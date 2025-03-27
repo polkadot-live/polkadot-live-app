@@ -112,3 +112,10 @@ export const arraysAreEqual = <T>(array1: T[], array2: T[]): boolean => {
 
   return true;
 };
+
+/**
+ * @name waitMs
+ * @summary Waits the given milliseconds and returns the provided boolean result.
+ */
+export const waitMs = async (ms: number, result: boolean): Promise<boolean> =>
+  new Promise<boolean>((resolve) => setTimeout(() => resolve(result), ms));

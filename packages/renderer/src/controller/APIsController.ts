@@ -1,6 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as ApiUtils from '@ren/utils/ApiUtils';
 import { Api } from '@ren/model/Api';
 import { ChainList } from '@ren/config/chains';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -124,13 +125,6 @@ export class APIsController {
   }
 
   /**
-   * @name waitMs
-   * @summary Waits the given milliseconds and returns the provided boolean result.
-   */
-  static waitMs = async (ms: number, result: boolean): Promise<boolean> =>
-    new Promise<boolean>((resolve) => setTimeout(() => resolve(result), ms));
-
-  /**
    * @name fetchConnectedInstance
    * @summary Returns the connected API instance for a specific chain ID.
    */
@@ -145,7 +139,7 @@ export class APIsController {
       // Wait up to 30 seconds to connect.
       const result = await Promise.race([
         instance.connect().then(() => true),
-        this.waitMs(30_000, false),
+        ApiUtils.waitMs(30_000, false),
       ]);
 
       // Return the connected instance if connection was successful.
