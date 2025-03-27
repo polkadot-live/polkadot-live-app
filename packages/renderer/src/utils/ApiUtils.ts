@@ -15,15 +15,6 @@ import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 const debug = MainDebug.extend('ApiUtils');
 
 /**
- * @name getApiInstance
- * @summary Connects an API instance to an endpoint and returns it.
- */
-export const getApiInstance = async (chainId: ChainID) => {
-  const instance = await APIsController.getConnectedApi(chainId);
-  return instance ? instance : null;
-};
-
-/**
  * @name getApiInstanceOrThrow
  * @summary Same as `getApiInstance` but throws an error if the endpoint fails to connect.
  */
@@ -31,7 +22,7 @@ export const getApiInstanceOrThrow = async (
   chainId: ChainID,
   error: string
 ) => {
-  const instance = await getApiInstance(chainId);
+  const instance = await APIsController.getConnectedApi(chainId);
   if (!instance) {
     throw new Error(`${error} - Could not get API instance.`);
   }
