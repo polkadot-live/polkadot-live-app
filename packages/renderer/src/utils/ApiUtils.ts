@@ -65,29 +65,3 @@ const isApiInstanceRequiredFor = (chainId: ChainID) => {
 
   return false;
 };
-
-/**
- * @name arraysAreEqual
- * @summary Returns `true` if the two passed arrays are equal, `false` otherwise.
- * @returns {boolean}
- */
-export const arraysAreEqual = <T>(array1: T[], array2: T[]): boolean => {
-  if (array1.length !== array2.length) {
-    return false;
-  }
-
-  for (let i = 0; i < array1.length; i++) {
-    if (array1[i] !== array2[i]) {
-      return false;
-    }
-  }
-
-  return true;
-};
-
-/**
- * @name waitMs
- * @summary Waits the given milliseconds and returns the provided boolean result.
- */
-export const waitMs = async (ms: number, result: boolean): Promise<boolean> =>
-  new Promise<boolean>((resolve) => setTimeout(() => resolve(result), ms));

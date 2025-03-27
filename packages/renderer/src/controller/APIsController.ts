@@ -1,16 +1,15 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as ApiUtils from '@ren/utils/ApiUtils';
+import * as Utils from '@ren/utils/CommonUtils';
 import { Api } from '@ren/model/Api';
 import { ChainList } from '@ren/config/chains';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAPIData } from '@polkadot-live/types/apis';
 
 /**
- *  A static class that manages active api providers.
+ * A static class that manages active api providers.
  * @class
- * @property {API} instances - a list of the active chain instances.
  */
 export class APIsController {
   static instances: Api[] = [];
@@ -91,6 +90,7 @@ export class APIsController {
     if (!this.get(chainId)) {
       throw new Error(`fetchConnectedInstance: API for ${chainId} not found`);
     }
+
     const instance = this.get(chainId)!;
     switch (instance.status) {
       case 'connected': {
@@ -106,7 +106,7 @@ export class APIsController {
         // Wait up to 30 seconds to connect.
         const result = await Promise.race([
           instance.connect().then(() => true),
-          ApiUtils.waitMs(30_000, false),
+          Utils.waitMs(30_000, false),
         ]);
 
         // Return the connected instance if connection was successful.
@@ -137,7 +137,6 @@ export class APIsController {
     if (!instance) {
       throw new Error(`fetchConnectedInstance: API for ${chainId} not found`);
     }
-
     return instance.status;
   };
 
@@ -167,11 +166,6 @@ export class APIsController {
     console.log('🤖 Creating new api interface: %o', endpoint);
     const instance = new Api(endpoint, chainId, rpcs);
     this.instances = [...this.instances, instance];
-
-    console.log(
-      '🔧 New api disconnected instances: %o',
-      this.instances.map((i) => i.chain)
-    );
   };
 
   /**

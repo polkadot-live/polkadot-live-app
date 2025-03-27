@@ -1,6 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as Utils from '@ren/utils/CommonUtils';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { ChainList } from '@ren/config/chains';
 import type { ChainID, ChainStatus } from '@polkadot-live/types/chains';
@@ -123,11 +124,7 @@ export class Api {
    */
   disconnect = async () => {
     // Web socket will disconnect automatically if status goes offline.
-    const isOnline: boolean =
-      (await window.myAPI.sendConnectionTaskAsync({
-        action: 'connection:getStatus',
-        data: null,
-      })) || false;
+    const isOnline: boolean = await Utils.getOnlineStatus();
 
     if (isOnline && this._api !== null) {
       await this._api.disconnect().catch(console.error);

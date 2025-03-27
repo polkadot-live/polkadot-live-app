@@ -1,6 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as Utils from '@ren/utils/CommonUtils';
 import * as AccountUtils from '@ren/utils/AccountUtils';
 import React, {
   createContext,
@@ -94,13 +95,6 @@ export const BootstrappingProvider = ({
     ]);
   };
 
-  /// Util: Get connection status.
-  const getOnlineStatus = async () =>
-    (await window.myAPI.sendConnectionTaskAsync({
-      action: 'connection:getStatus',
-      data: null,
-    })) || false;
-
   /// Handle event listeners.
   useEffect(() => {
     window.addEventListener('online', handleOnline);
@@ -132,7 +126,7 @@ export const BootstrappingProvider = ({
         data: null,
       });
 
-      const isConnected: boolean = await getOnlineStatus();
+      const isConnected: boolean = await Utils.getOnlineStatus();
       window.myAPI.relayModeFlag('isOnlineMode', isConnected);
       window.myAPI.relayModeFlag('isConnected', isConnected);
 
@@ -185,7 +179,7 @@ export const BootstrappingProvider = ({
 
     // Report online status to renderers.
     window.myAPI.relayModeFlag('isOnlineMode', false);
-    window.myAPI.relayModeFlag('isConnected', await getOnlineStatus());
+    window.myAPI.relayModeFlag('isConnected', await Utils.getOnlineStatus());
 
     // Disconnect from chains.
     for (const chainId of ['Polkadot', 'Kusama', 'Westend'] as ChainID[]) {
@@ -229,7 +223,7 @@ export const BootstrappingProvider = ({
       await handleInitializeAppOffline();
     } else {
       // Report online status to renderers.
-      const status = await getOnlineStatus();
+      const status = await Utils.getOnlineStatus();
       window.myAPI.relayModeFlag('isOnlineMode', status);
       window.myAPI.relayModeFlag('isConnected', status);
     }
@@ -256,7 +250,7 @@ export const BootstrappingProvider = ({
 
   /// Utility.
   const initIntervalsController = async () => {
-    const isConnected: boolean = await getOnlineStatus();
+    const isConnected: boolean = await Utils.getOnlineStatus();
     const ipcTask: IpcTask = { action: 'interval:task:get', data: null };
     const serialized = (await window.myAPI.sendIntervalTask(ipcTask)) || '[]';
     const tasks: IntervalSubscription[] = JSON.parse(serialized);
