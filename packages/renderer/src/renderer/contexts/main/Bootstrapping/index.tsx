@@ -268,18 +268,13 @@ export const BootstrappingProvider = ({
 
   /// Utility.
   const initIntervalsController = async () => {
-    const isOnline: boolean =
-      (await window.myAPI.sendConnectionTaskAsync({
-        action: 'connection:getStatus',
-        data: null,
-      })) || false;
-
+    const isConnected: boolean = await getOnlineStatus();
     const ipcTask: IpcTask = { action: 'interval:task:get', data: null };
     const serialized = (await window.myAPI.sendIntervalTask(ipcTask)) || '[]';
     const tasks: IntervalSubscription[] = JSON.parse(serialized);
 
     // Insert subscriptions and start interval if online.
-    IntervalsController.insertSubscriptions(tasks, isOnline);
+    IntervalsController.insertSubscriptions(tasks, isConnected);
 
     // Add tasks to React state in main window.
     // When the OpenGov view is open, the task state is synced in a separate function.
