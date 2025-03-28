@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type BigNumber from 'bignumber.js';
-import type { U8aLike } from '@polkadot/util/types';
 
 export interface PolkadotAccountState {
   inNominationPool: null | {
@@ -27,16 +26,4 @@ export interface BalanceLock {
   id: string;
   amount: BigNumber;
   reasons: string;
-}
-
-export interface APIConstants {
-  bondDuration: BigNumber;
-  sessionsPerEra: BigNumber;
-  maxNominatorRewardedPerValidator: BigNumber;
-  historyDepth: BigNumber;
-  expectedBlockTime: BigNumber;
-  epochDuration: BigNumber;
-  existentialDeposit: BigNumber;
-  fastUnstakeDeposit: BigNumber;
-  poolsPalletId: U8aLike;
 }

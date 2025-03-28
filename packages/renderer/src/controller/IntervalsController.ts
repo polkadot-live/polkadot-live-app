@@ -30,7 +30,7 @@ export class IntervalsController {
    *
    * NOTE: This method is called when app initializes and switches to online mode.
    */
-  static async initIntervals(isOnline: boolean) {
+  static initIntervals(isOnline: boolean) {
     isOnline && this.initClock();
   }
 

@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { TaskQueue } from '@ren/orchestrators/TaskQueue';
 import * as ApiUtils from '@ren/utils/ApiUtils';
 import * as defaults from './defaults';
@@ -17,8 +17,6 @@ import type {
 } from '@polkadot-live/types/subscriptions';
 import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
 import { AccountsController } from '@ren/controller/AccountsController';
-import { useChains } from '@app/contexts/main/Chains';
-import { APIsController } from '@ren/controller/APIsController';
 import { TaskOrchestrator } from '@ren/orchestrators/TaskOrchestrator';
 
 export const SubscriptionsContext =
@@ -33,8 +31,6 @@ export const SubscriptionsProvider = ({
 }: {
   children: ReactNode;
 }) => {
-  const { addChain } = useChains();
-
   /// Store received chain subscriptions.
   const [chainSubscriptionsState, setChainSubscriptionsState] = useState<
     Map<ChainID, SubscriptionTask[]>
@@ -44,6 +40,12 @@ export const SubscriptionsProvider = ({
   const [accountSubscriptionsState, setAccountSubscriptionsState] = useState<
     Map<string, SubscriptionTask[]>
   >(new Map());
+
+  useEffect(() => {
+    SubscriptionsController.setChainSubscriptions = setChainSubscriptionsState;
+    SubscriptionsController.setAccountSubscriptions =
+      setAccountSubscriptionsState;
+  }, []);
 
   /// Update cached account name for an account's subscription tasks.
   const updateAccountNameInTasks = (address: string, newName: string) => {
@@ -62,33 +64,10 @@ export const SubscriptionsProvider = ({
     });
   };
 
-  /// Set chain subscription tasks.
-  const setChainSubscriptions = (
-    subscriptions: Map<ChainID, SubscriptionTask[]>
-  ) => {
-    setChainSubscriptionsState(subscriptions);
-  };
-
   /// Get subscription tasks for a specific chain.
   const getChainSubscriptions = (chainId: ChainID) => {
     const subscriptions = chainSubscriptionsState.get(chainId);
     return subscriptions ? subscriptions : [];
-  };
-
-  /// Set subscription tasks for all accounts.
-  const setAccountSubscriptions = (
-    subscriptions: Map<string, SubscriptionTask[]>
-  ) => {
-    // Set new state for imported accounts and their subscriptions.
-    setAccountSubscriptionsState((prev) => {
-      prev.clear();
-
-      for (const [address, tasks] of subscriptions.entries()) {
-        prev.set(address, tasks);
-      }
-
-      return prev;
-    });
   };
 
   /// Get subscription tasks for a specific account.
@@ -215,12 +194,7 @@ export const SubscriptionsProvider = ({
     }
 
     // Disconnect from API instance if there are no tasks that require it.
-    await ApiUtils.handleApiDisconnects();
-
-    // Update chain state.
-    for (const apiData of APIsController.getAllFlattenedAPIData()) {
-      addChain(apiData);
-    }
+    await ApiUtils.disconnectAPIs();
   };
 
   /// Execute queued subscription task.
@@ -288,11 +262,6 @@ export const SubscriptionsProvider = ({
 
     // Disconnect from API instance if there are no tasks that require it.
     await ApiUtils.checkAndHandleApiDisconnect(task);
-
-    // Update chain state.
-    for (const apiData of APIsController.getAllFlattenedAPIData()) {
-      addChain(apiData);
-    }
   };
 
   return (
@@ -300,9 +269,7 @@ export const SubscriptionsProvider = ({
       value={{
         chainSubscriptions: chainSubscriptionsState,
         accountSubscriptions: accountSubscriptionsState,
-        setChainSubscriptions,
         getChainSubscriptions,
-        setAccountSubscriptions,
         getAccountSubscriptions,
         updateTask,
         updateAccountNameInTasks,

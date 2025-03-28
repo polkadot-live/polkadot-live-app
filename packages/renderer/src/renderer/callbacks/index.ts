@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { AccountsController } from '@ren/controller/AccountsController';
+import { APIsController } from '@ren/controller/APIsController';
 import BigNumber from 'bignumber.js';
 import { checkAccountWithProperties } from '@ren/utils/AccountUtils';
 import { Config as RendererConfig } from '@ren/config/processes/renderer';
@@ -15,7 +16,6 @@ import {
 import { NotificationsController } from '@ren/controller/NotificationsController';
 import { u8aToString, u8aUnwrapBytes } from '@polkadot/util';
 import { rmCommas } from '@w3ux/utils';
-import * as ApiUtils from '@ren/utils/ApiUtils';
 import type { ApiCallEntry } from '@polkadot-live/types/subscriptions';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { EventCallback } from '@polkadot-live/types/reporter';
@@ -314,7 +314,7 @@ export class Callbacks {
 
       // Get API instance.
       const origin = 'callback_account_balance_spendable';
-      const { api } = await ApiUtils.getApiInstanceOrThrow(
+      const { api } = await APIsController.getConnectedApiOrThrow(
         account.chain,
         origin
       );
@@ -411,7 +411,10 @@ export class Callbacks {
       const account = checkAccountWithProperties(entry, ['nominationPoolData']);
       const chainId = account.chain;
       const origin = 'callback_nomination_pool_rewards';
-      const { api } = await ApiUtils.getApiInstanceOrThrow(chainId, origin);
+      const { api } = await APIsController.getConnectedApiOrThrow(
+        chainId,
+        origin
+      );
 
       // Fetch pending rewards for the account.
       const pendingRewardsPlanck: BigNumber =
@@ -715,7 +718,7 @@ export class Callbacks {
       // Check if account has nominating rewards from the previous era.
       const account = checkAccountWithProperties(entry, ['nominatingData']);
       const origin = 'callback_nomination_pending_payouts';
-      const { api } = await ApiUtils.getApiInstanceOrThrow(
+      const { api } = await APIsController.getConnectedApiOrThrow(
         account.chain,
         origin
       );
@@ -794,7 +797,7 @@ export class Callbacks {
 
       // Otherwise get exposure.
       const origin = 'callback_nominating_exposure';
-      const { api } = await ApiUtils.getApiInstanceOrThrow(
+      const { api } = await APIsController.getConnectedApiOrThrow(
         account.chain,
         origin
       );
@@ -854,7 +857,7 @@ export class Callbacks {
       }
 
       const origin = 'callback_nominating_exposure_westend';
-      const { api } = await ApiUtils.getApiInstanceOrThrow(
+      const { api } = await APIsController.getConnectedApiOrThrow(
         account.chain,
         origin
       );
@@ -927,7 +930,7 @@ export class Callbacks {
 
       // Get live nominator data and check to see if it has changed.
       const origin = 'callback_nominating_commission';
-      const { api } = await ApiUtils.getApiInstanceOrThrow(
+      const { api } = await APIsController.getConnectedApiOrThrow(
         account.chain,
         origin
       );
@@ -1009,7 +1012,7 @@ export class Callbacks {
 
       // Get live nominator data and check to see if it has changed.
       const origin = 'callback_nominating_nominations';
-      const { api } = await ApiUtils.getApiInstanceOrThrow(
+      const { api } = await APIsController.getConnectedApiOrThrow(
         account.chain,
         origin
       );

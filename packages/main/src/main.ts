@@ -162,7 +162,6 @@ app.whenReady().then(async () => {
 
   // Emitted when system is resuming.
   powerMonitor.on('resume', async () => {
-    console.log('Resuming...');
     await OnlineStatusController.handleResume();
   });
 

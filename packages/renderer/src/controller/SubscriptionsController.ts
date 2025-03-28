@@ -3,9 +3,10 @@
 
 import { accountTasks as allAccountTasks } from '@ren/config/subscriptions/account';
 import { chainTasks as allChainTasks } from '@ren/config/subscriptions/chain';
+import { AccountsController } from './AccountsController';
 import { QueryMultiWrapper } from '@ren/model/QueryMultiWrapper';
 import { TaskOrchestrator } from '@ren/orchestrators/TaskOrchestrator';
-import type { Account, ImportedAccounts } from '@ren/model/Account';
+import type { Account } from '@ren/model/Account';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 
@@ -28,9 +29,29 @@ import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 export class SubscriptionsController {
   static chainSubscriptions: QueryMultiWrapper | null = null;
 
-  static addGlobal(wrapper: QueryMultiWrapper) {
-    SubscriptionsController.chainSubscriptions = wrapper;
-  }
+  static setChainSubscriptions: React.Dispatch<
+    React.SetStateAction<Map<ChainID, SubscriptionTask[]>>
+  >;
+
+  static setAccountSubscriptions: React.Dispatch<
+    React.SetStateAction<Map<string, SubscriptionTask[]>>
+  >;
+
+  /**
+   * Sync react state with managed controller data.
+   */
+  static syncChainSubscriptionsState = () => {
+    const data = this.getChainSubscriptions();
+    this.setChainSubscriptions(data);
+  };
+
+  /**
+   * Sync react state with managed controller data.
+   */
+  static syncAccountSubscriptionsState = () => {
+    const data = this.getAccountSubscriptions();
+    this.setAccountSubscriptions(data);
+  };
 
   /**
    * @name initChainSubscriptions
@@ -181,10 +202,10 @@ export class SubscriptionsController {
    * @summary Return a map of all correctly configured tasks possible for the received accounts.
    * Active subscriptions need to be included in the array.
    */
-  static getAccountSubscriptions(accountsMap: ImportedAccounts) {
+  static getAccountSubscriptions() {
     const result = new Map<string, SubscriptionTask[]>();
 
-    for (const accounts of accountsMap.values()) {
+    for (const accounts of AccountsController.accounts.values()) {
       for (const a of accounts) {
         const tasks = allAccountTasks
           // Filter on account's chain ID.

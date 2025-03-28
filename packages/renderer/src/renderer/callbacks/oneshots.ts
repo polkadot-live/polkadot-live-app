@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { getApiInstance } from '@ren/utils/ApiUtils';
+import { APIsController } from '@ren/controller/APIsController';
 import { Callbacks } from '.';
 import type {
   ApiCallEntry,
@@ -73,7 +73,7 @@ export const executeOneShot = async (task: SubscriptionTask) => {
  * @summary One-shot call to fetch an account's free balance.
  */
 const oneShot_account_balance_free = async (task: SubscriptionTask) => {
-  const instance = await getApiInstance(task.chainId);
+  const instance = await APIsController.getConnectedApi(task.chainId);
   if (!instance) {
     return false;
   }
@@ -90,7 +90,7 @@ const oneShot_account_balance_free = async (task: SubscriptionTask) => {
  * @summary One-shot to fetch an account's frozen balance.
  */
 const oneShot_account_balance_frozen = async (task: SubscriptionTask) => {
-  const instance = await getApiInstance(task.chainId);
+  const instance = await APIsController.getConnectedApi(task.chainId);
   if (!instance) {
     return false;
   }
@@ -107,7 +107,7 @@ const oneShot_account_balance_frozen = async (task: SubscriptionTask) => {
  * @summary One-shot to fetch an account's reserved balance.
  */
 const oneShot_account_balance_reserved = async (task: SubscriptionTask) => {
-  const instance = await getApiInstance(task.chainId);
+  const instance = await APIsController.getConnectedApi(task.chainId);
   if (!instance) {
     return false;
   }
@@ -124,7 +124,7 @@ const oneShot_account_balance_reserved = async (task: SubscriptionTask) => {
  * @summary One-shot to fetch an account's spendable balance.
  */
 const oneShot_account_balance_spendable = async (task: SubscriptionTask) => {
-  const instance = await getApiInstance(task.chainId);
+  const instance = await APIsController.getConnectedApi(task.chainId);
   if (!instance) {
     return false;
   }
@@ -151,7 +151,7 @@ const oneShot_nomination_pool_rewards = async (task: SubscriptionTask) => {
  * @summary One-shot call to fetch an account's nominating pool state.
  */
 const oneShot_nomination_pool_state = async (task: SubscriptionTask) => {
-  const instance = await getApiInstance(task.chainId);
+  const instance = await APIsController.getConnectedApi(task.chainId);
   if (!instance) {
     return false;
   }
@@ -168,7 +168,7 @@ const oneShot_nomination_pool_state = async (task: SubscriptionTask) => {
  * @summary One-shot call to fetch an account's nominating pool name.
  */
 const oneShot_nomination_pool_renamed = async (task: SubscriptionTask) => {
-  const instance = await getApiInstance(task.chainId);
+  const instance = await APIsController.getConnectedApi(task.chainId);
   if (!instance) {
     return false;
   }
@@ -185,7 +185,7 @@ const oneShot_nomination_pool_renamed = async (task: SubscriptionTask) => {
  * @summary One-shot call to fetch an account's nominating pool roles.
  */
 const oneShot_nomination_pool_roles = async (task: SubscriptionTask) => {
-  const instance = await getApiInstance(task.chainId);
+  const instance = await APIsController.getConnectedApi(task.chainId);
   if (!instance) {
     return false;
   }
@@ -202,7 +202,7 @@ const oneShot_nomination_pool_roles = async (task: SubscriptionTask) => {
  * @summary One-shot call to fetch an account's nominating pool commission.
  */
 const oneShot_nomination_pool_commission = async (task: SubscriptionTask) => {
-  const instance = await getApiInstance(task.chainId);
+  const instance = await APIsController.getConnectedApi(task.chainId);
   if (!instance) {
     return false;
   }
@@ -219,7 +219,7 @@ const oneShot_nomination_pool_commission = async (task: SubscriptionTask) => {
  * @summary One-shot call to fetch an account's nominating pending paypouts.
  */
 const oneShot_nominating_era_rewards = async (task: SubscriptionTask) => {
-  const instance = await getApiInstance(task.chainId);
+  const instance = await APIsController.getConnectedApi(task.chainId);
   if (!instance) {
     return false;
   }
@@ -236,7 +236,7 @@ const oneShot_nominating_era_rewards = async (task: SubscriptionTask) => {
  * @summary One-shot call to fetch an account's nominating exposure.
  */
 const oneShot_nominating_exposure = async (task: SubscriptionTask) => {
-  const instance = await getApiInstance(task.chainId);
+  const instance = await APIsController.getConnectedApi(task.chainId);
   if (!instance) {
     return false;
   }
@@ -253,7 +253,7 @@ const oneShot_nominating_exposure = async (task: SubscriptionTask) => {
  * @summary One-shot call to see a change in commission.
  */
 const oneShot_nominating_commission = async (task: SubscriptionTask) => {
-  const instance = await getApiInstance(task.chainId);
+  const instance = await APIsController.getConnectedApi(task.chainId);
   if (!instance) {
     return false;
   }
@@ -270,7 +270,7 @@ const oneShot_nominating_commission = async (task: SubscriptionTask) => {
  * @summary One-shot call to see a change in nominations.
  */
 const oneShot_nominating_nominations = async (task: SubscriptionTask) => {
-  const instance = await getApiInstance(task.chainId);
+  const instance = await APIsController.getConnectedApi(task.chainId);
   if (!instance) {
     return false;
   }

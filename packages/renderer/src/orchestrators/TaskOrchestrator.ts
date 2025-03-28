@@ -1,10 +1,11 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { getOnlineStatus } from '@ren/utils/CommonUtils';
 import { MainDebug } from '@ren/utils/DebugUtils';
+import { APIsController } from '@ren/controller/APIsController';
 import type { QueryMultiWrapper } from '@ren/model/QueryMultiWrapper';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
-import * as ApiUtils from '@ren/utils/ApiUtils';
 
 const debug = MainDebug.extend('TaskOrchestrator');
 
@@ -32,12 +33,7 @@ export class TaskOrchestrator {
     task: SubscriptionTask,
     wrapper: QueryMultiWrapper
   ) {
-    const isOnline: boolean =
-      (await window.myAPI.sendConnectionTaskAsync({
-        action: 'connection:getStatus',
-        data: null,
-      })) || false;
-
+    const isOnline: boolean = await getOnlineStatus();
     this.next(task, wrapper);
     isOnline && (await wrapper.build(task.chainId));
   }
@@ -61,12 +57,7 @@ export class TaskOrchestrator {
     }
 
     // Build the tasks if the app is in online mode.
-    const isOnline: boolean =
-      (await window.myAPI.sendConnectionTaskAsync({
-        action: 'connection:getStatus',
-        data: null,
-      })) || false;
-
+    const isOnline: boolean = await getOnlineStatus();
     if (isOnline) {
       const chainIds = new Set(tasks.map((t) => t.chainId));
       for (const chainId of chainIds) {
@@ -194,7 +185,10 @@ export class TaskOrchestrator {
   static async getApiCall(task: SubscriptionTask) {
     const { action, chainId } = task;
     const origin = 'TaskOrchestrator.getApiCall';
-    const instance = await ApiUtils.getApiInstanceOrThrow(chainId, origin);
+    const instance = await APIsController.getConnectedApiOrThrow(
+      chainId,
+      origin
+    );
 
     switch (action) {
       case 'subscribe:chain:timestamp':

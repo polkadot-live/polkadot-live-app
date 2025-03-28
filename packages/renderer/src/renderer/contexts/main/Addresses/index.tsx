@@ -1,10 +1,9 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { setStateWithRef } from '@w3ux/utils';
 import * as defaults from './defaults';
 import { AccountsController } from '@ren/controller/AccountsController';
-import { useContext, createContext, useState, useRef } from 'react';
+import { useContext, createContext, useState, useRef, useEffect } from 'react';
 import type { AddressesContextInterface } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
@@ -25,13 +24,8 @@ export const AddressesProvider = ({
   children: React.ReactNode;
 }) => {
   // Store the currently imported addresses
-  const [addresses, setAddressesState] = useState<FlattenedAccounts>(new Map());
+  const [addresses, setAddresses] = useState<FlattenedAccounts>(new Map());
   const addressesRef = useRef(addresses);
-
-  // Setter to update addresses state and ref.
-  const setAddresses = (value: FlattenedAccounts) => {
-    setStateWithRef(value, setAddressesState, addressesRef);
-  };
 
   // Check if an address exists in imported addresses.
   const addressExists = (address: string) => {
@@ -52,7 +46,7 @@ export const AddressesProvider = ({
     fromBackup = false
   ) => {
     // Update accounts state.
-    setAddresses(AccountsController.getAllFlattenedAccountData());
+    AccountsController.syncState();
 
     // Show OS notification for new address imports.
     if (!fromBackup) {
@@ -71,7 +65,7 @@ export const AddressesProvider = ({
   // Removes an imported address.
   const removeAddress = async (chain: ChainID, address: string) => {
     // Set address state.
-    setAddresses(AccountsController.getAllFlattenedAccountData());
+    AccountsController.syncState();
 
     // Remove persisted account from store.
     await window.myAPI.sendAccountTask({
@@ -173,11 +167,16 @@ export const AddressesProvider = ({
       0
     );
 
+  // Cache addresses state setter in controller for updaing UI.
+  useEffect(() => {
+    AccountsController.cachedSetAddresses = setAddresses;
+    AccountsController.cachedAddressesRef = addressesRef;
+  }, []);
+
   return (
     <AddressesContext.Provider
       value={{
         addresses: addressesRef.current,
-        setAddresses,
         getAddresses,
         addressExists,
         importAddress,

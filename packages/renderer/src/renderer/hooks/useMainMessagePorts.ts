@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 /// Dependencies.
+import { getOnlineStatus } from '@ren/utils/CommonUtils';
 import { AccountsController } from '@ren/controller/AccountsController';
 import { APIsController } from '@ren/controller/APIsController';
 import BigNumber from 'bignumber.js';
@@ -14,10 +15,7 @@ import {
   fetchNominatingDataForAccount,
   fetchNominationPoolDataForAccount,
 } from '@ren/utils/AccountUtils';
-import {
-  getApiInstanceOrThrow,
-  handleApiDisconnects,
-} from '@ren/utils/ApiUtils';
+import { disconnectAPIs } from '@ren/utils/ApiUtils';
 import { isObject, u8aConcat } from '@polkadot/util';
 import { planckToUnit, rmCommas } from '@w3ux/utils';
 import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
@@ -29,7 +27,6 @@ import { getAddressChainId } from '../Utils';
 import { useAddresses } from '@app/contexts/main/Addresses';
 import { useAppSettings } from '@app/contexts/main/AppSettings';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
-import { useChains } from '@app/contexts/main/Chains';
 import { useEffect } from 'react';
 import { useEvents } from '@app/contexts/main/Events';
 import { useManage } from '@app/contexts/main/Manage';
@@ -54,8 +51,7 @@ const WC_EVENT_ORIGIN = 'https://verify.walletconnect.org';
 
 export const useMainMessagePorts = () => {
   /// Main renderer contexts.
-  const { importAddress, removeAddress, setAddresses } = useAddresses();
-  const { addChain } = useChains();
+  const { importAddress, removeAddress } = useAddresses();
   const { updateEventsOnAccountRename } = useEvents();
   const { syncOpenGovWindow } = useBootstrapping();
   const { exportDataToBackup, importDataFromBackup } = useDataBackup();
@@ -88,9 +84,7 @@ export const useMainMessagePorts = () => {
     handleToggleHideDockIcon,
   } = useAppSettings();
 
-  const { setAccountSubscriptions, updateAccountNameInTasks, updateTask } =
-    useSubscriptions();
-
+  const { updateAccountNameInTasks, updateTask } = useSubscriptions();
   const { addIntervalSubscription, removeIntervalSubscription } =
     useIntervalSubscriptions();
 
@@ -100,16 +94,7 @@ export const useMainMessagePorts = () => {
    */
   const setSubscriptionsState = () => {
     // Set account subscriptions data for rendering.
-    setAccountSubscriptions(
-      SubscriptionsController.getAccountSubscriptions(
-        AccountsController.accounts
-      )
-    );
-
-    // Report chain connections to UI.
-    for (const apiData of APIsController.getAllFlattenedAPIData()) {
-      addChain(apiData);
-    }
+    SubscriptionsController.syncAccountSubscriptionsState();
   };
 
   /**
@@ -155,12 +140,7 @@ export const useMainMessagePorts = () => {
     }
 
     // Fetch account data from network.
-    const isOnline: boolean =
-      (await window.myAPI.sendConnectionTaskAsync({
-        action: 'connection:getStatus',
-        data: null,
-      })) || false;
-
+    const isOnline: boolean = await getOnlineStatus();
     if (isOnline) {
       await fetchBalanceForAccount(account);
       await fetchNominationPoolDataForAccount(account);
@@ -241,19 +221,10 @@ export const useMainMessagePorts = () => {
     await removeAddress(chainId, address);
 
     // Update account subscriptions data.
-    setAccountSubscriptions(
-      SubscriptionsController.getAccountSubscriptions(
-        AccountsController.accounts
-      )
-    );
+    SubscriptionsController.syncAccountSubscriptionsState();
 
     // Disconnect from any API instances that are not currently needed.
-    await handleApiDisconnects();
-
-    // Report chain connections to UI.
-    for (const apiData of APIsController.getAllFlattenedAPIData()) {
-      addChain(apiData);
-    }
+    await disconnectAPIs();
 
     // Transition away from rendering toggles.
     setRenderedSubscriptions({ type: '', tasks: [] });
@@ -277,7 +248,7 @@ export const useMainMessagePorts = () => {
       await AccountsController.set(chainId, account);
 
       // Update account react state.
-      setAddresses(AccountsController.getAllFlattenedAccountData());
+      AccountsController.syncState();
 
       // Update subscription task react state.
       updateAccountNameInTasks(address, newName);
@@ -378,7 +349,10 @@ export const useMainMessagePorts = () => {
    */
   const handleGetTracks = async (ev: MessageEvent) => {
     const { chainId } = ev.data.data;
-    const { api } = await getApiInstanceOrThrow(chainId, 'Error');
+    const { api } = await APIsController.getConnectedApiOrThrow(
+      chainId,
+      'Error'
+    );
     const result = api.consts.referenda.tracks.toHuman();
 
     ConfigRenderer.portToOpenGov?.postMessage({
@@ -394,7 +368,10 @@ export const useMainMessagePorts = () => {
   const handleGetReferenda = async (ev: MessageEvent) => {
     // Make API call to fetch referenda entries.
     const { chainId } = ev.data.data;
-    const { api } = await getApiInstanceOrThrow(chainId, 'Error');
+    const { api } = await APIsController.getConnectedApiOrThrow(
+      chainId,
+      'Error'
+    );
     const results = await api.query.referenda.referendumInfoFor.entries();
 
     // Populate referenda map.
@@ -477,7 +454,10 @@ export const useMainMessagePorts = () => {
    */
   const handleInitTreasury = async (ev: MessageEvent) => {
     const { chainId } = ev.data.data;
-    const { api } = await getApiInstanceOrThrow(chainId, 'Error');
+    const { api } = await APIsController.getConnectedApiOrThrow(
+      chainId,
+      'Error'
+    );
 
     // Get raw treasury public key.
     const EMPTY_U8A_32 = new Uint8Array(32);

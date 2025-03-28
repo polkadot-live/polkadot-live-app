@@ -14,8 +14,4 @@ export interface ChainInstance {
 
 export interface ChainsContextInterface {
   chains: Map<ChainID, FlattenedAPIData>;
-  addChain: (data: FlattenedAPIData) => void;
-  removeChain: (chain: ChainID) => void;
-  getChain: (chain: ChainID) => FlattenedAPIData | undefined;
-  setChain: (data: FlattenedAPIData) => void;
 }
