@@ -51,7 +51,7 @@ const WC_EVENT_ORIGIN = 'https://verify.walletconnect.org';
 
 export const useMainMessagePorts = () => {
   /// Main renderer contexts.
-  const { importAddress, removeAddress, setAddresses } = useAddresses();
+  const { importAddress, removeAddress } = useAddresses();
   const { updateEventsOnAccountRename } = useEvents();
   const { syncOpenGovWindow } = useBootstrapping();
   const { exportDataToBackup, importDataFromBackup } = useDataBackup();
@@ -258,7 +258,7 @@ export const useMainMessagePorts = () => {
       await AccountsController.set(chainId, account);
 
       // Update account react state.
-      setAddresses(AccountsController.getAllFlattenedAccountData());
+      AccountsController.syncState();
 
       // Update subscription task react state.
       updateAccountNameInTasks(address, newName);

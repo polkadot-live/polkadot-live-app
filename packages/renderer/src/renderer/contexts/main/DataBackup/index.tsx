@@ -18,7 +18,6 @@ import {
 } from '@app/utils/ImportUtils';
 
 /// Main window contexts.
-import { useAddresses } from '@app/contexts/main/Addresses';
 import { useEvents } from '@app/contexts/main/Events';
 import { useManage } from '../Manage';
 import { useIntervalSubscriptions } from '../IntervalSubscriptions';
@@ -53,7 +52,6 @@ export const DataBackupProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { setAddresses } = useAddresses();
   const { setEvents } = useEvents();
   const {
     updateRenderedSubscriptions,
@@ -231,7 +229,7 @@ export const DataBackupProvider = ({
       }
 
       // Update account list state.
-      setAddresses(AccountsController.getAllFlattenedAccountData());
+      AccountsController.syncState();
     }
   };
 

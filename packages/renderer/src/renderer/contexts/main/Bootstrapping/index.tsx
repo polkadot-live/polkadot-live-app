@@ -17,7 +17,6 @@ import { Config as RendererConfig } from '@ren/config/processes/renderer';
 import { ChainList } from '@ren/config/chains';
 import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
 import { IntervalsController } from '@ren/controller/IntervalsController';
-import { useAddresses } from '@app/contexts/main/Addresses';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
 import { disconnectAPIs } from '@ren/utils/ApiUtils';
@@ -42,7 +41,6 @@ export const BootstrappingProvider = ({
   const [isAborting, setIsAborting] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
 
-  const { setAddresses } = useAddresses();
   const { setChainSubscriptions, setAccountSubscriptions } = useSubscriptions();
   const { addIntervalSubscription } = useIntervalSubscriptions();
 
@@ -149,7 +147,7 @@ export const BootstrappingProvider = ({
       }
 
       // Set application state.
-      setAddresses(AccountsController.getAllFlattenedAccountData());
+      AccountsController.syncState();
       setSubscriptionsState();
       refAppInitialized.current = true; // Set app initialized flag.
 
