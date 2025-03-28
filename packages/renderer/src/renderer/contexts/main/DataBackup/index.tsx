@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 /// Dependencies.
+import { getOnlineStatus } from '@ren/utils/CommonUtils';
 import { createContext, useContext } from 'react';
 import { defaultDataBackupContext } from './default';
 import { AccountsController } from '@ren/controller/AccountsController';
@@ -17,11 +18,9 @@ import {
 } from '@app/utils/ImportUtils';
 
 /// Main window contexts.
-import { useAddresses } from '@app/contexts/main/Addresses';
 import { useEvents } from '@app/contexts/main/Events';
 import { useManage } from '../Manage';
 import { useIntervalSubscriptions } from '../IntervalSubscriptions';
-import { useSubscriptions } from '../Subscriptions';
 
 /// Types.
 import type {
@@ -52,7 +51,6 @@ export const DataBackupProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { setAddresses } = useAddresses();
   const { setEvents } = useEvents();
   const {
     updateRenderedSubscriptions,
@@ -60,7 +58,6 @@ export const DataBackupProvider = ({
     tryUpdateDynamicIntervalTask,
   } = useManage();
 
-  const { setAccountSubscriptions } = useSubscriptions();
   const { addIntervalSubscription, updateIntervalSubscription } =
     useIntervalSubscriptions();
 
@@ -188,11 +185,7 @@ export const DataBackupProvider = ({
           : (JSON.parse(ser) as LocalAddress[]);
 
       // Check connection status and set isImported to `false` if app is offline.
-      const isOnline: boolean =
-        (await window.myAPI.sendConnectionTaskAsync({
-          action: 'connection:getStatus',
-          data: null,
-        })) || false;
+      const isOnline: boolean = await getOnlineStatus();
 
       // Process parsed addresses.
       for (const a of parsed) {
@@ -234,7 +227,7 @@ export const DataBackupProvider = ({
       }
 
       // Update account list state.
-      setAddresses(AccountsController.getAllFlattenedAccountData());
+      AccountsController.syncState();
     }
   };
 
@@ -372,11 +365,7 @@ export const DataBackupProvider = ({
     }
 
     // Set subscriptions React state.
-    setAccountSubscriptions(
-      SubscriptionsController.getAccountSubscriptions(
-        AccountsController.accounts
-      )
-    );
+    SubscriptionsController.syncAccountSubscriptionsState();
 
     // Send successfully imported tasks to main process.
     await window.myAPI.sendSubscriptionTask({

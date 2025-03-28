@@ -27,7 +27,7 @@ export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [uiTrigger]);
 
-  // Cache chain state setter in controler for updaing UI.
+  // Cache chain state setter in controller for updaing UI.
   useEffect(() => {
     APIsController.cachedSetChains = setChains;
     APIsController.setUiTrigger = setUiTrigger;

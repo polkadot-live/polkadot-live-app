@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 /// Dependencies.
+import { getOnlineStatus } from '@ren/utils/CommonUtils';
 import { AccountsController } from '@ren/controller/AccountsController';
 import { APIsController } from '@ren/controller/APIsController';
 import BigNumber from 'bignumber.js';
@@ -50,7 +51,7 @@ const WC_EVENT_ORIGIN = 'https://verify.walletconnect.org';
 
 export const useMainMessagePorts = () => {
   /// Main renderer contexts.
-  const { importAddress, removeAddress, setAddresses } = useAddresses();
+  const { importAddress, removeAddress } = useAddresses();
   const { updateEventsOnAccountRename } = useEvents();
   const { syncOpenGovWindow } = useBootstrapping();
   const { exportDataToBackup, importDataFromBackup } = useDataBackup();
@@ -83,9 +84,7 @@ export const useMainMessagePorts = () => {
     handleToggleHideDockIcon,
   } = useAppSettings();
 
-  const { setAccountSubscriptions, updateAccountNameInTasks, updateTask } =
-    useSubscriptions();
-
+  const { updateAccountNameInTasks, updateTask } = useSubscriptions();
   const { addIntervalSubscription, removeIntervalSubscription } =
     useIntervalSubscriptions();
 
@@ -95,11 +94,7 @@ export const useMainMessagePorts = () => {
    */
   const setSubscriptionsState = () => {
     // Set account subscriptions data for rendering.
-    setAccountSubscriptions(
-      SubscriptionsController.getAccountSubscriptions(
-        AccountsController.accounts
-      )
-    );
+    SubscriptionsController.syncAccountSubscriptionsState();
   };
 
   /**
@@ -145,12 +140,7 @@ export const useMainMessagePorts = () => {
     }
 
     // Fetch account data from network.
-    const isOnline: boolean =
-      (await window.myAPI.sendConnectionTaskAsync({
-        action: 'connection:getStatus',
-        data: null,
-      })) || false;
-
+    const isOnline: boolean = await getOnlineStatus();
     if (isOnline) {
       await fetchBalanceForAccount(account);
       await fetchNominationPoolDataForAccount(account);
@@ -231,11 +221,7 @@ export const useMainMessagePorts = () => {
     await removeAddress(chainId, address);
 
     // Update account subscriptions data.
-    setAccountSubscriptions(
-      SubscriptionsController.getAccountSubscriptions(
-        AccountsController.accounts
-      )
-    );
+    SubscriptionsController.syncAccountSubscriptionsState();
 
     // Disconnect from any API instances that are not currently needed.
     await disconnectAPIs();
@@ -262,7 +248,7 @@ export const useMainMessagePorts = () => {
       await AccountsController.set(chainId, account);
 
       // Update account react state.
-      setAddresses(AccountsController.getAllFlattenedAccountData());
+      AccountsController.syncState();
 
       // Update subscription task react state.
       updateAccountNameInTasks(address, newName);

@@ -16,11 +16,22 @@ import { TaskOrchestrator } from '@ren/orchestrators/TaskOrchestrator';
  * A static class to provide an interface for managing imported accounts.
  * @class
  * @property {ImportedAccounts} accounts - list of imported accounts, separated by chain.
- * @property {SubscriptionDelegate[]} delegators - list of delegators, their delegate and the event
- * they are listening to.
  */
 export class AccountsController {
   static accounts: ImportedAccounts = new Map();
+  static cachedSetAddresses: React.Dispatch<
+    React.SetStateAction<FlattenedAccounts>
+  >;
+  static cachedAddressesRef: React.MutableRefObject<FlattenedAccounts>;
+
+  /**
+   * Sync react state with managed account data in controller.
+   */
+  static syncState = () => {
+    const data = this.getAllFlattenedAccountData();
+    this.cachedSetAddresses(data);
+    this.cachedAddressesRef.current = data;
+  };
 
   /**
    * @name initialize

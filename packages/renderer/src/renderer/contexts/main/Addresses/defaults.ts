@@ -6,7 +6,6 @@ import type { AddressesContextInterface } from './types';
 
 export const defaultAddressesContext: AddressesContextInterface = {
   addresses: new Map(),
-  setAddresses: (a) => {},
   getAddresses: () => [],
   addressExists: (a) => false,
   importAddress: (n, a) => new Promise(() => {}),

@@ -17,8 +17,6 @@ import { Config as RendererConfig } from '@ren/config/processes/renderer';
 import { ChainList } from '@ren/config/chains';
 import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
 import { IntervalsController } from '@ren/controller/IntervalsController';
-import { useAddresses } from '@app/contexts/main/Addresses';
-import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
 import { disconnectAPIs } from '@ren/utils/ApiUtils';
 import type { BootstrappingInterface } from './types';
@@ -38,13 +36,11 @@ export const BootstrappingProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { addIntervalSubscription } = useIntervalSubscriptions();
+
   const [appLoading, setAppLoading] = useState(true);
   const [isAborting, setIsAborting] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
-
-  const { setAddresses } = useAddresses();
-  const { setChainSubscriptions, setAccountSubscriptions } = useSubscriptions();
-  const { addIntervalSubscription } = useIntervalSubscriptions();
 
   const refAppInitialized = useRef(false);
   const refAborted = useRef(false);
@@ -149,8 +145,8 @@ export const BootstrappingProvider = ({
       }
 
       // Set application state.
-      setAddresses(AccountsController.getAllFlattenedAccountData());
-      setSubscriptionsState();
+      AccountsController.syncState();
+      syncSubscriptionsState();
       refAppInitialized.current = true; // Set app initialized flag.
 
       // Set app in offline mode if connection processing was aborted.
@@ -214,7 +210,7 @@ export const BootstrappingProvider = ({
       }
     }
 
-    setSubscriptionsState();
+    syncSubscriptionsState();
     refSwitchingToOnline.current = false;
 
     if (refAborted.current) {
@@ -243,12 +239,10 @@ export const BootstrappingProvider = ({
         SubscriptionsController.resubscribeChain(chainId),
       ]);
     }
-
-    // Set application state.
-    setSubscriptionsState();
+    syncSubscriptionsState();
   };
 
-  /// Utility.
+  /// Util for initializing the intervals controller.
   const initIntervalsController = async () => {
     const isConnected: boolean = await Utils.getOnlineStatus();
     const ipcTask: IpcTask = { action: 'interval:task:get', data: null };
@@ -265,16 +259,10 @@ export const BootstrappingProvider = ({
     }
   };
 
-  const setSubscriptionsState = () => {
-    // Set chain subscriptions data for rendering.
-    setChainSubscriptions(SubscriptionsController.getChainSubscriptions());
-
-    // Set account subscriptions data for rendering.
-    setAccountSubscriptions(
-      SubscriptionsController.getAccountSubscriptions(
-        AccountsController.accounts
-      )
-    );
+  /// Util for syncing react subscriptions state.
+  const syncSubscriptionsState = () => {
+    SubscriptionsController.syncChainSubscriptionsState();
+    SubscriptionsController.syncAccountSubscriptionsState();
   };
 
   /// Called when initializing the openGov window.

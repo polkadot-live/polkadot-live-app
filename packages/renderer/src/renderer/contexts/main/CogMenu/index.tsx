@@ -1,6 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { getOnlineStatus } from '@ren/utils/CommonUtils';
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { createContext, useContext } from 'react';
 import { defaultCogMenuContext } from './defaults';
@@ -64,11 +65,7 @@ export const CogMenuProvider = ({
       await handleInitializeAppOffline();
     } else {
       // Confirm online connection.
-      const status: boolean =
-        (await window.myAPI.sendConnectionTaskAsync({
-          action: 'connection:getStatus',
-          data: null,
-        })) || false;
+      const status: boolean = await getOnlineStatus();
 
       if (status) {
         // Handle going online.
