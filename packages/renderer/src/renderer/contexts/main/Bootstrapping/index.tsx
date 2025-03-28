@@ -36,11 +36,11 @@ export const BootstrappingProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { addIntervalSubscription } = useIntervalSubscriptions();
+
   const [appLoading, setAppLoading] = useState(true);
   const [isAborting, setIsAborting] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
-
-  const { addIntervalSubscription } = useIntervalSubscriptions();
 
   const refAppInitialized = useRef(false);
   const refAborted = useRef(false);
@@ -239,8 +239,6 @@ export const BootstrappingProvider = ({
         SubscriptionsController.resubscribeChain(chainId),
       ]);
     }
-
-    // Set application state.
     syncSubscriptionsState();
   };
 
