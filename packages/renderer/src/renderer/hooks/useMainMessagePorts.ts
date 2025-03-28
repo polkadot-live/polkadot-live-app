@@ -84,9 +84,7 @@ export const useMainMessagePorts = () => {
     handleToggleHideDockIcon,
   } = useAppSettings();
 
-  const { setAccountSubscriptions, updateAccountNameInTasks, updateTask } =
-    useSubscriptions();
-
+  const { updateAccountNameInTasks, updateTask } = useSubscriptions();
   const { addIntervalSubscription, removeIntervalSubscription } =
     useIntervalSubscriptions();
 
@@ -96,11 +94,7 @@ export const useMainMessagePorts = () => {
    */
   const setSubscriptionsState = () => {
     // Set account subscriptions data for rendering.
-    setAccountSubscriptions(
-      SubscriptionsController.getAccountSubscriptions(
-        AccountsController.accounts
-      )
-    );
+    SubscriptionsController.syncAccountSubscriptionsState();
   };
 
   /**
@@ -227,11 +221,7 @@ export const useMainMessagePorts = () => {
     await removeAddress(chainId, address);
 
     // Update account subscriptions data.
-    setAccountSubscriptions(
-      SubscriptionsController.getAccountSubscriptions(
-        AccountsController.accounts
-      )
-    );
+    SubscriptionsController.syncAccountSubscriptionsState();
 
     // Disconnect from any API instances that are not currently needed.
     await disconnectAPIs();

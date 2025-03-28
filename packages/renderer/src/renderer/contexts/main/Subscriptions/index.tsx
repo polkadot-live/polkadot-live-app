@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { TaskQueue } from '@ren/orchestrators/TaskQueue';
 import * as ApiUtils from '@ren/utils/ApiUtils';
 import * as defaults from './defaults';
@@ -41,6 +41,12 @@ export const SubscriptionsProvider = ({
     Map<string, SubscriptionTask[]>
   >(new Map());
 
+  useEffect(() => {
+    SubscriptionsController.setChainSubscriptions = setChainSubscriptionsState;
+    SubscriptionsController.setAccountSubscriptions =
+      setAccountSubscriptionsState;
+  }, []);
+
   /// Update cached account name for an account's subscription tasks.
   const updateAccountNameInTasks = (address: string, newName: string) => {
     const tasks = accountSubscriptionsState.get(address);
@@ -58,33 +64,10 @@ export const SubscriptionsProvider = ({
     });
   };
 
-  /// Set chain subscription tasks.
-  const setChainSubscriptions = (
-    subscriptions: Map<ChainID, SubscriptionTask[]>
-  ) => {
-    setChainSubscriptionsState(subscriptions);
-  };
-
   /// Get subscription tasks for a specific chain.
   const getChainSubscriptions = (chainId: ChainID) => {
     const subscriptions = chainSubscriptionsState.get(chainId);
     return subscriptions ? subscriptions : [];
-  };
-
-  /// Set subscription tasks for all accounts.
-  const setAccountSubscriptions = (
-    subscriptions: Map<string, SubscriptionTask[]>
-  ) => {
-    // Set new state for imported accounts and their subscriptions.
-    setAccountSubscriptionsState((prev) => {
-      prev.clear();
-
-      for (const [address, tasks] of subscriptions.entries()) {
-        prev.set(address, tasks);
-      }
-
-      return prev;
-    });
   };
 
   /// Get subscription tasks for a specific account.
@@ -286,9 +269,7 @@ export const SubscriptionsProvider = ({
       value={{
         chainSubscriptions: chainSubscriptionsState,
         accountSubscriptions: accountSubscriptionsState,
-        setChainSubscriptions,
         getChainSubscriptions,
-        setAccountSubscriptions,
         getAccountSubscriptions,
         updateTask,
         updateAccountNameInTasks,

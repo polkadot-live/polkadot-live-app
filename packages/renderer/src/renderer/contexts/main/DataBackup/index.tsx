@@ -21,7 +21,6 @@ import {
 import { useEvents } from '@app/contexts/main/Events';
 import { useManage } from '../Manage';
 import { useIntervalSubscriptions } from '../IntervalSubscriptions';
-import { useSubscriptions } from '../Subscriptions';
 
 /// Types.
 import type {
@@ -59,7 +58,6 @@ export const DataBackupProvider = ({
     tryUpdateDynamicIntervalTask,
   } = useManage();
 
-  const { setAccountSubscriptions } = useSubscriptions();
   const { addIntervalSubscription, updateIntervalSubscription } =
     useIntervalSubscriptions();
 
@@ -367,11 +365,7 @@ export const DataBackupProvider = ({
     }
 
     // Set subscriptions React state.
-    setAccountSubscriptions(
-      SubscriptionsController.getAccountSubscriptions(
-        AccountsController.accounts
-      )
-    );
+    SubscriptionsController.syncAccountSubscriptionsState();
 
     // Send successfully imported tasks to main process.
     await window.myAPI.sendSubscriptionTask({
