@@ -28,10 +28,6 @@ import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 export class SubscriptionsController {
   static chainSubscriptions: QueryMultiWrapper | null = null;
 
-  static addGlobal(wrapper: QueryMultiWrapper) {
-    SubscriptionsController.chainSubscriptions = wrapper;
-  }
-
   /**
    * @name initChainSubscriptions
    * @summary Fetch persisted chain subscription tasks from store and re-subscribe to them.
