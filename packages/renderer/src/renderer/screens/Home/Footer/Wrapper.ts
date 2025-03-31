@@ -76,6 +76,7 @@ export const NetworkItem = styled.div`
   border-radius: 0.375rem;
 
   .left {
+    flex: 1;
     display: flex;
     align-items: center;
     column-gap: 0.55rem;
@@ -92,7 +93,6 @@ export const NetworkItem = styled.div`
     }
   }
   .right {
-    flex: 1;
     display: flex;
     align-items: center;
     column-gap: 0.55rem;
@@ -100,6 +100,13 @@ export const NetworkItem = styled.div`
     label {
       color: var(--text-color-primary);
       font-size: 0.9rem;
+    }
+    .disconnect {
+      color: var(--text-color-secondary);
+      cursor: pointer;
+      &:hover {
+        color: var(--text-color-primary);
+      }
     }
   }
 `;

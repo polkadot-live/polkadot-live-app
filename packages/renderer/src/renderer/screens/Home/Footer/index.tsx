@@ -6,6 +6,7 @@ import {
   faAngleDown,
   faAngleUp,
   faCircle,
+  faCircleXmark,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useChains } from '@app/contexts/main/Chains';
@@ -15,6 +16,7 @@ import { useState } from 'react';
 import { FooterWrapper, NetworkItem } from './Wrapper';
 import { getIcon } from '@app/Utils';
 import { SelectRpc } from './RpcSelect';
+import { FlexRow } from '@polkadot-live/ui/styles';
 
 export const Footer = () => {
   const { chains } = useChains();
@@ -62,8 +64,17 @@ export const Footer = () => {
                 <h4>{apiData.chainId}</h4>
               </div>
               <div className="right">
-                {/* RPC select box */}
-                <SelectRpc apiData={apiData} />
+                <FlexRow $gap={'1.5rem'}>
+                  {/* RPC select box */}
+                  <SelectRpc apiData={apiData} />
+                  {/* Disconnect button */}
+                  <div className="disconnect">
+                    <FontAwesomeIcon
+                      icon={faCircleXmark}
+                      transform={'grow-2'}
+                    />
+                  </div>
+                </FlexRow>
               </div>
             </NetworkItem>
           ))}
