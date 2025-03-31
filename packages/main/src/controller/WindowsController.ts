@@ -5,7 +5,10 @@ import { store } from '@/main';
 import { BrowserWindow } from 'electron';
 import type { AnyJson } from '@polkadot-live/types/misc';
 import type { BaseWindow, WebContentsView } from 'electron';
-import type { SyncFlag } from '@polkadot-live/types/communication';
+import type {
+  SharedStateID,
+  SyncFlag,
+} from '@polkadot-live/types/communication';
 
 // A window helper to manage which windows are open and their current state.
 interface StoredWindow {
@@ -58,6 +61,31 @@ export class WindowsController {
   static relayIpc = (
     channel: string,
     ipcData: { syncId: SyncFlag; flag: boolean },
+    includeTabs = true,
+    includeMain = true,
+    includeViews = true
+  ) => {
+    // Send to main window.
+    if (includeMain) {
+      this.getWindow('menu')?.webContents?.send(channel, ipcData);
+    }
+
+    // Send to tabs view.
+    if (includeTabs) {
+      this.tabsView?.webContents.send(channel, ipcData);
+    }
+
+    // Send to views.
+    if (includeViews) {
+      for (const { view } of this.views) {
+        view.webContents.send(channel, ipcData);
+      }
+    }
+  };
+
+  static relaySharedState = (
+    channel: string,
+    ipcData: { stateId: SharedStateID; state: string },
     includeTabs = true,
     includeMain = true,
     includeViews = true

@@ -7,7 +7,11 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
 import type { PreloadAPI } from '@polkadot-live/types/preload';
-import type { IpcTask, SyncFlag } from '@polkadot-live/types/communication';
+import type {
+  IpcTask,
+  SharedStateID,
+  SyncFlag,
+} from '@polkadot-live/types/communication';
 
 if (!process.env.VITEST) {
   console.log(global.location.search);
@@ -221,9 +225,22 @@ export const API: PreloadAPI = {
   relayModeFlag: (syncId: SyncFlag, flag: boolean) =>
     ipcRenderer.send('app:modeFlag:relay', syncId, flag),
 
-  // Callback provided in useModeFlagsSyncing hook to sync state between renderers.
+  // Callback provided in connections context to sync state between renderers.
   syncModeFlags: (callback) =>
     ipcRenderer.on('renderer:modeFlag:set', callback),
+
+  /**
+   * Shared state
+   */
+
+  getSharedState: async (stateId: SharedStateID): Promise<string> =>
+    await ipcRenderer.invoke('app:sharedState:get', stateId),
+
+  relaySharedState: (stateId: SharedStateID, state: string) =>
+    ipcRenderer.send('app:sharedState:relay', stateId, state),
+
+  syncSharedState: (callback) =>
+    ipcRenderer.on('renderer:sharedState:set', callback),
 
   /**
    * Chain management

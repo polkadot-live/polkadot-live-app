@@ -7,6 +7,7 @@ import type { ExportResult, ImportResult } from './backup';
 import type {
   IpcTask,
   RelayPortTask,
+  SharedStateID,
   SyncFlag,
   TabData,
 } from './communication';
@@ -86,6 +87,15 @@ export interface PreloadAPI {
     ) => void
   ) => void;
   relayModeFlag: (syncId: SyncFlag, flag: boolean) => void;
+
+  getSharedState: (stateId: SharedStateID) => Promise<string>;
+  syncSharedState: (
+    callback: (
+      _: IpcRendererEvent,
+      data: { stateId: SharedStateID; state: string }
+    ) => void
+  ) => void;
+  relaySharedState: (stateId: SharedStateID, state: string) => void;
 
   handleOpenTab: (
     callback: (_: IpcRendererEvent, tabData: TabData) => void

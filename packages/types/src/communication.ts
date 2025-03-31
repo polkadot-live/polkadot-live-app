@@ -3,6 +3,8 @@
 
 import type { AnyData } from './misc';
 
+export type SharedStateID = 'activeAPIs';
+
 export type SyncFlag =
   | 'darkMode'
   | 'isBuildingExtrinsic'

@@ -6,6 +6,7 @@ import type { AccountSource } from '@polkadot-live/types/accounts';
 import type { PortPair, PortPairID } from '@polkadot-live/types/communication';
 import type { WcSyncFlags } from '@polkadot-live/types/walletConnect';
 import type { Rectangle, Tray } from 'electron';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 export class Config {
   // Storage keys.
@@ -51,6 +52,13 @@ export class Config {
     wcSessionRestored: false,
     wcVerifyingAccount: false,
   };
+
+  // Shared state.
+  private static _activeAPIs = new Map<ChainID, boolean>([
+    ['Polkadot', false],
+    ['Kusama', false],
+    ['Westend', false],
+  ]);
 
   // Return the local storage key for corresponding source addresses.
   static getStorageKey(source: AccountSource): string {
@@ -216,6 +224,14 @@ export class Config {
 
   static set wcSyncFlags(flags: WcSyncFlags) {
     Config._wcSyncFlags = flags;
+  }
+
+  static get activeAPIs(): Map<ChainID, boolean> {
+    return Config._activeAPIs;
+  }
+
+  static set activeAPIs(map: Map<ChainID, boolean>) {
+    Config._activeAPIs = map;
   }
 
   // Setter for app's tray object.

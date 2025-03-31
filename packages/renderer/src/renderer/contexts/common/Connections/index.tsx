@@ -5,8 +5,12 @@ import * as defaults from './defaults';
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ConnectionsContextInterface } from './types';
 import type { IpcRendererEvent } from 'electron';
-import type { SyncFlag } from '@polkadot-live/types/communication';
+import type {
+  SharedStateID,
+  SyncFlag,
+} from '@polkadot-live/types/communication';
 import type { WcSyncFlags } from '@polkadot-live/types/walletConnect';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 /**
  * Automatically listens for and sets mode flag state when they are
@@ -27,6 +31,23 @@ export const ConnectionsProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  /**
+   * Shared State
+   */
+
+  // Mapped boolean set to `true` when the chain's API instance is in use.
+  const [activeAPIs, setActiveAPIs] = useState(
+    new Map<ChainID, boolean>([
+      ['Polkadot', false],
+      ['Kusama', false],
+      ['Westend', false],
+    ])
+  );
+
+  /**
+   * Flags
+   */
+
   // Flag set to `true` when app is in online mode.
   const [isConnected, setIsConnected] = useState(false);
 
@@ -82,7 +103,31 @@ export const ConnectionsProvider = ({
         wcAccountApproved: results[4],
         wcVerifyingAccount: results[5],
       });
+
+      // Sync shared state.
+      const serActiveAPIs = await window.myAPI.getSharedState('activeAPIs');
+      const parActiveAPIs: Map<ChainID, boolean> = JSON.parse(serActiveAPIs);
+      setActiveAPIs(parActiveAPIs);
     };
+
+    // Listen for shared state syncing.
+    window.myAPI.syncSharedState(
+      (
+        _: IpcRendererEvent,
+        { stateId, state }: { stateId: SharedStateID; state: string }
+      ) => {
+        switch (stateId) {
+          case 'activeAPIs': {
+            const parsed: Map<ChainID, boolean> = JSON.parse(state);
+            setActiveAPIs(parsed);
+            break;
+          }
+          default: {
+            break;
+          }
+        }
+      }
+    );
 
     // Listen for synching events.
     window.myAPI.syncModeFlags(
@@ -153,6 +198,7 @@ export const ConnectionsProvider = ({
   return (
     <ConnectionsContext.Provider
       value={{
+        activeAPIs,
         darkMode,
         isConnected,
         isImporting,

@@ -2,8 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { WcSyncFlags } from '@polkadot-live/types/walletConnect';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 export interface ConnectionsContextInterface {
+  activeAPIs: Map<ChainID, boolean>;
   isConnected: boolean;
   isImporting: boolean;
   isOnlineMode: boolean;

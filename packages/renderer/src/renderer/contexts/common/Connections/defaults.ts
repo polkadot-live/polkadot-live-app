@@ -5,6 +5,7 @@
 import type { ConnectionsContextInterface } from './types';
 
 export const defaultConnectionsContext: ConnectionsContextInterface = {
+  activeAPIs: new Map(),
   isConnected: false,
   isImporting: false,
   isOnlineMode: false,

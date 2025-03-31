@@ -36,9 +36,14 @@ import { menuTemplate } from '@/utils/MenuUtils';
 import { version } from '../package.json';
 import * as WindowUtils from '@/utils/WindowUtils';
 import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
-import type { IpcTask, SyncFlag } from '@polkadot-live/types/communication';
+import type {
+  IpcTask,
+  SharedStateID,
+  SyncFlag,
+} from '@polkadot-live/types/communication';
 import type { NotificationData } from '@polkadot-live/types/reporter';
-import type { LedgerTask } from 'packages/types/src';
+import type { LedgerTask } from '@polkadot-live/types/ledger';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 const debug = MainDebug;
 
@@ -374,6 +379,10 @@ app.whenReady().then(async () => {
     SettingsController.getAppSettings()
   );
 
+  /**
+   * Relay
+   */
+
   ipcMain.on('app:modeFlag:relay', (_, syncId: SyncFlag, flag: boolean) => {
     switch (syncId) {
       case 'darkMode': {
@@ -481,6 +490,40 @@ app.whenReady().then(async () => {
       }
     }
   });
+
+  /**
+   * Shared State
+   */
+
+  ipcMain.handle(
+    'app:sharedState:get',
+    async (_, stateId: SharedStateID): Promise<string> => {
+      switch (stateId) {
+        case 'activeAPIs': {
+          return JSON.stringify(Array.from(ConfigMain.activeAPIs.entries()));
+        }
+      }
+    }
+  );
+
+  ipcMain.on(
+    'app:sharedState:relay',
+    (_, stateId: SharedStateID, state: string) => {
+      switch (stateId) {
+        case 'activeAPIs': {
+          const parsed: Map<ChainID, boolean> = JSON.parse(state);
+          ConfigMain.activeAPIs = parsed;
+          break;
+        }
+      }
+
+      // Relay to renderers.
+      WindowsController.relaySharedState('renderer:sharedState:set', {
+        stateId,
+        state,
+      });
+    }
+  );
 
   /**
    * Ledger
