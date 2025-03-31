@@ -8,6 +8,7 @@ import {
   faCircle,
   faCircleXmark,
 } from '@fortawesome/free-solid-svg-icons';
+import { APIsController } from '@ren/controller/APIsController';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useChains } from '@app/contexts/main/Chains';
@@ -47,6 +48,10 @@ export const Footer = () => {
       : !chainHasSubscriptions(chainId) &&
         !chainHasIntervalSubscriptions(chainId);
 
+  /// Handle disconnecting from a chain API.
+  const handleDisconnect = async (chainId: ChainID) =>
+    await APIsController.close(chainId);
+
   return (
     <FooterWrapper className={expanded ? 'expanded' : undefined}>
       <section className="status">
@@ -72,8 +77,8 @@ export const Footer = () => {
           [...chains.entries()].map(([chainId, apiData]) => (
             <NetworkItem key={`${chainId}_network`}>
               <div className="left">
-                {getIcon(apiData.chainId, 'icon')}
-                <h4>{apiData.chainId}</h4>
+                {getIcon(chainId, 'icon')}
+                <h4>{chainId}</h4>
               </div>
               <div className="right">
                 <FlexRow $gap={'1.5rem'}>
@@ -82,6 +87,7 @@ export const Footer = () => {
                   {/* Disconnect button */}
                   <div className="disconnect">
                     <button
+                      onClick={async () => await handleDisconnect(chainId)}
                       disabled={!allowDisconnect(chainId, apiData.status)}
                     >
                       <FontAwesomeIcon
