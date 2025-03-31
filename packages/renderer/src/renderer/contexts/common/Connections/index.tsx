@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import type { ConnectionsContextInterface } from './types';
 import type { IpcRendererEvent } from 'electron';
 import type {
@@ -36,13 +36,30 @@ export const ConnectionsProvider = ({
    */
 
   // Mapped boolean set to `true` when the chain's API instance is in use.
-  const [activeAPIs, setActiveAPIs] = useState(
-    new Map<ChainID, boolean>([
-      ['Polkadot', false],
-      ['Kusama', false],
-      ['Westend', false],
+  const [activeAPIs, setActiveAPIs] = useState<Map<ChainID, number>>(
+    new Map([
+      ['Polkadot', 0],
+      ['Kusama', 0],
+      ['Westend', 0],
     ])
   );
+
+  const activeAPIsRef = useRef(activeAPIs);
+
+  const relayActiveAPI = (chainId: ChainID, dir: 'inc' | 'dec') => {
+    const map = new Map<ChainID, number>();
+
+    for (const [key, val] of activeAPIsRef.current.entries()) {
+      key === chainId
+        ? map.set(key, dir === 'inc' ? val + 1 : val - 1)
+        : map.set(key, val);
+    }
+
+    window.myAPI.relaySharedState(
+      'activeAPIs',
+      JSON.stringify(Array.from(map.entries()))
+    );
+  };
 
   /**
    * Flags
@@ -106,8 +123,10 @@ export const ConnectionsProvider = ({
 
       // Sync shared state.
       const serActiveAPIs = await window.myAPI.getSharedState('activeAPIs');
-      const parActiveAPIs: Map<ChainID, boolean> = JSON.parse(serActiveAPIs);
-      setActiveAPIs(parActiveAPIs);
+      const parsedArray: [ChainID, number][] = JSON.parse(serActiveAPIs);
+      const parsedMap = new Map<ChainID, number>(parsedArray);
+      setActiveAPIs(parsedMap);
+      activeAPIsRef.current = parsedMap;
     };
 
     // Listen for shared state syncing.
@@ -118,11 +137,10 @@ export const ConnectionsProvider = ({
       ) => {
         switch (stateId) {
           case 'activeAPIs': {
-            const parsed: Map<ChainID, boolean> = JSON.parse(state);
-            setActiveAPIs(parsed);
-            break;
-          }
-          default: {
+            const parsedArray: [ChainID, number][] = JSON.parse(state);
+            const parsedMap = new Map<ChainID, number>(parsedArray);
+            setActiveAPIs(parsedMap);
+            activeAPIsRef.current = parsedMap;
             break;
           }
         }
@@ -206,6 +224,7 @@ export const ConnectionsProvider = ({
         isBuildingExtrinsic,
         wcSyncFlags,
         getOnlineMode,
+        relayActiveAPI,
         setDarkMode,
         setIsConnected,
         setIsImporting,

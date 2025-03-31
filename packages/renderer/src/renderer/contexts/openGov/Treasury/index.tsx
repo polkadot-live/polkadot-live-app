@@ -12,6 +12,7 @@ import { chainCurrency } from '@ren/config/chains';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { TreasuryContextInterface } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
+import { useConnections } from '@app/contexts/common/Connections';
 
 export const TreasuryContext = createContext<TreasuryContextInterface>(
   defaults.defaultTreasuryContext
@@ -24,8 +25,11 @@ export const TreasuryProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { relayActiveAPI } = useConnections();
+
   // Active treasury chain ID.
   const [treasuryChainId, setTreasuryChainId] = useState<ChainID>('Polkadot');
+  const treasuryChainIdRef = useRef(treasuryChainId);
 
   // Flag to determine whether treasury data is being fetched.
   const [fetchingTreasuryData, setFetchingTreasuryData] = useState(false);
@@ -62,6 +66,8 @@ export const TreasuryProvider = ({
 
     setFetchingTreasuryData(true);
     setTreasuryChainId(chainId);
+    treasuryChainIdRef.current = chainId;
+    relayActiveAPI(chainId, 'inc');
 
     // Send task to main renderer to fetch data using API.
     ConfigOpenGov.portOpenGov.postMessage({
@@ -101,6 +107,7 @@ export const TreasuryProvider = ({
     );
 
     setFetchingTreasuryData(false);
+    relayActiveAPI(treasuryChainIdRef.current, 'dec');
     setHasFetched(true);
 
     // Update cached flag.

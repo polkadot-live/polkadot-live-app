@@ -511,8 +511,9 @@ app.whenReady().then(async () => {
     (_, stateId: SharedStateID, state: string) => {
       switch (stateId) {
         case 'activeAPIs': {
-          const parsed: Map<ChainID, boolean> = JSON.parse(state);
-          ConfigMain.activeAPIs = parsed;
+          const parsedArray: [ChainID, number][] = JSON.parse(state);
+          const parsedMap = new Map<ChainID, number>(parsedArray);
+          ConfigMain.activeAPIs = parsedMap;
           break;
         }
       }

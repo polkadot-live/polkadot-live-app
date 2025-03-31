@@ -454,6 +454,7 @@ export const useMainMessagePorts = () => {
    */
   const handleInitTreasury = async (ev: MessageEvent) => {
     const { chainId } = ev.data.data;
+
     const { api } = await APIsController.getConnectedApiOrThrow(
       chainId,
       'Error'

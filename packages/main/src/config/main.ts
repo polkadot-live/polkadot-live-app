@@ -54,10 +54,10 @@ export class Config {
   };
 
   // Shared state.
-  private static _activeAPIs = new Map<ChainID, boolean>([
-    ['Polkadot', false],
-    ['Kusama', false],
-    ['Westend', false],
+  private static _activeAPIs = new Map<ChainID, number>([
+    ['Polkadot', 0],
+    ['Kusama', 0],
+    ['Westend', 0],
   ]);
 
   // Return the local storage key for corresponding source addresses.
@@ -226,11 +226,11 @@ export class Config {
     Config._wcSyncFlags = flags;
   }
 
-  static get activeAPIs(): Map<ChainID, boolean> {
+  static get activeAPIs(): Map<ChainID, number> {
     return Config._activeAPIs;
   }
 
-  static set activeAPIs(map: Map<ChainID, boolean>) {
+  static set activeAPIs(map: Map<ChainID, number>) {
     Config._activeAPIs = map;
   }
 

@@ -19,6 +19,7 @@ export const defaultConnectionsContext: ConnectionsContextInterface = {
     wcAccountApproved: false,
     wcVerifyingAccount: false,
   },
+  relayActiveAPI: () => {},
   setIsConnected: (b) => {},
   setIsImporting: (b) => {},
   setIsOnlineMode: (b) => {},
