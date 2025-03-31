@@ -154,7 +154,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
             </button>
             {getPageNumbers(tab).map((i, j) => (
               <Styles.FlexRow key={i} $row={'0.75rem'}>
-                {j === 2 && !showPageEllipsis(tab) && curPage > 4 && (
+                {j === 2 && !showPageEllipsis(tab) && pageCount > 4 && (
                   <button className="btn placeholder">
                     <FontAwesomeIcon className="icon" icon={faEllipsis} />
                   </button>
