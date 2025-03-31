@@ -104,8 +104,15 @@ export const NetworkItem = styled.div`
     .disconnect {
       color: var(--text-color-secondary);
       cursor: pointer;
-      &:hover {
-        color: var(--text-color-primary);
+
+      > button {
+        &:hover {
+          color: var(--text-color-primary);
+        }
+        &:disabled {
+          color: var(--text-dimmed);
+          cursor: not-allowed;
+        }
       }
     }
   }

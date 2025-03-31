@@ -6,6 +6,7 @@ import type { ChainID } from '@polkadot-live/types/chains';
 
 export interface IntervalSubscriptionsContextInterface {
   subscriptions: Map<ChainID, IntervalSubscription[]>;
+  chainHasIntervalSubscriptions: (chainId: ChainID) => boolean;
   setSubscriptions: (
     subscriptions: Map<ChainID, IntervalSubscription[]>
   ) => void;

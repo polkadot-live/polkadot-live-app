@@ -7,6 +7,7 @@ import type { SubscriptionsContextInterface } from './types';
 export const defaultSubscriptionsContext: SubscriptionsContextInterface = {
   chainSubscriptions: new Map(),
   accountSubscriptions: new Map(),
+  chainHasSubscriptions: () => false,
   getChainSubscriptions: () => [],
   getAccountSubscriptions: () => [],
   updateTask: () => {},

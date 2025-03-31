@@ -9,19 +9,24 @@ import {
   faCircleXmark,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useChains } from '@app/contexts/main/Chains';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
+import { useChains } from '@app/contexts/main/Chains';
 import { useConnections } from '@app/contexts/common/Connections';
+import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
 import { useState } from 'react';
+import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { FooterWrapper, NetworkItem } from './Wrapper';
 import { getIcon } from '@app/Utils';
 import { SelectRpc } from './RpcSelect';
 import { FlexRow } from '@polkadot-live/ui/styles';
+import type { ChainID, ChainStatus } from '@polkadot-live/types/chains';
 
 export const Footer = () => {
+  const { appLoading, isConnecting, isAborting } = useBootstrapping();
   const { chains } = useChains();
-  const { isConnecting, isAborting } = useBootstrapping();
   const { getOnlineMode } = useConnections();
+  const { chainHasIntervalSubscriptions } = useIntervalSubscriptions();
+  const { chainHasSubscriptions } = useSubscriptions();
 
   const [expanded, setExpanded] = useState<boolean>(false);
 
@@ -34,6 +39,13 @@ export const Footer = () => {
     getOnlineMode() && !isConnecting && !isAborting
       ? `Connected to ${connectionsCount()} network${connectionsCount() === 1 ? '' : 's'}`
       : 'Offline';
+
+  /// Method to determine whether an API can be disconnected.
+  const allowDisconnect = (chainId: ChainID, status: ChainStatus) =>
+    appLoading || status === 'disconnected'
+      ? false
+      : !chainHasSubscriptions(chainId) &&
+        !chainHasIntervalSubscriptions(chainId);
 
   return (
     <FooterWrapper className={expanded ? 'expanded' : undefined}>
@@ -69,10 +81,14 @@ export const Footer = () => {
                   <SelectRpc apiData={apiData} />
                   {/* Disconnect button */}
                   <div className="disconnect">
-                    <FontAwesomeIcon
-                      icon={faCircleXmark}
-                      transform={'grow-2'}
-                    />
+                    <button
+                      disabled={!allowDisconnect(chainId, apiData.status)}
+                    >
+                      <FontAwesomeIcon
+                        icon={faCircleXmark}
+                        transform={'grow-2'}
+                      />
+                    </button>
                   </div>
                 </FlexRow>
               </div>

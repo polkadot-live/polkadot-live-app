@@ -39,6 +39,16 @@ export const IntervalSubscriptionsProvider = ({
     });
   };
 
+  /// Determine if there are active subscriptions for a network.
+  const chainHasIntervalSubscriptions = (chainId: ChainID) => {
+    for (const task of subscriptions.get(chainId) || []) {
+      if (task.status === 'enable') {
+        return true;
+      }
+    }
+    return false;
+  };
+
   /// Remove an interval subscription from the context state.
   const removeIntervalSubscription = (task: IntervalSubscription) => {
     setSubscriptions((prev) => {
@@ -109,13 +119,14 @@ export const IntervalSubscriptionsProvider = ({
     <IntervalSubscriptionsContext.Provider
       value={{
         subscriptions,
-        setSubscriptions,
         addIntervalSubscription,
-        removeIntervalSubscription,
-        updateIntervalSubscription,
+        chainHasIntervalSubscriptions,
         getIntervalSubscriptionsForChain,
         getSortedKeys,
         getTotalIntervalSubscriptionCount,
+        removeIntervalSubscription,
+        setSubscriptions,
+        updateIntervalSubscription,
       }}
     >
       {children}

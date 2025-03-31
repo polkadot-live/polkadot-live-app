@@ -7,6 +7,7 @@ import type { IntervalSubscriptionsContextInterface } from './types';
 export const defaultIntervalSubscriptionsContext: IntervalSubscriptionsContextInterface =
   {
     subscriptions: new Map(),
+    chainHasIntervalSubscriptions: () => false,
     setSubscriptions: () => {},
     addIntervalSubscription: () => {},
     removeIntervalSubscription: () => {},
