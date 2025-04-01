@@ -1947,7 +1947,7 @@ __metadata:
     "@polkadot/types": "npm:^14.3.1"
     "@polkadot/types-codec": "npm:^14.3.1"
     "@types/styled-components": "npm:^5.1.34"
-    sass: "npm:^1.71.1"
+    sass: "npm:^1.86.1"
     sass-loader: "npm:^14.1.1"
   languageName: unknown
   linkType: soft
@@ -1974,7 +1974,7 @@ __metadata:
     gulp-sass: "npm:^5.1.0"
     gulp-typescript: "npm:^6.0.0-alpha.1"
     react-svg: "npm:^16.2.0"
-    sass: "npm:^1.80.6"
+    sass: "npm:^1.86.1"
   languageName: unknown
   linkType: soft
 
@@ -6904,7 +6904,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chokidar@npm:>=3.0.0 <4.0.0, chokidar@npm:^3.5.3, chokidar@npm:^3.6.0":
+"chokidar@npm:^3.5.3, chokidar@npm:^3.6.0":
   version: 3.6.0
   resolution: "chokidar@npm:3.6.0"
   dependencies:
@@ -10205,10 +10205,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"immutable@npm:^4.0.0":
-  version: 4.3.5
-  resolution: "immutable@npm:4.3.5"
-  checksum: 63d2d7908241a955d18c7822fd2215b6e89ff5a1a33cc72cd475b013cbbdef7a705aa5170a51ce9f84a57f62fdddfaa34e7b5a14b33d8a43c65cc6a881d6e894
+"immutable@npm:^5.0.2":
+  version: 5.1.1
+  resolution: "immutable@npm:5.1.1"
+  checksum: 5fd129ee9e448884003cc4f9e43bb91bab3b39dfeb3b49ddfb8bd563e0620eb47ae1f5b3ef96615d3ec38b52ab9a966dcacf9e39df00ed1a8ad062ddfba01cdf
   languageName: node
   linkType: hard
 
@@ -14267,33 +14267,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sass@npm:^1.71.1":
-  version: 1.71.1
-  resolution: "sass@npm:1.71.1"
-  dependencies:
-    chokidar: "npm:>=3.0.0 <4.0.0"
-    immutable: "npm:^4.0.0"
-    source-map-js: "npm:>=0.6.2 <2.0.0"
-  bin:
-    sass: sass.js
-  checksum: 59d79a6e106747746792b0c71908ae0aecdaf9b794d5724ee64e5249412f0d8ebe7ee2bf12946618848f14f949c4f6b530d82da3e62ab31c71198c6f73002130
-  languageName: node
-  linkType: hard
-
-"sass@npm:^1.80.6":
-  version: 1.80.6
-  resolution: "sass@npm:1.80.6"
+"sass@npm:^1.86.1":
+  version: 1.86.1
+  resolution: "sass@npm:1.86.1"
   dependencies:
     "@parcel/watcher": "npm:^2.4.1"
     chokidar: "npm:^4.0.0"
-    immutable: "npm:^4.0.0"
+    immutable: "npm:^5.0.2"
     source-map-js: "npm:>=0.6.2 <2.0.0"
   dependenciesMeta:
     "@parcel/watcher":
       optional: true
   bin:
     sass: sass.js
-  checksum: 04ce40d4dcf06cf2a94a66c1cc4fd4a9eb4033fd039291acd0be9d1d4123860da568c5cbef9de8493ffbedd8acae1cd0b8346f5da21c6f7cf0ffd3477730beca
+  checksum: 16733c7cd7ebb180d12c7aa8fdf4647de857901ab55c369f810b3654aa1c4cd61bb0274981d7792f0ccdfb29755aab17afc13c9daad69d8ffc4d761a8314c93a
   languageName: node
   linkType: hard
 
