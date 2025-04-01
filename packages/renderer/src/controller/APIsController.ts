@@ -48,6 +48,16 @@ export class APIsController {
   };
 
   /**
+   * @name closeAll
+   * @summary Close all connected API instances.
+   */
+  static closeAll = async () => {
+    for (const chainId of ChainList.keys()) {
+      await this.close(chainId);
+    }
+  };
+
+  /**
    * @name connectApi
    * @summary Ensures an API instance is connected.
    */

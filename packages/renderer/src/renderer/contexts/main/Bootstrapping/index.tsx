@@ -178,9 +178,7 @@ export const BootstrappingProvider = ({
     window.myAPI.relaySharedState('isConnected', await Utils.getOnlineStatus());
 
     // Disconnect from chains.
-    for (const chainId of ['Polkadot', 'Kusama', 'Westend'] as ChainID[]) {
-      await APIsController.close(chainId);
-    }
+    await APIsController.closeAll();
   };
 
   /// Handle switching to online mode.
