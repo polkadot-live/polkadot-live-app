@@ -16,6 +16,7 @@ import Store from 'electron-store';
 import AutoLaunch from 'auto-launch';
 import unhandled from 'electron-unhandled';
 import { Config as ConfigMain } from '@/config/main';
+import { SharedState } from './config/SharedState';
 import { AccountsController } from '@/controller/AccountsController';
 import { AddressesController } from '@/controller/AddressesController';
 import { AnalyticsController } from '@/controller/AnalyticsController';
@@ -386,34 +387,34 @@ app.whenReady().then(async () => {
           return OnlineStatusController.getStatus();
         }
         case 'isImporting': {
-          return ConfigMain.importingData;
+          return SharedState.importingData;
         }
         case 'isImportingAccount': {
-          return ConfigMain.importingAccount;
+          return SharedState.importingAccount;
         }
         case 'isOnlineMode': {
-          return ConfigMain.onlineMode;
+          return SharedState.onlineMode;
         }
         case 'isBuildingExtrinsic': {
-          return ConfigMain.isBuildingExtrinsic;
+          return SharedState.isBuildingExtrinsic;
         }
         case 'wc:account:approved': {
-          return ConfigMain.wcSyncFlags.wcAccountApproved;
+          return SharedState.wcSyncFlags.wcAccountApproved;
         }
         case 'wc:account:verifying': {
-          return ConfigMain.wcSyncFlags.wcVerifyingAccount;
+          return SharedState.wcSyncFlags.wcVerifyingAccount;
         }
         case 'wc:connecting': {
-          return ConfigMain.wcSyncFlags.wcConnecting;
+          return SharedState.wcSyncFlags.wcConnecting;
         }
         case 'wc:disconnecting': {
-          return ConfigMain.wcSyncFlags.wcDisconnecting;
+          return SharedState.wcSyncFlags.wcDisconnecting;
         }
         case 'wc:initialized': {
-          return ConfigMain.wcSyncFlags.wcInitialized;
+          return SharedState.wcSyncFlags.wcInitialized;
         }
         case 'wc:session:restored': {
-          return ConfigMain.wcSyncFlags.wcSessionRestored;
+          return SharedState.wcSyncFlags.wcSessionRestored;
         }
         default: {
           return false;
@@ -444,55 +445,55 @@ app.whenReady().then(async () => {
           break;
         }
         case 'isImporting': {
-          ConfigMain.importingData = state as boolean;
+          SharedState.importingData = state as boolean;
           break;
         }
         case 'isImportingAccount': {
-          ConfigMain.importingAccount = state as boolean;
+          SharedState.importingAccount = state as boolean;
           break;
         }
         case 'isOnlineMode': {
-          ConfigMain.onlineMode = state as boolean;
+          SharedState.onlineMode = state as boolean;
           break;
         }
         case 'isBuildingExtrinsic': {
-          ConfigMain.isBuildingExtrinsic = state as boolean;
+          SharedState.isBuildingExtrinsic = state as boolean;
           break;
         }
         case 'wc:account:approved': {
-          const pv = { ...ConfigMain.wcSyncFlags };
+          const pv = { ...SharedState.wcSyncFlags };
           const wcAccountApproved = state as boolean;
-          ConfigMain.wcSyncFlags = { ...pv, wcAccountApproved };
+          SharedState.wcSyncFlags = { ...pv, wcAccountApproved };
           break;
         }
         case 'wc:account:verifying': {
-          const pv = { ...ConfigMain.wcSyncFlags };
+          const pv = { ...SharedState.wcSyncFlags };
           const wcVerifyingAccount = state as boolean;
-          ConfigMain.wcSyncFlags = { ...pv, wcVerifyingAccount };
+          SharedState.wcSyncFlags = { ...pv, wcVerifyingAccount };
           break;
         }
         case 'wc:connecting': {
-          const pv = { ...ConfigMain.wcSyncFlags };
+          const pv = { ...SharedState.wcSyncFlags };
           const wcConnecting = state as boolean;
-          ConfigMain.wcSyncFlags = { ...pv, wcConnecting };
+          SharedState.wcSyncFlags = { ...pv, wcConnecting };
           break;
         }
         case 'wc:disconnecting': {
-          const pv = { ...ConfigMain.wcSyncFlags };
+          const pv = { ...SharedState.wcSyncFlags };
           const wcDisconnecting = state as boolean;
-          ConfigMain.wcSyncFlags = { ...pv, wcDisconnecting };
+          SharedState.wcSyncFlags = { ...pv, wcDisconnecting };
           break;
         }
         case 'wc:initialized': {
-          const pv = { ...ConfigMain.wcSyncFlags };
+          const pv = { ...SharedState.wcSyncFlags };
           const wcInitialized = state as boolean;
-          ConfigMain.wcSyncFlags = { ...pv, wcInitialized };
+          SharedState.wcSyncFlags = { ...pv, wcInitialized };
           break;
         }
         case 'wc:session:restored': {
-          const pv = { ...ConfigMain.wcSyncFlags };
+          const pv = { ...SharedState.wcSyncFlags };
           const wcSessionRestored = state as boolean;
-          ConfigMain.wcSyncFlags = { ...pv, wcSessionRestored };
+          SharedState.wcSyncFlags = { ...pv, wcSessionRestored };
           break;
         }
       }
