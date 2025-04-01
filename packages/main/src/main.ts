@@ -36,14 +36,9 @@ import { menuTemplate } from '@/utils/MenuUtils';
 import { version } from '../package.json';
 import * as WindowUtils from '@/utils/WindowUtils';
 import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
-import type {
-  IpcTask,
-  SharedStateID,
-  SyncFlag,
-} from '@polkadot-live/types/communication';
+import type { IpcTask, SyncID } from '@polkadot-live/types/communication';
 import type { NotificationData } from '@polkadot-live/types/reporter';
 import type { LedgerTask } from '@polkadot-live/types/ledger';
-import type { ChainID } from '@polkadot-live/types/chains';
 
 const debug = MainDebug;
 
@@ -380,127 +375,45 @@ app.whenReady().then(async () => {
   );
 
   /**
-   * Relay
-   */
-
-  ipcMain.on('app:modeFlag:relay', (_, syncId: SyncFlag, flag: boolean) => {
-    switch (syncId) {
-      case 'darkMode': {
-        // Persist new flag to store.
-        SettingsController.process({
-          action: 'settings:set:darkMode',
-          data: { flag },
-        });
-
-        // Set the background color for all open windows and views.
-        const { appDarkMode } = SettingsController.getAppSettings();
-        WindowsController.setWindowsBackgroundColor(
-          appDarkMode ? ConfigMain.themeColorDark : ConfigMain.themeColorLight
-        );
-        break;
-      }
-      case 'isConnected': {
-        break;
-      }
-      case 'isImporting': {
-        ConfigMain.importingData = flag;
-        break;
-      }
-      case 'isOnlineMode': {
-        ConfigMain.onlineMode = flag;
-        break;
-      }
-      case 'isBuildingExtrinsic': {
-        ConfigMain.isBuildingExtrinsic = flag;
-        break;
-      }
-      case 'wc:account:approved': {
-        const pv = { ...ConfigMain.wcSyncFlags };
-        ConfigMain.wcSyncFlags = { ...pv, wcAccountApproved: flag };
-        break;
-      }
-      case 'wc:account:verifying': {
-        const pv = { ...ConfigMain.wcSyncFlags };
-        ConfigMain.wcSyncFlags = { ...pv, wcVerifyingAccount: flag };
-        break;
-      }
-      case 'wc:connecting': {
-        const pv = { ...ConfigMain.wcSyncFlags };
-        ConfigMain.wcSyncFlags = { ...pv, wcConnecting: flag };
-        break;
-      }
-      case 'wc:disconnecting': {
-        const pv = { ...ConfigMain.wcSyncFlags };
-        ConfigMain.wcSyncFlags = { ...pv, wcDisconnecting: flag };
-        break;
-      }
-      case 'wc:initialized': {
-        const pv = { ...ConfigMain.wcSyncFlags };
-        ConfigMain.wcSyncFlags = { ...pv, wcInitialized: flag };
-        break;
-      }
-      case 'wc:session:restored': {
-        const pv = { ...ConfigMain.wcSyncFlags };
-        ConfigMain.wcSyncFlags = { ...pv, wcSessionRestored: flag };
-        break;
-      }
-      default: {
-        break;
-      }
-    }
-
-    // Relay to renderers.
-    WindowsController.relayIpc('renderer:modeFlag:set', { syncId, flag });
-  });
-
-  ipcMain.handle('app:modeFlag:get', async (_, syncId: SyncFlag) => {
-    switch (syncId) {
-      case 'isConnected': {
-        return OnlineStatusController.getStatus();
-      }
-      case 'isImporting': {
-        return ConfigMain.importingData;
-      }
-      case 'isOnlineMode': {
-        return ConfigMain.onlineMode;
-      }
-      case 'isBuildingExtrinsic': {
-        return ConfigMain.isBuildingExtrinsic;
-      }
-      case 'wc:account:approved': {
-        return ConfigMain.wcSyncFlags.wcAccountApproved;
-      }
-      case 'wc:account:verifying': {
-        return ConfigMain.wcSyncFlags.wcVerifyingAccount;
-      }
-      case 'wc:connecting': {
-        return ConfigMain.wcSyncFlags.wcConnecting;
-      }
-      case 'wc:disconnecting': {
-        return ConfigMain.wcSyncFlags.wcDisconnecting;
-      }
-      case 'wc:initialized': {
-        return ConfigMain.wcSyncFlags.wcInitialized;
-      }
-      case 'wc:session:restored': {
-        return ConfigMain.wcSyncFlags.wcSessionRestored;
-      }
-      default: {
-        return false;
-      }
-    }
-  });
-
-  /**
    * Shared State
    */
 
   ipcMain.handle(
     'app:sharedState:get',
-    async (_, stateId: SharedStateID): Promise<string> => {
-      switch (stateId) {
-        case 'activeAPIs': {
-          return JSON.stringify(Array.from(ConfigMain.activeAPIs.entries()));
+    async (_, syncId: SyncID): Promise<string | boolean> => {
+      switch (syncId) {
+        case 'isConnected': {
+          return OnlineStatusController.getStatus();
+        }
+        case 'isImporting': {
+          return ConfigMain.importingData;
+        }
+        case 'isOnlineMode': {
+          return ConfigMain.onlineMode;
+        }
+        case 'isBuildingExtrinsic': {
+          return ConfigMain.isBuildingExtrinsic;
+        }
+        case 'wc:account:approved': {
+          return ConfigMain.wcSyncFlags.wcAccountApproved;
+        }
+        case 'wc:account:verifying': {
+          return ConfigMain.wcSyncFlags.wcVerifyingAccount;
+        }
+        case 'wc:connecting': {
+          return ConfigMain.wcSyncFlags.wcConnecting;
+        }
+        case 'wc:disconnecting': {
+          return ConfigMain.wcSyncFlags.wcDisconnecting;
+        }
+        case 'wc:initialized': {
+          return ConfigMain.wcSyncFlags.wcInitialized;
+        }
+        case 'wc:session:restored': {
+          return ConfigMain.wcSyncFlags.wcSessionRestored;
+        }
+        default: {
+          return false;
         }
       }
     }
@@ -508,19 +421,78 @@ app.whenReady().then(async () => {
 
   ipcMain.on(
     'app:sharedState:relay',
-    (_, stateId: SharedStateID, state: string) => {
-      switch (stateId) {
-        case 'activeAPIs': {
-          const parsedArray: [ChainID, number][] = JSON.parse(state);
-          const parsedMap = new Map<ChainID, number>(parsedArray);
-          ConfigMain.activeAPIs = parsedMap;
+    (_, syncId: SyncID, state: string | boolean) => {
+      switch (syncId) {
+        case 'darkMode': {
+          // Persist new flag to store.
+          SettingsController.process({
+            action: 'settings:set:darkMode',
+            data: { state: state as boolean },
+          });
+
+          // Set the background color for all open windows and views.
+          const { appDarkMode } = SettingsController.getAppSettings();
+          WindowsController.setWindowsBackgroundColor(
+            appDarkMode ? ConfigMain.themeColorDark : ConfigMain.themeColorLight
+          );
+          break;
+        }
+        case 'isConnected': {
+          break;
+        }
+        case 'isImporting': {
+          ConfigMain.importingData = state as boolean;
+          break;
+        }
+        case 'isOnlineMode': {
+          ConfigMain.onlineMode = state as boolean;
+          break;
+        }
+        case 'isBuildingExtrinsic': {
+          ConfigMain.isBuildingExtrinsic = state as boolean;
+          break;
+        }
+        case 'wc:account:approved': {
+          const pv = { ...ConfigMain.wcSyncFlags };
+          const wcAccountApproved = state as boolean;
+          ConfigMain.wcSyncFlags = { ...pv, wcAccountApproved };
+          break;
+        }
+        case 'wc:account:verifying': {
+          const pv = { ...ConfigMain.wcSyncFlags };
+          const wcVerifyingAccount = state as boolean;
+          ConfigMain.wcSyncFlags = { ...pv, wcVerifyingAccount };
+          break;
+        }
+        case 'wc:connecting': {
+          const pv = { ...ConfigMain.wcSyncFlags };
+          const wcConnecting = state as boolean;
+          ConfigMain.wcSyncFlags = { ...pv, wcConnecting };
+          break;
+        }
+        case 'wc:disconnecting': {
+          const pv = { ...ConfigMain.wcSyncFlags };
+          const wcDisconnecting = state as boolean;
+          ConfigMain.wcSyncFlags = { ...pv, wcDisconnecting };
+          break;
+        }
+        case 'wc:initialized': {
+          const pv = { ...ConfigMain.wcSyncFlags };
+          const wcInitialized = state as boolean;
+          ConfigMain.wcSyncFlags = { ...pv, wcInitialized };
+          break;
+        }
+        case 'wc:session:restored': {
+          const pv = { ...ConfigMain.wcSyncFlags };
+          const wcSessionRestored = state as boolean;
+          ConfigMain.wcSyncFlags = { ...pv, wcSessionRestored };
           break;
         }
       }
 
       // Relay to renderers.
       WindowsController.relaySharedState('renderer:sharedState:set', {
-        stateId,
+        syncId,
         state,
       });
     }

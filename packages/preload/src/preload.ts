@@ -7,11 +7,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
 import type { PreloadAPI } from '@polkadot-live/types/preload';
-import type {
-  IpcTask,
-  SharedStateID,
-  SyncFlag,
-} from '@polkadot-live/types/communication';
+import type { IpcTask, SyncID } from '@polkadot-live/types/communication';
 
 if (!process.env.VITEST) {
   console.log(global.location.search);
@@ -214,31 +210,18 @@ export const API: PreloadAPI = {
   isViewOpen: (viewId) => ipcRenderer.invoke('app:view:isOpen', viewId),
 
   /**
-   * Mode flags
-   */
-
-  // Returns a mode flag cached in the main process to the requesting renderer.
-  getModeFlag: async (syncId: SyncFlag): Promise<boolean> =>
-    await ipcRenderer.invoke('app:modeFlag:get', syncId),
-
-  // Called when a mode flag changes in any renderer to broadcast it to every renderer.
-  relayModeFlag: (syncId: SyncFlag, flag: boolean) =>
-    ipcRenderer.send('app:modeFlag:relay', syncId, flag),
-
-  // Callback provided in connections context to sync state between renderers.
-  syncModeFlags: (callback) =>
-    ipcRenderer.on('renderer:modeFlag:set', callback),
-
-  /**
    * Shared state
    */
 
-  getSharedState: async (stateId: SharedStateID): Promise<string> =>
+  // Get cached shared state from main process.
+  getSharedState: async (stateId: SyncID): Promise<string | boolean> =>
     await ipcRenderer.invoke('app:sharedState:get', stateId),
 
-  relaySharedState: (stateId: SharedStateID, state: string) =>
+  // Broadcast shared state to all renderers.
+  relaySharedState: (stateId: SyncID, state: string | boolean) =>
     ipcRenderer.send('app:sharedState:relay', stateId, state),
 
+  // Called in each renderer to listen for syncing messages.
   syncSharedState: (callback) =>
     ipcRenderer.on('renderer:sharedState:set', callback),
 

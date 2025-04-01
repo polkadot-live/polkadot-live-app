@@ -5,7 +5,6 @@
 import type { ConnectionsContextInterface } from './types';
 
 export const defaultConnectionsContext: ConnectionsContextInterface = {
-  activeAPIs: new Map(),
   isConnected: false,
   isImporting: false,
   isOnlineMode: false,
@@ -19,7 +18,6 @@ export const defaultConnectionsContext: ConnectionsContextInterface = {
     wcAccountApproved: false,
     wcVerifyingAccount: false,
   },
-  relayActiveAPI: () => {},
   setIsConnected: (b) => {},
   setIsImporting: (b) => {},
   setIsOnlineMode: (b) => {},

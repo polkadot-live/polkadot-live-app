@@ -185,7 +185,7 @@ export const Home = () => {
           <Classic
             toggled={darkMode}
             onToggle={() => {
-              window.myAPI.relayModeFlag('darkMode', !darkMode);
+              window.myAPI.relaySharedState('darkMode', !darkMode);
             }}
             className="theme-toggle"
             duration={300}
