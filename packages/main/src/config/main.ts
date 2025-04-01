@@ -42,6 +42,7 @@ export class Config {
   // Flags to handle data processes.
   private static _exportingData = false;
   private static _importingData = false;
+  private static _importingAccount = false;
   private static _onlineMode = false;
   private static _isBuildingExtrinsic = false;
   private static _wcSyncFlags: WcSyncFlags = {
@@ -200,6 +201,14 @@ export class Config {
 
   static set importingData(flag: boolean) {
     Config._importingData = flag;
+  }
+
+  static get importingAccount(): boolean {
+    return Config._importingAccount;
+  }
+
+  static set importingAccount(flag: boolean) {
+    Config._importingAccount = flag;
   }
 
   static get onlineMode(): boolean {

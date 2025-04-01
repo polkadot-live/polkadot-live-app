@@ -8,6 +8,7 @@ export type SyncID =
   | 'isBuildingExtrinsic'
   | 'isConnected'
   | 'isImporting'
+  | 'isImportingAccount'
   | 'isOnlineMode'
   // WalletConnect
   | 'wc:connecting'

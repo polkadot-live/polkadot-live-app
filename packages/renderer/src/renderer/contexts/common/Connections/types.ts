@@ -6,6 +6,7 @@ import type { WcSyncFlags } from '@polkadot-live/types/walletConnect';
 export interface ConnectionsContextInterface {
   isConnected: boolean;
   isImporting: boolean;
+  isImportingAccount: boolean;
   isOnlineMode: boolean;
   darkMode: boolean;
   isBuildingExtrinsic: boolean;

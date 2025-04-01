@@ -25,7 +25,12 @@ import type { ChainID, ChainStatus } from '@polkadot-live/types/chains';
 export const Footer = () => {
   const { appLoading, isConnecting, isAborting } = useBootstrapping();
   const { chains } = useChains();
-  const { getOnlineMode } = useConnections();
+  const {
+    getOnlineMode,
+    isBuildingExtrinsic,
+    isImporting,
+    isImportingAccount,
+  } = useConnections();
   const { chainHasIntervalSubscriptions } = useIntervalSubscriptions();
   const { chainHasSubscriptions } = useSubscriptions();
 
@@ -43,7 +48,11 @@ export const Footer = () => {
 
   /// Method to determine whether an API can be disconnected.
   const allowDisconnect = (chainId: ChainID, status: ChainStatus) =>
-    appLoading || status === 'disconnected'
+    appLoading ||
+    status === 'disconnected' ||
+    isBuildingExtrinsic ||
+    isImporting ||
+    isImportingAccount
       ? false
       : !chainHasSubscriptions(chainId) &&
         !chainHasIntervalSubscriptions(chainId);

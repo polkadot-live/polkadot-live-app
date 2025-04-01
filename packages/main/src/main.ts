@@ -388,6 +388,9 @@ app.whenReady().then(async () => {
         case 'isImporting': {
           return ConfigMain.importingData;
         }
+        case 'isImportingAccount': {
+          return ConfigMain.importingAccount;
+        }
         case 'isOnlineMode': {
           return ConfigMain.onlineMode;
         }
@@ -427,7 +430,7 @@ app.whenReady().then(async () => {
           // Persist new flag to store.
           SettingsController.process({
             action: 'settings:set:darkMode',
-            data: { state: state as boolean },
+            data: { state },
           });
 
           // Set the background color for all open windows and views.
@@ -442,6 +445,10 @@ app.whenReady().then(async () => {
         }
         case 'isImporting': {
           ConfigMain.importingData = state as boolean;
+          break;
+        }
+        case 'isImportingAccount': {
+          ConfigMain.importingAccount = state as boolean;
           break;
         }
         case 'isOnlineMode': {

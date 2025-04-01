@@ -7,6 +7,7 @@ import type { ConnectionsContextInterface } from './types';
 export const defaultConnectionsContext: ConnectionsContextInterface = {
   isConnected: false,
   isImporting: false,
+  isImportingAccount: false,
   isOnlineMode: false,
   darkMode: true,
   isBuildingExtrinsic: false,
