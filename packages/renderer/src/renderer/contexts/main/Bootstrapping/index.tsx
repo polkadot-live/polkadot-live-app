@@ -123,8 +123,8 @@ export const BootstrappingProvider = ({
       });
 
       const isConnected: boolean = await Utils.getOnlineStatus();
-      window.myAPI.relayModeFlag('isOnlineMode', isConnected);
-      window.myAPI.relayModeFlag('isConnected', isConnected);
+      window.myAPI.relaySharedState('isOnlineMode', isConnected);
+      window.myAPI.relaySharedState('isConnected', isConnected);
 
       const initTasks: (() => Promise<AnyData>)[] = [
         initAccounts,
@@ -174,13 +174,11 @@ export const BootstrappingProvider = ({
     IntervalsController.stopInterval();
 
     // Report online status to renderers.
-    window.myAPI.relayModeFlag('isOnlineMode', false);
-    window.myAPI.relayModeFlag('isConnected', await Utils.getOnlineStatus());
+    window.myAPI.relaySharedState('isOnlineMode', false);
+    window.myAPI.relaySharedState('isConnected', await Utils.getOnlineStatus());
 
     // Disconnect from chains.
-    for (const chainId of ['Polkadot', 'Kusama', 'Westend'] as ChainID[]) {
-      await APIsController.close(chainId);
-    }
+    await APIsController.closeAll();
   };
 
   /// Handle switching to online mode.
@@ -220,8 +218,8 @@ export const BootstrappingProvider = ({
     } else {
       // Report online status to renderers.
       const status = await Utils.getOnlineStatus();
-      window.myAPI.relayModeFlag('isOnlineMode', status);
-      window.myAPI.relayModeFlag('isConnected', status);
+      window.myAPI.relaySharedState('isOnlineMode', status);
+      window.myAPI.relaySharedState('isConnected', status);
     }
   };
 

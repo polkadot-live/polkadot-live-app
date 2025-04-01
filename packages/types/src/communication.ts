@@ -3,11 +3,12 @@
 
 import type { AnyData } from './misc';
 
-export type SyncFlag =
+export type SyncID =
   | 'darkMode'
   | 'isBuildingExtrinsic'
   | 'isConnected'
   | 'isImporting'
+  | 'isImportingAccount'
   | 'isOnlineMode'
   // WalletConnect
   | 'wc:connecting'

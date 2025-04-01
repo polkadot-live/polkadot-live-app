@@ -102,6 +102,7 @@ export const useMainMessagePorts = () => {
    * @summary Imports a new account when a message is received from `import` window.
    */
   const handleImportAddress = async (ev: MessageEvent, fromBackup: boolean) => {
+    window.myAPI.relaySharedState('isImportingAccount', true);
     const { chainId, source, address, name } = ev.data.data;
 
     // Add address to accounts controller.
@@ -136,6 +137,7 @@ export const useMainMessagePorts = () => {
 
     // Return if account already exists and isn't being re-imported.
     if (!account) {
+      window.myAPI.relaySharedState('isImportingAccount', false);
       return;
     }
 
@@ -175,6 +177,7 @@ export const useMainMessagePorts = () => {
 
       // Update React subscriptions state.
       setSubscriptionsState();
+      window.myAPI.relaySharedState('isImportingAccount', false);
     }
 
     // Add account to address context state.
@@ -454,6 +457,7 @@ export const useMainMessagePorts = () => {
    */
   const handleInitTreasury = async (ev: MessageEvent) => {
     const { chainId } = ev.data.data;
+
     const { api } = await APIsController.getConnectedApiOrThrow(
       chainId,
       'Error'

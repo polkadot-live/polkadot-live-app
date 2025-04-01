@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as ConfigMain } from '@/config/main';
+import { SharedState } from '@/config/SharedState';
 import { dialog } from 'electron';
 import { promises as fsPromises } from 'fs';
 import { AddressesController } from '@/controller/AddressesController';
@@ -27,12 +27,12 @@ export class BackupController {
     }
 
     // Return early if export dialog is already open.
-    if (ConfigMain.exportingData) {
+    if (SharedState.exportingData) {
       return { result: false, msg: 'executing' };
     }
 
     // Render transparent browser window over base window.
-    ConfigMain.exportingData = true;
+    SharedState.exportingData = true;
     let overlay = null;
     if (process.platform !== 'linux') {
       overlay = WindowsController.getOverlay();
@@ -70,14 +70,14 @@ export class BackupController {
           encoding: 'utf8',
         });
 
-        ConfigMain.exportingData = false;
+        SharedState.exportingData = false;
         return { result: true, msg: 'success' };
       } catch (err) {
-        ConfigMain.exportingData = false;
+        SharedState.exportingData = false;
         return { result: false, msg: 'error' };
       }
     } else {
-      ConfigMain.exportingData = false;
+      SharedState.exportingData = false;
       return { result: false, msg: 'canceled' };
     }
   }

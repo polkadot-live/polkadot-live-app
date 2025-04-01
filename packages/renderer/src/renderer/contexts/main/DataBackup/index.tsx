@@ -112,7 +112,7 @@ export const DataBackupProvider = ({
     switch (response.msg) {
       case 'success': {
         // Broadcast importing flag.
-        window.myAPI.relayModeFlag('isImporting', true);
+        window.myAPI.relaySharedState('isImporting', true);
 
         try {
           if (!response.data) {
@@ -139,7 +139,7 @@ export const DataBackupProvider = ({
         }
 
         // Broadcast importing flag.
-        window.myAPI.relayModeFlag('isImporting', false);
+        window.myAPI.relaySharedState('isImporting', false);
         break;
       }
       case 'alreadyOpen': {

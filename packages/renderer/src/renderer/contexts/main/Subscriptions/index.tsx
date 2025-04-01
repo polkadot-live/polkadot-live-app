@@ -47,6 +47,23 @@ export const SubscriptionsProvider = ({
       setAccountSubscriptionsState;
   }, []);
 
+  /// Determine if there are active subscriptions for a network.
+  const chainHasSubscriptions = (chainId: ChainID) => {
+    const accounts = AccountsController.accounts.get(chainId);
+    if (!accounts) {
+      return false;
+    }
+
+    for (const acc of accounts) {
+      const tasks = acc.getSubscriptionTasks();
+      if (tasks && tasks.length > 0) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
   /// Update cached account name for an account's subscription tasks.
   const updateAccountNameInTasks = (address: string, newName: string) => {
     const tasks = accountSubscriptionsState.get(address);
@@ -269,6 +286,7 @@ export const SubscriptionsProvider = ({
       value={{
         chainSubscriptions: chainSubscriptionsState,
         accountSubscriptions: accountSubscriptionsState,
+        chainHasSubscriptions,
         getChainSubscriptions,
         getAccountSubscriptions,
         updateTask,

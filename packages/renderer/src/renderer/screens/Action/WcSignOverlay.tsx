@@ -43,8 +43,8 @@ export const WcSignOverlay = ({ info }: WcSignOverlayProps) => {
 
     return () => {
       // Reset relay flags.
-      window.myAPI.relayModeFlag('wc:account:approved', false);
-      window.myAPI.relayModeFlag('wc:account:verifying', false);
+      window.myAPI.relaySharedState('wc:account:approved', false);
+      window.myAPI.relaySharedState('wc:account:verifying', false);
     };
   }, []);
 
@@ -52,7 +52,7 @@ export const WcSignOverlay = ({ info }: WcSignOverlayProps) => {
    * Establish a WalletConnect session before signing.
    */
   const handleConnect = () => {
-    window.myAPI.relayModeFlag('isBuildingExtrinsic', true);
+    window.myAPI.relaySharedState('isBuildingExtrinsic', true);
     const { chainId, from } = info.actionMeta;
 
     ConfigAction.portAction.postMessage({
@@ -65,7 +65,7 @@ export const WcSignOverlay = ({ info }: WcSignOverlayProps) => {
    * Sign an extrinsic via WalletConnect (requires a session)
    */
   const handleSign = () => {
-    window.myAPI.relayModeFlag('isBuildingExtrinsic', true);
+    window.myAPI.relaySharedState('isBuildingExtrinsic', true);
 
     ConfigAction.portAction.postMessage({
       task: 'renderer:wc:sign',
@@ -84,7 +84,7 @@ export const WcSignOverlay = ({ info }: WcSignOverlayProps) => {
 
     setDisableClose(false);
     setOverlayStatus(0);
-    window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
+    window.myAPI.relaySharedState('isBuildingExtrinsic', false);
   };
 
   return (
