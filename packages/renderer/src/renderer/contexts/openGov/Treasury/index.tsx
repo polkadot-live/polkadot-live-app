@@ -26,7 +26,6 @@ export const TreasuryProvider = ({
 }) => {
   // Active treasury chain ID.
   const [treasuryChainId, setTreasuryChainId] = useState<ChainID>('Polkadot');
-  const treasuryChainIdRef = useRef(treasuryChainId);
 
   // Flag to determine whether treasury data is being fetched.
   const [fetchingTreasuryData, setFetchingTreasuryData] = useState(false);
@@ -63,7 +62,6 @@ export const TreasuryProvider = ({
 
     setFetchingTreasuryData(true);
     setTreasuryChainId(chainId);
-    treasuryChainIdRef.current = chainId;
 
     // Send task to main renderer to fetch data using API.
     ConfigOpenGov.portOpenGov.postMessage({
