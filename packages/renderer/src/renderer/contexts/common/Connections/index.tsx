@@ -174,11 +174,6 @@ export const ConnectionsProvider = ({
         isBuildingExtrinsic,
         wcSyncFlags,
         getOnlineMode,
-        setDarkMode,
-        setIsConnected,
-        setIsImporting,
-        setIsOnlineMode,
-        setIsBuildingExtrinsic,
       }}
     >
       {children}

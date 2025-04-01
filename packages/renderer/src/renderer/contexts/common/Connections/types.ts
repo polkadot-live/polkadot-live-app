@@ -11,10 +11,5 @@ export interface ConnectionsContextInterface {
   darkMode: boolean;
   isBuildingExtrinsic: boolean;
   wcSyncFlags: WcSyncFlags;
-  setIsConnected: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsImporting: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsOnlineMode: React.Dispatch<React.SetStateAction<boolean>>;
-  setDarkMode: React.Dispatch<React.SetStateAction<boolean>>;
   getOnlineMode: () => boolean;
-  setIsBuildingExtrinsic: React.Dispatch<React.SetStateAction<boolean>>;
 }

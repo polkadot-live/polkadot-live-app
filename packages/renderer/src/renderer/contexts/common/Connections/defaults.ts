@@ -19,10 +19,5 @@ export const defaultConnectionsContext: ConnectionsContextInterface = {
     wcAccountApproved: false,
     wcVerifyingAccount: false,
   },
-  setIsConnected: (b) => {},
-  setIsImporting: (b) => {},
-  setIsOnlineMode: (b) => {},
-  setDarkMode: (b) => {},
   getOnlineMode: () => true,
-  setIsBuildingExtrinsic: (b) => {},
 };
