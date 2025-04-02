@@ -112,13 +112,9 @@ export class QueryMultiWrapper {
    * @name handleCallback
    * @summary Main logic to handle entries (subscription tasks).
    */
-  private async handleCallback(
-    entry: ApiCallEntry,
-    dataArr: AnyData,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    chainId: ChainID
-  ) {
+  private async handleCallback(entry: ApiCallEntry, dataArr: AnyData) {
     const { action, justBuilt } = entry.task;
+    const subData = dataArr[entry.task.dataIndex!];
 
     // Exit early if the task was just built (toggled on).
     if (justBuilt) {
@@ -128,47 +124,27 @@ export class QueryMultiWrapper {
 
     switch (action) {
       case 'subscribe:chain:timestamp': {
-        Callbacks.callback_query_timestamp_now(
-          dataArr[entry.task.dataIndex!],
-          entry,
-          this
-        );
+        Callbacks.callback_query_timestamp_now(subData, entry, this);
         break;
       }
       case 'subscribe:chain:currentSlot': {
-        Callbacks.callback_query_babe_currentSlot(
-          dataArr[entry.task.dataIndex!],
-          entry,
-          this
-        );
+        Callbacks.callback_query_babe_currentSlot(subData, entry, this);
         break;
       }
       case 'subscribe:account:balance:free': {
-        await Callbacks.callback_account_balance_free(
-          dataArr[entry.task.dataIndex!],
-          entry
-        );
+        await Callbacks.callback_account_balance_free(subData, entry);
         break;
       }
       case 'subscribe:account:balance:frozen': {
-        await Callbacks.callback_account_balance_frozen(
-          dataArr[entry.task.dataIndex!],
-          entry
-        );
+        await Callbacks.callback_account_balance_frozen(subData, entry);
         break;
       }
       case 'subscribe:account:balance:reserved': {
-        await Callbacks.callback_account_balance_reserved(
-          dataArr[entry.task.dataIndex!],
-          entry
-        );
+        await Callbacks.callback_account_balance_reserved(subData, entry);
         break;
       }
       case 'subscribe:account:balance:spendable': {
-        await Callbacks.callback_account_balance_spendable(
-          dataArr[entry.task.dataIndex!],
-          entry
-        );
+        await Callbacks.callback_account_balance_spendable(subData, entry);
         break;
       }
       case 'subscribe:account:nominationPools:rewards': {
@@ -176,59 +152,35 @@ export class QueryMultiWrapper {
         break;
       }
       case 'subscribe:account:nominationPools:state': {
-        await Callbacks.callback_nomination_pool_state(
-          dataArr[entry.task.dataIndex!],
-          entry
-        );
+        await Callbacks.callback_nomination_pool_state(subData, entry);
         break;
       }
       case 'subscribe:account:nominationPools:renamed': {
-        await Callbacks.callback_nomination_pool_renamed(
-          dataArr[entry.task.dataIndex!],
-          entry
-        );
+        await Callbacks.callback_nomination_pool_renamed(subData, entry);
         break;
       }
       case 'subscribe:account:nominationPools:roles': {
-        await Callbacks.callback_nomination_pool_roles(
-          dataArr[entry.task.dataIndex!],
-          entry
-        );
+        await Callbacks.callback_nomination_pool_roles(subData, entry);
         break;
       }
       case 'subscribe:account:nominationPools:commission': {
-        await Callbacks.callback_nomination_pool_commission(
-          dataArr[entry.task.dataIndex!],
-          entry
-        );
+        await Callbacks.callback_nomination_pool_commission(subData, entry);
         break;
       }
       case 'subscribe:account:nominating:pendingPayouts': {
-        await Callbacks.callback_nominating_era_rewards(
-          dataArr[entry.task.dataIndex!],
-          entry
-        );
+        await Callbacks.callback_nominating_era_rewards(subData, entry);
         break;
       }
       case 'subscribe:account:nominating:exposure': {
-        await Callbacks.callback_nominating_exposure(
-          dataArr[entry.task.dataIndex!],
-          entry
-        );
+        await Callbacks.callback_nominating_exposure(subData, entry);
         break;
       }
       case 'subscribe:account:nominating:commission': {
-        await Callbacks.callback_nominating_commission(
-          dataArr[entry.task.dataIndex!],
-          entry
-        );
+        await Callbacks.callback_nominating_commission(subData, entry);
         break;
       }
       case 'subscribe:account:nominating:nominations': {
-        await Callbacks.callback_nominating_nominations(
-          dataArr[entry.task.dataIndex!],
-          entry
-        );
+        await Callbacks.callback_nominating_nominations(subData, entry);
         break;
       }
     }
@@ -262,7 +214,7 @@ export class QueryMultiWrapper {
         const { callEntries } = this.subscriptions.get(chainId)!;
 
         for (const entry of callEntries) {
-          await this.handleCallback(entry, data, chainId);
+          await this.handleCallback(entry, data);
         }
       }
     );
