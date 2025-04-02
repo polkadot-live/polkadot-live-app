@@ -111,6 +111,7 @@ export const NetworkItem = styled.div`
         }
         &:disabled {
           color: var(--text-dimmed);
+          opacity: 0.6;
           cursor: not-allowed;
         }
       }
