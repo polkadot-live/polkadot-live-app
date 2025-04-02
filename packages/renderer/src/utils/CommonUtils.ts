@@ -31,6 +31,21 @@ export const getOnlineStatus = async () =>
   })) || false;
 
 /**
+ * @name raceWithTimeout
+ * @summary Resolve to `true` if provided task finishes first and `false` otherwise.
+ */
+export const raceWithTimeout = async <T>(
+  task: Promise<T>,
+  timeoutMs: number
+): Promise<boolean> =>
+  Promise.race([
+    task.then(() => true),
+    new Promise<boolean>((resolve) =>
+      setTimeout(() => resolve(false), timeoutMs)
+    ),
+  ]);
+
+/**
  * @name waitMs
  * @summary Waits the given milliseconds and returns the provided boolean result.
  */

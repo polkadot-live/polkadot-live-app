@@ -329,7 +329,7 @@ export const Permissions = ({
 
       // Render error alert.
       toast.error('API timed out.', {
-        position: 'bottom-center',
+        position: 'top-right',
         autoClose: 3000,
         hideProgressBar: true,
         closeOnClick: true,

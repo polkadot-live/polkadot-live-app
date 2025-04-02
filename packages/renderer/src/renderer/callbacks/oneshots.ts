@@ -9,7 +9,9 @@ import type {
   SubscriptionTask,
 } from '@polkadot-live/types/subscriptions';
 
-export const executeOneShot = async (task: SubscriptionTask) => {
+export const executeOneShot = async (
+  task: SubscriptionTask
+): Promise<boolean> => {
   // Handle task that doesn't require an API instance.
   if (task.action === 'subscribe:account:nominationPools:rewards') {
     const result = await oneShot_nomination_pool_rewards(task);
@@ -72,12 +74,11 @@ export const executeOneShot = async (task: SubscriptionTask) => {
 const oneShot_account_balance_free = async (
   task: SubscriptionTask,
   instance: Api
-) => {
+): Promise<boolean> => {
   const { api } = instance;
   const data = await api.query.system.account(task.account!.address);
   const entry: ApiCallEntry = { curVal: null, task };
-  await Callbacks.callback_account_balance_free(data, entry, true);
-  return true;
+  return await Callbacks.callback_account_balance_free(data, entry, true);
 };
 
 /**
@@ -87,12 +88,11 @@ const oneShot_account_balance_free = async (
 const oneShot_account_balance_frozen = async (
   task: SubscriptionTask,
   instance: Api
-) => {
+): Promise<boolean> => {
   const { api } = instance;
   const data = await api.query.system.account(task.account!.address);
   const entry: ApiCallEntry = { curVal: null, task };
-  await Callbacks.callback_account_balance_frozen(data, entry, true);
-  return true;
+  return await Callbacks.callback_account_balance_frozen(data, entry, true);
 };
 
 /**
@@ -102,12 +102,11 @@ const oneShot_account_balance_frozen = async (
 const oneShot_account_balance_reserved = async (
   task: SubscriptionTask,
   instance: Api
-) => {
+): Promise<boolean> => {
   const { api } = instance;
   const data = await api.query.system.account(task.account!.address);
   const entry: ApiCallEntry = { curVal: null, task };
-  await Callbacks.callback_account_balance_reserved(data, entry, true);
-  return true;
+  return await Callbacks.callback_account_balance_reserved(data, entry, true);
 };
 
 /**
@@ -117,22 +116,22 @@ const oneShot_account_balance_reserved = async (
 const oneShot_account_balance_spendable = async (
   task: SubscriptionTask,
   instance: Api
-) => {
+): Promise<boolean> => {
   const { api } = instance;
   const data = await api.query.system.account(task.account!.address);
   const entry: ApiCallEntry = { curVal: null, task };
-  await Callbacks.callback_account_balance_spendable(data, entry, true);
-  return true;
+  return await Callbacks.callback_account_balance_spendable(data, entry, true);
 };
 
 /**
  * @name oneShot_nomination_pool_rewards
  * @summary One-shot call to fetch an account's nominating pool rewards.
  */
-const oneShot_nomination_pool_rewards = async (task: SubscriptionTask) => {
+const oneShot_nomination_pool_rewards = async (
+  task: SubscriptionTask
+): Promise<boolean> => {
   const entry: ApiCallEntry = { curVal: null, task };
-  await Callbacks.callback_nomination_pool_rewards(entry, true);
-  return true;
+  return await Callbacks.callback_nomination_pool_rewards(entry, true);
 };
 
 /**
@@ -142,12 +141,11 @@ const oneShot_nomination_pool_rewards = async (task: SubscriptionTask) => {
 const oneShot_nomination_pool_state = async (
   task: SubscriptionTask,
   instance: Api
-) => {
+): Promise<boolean> => {
   const { api } = instance;
   const data = await api.query.nominationPools.bondedPools(task.actionArgs!);
   const entry: ApiCallEntry = { curVal: null, task };
-  await Callbacks.callback_nomination_pool_state(data, entry, true);
-  return true;
+  return await Callbacks.callback_nomination_pool_state(data, entry, true);
 };
 
 /**
@@ -157,12 +155,11 @@ const oneShot_nomination_pool_state = async (
 const oneShot_nomination_pool_renamed = async (
   task: SubscriptionTask,
   instance: Api
-) => {
+): Promise<boolean> => {
   const { api } = instance;
   const data = await api.query.nominationPools.metadata(task.actionArgs!);
   const entry: ApiCallEntry = { curVal: null, task };
-  await Callbacks.callback_nomination_pool_renamed(data, entry, true);
-  return true;
+  return await Callbacks.callback_nomination_pool_renamed(data, entry, true);
 };
 
 /**
@@ -172,12 +169,11 @@ const oneShot_nomination_pool_renamed = async (
 const oneShot_nomination_pool_roles = async (
   task: SubscriptionTask,
   instance: Api
-) => {
+): Promise<boolean> => {
   const { api } = instance;
   const data = await api.query.nominationPools.bondedPools(task.actionArgs!);
   const entry: ApiCallEntry = { curVal: null, task };
-  await Callbacks.callback_nomination_pool_roles(data, entry, true);
-  return true;
+  return await Callbacks.callback_nomination_pool_roles(data, entry, true);
 };
 
 /**
@@ -187,12 +183,11 @@ const oneShot_nomination_pool_roles = async (
 const oneShot_nomination_pool_commission = async (
   task: SubscriptionTask,
   instance: Api
-) => {
+): Promise<boolean> => {
   const { api } = instance;
   const data = await api.query.nominationPools.bondedPools(task.actionArgs!);
   const entry: ApiCallEntry = { curVal: null, task };
-  await Callbacks.callback_nomination_pool_commission(data, entry, true);
-  return true;
+  return await Callbacks.callback_nomination_pool_commission(data, entry, true);
 };
 
 /**
@@ -202,12 +197,11 @@ const oneShot_nomination_pool_commission = async (
 const oneShot_nominating_era_rewards = async (
   task: SubscriptionTask,
   instance: Api
-) => {
+): Promise<boolean> => {
   const { api } = instance;
   const data = await api.query.staking.activeEra();
   const entry: ApiCallEntry = { curVal: null, task };
-  await Callbacks.callback_nominating_era_rewards(data, entry, true);
-  return true;
+  return await Callbacks.callback_nominating_era_rewards(data, entry, true);
 };
 
 /**
@@ -217,12 +211,11 @@ const oneShot_nominating_era_rewards = async (
 const oneShot_nominating_exposure = async (
   task: SubscriptionTask,
   instance: Api
-) => {
+): Promise<boolean> => {
   const { api } = instance;
   const entry: ApiCallEntry = { curVal: null, task };
   const data = await api.query.staking.activeEra();
-  await Callbacks.callback_nominating_exposure(data, entry, true);
-  return true;
+  return await Callbacks.callback_nominating_exposure(data, entry, true);
 };
 
 /**
@@ -232,12 +225,11 @@ const oneShot_nominating_exposure = async (
 const oneShot_nominating_commission = async (
   task: SubscriptionTask,
   instance: Api
-) => {
+): Promise<boolean> => {
   const { api } = instance;
   const data = await api.query.staking.activeEra();
   const entry: ApiCallEntry = { curVal: null, task };
-  await Callbacks.callback_nominating_commission(data, entry, true);
-  return true;
+  return await Callbacks.callback_nominating_commission(data, entry, true);
 };
 
 /**
@@ -247,10 +239,9 @@ const oneShot_nominating_commission = async (
 const oneShot_nominating_nominations = async (
   task: SubscriptionTask,
   instance: Api
-) => {
+): Promise<boolean> => {
   const { api } = instance;
   const data = await api.query.staking.activeEra();
   const entry: ApiCallEntry = { curVal: null, task };
-  await Callbacks.callback_nominating_nominations(data, entry, true);
-  return true;
+  return await Callbacks.callback_nominating_nominations(data, entry, true);
 };
