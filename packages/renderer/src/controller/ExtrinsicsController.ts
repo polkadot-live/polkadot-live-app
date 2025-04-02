@@ -64,11 +64,7 @@ export class ExtrinsicsController {
     const { chainId, from, pallet, method } = info.actionMeta;
 
     const args = this.getExtrinsicArgs(actionMeta);
-    const origin = 'ExtrinsicsController.getEstimatedFee';
-    const { api } = await APIsController.getConnectedApiOrThrow(
-      chainId,
-      origin
-    );
+    const { api } = await APIsController.getConnectedApiOrThrow(chainId);
     console.log(`📝 New extrinsic: ${from}, ${pallet}, ${method}, ${args}`);
 
     // Instantiate tx.
@@ -185,11 +181,7 @@ export class ExtrinsicsController {
 
       // Create tx if it's not cached already.
       if (!this.txPayloads.has(txId)) {
-        const origin = 'ExtrinsicsController.build';
-        const { api } = await APIsController.getConnectedApiOrThrow(
-          chainId,
-          origin
-        );
+        const { api } = await APIsController.getConnectedApiOrThrow(chainId);
 
         // Instantiate tx.
         const { pallet, method } = info.actionMeta;
@@ -250,11 +242,7 @@ export class ExtrinsicsController {
     accountNonce: number
   ) => {
     // Build and set payload of the transaction and store it in TxMetaContext.
-    const origin = 'ExtrinsicsController.buildPayload';
-    const { api } = await APIsController.getConnectedApiOrThrow(
-      chainId,
-      origin
-    );
+    const { api } = await APIsController.getConnectedApiOrThrow(chainId);
 
     const lastHeader = await api.rpc.chain.getHeader();
     const blockNumber = api.registry.createType(

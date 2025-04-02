@@ -18,6 +18,7 @@ import { u8aToString, u8aUnwrapBytes } from '@polkadot/util';
 import { rmCommas } from '@w3ux/utils';
 import type { ApiCallEntry } from '@polkadot-live/types/subscriptions';
 import type { AnyData } from '@polkadot-live/types/misc';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { EventCallback } from '@polkadot-live/types/reporter';
 import type { QueryMultiWrapper } from '@ren/model/QueryMultiWrapper';
 
@@ -319,11 +320,7 @@ export class Callbacks {
       }
 
       // Get API instance.
-      const origin = 'callback_account_balance_spendable';
-      const { api } = await APIsController.getConnectedApiOrThrow(
-        account.chain,
-        origin
-      );
+      const { api } = await this.getApiOrThrow(account.chain);
 
       /*
         Spendable balance equation:
@@ -417,12 +414,7 @@ export class Callbacks {
   ): Promise<boolean> {
     try {
       const account = checkAccountWithProperties(entry, ['nominationPoolData']);
-      const chainId = account.chain;
-      const origin = 'callback_nomination_pool_rewards';
-      const { api } = await APIsController.getConnectedApiOrThrow(
-        chainId,
-        origin
-      );
+      const { api } = await this.getApiOrThrow(account.chain);
 
       // Fetch pending rewards for the account.
       const pendingRewardsPlanck: BigNumber =
@@ -444,7 +436,7 @@ export class Callbacks {
         account.nominationPoolData!.poolPendingRewards = new BigNumber(
           pendingRewardsPlanck
         );
-        await AccountsController.set(chainId, account);
+        await AccountsController.set(account.chain, account);
         entry.task.account = account.flatten();
       }
 
@@ -736,11 +728,7 @@ export class Callbacks {
     try {
       // Check if account has nominating rewards from the previous era.
       const account = checkAccountWithProperties(entry, ['nominatingData']);
-      const origin = 'callback_nomination_pending_payouts';
-      const { api } = await APIsController.getConnectedApiOrThrow(
-        account.chain,
-        origin
-      );
+      const { api } = await this.getApiOrThrow(account.chain);
 
       // Fetch previous era.
       const eraResult: AnyData = (
@@ -817,11 +805,7 @@ export class Callbacks {
       }
 
       // Otherwise get exposure.
-      const origin = 'callback_nominating_exposure';
-      const { api } = await APIsController.getConnectedApiOrThrow(
-        account.chain,
-        origin
-      );
+      const { api } = await this.getApiOrThrow(account.chain);
       const exposed = await getAccountExposed_deprecated(api, era, account);
 
       // Update account data.
@@ -879,13 +863,8 @@ export class Callbacks {
         return true;
       }
 
-      const origin = 'callback_nominating_exposure_westend';
-      const { api } = await APIsController.getConnectedApiOrThrow(
-        account.chain,
-        origin
-      );
-
       // Cache previous exposure.
+      const { api } = await this.getApiOrThrow(account.chain);
       const { exposed: prevExposed } = account.nominatingData!;
 
       // Update account nominating data.
@@ -954,11 +933,7 @@ export class Callbacks {
       }
 
       // Get live nominator data and check to see if it has changed.
-      const origin = 'callback_nominating_commission';
-      const { api } = await APIsController.getConnectedApiOrThrow(
-        account.chain,
-        origin
-      );
+      const { api } = await this.getApiOrThrow(account.chain);
 
       // Cache previous commissions.
       const prev = account.nominatingData!.validators.map((v) => v.commission);
@@ -1038,11 +1013,7 @@ export class Callbacks {
       }
 
       // Get live nominator data and check to see if it has changed.
-      const origin = 'callback_nominating_nominations';
-      const { api } = await APIsController.getConnectedApiOrThrow(
-        account.chain,
-        origin
-      );
+      const { api } = await this.getApiOrThrow(account.chain);
 
       // Cache previous nominations.
       const prev = account.nominatingData!.validators.map((v) => v.validatorId);
@@ -1095,6 +1066,13 @@ export class Callbacks {
       return false;
     }
   }
+
+  /**
+   * @name getApiOrThrow
+   * @summary Get an API instance of throw.
+   */
+  private static getApiOrThrow = async (chainId: ChainID) =>
+    await APIsController.getConnectedApiOrThrow(chainId);
 
   /**
    * @name showNotificationFlag

@@ -352,10 +352,7 @@ export const useMainMessagePorts = () => {
    */
   const handleGetTracks = async (ev: MessageEvent) => {
     const { chainId } = ev.data.data;
-    const { api } = await APIsController.getConnectedApiOrThrow(
-      chainId,
-      'Error'
-    );
+    const { api } = await APIsController.getConnectedApiOrThrow(chainId);
     const result = api.consts.referenda.tracks.toHuman();
 
     ConfigRenderer.portToOpenGov?.postMessage({
@@ -371,10 +368,7 @@ export const useMainMessagePorts = () => {
   const handleGetReferenda = async (ev: MessageEvent) => {
     // Make API call to fetch referenda entries.
     const { chainId } = ev.data.data;
-    const { api } = await APIsController.getConnectedApiOrThrow(
-      chainId,
-      'Error'
-    );
+    const { api } = await APIsController.getConnectedApiOrThrow(chainId);
     const results = await api.query.referenda.referendumInfoFor.entries();
 
     // Populate referenda map.
@@ -457,11 +451,7 @@ export const useMainMessagePorts = () => {
    */
   const handleInitTreasury = async (ev: MessageEvent) => {
     const { chainId } = ev.data.data;
-
-    const { api } = await APIsController.getConnectedApiOrThrow(
-      chainId,
-      'Error'
-    );
+    const { api } = await APIsController.getConnectedApiOrThrow(chainId);
 
     // Get raw treasury public key.
     const EMPTY_U8A_32 = new Uint8Array(32);
