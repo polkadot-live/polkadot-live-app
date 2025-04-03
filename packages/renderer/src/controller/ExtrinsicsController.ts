@@ -13,7 +13,7 @@ import {
 } from '@ren/utils/AccountUtils';
 
 import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
-import type { ChainID } from '@polkadot-live/types/chains';
+import type { ApiPromise } from '@polkadot/api';
 import type {
   ActionMeta,
   ExtrinsicInfo,
@@ -92,9 +92,8 @@ export class ExtrinsicsController {
         data: { txId, estimatedFee: estimatedFee.toString() },
       });
     } catch (e) {
-      // TODO: Send error to action window?
-      console.log('Error:');
       console.log(e);
+      this.handleTxError('An error occurred.');
     }
   };
 
@@ -178,11 +177,10 @@ export class ExtrinsicsController {
       const { txId, actionMeta } = info;
       const { chainId, from } = info.actionMeta;
       const nonce = (await getAddressNonce(from, chainId)).toNumber();
+      const { api } = await APIsController.getConnectedApiOrThrow(chainId);
 
       // Create tx if it's not cached already.
       if (!this.txPayloads.has(txId)) {
-        const { api } = await APIsController.getConnectedApiOrThrow(chainId);
-
         // Instantiate tx.
         const { pallet, method } = info.actionMeta;
         const args = this.getExtrinsicArgs(actionMeta);
@@ -200,9 +198,9 @@ export class ExtrinsicsController {
       const { tx } = cached;
       const { rawPayload, payload } = await this.buildPayload(
         tx,
-        chainId,
         from,
-        nonce
+        nonce,
+        api
       );
 
       this.txPayloads.set(txId, { ...cached, raw: rawPayload, payload });
@@ -222,13 +220,11 @@ export class ExtrinsicsController {
           },
         });
       } else {
-        ConfigRenderer.portToAction?.postMessage({
-          task: 'action:tx:invalid',
-          data: { message: verifyResult.reason || 'Reason unknown.' },
-        });
+        this.handleTxError(verifyResult.reason || 'Reason unknown.');
       }
     } catch (err) {
       console.log(err);
+      this.handleTxError('An error occurred.');
     }
   };
 
@@ -237,13 +233,10 @@ export class ExtrinsicsController {
    */
   static buildPayload = async (
     tx: AnyJson,
-    chainId: ChainID,
     from: string,
-    accountNonce: number
+    accountNonce: number,
+    api: ApiPromise
   ) => {
-    // Build and set payload of the transaction and store it in TxMetaContext.
-    const { api } = await APIsController.getConnectedApiOrThrow(chainId);
-
     const lastHeader = await api.rpc.chain.getHeader();
     const blockNumber = api.registry.createType(
       'BlockNumber',
@@ -443,5 +436,16 @@ export class ExtrinsicsController {
         });
       }
     }
+  };
+
+  /**
+   * @name handleTxError
+   * @summary Render toast error and stop building extrinsic in extrinsics renderer.
+   */
+  private static handleTxError = (message: string) => {
+    ConfigRenderer.portToAction?.postMessage({
+      task: 'action:tx:invalid',
+      data: { message },
+    });
   };
 }
