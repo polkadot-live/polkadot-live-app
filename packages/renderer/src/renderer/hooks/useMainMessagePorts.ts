@@ -89,15 +89,6 @@ export const useMainMessagePorts = () => {
     useIntervalSubscriptions();
 
   /**
-   * @name setSubscriptionsAndChainConnections
-   * @summary Set subscription data React state.
-   */
-  const setSubscriptionsState = () => {
-    // Set account subscriptions data for rendering.
-    SubscriptionsController.syncAccountSubscriptionsState();
-  };
-
-  /**
    * @name handleImportAddress
    * @summary Imports a new account when a message is received from `import` window.
    */
@@ -176,7 +167,7 @@ export const useMainMessagePorts = () => {
         (await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti));
 
       // Update React subscriptions state.
-      setSubscriptionsState();
+      SubscriptionsController.syncAccountSubscriptionsState();
       window.myAPI.relaySharedState('isImportingAccount', false);
     }
 
