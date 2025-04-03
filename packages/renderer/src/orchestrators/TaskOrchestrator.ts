@@ -2,12 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { getOnlineStatus } from '@ren/utils/CommonUtils';
-import { MainDebug } from '@ren/utils/DebugUtils';
 import { APIsController } from '@ren/controller/APIsController';
 import type { QueryMultiWrapper } from '@ren/model/QueryMultiWrapper';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
-
-const debug = MainDebug.extend('TaskOrchestrator');
 
 /**
  * This class is used in the main window renderer.
@@ -17,8 +14,6 @@ const debug = MainDebug.extend('TaskOrchestrator');
  *  > subscribeTask(task, wrapper)
  *  |
  *  > next(task, wrapper)
- *  |
- *  > subscribe_<function>(task, wrapper)
  *  |
  *  > handleTask(task, apiCall, wrapper)
  */
@@ -68,7 +63,7 @@ export class TaskOrchestrator {
 
   /**
    * @name next
-   * @summary Calls the appropriate subscription function based on the task's chain ID and action string.
+   * @summary Check for sufficient data and handle the subscription task.
    */
   private static next(task: SubscriptionTask, wrapper: QueryMultiWrapper) {
     switch (task.chainId) {
@@ -76,78 +71,37 @@ export class TaskOrchestrator {
       case 'Polkadot':
       case 'Westend':
       case 'Kusama': {
-        // Identify task
+        // Return if data is missing for certain tasks.
         switch (task.action) {
-          case 'subscribe:chain:timestamp': {
-            TaskOrchestrator.subscribe_query_timestamp_now(task, wrapper);
-            break;
-          }
-          case 'subscribe:chain:currentSlot': {
-            TaskOrchestrator.subscribe_query_babe_currentSlot(task, wrapper);
-            break;
-          }
-          case 'subscribe:account:balance:free': {
-            TaskOrchestrator.subscribe_account_balance_free(task, wrapper);
-            break;
-          }
-          case 'subscribe:account:balance:frozen': {
-            TaskOrchestrator.subscribe_account_balance_frozen(task, wrapper);
-            break;
-          }
-          case 'subscribe:account:balance:reserved': {
-            TaskOrchestrator.subscribe_account_balance_reserved(task, wrapper);
-            break;
-          }
-          case 'subscribe:account:balance:spendable': {
-            TaskOrchestrator.subscribe_account_balance_spendable(task, wrapper);
-            break;
-          }
-          case 'subscribe:account:nominationPools:rewards': {
-            TaskOrchestrator.subscribe_nomination_pool_rewards(task, wrapper);
-            break;
-          }
-          case 'subscribe:account:nominationPools:state': {
-            TaskOrchestrator.subscribe_nomination_pool_state(task, wrapper);
-            break;
-          }
-          case 'subscribe:account:nominationPools:renamed': {
-            TaskOrchestrator.subscribe_nomination_pool_renamed(task, wrapper);
-            break;
-          }
-          case 'subscribe:account:nominationPools:roles': {
-            TaskOrchestrator.subscribe_nomination_pool_roles(task, wrapper);
-            break;
-          }
+          case 'subscribe:account:nominationPools:rewards':
+          case 'subscribe:account:nominationPools:state':
+          case 'subscribe:account:nominationPools:renamed':
+          case 'subscribe:account:nominationPools:roles':
           case 'subscribe:account:nominationPools:commission': {
-            TaskOrchestrator.subscribe_nomination_pool_commission(
-              task,
-              wrapper
-            );
+            if (!task.account?.nominationPoolData) {
+              console.log('🟠 Account has not joined a nomination pool.');
+              return;
+            }
             break;
           }
-          case 'subscribe:account:nominating:pendingPayouts': {
-            TaskOrchestrator.subscribe_nominating_pending_payouts(
-              task,
-              wrapper
-            );
-            break;
-          }
-          case 'subscribe:account:nominating:exposure': {
-            TaskOrchestrator.subscribe_nominating_exposure(task, wrapper);
-            break;
-          }
-          case 'subscribe:account:nominating:commission': {
-            TaskOrchestrator.subscribe_nominating_commission(task, wrapper);
-            break;
-          }
+          case 'subscribe:account:nominating:pendingPayouts':
+          case 'subscribe:account:nominating:exposure':
+          case 'subscribe:account:nominating:commission':
           case 'subscribe:account:nominating:nominations': {
-            TaskOrchestrator.subscribe_nominating_nominations(task, wrapper);
+            if (!task.account?.nominatingData) {
+              console.log('🟠 Account is not nominating.');
+              return;
+            }
             break;
           }
           default: {
-            throw new Error('Subscription action not found');
+            break;
           }
         }
+
+        // Rebuild query.
+        this.handleTask(task, wrapper);
+        break;
       }
     }
   }
@@ -184,277 +138,41 @@ export class TaskOrchestrator {
 
   static async getApiCall(task: SubscriptionTask) {
     const { action, chainId } = task;
-    const origin = 'TaskOrchestrator.getApiCall';
-    const instance = await APIsController.getConnectedApiOrThrow(
-      chainId,
-      origin
-    );
+    const { api } = await APIsController.getConnectedApiOrThrow(chainId);
 
     switch (action) {
       case 'subscribe:chain:timestamp':
-        return instance.api.query.timestamp.now;
+        return api.query.timestamp.now;
       case 'subscribe:chain:currentSlot':
-        return instance.api.query.babe.currentSlot;
+        return api.query.babe.currentSlot;
       case 'subscribe:account:balance:free':
-        return instance.api.query.system.account;
+        return api.query.system.account;
       case 'subscribe:account:balance:frozen':
-        return instance.api.query.system.account;
+        return api.query.system.account;
       case 'subscribe:account:balance:reserved':
-        return instance.api.query.system.account;
+        return api.query.system.account;
       case 'subscribe:account:balance:spendable':
-        return instance.api.query.system.account;
+        return api.query.system.account;
       case 'subscribe:account:nominationPools:rewards':
-        return instance.api.query.system.account;
+        return api.query.system.account;
       case 'subscribe:account:nominationPools:state':
-        return instance.api.query.nominationPools.bondedPools;
+        return api.query.nominationPools.bondedPools;
       case 'subscribe:account:nominationPools:renamed':
-        return instance.api.query.nominationPools.metadata;
+        return api.query.nominationPools.metadata;
       case 'subscribe:account:nominationPools:roles':
-        return instance.api.query.nominationPools.bondedPools;
+        return api.query.nominationPools.bondedPools;
       case 'subscribe:account:nominationPools:commission':
-        return instance.api.query.nominationPools.bondedPools;
+        return api.query.nominationPools.bondedPools;
       case 'subscribe:account:nominating:pendingPayouts':
-        return instance.api.query.staking.activeEra;
+        return api.query.staking.activeEra;
       case 'subscribe:account:nominating:exposure':
-        return instance.api.query.staking.activeEra;
+        return api.query.staking.activeEra;
       case 'subscribe:account:nominating:commission':
-        return instance.api.query.staking.activeEra;
+        return api.query.staking.activeEra;
       case 'subscribe:account:nominating:nominations':
-        return instance.api.query.staking.activeEra;
+        return api.query.staking.activeEra;
       default:
         throw new Error('Subscription action not found');
     }
-  }
-
-  /*-------------------------------------------------- 
-   Subscription Handlers
-   --------------------------------------------------*/
-
-  /**
-   * @name subscribe_query_timestamp_now
-   * @summary Handle a task that subscribes to the API function api.query.timestamp.now.
-   */
-  private static subscribe_query_timestamp_now(
-    task: SubscriptionTask,
-    wrapper: QueryMultiWrapper
-  ) {
-    TaskOrchestrator.handleTask(task, wrapper);
-  }
-
-  /**
-   * @name subscribe_query_babe_currentSlot
-   * @summary Handle a task that subscribes to the API function api.query.babe.currentSlot.
-   */
-  private static subscribe_query_babe_currentSlot(
-    task: SubscriptionTask,
-    wrapper: QueryMultiWrapper
-  ) {
-    TaskOrchestrator.handleTask(task, wrapper);
-  }
-
-  /**
-   * @name subscribe_account_balance_free
-   * @summary Handle a task that subscribes to the API function api.query.system.account.
-   */
-  private static subscribe_account_balance_free(
-    task: SubscriptionTask,
-    wrapper: QueryMultiWrapper
-  ) {
-    TaskOrchestrator.handleTask(task, wrapper);
-  }
-
-  /**
-   * @name subscribe_account_balance_frozen
-   * @summary Subscribe to api.query.system.account to fetch an account's frozen balance.
-   */
-  private static subscribe_account_balance_frozen(
-    task: SubscriptionTask,
-    wrapper: QueryMultiWrapper
-  ) {
-    TaskOrchestrator.handleTask(task, wrapper);
-  }
-
-  /**
-   * @name subscribe_account_balance_reserved
-   * @summary Subscribe to api.query.system.account to fetch an account's reserved balance.
-   */
-  private static subscribe_account_balance_reserved(
-    task: SubscriptionTask,
-    wrapper: QueryMultiWrapper
-  ) {
-    TaskOrchestrator.handleTask(task, wrapper);
-  }
-
-  /**
-   * @name subscribe_account_balance_spendable
-   * @summary Subscribe to api.query.system.account to fetch an account's spendable balance.
-   */
-  private static subscribe_account_balance_spendable(
-    task: SubscriptionTask,
-    wrapper: QueryMultiWrapper
-  ) {
-    TaskOrchestrator.handleTask(task, wrapper);
-  }
-
-  /**
-   * @name subscribe_nomination_pool_rewards
-   * @summary Handle a task that subscribes to the API function api.query.system.account for a nomination pool's reward address.
-   */
-  private static subscribe_nomination_pool_rewards(
-    task: SubscriptionTask,
-    wrapper: QueryMultiWrapper
-  ) {
-    // Exit early if the associated account has not joined a nomination pool.
-    if (!task.account?.nominationPoolData) {
-      debug('🟠 Account has not joined a nomination pool.');
-      return;
-    }
-
-    // Otherwise rebuild query.
-    TaskOrchestrator.handleTask(task, wrapper);
-  }
-
-  /**
-   * @name subscribe_nomination_pool_state
-   * @summary Handle a task that subscribes to the API function api.query.nominationPools.bondedPools to fetch a pool's state.
-   */
-  private static subscribe_nomination_pool_state(
-    task: SubscriptionTask,
-    wrapper: QueryMultiWrapper
-  ) {
-    // Exit early if the account in question has not joined a nomination pool.
-    if (!task.account?.nominationPoolData) {
-      debug('🟠 Account has not joined a nomination pool.');
-      return;
-    }
-
-    // Otherwise rebuild query.
-    TaskOrchestrator.handleTask(task, wrapper);
-  }
-
-  /**
-   * @name subscribe_nomination_pool_renamed
-   * @summary Handle a task that subscribes to the API function api.query.nominationPools.metadata to fetch a pool's name.
-   */
-  private static subscribe_nomination_pool_renamed(
-    task: SubscriptionTask,
-    wrapper: QueryMultiWrapper
-  ) {
-    // Exit early if the account in question has not joined a nomination pool.
-    if (!task.account?.nominationPoolData) {
-      debug('🟠 Account has not joined a nomination pool.');
-      return;
-    }
-
-    // Otherwise rebuild query.
-    TaskOrchestrator.handleTask(task, wrapper);
-  }
-
-  /**
-   * @name subscribe_nomination_pool_roles
-   * @summary Handle a task that subscribes to the API function api.query.nominationPools.bondedPools to fetch a pool's roles.
-   */
-  private static subscribe_nomination_pool_roles(
-    task: SubscriptionTask,
-    wrapper: QueryMultiWrapper
-  ) {
-    // Exit early if the account in question has not joined a nomination pool.
-    if (!task.account?.nominationPoolData) {
-      debug('🟠 Account has not joined a nomination pool.');
-      return;
-    }
-
-    // Otherwise rebuild query.
-    TaskOrchestrator.handleTask(task, wrapper);
-  }
-
-  /**
-   * @name subscribe_nomination_pool_commission
-   * @summary Handle a task that subscribes to the API function api.query.nominationPools.bondedPools to fetch a pool's commission.
-   */
-  private static subscribe_nomination_pool_commission(
-    task: SubscriptionTask,
-    wrapper: QueryMultiWrapper
-  ) {
-    // Exit early if the account in question has not joined a nomination pool.
-    if (!task.account?.nominationPoolData) {
-      debug('🟠 Account has not joined a nomination pool.');
-      return;
-    }
-
-    // Otherwise rebuild query.
-    TaskOrchestrator.handleTask(task, wrapper);
-  }
-
-  /**
-   * @name subscribe_nominating_pending_payouts
-   * @summary Handle a task that subscribes to the API function api.query.activeEra and notifies an account's pending payouts.
-   */
-  private static subscribe_nominating_pending_payouts(
-    task: SubscriptionTask,
-    wrapper: QueryMultiWrapper
-  ) {
-    // Exit early if the account in question is not nominating.
-    if (!task.account?.nominatingData) {
-      console.log('🟠 Account is not nominating.');
-      return;
-    }
-
-    // Otherwise rebuild query.
-    TaskOrchestrator.handleTask(task, wrapper);
-  }
-
-  /**
-   * @name subscribe_nominating_exposure
-   * @summary Handle a task that subscribes to the API function api.query.activeEra and notifies an account's exposure.
-   */
-  private static subscribe_nominating_exposure(
-    task: SubscriptionTask,
-    wrapper: QueryMultiWrapper
-  ) {
-    // Exit early if the account in question is not nominating.
-    if (!task.account?.nominatingData) {
-      console.log('🟠 Account is not nominating.');
-      return;
-    }
-
-    // Otherwise rebuild query.
-    TaskOrchestrator.handleTask(task, wrapper);
-  }
-
-  /**
-   * @name subscribe_nominating_commission
-   * @summary Handle a task that subscribes to the API function api.query.activeEra and handles nominated validator commission changes.
-   */
-  private static subscribe_nominating_commission(
-    task: SubscriptionTask,
-    wrapper: QueryMultiWrapper
-  ) {
-    // Exit early if the account in question is not nominating.
-    if (!task.account?.nominatingData) {
-      console.log('🟠 Account is not nominating.');
-      return;
-    }
-
-    // Otherwise rebuild query.
-    TaskOrchestrator.handleTask(task, wrapper);
-  }
-
-  /**
-   * @name subscribe_nominating_nominations
-   * @summary Handle a task that subscribes to the API function api.query.activeEra and handles changes in nominated validators.
-   */
-  private static subscribe_nominating_nominations(
-    task: SubscriptionTask,
-    wrapper: QueryMultiWrapper
-  ) {
-    // Exit early if the account in question is not nominating.
-    if (!task.account?.nominatingData) {
-      console.log('🟠 Account is not nominating.');
-      return;
-    }
-
-    // Otherwise rebuild query.
-    TaskOrchestrator.handleTask(task, wrapper);
   }
 }

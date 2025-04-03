@@ -88,12 +88,25 @@ export const Tracks = ({ setSection }: TracksProps) => {
           </section>
 
           <section>
-            {!getOnlineMode() && !hasFetched ? (
+            {/** Offline and not fetched */}
+            {!getOnlineMode() && !hasFetched && (
               <div style={{ padding: '0.5rem' }}>
                 <p>Currently offline.</p>
                 <p>Please reconnect to load OpenGov tracks.</p>
               </div>
-            ) : (
+            )}
+            {/** Online and not fetched */}
+            {getOnlineMode() && !hasFetched && !fetchingTracks && (
+              <div style={{ padding: '0.5rem' }}>
+                <p>Could not fetch tracks.</p>
+              </div>
+            )}
+            {/** Fetching */}
+            {fetchingTracks && (
+              <div style={{ marginTop: '2rem' }}>{renderPlaceholders(4)}</div>
+            )}
+            {/** Online and fetched */}
+            {hasFetched && !fetchingTracks && tracksMap.has(chainId) && (
               <div>
                 {fetchingTracks || !tracksMap.has(chainId) ? (
                   <div style={{ marginTop: '2rem' }}>

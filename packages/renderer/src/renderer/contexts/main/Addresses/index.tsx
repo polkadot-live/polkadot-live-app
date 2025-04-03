@@ -48,7 +48,6 @@ export const AddressesProvider = ({
     // Update accounts state.
     AccountsController.syncState();
 
-    // Show OS notification for new address imports.
     if (!fromBackup) {
       await window.myAPI.sendAccountTask({
         action: 'account:import',
