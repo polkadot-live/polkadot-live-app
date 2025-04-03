@@ -57,7 +57,7 @@ export class SettingsController {
       }
       case 'settings:set:darkMode': {
         const settings = this.getAppSettings();
-        settings.appDarkMode = task.data.flag;
+        settings.appDarkMode = task.data.state;
         const key = Config.settingsStorageKey;
         (store as Record<string, AnyData>).set(key, settings);
         break;

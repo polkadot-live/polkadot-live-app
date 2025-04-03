@@ -92,7 +92,7 @@ export const ExtrinsicDropdownMenu = ({
           <DropdownMenu.Separator className="DropdownMenuSeparator" />
           <DropdownMenu.Item
             className="DropdownMenuItem"
-            disabled={!isBuilt || isBuildingExtrinsic}
+            disabled={isBuildingExtrinsic}
             onSelect={() => onDelete()}
           >
             <div className="LeftSlot">

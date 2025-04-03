@@ -175,7 +175,7 @@ export const WalletConnectProvider = ({
     }
 
     console.log('> WalletConnect Initialized');
-    window.myAPI.relayModeFlag('wc:initialized', true);
+    window.myAPI.relaySharedState('wc:initialized', true);
   };
 
   /**
@@ -209,7 +209,7 @@ export const WalletConnectProvider = ({
       if (wcProvider.current?.session) {
         wcPairingTopic.current = wcProvider.current.session.pairingTopic;
         wcSession.current = wcProvider.current.session;
-        window.myAPI.relayModeFlag('wc:session:restored', true);
+        window.myAPI.relaySharedState('wc:session:restored', true);
       } else {
         console.log('> Re-create session uri and approval.');
 
@@ -276,7 +276,7 @@ export const WalletConnectProvider = ({
     setFetchedAddresses(namespaces);
 
     // Set restored session flag.
-    window.myAPI.relayModeFlag('wc:session:restored', true);
+    window.myAPI.relaySharedState('wc:session:restored', true);
   };
 
   /**
@@ -289,9 +289,9 @@ export const WalletConnectProvider = ({
       wcNetworksRef.current = wcNetworks;
 
       // Restore existing session or create a new one.
-      window.myAPI.relayModeFlag('wc:connecting', true);
+      window.myAPI.relaySharedState('wc:connecting', true);
       await cacheOrPrepareSession('import');
-      window.myAPI.relayModeFlag('wc:connecting', false);
+      window.myAPI.relaySharedState('wc:connecting', false);
 
       if (!wcMetaRef.current?.uri) {
         fetchAddressesFromExistingSession();
@@ -311,7 +311,7 @@ export const WalletConnectProvider = ({
 
         // Set received WalletConnect address state.
         setFetchedAddresses(session.namespaces);
-        window.myAPI.relayModeFlag('wc:session:restored', true);
+        window.myAPI.relaySharedState('wc:session:restored', true);
       }
     } catch (error: AnyData) {
       console.error(error);
@@ -322,11 +322,11 @@ export const WalletConnectProvider = ({
    * Verify a signing account is approved in the WalletConnect session.
    */
   const verifySigningAccount = async (target: string, chainId: ChainID) => {
-    window.myAPI.relayModeFlag('wc:account:verifying', true);
+    window.myAPI.relaySharedState('wc:account:verifying', true);
 
     if (!wcSession.current) {
       sendToastError('extrinsics', 'WalletConnect Error - Session not found');
-      window.myAPI.relayModeFlag('wc:account:verifying', false);
+      window.myAPI.relaySharedState('wc:account:verifying', false);
     }
 
     // Get the accounts from the session.
@@ -351,8 +351,8 @@ export const WalletConnectProvider = ({
     // Update relay flags.
     setTimeout(() => {
       const approved = found ? true : false;
-      window.myAPI.relayModeFlag('wc:account:verifying', false);
-      window.myAPI.relayModeFlag('wc:account:approved', approved);
+      window.myAPI.relaySharedState('wc:account:verifying', false);
+      window.myAPI.relaySharedState('wc:account:approved', approved);
 
       if (!approved) {
         // Toast error notification in extrinsics window.
@@ -376,17 +376,17 @@ export const WalletConnectProvider = ({
     chainId: ChainID
   ) => {
     try {
-      window.myAPI.relayModeFlag('wc:connecting', true);
+      window.myAPI.relaySharedState('wc:connecting', true);
       await cacheOrPrepareSession('extrinsics');
 
-      window.myAPI.relayModeFlag('wc:connecting', false);
-      window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
+      window.myAPI.relaySharedState('wc:connecting', false);
+      window.myAPI.relaySharedState('isBuildingExtrinsic', false);
 
       // Await approval and cache session and pairing topic.
       const session = await wcMetaRef.current!.approval();
       wcSession.current = session;
       wcPairingTopic.current = session.pairingTopic;
-      window.myAPI.relayModeFlag('wc:session:restored', true);
+      window.myAPI.relaySharedState('wc:session:restored', true);
 
       // Close modal in extrinsics window.
       if (wcMetaRef.current?.uri) {
@@ -431,7 +431,7 @@ export const WalletConnectProvider = ({
           const message = 'Error - Cancel pending signature before re-signing';
           sendToastError('extrinsics', message);
         }
-        window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
+        window.myAPI.relaySharedState('isBuildingExtrinsic', false);
         return;
       }
 
@@ -474,11 +474,11 @@ export const WalletConnectProvider = ({
       } else {
         // Signing canceled, don't submit transaction.
         wcTxSignMap.current.delete(txId);
-        window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
+        window.myAPI.relaySharedState('isBuildingExtrinsic', false);
       }
     } catch (error: AnyData) {
       wcTxSignMap.current.delete(info.txId);
-      window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
+      window.myAPI.relaySharedState('isBuildingExtrinsic', false);
 
       console.log(error);
       error.code === -32000
@@ -495,7 +495,7 @@ export const WalletConnectProvider = ({
       return;
     }
 
-    window.myAPI.relayModeFlag('wc:disconnecting', true);
+    window.myAPI.relaySharedState('wc:disconnecting', true);
     const topic = wcProvider.current.session?.topic;
     if (topic) {
       await wcProvider.current.client.disconnect({
@@ -509,8 +509,8 @@ export const WalletConnectProvider = ({
     wcPairingTopic.current = null;
     wcMetaRef.current = null;
 
-    window.myAPI.relayModeFlag('wc:session:restored', false);
-    window.myAPI.relayModeFlag('wc:disconnecting', false);
+    window.myAPI.relaySharedState('wc:session:restored', false);
+    window.myAPI.relaySharedState('wc:disconnecting', false);
   };
 
   /**

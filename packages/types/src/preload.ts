@@ -4,12 +4,7 @@
 import type { ChainID } from './chains';
 import type { DismissEvent, EventCallback, NotificationData } from './reporter';
 import type { ExportResult, ImportResult } from './backup';
-import type {
-  IpcTask,
-  RelayPortTask,
-  SyncFlag,
-  TabData,
-} from './communication';
+import type { IpcTask, RelayPortTask, SyncID, TabData } from './communication';
 import type { IpcRendererEvent } from 'electron';
 import type { WorkspaceItem } from './developerConsole/workspaces';
 import type { AnyData } from './misc';
@@ -78,14 +73,14 @@ export interface PreloadAPI {
   closeWindow: ApiCloseWindow;
   quitApp: ApiEmptyPromiseRequest;
 
-  getModeFlag: (syncId: SyncFlag) => Promise<boolean>;
-  syncModeFlags: (
+  getSharedState: (stateId: SyncID) => Promise<string | boolean>;
+  syncSharedState: (
     callback: (
       _: IpcRendererEvent,
-      data: { syncId: SyncFlag; flag: boolean }
+      data: { syncId: SyncID; state: string | boolean }
     ) => void
   ) => void;
-  relayModeFlag: (syncId: SyncFlag, flag: boolean) => void;
+  relaySharedState: (syncId: SyncID, state: string | boolean) => void;
 
   handleOpenTab: (
     callback: (_: IpcRendererEvent, tabData: TabData) => void

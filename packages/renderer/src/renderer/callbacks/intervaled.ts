@@ -3,9 +3,9 @@
 
 import BigNumber from 'bignumber.js';
 import { Config as RendererConfig } from '@ren/config/processes/renderer';
-import { getApiInstance } from '@ren/utils/ApiUtils';
 import { isObject } from '@polkadot/util';
 import { rmCommas } from '@w3ux/utils';
+import { APIsController } from '@ren/controller/APIsController';
 import { EventsController } from '@ren/controller/EventsController';
 import { NotificationsController } from '@ren/controller/NotificationsController';
 import { formatBlocksToTime } from '../utils/timeUtils';
@@ -75,7 +75,7 @@ const oneShot_openGov_referendumVotes = async (
   policy: NotificationPolicy = 'default'
 ): Promise<OneShotReturn> => {
   const { chainId, referendumId } = task;
-  const instance = await getApiInstance(chainId);
+  const instance = await APIsController.getConnectedApi(chainId);
 
   if (!instance || !referendumId) {
     return !instance
@@ -141,7 +141,7 @@ const oneShot_openGov_decisionPeriod = async (
   policy: NotificationPolicy = 'default'
 ): Promise<OneShotReturn> => {
   const { chainId, referendumId } = task;
-  const instance = await getApiInstance(chainId);
+  const instance = await APIsController.getConnectedApi(chainId);
 
   if (!instance || !referendumId) {
     return !instance
@@ -237,7 +237,7 @@ const oneShot_openGov_thresholds = async (
   policy: NotificationPolicy = 'default'
 ): Promise<OneShotReturn> => {
   const { chainId, referendumId } = task;
-  const instance = await getApiInstance(chainId);
+  const instance = await APIsController.getConnectedApi(chainId);
 
   if (!instance || !referendumId) {
     return !instance

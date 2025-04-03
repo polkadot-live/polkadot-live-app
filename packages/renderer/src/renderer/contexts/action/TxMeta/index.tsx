@@ -301,7 +301,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (alreadyExists !== undefined) {
       // Relay building extrinsic flag to app.
-      window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
+      window.myAPI.relaySharedState('isBuildingExtrinsic', false);
       renderToast(
         'Extrinsic already added.',
         `toast-already-exists-${String(Date.now())}`,
@@ -341,7 +341,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         data: JSON.stringify(info),
       });
     } catch (err) {
-      window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
+      window.myAPI.relaySharedState('isBuildingExtrinsic', false);
       console.log(err);
     }
   };
@@ -374,7 +374,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       console.log(err);
     } finally {
       // Relay building extrinsic flag to app.
-      window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
+      window.myAPI.relaySharedState('isBuildingExtrinsic', false);
     }
   };
 
@@ -390,7 +390,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       // Relay building extrinsic flag to app.
-      window.myAPI.relayModeFlag('isBuildingExtrinsic', true);
+      window.myAPI.relaySharedState('isBuildingExtrinsic', true);
 
       ConfigAction.portAction.postMessage({
         task: 'renderer:tx:build',
@@ -433,7 +433,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (err) {
       console.log(err);
     } finally {
-      window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
+      window.myAPI.relaySharedState('isBuildingExtrinsic', false);
     }
   };
 
@@ -441,7 +441,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
    * Render an error notification if an extrinsic is not valid for submission.
    */
   const notifyInvalidExtrinsic = (message: string) => {
-    window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
+    window.myAPI.relaySharedState('isBuildingExtrinsic', false);
     const text = `Invalid extrinsic - ${message}`;
     renderToast(text, `invalid-extrinsic-${String(Date.now())}`, 'error');
   };
@@ -450,7 +450,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
    * Send a completed and signed extrinsic to main renderer for submission.
    */
   const submitTx = (txId: string) => {
-    window.myAPI.relayModeFlag('isBuildingExtrinsic', true);
+    window.myAPI.relaySharedState('isBuildingExtrinsic', true);
 
     try {
       const info = extrinsicsRef.current.get(txId);
@@ -471,7 +471,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       });
     } catch (err) {
       console.log(err);
-      window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
+      window.myAPI.relaySharedState('isBuildingExtrinsic', false);
     }
   };
 
@@ -479,7 +479,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
    * Submit a mock extrinsic.
    */
   const submitMockTx = (txId: string) => {
-    window.myAPI.relayModeFlag('isBuildingExtrinsic', true);
+    window.myAPI.relaySharedState('isBuildingExtrinsic', true);
 
     const info = extrinsicsRef.current.get(txId);
     if (!info) {
@@ -507,7 +507,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       setUpdateCache(true);
 
       if (txStatus === 'error' || txStatus === 'finalized') {
-        window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
+        window.myAPI.relaySharedState('isBuildingExtrinsic', false);
       }
 
       // Update tx status in store.

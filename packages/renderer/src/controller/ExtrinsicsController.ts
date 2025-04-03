@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import BigNumber from 'bignumber.js';
+import { APIsController } from '@ren/controller/APIsController';
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { chainUnits } from '@ren/config/chains';
-import { getApiInstanceOrThrow } from '@ren/utils/ApiUtils';
 import { unitToPlanck } from '@w3ux/utils';
 import {
   getAddressNonce,
@@ -13,7 +13,7 @@ import {
 } from '@ren/utils/AccountUtils';
 
 import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
-import type { ChainID } from '@polkadot-live/types/chains';
+import type { ApiPromise } from '@polkadot/api';
 import type {
   ActionMeta,
   ExtrinsicInfo,
@@ -64,8 +64,7 @@ export class ExtrinsicsController {
     const { chainId, from, pallet, method } = info.actionMeta;
 
     const args = this.getExtrinsicArgs(actionMeta);
-    const origin = 'ExtrinsicsController.getEstimatedFee';
-    const { api } = await getApiInstanceOrThrow(chainId, origin);
+    const { api } = await APIsController.getConnectedApiOrThrow(chainId);
     console.log(`📝 New extrinsic: ${from}, ${pallet}, ${method}, ${args}`);
 
     // Instantiate tx.
@@ -93,9 +92,8 @@ export class ExtrinsicsController {
         data: { txId, estimatedFee: estimatedFee.toString() },
       });
     } catch (e) {
-      // TODO: Send error to action window?
-      console.log('Error:');
       console.log(e);
+      this.handleTxError('An error occurred.');
     }
   };
 
@@ -179,12 +177,10 @@ export class ExtrinsicsController {
       const { txId, actionMeta } = info;
       const { chainId, from } = info.actionMeta;
       const nonce = (await getAddressNonce(from, chainId)).toNumber();
+      const { api } = await APIsController.getConnectedApiOrThrow(chainId);
 
       // Create tx if it's not cached already.
       if (!this.txPayloads.has(txId)) {
-        const origin = 'ExtrinsicsController.build';
-        const { api } = await getApiInstanceOrThrow(chainId, origin);
-
         // Instantiate tx.
         const { pallet, method } = info.actionMeta;
         const args = this.getExtrinsicArgs(actionMeta);
@@ -202,9 +198,9 @@ export class ExtrinsicsController {
       const { tx } = cached;
       const { rawPayload, payload } = await this.buildPayload(
         tx,
-        chainId,
         from,
-        nonce
+        nonce,
+        api
       );
 
       this.txPayloads.set(txId, { ...cached, raw: rawPayload, payload });
@@ -224,13 +220,11 @@ export class ExtrinsicsController {
           },
         });
       } else {
-        ConfigRenderer.portToAction?.postMessage({
-          task: 'action:tx:invalid',
-          data: { message: verifyResult.reason || 'Reason unknown.' },
-        });
+        this.handleTxError(verifyResult.reason || 'Reason unknown.');
       }
     } catch (err) {
       console.log(err);
+      this.handleTxError('An error occurred.');
     }
   };
 
@@ -239,14 +233,10 @@ export class ExtrinsicsController {
    */
   static buildPayload = async (
     tx: AnyJson,
-    chainId: ChainID,
     from: string,
-    accountNonce: number
+    accountNonce: number,
+    api: ApiPromise
   ) => {
-    // Build and set payload of the transaction and store it in TxMetaContext.
-    const origin = 'ExtrinsicsController.buildPayload';
-    const { api } = await getApiInstanceOrThrow(chainId, origin);
-
     const lastHeader = await api.rpc.chain.getHeader();
     const blockNumber = api.registry.createType(
       'BlockNumber',
@@ -412,7 +402,7 @@ export class ExtrinsicsController {
         });
       }
     } catch (e) {
-      window.myAPI.relayModeFlag('isBuildingExtrinsic', false);
+      window.myAPI.relaySharedState('isBuildingExtrinsic', false);
       console.log(e);
       this.postTxStatus('error', info);
     }
@@ -446,5 +436,16 @@ export class ExtrinsicsController {
         });
       }
     }
+  };
+
+  /**
+   * @name handleTxError
+   * @summary Render toast error and stop building extrinsic in extrinsics renderer.
+   */
+  private static handleTxError = (message: string) => {
+    ConfigRenderer.portToAction?.postMessage({
+      task: 'action:tx:invalid',
+      data: { message },
+    });
   };
 }

@@ -123,7 +123,7 @@ export const useSendNative = (): SendNativeHook => {
     };
 
     // Send extrinsic to action window.
-    window.myAPI.relayModeFlag('isBuildingExtrinsic', true);
+    window.myAPI.relaySharedState('isBuildingExtrinsic', true);
     const extrinsicsViewOpen = await window.myAPI.isViewOpen('action');
 
     if (!extrinsicsViewOpen) {

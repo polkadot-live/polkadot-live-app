@@ -10,7 +10,6 @@ import type { ChainID } from '@polkadot-live/types/chains';
 
 export interface AddressesContextInterface {
   addresses: FlattenedAccounts;
-  setAddresses: (a: FlattenedAccounts) => void;
   getAddresses: () => FlattenedAccountData[];
   addressExists: (a: string) => boolean;
   importAddress: (

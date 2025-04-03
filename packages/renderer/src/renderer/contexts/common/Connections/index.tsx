@@ -5,15 +5,15 @@ import * as defaults from './defaults';
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ConnectionsContextInterface } from './types';
 import type { IpcRendererEvent } from 'electron';
-import type { SyncFlag } from '@polkadot-live/types/communication';
+import type { SyncID } from '@polkadot-live/types/communication';
 import type { WcSyncFlags } from '@polkadot-live/types/walletConnect';
+import type { PersistedSettings } from '@polkadot-live/types/settings';
 
 /**
- * Automatically listens for and sets mode flag state when they are
+ * Automatically listens for and sets shared state when the state is
  * updated in other processes.
  *
- * Immediately sets this renderer's mode flag state which is
- * consistent with the app.
+ * Keeps state synchronized between processes.
  */
 
 export const ConnectionsContext = createContext<ConnectionsContextInterface>(
@@ -36,6 +36,9 @@ export const ConnectionsProvider = ({
   // Flag set to `true` when app is importing data from backup file.
   const [isImporting, setIsImporting] = useState(false);
 
+  // Flag set to `true` when app is adding an account to main window.
+  const [isImportingAccount, setIsImportingAccount] = useState(false);
+
   // Flag set to `true` when app's theme is dark mode.
   const [darkMode, setDarkMode] = useState(true);
 
@@ -53,25 +56,28 @@ export const ConnectionsProvider = ({
   });
 
   useEffect(() => {
-    // Synchronize flags in store.
-    const syncModeFlagsOnMount = async () => {
-      setIsConnected(await window.myAPI.getModeFlag('isConnected'));
-      setIsOnlineMode(await window.myAPI.getModeFlag('isOnlineMode'));
-      setIsImporting(await window.myAPI.getModeFlag('isImporting'));
-      setDarkMode((await window.myAPI.getAppSettings()).appDarkMode);
+    const getAsBoolean = async (syncId: SyncID) =>
+      (await window.myAPI.getSharedState(syncId)) as boolean;
 
-      setIsBuildingExtrinsic(
-        await window.myAPI.getModeFlag('isBuildingExtrinsic')
-      );
+    // Synchronize flags in store.
+    const syncSharedStateOnMount = async () => {
+      const settings: PersistedSettings = await window.myAPI.getAppSettings();
+      setDarkMode(settings.appDarkMode);
+
+      setIsConnected(await getAsBoolean('isConnected'));
+      setIsOnlineMode(await getAsBoolean('isOnlineMode'));
+      setIsImporting(await getAsBoolean('isImporting'));
+      setIsImportingAccount(await getAsBoolean('isImportingAccount'));
+      setIsBuildingExtrinsic(await getAsBoolean('isBuildingExtrinsic'));
 
       // Get WalletConnect flags asynchronously.
       const results = await Promise.all([
-        window.myAPI.getModeFlag('wc:connecting'),
-        window.myAPI.getModeFlag('wc:disconnecting'),
-        window.myAPI.getModeFlag('wc:initialized'),
-        window.myAPI.getModeFlag('wc:session:restored'),
-        window.myAPI.getModeFlag('wc:account:approved'),
-        window.myAPI.getModeFlag('wc:account:verifying'),
+        getAsBoolean('wc:connecting'),
+        getAsBoolean('wc:disconnecting'),
+        getAsBoolean('wc:initialized'),
+        getAsBoolean('wc:session:restored'),
+        getAsBoolean('wc:account:approved'),
+        getAsBoolean('wc:account:verifying'),
       ]);
 
       setWcSyncFlags({
@@ -84,65 +90,72 @@ export const ConnectionsProvider = ({
       });
     };
 
-    // Listen for synching events.
-    window.myAPI.syncModeFlags(
+    // Listen for shared state syncing.
+    window.myAPI.syncSharedState(
       (
         _: IpcRendererEvent,
-        { syncId, flag }: { syncId: SyncFlag; flag: boolean }
+        { syncId, state }: { syncId: SyncID; state: string | boolean }
       ) => {
         switch (syncId) {
           case 'darkMode': {
-            setDarkMode(flag);
+            setDarkMode(state as boolean);
             break;
           }
           case 'isConnected': {
-            setIsConnected(flag);
+            setIsConnected(state as boolean);
             break;
           }
           case 'isImporting': {
-            setIsImporting(flag);
+            setIsImporting(state as boolean);
+            break;
+          }
+          case 'isImportingAccount': {
+            setIsImportingAccount(state as boolean);
             break;
           }
           case 'isOnlineMode': {
-            setIsOnlineMode(flag);
+            setIsOnlineMode(state as boolean);
             break;
           }
           case 'isBuildingExtrinsic': {
-            setIsBuildingExtrinsic(flag);
+            setIsBuildingExtrinsic(state as boolean);
             break;
           }
           case 'wc:account:approved': {
-            setWcSyncFlags((pv) => ({ ...pv, wcAccountApproved: flag }));
+            const wcAccountApproved = state as boolean;
+            setWcSyncFlags((pv) => ({ ...pv, wcAccountApproved }));
             break;
           }
           case 'wc:connecting': {
-            setWcSyncFlags((pv) => ({ ...pv, wcConnecting: flag }));
+            const wcConnecting = state as boolean;
+            setWcSyncFlags((pv) => ({ ...pv, wcConnecting }));
             break;
           }
           case 'wc:disconnecting': {
-            setWcSyncFlags((pv) => ({ ...pv, wcDisconnecting: flag }));
+            const wcDisconnecting = state as boolean;
+            setWcSyncFlags((pv) => ({ ...pv, wcDisconnecting }));
             break;
           }
           case 'wc:initialized': {
-            setWcSyncFlags((pv) => ({ ...pv, wcInitialized: flag }));
+            const wcInitialized = state as boolean;
+            setWcSyncFlags((pv) => ({ ...pv, wcInitialized }));
             break;
           }
           case 'wc:session:restored': {
-            setWcSyncFlags((pv) => ({ ...pv, wcSessionRestored: flag }));
+            const wcSessionRestored = state as boolean;
+            setWcSyncFlags((pv) => ({ ...pv, wcSessionRestored }));
             break;
           }
           case 'wc:account:verifying': {
-            setWcSyncFlags((pv) => ({ ...pv, wcVerifyingAccount: flag }));
-            break;
-          }
-          default: {
+            const wcVerifyingAccount = state as boolean;
+            setWcSyncFlags((pv) => ({ ...pv, wcVerifyingAccount }));
             break;
           }
         }
       }
     );
 
-    syncModeFlagsOnMount();
+    syncSharedStateOnMount();
   }, []);
 
   /**
@@ -156,15 +169,11 @@ export const ConnectionsProvider = ({
         darkMode,
         isConnected,
         isImporting,
+        isImportingAccount,
         isOnlineMode,
         isBuildingExtrinsic,
         wcSyncFlags,
         getOnlineMode,
-        setDarkMode,
-        setIsConnected,
-        setIsImporting,
-        setIsOnlineMode,
-        setIsBuildingExtrinsic,
       }}
     >
       {children}

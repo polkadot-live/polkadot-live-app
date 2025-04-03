@@ -37,7 +37,7 @@ export const ActionsDropdown = ({
   // Open action window and initialize with the event's tx data.
   const openActionWindow = async (txMeta: ActionMeta, btnLabel: string) => {
     // Relay building extrinsic flag to app.
-    window.myAPI.relayModeFlag('isBuildingExtrinsic', true);
+    window.myAPI.relaySharedState('isBuildingExtrinsic', true);
 
     const extrinsicsViewOpen = await window.myAPI.isViewOpen('action');
     if (!extrinsicsViewOpen) {

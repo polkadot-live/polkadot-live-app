@@ -4,7 +4,6 @@
 import { MessageChannelMain } from 'electron';
 import type { AccountSource } from '@polkadot-live/types/accounts';
 import type { PortPair, PortPairID } from '@polkadot-live/types/communication';
-import type { WcSyncFlags } from '@polkadot-live/types/walletConnect';
 import type { Rectangle, Tray } from 'electron';
 
 export class Config {
@@ -37,20 +36,6 @@ export class Config {
 
   // Cache Electron objects.
   private static _appTray: Tray | null = null;
-
-  // Flags to handle data processes.
-  private static _exportingData = false;
-  private static _importingData = false;
-  private static _onlineMode = false;
-  private static _isBuildingExtrinsic = false;
-  private static _wcSyncFlags: WcSyncFlags = {
-    wcAccountApproved: false,
-    wcConnecting: false,
-    wcDisconnecting: false,
-    wcInitialized: false,
-    wcSessionRestored: false,
-    wcVerifyingAccount: false,
-  };
 
   // Return the local storage key for corresponding source addresses.
   static getStorageKey(source: AccountSource): string {
@@ -176,46 +161,6 @@ export class Config {
 
   static get themeColorLight(): string {
     return Config._themeColorLight;
-  }
-
-  static get exportingData(): boolean {
-    return Config._exportingData;
-  }
-
-  static set exportingData(flag: boolean) {
-    Config._exportingData = flag;
-  }
-
-  static get importingData(): boolean {
-    return Config._importingData;
-  }
-
-  static set importingData(flag: boolean) {
-    Config._importingData = flag;
-  }
-
-  static get onlineMode(): boolean {
-    return Config._onlineMode;
-  }
-
-  static set onlineMode(flag: boolean) {
-    Config._onlineMode = flag;
-  }
-
-  static get isBuildingExtrinsic(): boolean {
-    return Config._isBuildingExtrinsic;
-  }
-
-  static set isBuildingExtrinsic(flag: boolean) {
-    Config._isBuildingExtrinsic = flag;
-  }
-
-  static get wcSyncFlags(): WcSyncFlags {
-    return Config._wcSyncFlags;
-  }
-
-  static set wcSyncFlags(flags: WcSyncFlags) {
-    Config._wcSyncFlags = flags;
   }
 
   // Setter for app's tray object.

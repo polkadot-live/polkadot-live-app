@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 /// Dependencies.
+import { getOnlineStatus } from '@ren/utils/CommonUtils';
 import { AccountsController } from '@ren/controller/AccountsController';
 import { APIsController } from '@ren/controller/APIsController';
 import BigNumber from 'bignumber.js';
@@ -14,10 +15,7 @@ import {
   fetchNominatingDataForAccount,
   fetchNominationPoolDataForAccount,
 } from '@ren/utils/AccountUtils';
-import {
-  getApiInstanceOrThrow,
-  handleApiDisconnects,
-} from '@ren/utils/ApiUtils';
+import { disconnectAPIs } from '@ren/utils/ApiUtils';
 import { isObject, u8aConcat } from '@polkadot/util';
 import { planckToUnit, rmCommas } from '@w3ux/utils';
 import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
@@ -29,7 +27,6 @@ import { getAddressChainId } from '../Utils';
 import { useAddresses } from '@app/contexts/main/Addresses';
 import { useAppSettings } from '@app/contexts/main/AppSettings';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
-import { useChains } from '@app/contexts/main/Chains';
 import { useEffect } from 'react';
 import { useEvents } from '@app/contexts/main/Events';
 import { useManage } from '@app/contexts/main/Manage';
@@ -54,8 +51,7 @@ const WC_EVENT_ORIGIN = 'https://verify.walletconnect.org';
 
 export const useMainMessagePorts = () => {
   /// Main renderer contexts.
-  const { importAddress, removeAddress, setAddresses } = useAddresses();
-  const { addChain } = useChains();
+  const { importAddress, removeAddress } = useAddresses();
   const { updateEventsOnAccountRename } = useEvents();
   const { syncOpenGovWindow } = useBootstrapping();
   const { exportDataToBackup, importDataFromBackup } = useDataBackup();
@@ -88,35 +84,16 @@ export const useMainMessagePorts = () => {
     handleToggleHideDockIcon,
   } = useAppSettings();
 
-  const { setAccountSubscriptions, updateAccountNameInTasks, updateTask } =
-    useSubscriptions();
-
+  const { updateAccountNameInTasks, updateTask } = useSubscriptions();
   const { addIntervalSubscription, removeIntervalSubscription } =
     useIntervalSubscriptions();
-
-  /**
-   * @name setSubscriptionsAndChainConnections
-   * @summary Set subscription data React state.
-   */
-  const setSubscriptionsState = () => {
-    // Set account subscriptions data for rendering.
-    setAccountSubscriptions(
-      SubscriptionsController.getAccountSubscriptions(
-        AccountsController.accounts
-      )
-    );
-
-    // Report chain connections to UI.
-    for (const apiData of APIsController.getAllFlattenedAPIData()) {
-      addChain(apiData);
-    }
-  };
 
   /**
    * @name handleImportAddress
    * @summary Imports a new account when a message is received from `import` window.
    */
   const handleImportAddress = async (ev: MessageEvent, fromBackup: boolean) => {
+    window.myAPI.relaySharedState('isImportingAccount', true);
     const { chainId, source, address, name } = ev.data.data;
 
     // Add address to accounts controller.
@@ -151,16 +128,12 @@ export const useMainMessagePorts = () => {
 
     // Return if account already exists and isn't being re-imported.
     if (!account) {
+      window.myAPI.relaySharedState('isImportingAccount', false);
       return;
     }
 
     // Fetch account data from network.
-    const isOnline: boolean =
-      (await window.myAPI.sendConnectionTaskAsync({
-        action: 'connection:getStatus',
-        data: null,
-      })) || false;
-
+    const isOnline: boolean = await getOnlineStatus();
     if (isOnline) {
       await fetchBalanceForAccount(account);
       await fetchNominationPoolDataForAccount(account);
@@ -194,7 +167,8 @@ export const useMainMessagePorts = () => {
         (await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti));
 
       // Update React subscriptions state.
-      setSubscriptionsState();
+      SubscriptionsController.syncAccountSubscriptionsState();
+      window.myAPI.relaySharedState('isImportingAccount', false);
     }
 
     // Add account to address context state.
@@ -241,19 +215,10 @@ export const useMainMessagePorts = () => {
     await removeAddress(chainId, address);
 
     // Update account subscriptions data.
-    setAccountSubscriptions(
-      SubscriptionsController.getAccountSubscriptions(
-        AccountsController.accounts
-      )
-    );
+    SubscriptionsController.syncAccountSubscriptionsState();
 
     // Disconnect from any API instances that are not currently needed.
-    await handleApiDisconnects();
-
-    // Report chain connections to UI.
-    for (const apiData of APIsController.getAllFlattenedAPIData()) {
-      addChain(apiData);
-    }
+    await disconnectAPIs();
 
     // Transition away from rendering toggles.
     setRenderedSubscriptions({ type: '', tasks: [] });
@@ -277,7 +242,7 @@ export const useMainMessagePorts = () => {
       await AccountsController.set(chainId, account);
 
       // Update account react state.
-      setAddresses(AccountsController.getAllFlattenedAccountData());
+      AccountsController.syncState();
 
       // Update subscription task react state.
       updateAccountNameInTasks(address, newName);
@@ -378,13 +343,22 @@ export const useMainMessagePorts = () => {
    */
   const handleGetTracks = async (ev: MessageEvent) => {
     const { chainId } = ev.data.data;
-    const { api } = await getApiInstanceOrThrow(chainId, 'Error');
-    const result = api.consts.referenda.tracks.toHuman();
 
-    ConfigRenderer.portToOpenGov?.postMessage({
-      task: 'openGov:tracks:receive',
-      data: { result, chainId },
-    });
+    try {
+      const { api } = await APIsController.getConnectedApiOrThrow(chainId);
+      const result = api.consts.referenda.tracks.toHuman();
+
+      ConfigRenderer.portToOpenGov?.postMessage({
+        task: 'openGov:tracks:receive',
+        data: { result, chainId },
+      });
+    } catch (e) {
+      console.error(e);
+      ConfigRenderer.portToOpenGov?.postMessage({
+        task: 'openGov:tracks:receive',
+        data: { result: null, chainId },
+      });
+    }
   };
 
   /**
@@ -392,83 +366,91 @@ export const useMainMessagePorts = () => {
    * @summary Use API to get a network's OpenGov referenda.
    */
   const handleGetReferenda = async (ev: MessageEvent) => {
-    // Make API call to fetch referenda entries.
-    const { chainId } = ev.data.data;
-    const { api } = await getApiInstanceOrThrow(chainId, 'Error');
-    const results = await api.query.referenda.referendumInfoFor.entries();
+    try {
+      // Make API call to fetch referenda entries.
+      const { chainId } = ev.data.data;
+      const { api } = await APIsController.getConnectedApiOrThrow(chainId);
+      const results = await api.query.referenda.referendumInfoFor.entries();
 
-    // Populate referenda map.
-    const allReferenda: OG.ReferendaInfo[] = [];
+      // Populate referenda map.
+      const allReferenda: OG.ReferendaInfo[] = [];
 
-    for (const [storageKey, storage] of results) {
-      const human: AnyData = storage.toHuman();
-      const refId = Number(rmCommas(String(storageKey.toHuman())));
+      for (const [storageKey, storage] of results) {
+        const human: AnyData = storage.toHuman();
+        const refId = Number(rmCommas(String(storageKey.toHuman())));
 
-      if (isObject(human)) {
-        if ('Approved' in human) {
-          const isNull = human.Approved[1] === null;
-          const block = human.Approved[0];
-          const who = isNull ? null : human.Approved[1].who;
-          const amount = isNull ? null : human.Approved[1].amount;
-          const info: OG.RefApproved = { block, who, amount };
+        if (isObject(human)) {
+          if ('Approved' in human) {
+            const isNull = human.Approved[1] === null;
+            const block = human.Approved[0];
+            const who = isNull ? null : human.Approved[1].who;
+            const amount = isNull ? null : human.Approved[1].amount;
+            const info: OG.RefApproved = { block, who, amount };
 
-          allReferenda.push({ refId, refStatus: 'Approved', info });
-        } else if ('Cancelled' in human) {
-          const isNull = human.Cancelled[1] === null;
-          const block = human.Cancelled[0];
-          const who = isNull ? null : human.Cancelled[1].who;
-          const amount = isNull ? null : human.Cancelled[1].amount;
-          const info: OG.RefCancelled = { block, who, amount };
+            allReferenda.push({ refId, refStatus: 'Approved', info });
+          } else if ('Cancelled' in human) {
+            const isNull = human.Cancelled[1] === null;
+            const block = human.Cancelled[0];
+            const who = isNull ? null : human.Cancelled[1].who;
+            const amount = isNull ? null : human.Cancelled[1].amount;
+            const info: OG.RefCancelled = { block, who, amount };
 
-          allReferenda.push({ refId, refStatus: 'Cancelled', info });
-        } else if ('Rejected' in human) {
-          const block = human.Rejected[0];
-          const who = human.Rejected[1].who;
-          const amount = human.Rejected[1].amount;
-          const info: OG.RefRejected = { block, who, amount };
+            allReferenda.push({ refId, refStatus: 'Cancelled', info });
+          } else if ('Rejected' in human) {
+            const block = human.Rejected[0];
+            const who = human.Rejected[1].who;
+            const amount = human.Rejected[1].amount;
+            const info: OG.RefRejected = { block, who, amount };
 
-          allReferenda.push({ refId, refStatus: 'Rejected', info });
-        } else if ('TimedOut' in human) {
-          const block = human.TimedOut[0];
-          const who = human.TimedOut[1].who;
-          const amount = human.TimedOut[1].amount;
-          const info: OG.RefTimedOut = { block, who, amount };
+            allReferenda.push({ refId, refStatus: 'Rejected', info });
+          } else if ('TimedOut' in human) {
+            const block = human.TimedOut[0];
+            const who = human.TimedOut[1].who;
+            const amount = human.TimedOut[1].amount;
+            const info: OG.RefTimedOut = { block, who, amount };
 
-          allReferenda.push({ refId, refStatus: 'TimedOut', info });
-        } else if ('Ongoing' in human) {
-          // In Queue
-          if (human.Ongoing.inQueue === true) {
-            const info: OG.RefOngoing = { ...human.Ongoing };
-            allReferenda.push({ refId, refStatus: 'Queueing', info });
+            allReferenda.push({ refId, refStatus: 'TimedOut', info });
+          } else if ('Ongoing' in human) {
+            // In Queue
+            if (human.Ongoing.inQueue === true) {
+              const info: OG.RefOngoing = { ...human.Ongoing };
+              allReferenda.push({ refId, refStatus: 'Queueing', info });
+            }
+            // Preparing
+            else if (human.Ongoing.deciding === null) {
+              const info: OG.RefPreparing = { ...human.Ongoing };
+              allReferenda.push({ refId, refStatus: 'Preparing', info });
+            }
+            // Deciding
+            else if (human.Ongoing.deciding.confirming === null) {
+              const info: OG.RefDeciding = { ...human.Ongoing };
+              allReferenda.push({ refId, refStatus: 'Deciding', info });
+            }
+            // Confirming
+            else if (human.Ongoing.deciding.confirming !== null) {
+              const info: OG.RefConfirming = { ...human.Ongoing };
+              allReferenda.push({ refId, refStatus: 'Confirming', info });
+            }
+          } else if ('Killed' in human) {
+            const block = human.Killed;
+            const info: OG.RefKilled = { block };
+            allReferenda.push({ refId, refStatus: 'Killed', info });
           }
-          // Preparing
-          else if (human.Ongoing.deciding === null) {
-            const info: OG.RefPreparing = { ...human.Ongoing };
-            allReferenda.push({ refId, refStatus: 'Preparing', info });
-          }
-          // Deciding
-          else if (human.Ongoing.deciding.confirming === null) {
-            const info: OG.RefDeciding = { ...human.Ongoing };
-            allReferenda.push({ refId, refStatus: 'Deciding', info });
-          }
-          // Confirming
-          else if (human.Ongoing.deciding.confirming !== null) {
-            const info: OG.RefConfirming = { ...human.Ongoing };
-            allReferenda.push({ refId, refStatus: 'Confirming', info });
-          }
-        } else if ('Killed' in human) {
-          const block = human.Killed;
-          const info: OG.RefKilled = { block };
-          allReferenda.push({ refId, refStatus: 'Killed', info });
         }
       }
-    }
 
-    // Serialize data before sending to open gov window.
-    ConfigRenderer.portToOpenGov?.postMessage({
-      task: 'openGov:referenda:receive',
-      data: { json: JSON.stringify(allReferenda) },
-    });
+      // Serialize data before sending to open gov window.
+      ConfigRenderer.portToOpenGov?.postMessage({
+        task: 'openGov:referenda:receive',
+        data: { json: JSON.stringify(allReferenda) },
+      });
+    } catch (e) {
+      console.error(e);
+      ConfigRenderer.portToOpenGov?.postMessage({
+        task: 'openGov:referenda:receive',
+        data: { json: null },
+      });
+    }
   };
 
   /**
@@ -476,81 +458,92 @@ export const useMainMessagePorts = () => {
    * @summary Use API to get treasury data for OpenGov window.
    */
   const handleInitTreasury = async (ev: MessageEvent) => {
-    const { chainId } = ev.data.data;
-    const { api } = await getApiInstanceOrThrow(chainId, 'Error');
+    try {
+      const { chainId } = ev.data.data;
+      const { api } = await APIsController.getConnectedApiOrThrow(chainId);
 
-    // Get raw treasury public key.
-    const EMPTY_U8A_32 = new Uint8Array(32);
-    const publicKey = u8aConcat(
-      'modl',
-      api.consts.treasury.palletId
-        ? api.consts.treasury.palletId.toU8a(true)
-        : 'py/trsry',
-      EMPTY_U8A_32
-    ).subarray(0, 32);
+      // Get raw treasury public key.
+      const EMPTY_U8A_32 = new Uint8Array(32);
+      const publicKey = u8aConcat(
+        'modl',
+        api.consts.treasury.palletId
+          ? api.consts.treasury.palletId.toU8a(true)
+          : 'py/trsry',
+        EMPTY_U8A_32
+      ).subarray(0, 32);
 
-    // Get free balance.
-    const prefix: number = chainId === 'Polkadot' ? 0 : 2; // Kusama prefix 2
-    const encoded = encodeAddress(publicKey, prefix);
-    const result: AnyData = (await api.query.system.account(encoded)).toHuman();
-    const { free } = result.data;
-    const freeBalance: string = planckToUnit(
-      new BigNumber(rmCommas(String(free))),
-      chainUnits(chainId)
-    ).toString();
+      // Get free balance.
+      const prefix: number = chainId === 'Polkadot' ? 0 : 2; // Kusama prefix 2
+      const encoded = encodeAddress(publicKey, prefix);
+      const result: AnyData = (
+        await api.query.system.account(encoded)
+      ).toHuman();
+      const { free } = result.data;
+      const freeBalance: string = planckToUnit(
+        new BigNumber(rmCommas(String(free))),
+        chainUnits(chainId)
+      ).toString();
 
-    // Get next burn.
-    const burn = api.consts.treasury.burn;
-    const toBurn = new BigNumber(burn.toString())
-      .dividedBy(Math.pow(10, 6))
-      .multipliedBy(new BigNumber(rmCommas(String(free))));
-    const nextBurn = planckToUnit(toBurn, chainUnits(chainId)).toString();
+      // Get next burn.
+      const burn = api.consts.treasury.burn;
+      const toBurn = new BigNumber(burn.toString())
+        .dividedBy(Math.pow(10, 6))
+        .multipliedBy(new BigNumber(rmCommas(String(free))));
+      const nextBurn = planckToUnit(toBurn, chainUnits(chainId)).toString();
 
-    // Get to be awarded.
-    const [approvals, proposals] = await Promise.all([
-      api.query.treasury.approvals(),
-      api.query.treasury.proposals.entries(),
-    ]);
+      // Get to be awarded.
+      const [approvals, proposals] = await Promise.all([
+        api.query.treasury.approvals(),
+        api.query.treasury.proposals.entries(),
+      ]);
 
-    let toBeAwarded = new BigNumber(0);
-    const toBeAwardedProposalIds = approvals.toHuman() as string[];
+      let toBeAwarded = new BigNumber(0);
+      const toBeAwardedProposalIds = approvals.toHuman() as string[];
 
-    for (const [rawProposalId, rawProposalData] of proposals) {
-      const proposalId: string = (rawProposalId.toHuman() as [string])[0];
-      if (toBeAwardedProposalIds.includes(proposalId)) {
-        const proposal: AnyData = rawProposalData.toHuman();
-        toBeAwarded = toBeAwarded.plus(
-          new BigNumber(rmCommas(String(proposal.value)))
-        );
+      for (const [rawProposalId, rawProposalData] of proposals) {
+        const proposalId: string = (rawProposalId.toHuman() as [string])[0];
+        if (toBeAwardedProposalIds.includes(proposalId)) {
+          const proposal: AnyData = rawProposalData.toHuman();
+          toBeAwarded = toBeAwarded.plus(
+            new BigNumber(rmCommas(String(proposal.value)))
+          );
+        }
       }
+
+      const toBeAwardedAsStr = planckToUnit(
+        toBeAwarded,
+        chainUnits(chainId)
+      ).toString();
+
+      // Spend period + elapsed spend period.
+      const lastHeader = await api.rpc.chain.getHeader();
+      const blockHeight = lastHeader.number.toNumber();
+
+      const spendPeriodAsStr = String(
+        api.consts.treasury.spendPeriod.toHuman()
+      );
+      const spendPeriodBn = new BigNumber(rmCommas(String(spendPeriodAsStr)));
+      const spendPeriodElapsedBlocksAsStr = new BigNumber(blockHeight)
+        .mod(spendPeriodBn)
+        .toString();
+
+      ConfigRenderer.portToOpenGov?.postMessage({
+        task: 'openGov:treasury:set',
+        data: {
+          publicKey,
+          freeBalance,
+          nextBurn,
+          toBeAwardedAsStr,
+          spendPeriodAsStr,
+          spendPeriodElapsedBlocksAsStr,
+        },
+      });
+    } catch (e) {
+      ConfigRenderer.portToOpenGov?.postMessage({
+        task: 'openGov:treasury:set',
+        data: null,
+      });
     }
-
-    const toBeAwardedAsStr = planckToUnit(
-      toBeAwarded,
-      chainUnits(chainId)
-    ).toString();
-
-    // Spend period + elapsed spend period.
-    const lastHeader = await api.rpc.chain.getHeader();
-    const blockHeight = lastHeader.number.toNumber();
-
-    const spendPeriodAsStr = String(api.consts.treasury.spendPeriod.toHuman());
-    const spendPeriodBn = new BigNumber(rmCommas(String(spendPeriodAsStr)));
-    const spendPeriodElapsedBlocksAsStr = new BigNumber(blockHeight)
-      .mod(spendPeriodBn)
-      .toString();
-
-    ConfigRenderer.portToOpenGov?.postMessage({
-      task: 'openGov:treasury:set',
-      data: {
-        publicKey,
-        freeBalance,
-        nextBurn,
-        toBeAwardedAsStr,
-        spendPeriodAsStr,
-        spendPeriodElapsedBlocksAsStr,
-      },
-    });
   };
 
   /**

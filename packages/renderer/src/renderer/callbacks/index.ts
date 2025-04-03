@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { AccountsController } from '@ren/controller/AccountsController';
+import { APIsController } from '@ren/controller/APIsController';
 import BigNumber from 'bignumber.js';
 import { checkAccountWithProperties } from '@ren/utils/AccountUtils';
 import { Config as RendererConfig } from '@ren/config/processes/renderer';
@@ -15,9 +16,9 @@ import {
 import { NotificationsController } from '@ren/controller/NotificationsController';
 import { u8aToString, u8aUnwrapBytes } from '@polkadot/util';
 import { rmCommas } from '@w3ux/utils';
-import * as ApiUtils from '@ren/utils/ApiUtils';
 import type { ApiCallEntry } from '@polkadot-live/types/subscriptions';
 import type { AnyData } from '@polkadot-live/types/misc';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { EventCallback } from '@polkadot-live/types/reporter';
 import type { QueryMultiWrapper } from '@ren/model/QueryMultiWrapper';
 
@@ -118,7 +119,7 @@ export class Callbacks {
     data: AnyData,
     entry: ApiCallEntry,
     isOneShot = false
-  ) {
+  ): Promise<boolean> {
     try {
       // Get account.
       const account = AccountsController.get(
@@ -127,7 +128,7 @@ export class Callbacks {
       );
 
       if (!account || !account.balance) {
-        return;
+        return false;
       }
 
       // Get the received balance.
@@ -140,7 +141,7 @@ export class Callbacks {
 
       // Exit early if nothing has changed.
       if (!isOneShot && isSame) {
-        return;
+        return true;
       }
 
       // Update account data if balance has changed.
@@ -165,9 +166,11 @@ export class Callbacks {
         action: 'events:persist',
         data: { event: parsed, notification, isOneShot },
       });
+
+      return true;
     } catch (err) {
       console.error(err);
-      return;
+      return false;
     }
   }
 
@@ -179,7 +182,7 @@ export class Callbacks {
     data: AnyData,
     entry: ApiCallEntry,
     isOneShot = false
-  ) {
+  ): Promise<boolean> {
     try {
       // Get account.
       const account = AccountsController.get(
@@ -188,7 +191,7 @@ export class Callbacks {
       );
 
       if (!account || !account.balance) {
-        return;
+        return false;
       }
 
       // Get the received frozen balance.
@@ -201,7 +204,7 @@ export class Callbacks {
 
       // Exit early if nothing has changed.
       if (!isOneShot && isSame) {
-        return;
+        return true;
       }
 
       // Update account data if balance has changed.
@@ -226,9 +229,11 @@ export class Callbacks {
         action: 'events:persist',
         data: { event: parsed, notification, isOneShot },
       });
+
+      return true;
     } catch (err) {
       console.error(err);
-      return;
+      return false;
     }
   }
 
@@ -240,7 +245,7 @@ export class Callbacks {
     data: AnyData,
     entry: ApiCallEntry,
     isOneShot = false
-  ) {
+  ): Promise<boolean> {
     try {
       // Get account.
       const account = AccountsController.get(
@@ -249,7 +254,7 @@ export class Callbacks {
       );
 
       if (!account || !account.balance) {
-        return;
+        return false;
       }
 
       // Get the received reserved balance.
@@ -262,7 +267,7 @@ export class Callbacks {
 
       // Exit early if nothing has changed.
       if (!isOneShot && isSame) {
-        return;
+        return true;
       }
 
       // Update account data if balance has changed.
@@ -287,9 +292,11 @@ export class Callbacks {
         action: 'events:persist',
         data: { event: parsed, notification, isOneShot },
       });
+
+      return true;
     } catch (err) {
       console.error(err);
-      return;
+      return false;
     }
   }
   /**
@@ -300,7 +307,7 @@ export class Callbacks {
     data: AnyData,
     entry: ApiCallEntry,
     isOneShot = false
-  ) {
+  ): Promise<boolean> {
     try {
       // Get account.
       const account = AccountsController.get(
@@ -309,15 +316,11 @@ export class Callbacks {
       );
 
       if (!account || !account.balance) {
-        return;
+        return false;
       }
 
       // Get API instance.
-      const origin = 'callback_account_balance_spendable';
-      const { api } = await ApiUtils.getApiInstanceOrThrow(
-        account.chain,
-        origin
-      );
+      const { api } = await this.getApiOrThrow(account.chain);
 
       /*
         Spendable balance equation:
@@ -361,7 +364,7 @@ export class Callbacks {
 
       // Exit early if nothing has changed.
       if (!isOneShot && isSame) {
-        return;
+        return true;
       }
 
       // Update account nonce if balance has changed.
@@ -385,9 +388,11 @@ export class Callbacks {
         action: 'events:persist',
         data: { event: parsed, notification, isOneShot },
       });
+
+      return true;
     } catch (err) {
       console.error(err);
-      return;
+      return false;
     }
   }
 
@@ -406,12 +411,10 @@ export class Callbacks {
   static async callback_nomination_pool_rewards(
     entry: ApiCallEntry,
     isOneShot = false
-  ) {
+  ): Promise<boolean> {
     try {
       const account = checkAccountWithProperties(entry, ['nominationPoolData']);
-      const chainId = account.chain;
-      const origin = 'callback_nomination_pool_rewards';
-      const { api } = await ApiUtils.getApiInstanceOrThrow(chainId, origin);
+      const { api } = await this.getApiOrThrow(account.chain);
 
       // Fetch pending rewards for the account.
       const pendingRewardsPlanck: BigNumber =
@@ -425,7 +428,7 @@ export class Callbacks {
         (!isOneShot && isSame) ||
         (!isOneShot && pendingRewardsPlanck.eq(0))
       ) {
-        return;
+        return true;
       }
 
       // Update account and entry data.
@@ -433,7 +436,7 @@ export class Callbacks {
         account.nominationPoolData!.poolPendingRewards = new BigNumber(
           pendingRewardsPlanck
         );
-        await AccountsController.set(chainId, account);
+        await AccountsController.set(account.chain, account);
         entry.task.account = account.flatten();
       }
 
@@ -453,8 +456,11 @@ export class Callbacks {
         action: 'events:persist',
         data: { event, notification, isOneShot },
       });
+
+      return true;
     } catch (err) {
       console.error(err);
+      return false;
     }
   }
 
@@ -468,7 +474,7 @@ export class Callbacks {
     data: AnyData,
     entry: ApiCallEntry,
     isOneShot = false
-  ) {
+  ): Promise<boolean> {
     try {
       const account = checkAccountWithProperties(entry, ['nominationPoolData']);
 
@@ -478,7 +484,7 @@ export class Callbacks {
       const isSame = prevState === receivedPoolState;
 
       if (!isOneShot && isSame) {
-        return;
+        return true;
       }
 
       // Update account and entry data.
@@ -504,9 +510,11 @@ export class Callbacks {
           isOneShot,
         },
       });
+
+      return true;
     } catch (err) {
       console.error(err);
-      return;
+      return false;
     }
   }
 
@@ -520,7 +528,7 @@ export class Callbacks {
     data: AnyData,
     entry: ApiCallEntry,
     isOneShot = false
-  ) {
+  ): Promise<boolean> {
     try {
       const account = checkAccountWithProperties(entry, ['nominationPoolData']);
 
@@ -530,7 +538,7 @@ export class Callbacks {
       const isSame = prevName === receivedPoolName || receivedPoolName === '';
 
       if (!isOneShot && isSame) {
-        return;
+        return true;
       }
 
       // Update account and entry data.
@@ -556,9 +564,11 @@ export class Callbacks {
           isOneShot,
         },
       });
+
+      return true;
     } catch (err) {
       console.error(err);
-      return;
+      return false;
     }
   }
 
@@ -572,7 +582,7 @@ export class Callbacks {
     data: AnyData,
     entry: ApiCallEntry,
     isOneShot = false
-  ) {
+  ): Promise<boolean> {
     try {
       const account = checkAccountWithProperties(entry, ['nominationPoolData']);
 
@@ -596,7 +606,7 @@ export class Callbacks {
         poolRoles.bouncer === bouncer;
 
       if (!isOneShot && isSame) {
-        return;
+        return true;
       }
 
       // Update account and entry data.
@@ -628,9 +638,11 @@ export class Callbacks {
           isOneShot,
         },
       });
+
+      return true;
     } catch (err) {
       console.error(err);
-      return;
+      return false;
     }
   }
 
@@ -644,7 +656,7 @@ export class Callbacks {
     data: AnyData,
     entry: ApiCallEntry,
     isOneShot = false
-  ) {
+  ): Promise<boolean> {
     try {
       const account = checkAccountWithProperties(entry, ['nominationPoolData']);
 
@@ -664,7 +676,7 @@ export class Callbacks {
         poolCommission.max === (max as string | null);
 
       if (!isOneShot && isSame) {
-        return;
+        return true;
       }
 
       // Update account and entry data.
@@ -696,9 +708,11 @@ export class Callbacks {
           isOneShot,
         },
       });
+
+      return true;
     } catch (err) {
       console.error(err);
-      return;
+      return false;
     }
   }
 
@@ -710,15 +724,11 @@ export class Callbacks {
     data: AnyData,
     entry: ApiCallEntry,
     isOneShot = false
-  ) {
+  ): Promise<boolean> {
     try {
       // Check if account has nominating rewards from the previous era.
       const account = checkAccountWithProperties(entry, ['nominatingData']);
-      const origin = 'callback_nomination_pending_payouts';
-      const { api } = await ApiUtils.getApiInstanceOrThrow(
-        account.chain,
-        origin
-      );
+      const { api } = await this.getApiOrThrow(account.chain);
 
       // Fetch previous era.
       const eraResult: AnyData = (
@@ -755,9 +765,11 @@ export class Callbacks {
           isOneShot,
         },
       });
+
+      return true;
     } catch (err) {
       console.error(err);
-      return;
+      return false;
     }
   }
 
@@ -778,7 +790,7 @@ export class Callbacks {
     data: AnyData,
     entry: ApiCallEntry,
     isOneShot = false
-  ) {
+  ): Promise<boolean> {
     try {
       // eslint-disable-next-line prettier/prettier
       const era: number = parseInt(
@@ -789,15 +801,11 @@ export class Callbacks {
 
       // Exit early if this era exposure is already known for this account.
       if (!isOneShot && alreadyKnown) {
-        return;
+        return true;
       }
 
       // Otherwise get exposure.
-      const origin = 'callback_nominating_exposure';
-      const { api } = await ApiUtils.getApiInstanceOrThrow(
-        account.chain,
-        origin
-      );
+      const { api } = await this.getApiOrThrow(account.chain);
       const exposed = await getAccountExposed_deprecated(api, era, account);
 
       // Update account data.
@@ -825,9 +833,11 @@ export class Callbacks {
           isOneShot,
         },
       });
+
+      return true;
     } catch (err) {
       console.error(err);
-      return;
+      return false;
     }
   }
 
@@ -839,7 +849,7 @@ export class Callbacks {
     data: AnyData,
     entry: ApiCallEntry,
     isOneShot = false
-  ) {
+  ): Promise<boolean> {
     try {
       // eslint-disable-next-line prettier/prettier
       const era: number = parseInt(
@@ -850,16 +860,11 @@ export class Callbacks {
 
       // Exit early if this era exposure is already known for this account.
       if (!isOneShot && alreadyKnown) {
-        return;
+        return true;
       }
 
-      const origin = 'callback_nominating_exposure_westend';
-      const { api } = await ApiUtils.getApiInstanceOrThrow(
-        account.chain,
-        origin
-      );
-
       // Cache previous exposure.
+      const { api } = await this.getApiOrThrow(account.chain);
       const { exposed: prevExposed } = account.nominatingData!;
 
       // Update account nominating data.
@@ -874,7 +879,7 @@ export class Callbacks {
       // Return if exposure has not changed.
       const exposed = maybeNominatingData ? maybeNominatingData.exposed : false;
       if (!isOneShot && prevExposed === exposed) {
-        return;
+        return true;
       }
 
       // Get notification.
@@ -894,9 +899,11 @@ export class Callbacks {
           isOneShot,
         },
       });
+
+      return true;
     } catch (err) {
       console.error(err);
-      return;
+      return false;
     }
   }
 
@@ -911,7 +918,7 @@ export class Callbacks {
     data: AnyData,
     entry: ApiCallEntry,
     isOneShot = false
-  ) {
+  ): Promise<boolean> {
     try {
       // eslint-disable-next-line prettier/prettier
       const era: number = parseInt(
@@ -922,15 +929,11 @@ export class Callbacks {
 
       // Exit early if nominator data for this era is already known for this account.
       if (!isOneShot && alreadyKnown) {
-        return;
+        return true;
       }
 
       // Get live nominator data and check to see if it has changed.
-      const origin = 'callback_nominating_commission';
-      const { api } = await ApiUtils.getApiInstanceOrThrow(
-        account.chain,
-        origin
-      );
+      const { api } = await this.getApiOrThrow(account.chain);
 
       // Cache previous commissions.
       const prev = account.nominatingData!.validators.map((v) => v.commission);
@@ -953,7 +956,7 @@ export class Callbacks {
         if (!areEqual) {
           hasChanged = true;
         } else if (!isOneShot && areEqual) {
-          return;
+          return true;
         }
       } else {
         // Commission changes if account no longer nominating.
@@ -976,9 +979,11 @@ export class Callbacks {
           isOneShot,
         },
       });
+
+      return true;
     } catch (err) {
       console.error(err);
-      return;
+      return false;
     }
   }
 
@@ -993,7 +998,7 @@ export class Callbacks {
     data: AnyData,
     entry: ApiCallEntry,
     isOneShot = false
-  ) {
+  ): Promise<boolean> {
     try {
       // eslint-disable-next-line prettier/prettier
       const era: number = parseInt(
@@ -1004,15 +1009,11 @@ export class Callbacks {
 
       // Exit early if nominator data for this era is already known for this account.
       if (!isOneShot && alreadyKnown) {
-        return;
+        return true;
       }
 
       // Get live nominator data and check to see if it has changed.
-      const origin = 'callback_nominating_nominations';
-      const { api } = await ApiUtils.getApiInstanceOrThrow(
-        account.chain,
-        origin
-      );
+      const { api } = await this.getApiOrThrow(account.chain);
 
       // Cache previous nominations.
       const prev = account.nominatingData!.validators.map((v) => v.validatorId);
@@ -1035,7 +1036,7 @@ export class Callbacks {
         if (!areEqual) {
           hasChanged = true;
         } else if (!isOneShot && areEqual) {
-          return;
+          return true;
         }
       } else {
         // Nominations have changed if account no longer nominating.
@@ -1058,11 +1059,20 @@ export class Callbacks {
           isOneShot,
         },
       });
+
+      return true;
     } catch (err) {
       console.error(err);
-      return;
+      return false;
     }
   }
+
+  /**
+   * @name getApiOrThrow
+   * @summary Get an API instance of throw.
+   */
+  private static getApiOrThrow = async (chainId: ChainID) =>
+    await APIsController.getConnectedApiOrThrow(chainId);
 
   /**
    * @name showNotificationFlag

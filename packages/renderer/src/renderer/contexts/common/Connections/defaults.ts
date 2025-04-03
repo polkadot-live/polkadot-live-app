@@ -7,6 +7,7 @@ import type { ConnectionsContextInterface } from './types';
 export const defaultConnectionsContext: ConnectionsContextInterface = {
   isConnected: false,
   isImporting: false,
+  isImportingAccount: false,
   isOnlineMode: false,
   darkMode: true,
   isBuildingExtrinsic: false,
@@ -18,10 +19,5 @@ export const defaultConnectionsContext: ConnectionsContextInterface = {
     wcAccountApproved: false,
     wcVerifyingAccount: false,
   },
-  setIsConnected: (b) => {},
-  setIsImporting: (b) => {},
-  setIsOnlineMode: (b) => {},
-  setDarkMode: (b) => {},
   getOnlineMode: () => true,
-  setIsBuildingExtrinsic: (b) => {},
 };

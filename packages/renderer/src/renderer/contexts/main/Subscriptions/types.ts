@@ -13,9 +13,8 @@ import type {
 export interface SubscriptionsContextInterface {
   chainSubscriptions: Map<ChainID, SubscriptionTask[]>;
   accountSubscriptions: Map<string, SubscriptionTask[]>;
-  setChainSubscriptions: (a: Map<ChainID, SubscriptionTask[]>) => void;
+  chainHasSubscriptions: (chainId: ChainID) => boolean;
   getChainSubscriptions: (a: ChainID) => SubscriptionTask[];
-  setAccountSubscriptions: (a: Map<string, SubscriptionTask[]>) => void;
   getAccountSubscriptions: (a: string) => SubscriptionTask[];
   updateTask: (type: string, task: SubscriptionTask, address?: string) => void;
   updateAccountNameInTasks: (address: string, newName: string) => void;
