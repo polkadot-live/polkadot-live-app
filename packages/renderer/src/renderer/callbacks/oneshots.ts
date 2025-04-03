@@ -3,11 +3,11 @@
 
 import { APIsController } from '@ren/controller/APIsController';
 import { Callbacks } from '.';
-import type { Api } from '@ren/model/Api';
 import type {
   ApiCallEntry,
   SubscriptionTask,
 } from '@polkadot-live/types/subscriptions';
+import type { ApiPromise } from '@polkadot/api';
 
 export const executeOneShot = async (
   task: SubscriptionTask
@@ -23,43 +23,44 @@ export const executeOneShot = async (
   if (!instance) {
     return false;
   }
+  const { api } = instance;
 
   switch (task.action) {
     case 'subscribe:account:balance:free': {
-      return await oneShot_account_balance_free(task, instance);
+      return await oneShot_account_balance_free(task, api);
     }
     case 'subscribe:account:balance:frozen': {
-      return await oneShot_account_balance_frozen(task, instance);
+      return await oneShot_account_balance_frozen(task, api);
     }
     case 'subscribe:account:balance:reserved': {
-      return await oneShot_account_balance_reserved(task, instance);
+      return await oneShot_account_balance_reserved(task, api);
     }
     case 'subscribe:account:balance:spendable': {
-      return await oneShot_account_balance_spendable(task, instance);
+      return await oneShot_account_balance_spendable(task, api);
     }
     case 'subscribe:account:nominationPools:state': {
-      return await oneShot_nomination_pool_state(task, instance);
+      return await oneShot_nomination_pool_state(task, api);
     }
     case 'subscribe:account:nominationPools:renamed': {
-      return await oneShot_nomination_pool_renamed(task, instance);
+      return await oneShot_nomination_pool_renamed(task, api);
     }
     case 'subscribe:account:nominationPools:roles': {
-      return await oneShot_nomination_pool_roles(task, instance);
+      return await oneShot_nomination_pool_roles(task, api);
     }
     case 'subscribe:account:nominationPools:commission': {
-      return await oneShot_nomination_pool_commission(task, instance);
+      return await oneShot_nomination_pool_commission(task, api);
     }
     case 'subscribe:account:nominating:pendingPayouts': {
-      return await oneShot_nominating_era_rewards(task, instance);
+      return await oneShot_nominating_era_rewards(task, api);
     }
     case 'subscribe:account:nominating:exposure': {
-      return await oneShot_nominating_exposure(task, instance);
+      return await oneShot_nominating_exposure(task, api);
     }
     case 'subscribe:account:nominating:commission': {
-      return await oneShot_nominating_commission(task, instance);
+      return await oneShot_nominating_commission(task, api);
     }
     case 'subscribe:account:nominating:nominations': {
-      return await oneShot_nominating_nominations(task, instance);
+      return await oneShot_nominating_nominations(task, api);
     }
     default: {
       return false;
@@ -73,9 +74,8 @@ export const executeOneShot = async (
  */
 const oneShot_account_balance_free = async (
   task: SubscriptionTask,
-  instance: Api
+  api: ApiPromise
 ): Promise<boolean> => {
-  const { api } = instance;
   const data = await api.query.system.account(task.account!.address);
   const entry: ApiCallEntry = { curVal: null, task };
   return await Callbacks.callback_account_balance_free(data, entry, true);
@@ -87,9 +87,8 @@ const oneShot_account_balance_free = async (
  */
 const oneShot_account_balance_frozen = async (
   task: SubscriptionTask,
-  instance: Api
+  api: ApiPromise
 ): Promise<boolean> => {
-  const { api } = instance;
   const data = await api.query.system.account(task.account!.address);
   const entry: ApiCallEntry = { curVal: null, task };
   return await Callbacks.callback_account_balance_frozen(data, entry, true);
@@ -101,9 +100,8 @@ const oneShot_account_balance_frozen = async (
  */
 const oneShot_account_balance_reserved = async (
   task: SubscriptionTask,
-  instance: Api
+  api: ApiPromise
 ): Promise<boolean> => {
-  const { api } = instance;
   const data = await api.query.system.account(task.account!.address);
   const entry: ApiCallEntry = { curVal: null, task };
   return await Callbacks.callback_account_balance_reserved(data, entry, true);
@@ -115,9 +113,8 @@ const oneShot_account_balance_reserved = async (
  */
 const oneShot_account_balance_spendable = async (
   task: SubscriptionTask,
-  instance: Api
+  api: ApiPromise
 ): Promise<boolean> => {
-  const { api } = instance;
   const data = await api.query.system.account(task.account!.address);
   const entry: ApiCallEntry = { curVal: null, task };
   return await Callbacks.callback_account_balance_spendable(data, entry, true);
@@ -140,9 +137,8 @@ const oneShot_nomination_pool_rewards = async (
  */
 const oneShot_nomination_pool_state = async (
   task: SubscriptionTask,
-  instance: Api
+  api: ApiPromise
 ): Promise<boolean> => {
-  const { api } = instance;
   const data = await api.query.nominationPools.bondedPools(task.actionArgs!);
   const entry: ApiCallEntry = { curVal: null, task };
   return await Callbacks.callback_nomination_pool_state(data, entry, true);
@@ -154,9 +150,8 @@ const oneShot_nomination_pool_state = async (
  */
 const oneShot_nomination_pool_renamed = async (
   task: SubscriptionTask,
-  instance: Api
+  api: ApiPromise
 ): Promise<boolean> => {
-  const { api } = instance;
   const data = await api.query.nominationPools.metadata(task.actionArgs!);
   const entry: ApiCallEntry = { curVal: null, task };
   return await Callbacks.callback_nomination_pool_renamed(data, entry, true);
@@ -168,9 +163,8 @@ const oneShot_nomination_pool_renamed = async (
  */
 const oneShot_nomination_pool_roles = async (
   task: SubscriptionTask,
-  instance: Api
+  api: ApiPromise
 ): Promise<boolean> => {
-  const { api } = instance;
   const data = await api.query.nominationPools.bondedPools(task.actionArgs!);
   const entry: ApiCallEntry = { curVal: null, task };
   return await Callbacks.callback_nomination_pool_roles(data, entry, true);
@@ -182,9 +176,8 @@ const oneShot_nomination_pool_roles = async (
  */
 const oneShot_nomination_pool_commission = async (
   task: SubscriptionTask,
-  instance: Api
+  api: ApiPromise
 ): Promise<boolean> => {
-  const { api } = instance;
   const data = await api.query.nominationPools.bondedPools(task.actionArgs!);
   const entry: ApiCallEntry = { curVal: null, task };
   return await Callbacks.callback_nomination_pool_commission(data, entry, true);
@@ -196,9 +189,8 @@ const oneShot_nomination_pool_commission = async (
  */
 const oneShot_nominating_era_rewards = async (
   task: SubscriptionTask,
-  instance: Api
+  api: ApiPromise
 ): Promise<boolean> => {
-  const { api } = instance;
   const data = await api.query.staking.activeEra();
   const entry: ApiCallEntry = { curVal: null, task };
   return await Callbacks.callback_nominating_era_rewards(data, entry, true);
@@ -210,9 +202,8 @@ const oneShot_nominating_era_rewards = async (
  */
 const oneShot_nominating_exposure = async (
   task: SubscriptionTask,
-  instance: Api
+  api: ApiPromise
 ): Promise<boolean> => {
-  const { api } = instance;
   const entry: ApiCallEntry = { curVal: null, task };
   const data = await api.query.staking.activeEra();
   return await Callbacks.callback_nominating_exposure(data, entry, true);
@@ -224,9 +215,8 @@ const oneShot_nominating_exposure = async (
  */
 const oneShot_nominating_commission = async (
   task: SubscriptionTask,
-  instance: Api
+  api: ApiPromise
 ): Promise<boolean> => {
-  const { api } = instance;
   const data = await api.query.staking.activeEra();
   const entry: ApiCallEntry = { curVal: null, task };
   return await Callbacks.callback_nominating_commission(data, entry, true);
@@ -238,9 +228,8 @@ const oneShot_nominating_commission = async (
  */
 const oneShot_nominating_nominations = async (
   task: SubscriptionTask,
-  instance: Api
+  api: ApiPromise
 ): Promise<boolean> => {
-  const { api } = instance;
   const data = await api.query.staking.activeEra();
   const entry: ApiCallEntry = { curVal: null, task };
   return await Callbacks.callback_nominating_nominations(data, entry, true);
