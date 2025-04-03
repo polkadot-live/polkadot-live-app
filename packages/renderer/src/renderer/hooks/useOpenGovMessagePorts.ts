@@ -12,9 +12,9 @@ import type { ReferendaInfo } from '@polkadot-live/types/openGov';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 
 export const useOpenGovMessagePorts = () => {
-  const { receiveTracksData } = useTracks();
-  const { receiveReferendaData } = useReferenda();
-  const { setTreasuryData } = useTreasury();
+  const { receiveTracksData, setFetchingTracks } = useTracks();
+  const { receiveReferendaData, setFetchingReferenda } = useReferenda();
+  const { setTreasuryData, setFetchingTreasuryData } = useTreasury();
 
   const {
     addReferendaSubscription,
@@ -38,17 +38,34 @@ export const useOpenGovMessagePorts = () => {
           switch (ev.data.task) {
             case 'openGov:tracks:receive': {
               const { result, chainId } = ev.data.data;
-              receiveTracksData(getTracks(result), chainId);
+
+              if (result !== null) {
+                receiveTracksData(getTracks(result), chainId);
+              } else {
+                // TODO: UI error notification.
+                setFetchingTracks(false);
+              }
               break;
             }
             case 'openGov:referenda:receive': {
               const { json } = ev.data.data;
-              const parsed: ReferendaInfo[] = JSON.parse(json);
-              await receiveReferendaData(parsed);
+
+              if (json !== null) {
+                const parsed: ReferendaInfo[] = JSON.parse(json);
+                await receiveReferendaData(parsed);
+              } else {
+                // TODO: UI error notification.
+                setFetchingReferenda(false);
+              }
               break;
             }
             case 'openGov:treasury:set': {
-              setTreasuryData(ev.data.data);
+              if (ev.data.data !== null) {
+                setTreasuryData(ev.data.data);
+              } else {
+                // TODO: UI error notification.
+                setFetchingTreasuryData(false);
+              }
               break;
             }
             case 'openGov:task:add': {

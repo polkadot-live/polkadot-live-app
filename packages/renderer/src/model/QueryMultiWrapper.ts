@@ -192,31 +192,36 @@ export class QueryMultiWrapper {
    * @param {ChainID} chainId - The target chain to subscribe to.
    */
   async build(chainId: ChainID) {
-    if (!this.subscriptions.get(chainId)) {
-      console.log('🟠 queryMulti map is empty.');
-      return;
-    }
-
-    // Construct the argument for new queryMulti call.
-    const finalArg: AnyData = await this.buildQueryMultiArg(chainId);
-    const instance = await APIsController.getConnectedApiOrThrow(chainId);
-
-    // Call queryMulti api.
-    const unsub = await instance.api.queryMulti(
-      finalArg,
-      // The queryMulti callback.
-      async (data: AnyData) => {
-        // Work out task to handle
-        const { callEntries } = this.subscriptions.get(chainId)!;
-
-        for (const entry of callEntries) {
-          await this.handleCallback(entry, data);
-        }
+    try {
+      if (!this.subscriptions.get(chainId)) {
+        console.log('🟠 queryMulti map is empty.');
+        return;
       }
-    );
 
-    // Replace the entry's unsub function
-    this.replaceUnsub(chainId, unsub);
+      // Construct the argument for new queryMulti call.
+      const finalArg: AnyData = await this.buildQueryMultiArg(chainId);
+      const instance = await APIsController.getConnectedApiOrThrow(chainId);
+
+      // Call queryMulti api.
+      const unsub = await instance.api.queryMulti(
+        finalArg,
+        // The queryMulti callback.
+        async (data: AnyData) => {
+          // Work out task to handle
+          const { callEntries } = this.subscriptions.get(chainId)!;
+
+          for (const entry of callEntries) {
+            await this.handleCallback(entry, data);
+          }
+        }
+      );
+
+      // Replace the entry's unsub function
+      this.replaceUnsub(chainId, unsub);
+    } catch (e) {
+      console.error(e);
+      // TODO: UI notification
+    }
   }
 
   /**
