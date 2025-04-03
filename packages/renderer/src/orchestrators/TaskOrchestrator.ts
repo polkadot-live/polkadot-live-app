@@ -101,6 +101,7 @@ export class TaskOrchestrator {
 
         // Rebuild query.
         this.handleTask(task, wrapper);
+        break;
       }
     }
   }
