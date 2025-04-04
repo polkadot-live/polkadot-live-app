@@ -3,7 +3,7 @@
 
 import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/ui/styles';
-import { LinksFooter } from '@app/Utils';
+import { LinksFooter } from '@ren/utils/RenderingUtils';
 import { Config as ConfigOpenGov } from '@ren/config/processes/openGov';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useTracks } from '@app/contexts/openGov/Tracks';

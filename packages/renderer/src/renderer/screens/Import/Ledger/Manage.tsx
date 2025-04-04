@@ -19,9 +19,11 @@ import { getSortedLocalLedgerAddresses } from '@ren/utils/ImportUtils';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useState } from 'react';
 import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
-import { getAddressChainId } from '@ren/renderer/Utils';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { getInitialChainAccordionValue } from '@ren/utils/AccountUtils';
+import {
+  getAddressChainId,
+  getInitialChainAccordionValue,
+} from '@ren/utils/AccountUtils';
 import type { ImportLedgerManageProps } from '../types';
 import type { ChainID } from '@polkadot-live/types/chains';
 

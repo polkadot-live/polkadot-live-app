@@ -5,11 +5,11 @@ import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/ui/styles';
 import * as themeVariables from '../../../theme/variables';
 
-import { TooltipWrapper } from '@app/Utils';
 import {
   faArrowsRotate,
   faTriangleExclamation,
 } from '@fortawesome/free-solid-svg-icons';
+import { TooltipWrapper } from '@ren/utils/RenderingUtils';
 import { TreasuryStats } from '../Wrappers';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useHelp } from '@app/contexts/common/Help';

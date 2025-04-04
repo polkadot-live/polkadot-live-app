@@ -19,9 +19,11 @@ import { useState } from 'react';
 import { faCaretLeft, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
 import { Address } from './Address';
-import { getAddressChainId } from '@ren/renderer/Utils';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { getInitialChainAccordionValue } from '@ren/utils/AccountUtils';
+import {
+  getAddressChainId,
+  getInitialChainAccordionValue,
+} from '@ren/utils/AccountUtils';
 import type { ChainID } from '@polkadot-live/types/chains';
 
 interface ImportWcManageProps {

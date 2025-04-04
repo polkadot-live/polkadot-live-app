@@ -22,9 +22,11 @@ import { getSortedLocalAddresses } from '@ren/utils/ImportUtils';
 import { useState } from 'react';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
-import { getAddressChainId } from '@ren/renderer/Utils';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { getInitialChainAccordionValue } from '@ren/utils/AccountUtils';
+import {
+  getAddressChainId,
+  getInitialChainAccordionValue,
+} from '@ren/utils/AccountUtils';
 import type { ManageVaultProps } from '../types';
 import type { ChainID } from '@polkadot-live/types/chains';
 

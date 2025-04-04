@@ -14,6 +14,7 @@ import {
   fetchBalanceForAccount,
   fetchNominatingDataForAccount,
   fetchNominationPoolDataForAccount,
+  getAddressChainId,
 } from '@ren/utils/AccountUtils';
 import { disconnectAPIs } from '@ren/utils/ApiUtils';
 import { isObject, u8aConcat } from '@polkadot/util';
@@ -21,7 +22,6 @@ import { planckToUnit, rmCommas } from '@w3ux/utils';
 import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
 import { IntervalsController } from '@ren/controller/IntervalsController';
 import { TaskOrchestrator } from '@ren/orchestrators/TaskOrchestrator';
-import { getAddressChainId } from '../Utils';
 
 /// Main window contexts.
 import { useAddresses } from '@app/contexts/main/Addresses';

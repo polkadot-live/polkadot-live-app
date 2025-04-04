@@ -8,7 +8,7 @@ import type {
   LedgerLocalAddress,
   LocalAddress,
 } from '@polkadot-live/types/accounts';
-import { getAddressChainId } from '../renderer/Utils';
+import { getAddressChainId } from '@ren/utils/AccountUtils';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IpcTask } from '@polkadot-live/types/communication';

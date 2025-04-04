@@ -8,7 +8,7 @@ import { defaultDataBackupContext } from './default';
 import { AccountsController } from '@ren/controller/AccountsController';
 import { IntervalsController } from '@ren/controller/IntervalsController';
 import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
-import { getAddressChainId } from '@app/Utils';
+import { getAddressChainId } from '@ren/utils/AccountUtils';
 import {
   getFromBackupFile,
   postToExtrinsics,

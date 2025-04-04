@@ -22,8 +22,10 @@ import { useImportHandler } from '@app/contexts/import/ImportHandler';
 
 /// Util imports.
 import { getSortedLocalAddresses } from '@ren/utils/ImportUtils';
-import { getAddressChainId } from '@ren/renderer/Utils';
-import { getInitialChainAccordionValue } from '@ren/utils/AccountUtils';
+import {
+  getAddressChainId,
+  getInitialChainAccordionValue,
+} from '@ren/utils/AccountUtils';
 
 /// Type imports.
 import type { FormEvent } from 'react';

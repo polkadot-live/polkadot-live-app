@@ -16,7 +16,7 @@ import { useAddresses } from '@app/contexts/import/Addresses';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { chainIcon } from '@ren/config/chains';
-import { getAddressChainId } from '@app/Utils';
+import { getAddressChainId } from '@ren/utils/AccountUtils';
 import type { AddressProps } from '../Addresses/types';
 
 export const Address = ({ localAddress, setSection }: AddressProps) => {

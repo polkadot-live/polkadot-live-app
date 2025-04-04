@@ -18,7 +18,7 @@ import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptio
 import { useState } from 'react';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { FooterWrapper, NetworkItem } from './Wrapper';
-import { getIcon } from '@app/Utils';
+import { getIcon } from '@ren/utils/RenderingUtils';
 import { SelectRpc } from './RpcSelect';
 import { FlexRow } from '@polkadot-live/ui/styles';
 import { TooltipRx } from '@polkadot-live/ui/components';
