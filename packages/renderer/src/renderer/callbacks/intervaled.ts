@@ -8,7 +8,7 @@ import { rmCommas } from '@w3ux/utils';
 import { APIsController } from '@ren/controller/APIsController';
 import { EventsController } from '@ren/controller/EventsController';
 import { NotificationsController } from '@ren/controller/NotificationsController';
-import { formatBlocksToTime } from '../utils/timeUtils';
+import { formatBlocksToTime } from '@ren/utils/TimeUtils';
 import {
   getMinApprovalSupport,
   getTracks,

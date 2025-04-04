@@ -3,7 +3,7 @@
 
 import { executeIntervaledOneShot } from '@app/callbacks/intervaled';
 import { intervalDurationsConfig } from '@ren/config/subscriptions/interval';
-import { secondsUntilNextMinute } from '@app/utils/timeUtils';
+import { secondsUntilNextMinute } from '@ren/utils/TimeUtils';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
