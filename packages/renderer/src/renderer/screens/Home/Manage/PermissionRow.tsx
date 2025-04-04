@@ -14,7 +14,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useHelp } from '@app/contexts/common/Help';
-import { showGroupTooltip, toolTipTextFor } from '@app/utils/renderingUtils';
+import { showGroupTooltip, toolTipTextFor } from '@ren/utils/RenderingUtils';
 import type { PermissionRowProps } from './types';
 
 export const PermissionRow = ({
