@@ -8,7 +8,7 @@ import {
   RefStatusBadge,
   TitleWithOrigin,
 } from './Wrappers';
-import { renderOrigin } from '@app/utils/openGovUtils';
+import { renderOrigin } from '@ren/utils/OpenGovUtils';
 import { useConnections } from '@app/contexts/common/Connections';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useReferenda } from '@app/contexts/openGov/Referenda';

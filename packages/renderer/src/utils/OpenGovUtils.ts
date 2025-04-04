@@ -233,30 +233,6 @@ export const getSpacedOrigin = (origin: string) => {
 };
 
 /**
- * @name getOrderedOrigins
- * @summary Get referedum origins in the desired order.
- * @deprecated
- */
-export const getOrderedOrigins = () => [
-  'Root',
-  'WhitelistedCaller',
-  'WishForChange',
-  'StakingAdmin',
-  'Treasurer',
-  'LeaseAdmin',
-  'FellowshipAdmin',
-  'GeneralAdmin',
-  'AuctionAdmin',
-  'ReferendumCanceller',
-  'ReferendumKiller',
-  'SmallTipper',
-  'BigTipper',
-  'SmallSpender',
-  'MediumSpender',
-  'BigSpender',
-];
-
-/**
  * @name getOriginIdFromName
  * @summary Get origin ID via origin.
  */

@@ -14,7 +14,7 @@ import {
   getTracks,
   getOriginIdFromName,
   rmChars,
-} from '../utils/openGovUtils';
+} from '@ren/utils/OpenGovUtils';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { OneShotReturn, RefDeciding } from '@polkadot-live/types/openGov';
 import type { NotificationData } from '@polkadot-live/types/reporter';
