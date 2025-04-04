@@ -9,7 +9,7 @@ import { Identicon } from '@polkadot-live/ui/components';
 import { ItemEntryWrapper, ItemsColumn } from './Wrappers';
 import { ButtonText } from '@polkadot-live/ui/kits/buttons';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { getIcon } from '@app/Utils';
+import { getIcon } from '@ren/utils/RenderingUtils';
 import { NoAccounts, NoOpenGov } from '../NoAccounts';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useManage } from '@app/contexts/main/Manage';

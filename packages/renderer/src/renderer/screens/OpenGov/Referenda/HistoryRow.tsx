@@ -4,7 +4,7 @@
 import * as Wrappers from './Wrappers';
 import type * as OG from '@polkadot-live/types/openGov';
 
-import { renderOrigin } from '@app/utils/openGovUtils';
+import { renderOrigin } from '@ren/utils/OpenGovUtils';
 import { usePolkassembly } from '@app/contexts/openGov/Polkassembly';
 import { useReferenda } from '@app/contexts/openGov/Referenda';
 import { FlexRow } from '@polkadot-live/ui/styles';

@@ -5,8 +5,10 @@ import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { useEffect, useRef, useState } from 'react';
 import { chainUnits } from '@ren/config/chains';
 import { ellipsisFn, unitToPlanck } from '@w3ux/utils';
-import { getAddressChainId } from '../Utils';
-import { getSpendableBalance } from '@ren/utils/AccountUtils';
+import {
+  getAddressChainId,
+  getSpendableBalance,
+} from '@ren/utils/AccountUtils';
 
 import type {
   ActionMeta,

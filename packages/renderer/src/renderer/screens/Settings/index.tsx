@@ -5,7 +5,7 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/ui/styles';
 
-import { LinksFooter } from '@app/Utils';
+import { LinksFooter } from '@ren/utils/RenderingUtils';
 import { Setting } from './Setting';
 import { SettingsList } from '@ren/config/settings';
 import { useEffect, useState } from 'react';

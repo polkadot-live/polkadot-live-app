@@ -21,7 +21,7 @@ import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import { TriggerRightIconWrapper } from './Wrappers';
 import { useConnections } from '@app/contexts/common/Connections';
 import { BarLoader } from 'react-spinners';
-import { LinksFooter } from '@ren/renderer/Utils';
+import { LinksFooter } from '@ren/utils/RenderingUtils';
 import { DialogExtrinsicSummary } from './Dialogs';
 import { useEffect, useState } from 'react';
 import { PaginationRow } from '../OpenGov/Referenda/Wrappers';

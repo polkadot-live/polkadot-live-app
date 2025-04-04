@@ -3,63 +3,15 @@
 
 import { Config as ConfigImport } from '@ren/config/processes/import';
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
-import { Flip, toast } from 'react-toastify';
 import type {
   AccountSource,
   LedgerLocalAddress,
   LocalAddress,
 } from '@polkadot-live/types/accounts';
-import { getAddressChainId } from '../Utils';
+import { getAddressChainId } from '@ren/utils/AccountUtils';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IpcTask } from '@polkadot-live/types/communication';
-
-type ToastType = 'success' | 'error';
-
-/**
- * @name renderToast
- * @summary Utility to render a toastify notification.
- */
-export const renderToast = (
-  text: string,
-  toastType: ToastType,
-  toastId: string
-) => {
-  switch (toastType) {
-    case 'success': {
-      toast.success(text, {
-        position: 'top-center',
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        closeButton: false,
-        pauseOnHover: false,
-        draggable: false,
-        progress: undefined,
-        theme: 'dark',
-        transition: Flip,
-        toastId,
-      });
-      break;
-    }
-    case 'error': {
-      toast.error(text, {
-        position: 'top-center',
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        closeButton: false,
-        pauseOnHover: false,
-        draggable: false,
-        progress: undefined,
-        theme: 'dark',
-        transition: Flip,
-        toastId,
-      });
-      break;
-    }
-  }
-};
 
 /**
  * @name renameAccountInStore

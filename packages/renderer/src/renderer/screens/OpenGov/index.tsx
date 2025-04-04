@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useDebug } from '@app/hooks/useDebug';
 import { useTreasury } from '@app/contexts/openGov/Treasury';
-import { LinksFooter } from '@app/Utils';
+import { LinksFooter } from '@ren/utils/RenderingUtils';
 import { Overview } from './Overview';
 import { Referenda } from './Referenda';
 import { Tracks } from './Tracks';

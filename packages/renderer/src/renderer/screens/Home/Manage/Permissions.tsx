@@ -20,7 +20,7 @@ import { Flip, toast } from 'react-toastify';
 import { PermissionRow } from './PermissionRow';
 import { IntervalsController } from '@ren/controller/IntervalsController';
 import { IntervalRow } from './IntervalRow';
-import { showGroupTooltip, toolTipTextFor } from '@app/utils/renderingUtils';
+import { showGroupTooltip, toolTipTextFor } from '@ren/utils/RenderingUtils';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 

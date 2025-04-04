@@ -7,6 +7,7 @@ import * as Styles from '@polkadot-live/ui/styles';
 
 import { Address } from './Address';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
+import { renderToast } from '@polkadot-live/ui/utils';
 import { checkAddress } from '@polkadot/util-crypto';
 import { ellipsisFn, unescape } from '@w3ux/utils';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
@@ -20,9 +21,11 @@ import { useAddresses } from '@app/contexts/import/Addresses';
 import { useImportHandler } from '@app/contexts/import/ImportHandler';
 
 /// Util imports.
-import { getSortedLocalAddresses, renderToast } from '@app/utils/ImportUtils';
-import { getAddressChainId } from '@ren/renderer/Utils';
-import { getInitialChainAccordionValue } from '@ren/utils/AccountUtils';
+import { getSortedLocalAddresses } from '@ren/utils/ImportUtils';
+import {
+  getAddressChainId,
+  getInitialChainAccordionValue,
+} from '@ren/utils/AccountUtils';
 
 /// Type imports.
 import type { FormEvent } from 'react';
@@ -78,10 +81,10 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
     const trimmed = editName.trim();
 
     if (isAlreadyImported(trimmed)) {
-      renderToast('Address is already imported.', 'error', `toast-${trimmed}`);
+      renderToast('Address is already imported.', `toast-${trimmed}`, 'error');
       return;
     } else if (!validateAddress(trimmed)) {
-      renderToast('Invalid Address.', 'error', `toast-${trimmed}`);
+      renderToast('Invalid Address.', `toast-${trimmed}`, 'error');
       return;
     }
 

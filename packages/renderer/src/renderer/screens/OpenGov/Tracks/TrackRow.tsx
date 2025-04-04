@@ -11,13 +11,13 @@ import {
   faHashtag,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { formatBlocksToTime } from '@app/utils/timeUtils';
+import { formatBlocksToTime } from '@ren/utils/TimeUtils';
 import { useHelp } from '@app/contexts/common/Help';
 import { useTracks } from '@app/contexts/openGov/Tracks';
-import { formatChainUnits } from '@app/utils/renderingUtils';
+import { formatChainUnits } from '@ren/utils/RenderingUtils';
+import { FlexRow } from '@polkadot-live/ui/styles';
 import type { HelpItemKey } from '@polkadot-live/types/help';
 import type { TrackRowProps } from '../types';
-import { FlexRow } from '@polkadot-live/ui/styles';
 
 // Re-use track item component for header alignment.
 export const StickyHeadingsRow = () => {

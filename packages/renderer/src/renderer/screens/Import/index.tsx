@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as UI from '@polkadot-live/ui/components';
-import { LinksFooter } from '@app/Utils';
+import { LinksFooter } from '@ren/utils/RenderingUtils';
 import React, { useEffect, useState } from 'react';
 import { Home } from './Home';
 import { ImportLedger } from './Ledger';

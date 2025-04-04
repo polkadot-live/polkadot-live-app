@@ -6,7 +6,7 @@ import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/ui/styles';
 import * as Tabs from '@radix-ui/react-tabs';
 import * as Wrappers from './Wrappers';
-import { LinksFooter } from '@app/Utils';
+import { LinksFooter } from '@ren/utils/RenderingUtils';
 import { HistoryRow } from './HistoryRow';
 import { DropdownReferendaFilter } from '../Dropdowns';
 

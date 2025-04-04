@@ -8,13 +8,13 @@ import { rmCommas } from '@w3ux/utils';
 import { APIsController } from '@ren/controller/APIsController';
 import { EventsController } from '@ren/controller/EventsController';
 import { NotificationsController } from '@ren/controller/NotificationsController';
-import { formatBlocksToTime } from '../utils/timeUtils';
+import { formatBlocksToTime } from '@ren/utils/TimeUtils';
 import {
   getMinApprovalSupport,
   getTracks,
   getOriginIdFromName,
   rmChars,
-} from '../utils/openGovUtils';
+} from '@ren/utils/OpenGovUtils';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { OneShotReturn, RefDeciding } from '@polkadot-live/types/openGov';
 import type { NotificationData } from '@polkadot-live/types/reporter';

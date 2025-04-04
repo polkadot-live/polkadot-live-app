@@ -3,6 +3,7 @@
 
 import { APIsController } from '@ren/controller/APIsController';
 import { AccountsController } from '@ren/controller/AccountsController';
+import { ChainList } from '@ren/config/chains';
 import BigNumber from 'bignumber.js';
 import {
   BN,
@@ -12,6 +13,7 @@ import {
   u8aToString,
   u8aUnwrapBytes,
 } from '@polkadot/util';
+import { checkAddress } from '@polkadot/util-crypto';
 import { getAccountNominatingData } from '@app/callbacks/nominating';
 import { rmCommas } from '@w3ux/utils';
 import type {
@@ -25,6 +27,46 @@ import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { Account } from '@ren/model/Account';
 import type { ApiPromise } from '@polkadot/api';
+
+/**
+ * @name getAddressChainId
+ * @summary Return an address' chain ID.
+ */
+export const getAddressChainId = (address: string): ChainID => {
+  for (const [chainId, { prefix }] of ChainList.entries()) {
+    const result = checkAddress(address, prefix);
+
+    if (result !== null) {
+      const [isValid] = result;
+
+      if (isValid) {
+        return chainId;
+      }
+    }
+  }
+
+  throw new Error('Imported address not recognized.');
+};
+
+/**
+ * @name checkValidAddress
+ * @summary Verify that an address is encoded to one of the supported networks.
+ */
+export const checkValidAddress = (address: string): boolean => {
+  for (const { prefix } of ChainList.values()) {
+    const result = checkAddress(address, prefix);
+
+    if (result !== null) {
+      const [isValid] = result;
+
+      if (isValid) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+};
 
 /**
  * @name getInitialChainAccordionValue
