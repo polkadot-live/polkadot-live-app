@@ -14,7 +14,7 @@ import {
   ButtonPrimaryInvert,
 } from '@polkadot-live/ui/kits/buttons';
 import { useAddresses } from '@app/contexts/import/Addresses';
-import { getSortedLocalAddresses } from '@app/utils/ImportUtils';
+import { getSortedLocalAddresses } from '@ren/utils/ImportUtils';
 import { useState } from 'react';
 import { faCaretLeft, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';

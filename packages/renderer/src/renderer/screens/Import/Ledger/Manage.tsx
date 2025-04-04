@@ -15,7 +15,7 @@ import {
   ButtonText,
   ButtonPrimaryInvert,
 } from '@polkadot-live/ui/kits/buttons';
-import { getSortedLocalLedgerAddresses } from '@app/utils/ImportUtils';
+import { getSortedLocalLedgerAddresses } from '@ren/utils/ImportUtils';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useState } from 'react';
 import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';

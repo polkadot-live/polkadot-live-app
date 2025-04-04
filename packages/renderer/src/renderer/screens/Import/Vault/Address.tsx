@@ -7,9 +7,9 @@ import { Delete } from '../Addresses/Delete';
 import {
   postRenameAccount,
   renameAccountInStore,
-  renderToast,
-} from '@app/utils/ImportUtils';
+} from '@ren/utils/ImportUtils';
 import { HardwareAddress } from '@polkadot-live/ui/components';
+import { renderToast } from '@polkadot-live/ui/utils';
 import { Remove } from '../Addresses/Remove';
 import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
 import { useAddresses } from '@app/contexts/import/Addresses';
@@ -64,10 +64,10 @@ export const Address = ({ localAddress, setSection }: AddressProps) => {
         )
       }
       onRenameError={(message, toastId) =>
-        renderToast(message, 'error', toastId)
+        renderToast(message, toastId, 'error')
       }
       onRenameSuccess={(message, toastId) =>
-        renderToast(message, 'success', toastId)
+        renderToast(message, toastId, 'success')
       }
       openRemoveHandler={() =>
         openOverlayWith(
