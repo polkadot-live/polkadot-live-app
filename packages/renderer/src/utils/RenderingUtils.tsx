@@ -6,7 +6,6 @@ import PolkadotIcon from '@app/svg/polkadotIcon.svg?react';
 import WestendIcon from '@app/svg/westendIcon.svg?react';
 import KusamaIcon from '@app/svg/kusamaIcon.svg?react';
 
-import BigNumber from 'bignumber.js';
 import { planckToUnit, rmCommas } from '@w3ux/utils';
 import { chainCurrency, chainUnits } from '@ren/config/chains';
 import { useHelp } from '@app/contexts/common/Help';
@@ -149,10 +148,9 @@ export const getShortIntervalLabel = (ticksToWait: number) => {
 export const formatChainUnits = (units: string, chainId: ChainID) => {
   // Include regex to remove trailing zeros after decimal point.
   const formatted: string = planckToUnit(
-    new BigNumber(rmCommas(units)),
+    BigInt(rmCommas(units)),
     chainUnits(chainId)
   )
-    .toFixed(2)
     .replace(/(\.\d*?[1-9])0+|\.0*$/, '$1')
     .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
