@@ -3,7 +3,6 @@
 
 import type { AnyData } from './misc';
 import type { ChainID } from './chains';
-import type BigNumber from 'bignumber.js';
 import type { AccountSource } from './accounts';
 
 export interface PagedExtrinsicItems {
@@ -66,7 +65,7 @@ export interface AddressInfo {
 }
 
 export interface ExtrinsicDynamicInfo {
-  accountNonce: BigNumber;
+  accountNonce: bigint;
   genesisHash: Uint8Array;
   txPayload: Uint8Array;
   txSignature?: `0x${string}`;

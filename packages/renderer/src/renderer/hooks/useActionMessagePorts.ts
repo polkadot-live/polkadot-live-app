@@ -5,7 +5,6 @@ import { Config as ConfigAction } from '@ren/config/processes/action';
 import { useEffect } from 'react';
 import { useTxMeta } from '@app/contexts/action/TxMeta';
 import { useOverlay } from '@polkadot-live/ui/contexts';
-import BigNumber from 'bignumber.js';
 import { renderToast } from '@polkadot-live/ui/utils';
 import type { ActionMeta } from '@polkadot-live/types/tx';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -82,7 +81,7 @@ export const useActionMessagePorts = () => {
     const { accountNonce, genesisHash, txId, txPayload } = ev.data.data;
 
     setTxDynamicInfo(txId, {
-      accountNonce: new BigNumber(accountNonce),
+      accountNonce: BigInt(accountNonce),
       genesisHash,
       txPayload,
     });
