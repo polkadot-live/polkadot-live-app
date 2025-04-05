@@ -4,7 +4,6 @@
 import { APIsController } from '@ren/controller/APIsController';
 import { AccountsController } from '@ren/controller/AccountsController';
 import { ChainList } from '@ren/config/chains';
-import BigNumber from 'bignumber.js';
 import {
   BN,
   bnToU8a,
@@ -118,10 +117,10 @@ export const fetchBalanceForAccount = async (account: Account) => {
   const result: AnyJson = await api.query.system.account(account.address);
 
   account.balance = {
-    nonce: new BigNumber(rmCommas(String(result.nonce))),
-    free: new BigNumber(rmCommas(String(result.data.free))),
-    reserved: new BigNumber(rmCommas(String(result.data.reserved))),
-    frozen: new BigNumber(rmCommas(String(result.data.frozen))),
+    nonce: BigInt(rmCommas(String(result.nonce))),
+    free: BigInt(rmCommas(String(result.data.free))),
+    reserved: BigInt(rmCommas(String(result.data.reserved))),
+    frozen: BigInt(rmCommas(String(result.data.frozen))),
   } as AccountBalance;
 
   await AccountsController.set(account.chain, account);
@@ -139,10 +138,10 @@ export const getBalanceForAccount = async (
   const result: AnyJson = await api.query.system.account(address);
 
   const balance: AccountBalance = {
-    nonce: new BigNumber(rmCommas(String(result.nonce))),
-    free: new BigNumber(rmCommas(String(result.data.free))),
-    reserved: new BigNumber(rmCommas(String(result.data.reserved))),
-    frozen: new BigNumber(rmCommas(String(result.data.frozen))),
+    nonce: BigInt(rmCommas(String(result.nonce))),
+    free: BigInt(rmCommas(String(result.data.free))),
+    reserved: BigInt(rmCommas(String(result.data.reserved))),
+    frozen: BigInt(rmCommas(String(result.data.frozen))),
   };
 
   // Update account data if it is being managed by controller.
@@ -161,11 +160,9 @@ export const getBalanceForAccount = async (
  */
 export const getExistentialDeposit = async (
   chainId: ChainID
-): Promise<BigNumber> => {
+): Promise<bigint> => {
   const { api } = await APIsController.getConnectedApiOrThrow(chainId);
-  return new BigNumber(
-    rmCommas(String(api.consts.balances.existentialDeposit))
-  );
+  return BigInt(rmCommas(String(api.consts.balances.existentialDeposit)));
 };
 
 /**
@@ -175,23 +172,20 @@ export const getExistentialDeposit = async (
 export const getSpendableBalance = async (
   address: string,
   chainId: ChainID
-): Promise<BigNumber> => {
+): Promise<bigint> => {
   const balance = await getBalanceForAccount(address, chainId);
 
   // Spendable balance equation:
   // spendable = free - max(max(frozen, reserved), ed)
-  const free = new BigNumber(rmCommas(String(balance.free)));
-  const frozen = new BigNumber(rmCommas(String(balance.frozen)));
-  const reserved = new BigNumber(rmCommas(String(balance.reserved)));
+  const free = BigInt(rmCommas(String(balance.free)));
+  const frozen = BigInt(rmCommas(String(balance.frozen)));
+  const reserved = BigInt(rmCommas(String(balance.reserved)));
   const ed = await getExistentialDeposit(chainId);
 
-  let spendable = free.minus(
-    BigNumber.max(BigNumber.max(frozen, reserved), ed)
-  );
-
-  const zero = new BigNumber(0);
-  if (spendable.lt(zero)) {
-    spendable = new BigNumber(0);
+  const max = (a: bigint, b: bigint): bigint => (a > b ? a : b);
+  let spendable = free - max(max(frozen, reserved), ed);
+  if (spendable < 0n) {
+    spendable = 0n;
   }
 
   return spendable;
@@ -264,12 +258,12 @@ export const fetchNominationPoolDataForAccount = async (account: Account) => {
 export const getNominationPoolRewards = async (
   address: string,
   chainId: ChainID
-) => {
+): Promise<bigint> => {
   const { api } = await APIsController.getConnectedApiOrThrow(chainId);
   const result: AnyJson =
     await api.call.nominationPoolsApi.pendingRewards(address);
 
-  return new BigNumber(rmCommas(String(result)));
+  return BigInt(rmCommas(String(result)));
 };
 
 /**
@@ -299,9 +293,7 @@ const setNominationPoolDataForAccount = async (account: Account) => {
   // Get pending rewards for the account.
   const pendingRewardsResult: AnyJson =
     await api.call.nominationPoolsApi.pendingRewards(account.address);
-  const poolPendingRewards = new BigNumber(
-    rmCommas(String(pendingRewardsResult))
-  );
+  const poolPendingRewards = BigInt(rmCommas(String(pendingRewardsResult)));
 
   // Get nomination pool data.
   const npResult: AnyData = (
@@ -339,7 +331,7 @@ const setNominationPoolDataForAccount = async (account: Account) => {
  * @param {number} poolId - id of the pool.
  */
 const getPoolAccounts = (poolId: number, api: ApiPromise) => {
-  const createAccount = (pId: BigNumber, index: number): string => {
+  const createAccount = (pId: bigint, index: number): string => {
     const EmptyH256 = new Uint8Array(32);
     const ModPrefix = stringToU8a('modl');
     const U32Opts = { bitLength: 32, isLe: true };
@@ -359,11 +351,11 @@ const getPoolAccounts = (poolId: number, api: ApiPromise) => {
       .toString();
   };
 
-  const poolIdBigNumber = new BigNumber(poolId);
+  const poolIdBigInt = BigInt(poolId);
 
   return {
-    stash: createAccount(poolIdBigNumber, 0),
-    reward: createAccount(poolIdBigNumber, 1),
+    stash: createAccount(poolIdBigInt, 0),
+    reward: createAccount(poolIdBigInt, 1),
   };
 };
 
@@ -371,10 +363,13 @@ const getPoolAccounts = (poolId: number, api: ApiPromise) => {
  * @name getNonceForAddress
  * @summary Get the live nonce for an address.
  */
-export const getAddressNonce = async (address: string, chainId: ChainID) => {
+export const getAddressNonce = async (
+  address: string,
+  chainId: ChainID
+): Promise<bigint> => {
   const instance = await APIsController.getConnectedApiOrThrow(chainId);
   const result: AnyData = await instance.api.query.system.account(address);
-  return new BigNumber(rmCommas(String(result.nonce)));
+  return BigInt(rmCommas(String(result.nonce)));
 };
 
 /**

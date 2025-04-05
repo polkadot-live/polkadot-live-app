@@ -24,10 +24,10 @@ export type FlattenedAccounts = Map<ChainID, FlattenedAccountData[]>;
  * Account's balances.
  */
 export interface AccountBalance {
-  nonce: BigNumber;
-  free: BigNumber;
-  reserved: BigNumber;
-  frozen: BigNumber;
+  nonce: bigint;
+  free: bigint;
+  reserved: bigint;
+  frozen: bigint;
 }
 
 /*
@@ -36,7 +36,7 @@ export interface AccountBalance {
 export interface AccountNominationPoolData {
   poolId: number;
   poolRewardAddress: string;
-  poolPendingRewards: BigNumber;
+  poolPendingRewards: bigint;
   poolState: string;
   poolName: string;
   poolRoles: NominationPoolRoles;

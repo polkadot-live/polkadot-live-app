@@ -71,7 +71,7 @@
     "@vitejs/plugin-react-swc": "^3.6.0",
     "@w3ux/extension-assets": "^1.0.0",
     "@w3ux/react-polkicon": "^2.0.1-alpha.0",
-    "@w3ux/utils": "0.4.0-alpha.0",
+    "@w3ux/utils": "^2.0.7-alpha.2",
     "@walletconnect/modal": "^2.7.0",
     "@walletconnect/universal-provider": "^2.17.3",
     "@walletconnect/utils": "^2.17.3",
