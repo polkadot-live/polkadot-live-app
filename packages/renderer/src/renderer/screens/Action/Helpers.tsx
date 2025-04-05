@@ -1,7 +1,6 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import BigNumber from 'bignumber.js';
 import { chainCurrency, chainUnits } from '@ren/config/chains';
 import { ellipsisFn, planckToUnit } from '@w3ux/utils';
 import {
@@ -43,13 +42,13 @@ export const getExtrinsicTitle = (info: ExtrinsicInfo) => {
     case 'balances_transferKeepAlive': {
       const { chainId, data } = info.actionMeta;
       const { sendAmount }: ExTransferKeepAliveData = data;
-      const bnPlanck = new BigNumber(sendAmount);
-      const bnUnit = planckToUnit(bnPlanck, chainUnits(chainId));
+      const planck = BigInt(sendAmount);
+      const unit = planckToUnit(planck, chainUnits(chainId));
 
       const fmtAmount =
-        bnUnit.toString().length > MAXLEN
-          ? ellipsisFn(bnUnit.toString(), MAXLEN, 'end')
-          : bnUnit.toString();
+        unit.toString().length > MAXLEN
+          ? ellipsisFn(unit.toString(), MAXLEN, 'end')
+          : unit.toString();
 
       return (
         <TriggerHeader>
@@ -63,13 +62,13 @@ export const getExtrinsicTitle = (info: ExtrinsicInfo) => {
     case 'nominationPools_pendingRewards_withdraw':
     case 'nominationPools_pendingRewards_bond': {
       const { chainId, data } = info.actionMeta;
-      const bnPendingRewardsPlanck = new BigNumber(data.extra);
-      const bnUnit = planckToUnit(bnPendingRewardsPlanck, chainUnits(chainId));
+      const rewards = BigInt(data.extra);
+      const unit = planckToUnit(rewards, chainUnits(chainId));
 
       const fmtAmount =
-        bnUnit.toString().length > MAXLEN
-          ? ellipsisFn(bnUnit.toString(), MAXLEN, 'end')
-          : bnUnit.toString();
+        unit.toString().length > MAXLEN
+          ? ellipsisFn(unit.toString(), MAXLEN, 'end')
+          : unit.toString();
 
       const title =
         action === 'nominationPools_pendingRewards_bond'
@@ -139,11 +138,11 @@ export const EstimatedFeeBadge = ({
   if (info.estimatedFee) {
     const { chainId } = info.actionMeta;
     const currency = chainCurrency(chainId);
-    const bnPlanck = new BigNumber(info.estimatedFee);
-    const bnUnit = planckToUnit(bnPlanck, chainUnits(chainId));
+    const planck = BigInt(info.estimatedFee);
+    const unit = planckToUnit(planck, chainUnits(chainId));
 
-    estimatedFee = `${bnUnit.toString()} ${currency}`;
-    truncEstimatedFee = `${truncateDecimalPlaces(bnUnit.toString())} ${currency}`;
+    estimatedFee = `${unit.toString()} ${currency}`;
+    truncEstimatedFee = `${truncateDecimalPlaces(unit.toString())} ${currency}`;
   }
 
   return (
