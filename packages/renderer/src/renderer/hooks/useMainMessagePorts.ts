@@ -478,9 +478,10 @@ export const useMainMessagePorts = () => {
       const result: AnyData = (
         await api.query.system.account(encoded)
       ).toHuman();
+
       const { free } = result.data;
       const freeBalance: string = planckToUnit(
-        new BigNumber(rmCommas(String(free))),
+        BigInt(rmCommas(String(free))),
         chainUnits(chainId)
       ).toString();
 
@@ -489,7 +490,11 @@ export const useMainMessagePorts = () => {
       const toBurn = new BigNumber(burn.toString())
         .dividedBy(Math.pow(10, 6))
         .multipliedBy(new BigNumber(rmCommas(String(free))));
-      const nextBurn = planckToUnit(toBurn, chainUnits(chainId)).toString();
+
+      const nextBurn = planckToUnit(
+        toBurn.toString(),
+        chainUnits(chainId)
+      ).toString();
 
       // Get to be awarded.
       const [approvals, proposals] = await Promise.all([
@@ -497,21 +502,19 @@ export const useMainMessagePorts = () => {
         api.query.treasury.proposals.entries(),
       ]);
 
-      let toBeAwarded = new BigNumber(0);
+      let toBeAwarded = 0n;
       const toBeAwardedProposalIds = approvals.toHuman() as string[];
 
       for (const [rawProposalId, rawProposalData] of proposals) {
         const proposalId: string = (rawProposalId.toHuman() as [string])[0];
         if (toBeAwardedProposalIds.includes(proposalId)) {
           const proposal: AnyData = rawProposalData.toHuman();
-          toBeAwarded = toBeAwarded.plus(
-            new BigNumber(rmCommas(String(proposal.value)))
-          );
+          toBeAwarded += BigInt(rmCommas(String(proposal.value)));
         }
       }
 
       const toBeAwardedAsStr = planckToUnit(
-        toBeAwarded,
+        toBeAwarded.toString(),
         chainUnits(chainId)
       ).toString();
 

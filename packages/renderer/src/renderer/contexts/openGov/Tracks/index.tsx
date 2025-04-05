@@ -5,10 +5,10 @@ import * as defaults from './defaults';
 import { Config as ConfigOpenGov } from '@ren/config/processes/openGov';
 import { createContext, useContext, useRef, useState } from 'react';
 import { useConnections } from '../../common/Connections';
+import { setStateWithRef } from '@w3ux/utils';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { Track } from '@ren/model/Track';
 import type { TracksContextInterface } from './types';
-import { setStateWithRef } from '@w3ux/utils';
 
 export const TracksContext = createContext<TracksContextInterface>(
   defaults.defaultTracksContext
