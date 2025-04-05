@@ -15,7 +15,7 @@ import {
 import { getUnixTime } from 'date-fns';
 
 import type { AnyData } from '@polkadot-live/types/misc';
-import type BigNumber from 'bignumber.js';
+import type { NominationPoolRoles } from '@polkadot-live/types/accounts';
 import type {
   IntervalSubscription,
   ApiCallEntry,
@@ -193,10 +193,10 @@ export class EventsController {
        * subscribe:account:balance:free
        */
       case 'subscribe:account:balance:free': {
-        const account = checkAccountWithProperties(entry, ['balance']);
-        const newFree = miscData.free;
-
+        const { free }: { free: bigint } = miscData;
         const { chainId } = entry.task;
+
+        const account = checkAccountWithProperties(entry, ['balance']);
         const address = account.address;
         const source = account.source;
         const accountName = entry.task.account!.name;
@@ -215,8 +215,8 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Free Balance',
-          subtitle: getBalanceText(newFree, chainId),
-          data: { free: newFree.toString() },
+          subtitle: getBalanceText(free, chainId),
+          data: { free: free.toString() },
           timestamp: getUnixTime(new Date()),
           stale: false,
           txActions: [],
@@ -228,10 +228,10 @@ export class EventsController {
        * subscribe:account:balance:frozen
        */
       case 'subscribe:account:balance:frozen': {
-        const account = checkAccountWithProperties(entry, ['balance']);
-        const newFrozen = miscData.frozen;
-
+        const { frozen }: { frozen: bigint } = miscData;
         const { chainId } = entry.task;
+
+        const account = checkAccountWithProperties(entry, ['balance']);
         const address = account.address;
         const source = account.source;
         const accountName = entry.task.account!.name;
@@ -250,8 +250,8 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Frozen Balance',
-          subtitle: getBalanceText(newFrozen, chainId),
-          data: { frozen: newFrozen.toString() },
+          subtitle: getBalanceText(frozen, chainId),
+          data: { frozen: frozen.toString() },
           timestamp: getUnixTime(new Date()),
           stale: false,
           txActions: [],
@@ -263,10 +263,10 @@ export class EventsController {
        * subscribe:account:balance:reserved
        */
       case 'subscribe:account:balance:reserved': {
-        const account = checkAccountWithProperties(entry, ['balance']);
-        const newReserved = miscData.reserved;
-
+        const { reserved }: { reserved: bigint } = miscData;
         const { chainId } = entry.task;
+
+        const account = checkAccountWithProperties(entry, ['balance']);
         const address = account.address;
         const source = account.source;
         const accountName = entry.task.account!.name;
@@ -285,8 +285,8 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Reserved Balance',
-          subtitle: getBalanceText(newReserved, chainId),
-          data: { frozen: newReserved.toString() },
+          subtitle: getBalanceText(reserved, chainId),
+          data: { reserved: reserved.toString() },
           timestamp: getUnixTime(new Date()),
           stale: false,
           txActions: [],
@@ -295,13 +295,13 @@ export class EventsController {
       }
 
       /**
-       * subscribe:account:balance:reserved
+       * subscribe:account:balance:spendable
        */
       case 'subscribe:account:balance:spendable': {
-        const account = checkAccountWithProperties(entry, ['balance']);
-        const newSpendable = miscData.spendable;
-
+        const { spendable }: { spendable: bigint } = miscData;
         const { chainId } = entry.task;
+
+        const account = checkAccountWithProperties(entry, ['balance']);
         const address = account.address;
         const source = account.source;
         const accountName = entry.task.account!.name;
@@ -320,8 +320,8 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Spendable Balance',
-          subtitle: getBalanceText(newSpendable, chainId),
-          data: { spendable: newSpendable.toString() },
+          subtitle: getBalanceText(spendable, chainId),
+          data: { spendable: spendable.toString() },
           timestamp: getUnixTime(new Date()),
           stale: false,
           txActions: [],
@@ -339,9 +339,7 @@ export class EventsController {
 
         const { chainId } = entry.task;
         const { address, name: accountName, source } = flattenedAccount;
-        const { poolPendingRewards } = flattenedAccount.nominationPoolData!;
-
-        const pendingRewardsPlanck = miscData.pendingRewardsPlanck as BigNumber;
+        const { pending }: { pending: bigint } = miscData;
 
         return {
           uid: '',
@@ -357,8 +355,8 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Nomination Pool Rewards',
-          subtitle: getBalanceText(pendingRewardsPlanck, chainId),
-          data: { pendingRewards: poolPendingRewards?.toString() },
+          subtitle: getBalanceText(pending, chainId),
+          data: { pendingRewards: pending.toString() },
           timestamp: getUnixTime(new Date()),
           stale: false,
           txActions: [
@@ -374,9 +372,7 @@ export class EventsController {
                 method: 'bondExtra',
                 chainId,
                 args: [{ Rewards: null }],
-                data: {
-                  extra: pendingRewardsPlanck.toString(),
-                },
+                data: { extra: pending.toString() },
               },
             },
             {
@@ -391,9 +387,7 @@ export class EventsController {
                 method: 'claimPayout',
                 chainId,
                 args: [],
-                data: {
-                  extra: pendingRewardsPlanck.toString(),
-                },
+                data: { extra: pending.toString() },
               },
             },
           ],
@@ -416,7 +410,7 @@ export class EventsController {
         const { chainId } = entry.task;
         const { address, name: accountName, source } = flattenedAccount;
         const { poolState, poolId } = flattenedAccount.nominationPoolData!;
-        const { prevState } = miscData;
+        const { prev }: { prev: string } = miscData;
 
         return {
           uid: '',
@@ -432,10 +426,8 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Nomination Pool State',
-          subtitle: getNominationPoolStateText(poolState, prevState),
-          data: {
-            poolState,
-          },
+          subtitle: getNominationPoolStateText(poolState, prev),
+          data: { poolState },
           timestamp: getUnixTime(new Date()),
           stale: false,
           txActions: [],
@@ -458,7 +450,7 @@ export class EventsController {
         const { chainId } = entry.task;
         const { address, name: accountName, source } = flattenedAccount;
         const { poolName, poolId } = flattenedAccount.nominationPoolData!;
-        const { prevName } = miscData;
+        const { prev }: { prev: string } = miscData;
 
         return {
           uid: '',
@@ -474,10 +466,8 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Nomination Pool Name',
-          subtitle: getNominationPoolRenamedText(poolName, prevName),
-          data: {
-            poolName,
-          },
+          subtitle: getNominationPoolRenamedText(poolName, prev),
+          data: { poolName },
           timestamp: getUnixTime(new Date()),
           stale: false,
           txActions: [],
@@ -500,7 +490,7 @@ export class EventsController {
         const { chainId } = entry.task;
         const { address, name: accountName, source } = flattenedAccount;
         const { poolRoles, poolId } = flattenedAccount.nominationPoolData!;
-        const { poolRoles: prevRoles } = miscData;
+        const { prev }: { prev: NominationPoolRoles } = miscData;
 
         return {
           uid: '',
@@ -516,10 +506,8 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Nomination Pool Roles',
-          subtitle: getNominationPoolRolesText(poolRoles, prevRoles),
-          data: {
-            depositor: poolRoles.depositor,
-          },
+          subtitle: getNominationPoolRolesText(poolRoles, prev),
+          data: { depositor: poolRoles.depositor },
           timestamp: getUnixTime(new Date()),
           stale: false,
           txActions: [],
@@ -575,11 +563,9 @@ export class EventsController {
        * subscribe:account:nominating:pendingPayouts
        */
       case 'subscribe:account:nominating:pendingPayouts': {
-        // eslint-disable-next-line prettier/prettier
-        const { eraRewards, era }: { eraRewards: BigNumber; era: string } =
-          miscData;
         const { chainId } = entry.task;
         const { address, name: accountName, source } = entry.task.account!;
+        const { rewards, era }: { rewards: bigint; era: string } = miscData;
 
         return {
           uid: '',
@@ -595,10 +581,10 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Nominating Rewards',
-          subtitle: getBalanceText(eraRewards, chainId),
+          subtitle: getBalanceText(rewards, chainId),
           data: {
             era,
-            eraRewards: eraRewards.toString(), // string required
+            eraRewards: rewards.toString(), // string required
           },
           timestamp: getUnixTime(new Date()),
           stale: false,

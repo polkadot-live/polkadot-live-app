@@ -21,6 +21,7 @@ import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { EventCallback } from '@polkadot-live/types/reporter';
 import type { QueryMultiWrapper } from '@ren/model/QueryMultiWrapper';
+import type { NominationPoolRoles } from '@polkadot-live/types/accounts';
 
 export class Callbacks {
   /**
@@ -132,12 +133,9 @@ export class Callbacks {
       }
 
       // Get the received balance.
-      const free = new BigNumber(rmCommas(String(data.data.free)));
-
-      let isSame = false;
-      if (account.balance.free) {
-        isSame = free.eq(account.balance.free);
-      }
+      const free = BigInt(rmCommas(String(data.data.free)));
+      const b = account.balance;
+      const isSame = b.free ? free === b.free : false;
 
       // Exit early if nothing has changed.
       if (!isOneShot && isSame) {
@@ -147,7 +145,7 @@ export class Callbacks {
       // Update account data if balance has changed.
       if (!isSame) {
         account.balance.free = free;
-        account.balance.nonce = new BigNumber(rmCommas(String(data.nonce)));
+        account.balance.nonce = BigInt(rmCommas(String(data.nonce)));
         await AccountsController.set(account.chain, account);
         entry.task.account = account.flatten();
       }
@@ -195,12 +193,9 @@ export class Callbacks {
       }
 
       // Get the received frozen balance.
-      const frozen = new BigNumber(rmCommas(String(data.data.frozen)));
-
-      let isSame = false;
-      if (account.balance.frozen) {
-        isSame = frozen.eq(account.balance.frozen);
-      }
+      const frozen = BigInt(rmCommas(String(data.data.frozen)));
+      const b = account.balance;
+      const isSame = b.frozen ? frozen === b.frozen : false;
 
       // Exit early if nothing has changed.
       if (!isOneShot && isSame) {
@@ -210,7 +205,7 @@ export class Callbacks {
       // Update account data if balance has changed.
       if (!isSame) {
         account.balance.frozen = frozen;
-        account.balance.nonce = new BigNumber(rmCommas(String(data.nonce)));
+        account.balance.nonce = BigInt(rmCommas(String(data.nonce)));
         await AccountsController.set(account.chain, account);
         entry.task.account = account.flatten();
       }
@@ -258,12 +253,9 @@ export class Callbacks {
       }
 
       // Get the received reserved balance.
-      const reserved = new BigNumber(rmCommas(String(data.data.reserved)));
-
-      let isSame = false;
-      if (account.balance.reserved) {
-        isSame = reserved.eq(account.balance.reserved);
-      }
+      const reserved = BigInt(rmCommas(String(data.data.reserved)));
+      const b = account.balance;
+      const isSame = b.reserved ? reserved === b.reserved : false;
 
       // Exit early if nothing has changed.
       if (!isOneShot && isSame) {
@@ -273,7 +265,7 @@ export class Callbacks {
       // Update account data if balance has changed.
       if (!isSame) {
         account.balance.reserved = reserved;
-        account.balance.nonce = new BigNumber(rmCommas(String(data.nonce)));
+        account.balance.nonce = BigInt(rmCommas(String(data.nonce)));
         await AccountsController.set(account.chain, account);
         entry.task.account = account.flatten();
       }
@@ -322,45 +314,27 @@ export class Callbacks {
       // Get API instance.
       const { api } = await this.getApiOrThrow(account.chain);
 
-      /*
-        Spendable balance equation:
-        spendable = free - max(max(frozen, reserved), ed)
-      */
-      const free = new BigNumber(rmCommas(String(data.data.free)));
-      const frozen = new BigNumber(rmCommas(String(data.data.frozen)));
-      const reserved = new BigNumber(rmCommas(String(data.data.reserved)));
-      const ed = new BigNumber(
+      /**
+       * Spendable balance equation:
+       * spendable = free - max(max(frozen, reserved), ed)
+       */
+      const free = BigInt(rmCommas(String(data.data.free)));
+      const frozen = BigInt(rmCommas(String(data.data.frozen)));
+      const reserved = BigInt(rmCommas(String(data.data.reserved)));
+      const ed = BigInt(
         rmCommas(String(api.consts.balances.existentialDeposit))
       );
 
-      let spendable = free.minus(
-        BigNumber.max(BigNumber.max(frozen, reserved), ed)
-      );
-
-      const zero = new BigNumber(0);
-      if (spendable.lt(zero)) {
-        spendable = new BigNumber(0);
+      const max = (a: bigint, b: bigint): bigint => (a > b ? a : b);
+      let spendable = free - max(max(frozen, reserved), ed);
+      if (spendable < 0n) {
+        spendable = 0n;
       }
 
-      // TODO: Remove check, we know the account has a balance.
-      let isSame = false;
-      if (account.balance) {
-        const {
-          free: accFree,
-          frozen: accFroz,
-          reserved: accRes,
-        } = account.balance;
-
-        let accSpendable = accFree.minus(
-          BigNumber.max(BigNumber.max(accFroz, accRes), ed)
-        );
-
-        if (accSpendable.lt(zero)) {
-          accSpendable = new BigNumber(0);
-        }
-
-        isSame = spendable.eq(accSpendable);
-      }
+      // Check if spendable balance has changed.
+      const b = account.balance;
+      const cur = max(b.free - max(max(b.frozen, b.reserved), ed), 0n);
+      const isSame = spendable === cur;
 
       // Exit early if nothing has changed.
       if (!isOneShot && isSame) {
@@ -369,7 +343,7 @@ export class Callbacks {
 
       // Update account nonce if balance has changed.
       if (!isSame) {
-        account.balance.nonce = new BigNumber(rmCommas(String(data.nonce)));
+        account.balance.nonce = BigInt(rmCommas(String(data.nonce)));
         await AccountsController.set(account.chain, account);
         entry.task.account = account.flatten();
       }
@@ -417,40 +391,30 @@ export class Callbacks {
       const { api } = await this.getApiOrThrow(account.chain);
 
       // Fetch pending rewards for the account.
-      const pendingRewardsPlanck: BigNumber =
-        await api.call.nominationPoolsApi.pendingRewards(account.address);
+      const pending: bigint = await api.call.nominationPoolsApi.pendingRewards(
+        account.address
+      );
 
-      const isSame =
-        account.nominationPoolData!.poolPendingRewards.eq(pendingRewardsPlanck);
+      const cur = account.nominationPoolData!.poolPendingRewards;
+      const isSame = cur === pending;
 
       // Return if pending rewards is zero or no change.
-      if (
-        (!isOneShot && isSame) ||
-        (!isOneShot && pendingRewardsPlanck.eq(0))
-      ) {
+      if ((!isOneShot && isSame) || (!isOneShot && pending === 0n)) {
         return true;
       }
 
       // Update account and entry data.
       if (!isSame) {
-        account.nominationPoolData!.poolPendingRewards = new BigNumber(
-          pendingRewardsPlanck
-        );
+        account.nominationPoolData!.poolPendingRewards = pending;
         await AccountsController.set(account.chain, account);
         entry.task.account = account.flatten();
       }
 
-      // Get notification.
+      // Get event and notification.
+      const event = EventsController.getEvent(entry, { pending });
       const notification = this.getNotificationFlag(entry, isOneShot)
-        ? NotificationsController.getNotification(entry, account, {
-            pendingRewardsPlanck: new BigNumber(pendingRewardsPlanck),
-          })
+        ? NotificationsController.getNotification(entry, account, { pending })
         : null;
-
-      // Handle notification and events in main process.
-      const event = EventsController.getEvent(entry, {
-        pendingRewardsPlanck: new BigNumber(pendingRewardsPlanck),
-      });
 
       window.myAPI.sendEventTask({
         action: 'events:persist',
@@ -479,9 +443,9 @@ export class Callbacks {
       const account = checkAccountWithProperties(entry, ['nominationPoolData']);
 
       // Get the received pool state.
-      const receivedPoolState: string = data.toHuman().state;
-      const prevState = account.nominationPoolData!.poolState;
-      const isSame = prevState === receivedPoolState;
+      const state: string = data.toHuman().state;
+      const cur = account.nominationPoolData!.poolState;
+      const isSame = cur === state;
 
       if (!isOneShot && isSame) {
         return true;
@@ -489,23 +453,21 @@ export class Callbacks {
 
       // Update account and entry data.
       if (!isSame) {
-        account.nominationPoolData!.poolState = receivedPoolState;
+        account.nominationPoolData!.poolState = state;
         await AccountsController.set(account.chain, account);
         entry.task.account = account.flatten();
       }
 
       // Get notification.
       const notification = this.getNotificationFlag(entry, isOneShot)
-        ? NotificationsController.getNotification(entry, account, {
-            prevState,
-          })
+        ? NotificationsController.getNotification(entry, account, { prev: cur })
         : null;
 
       // Handle notification and events in main process.
       window.myAPI.sendEventTask({
         action: 'events:persist',
         data: {
-          event: EventsController.getEvent(entry, { prevState }),
+          event: EventsController.getEvent(entry, { prev: cur }),
           notification,
           isOneShot,
         },
@@ -533,9 +495,9 @@ export class Callbacks {
       const account = checkAccountWithProperties(entry, ['nominationPoolData']);
 
       // Get the received pool name.
-      const receivedPoolName: string = u8aToString(u8aUnwrapBytes(data));
-      const prevName = account.nominationPoolData!.poolName;
-      const isSame = prevName === receivedPoolName || receivedPoolName === '';
+      const poolName: string = u8aToString(u8aUnwrapBytes(data));
+      const cur = account.nominationPoolData!.poolName;
+      const isSame = cur === poolName || poolName === '';
 
       if (!isOneShot && isSame) {
         return true;
@@ -543,23 +505,21 @@ export class Callbacks {
 
       // Update account and entry data.
       if (!isSame) {
-        account.nominationPoolData!.poolName = receivedPoolName;
+        account.nominationPoolData!.poolName = poolName;
         await AccountsController.set(account.chain, account);
         entry.task.account = account.flatten();
       }
 
       // Get notification.
       const notification = this.getNotificationFlag(entry, isOneShot)
-        ? NotificationsController.getNotification(entry, account, {
-            prevName,
-          })
+        ? NotificationsController.getNotification(entry, account, { prev: cur })
         : null;
 
       // Handle notification and events in main process.
       window.myAPI.sendEventTask({
         action: 'events:persist',
         data: {
-          event: EventsController.getEvent(entry, { prevName }),
+          event: EventsController.getEvent(entry, { prev: cur }),
           notification,
           isOneShot,
         },
@@ -587,23 +547,17 @@ export class Callbacks {
       const account = checkAccountWithProperties(entry, ['nominationPoolData']);
 
       // Get the received pool roles.
-      interface Target {
-        depositor: string;
-        root: string;
-        nominator: string;
-        bouncer: string;
-      }
       const humanData: AnyData = data.toHuman();
-      const { depositor, root, nominator, bouncer }: Target = humanData.roles;
+      const roles: NominationPoolRoles = humanData.roles;
 
       // Return if roles have not changed.
-      const poolRoles = account.nominationPoolData!.poolRoles;
+      const cur = account.nominationPoolData!.poolRoles;
 
       const isSame =
-        poolRoles.depositor === depositor &&
-        poolRoles.root === root &&
-        poolRoles.nominator === nominator &&
-        poolRoles.bouncer === bouncer;
+        cur.depositor === roles.depositor &&
+        cur.root === roles.root &&
+        cur.nominator === roles.nominator &&
+        cur.bouncer === roles.bouncer;
 
       if (!isOneShot && isSame) {
         return true;
@@ -612,28 +566,21 @@ export class Callbacks {
       // Update account and entry data.
       if (!isSame) {
         // eslint-disable-next-line prettier/prettier
-        account.nominationPoolData!.poolRoles = {
-          depositor,
-          root,
-          nominator,
-          bouncer,
-        };
+        account.nominationPoolData!.poolRoles = { ...roles };
         await AccountsController.set(account.chain, account);
         entry.task.account = account.flatten();
       }
 
       // Get notification.
       const notification = this.getNotificationFlag(entry, isOneShot)
-        ? NotificationsController.getNotification(entry, account, {
-            poolRoles,
-          })
+        ? NotificationsController.getNotification(entry, account, { prev: cur })
         : null;
 
       // Handle notification and events in main process.
       window.myAPI.sendEventTask({
         action: 'events:persist',
         data: {
-          event: EventsController.getEvent(entry, { poolRoles }),
+          event: EventsController.getEvent(entry, { roles }),
           notification,
           isOneShot,
         },
@@ -681,7 +628,6 @@ export class Callbacks {
 
       // Update account and entry data.
       if (!isSame) {
-        // eslint-disable-next-line prettier/prettier
         account.nominationPoolData!.poolCommission = {
           changeRate,
           current,
@@ -721,7 +667,6 @@ export class Callbacks {
    * @summary Callback for 'subscribe:account:nominating:pendingPayouts'
    */
   static async callback_nominating_era_rewards(
-    data: AnyData,
     entry: ApiCallEntry,
     isOneShot = false
   ): Promise<boolean> {
@@ -735,21 +680,16 @@ export class Callbacks {
         await api.query.staking.activeEra()
       ).toHuman();
 
-      const era: BigNumber = new BigNumber(
-        parseInt((eraResult.index as string).replace(/,/g, ''))
-      ).minus(1);
+      const era =
+        BigInt(parseInt((eraResult.index as string).replace(/,/g, ''))) - 1n;
 
       // Calculate rewards.
-      const eraRewards = await getEraRewards(
-        account.address,
-        api,
-        era.toNumber()
-      );
+      const eraRewards = await getEraRewards(account.address, api, Number(era));
 
       // Get notification.
       const notification = this.getNotificationFlag(entry, isOneShot)
         ? NotificationsController.getNotification(entry, account, {
-            pendingPayout: new BigNumber(eraRewards),
+            pendingPayout: BigInt(eraRewards.toString()),
             chainId: account.chain,
           })
         : null;
@@ -758,7 +698,7 @@ export class Callbacks {
         action: 'events:persist',
         data: {
           event: EventsController.getEvent(entry, {
-            eraRewards,
+            rewards: BigInt(eraRewards.toString()),
             era: era.toString(),
           }),
           notification,

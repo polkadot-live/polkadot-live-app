@@ -51,7 +51,7 @@ export const executeOneShot = async (
       return await oneShot_nomination_pool_commission(task, api);
     }
     case 'subscribe:account:nominating:pendingPayouts': {
-      return await oneShot_nominating_era_rewards(task, api);
+      return await oneShot_nominating_era_rewards(task);
     }
     case 'subscribe:account:nominating:exposure': {
       return await oneShot_nominating_exposure(task, api);
@@ -188,12 +188,10 @@ const oneShot_nomination_pool_commission = async (
  * @summary One-shot call to fetch an account's nominating pending paypouts.
  */
 const oneShot_nominating_era_rewards = async (
-  task: SubscriptionTask,
-  api: ApiPromise
+  task: SubscriptionTask
 ): Promise<boolean> => {
-  const data = await api.query.staking.activeEra();
   const entry: ApiCallEntry = { curVal: null, task };
-  return await Callbacks.callback_nominating_era_rewards(data, entry, true);
+  return await Callbacks.callback_nominating_era_rewards(entry, true);
 };
 
 /**

@@ -4,7 +4,6 @@
 import { chainCurrency, chainUnits } from '@ren/config/chains';
 import { formatDistanceToNow } from 'date-fns';
 import { planckToUnit } from '@w3ux/utils';
-import type BigNumber from 'bignumber.js';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   NominationPoolCommission,
@@ -102,19 +101,11 @@ export const getNominationPoolStateText = (
  * @name getBalanceText
  * @summary Text to render for transfer events.
  */
-export const getBalanceText = (
-  balance: BigNumber,
-  chainId: ChainID
-): string => {
-  const asUnit = planckToUnit(balance as BigNumber, chainUnits(chainId));
+export const getBalanceText = (balance: bigint, chainId: ChainID): string => {
+  const asUnit = planckToUnit(balance, chainUnits(chainId));
   const regexA = /\.0+$/; // Remove trailing zeros after a decimal point.
   const regexB = /\B(?=(\d{3})+(?!\d))/g; // Insert commas as thousand separators.
-
-  const formatted: string = asUnit
-    .toFixed(3)
-    .replace(regexA, '')
-    .replace(regexB, ',');
-
+  const formatted: string = asUnit.replace(regexA, '').replace(regexB, ',');
   return `${formatted} ${chainCurrency(chainId)}`;
 };
 

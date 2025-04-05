@@ -14,8 +14,8 @@ import type {
   ApiCallEntry,
   IntervalSubscription,
 } from '@polkadot-live/types/subscriptions';
+import type { NominationPoolRoles } from '@polkadot-live/types/accounts';
 import type { NotificationData } from '@polkadot-live/types/reporter';
-import type BigNumber from 'bignumber.js';
 
 export class NotificationsController {
   /**
@@ -94,40 +94,37 @@ export class NotificationsController {
       case 'subscribe:account:nominationPools:rewards': {
         return {
           title: account.name,
-          body: getBalanceText(
-            miscData.pendingRewardsPlanck as BigNumber,
-            account.chain
-          ),
+          body: getBalanceText(miscData.pending as bigint, account.chain),
           subtitle: 'Nomination Pool Rewards',
         };
       }
       case 'subscribe:account:nominationPools:state': {
         const { poolState } = account.nominationPoolData!;
-        const { prevState } = miscData;
+        const { prev }: { prev: string } = miscData;
 
         return {
           title: account.name,
-          body: getNominationPoolStateText(poolState, prevState),
+          body: getNominationPoolStateText(poolState, prev),
           subtitle: 'Nomiantion Pool State',
         };
       }
       case 'subscribe:account:nominationPools:renamed': {
         const { poolName } = account.nominationPoolData!;
-        const { prevName } = miscData;
+        const { prev }: { prev: string } = miscData;
 
         return {
           title: account.name,
-          body: getNominationPoolRenamedText(poolName, prevName),
+          body: getNominationPoolRenamedText(poolName, prev),
           subtitle: 'Nomination Pool Name',
         };
       }
       case 'subscribe:account:nominationPools:roles': {
         const { poolRoles } = account.nominationPoolData!;
-        const { poolRoles: prevRoles } = miscData;
+        const { prev }: { prev: NominationPoolRoles } = miscData;
 
         return {
           title: account.name,
-          body: getNominationPoolRolesText(poolRoles, prevRoles),
+          body: getNominationPoolRolesText(poolRoles, prev),
           subtitle: 'Nomination Pool Roles',
         };
       }
