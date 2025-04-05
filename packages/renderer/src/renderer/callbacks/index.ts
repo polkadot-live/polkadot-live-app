@@ -391,10 +391,11 @@ export class Callbacks {
       const { api } = await this.getApiOrThrow(account.chain);
 
       // Fetch pending rewards for the account.
-      const pending: bigint = await api.call.nominationPoolsApi.pendingRewards(
-        account.address
-      );
+      const strPending = (
+        await api.call.nominationPoolsApi.pendingRewards(account.address)
+      ).toString();
 
+      const pending = BigInt(rmCommas(strPending));
       const cur = account.nominationPoolData!.poolPendingRewards;
       const isSame = cur === pending;
 
