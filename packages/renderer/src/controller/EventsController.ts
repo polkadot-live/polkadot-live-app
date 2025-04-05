@@ -565,7 +565,7 @@ export class EventsController {
       case 'subscribe:account:nominating:pendingPayouts': {
         const { chainId } = entry.task;
         const { address, name: accountName, source } = entry.task.account!;
-        const { rewards, era }: { rewards: bigint; era: string } = miscData;
+        const { rewards, era }: { rewards: string; era: string } = miscData;
 
         return {
           uid: '',
@@ -582,10 +582,7 @@ export class EventsController {
           },
           title: 'Nominating Rewards',
           subtitle: getBalanceText(rewards, chainId),
-          data: {
-            era,
-            eraRewards: rewards.toString(), // string required
-          },
+          data: { era, eraRewards: rewards },
           timestamp: getUnixTime(new Date()),
           stale: false,
           txActions: [],

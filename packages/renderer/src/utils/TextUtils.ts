@@ -130,7 +130,10 @@ export const formatChainUnits = (units: string, chainId: ChainID) => {
  * @name getBalanceText
  * @summary Text to render for transfer events.
  */
-export const getBalanceText = (balance: bigint, chainId: ChainID): string => {
+export const getBalanceText = (
+  balance: bigint | string,
+  chainId: ChainID
+): string => {
   const asUnit = planckToUnit(balance, chainUnits(chainId));
   const regexA = /\.0+$/; // Remove trailing zeros after a decimal point.
   const regexB = /\B(?=(\d{3})+(?!\d))/g; // Insert commas as thousand separators.

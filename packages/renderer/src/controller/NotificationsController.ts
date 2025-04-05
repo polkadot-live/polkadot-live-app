@@ -14,6 +14,7 @@ import type {
   ApiCallEntry,
   IntervalSubscription,
 } from '@polkadot-live/types/subscriptions';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { NominationPoolRoles } from '@polkadot-live/types/accounts';
 import type { NotificationData } from '@polkadot-live/types/reporter';
 
@@ -139,11 +140,12 @@ export class NotificationsController {
         };
       }
       case 'subscribe:account:nominating:pendingPayouts': {
-        const { pendingPayout, chainId } = miscData;
+        const { rewards, chainId }: { rewards: string; chainId: ChainID } =
+          miscData;
 
         return {
           title: account.name,
-          body: getBalanceText(pendingPayout, chainId),
+          body: getBalanceText(rewards, chainId),
           subtitle: 'Nominating Rewards',
         };
       }

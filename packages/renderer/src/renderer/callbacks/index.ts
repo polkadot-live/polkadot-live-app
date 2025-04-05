@@ -686,24 +686,22 @@ export class Callbacks {
       // Calculate rewards.
       const eraRewards = await getEraRewards(account.address, api, Number(era));
 
-      // Get notification.
+      // Get notification and event.
       const notification = this.getNotificationFlag(entry, isOneShot)
         ? NotificationsController.getNotification(entry, account, {
-            pendingPayout: BigInt(eraRewards.toString()),
+            rewards: eraRewards.toString(),
             chainId: account.chain,
           })
         : null;
 
+      const event = EventsController.getEvent(entry, {
+        rewards: eraRewards.toString(),
+        era: era.toString(),
+      });
+
       window.myAPI.sendEventTask({
         action: 'events:persist',
-        data: {
-          event: EventsController.getEvent(entry, {
-            rewards: BigInt(eraRewards.toString()),
-            era: era.toString(),
-          }),
-          notification,
-          isOneShot,
-        },
+        data: { event, notification, isOneShot },
       });
 
       return true;
