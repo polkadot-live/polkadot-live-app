@@ -14,7 +14,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { formatBlocksToTime } from '@ren/utils/TimeUtils';
 import { useHelp } from '@app/contexts/common/Help';
 import { useTracks } from '@app/contexts/openGov/Tracks';
-import { formatChainUnits } from '@ren/utils/RenderingUtils';
+import { formatChainUnits } from '@ren/utils/TextUtils';
 import { FlexRow } from '@polkadot-live/ui/styles';
 import type { HelpItemKey } from '@polkadot-live/types/help';
 import type { TrackRowProps } from '../types';
