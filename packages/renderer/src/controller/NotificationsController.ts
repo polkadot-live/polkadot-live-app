@@ -65,37 +65,42 @@ export class NotificationsController {
   ): NotificationData {
     switch (entry.task.action) {
       case 'subscribe:account:balance:free': {
+        const { free }: { free: bigint } = miscData;
         return {
           title: account.name,
-          body: getBalanceText(miscData.free, account.chain),
+          body: getBalanceText(free, account.chain),
           subtitle: 'Free Balance',
         };
       }
       case 'subscribe:account:balance:frozen': {
+        const { frozen }: { frozen: bigint } = miscData;
         return {
           title: account.name,
-          body: getBalanceText(miscData.frozen, account.chain),
+          body: getBalanceText(frozen, account.chain),
           subtitle: 'Frozen Balance',
         };
       }
       case 'subscribe:account:balance:reserved': {
+        const { reserved }: { reserved: bigint } = miscData;
         return {
           title: account.name,
-          body: getBalanceText(miscData.reserved, account.chain),
+          body: getBalanceText(reserved, account.chain),
           subtitle: 'Reserved Balance',
         };
       }
       case 'subscribe:account:balance:spendable': {
+        const { spendable }: { spendable: bigint } = miscData;
         return {
           title: account.name,
-          body: getBalanceText(miscData.spendable, account.chain),
+          body: getBalanceText(spendable, account.chain),
           subtitle: 'Spendable Balance',
         };
       }
       case 'subscribe:account:nominationPools:rewards': {
+        const { pending }: { pending: bigint } = miscData;
         return {
           title: account.name,
-          body: getBalanceText(miscData.pending as bigint, account.chain),
+          body: getBalanceText(pending, account.chain),
           subtitle: 'Nomination Pool Rewards',
         };
       }
@@ -150,7 +155,7 @@ export class NotificationsController {
         };
       }
       case 'subscribe:account:nominating:exposure': {
-        const { exposed } = miscData;
+        const { exposed }: { exposed: boolean } = miscData;
 
         const body = exposed
           ? `Actively nominating in the current era.`
