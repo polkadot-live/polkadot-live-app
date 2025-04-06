@@ -581,7 +581,7 @@ export class Callbacks {
       window.myAPI.sendEventTask({
         action: 'events:persist',
         data: {
-          event: EventsController.getEvent(entry, { roles }),
+          event: EventsController.getEvent(entry, { prev: cur }),
           notification,
           isOneShot,
         },
