@@ -3,7 +3,6 @@
 
 import { AccountsController } from '@ren/controller/AccountsController';
 import { APIsController } from '@ren/controller/APIsController';
-import BigNumber from 'bignumber.js';
 import { checkAccountWithProperties } from '@ren/utils/AccountUtils';
 import { Config as RendererConfig } from '@ren/config/processes/renderer';
 import { EventsController } from '@ren/controller/EventsController';
@@ -39,29 +38,24 @@ export class Callbacks {
     try {
       const { action, chainId } = entry.task;
       const timeBuffer = 20;
-
-      const newVal = new BigNumber(data);
-      const curVal = new BigNumber(
-        wrapper.getChainTaskCurrentVal(action, chainId)
-      );
+      const cached = wrapper.getChainTaskCurrentVal(action, chainId);
+      const prev: bigint = cached ? BigInt(cached) : 0n;
+      const cur = BigInt(data.toString());
 
       // Return if value hasn't changed since last callback or time buffer hasn't passed.
-      if (
-        JSON.stringify(newVal) === JSON.stringify(curVal) ||
-        newVal.minus(curVal).lte(timeBuffer)
-      ) {
+      if (cur === prev || cur - prev <= timeBuffer) {
         return;
       }
 
       // Cache new value.
-      wrapper.setChainTaskVal(entry, newVal, chainId);
+      wrapper.setChainTaskVal(entry, cur.toString(), chainId);
 
       // Debugging.
-      const now = new Date(data * 1000).toDateString();
+      const now = new Date(Number(cur) * 1000).toDateString();
       console.log(`Now: ${now} | ${data}`);
 
       // Send event and notification data to main process.
-      const event = EventsController.getEvent(entry, String(newVal));
+      const event = EventsController.getEvent(entry, cur.toString());
       window.myAPI.sendEventTask({
         action: 'events:persist',
         data: { event, notification: null, isOneShot: false },
@@ -86,22 +80,23 @@ export class Callbacks {
   ) {
     try {
       const { action, chainId } = entry.task;
-      const newVal = new BigNumber(data);
-      const curVal = wrapper.getChainTaskCurrentVal(action, chainId);
+      const cached = wrapper.getChainTaskCurrentVal(action, chainId);
+      const prev = cached ? BigInt(cached) : 0n;
+      const cur = BigInt(data.toString());
 
       // Return if value hasn't changed since last callback.
-      if (JSON.stringify(newVal) === JSON.stringify(curVal)) {
+      if (cur === prev) {
         return;
       }
 
       // Cache new value.
-      wrapper.setChainTaskVal(entry, newVal, chainId);
+      wrapper.setChainTaskVal(entry, cur.toString(), chainId);
 
       // Debugging.
-      console.log(`Current Sot: ${newVal}`);
+      console.log(`Current Sot: ${cur}`);
 
       // Send event and notification data to main process.
-      const event = EventsController.getEvent(entry, String(newVal));
+      const event = EventsController.getEvent(entry, cur.toString());
       window.myAPI.sendEventTask({
         action: 'events:persist',
         data: { event, notification: null, isOneShot: false },
