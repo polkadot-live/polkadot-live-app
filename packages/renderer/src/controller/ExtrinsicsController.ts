@@ -1,7 +1,6 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import BigNumber from 'bignumber.js';
 import { APIsController } from '@ren/controller/APIsController';
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { chainUnits } from '@ren/config/chains';
@@ -59,7 +58,7 @@ export class ExtrinsicsController {
   /**
    * Independent method to get an estimated transaction fee.
    */
-  static getEstimatedFee = async (info: ExtrinsicInfo): Promise<BigNumber> => {
+  static getEstimatedFee = async (info: ExtrinsicInfo): Promise<bigint> => {
     const { txId, actionMeta } = info;
     const { chainId, from, pallet, method } = info.actionMeta;
 
@@ -73,7 +72,7 @@ export class ExtrinsicsController {
 
     // Get estimated tx fee.
     const { partialFee } = await tx.paymentInfo(from);
-    const estimatedFeePlank = new BigNumber(partialFee.toString());
+    const estimatedFeePlank = BigInt(partialFee.toString());
     console.log(`📝 Estimated fee: ${estimatedFeePlank.toString()}`);
 
     return estimatedFeePlank;
@@ -115,11 +114,6 @@ export class ExtrinsicsController {
 
     switch (action) {
       case 'balances_transferKeepAlive': {
-        // args[1]: BigInt to string to BigNumber.
-        const bnSendAmount = new BigNumber(args[1].toString());
-        const bnSpendable = await getSpendableBalance(from, chainId);
-        const bnFee = new BigNumber(estimatedFee);
-
         // NOTE: Disable Polkadot network transfers in alpha releases.
         if (chainId === 'Polkadot') {
           return {
@@ -128,10 +122,14 @@ export class ExtrinsicsController {
           };
         }
 
+        const sendAmount: bigint = args[1];
+        const spendable = await getSpendableBalance(from, chainId);
+        const fee = BigInt(estimatedFee);
+
         // NOTE: Limit send amount to 100 tokens in alpha releases.
-        const bnLimit = unitToPlanck(TOKEN_TRANSFER_LIMIT, chainUnits(chainId));
-        const checkA = bnSendAmount.lte(bnLimit);
-        const checkB = bnSpendable.gte(bnSendAmount.plus(bnFee));
+        const biLimit = unitToPlanck(TOKEN_TRANSFER_LIMIT, chainUnits(chainId));
+        const checkA = sendAmount <= biLimit;
+        const checkB = spendable >= sendAmount + fee;
         const isValid = checkA && checkB;
 
         return isValid
@@ -142,25 +140,25 @@ export class ExtrinsicsController {
       }
       case 'nominationPools_pendingRewards_withdraw':
       case 'nominationPools_pendingRewards_bond': {
-        const bnSpendable = await getSpendableBalance(from, chainId);
-        const bnFee = new BigNumber(estimatedFee);
+        const spendable = await getSpendableBalance(from, chainId);
+        const fee = BigInt(estimatedFee);
 
         // Check sufficient balance.
-        if (!bnSpendable.gte(bnFee)) {
+        if (spendable < fee) {
           return { isValid: false, reason: 'Insufficient balance' };
         }
 
         // Check rewards are current (extrinsic is not outdated).
         const { extra }: { extra: string } = info.actionMeta.data;
-        const bnExtRewards = new BigNumber(extra);
-        const bnCurRewards = await getNominationPoolRewards(from, chainId);
+        const rewards = BigInt(extra);
+        const curRewards = await getNominationPoolRewards(from, chainId);
 
-        if (!bnExtRewards.isEqualTo(bnCurRewards)) {
+        if (rewards !== curRewards) {
           return { isValid: false, reason: 'Outdated extrinsic' };
         }
 
         // Check rewards are non-zero.
-        if (bnExtRewards.isZero()) {
+        if (rewards === 0n) {
           return { isValid: false, reason: 'No pending rewards' };
         }
 
@@ -176,8 +174,8 @@ export class ExtrinsicsController {
     try {
       const { txId, actionMeta } = info;
       const { chainId, from } = info.actionMeta;
-      const nonce = (await getAddressNonce(from, chainId)).toNumber();
       const { api } = await APIsController.getConnectedApiOrThrow(chainId);
+      const nonce = Number((await getAddressNonce(from, chainId)).toString());
 
       // Create tx if it's not cached already.
       if (!this.txPayloads.has(txId)) {

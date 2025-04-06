@@ -14,7 +14,7 @@ import { useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ActionButton, InputWrapper } from './Wrappers';
-import { getBalanceText } from '@ren/utils/TextUtils';
+import { formatDecimal, getBalanceText } from '@ren/utils/TextUtils';
 import {
   AccountNameWithTooltip,
   AddressWithTooltip,
@@ -368,7 +368,7 @@ export const Send: React.FC = () => {
                   <InfoPanel label={'Send Amount:'}>
                     {sendAmount === '0' || sendAmount === '' || !validAmount
                       ? '-'
-                      : `${sendAmount} ${chainCurrency(senderNetwork!)}`}
+                      : `${formatDecimal(sendAmount)} ${chainCurrency(senderNetwork!)}`}
                   </InfoPanel>
 
                   <FlexRow $gap={'0.5rem'}>

@@ -41,7 +41,7 @@ export const HelpConfig: HelpItems = [
     title: 'Subscription: Free Balance',
     definition: [
       "Get notified when an account's free balance changes.",
-      "An account's free balance can be used for on-chain activity like staking, participating in governance etc. but is not necessarily spendable (or transferrable).",
+      "An account's free balance does not include the reserved balance. It can be used for on-chain activity like staking, participating in governance etc. but is not necessarily spendable (or transferrable).",
     ],
   },
   {

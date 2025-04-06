@@ -102,7 +102,7 @@ export const Item = memo(function Item({ event }: ItemProps) {
                 <FlexRow $gap={'0.35rem'} style={{ flex: 1, minWidth: 0 }}>
                   <h4>{accountName}</h4>
 
-                  {event.category !== 'openGov' && (
+                  {!['openGov', 'debugging'].includes(event.category) && (
                     <div className="icon-wrapper">
                       <div className="icon ">
                         <TooltipRx text={ellipsisFn(address, 12)} theme={theme}>

@@ -14,8 +14,9 @@ import type {
   ApiCallEntry,
   IntervalSubscription,
 } from '@polkadot-live/types/subscriptions';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { NominationPoolRoles } from '@polkadot-live/types/accounts';
 import type { NotificationData } from '@polkadot-live/types/reporter';
-import type BigNumber from 'bignumber.js';
 
 export class NotificationsController {
   /**
@@ -30,15 +31,23 @@ export class NotificationsController {
 
     switch (action) {
       case 'subscribe:interval:openGov:referendumVotes': {
-        const { percentAyes, percentNays } = miscData;
+        const {
+          percentAyes,
+          percentNays,
+        }: { percentAyes: string; percentNays: string } = miscData;
+
         return {
           title: `Referendum ${referendumId}`,
-          body: `Ayes at ${percentAyes.toString()}% and Nayes at ${percentNays.toString()}%.`,
+          body: `Ayes at ${percentAyes}% and Nayes at ${percentNays}%.`,
           subtitle: `Votes Tally`,
         };
       }
       case 'subscribe:interval:openGov:referendumThresholds': {
-        const { formattedApp, formattedSup } = miscData;
+        const {
+          formattedApp,
+          formattedSup,
+        }: { formattedApp: string; formattedSup: string } = miscData;
+
         return {
           title: `Referendum ${referendumId}`,
           body: `Approval at ${formattedApp}% and support at ${formattedSup}%`,
@@ -64,70 +73,72 @@ export class NotificationsController {
   ): NotificationData {
     switch (entry.task.action) {
       case 'subscribe:account:balance:free': {
+        const { free }: { free: bigint } = miscData;
         return {
           title: account.name,
-          body: getBalanceText(miscData.free, account.chain),
+          body: getBalanceText(free, account.chain),
           subtitle: 'Free Balance',
         };
       }
       case 'subscribe:account:balance:frozen': {
+        const { frozen }: { frozen: bigint } = miscData;
         return {
           title: account.name,
-          body: getBalanceText(miscData.frozen, account.chain),
+          body: getBalanceText(frozen, account.chain),
           subtitle: 'Frozen Balance',
         };
       }
       case 'subscribe:account:balance:reserved': {
+        const { reserved }: { reserved: bigint } = miscData;
         return {
           title: account.name,
-          body: getBalanceText(miscData.reserved, account.chain),
+          body: getBalanceText(reserved, account.chain),
           subtitle: 'Reserved Balance',
         };
       }
       case 'subscribe:account:balance:spendable': {
+        const { spendable }: { spendable: bigint } = miscData;
         return {
           title: account.name,
-          body: getBalanceText(miscData.spendable, account.chain),
+          body: getBalanceText(spendable, account.chain),
           subtitle: 'Spendable Balance',
         };
       }
       case 'subscribe:account:nominationPools:rewards': {
+        const { pending }: { pending: bigint } = miscData;
         return {
           title: account.name,
-          body: getBalanceText(
-            miscData.pendingRewardsPlanck as BigNumber,
-            account.chain
-          ),
+          body: getBalanceText(pending, account.chain),
           subtitle: 'Nomination Pool Rewards',
         };
       }
       case 'subscribe:account:nominationPools:state': {
         const { poolState } = account.nominationPoolData!;
-        const { prevState } = miscData;
+        const { prev }: { prev: string } = miscData;
 
         return {
           title: account.name,
-          body: getNominationPoolStateText(poolState, prevState),
+          body: getNominationPoolStateText(poolState, prev),
           subtitle: 'Nomiantion Pool State',
         };
       }
       case 'subscribe:account:nominationPools:renamed': {
         const { poolName } = account.nominationPoolData!;
-        const { prevName } = miscData;
+        const { prev }: { prev: string } = miscData;
 
         return {
           title: account.name,
-          body: getNominationPoolRenamedText(poolName, prevName),
+          body: getNominationPoolRenamedText(poolName, prev),
           subtitle: 'Nomination Pool Name',
         };
       }
       case 'subscribe:account:nominationPools:roles': {
         const { poolRoles } = account.nominationPoolData!;
-        const { poolRoles: prevRoles } = miscData;
+        const { prev }: { prev: NominationPoolRoles } = miscData;
 
         return {
           title: account.name,
-          body: getNominationPoolRolesText(poolRoles, prevRoles),
+          body: getNominationPoolRolesText(poolRoles, prev),
           subtitle: 'Nomination Pool Roles',
         };
       }
@@ -142,16 +153,17 @@ export class NotificationsController {
         };
       }
       case 'subscribe:account:nominating:pendingPayouts': {
-        const { pendingPayout, chainId } = miscData;
+        const { rewards, chainId }: { rewards: string; chainId: ChainID } =
+          miscData;
 
         return {
           title: account.name,
-          body: getBalanceText(pendingPayout, chainId),
+          body: getBalanceText(rewards, chainId),
           subtitle: 'Nominating Rewards',
         };
       }
       case 'subscribe:account:nominating:exposure': {
-        const { exposed } = miscData;
+        const { exposed }: { exposed: boolean } = miscData;
 
         const body = exposed
           ? `Actively nominating in the current era.`

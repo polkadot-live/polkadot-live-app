@@ -5,6 +5,7 @@ import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { useEffect, useRef, useState } from 'react';
 import { chainUnits } from '@ren/config/chains';
 import { ellipsisFn, unitToPlanck } from '@w3ux/utils';
+import { formatDecimal } from '@ren/utils/TextUtils';
 import {
   getAddressChainId,
   getSpendableBalance,
@@ -19,7 +20,6 @@ import type {
   LedgerLocalAddress,
   LocalAddress,
 } from '@polkadot-live/types/accounts';
-import type BigNumber from 'bignumber.js';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { SendRecipient } from '@app/screens/Home/Send/types';
 import type { ChangeEvent } from 'react';
@@ -33,7 +33,7 @@ interface SendNativeHook {
   sendAmount: string;
   sender: string | null;
   senderNetwork: ChainID | null;
-  spendable: BigNumber | null;
+  spendable: bigint | null;
   summaryComplete: boolean;
   validAmount: boolean;
   getReceiverAccounts: () => (LocalAddress | LedgerLocalAddress)[];
@@ -66,7 +66,7 @@ export const useSendNative = (): SendNativeHook => {
   const [sendAmount, setSendAmount] = useState<string>('0');
 
   const [fetchingSpendable, setFetchingSpendable] = useState(false);
-  const [spendable, setSpendable] = useState<BigNumber | null>(null);
+  const [spendable, setSpendable] = useState<bigint | null>(null);
   const [validAmount, setValidAmount] = useState(true);
 
   const [summaryComplete, setSummaryComplete] = useState(false);
@@ -100,7 +100,7 @@ export const useSendNative = (): SendNativeHook => {
     };
 
     const sendAmountPlanck: string = unitToPlanck(
-      sendAmount.toString(),
+      formatDecimal(sendAmount),
       chainUnits(senderNetwork)
     ).toString();
 
@@ -253,8 +253,8 @@ export const useSendNative = (): SendNativeHook => {
 
       // Check if send amount is less than spendable amount.
       const units = chainUnits(senderNetwork);
-      const bnAmountAsPlanck = unitToPlanck(amount, units);
-      setValidAmount(spendable.gte(bnAmountAsPlanck));
+      const amountAsPlanck = unitToPlanck(amount, units);
+      setValidAmount(spendable >= amountAsPlanck);
       return;
     }
 

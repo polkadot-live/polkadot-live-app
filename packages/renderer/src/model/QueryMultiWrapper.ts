@@ -168,7 +168,7 @@ export class QueryMultiWrapper {
         break;
       }
       case 'subscribe:account:nominating:pendingPayouts': {
-        await Callbacks.callback_nominating_era_rewards(subData, entry);
+        await Callbacks.callback_nominating_era_rewards(entry);
         break;
       }
       case 'subscribe:account:nominating:exposure': {

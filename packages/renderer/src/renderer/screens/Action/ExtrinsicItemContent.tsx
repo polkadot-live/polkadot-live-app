@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import BigNumber from 'bignumber.js';
 import { chainCurrency, chainUnits } from '@ren/config/chains';
 import { planckToUnit } from '@w3ux/utils';
 import { useConnections } from '@app/contexts/common/Connections';
@@ -12,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ExtrinsicItemContentWrapper } from './Wrappers';
 import type { ExtrinsicItemContentProps } from './types';
 import type { ExTransferKeepAliveData } from '@polkadot-live/types/tx';
+import { formatDecimal } from '@ren/utils/TextUtils';
 
 /**
  * @name ExtrinsicItemContent
@@ -41,10 +41,10 @@ export const ExtrinsicItemContent = ({
       }: ExTransferKeepAliveData = data;
 
       const units = chainUnits(chainId);
-      const bnPlanck = new BigNumber(planck);
-      const bnUnit = planckToUnit(bnPlanck, units);
+      const biPlanck = BigInt(planck);
+      const unit = formatDecimal(planckToUnit(biPlanck, units));
       const currency = chainCurrency(chainId);
-      const fmtAmount = <b>{`${bnUnit.toString()} ${currency}`}</b>;
+      const fmtAmount = <b>{`${unit} ${currency}`}</b>;
 
       return (
         <ExtrinsicItemContentWrapper>
@@ -75,11 +75,9 @@ export const ExtrinsicItemContent = ({
       );
     }
     case 'nominationPools_pendingRewards_bond': {
-      const bnPendingRewardsPlanck = new BigNumber(data.extra);
-      const bnUnit = planckToUnit(bnPendingRewardsPlanck, chainUnits(chainId));
-      const fmtAmount = (
-        <b>{`${bnUnit.toString()} ${chainCurrency(chainId)}`}</b>
-      );
+      const rewards = BigInt(data.extra);
+      const unit = planckToUnit(rewards, chainUnits(chainId));
+      const fmtAmount = <b>{`${unit} ${chainCurrency(chainId)}`}</b>;
 
       return (
         <ExtrinsicItemContentWrapper>
@@ -98,11 +96,9 @@ export const ExtrinsicItemContent = ({
       );
     }
     case 'nominationPools_pendingRewards_withdraw': {
-      const bnPendingRewardsPlanck = new BigNumber(data.extra);
-      const bnUnit = planckToUnit(bnPendingRewardsPlanck, chainUnits(chainId));
-      const fmtAmount = (
-        <b>{`${bnUnit.toString()} ${chainCurrency(chainId)}`}</b>
-      );
+      const rewards = BigInt(data.extra);
+      const unit = planckToUnit(rewards, chainUnits(chainId));
+      const fmtAmount = <b>{`${unit} ${chainCurrency(chainId)}`}</b>;
 
       return (
         <ExtrinsicItemContentWrapper>

@@ -10,8 +10,8 @@ import { useConnections } from '@app/contexts/common/Connections';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTableList } from '@fortawesome/free-solid-svg-icons';
-import BigNumber from 'bignumber.js';
 import { ellipsisFn, planckToUnit } from '@w3ux/utils';
+import { formatDecimal } from '@ren/utils/TextUtils';
 import { CopyButton, Identicon, TooltipRx } from '@polkadot-live/ui/components';
 import { truncateDecimalPlaces } from '../Helpers';
 import { InfoPanel } from './Wrappers';
@@ -61,13 +61,13 @@ export const DialogExtrinsicSummary = ({
 
     const { chainId } = info.actionMeta;
     const currency = chainCurrency(chainId);
-    const bnPlanck = new BigNumber(info.estimatedFee!);
-    const bnUnit = planckToUnit(bnPlanck, chainUnits(chainId));
+    const planck = BigInt(info.estimatedFee!);
+    const unit = planckToUnit(planck, chainUnits(chainId));
 
     return (
       <span className="RightItem">
-        <TooltipRx text={`${bnUnit.toString()} ${currency}`} theme={theme}>
-          <span>{`${truncateDecimalPlaces(bnUnit.toString())} ${currency}`}</span>
+        <TooltipRx text={`${unit} ${currency}`} theme={theme}>
+          <span>{`${truncateDecimalPlaces(unit)} ${currency}`}</span>
         </TooltipRx>
       </span>
     );
@@ -86,14 +86,14 @@ export const DialogExtrinsicSummary = ({
     switch (info.actionMeta.action) {
       case 'balances_transferKeepAlive': {
         const {
-          sendAmount: planck,
+          sendAmount,
           recipientAccountName,
           recipientAddress,
         }: ExTransferKeepAliveData = data;
 
         const units = chainUnits(chainId);
-        const bnPlanck = new BigNumber(planck);
-        const bnUnit = planckToUnit(bnPlanck, units);
+        const planck = BigInt(sendAmount);
+        const unit = formatDecimal(planckToUnit(planck, units));
         const currency = chainCurrency(chainId);
 
         return (
@@ -110,9 +110,7 @@ export const DialogExtrinsicSummary = ({
             <InfoPanel $theme={theme}>
               <div>
                 <span className="LeftItem">Send Amount</span>
-                <span className="RightItem">
-                  {`${bnUnit.toString()} ${currency}`}
-                </span>
+                <span className="RightItem">{`${unit} ${currency}`}</span>
               </div>
             </InfoPanel>
           </>
@@ -120,11 +118,8 @@ export const DialogExtrinsicSummary = ({
       }
       case 'nominationPools_pendingRewards_bond':
       case 'nominationPools_pendingRewards_withdraw': {
-        const bnPendingRewardsPlanck = new BigNumber(data.extra);
-        const bnUnit = planckToUnit(
-          bnPendingRewardsPlanck,
-          chainUnits(chainId)
-        );
+        const rewards = BigInt(data.extra);
+        const unit = planckToUnit(rewards, chainUnits(chainId));
 
         const title =
           info.actionMeta.action === 'nominationPools_pendingRewards_bond'
@@ -138,10 +133,10 @@ export const DialogExtrinsicSummary = ({
               <span className="LeftItem">{title}</span>
               <span className="RightItem">
                 <TooltipRx
-                  text={`${bnUnit.toString()} ${chainCurrency(chainId)}`}
+                  text={`${unit} ${chainCurrency(chainId)}`}
                   theme={theme}
                 >
-                  <span>{`${truncateDecimalPlaces(bnUnit.toString())} ${chainCurrency(chainId)}`}</span>
+                  <span>{`${truncateDecimalPlaces(unit)} ${chainCurrency(chainId)}`}</span>
                 </TooltipRx>
               </span>
             </div>
