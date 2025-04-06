@@ -128,7 +128,8 @@ export class Callbacks {
       }
 
       // Get the received balance.
-      const free = BigInt(rmCommas(String(data.data.free)));
+      const frozen = BigInt(rmCommas(String(data.data.frozen)));
+      const free = BigInt(rmCommas(String(data.data.free))) - frozen;
       const b = account.balance;
       const isSame = b.free ? free === b.free : false;
 
