@@ -5,6 +5,7 @@ import * as Dialog from '@radix-ui/react-dialog';
 import * as themeVariables from '../../../theme/variables';
 import * as Styles from '@polkadot-live/ui/styles';
 
+import { formatDecimal } from '@ren/utils/TextUtils';
 import { chainCurrency, chainUnits } from '@ren/config/chains';
 import { useConnections } from '@app/contexts/common/Connections';
 import { Cross2Icon } from '@radix-ui/react-icons';
@@ -92,7 +93,7 @@ export const DialogExtrinsicSummary = ({
 
         const units = chainUnits(chainId);
         const planck = BigInt(sendAmount);
-        const unit = planckToUnit(planck, units);
+        const unit = formatDecimal(planckToUnit(planck, units));
         const currency = chainCurrency(chainId);
 
         return (

@@ -109,6 +109,26 @@ export const truncateDecimals = (value: string, decimals: number): string => {
 };
 
 /**
+ * @name formatDecimal
+ * @summary Format a decimal number represented as a string.
+ */
+export const formatDecimal = (value: string): string => {
+  const [intPart, decimalPart = ''] = value.split('.');
+
+  if (decimalPart.length === 0) {
+    return `${intPart}.00`;
+  }
+
+  // Remove trailing zeros
+  const trimmed = decimalPart.replace(/0+$/, '');
+
+  // Ensure at least 2 digits
+  const padded = trimmed.padEnd(2, '0');
+
+  return `${intPart}.${padded}`;
+};
+
+/**
  * @name formatChainUnits
  * @summary Get readable chain units for rendering.
  */
