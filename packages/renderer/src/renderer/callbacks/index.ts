@@ -391,12 +391,12 @@ export class Callbacks {
       const { api } = await this.getApiOrThrow(account.chain);
 
       // Fetch pending rewards for the account.
-      const strPending = (
+      const result = (
         await api.call.nominationPoolsApi.pendingRewards(account.address)
       ).toString();
 
-      const pending = BigInt(rmCommas(strPending));
-      const cur = account.nominationPoolData!.poolPendingRewards;
+      const pending = BigInt(result);
+      const cur = BigInt(account.nominationPoolData!.poolPendingRewards);
       const isSame = cur === pending;
 
       // Return if pending rewards is zero or no change.
@@ -406,7 +406,7 @@ export class Callbacks {
 
       // Update account and entry data.
       if (!isSame) {
-        account.nominationPoolData!.poolPendingRewards = pending;
+        account.nominationPoolData!.poolPendingRewards = pending.toString();
         await AccountsController.set(account.chain, account);
         entry.task.account = account.flatten();
       }

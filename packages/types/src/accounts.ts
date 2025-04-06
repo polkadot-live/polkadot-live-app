@@ -36,7 +36,7 @@ export interface AccountBalance {
 export interface AccountNominationPoolData {
   poolId: number;
   poolRewardAddress: string;
-  poolPendingRewards: bigint;
+  poolPendingRewards: string;
   poolState: string;
   poolName: string;
   poolRoles: NominationPoolRoles;

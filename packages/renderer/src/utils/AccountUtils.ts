@@ -291,9 +291,10 @@ const setNominationPoolDataForAccount = async (account: Account) => {
   const { reward: poolRewardAddress } = getPoolAccounts(poolId, api);
 
   // Get pending rewards for the account.
-  const pendingRewardsResult: AnyJson =
-    await api.call.nominationPoolsApi.pendingRewards(account.address);
-  const poolPendingRewards = BigInt(rmCommas(String(pendingRewardsResult)));
+  const pendingRewardsResult: AnyJson = (
+    await api.call.nominationPoolsApi.pendingRewards(account.address)
+  ).toString();
+  const poolPendingRewards = BigInt(rmCommas(pendingRewardsResult)).toString();
 
   // Get nomination pool data.
   const npResult: AnyData = (
