@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { AnyJson, AnyFunction } from './misc';
-import type { PolkadotAccountState } from './chains/polkadot';
 import type BigNumber from 'bignumber.js';
 import type { ChainID } from './chains';
 
@@ -130,11 +129,6 @@ export interface LedgerLocalAddress {
   name: string;
   pubKey: string;
 }
-
-/**
- * @deprecated The type should not be used
- */
-export type AccountChainState = PolkadotAccountState;
 
 // Type for `Account.state` property
 // Currently only supports Polkadot chain instance's state

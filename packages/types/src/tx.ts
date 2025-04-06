@@ -65,7 +65,7 @@ export interface AddressInfo {
 }
 
 export interface ExtrinsicDynamicInfo {
-  accountNonce: bigint;
+  accountNonce: string;
   genesisHash: Uint8Array;
   txPayload: Uint8Array;
   txSignature?: `0x${string}`;

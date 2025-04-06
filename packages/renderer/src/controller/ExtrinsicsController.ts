@@ -175,7 +175,7 @@ export class ExtrinsicsController {
       const { txId, actionMeta } = info;
       const { chainId, from } = info.actionMeta;
       const { api } = await APIsController.getConnectedApiOrThrow(chainId);
-      const nonce = Number(await getAddressNonce(from, chainId));
+      const nonce = Number((await getAddressNonce(from, chainId)).toString());
 
       // Create tx if it's not cached already.
       if (!this.txPayloads.has(txId)) {

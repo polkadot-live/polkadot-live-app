@@ -11,6 +11,7 @@ import {
   TxInfoBadge,
 } from '@polkadot-live/ui/components';
 import { faCoins, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import { formatDecimal } from '@ren/utils/TextUtils';
 import { FlexRow } from '@polkadot-live/ui/styles';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type {
@@ -43,12 +44,10 @@ export const getExtrinsicTitle = (info: ExtrinsicInfo) => {
       const { chainId, data } = info.actionMeta;
       const { sendAmount }: ExTransferKeepAliveData = data;
       const planck = BigInt(sendAmount);
-      const unit = planckToUnit(planck, chainUnits(chainId));
+      const unit = formatDecimal(planckToUnit(planck, chainUnits(chainId)));
 
       const fmtAmount =
-        unit.toString().length > MAXLEN
-          ? ellipsisFn(unit.toString(), MAXLEN, 'end')
-          : unit.toString();
+        unit.length > MAXLEN ? ellipsisFn(unit, MAXLEN, 'end') : unit;
 
       return (
         <TriggerHeader>
@@ -66,9 +65,7 @@ export const getExtrinsicTitle = (info: ExtrinsicInfo) => {
       const unit = planckToUnit(rewards, chainUnits(chainId));
 
       const fmtAmount =
-        unit.toString().length > MAXLEN
-          ? ellipsisFn(unit.toString(), MAXLEN, 'end')
-          : unit.toString();
+        unit.length > MAXLEN ? ellipsisFn(unit, MAXLEN, 'end') : unit;
 
       const title =
         action === 'nominationPools_pendingRewards_bond'
@@ -141,8 +138,8 @@ export const EstimatedFeeBadge = ({
     const planck = BigInt(info.estimatedFee);
     const unit = planckToUnit(planck, chainUnits(chainId));
 
-    estimatedFee = `${unit.toString()} ${currency}`;
-    truncEstimatedFee = `${truncateDecimalPlaces(unit.toString())} ${currency}`;
+    estimatedFee = `${unit} ${currency}`;
+    truncEstimatedFee = `${truncateDecimalPlaces(unit)} ${currency}`;
   }
 
   return (

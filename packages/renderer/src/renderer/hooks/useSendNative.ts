@@ -5,6 +5,7 @@ import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { useEffect, useRef, useState } from 'react';
 import { chainUnits } from '@ren/config/chains';
 import { ellipsisFn, unitToPlanck } from '@w3ux/utils';
+import { formatDecimal } from '@ren/utils/TextUtils';
 import {
   getAddressChainId,
   getSpendableBalance,
@@ -99,7 +100,7 @@ export const useSendNative = (): SendNativeHook => {
     };
 
     const sendAmountPlanck: string = unitToPlanck(
-      sendAmount.toString(),
+      formatDecimal(sendAmount),
       chainUnits(senderNetwork)
     ).toString();
 

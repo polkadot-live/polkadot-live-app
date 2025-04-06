@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ExtrinsicItemContentWrapper } from './Wrappers';
 import type { ExtrinsicItemContentProps } from './types';
 import type { ExTransferKeepAliveData } from '@polkadot-live/types/tx';
+import { formatDecimal } from '@ren/utils/TextUtils';
 
 /**
  * @name ExtrinsicItemContent
@@ -41,9 +42,9 @@ export const ExtrinsicItemContent = ({
 
       const units = chainUnits(chainId);
       const biPlanck = BigInt(planck);
-      const bnUnit = planckToUnit(biPlanck, units);
+      const unit = formatDecimal(planckToUnit(biPlanck, units));
       const currency = chainCurrency(chainId);
-      const fmtAmount = <b>{`${bnUnit.toString()} ${currency}`}</b>;
+      const fmtAmount = <b>{`${unit} ${currency}`}</b>;
 
       return (
         <ExtrinsicItemContentWrapper>
@@ -75,10 +76,8 @@ export const ExtrinsicItemContent = ({
     }
     case 'nominationPools_pendingRewards_bond': {
       const rewards = BigInt(data.extra);
-      const bnUnit = planckToUnit(rewards, chainUnits(chainId));
-      const fmtAmount = (
-        <b>{`${bnUnit.toString()} ${chainCurrency(chainId)}`}</b>
-      );
+      const unit = planckToUnit(rewards, chainUnits(chainId));
+      const fmtAmount = <b>{`${unit} ${chainCurrency(chainId)}`}</b>;
 
       return (
         <ExtrinsicItemContentWrapper>
@@ -98,10 +97,8 @@ export const ExtrinsicItemContent = ({
     }
     case 'nominationPools_pendingRewards_withdraw': {
       const rewards = BigInt(data.extra);
-      const bnUnit = planckToUnit(rewards, chainUnits(chainId));
-      const fmtAmount = (
-        <b>{`${bnUnit.toString()} ${chainCurrency(chainId)}`}</b>
-      );
+      const unit = planckToUnit(rewards, chainUnits(chainId));
+      const fmtAmount = <b>{`${unit} ${chainCurrency(chainId)}`}</b>;
 
       return (
         <ExtrinsicItemContentWrapper>

@@ -81,7 +81,7 @@ export const useActionMessagePorts = () => {
     const { accountNonce, genesisHash, txId, txPayload } = ev.data.data;
 
     setTxDynamicInfo(txId, {
-      accountNonce: BigInt(accountNonce),
+      accountNonce: String(accountNonce),
       genesisHash,
       txPayload,
     });
