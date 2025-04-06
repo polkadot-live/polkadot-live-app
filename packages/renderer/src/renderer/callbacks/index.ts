@@ -128,8 +128,9 @@ export class Callbacks {
       }
 
       // Get the received balance.
-      const frozen = BigInt(rmCommas(String(data.data.frozen)));
-      const free = BigInt(rmCommas(String(data.data.free))) - frozen;
+      const human = data.toHuman();
+      const reserved = BigInt(rmCommas(human.data.reserved));
+      const free = BigInt(rmCommas(human.data.free)) - reserved;
       const b = account.balance;
       const isSame = b.free ? free === b.free : false;
 
@@ -141,7 +142,7 @@ export class Callbacks {
       // Update account data if balance has changed.
       if (!isSame) {
         account.balance.free = free;
-        account.balance.nonce = BigInt(rmCommas(String(data.nonce)));
+        account.balance.nonce = BigInt(rmCommas(human.nonce));
         await AccountsController.set(account.chain, account);
         entry.task.account = account.flatten();
       }
@@ -189,7 +190,8 @@ export class Callbacks {
       }
 
       // Get the received frozen balance.
-      const frozen = BigInt(rmCommas(String(data.data.frozen)));
+      const human = data.toHuman();
+      const frozen = BigInt(rmCommas(human.data.frozen));
       const b = account.balance;
       const isSame = b.frozen ? frozen === b.frozen : false;
 
@@ -201,7 +203,7 @@ export class Callbacks {
       // Update account data if balance has changed.
       if (!isSame) {
         account.balance.frozen = frozen;
-        account.balance.nonce = BigInt(rmCommas(String(data.nonce)));
+        account.balance.nonce = BigInt(rmCommas(human.nonce));
         await AccountsController.set(account.chain, account);
         entry.task.account = account.flatten();
       }
@@ -249,7 +251,8 @@ export class Callbacks {
       }
 
       // Get the received reserved balance.
-      const reserved = BigInt(rmCommas(String(data.data.reserved)));
+      const human = data.toHuman();
+      const reserved = BigInt(rmCommas(human.data.reserved));
       const b = account.balance;
       const isSame = b.reserved ? reserved === b.reserved : false;
 
@@ -261,7 +264,7 @@ export class Callbacks {
       // Update account data if balance has changed.
       if (!isSame) {
         account.balance.reserved = reserved;
-        account.balance.nonce = BigInt(rmCommas(String(data.nonce)));
+        account.balance.nonce = BigInt(rmCommas(human.nonce));
         await AccountsController.set(account.chain, account);
         entry.task.account = account.flatten();
       }
@@ -314,9 +317,10 @@ export class Callbacks {
        * Spendable balance equation:
        * spendable = free - max(max(frozen, reserved), ed)
        */
-      const free = BigInt(rmCommas(String(data.data.free)));
-      const frozen = BigInt(rmCommas(String(data.data.frozen)));
-      const reserved = BigInt(rmCommas(String(data.data.reserved)));
+      const human = data.toHuman();
+      const free = BigInt(rmCommas(human.data.free));
+      const frozen = BigInt(rmCommas(human.data.frozen));
+      const reserved = BigInt(rmCommas(human.data.reserved));
       const ed = BigInt(
         rmCommas(String(api.consts.balances.existentialDeposit))
       );
@@ -339,7 +343,7 @@ export class Callbacks {
 
       // Update account nonce if balance has changed.
       if (!isSame) {
-        account.balance.nonce = BigInt(rmCommas(String(data.nonce)));
+        account.balance.nonce = BigInt(rmCommas(human.nonce));
         await AccountsController.set(account.chain, account);
         entry.task.account = account.flatten();
       }
