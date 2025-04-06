@@ -38,7 +38,10 @@ export class EventsController {
     switch (task.action) {
       case 'subscribe:interval:openGov:referendumVotes': {
         const { action, chainId, referendumId } = task;
-        const { ayeVotes, nayVotes } = miscData;
+        const {
+          percentAyes,
+          percentNays,
+        }: { percentAyes: string; percentNays: string } = miscData;
 
         return {
           uid: '',
@@ -49,8 +52,8 @@ export class EventsController {
             data: { chainId } as EventChainData,
           },
           title: `Referendum ${referendumId}`,
-          subtitle: `Ayes at ${ayeVotes}% and Nayes at ${nayVotes}%.`,
-          data: { referendumId, ayeVotes, nayVotes },
+          subtitle: `Ayes at ${percentAyes}% and Nayes at ${percentNays}%.`,
+          data: { referendumId, percentAyes, percentNays },
           timestamp: getUnixTime(new Date()),
           stale: false,
           txActions: [],
@@ -68,7 +71,10 @@ export class EventsController {
       }
       case 'subscribe:interval:openGov:decisionPeriod': {
         const { action, chainId, referendumId } = task;
-        const { formattedTime, subtext } = miscData;
+        const {
+          formattedTime,
+          subtext,
+        }: { formattedTime: string; subtext: string } = miscData;
 
         return {
           uid: '',
@@ -98,7 +104,10 @@ export class EventsController {
       }
       case 'subscribe:interval:openGov:referendumThresholds': {
         const { action, chainId, referendumId } = task;
-        const { formattedApp, formattedSup } = miscData;
+        const {
+          formattedApp,
+          formattedSup,
+        }: { formattedApp: string; formattedSup: string } = miscData;
 
         return {
           uid: '',

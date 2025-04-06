@@ -31,15 +31,23 @@ export class NotificationsController {
 
     switch (action) {
       case 'subscribe:interval:openGov:referendumVotes': {
-        const { percentAyes, percentNays } = miscData;
+        const {
+          percentAyes,
+          percentNays,
+        }: { percentAyes: string; percentNays: string } = miscData;
+
         return {
           title: `Referendum ${referendumId}`,
-          body: `Ayes at ${percentAyes.toString()}% and Nayes at ${percentNays.toString()}%.`,
+          body: `Ayes at ${percentAyes}% and Nayes at ${percentNays}%.`,
           subtitle: `Votes Tally`,
         };
       }
       case 'subscribe:interval:openGov:referendumThresholds': {
-        const { formattedApp, formattedSup } = miscData;
+        const {
+          formattedApp,
+          formattedSup,
+        }: { formattedApp: string; formattedSup: string } = miscData;
+
         return {
           title: `Referendum ${referendumId}`,
           body: `Approval at ${formattedApp}% and support at ${formattedSup}%`,

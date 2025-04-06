@@ -94,23 +94,25 @@ const oneShot_openGov_referendumVotes = async (
   const info: RefDeciding = { ...human.Ongoing };
   const { ayes, nays } = info.tally;
 
-  const ayesBn = new BigNumber(rmCommas(String(ayes)));
-  const naysBn = new BigNumber(rmCommas(String(nays)));
-  const totalBn = ayesBn.plus(naysBn);
+  const bnAyes = new BigNumber(rmCommas(String(ayes)));
+  const bnNays = new BigNumber(rmCommas(String(nays)));
+  const bnTotal = bnAyes.plus(bnNays);
 
-  const percentAyes = ayesBn
-    .dividedBy(totalBn)
+  const percentAyes = bnAyes
+    .dividedBy(bnTotal)
     .multipliedBy(100)
-    .decimalPlaces(1);
+    .decimalPlaces(1)
+    .toString();
 
-  const percentNays = naysBn
-    .dividedBy(totalBn)
+  const percentNays = bnNays
+    .dividedBy(bnTotal)
     .multipliedBy(100)
-    .decimalPlaces(1);
+    .decimalPlaces(1)
+    .toString();
 
   const event = EventsController.getIntervalEvent(task, {
-    ayeVotes: percentAyes.toString(),
-    nayVotes: percentNays.toString(),
+    percentAyes,
+    percentNays,
   });
 
   const notification = getNotificationFlag(task, policy)
@@ -171,13 +173,13 @@ const oneShot_openGov_decisionPeriod = async (
   }
 
   const lastHeader = await api.rpc.chain.getHeader();
-  const currentBlockBn = new BigNumber(lastHeader.number.toNumber());
+  const bnCurrentBlock = new BigNumber(lastHeader.number.toNumber());
   const { confirming } = info.deciding;
 
   if (confirming) {
-    const confirmBlockBn = new BigNumber(rmCommas(String(confirming)));
-    const remainingBlocksBn = confirmBlockBn.minus(currentBlockBn);
-    formattedTime = formatBlocksToTime(chainId, remainingBlocksBn.toString());
+    const bnConfirmBlock = new BigNumber(rmCommas(String(confirming)));
+    const bnRemainingBlocks = bnConfirmBlock.minus(bnCurrentBlock);
+    formattedTime = formatBlocksToTime(chainId, bnRemainingBlocks.toString());
     notificationData.body = `Confirmaing. Ends in ${formattedTime}.`;
   } else {
     const { since } = info.deciding;
@@ -198,12 +200,12 @@ const oneShot_openGov_decisionPeriod = async (
     }
 
     // Prefix `dp` meaning `Decision Period`.
-    const dpBn = new BigNumber(rmCommas(String(track.decisionPeriod)));
-    const dpSinceBn = new BigNumber(rmCommas(String(since)));
-    const dpEndBlockBn = dpSinceBn.plus(dpBn);
-    const remainingBlocksBn = dpEndBlockBn.minus(currentBlockBn);
+    const bnDp = new BigNumber(rmCommas(String(track.decisionPeriod)));
+    const bnDpSince = new BigNumber(rmCommas(String(since)));
+    const bnDpEndBlock = bnDpSince.plus(bnDp);
+    const bnRemainingBlocks = bnDpEndBlock.minus(bnCurrentBlock);
 
-    formattedTime = formatBlocksToTime(chainId, remainingBlocksBn.toString());
+    formattedTime = formatBlocksToTime(chainId, bnRemainingBlocks.toString());
     notificationData.body = `Ends in ${formattedTime}.`;
   }
 
@@ -288,11 +290,13 @@ const oneShot_openGov_thresholds = async (
 
   const formattedApp = new BigNumber(rmChars(thresholds.minApproval))
     .multipliedBy(100)
-    .toFixed(2);
+    .toFixed(2)
+    .toString();
 
   const formattedSup = new BigNumber(rmChars(thresholds.minSupport))
     .multipliedBy(100)
-    .toFixed(2);
+    .toFixed(2)
+    .toString();
 
   const event = EventsController.getIntervalEvent(task, {
     formattedApp,
