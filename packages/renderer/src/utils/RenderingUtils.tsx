@@ -2,10 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as UI from '@polkadot-live/ui/components';
+import * as Styles from '@polkadot-live/ui/styles';
 import PolkadotIcon from '@app/svg/polkadotIcon.svg?react';
 import WestendIcon from '@app/svg/westendIcon.svg?react';
 import KusamaIcon from '@app/svg/kusamaIcon.svg?react';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { useHelp } from '@app/contexts/common/Help';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -27,6 +30,18 @@ export const LinksFooter = () => {
     />
   );
 };
+
+/**
+ * @name OfflineWarning
+ * @summary Render an offline message.
+ */
+// Offline warning markup.
+export const OfflineWarning = () => (
+  <Styles.FlexRow $gap={'0.5rem'} style={{ color: 'var(--accent-warning)' }}>
+    <FontAwesomeIcon icon={faTriangleExclamation} transform={'shrink-2'} />
+    <p style={{ margin: 0, color: 'inherit' }}>Currently offline</p>
+  </Styles.FlexRow>
+);
 
 /**
  * @name TooltipWrapper
