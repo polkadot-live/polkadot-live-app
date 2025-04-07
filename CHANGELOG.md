@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.8.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.7.0-alpha...v0.8.0-alpha) (2025-04-07)
+
+
+### Features
+
+* api disconnect button tooltips ([#946](https://github.com/polkadot-live/polkadot-live-app/issues/946)) ([6d5dd74](https://github.com/polkadot-live/polkadot-live-app/commit/6d5dd7470a06d70c4d13ba6018a1fa0ef6c58b37))
+* api timeouts and cleanup ([#947](https://github.com/polkadot-live/polkadot-live-app/issues/947)) ([dd78e86](https://github.com/polkadot-live/polkadot-live-app/commit/dd78e8632c503cdbfcd6752660909e4a0df2f67c))
+* disconnect chain api ([#935](https://github.com/polkadot-live/polkadot-live-app/issues/935)) ([739db1d](https://github.com/polkadot-live/polkadot-live-app/commit/739db1d44c190336f198bd378c7efe99816e7728))
+* send screen offline mode ([#952](https://github.com/polkadot-live/polkadot-live-app/issues/952)) ([beee1c0](https://github.com/polkadot-live/polkadot-live-app/commit/beee1c0d3eeac333aa71da28284b6177c9208f11))
+* ui edge cases ([#951](https://github.com/polkadot-live/polkadot-live-app/issues/951)) ([ed1542d](https://github.com/polkadot-live/polkadot-live-app/commit/ed1542de4c39b6560c2b843987f7fb0ac3a7c0fb))
+
+
+### Bug Fixes
+
+* api connections state ([#932](https://github.com/polkadot-live/polkadot-live-app/issues/932)) ([8d54228](https://github.com/polkadot-live/polkadot-live-app/commit/8d54228e68d6319d59d42e42cacc2a854fad887c))
+* bootstrapping state ([#933](https://github.com/polkadot-live/polkadot-live-app/issues/933)) ([f277cc0](https://github.com/polkadot-live/polkadot-live-app/commit/f277cc02db34647a30a9010ba549a548e15bdfda))
+* referenda pagination ellipsis ([#934](https://github.com/polkadot-live/polkadot-live-app/issues/934)) ([d437aa5](https://github.com/polkadot-live/polkadot-live-app/commit/d437aa5e27b58f83c15ba01930286b843eeddd47))
+
 ## [0.7.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.6.2-alpha...v0.7.0-alpha) (2025-03-24)
 
 
