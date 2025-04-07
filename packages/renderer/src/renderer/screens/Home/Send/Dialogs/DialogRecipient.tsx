@@ -33,7 +33,7 @@ export const DialogRecipient = ({
   sender,
   setReceiver,
 }: DialogRecipientProps) => {
-  const { darkMode } = useConnections();
+  const { darkMode, getOnlineMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
   const [isOpen, setIsOpen] = useState(false);
@@ -164,15 +164,24 @@ export const DialogRecipient = ({
   }, [sender]);
 
   return (
-    <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog.Root
+      open={isOpen}
+      onOpenChange={(val) => getOnlineMode() && setIsOpen(val)}
+    >
       <Styles.DialogTrigger $theme={theme}>
-        <TriggerButton $theme={theme}>
+        <TriggerButton
+          $theme={theme}
+          className={!getOnlineMode() ? 'disable' : ''}
+        >
           {recipient === null || recipient.address === '' ? (
             <span style={{ textAlign: 'left', flex: 1 }}>Select Recipient</span>
           ) : (
-            <SelectedAddressItem $theme={theme}>
+            <SelectedAddressItem
+              className={!getOnlineMode() ? 'disable' : ''}
+              $theme={theme}
+            >
               <Styles.FlexRow $gap={'1.25rem'} style={{ width: '100%' }}>
-                <div style={{ minWidth: 'fit-content' }}>
+                <div className="identicon" style={{ minWidth: 'fit-content' }}>
                   <Identicon value={recipient.address} fontSize="1.9rem" />
                 </div>
                 <Styles.FlexColumn

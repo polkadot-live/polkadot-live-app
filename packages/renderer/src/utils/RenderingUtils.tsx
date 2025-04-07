@@ -36,13 +36,19 @@ export const LinksFooter = () => {
  * @summary Render an offline message.
  */
 // Offline warning markup.
-export const OfflineWarning = ({ style }: { style?: React.CSSProperties }) => (
+export const OfflineWarning = ({
+  style,
+  text,
+}: {
+  style?: React.CSSProperties;
+  text?: string;
+}) => (
   <Styles.FlexRow
     $gap={'0.5rem'}
     style={{ ...style, color: 'var(--accent-warning)' }}
   >
     <FontAwesomeIcon icon={faTriangleExclamation} transform={'shrink-2'} />
-    <p style={{ margin: 0, color: 'inherit' }}>Currently offline</p>
+    <p style={{ margin: 0, color: 'inherit' }}>{text || 'Currently offline'}</p>
   </Styles.FlexRow>
 );
 

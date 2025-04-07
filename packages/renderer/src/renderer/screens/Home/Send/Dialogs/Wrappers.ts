@@ -62,6 +62,16 @@ export const SelectedAddressItem = styled.div<{
     color: ${(props) => props.$theme.textColorSecondary};
     font-size: 1rem;
   }
+  &.disable {
+    cursor: not-allowed;
+    h3 {
+      color: ${(props) => props.$theme.textDimmed};
+      cursor: not-allowed;
+    }
+    .identicon {
+      opacity: 0.35;
+    }
+  }
 `;
 
 export const AddressItem = styled.div<{ $theme: AnyData; selected: boolean }>`
@@ -203,7 +213,11 @@ export const TriggerButton = styled.div<{ $theme: AnyData }>`
   border-radius: 0.375rem;
   font-size: 1.1rem;
 
-  &:hover {
+  &.disable {
+    color: var(--text-dimmed);
+    cursor: not-allowed;
+  }
+  &:hover:not(.disable) {
     background-color: ${(props) => props.$theme.backgroundPrimaryHover};
   }
 `;
