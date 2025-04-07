@@ -367,25 +367,21 @@ export const ReferendaProvider = ({
     const execute = async () => {
       if (refTrigger) {
         // Active directory.
-        const pActive = getReferendaPage(activePagedReferenda.page, 'active');
-        await fetchFromPolkassembly(pActive);
+        const active = getReferendaPage(activePagedReferenda.page, 'active');
+        await fetchFromPolkassembly(active);
         setActivePagedReferenda((pv) => ({
           ...pv,
           pageCount: getPageCount('active'),
-          referenda: pActive,
+          referenda: active,
         }));
 
         // History directory.
-        const pHistory = getReferendaPage(
-          historyPagedReferenda.page,
-          'history'
-        );
-
-        await fetchFromPolkassembly(pHistory);
+        const history = getReferendaPage(historyPagedReferenda.page, 'history');
+        await fetchFromPolkassembly(history);
         setHistoryPagedReferenda((pv) => ({
           ...pv,
           pageCount: getPageCount('history'),
-          referenda: pHistory,
+          referenda: history,
         }));
 
         // Cleanup.

@@ -93,28 +93,65 @@ export const useMainMessagePorts = () => {
    * @summary Imports a new account when a message is received from `import` window.
    */
   const handleImportAddress = async (ev: MessageEvent, fromBackup: boolean) => {
-    window.myAPI.relaySharedState('isImportingAccount', true);
-    const { chainId, source, address, name } = ev.data.data;
+    try {
+      window.myAPI.relaySharedState('isImportingAccount', true);
+      const { chainId, source, address, name: accountName } = ev.data.data;
 
-    // Add address to accounts controller.
-    let account =
-      AccountsController.add(chainId, source, address, name) || undefined;
+      // Add address to accounts controller.
+      let account =
+        AccountsController.add(chainId, source, address, accountName) ||
+        undefined;
 
-    // Unsubscribe all tasks if the account exists and is being re-imported.
-    if (fromBackup && !account) {
-      account = AccountsController.get(chainId, address);
+      // Unsubscribe all tasks if the account exists and is being re-imported.
+      if (fromBackup && !account) {
+        account = AccountsController.get(chainId, address);
 
-      if (account) {
-        await AccountsController.removeAllSubscriptions(account);
-        const allTasks = SubscriptionsController.getAllSubscriptionsForAccount(
+        if (account) {
+          await AccountsController.removeAllSubscriptions(account);
+          const allTasks =
+            SubscriptionsController.getAllSubscriptionsForAccount(
+              account,
+              'disable'
+            );
+
+          for (const task of allTasks) {
+            updateTask('account', task, task.account?.address);
+            updateRenderedSubscriptions(task);
+
+            await window.myAPI.sendSubscriptionTask({
+              action: 'subscriptions:account:update',
+              data: {
+                serAccount: JSON.stringify(account.flatten()),
+                serTask: JSON.stringify(task),
+              },
+            });
+          }
+        }
+      }
+
+      // Return if account already exists and isn't being re-imported.
+      if (!account) {
+        window.myAPI.relaySharedState('isImportingAccount', false);
+        return;
+      }
+
+      // Fetch account data from network.
+      const isOnline: boolean = await getOnlineStatus();
+      if (isOnline) {
+        await fetchBalanceForAccount(account);
+        await fetchNominationPoolDataForAccount(account);
+        await fetchNominatingDataForAccount(account);
+      }
+
+      // Subscribe new account to all possible subscriptions if setting enabled.
+      if (account.queryMulti !== null && !fromBackup) {
+        const tasks = SubscriptionsController.getAllSubscriptionsForAccount(
           account,
-          'disable'
+          'enable'
         );
 
-        for (const task of allTasks) {
-          updateTask('account', task, task.account?.address);
-          updateRenderedSubscriptions(task);
-
+        // Update persisted state and React state for tasks.
+        for (const task of tasks) {
           await window.myAPI.sendSubscriptionTask({
             action: 'subscriptions:account:update',
             data: {
@@ -122,70 +159,40 @@ export const useMainMessagePorts = () => {
               serTask: JSON.stringify(task),
             },
           });
+
+          updateTask('account', task, task.account?.address);
+          updateRenderedSubscriptions(task);
         }
-      }
-    }
 
-    // Return if account already exists and isn't being re-imported.
-    if (!account) {
-      window.myAPI.relaySharedState('isImportingAccount', false);
-      return;
-    }
+        // Subscribe to tasks if app setting enabled.
+        !fromBackup &&
+          ConfigRenderer.enableAutomaticSubscriptions &&
+          (await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti));
 
-    // Fetch account data from network.
-    const isOnline: boolean = await getOnlineStatus();
-    if (isOnline) {
-      await fetchBalanceForAccount(account);
-      await fetchNominationPoolDataForAccount(account);
-      await fetchNominatingDataForAccount(account);
-    }
-
-    // Subscribe new account to all possible subscriptions if setting enabled.
-    if (account.queryMulti !== null && !fromBackup) {
-      const tasks = SubscriptionsController.getAllSubscriptionsForAccount(
-        account,
-        'enable'
-      );
-
-      // Update persisted state and React state for tasks.
-      for (const task of tasks) {
-        await window.myAPI.sendSubscriptionTask({
-          action: 'subscriptions:account:update',
-          data: {
-            serAccount: JSON.stringify(account.flatten()),
-            serTask: JSON.stringify(task),
-          },
-        });
-
-        updateTask('account', task, task.account?.address);
-        updateRenderedSubscriptions(task);
+        // Update React subscriptions state.
+        SubscriptionsController.syncAccountSubscriptionsState();
       }
 
-      // Subscribe to tasks if app setting enabled.
-      !fromBackup &&
-        ConfigRenderer.enableAutomaticSubscriptions &&
-        (await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti));
+      // Add account to address context state.
+      await importAddress(chainId, source, address, accountName, fromBackup);
 
-      // Update React subscriptions state.
-      SubscriptionsController.syncAccountSubscriptionsState();
+      // Send message back to import window to reset account's processing flag.
+      ConfigRenderer.portToImport?.postMessage({
+        task: 'import:account:processing',
+        data: { address, source, status: false, success: true, accountName },
+      });
+
       window.myAPI.relaySharedState('isImportingAccount', false);
+      window.myAPI.umamiEvent('account-import', { source, chainId });
+    } catch (err) {
+      const { address, source, name: accountName } = ev.data.data;
+
+      window.myAPI.relaySharedState('isImportingAccount', false);
+      ConfigRenderer.portToImport?.postMessage({
+        task: 'import:account:processing',
+        data: { address, source, status: false, success: false, accountName },
+      });
     }
-
-    // Add account to address context state.
-    await importAddress(chainId, source, address, name, fromBackup);
-
-    // Send message back to import window to reset account's processing flag.
-    ConfigRenderer.portToImport?.postMessage({
-      task: 'import:account:processing',
-      data: {
-        address,
-        source,
-        status: false,
-      },
-    });
-
-    // Analytics.
-    window.myAPI.umamiEvent('account-import', { source, chainId });
   };
 
   /**
@@ -195,37 +202,41 @@ export const useMainMessagePorts = () => {
    * Also called when deleting an account.
    */
   const handleRemoveAddress = async (ev: MessageEvent) => {
-    const { address, chainId } = ev.data.data;
+    try {
+      const { address, chainId } = ev.data.data;
 
-    // Retrieve the account.
-    const account = AccountsController.get(chainId, address);
+      // Retrieve the account.
+      const account = AccountsController.get(chainId, address);
 
-    if (!account) {
-      console.log('Account could not be fetched, probably not imported yet');
-      return;
+      if (!account) {
+        console.log('Account could not be fetched, probably not imported yet');
+        return;
+      }
+
+      // Unsubscribe from all active tasks.
+      await AccountsController.removeAllSubscriptions(account);
+
+      // Remove account from controller and store.
+      AccountsController.remove(chainId, address);
+
+      // Remove address from context.
+      await removeAddress(chainId, address);
+
+      // Update account subscriptions data.
+      SubscriptionsController.syncAccountSubscriptionsState();
+
+      // Disconnect from any API instances that are not currently needed.
+      await disconnectAPIs();
+
+      // Transition away from rendering toggles.
+      setRenderedSubscriptions({ type: '', tasks: [] });
+
+      // Analytics.
+      const { source } = account;
+      window.myAPI.umamiEvent('account-remove', { source, chainId });
+    } catch (err) {
+      console.error(err);
     }
-
-    // Unsubscribe from all active tasks.
-    await AccountsController.removeAllSubscriptions(account);
-
-    // Remove account from controller and store.
-    AccountsController.remove(chainId, address);
-
-    // Remove address from context.
-    await removeAddress(chainId, address);
-
-    // Update account subscriptions data.
-    SubscriptionsController.syncAccountSubscriptionsState();
-
-    // Disconnect from any API instances that are not currently needed.
-    await disconnectAPIs();
-
-    // Transition away from rendering toggles.
-    setRenderedSubscriptions({ type: '', tasks: [] });
-
-    // Analytics.
-    const { source } = account;
-    window.myAPI.umamiEvent('account-remove', { source, chainId });
   };
 
   /**

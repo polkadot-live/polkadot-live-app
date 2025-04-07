@@ -8,6 +8,7 @@ import { useTracks } from '@app/contexts/openGov/Tracks';
 import { useReferenda } from '../contexts/openGov/Referenda';
 import { useTreasury } from '../contexts/openGov/Treasury';
 import { useReferendaSubscriptions } from '../contexts/openGov/ReferendaSubscriptions';
+import { renderToast } from '@polkadot-live/ui/utils';
 import type { ReferendaInfo } from '@polkadot-live/types/openGov';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 
@@ -54,8 +55,8 @@ export const useOpenGovMessagePorts = () => {
                 const parsed: ReferendaInfo[] = JSON.parse(json);
                 await receiveReferendaData(parsed);
               } else {
-                // TODO: UI error notification.
                 setFetchingReferenda(false);
+                renderToast('Error fetching referenda', 'fetch-error', 'error');
               }
               break;
             }
@@ -63,8 +64,8 @@ export const useOpenGovMessagePorts = () => {
               if (ev.data.data !== null) {
                 setTreasuryData(ev.data.data);
               } else {
-                // TODO: UI error notification.
                 setFetchingTreasuryData(false);
+                renderToast('Error fetching treasury', 'fetch-error', 'error');
               }
               break;
             }

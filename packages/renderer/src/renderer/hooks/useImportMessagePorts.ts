@@ -4,9 +4,10 @@
 import { Config as ConfigImport } from '@ren/config/processes/import';
 
 /// Import window contexts.
+import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useImportHandler } from '@app/contexts/import/ImportHandler';
-import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
+import { useRemoveHandler } from '@app/contexts/import/RemoveHandler';
 import { useWalletConnectImport } from '@app/contexts/import/WalletConnectImport';
 import { useEffect } from 'react';
 import { renderToast } from '@polkadot-live/ui/utils';
@@ -21,6 +22,7 @@ export const useImportMessagePorts = () => {
   const { handleImportAddressFromBackup } = useImportHandler();
   const { setStatusForAccount } = useAccountStatuses();
   const { handleAddressImport } = useAddresses();
+  const { handleRemoveAddress } = useRemoveHandler();
   const { setWcFetchedAddresses, handleOpenCloseWcModal } =
     useWalletConnectImport();
 
@@ -52,8 +54,14 @@ export const useImportMessagePorts = () => {
               break;
             }
             case 'import:account:processing': {
-              const { address, source, status } = ev.data.data;
+              const { address, source, status, success } = ev.data.data;
               setStatusForAccount(address, source, status);
+
+              if (!success) {
+                const { accountName } = ev.data.data;
+                await handleRemoveAddress(address, source, accountName);
+                renderToast('Account import error', 'import-error', 'error');
+              }
               break;
             }
             case 'import:address:update': {

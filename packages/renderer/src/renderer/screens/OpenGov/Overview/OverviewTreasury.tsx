@@ -5,16 +5,12 @@ import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/ui/styles';
 import * as themeVariables from '../../../theme/variables';
 
-import {
-  faArrowsRotate,
-  faTriangleExclamation,
-} from '@fortawesome/free-solid-svg-icons';
-import { TooltipWrapper } from '@ren/utils/RenderingUtils';
+import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
+import { OfflineWarning, TooltipWrapper } from '@ren/utils/RenderingUtils';
 import { TreasuryStats } from '../Wrappers';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useHelp } from '@app/contexts/common/Help';
 import { useTreasury } from '@app/contexts/openGov/Treasury';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { ChainID } from '@polkadot-live/types/chains';
 
 export const OverviewTreasury: React.FC = () => {
@@ -51,14 +47,6 @@ export const OverviewTreasury: React.FC = () => {
   const refetchTreasuryStats = () => {
     refetchStats();
   };
-
-  // Offline warning markup.
-  const renderOfflineWarning = (): React.ReactNode => (
-    <Styles.FlexRow $gap={'0.5rem'} style={{ color: 'var(--accent-warning)' }}>
-      <FontAwesomeIcon icon={faTriangleExclamation} transform={'shrink-2'} />
-      <p style={{ margin: 0, color: 'inherit' }}>Currently offline</p>
-    </Styles.FlexRow>
-  );
 
   return (
     <section>
@@ -107,7 +95,7 @@ export const OverviewTreasury: React.FC = () => {
                   </div>
                 </TooltipWrapper>
 
-                {!getOnlineMode() && renderOfflineWarning()}
+                {!getOnlineMode() && <OfflineWarning />}
               </Styles.FlexRow>
             </UI.ControlsWrapper>
 
