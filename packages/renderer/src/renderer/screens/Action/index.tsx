@@ -21,7 +21,7 @@ import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import { TriggerRightIconWrapper } from './Wrappers';
 import { useConnections } from '@app/contexts/common/Connections';
 import { BarLoader } from 'react-spinners';
-import { LinksFooter } from '@ren/utils/RenderingUtils';
+import { LinksFooter, OfflineWarning } from '@ren/utils/RenderingUtils';
 import { DialogExtrinsicSummary } from './Dialogs';
 import { useEffect, useState } from 'react';
 import { PaginationRow } from '../OpenGov/Referenda/Wrappers';
@@ -75,7 +75,7 @@ export const Action = () => {
       : setPage(page < pageCount ? page + 1 : page);
   };
 
-  const { isBuildingExtrinsic, darkMode } = useConnections();
+  const { isBuildingExtrinsic, darkMode, getOnlineMode } = useConnections();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
   const [dialogInfo, setDialogInfo] = useState<ExtrinsicInfo | null>(null);
@@ -212,6 +212,10 @@ export const Action = () => {
           text={'Extrinsics'}
           style={{ margin: '2rem 0 1rem' }}
         />
+
+        {!getOnlineMode() && (
+          <OfflineWarning style={{ marginBottom: '1.25rem' }} />
+        )}
 
         {Array.from(extrinsics.keys()).length === 0 && (
           <EmptyWrapper>
