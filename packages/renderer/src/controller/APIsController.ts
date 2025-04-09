@@ -203,7 +203,7 @@ export class APIsController {
 
   /**
    * @name tryConnect
-   * @summary Determins if an API instance is connected. Waits a maximum of 15 seconds.
+   * @summary Determines if an API instance is connected. Waits a maximum of 15 seconds.
    */
   private static async tryConnect(chainId: ChainID) {
     const MAX_TRIES = 15;
