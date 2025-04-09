@@ -123,6 +123,9 @@ export class APIsController {
         result && this.updateUiChainState(this.get(chainId)!);
         return result ? this.get(chainId)! : null;
       }
+      default: {
+        return null;
+      }
     }
   };
 
