@@ -1,73 +1,41 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { DedotClient, WsProvider } from 'dedot';
 import { ChainList } from '@ren/config/chains';
-import type { ChainID, ChainStatus } from '@polkadot-live/types/chains';
+import { DedotClient, WsProvider } from 'dedot';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { ClientTypes, FlattenedAPIData } from '@polkadot-live/types/apis';
 
 export class Api<T extends keyof ClientTypes> {
-  private _api: DedotClient<ClientTypes[T]> | null;
-  private _chain: ChainID;
-  private _endpoint: string;
-  private _rpcs: string[] = [];
-  private _status: ChainStatus = 'disconnected';
+  api: DedotClient<ClientTypes[T]> | null;
+  chain: ChainID;
+  endpoint: string;
+  rpcs: string[] = [];
 
   constructor(endpoint: string, chainId: ChainID, rpcs: string[]) {
-    this._chain = chainId;
-    this._endpoint = endpoint;
-    this._status = 'disconnected';
-    this._api = null;
-    this._rpcs = rpcs;
+    this.api = null;
+    this.chain = chainId;
+    this.endpoint = endpoint;
+    this.rpcs = rpcs;
   }
 
-  get api(): DedotClient<ClientTypes[T]> {
-    if (!this._api) {
-      throw new Error('_api property is null');
-    } else {
-      return this._api;
-    }
-  }
-
-  set api(value: DedotClient<ClientTypes[T]> | null) {
-    this._api = value;
-  }
-
-  get chain() {
-    return this._chain;
-  }
-
-  set chain(value: ChainID) {
-    this._chain = value;
-  }
-  get endpoint() {
-    return this._endpoint;
-  }
-
-  set endpoint(value: string) {
-    this._endpoint = value;
-  }
-
-  get status() {
-    return this._status;
-  }
-
-  set status(value: ChainStatus) {
-    this._status = value;
-  }
+  /**
+   * Clear an api if app goes offline.
+   */
+  clear = () => {
+    this.api = null;
+  };
 
   /**
    * Connect to an endpoint.
    */
   connect = async () => {
     try {
-      if (this.status !== 'disconnected') {
+      if (this.api && this.status() !== 'disconnected') {
         return;
       }
 
-      this.status = 'reconnecting';
       const provider = new WsProvider(this.endpoint);
-      this.initEvents(provider);
       const api = await DedotClient.new<ClientTypes[T]>({
         provider,
         cacheMetadata: true,
@@ -80,7 +48,6 @@ export class Api<T extends keyof ClientTypes> {
 
       this.api = api;
       this.chain = chainId;
-      this.status = 'connected';
     } catch (err) {
       console.log('!connect error');
       console.error(err);
@@ -92,17 +59,21 @@ export class Api<T extends keyof ClientTypes> {
    */
   disconnect = async () => {
     try {
-      if (this.api !== null) {
+      if (this.api && this.status() !== 'disconnected') {
         await this.api.disconnect();
       }
 
       this.api = null;
-      this.status = 'disconnected';
     } catch (err) {
       console.log('!disconnect error');
       console.error(err);
     }
   };
+
+  /**
+   * Gets client connection status.
+   */
+  status = () => (this.api ? this.api.status : 'disconnected');
 
   /**
    * Get serializable API instance data.
@@ -111,24 +82,7 @@ export class Api<T extends keyof ClientTypes> {
     ({
       endpoint: this.endpoint,
       chainId: this.chain,
-      status: this.status,
-      rpcs: this._rpcs,
+      status: this.status(),
+      rpcs: this.rpcs,
     }) as FlattenedAPIData;
-
-  /**
-   * Initialise client event handlers.
-   */
-  initEvents = (provider: WsProvider) => {
-    provider.on('connected', () => {
-      console.log('⭕ %o', this.endpoint, ' CONNECTED');
-    });
-    provider.on('disconnected', () => {
-      console.log('❌ %o', this.endpoint, ' DISCONNECTED');
-      this.status = 'disconnected';
-    });
-    provider.on('error', () => {
-      console.log('❗ %o', this.endpoint, ' ERROR');
-      this.status = 'disconnected';
-    });
-  };
 }
