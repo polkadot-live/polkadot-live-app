@@ -12,7 +12,8 @@
     "lint": "eslint --fix --ext .ts,.tsx . && npx prettier --write ./src",
     "clear:dist": "([ -d \"dist\" ] && rm -fr \"dist\") || true",
     "clear": "([ -d \"node_modules\" ] && rm -fr \"node_modules\") || true",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "npx vitest run --passWithNoTests"
   },
   "devDependencies": {
     "@polkadot-live/types": "workspace:*",
