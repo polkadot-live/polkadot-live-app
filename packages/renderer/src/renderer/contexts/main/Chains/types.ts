@@ -14,4 +14,5 @@ export interface ChainInstance {
 
 export interface ChainsContextInterface {
   chains: Map<ChainID, FlattenedAPIData>;
+  dedotChains: Map<ChainID, FlattenedAPIData>;
 }

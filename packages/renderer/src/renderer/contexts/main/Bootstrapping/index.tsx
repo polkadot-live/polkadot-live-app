@@ -12,6 +12,7 @@ import React, {
 } from 'react';
 import { defaultBootstrappingContext } from './default';
 import { AccountsController } from '@ren/controller/AccountsController';
+import { APIsController as DedotAPIsController } from '@ren/controller/dedot/APIsController';
 import { APIsController } from '@ren/controller/APIsController';
 import { Config as RendererConfig } from '@ren/config/processes/renderer';
 import { ChainList } from '@ren/config/chains';
@@ -63,8 +64,11 @@ export const BootstrappingProvider = ({
   };
 
   /// Step 1: Initialize chain APIs (disconnected).
-  const initChainAPIs = () =>
-    APIsController.initialize(Array.from(ChainList.keys()));
+  const initChainAPIs = () => {
+    const chainIds = Array.from(ChainList.keys());
+    APIsController.initialize(chainIds);
+    DedotAPIsController.initialize(chainIds);
+  };
 
   /// Step 2: Initialize accounts.
   const initAccounts = async () => await AccountsController.initialize();
@@ -179,6 +183,7 @@ export const BootstrappingProvider = ({
 
     // Disconnect from chains.
     await APIsController.closeAll();
+    await DedotAPIsController.closeAll();
   };
 
   /// Handle switching to online mode.

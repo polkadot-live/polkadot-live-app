@@ -4,6 +4,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import * as defaults from './defaults';
 import { APIsController } from '@ren/controller/APIsController';
+import { APIsController as DedotApisController } from '@ren/controller/dedot/APIsController';
 import type { ChainsContextInterface } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAPIData } from '@polkadot-live/types/apis';
@@ -20,6 +21,10 @@ export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
     new Map()
   );
 
+  const [dedotChains, setDedotChains] = useState<
+    Map<ChainID, FlattenedAPIData>
+  >(new Map());
+
   // Trigger a render after chain data is set.
   useEffect(() => {
     if (uiTrigger) {
@@ -31,12 +36,16 @@ export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     APIsController.cachedSetChains = setChains;
     APIsController.setUiTrigger = setUiTrigger;
+
+    DedotApisController.cachedSetChains = setDedotChains;
+    DedotApisController.setUiTrigger = setUiTrigger;
   }, []);
 
   return (
     <ChainsContext.Provider
       value={{
         chains,
+        dedotChains,
       }}
     >
       {children}
