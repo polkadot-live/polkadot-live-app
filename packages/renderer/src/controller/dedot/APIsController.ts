@@ -49,9 +49,8 @@ export class APIsController {
    * Disconnect all clients.
    */
   static closeAll = async () => {
-    for (const chainId of ChainList.keys()) {
-      await this.close(chainId);
-    }
+    const chainIds = Array.from(ChainList.keys());
+    await Promise.all(chainIds.map((c) => this.close(c)));
   };
 
   /**

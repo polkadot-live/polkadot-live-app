@@ -6,6 +6,8 @@ import { DedotClient, WsProvider } from 'dedot';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ClientTypes, FlattenedAPIData } from '@polkadot-live/types/apis';
 
+const isTestEnv = (): boolean => process.env.NODE_ENV === 'test';
+
 export class Api<T extends keyof ClientTypes> {
   api: DedotClient<ClientTypes[T]> | null;
   chain: ChainID;
@@ -38,7 +40,7 @@ export class Api<T extends keyof ClientTypes> {
       const provider = new WsProvider(this.endpoint);
       const api = await DedotClient.new<ClientTypes[T]>({
         provider,
-        cacheMetadata: true,
+        cacheMetadata: !isTestEnv(),
       });
 
       const chainId = (await api.rpc.system_chain()) as ChainID;

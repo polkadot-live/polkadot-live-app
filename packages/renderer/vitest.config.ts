@@ -7,8 +7,8 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 export default defineConfig({
   plugins: [tsconfigPaths()],
   test: {
-    testTimeout: 5_000,
-    hookTimeout: 5_000,
+    testTimeout: 40_000,
+    hookTimeout: 40_000,
 
     /**
      * Import vitest functions in every test file.
