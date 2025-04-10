@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { APIsController } from '@ren/controller/dedot/APIsController';
 import { ChainList } from '@ren/config/chains';
 import type { Api } from '@ren/model/dedot/Api';
