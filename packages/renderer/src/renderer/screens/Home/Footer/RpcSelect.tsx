@@ -4,14 +4,22 @@
 import { useState } from 'react';
 import { SelectRpcWrapper } from './Wrapper';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAPIData } from '@polkadot-live/types/apis';
 
 interface SelectRpcProps {
   apiData: FlattenedAPIData;
   apiBackend: 'dedot' | 'polkadot.js';
+  disabled: boolean;
+  setWorkingEndpoint?: (chainId: ChainID, val: boolean) => void;
 }
 
-export const SelectRpc = ({ apiData, apiBackend }: SelectRpcProps) => {
+export const SelectRpc = ({
+  apiData,
+  apiBackend,
+  disabled,
+  setWorkingEndpoint,
+}: SelectRpcProps) => {
   const { chainId, endpoint } = apiData;
   const [selectedRpc, setSelectedRpc] = useState(endpoint);
   const { handleNewEndpointForChain } = useBootstrapping();
@@ -20,6 +28,7 @@ export const SelectRpc = ({ apiData, apiBackend }: SelectRpcProps) => {
   const handleRpcChange = async (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
+    setWorkingEndpoint && setWorkingEndpoint(chainId, true);
     const newEndpoint = event.target.value;
 
     // Exit early if endpoint hasn't changed.
@@ -32,6 +41,7 @@ export const SelectRpc = ({ apiData, apiBackend }: SelectRpcProps) => {
 
     // Re-connect and subscribe to active tasks.
     await handleNewEndpointForChain(chainId, newEndpoint, apiBackend);
+    setWorkingEndpoint && setWorkingEndpoint(chainId, false);
   };
 
   /// Get class name for connected status icon.
@@ -50,6 +60,7 @@ export const SelectRpc = ({ apiData, apiBackend }: SelectRpcProps) => {
           id={`${chainId}_rpcs`}
           value={selectedRpc}
           onChange={(e) => handleRpcChange(e)}
+          disabled={disabled}
         >
           {apiData.rpcs.map((rpc, i) => (
             <option key={i} value={rpc}>

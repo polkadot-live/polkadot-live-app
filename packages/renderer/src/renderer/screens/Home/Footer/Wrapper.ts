@@ -106,7 +106,8 @@ export const NetworkItem = styled.div`
       color: var(--text-color-primary);
       font-size: 0.9rem;
     }
-    .disconnect {
+    .disconnect,
+    .connect {
       color: var(--text-color-secondary);
       cursor: pointer;
 
