@@ -7,7 +7,11 @@ import type { AnyData } from '../misc';
 export type ChainID = 'Polkadot' | 'Westend' | 'Kusama';
 
 // Connection status of a chain.
-export type ChainStatus = 'connecting' | 'connected' | 'disconnected';
+export type ChainStatus =
+  | 'connecting'
+  | 'connected'
+  | 'disconnected'
+  | 'reconnecting';
 
 // For network select box.
 export interface SelectNetworkData {

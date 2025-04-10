@@ -51,6 +51,7 @@ export class Api {
   set chain(value: ChainID) {
     this._chain = value;
   }
+
   get endpoint() {
     return this._endpoint;
   }
