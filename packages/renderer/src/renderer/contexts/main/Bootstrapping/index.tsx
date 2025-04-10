@@ -231,18 +231,23 @@ export const BootstrappingProvider = ({
   /// Re-subscribe to tasks when switching to a different endpoint.
   const handleNewEndpointForChain = async (
     chainId: ChainID,
-    newEndpoint: string
+    newEndpoint: string,
+    apiBackend = 'polkadot.js'
   ) => {
-    await APIsController.connectEndpoint(chainId, newEndpoint);
+    if (apiBackend === 'polkadot.js') {
+      await APIsController.connectEndpoint(chainId, newEndpoint);
 
-    // Re-subscribe account and chain tasks.
-    if (APIsController.getStatus(chainId) === 'connected') {
-      await Promise.all([
-        AccountsController.subscribeAccountsForChain(chainId),
-        SubscriptionsController.resubscribeChain(chainId),
-      ]);
+      // Re-subscribe account and chain tasks.
+      if (APIsController.getStatus(chainId) === 'connected') {
+        await Promise.all([
+          AccountsController.subscribeAccountsForChain(chainId),
+          SubscriptionsController.resubscribeChain(chainId),
+        ]);
+      }
+      syncSubscriptionsState();
+    } else {
+      await DedotAPIsController.connectEndpoint(chainId, newEndpoint);
     }
-    syncSubscriptionsState();
   };
 
   /// Util for initializing the intervals controller.

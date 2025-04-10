@@ -26,7 +26,7 @@ import type { ChainID, ChainStatus } from '@polkadot-live/types/chains';
 
 export const Footer = () => {
   const { appLoading, isConnecting, isAborting } = useBootstrapping();
-  const { chains } = useChains();
+  const { chains, dedotChains } = useChains();
   const {
     getOnlineMode,
     darkMode,
@@ -96,6 +96,46 @@ export const Footer = () => {
       </section>
       {/* Networks list */}
       <section className="network-list-wrapper">
+        <h3>Dedot</h3>
+        {expanded &&
+          [...dedotChains.entries()].map(([chainId, apiData]) => (
+            <NetworkItem key={`${chainId}_dedot_network`}>
+              <div className="left">
+                {getIcon(chainId, 'icon')}
+                <h4>{chainId}</h4>
+              </div>
+              <div className="right">
+                <FlexRow $gap={'1.5rem'}>
+                  {/* RPC select box */}
+                  <SelectRpc apiData={apiData} apiBackend="dedot" />
+
+                  {/* Disconnect button */}
+                  <div className="disconnect">
+                    <TooltipRx
+                      text={getTooltipText(chainId, apiData.status)}
+                      side="left"
+                      style={{ zIndex: 99 }}
+                      theme={theme}
+                    >
+                      <button
+                        onClick={() => console.log('todo')}
+                        disabled={true}
+                      >
+                        <FontAwesomeIcon
+                          icon={faCircleXmark}
+                          transform={'grow-2'}
+                        />
+                      </button>
+                    </TooltipRx>
+                  </div>
+                </FlexRow>
+              </div>
+            </NetworkItem>
+          ))}
+      </section>
+
+      <section className="network-list-wrapper">
+        <h3>Polkadot.js</h3>
         {expanded &&
           [...chains.entries()].map(([chainId, apiData]) => (
             <NetworkItem key={`${chainId}_network`}>
@@ -106,7 +146,8 @@ export const Footer = () => {
               <div className="right">
                 <FlexRow $gap={'1.5rem'}>
                   {/* RPC select box */}
-                  <SelectRpc apiData={apiData} />
+                  <SelectRpc apiData={apiData} apiBackend="polkadot.js" />
+
                   {/* Disconnect button */}
                   <div className="disconnect">
                     <TooltipRx
