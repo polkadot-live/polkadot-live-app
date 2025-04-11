@@ -5,6 +5,7 @@ import BigNumber from 'bignumber.js';
 import { Config as RendererConfig } from '@ren/config/processes/renderer';
 import { isObject } from '@polkadot/util';
 import { rmCommas } from '@w3ux/utils';
+import { APIsController as DedotAPIsController } from '@ren/controller/dedot/APIsController';
 import { APIsController } from '@ren/controller/APIsController';
 import { EventsController } from '@ren/controller/EventsController';
 import { NotificationsController } from '@ren/controller/NotificationsController';
@@ -14,6 +15,7 @@ import {
   getTracks,
   getOriginIdFromName,
   rmChars,
+  getSerializedTracks,
 } from '@ren/utils/OpenGovUtils';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { OneShotReturn, RefDeciding } from '@polkadot-live/types/openGov';
@@ -191,9 +193,11 @@ const oneShot_openGov_decisionPeriod = async (
         ? String(originData.system)
         : String(originData.Origins);
 
+    // TMP: Use Dedot client to get tracks data.
+    const client = await DedotAPIsController.getConnectedApi(chainId);
+    const tracks = client!.api!.consts.referenda.tracks;
+    const tracksData = getTracks(getSerializedTracks(tracks));
     const trackId = getOriginIdFromName(originName);
-    const tracksResult: AnyData = api.consts.referenda.tracks.toHuman();
-    const tracksData = getTracks(tracksResult);
     const track = tracksData.find((t) => t.trackId === trackId);
     if (!track) {
       return { success: false, message: 'Referendum track not found.' };
@@ -269,9 +273,11 @@ const oneShot_openGov_thresholds = async (
       ? String(originData.system)
       : String(originData.Origins);
 
+  // TMP: Use Dedot client to get tracks data.
+  const client = await DedotAPIsController.getConnectedApi(chainId);
+  const tracks = client!.api!.consts.referenda.tracks;
+  const tracksData = getTracks(getSerializedTracks(tracks));
   const trackId = getOriginIdFromName(originName);
-  const tracksResult: AnyData = api.consts.referenda.tracks.toHuman();
-  const tracksData = getTracks(tracksResult);
   const track = tracksData.find((t) => t.trackId === trackId);
   if (!track) {
     return { success: false, message: 'Referendum track not found.' };

@@ -17,6 +17,7 @@ import {
   getAddressChainId,
 } from '@ren/utils/AccountUtils';
 import { disconnectAPIs } from '@ren/utils/ApiUtils';
+import { getSerializedTracks } from '@ren/utils/OpenGovUtils';
 import { isObject } from '@polkadot/util';
 import { planckToUnit, rmCommas } from '@w3ux/utils';
 import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
@@ -357,18 +358,23 @@ export const useMainMessagePorts = () => {
     const { chainId } = ev.data.data;
 
     try {
-      const { api } = await APIsController.getConnectedApiOrThrow(chainId);
-      const result = api.consts.referenda.tracks.toHuman();
+      const { api } = await DedotAPIsController.getConnectedApiOrThrow(chainId);
+      if (!api) {
+        throw Error('api is null');
+      }
+
+      const tracks = api.consts.referenda.tracks;
+      const serialized = getSerializedTracks(tracks);
 
       ConfigRenderer.portToOpenGov?.postMessage({
         task: 'openGov:tracks:receive',
-        data: { result, chainId },
+        data: { serialized, chainId },
       });
     } catch (e) {
       console.error(e);
       ConfigRenderer.portToOpenGov?.postMessage({
         task: 'openGov:tracks:receive',
-        data: { result: null, chainId },
+        data: { serialized: null, chainId },
       });
     }
   };
