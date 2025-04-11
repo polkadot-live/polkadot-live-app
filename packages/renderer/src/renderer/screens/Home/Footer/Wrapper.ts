@@ -58,6 +58,11 @@ export const FooterWrapper = styled.div`
   }
 
   .network-list-wrapper {
+    h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.25rem;
+      margin-left: 0.25rem;
+    }
     display: flex;
     flex-direction: column;
     row-gap: 0.75rem;
@@ -101,7 +106,8 @@ export const NetworkItem = styled.div`
       color: var(--text-color-primary);
       font-size: 0.9rem;
     }
-    .disconnect {
+    .disconnect,
+    .connect {
       color: var(--text-color-secondary);
       cursor: pointer;
 
