@@ -18,6 +18,7 @@ import { Config as RendererConfig } from '@ren/config/processes/renderer';
 import { ChainList } from '@ren/config/chains';
 import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
 import { IntervalsController } from '@ren/controller/IntervalsController';
+import { useConnections } from '../../common/Connections';
 import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
 import { disconnectAPIs } from '@ren/utils/ApiUtils';
 import type { BootstrappingInterface } from './types';
@@ -38,6 +39,7 @@ export const BootstrappingProvider = ({
   children: React.ReactNode;
 }) => {
   const { addIntervalSubscription } = useIntervalSubscriptions();
+  const { isOnlineMode } = useConnections();
 
   const [appLoading, setAppLoading] = useState(true);
   const [isAborting, setIsAborting] = useState(false);
@@ -105,6 +107,19 @@ export const BootstrappingProvider = ({
       window.removeEventListener('offline', handleOffline);
     };
   }, []);
+
+  /// Handle Dedot clients when online mode changes.
+  useEffect(() => {
+    const disconnectAll = async () => {
+      await DedotAPIsController.closeAll();
+    };
+
+    if (!isOnlineMode) {
+      disconnectAll();
+    } else {
+      // TODO: Handle online mode.
+    }
+  }, [isOnlineMode]);
 
   /// Handle abort flag.
   useEffect(() => {

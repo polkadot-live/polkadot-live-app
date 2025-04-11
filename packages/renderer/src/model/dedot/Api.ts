@@ -50,6 +50,7 @@ export class Api<T extends keyof ClientTypes> {
 
       this.api = api;
       this.chain = chainId;
+      console.log('⭕ Dedot: %o', this.endpoint, ' CONNECTED');
     } catch (err) {
       console.log('!connect error');
       console.error(err);
@@ -66,6 +67,7 @@ export class Api<T extends keyof ClientTypes> {
       }
 
       this.api = null;
+      console.log('❌ Dedot: %o', this.endpoint, ' DISCONNECTED');
     } catch (err) {
       console.log('!disconnect error');
       console.error(err);
