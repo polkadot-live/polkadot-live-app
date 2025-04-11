@@ -4,11 +4,11 @@
 /// Dependencies.
 import { getOnlineStatus } from '@ren/utils/CommonUtils';
 import { AccountsController } from '@ren/controller/AccountsController';
+import { APIsController as DedotAPIsController } from '@ren/controller/dedot/APIsController';
 import { APIsController } from '@ren/controller/APIsController';
 import BigNumber from 'bignumber.js';
 import { chainUnits } from '@ren/config/chains';
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
-import { encodeAddress } from '@polkadot/util-crypto';
 import { ExtrinsicsController } from '@ren/controller/ExtrinsicsController';
 import {
   fetchBalanceForAccount,
@@ -17,11 +17,12 @@ import {
   getAddressChainId,
 } from '@ren/utils/AccountUtils';
 import { disconnectAPIs } from '@ren/utils/ApiUtils';
-import { isObject, u8aConcat } from '@polkadot/util';
+import { isObject } from '@polkadot/util';
 import { planckToUnit, rmCommas } from '@w3ux/utils';
 import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
 import { IntervalsController } from '@ren/controller/IntervalsController';
 import { TaskOrchestrator } from '@ren/orchestrators/TaskOrchestrator';
+import { concatU8a, encodeAddress, hexToU8a, stringToU8a } from 'dedot/utils';
 
 /// Main window contexts.
 import { useAddresses } from '@app/contexts/main/Addresses';
@@ -471,36 +472,35 @@ export const useMainMessagePorts = () => {
   const handleInitTreasury = async (ev: MessageEvent) => {
     try {
       const { chainId } = ev.data.data;
-      const { api } = await APIsController.getConnectedApiOrThrow(chainId);
+      const api = (
+        await DedotAPIsController.getConnectedApiOrThrow(chainId)
+      ).getApi();
 
-      // Get raw treasury public key.
       const EMPTY_U8A_32 = new Uint8Array(32);
-      const publicKey = u8aConcat(
-        'modl',
-        api.consts.treasury.palletId
-          ? api.consts.treasury.palletId.toU8a(true)
-          : 'py/trsry',
+      const hexPalletId = api.consts.treasury.palletId;
+      const u8aPalleId = hexPalletId
+        ? hexToU8a(hexPalletId)
+        : stringToU8a('py/trsry');
+
+      const publicKey = concatU8a(
+        stringToU8a('modl'),
+        u8aPalleId,
         EMPTY_U8A_32
       ).subarray(0, 32);
 
       // Get free balance.
-      const prefix: number = chainId === 'Polkadot' ? 0 : 2; // Kusama prefix 2
+      const prefix: number = api.consts.system.ss58Prefix;
       const encoded = encodeAddress(publicKey, prefix);
-      const result: AnyData = (
-        await api.query.system.account(encoded)
-      ).toHuman();
+      const result = await api.query.system.account(encoded);
 
       const { free } = result.data;
-      const freeBalance: string = planckToUnit(
-        BigInt(rmCommas(String(free))),
-        chainUnits(chainId)
-      ).toString();
+      const freeBalance: string = planckToUnit(free, chainUnits(chainId));
 
       // Get next burn.
       const burn = api.consts.treasury.burn;
-      const toBurn = new BigNumber(burn.toString())
+      const toBurn = new BigNumber(burn)
         .dividedBy(Math.pow(10, 6))
-        .multipliedBy(new BigNumber(rmCommas(String(free))));
+        .multipliedBy(new BigNumber(free.toString()));
 
       const nextBurn = planckToUnit(
         toBurn.toString(),
@@ -514,32 +514,25 @@ export const useMainMessagePorts = () => {
       ]);
 
       let toBeAwarded = 0n;
-      const toBeAwardedProposalIds = approvals.toHuman() as string[];
-
-      for (const [rawProposalId, rawProposalData] of proposals) {
-        const proposalId: string = (rawProposalId.toHuman() as [string])[0];
-        if (toBeAwardedProposalIds.includes(proposalId)) {
-          const proposal: AnyData = rawProposalData.toHuman();
-          toBeAwarded += BigInt(rmCommas(String(proposal.value)));
+      for (const [proposalId, proposalData] of proposals) {
+        if (approvals.includes(proposalId)) {
+          toBeAwarded += proposalData.value;
         }
       }
 
-      const toBeAwardedAsStr = planckToUnit(
-        toBeAwarded.toString(),
-        chainUnits(chainId)
-      ).toString();
+      const strToBeAwarded = planckToUnit(toBeAwarded, chainUnits(chainId));
 
       // Spend period + elapsed spend period.
-      const lastHeader = await api.rpc.chain.getHeader();
-      const blockHeight = lastHeader.number.toNumber();
+      const spendPeriod = api.consts.treasury.spendPeriod;
+      const lastHeader = await api.rpc.chain_getHeader();
+      const dedotBlockHeight = lastHeader?.number;
 
-      const spendPeriodAsStr = String(
-        api.consts.treasury.spendPeriod.toHuman()
-      );
-      const spendPeriodBn = new BigNumber(rmCommas(String(spendPeriodAsStr)));
-      const spendPeriodElapsedBlocksAsStr = new BigNumber(blockHeight)
-        .mod(spendPeriodBn)
-        .toString();
+      let spendPeriodElapsedBlocksAsStr = '0';
+      if (dedotBlockHeight) {
+        spendPeriodElapsedBlocksAsStr = new BigNumber(dedotBlockHeight)
+          .mod(new BigNumber(spendPeriod))
+          .toString();
+      }
 
       ConfigRenderer.portToOpenGov?.postMessage({
         task: 'openGov:treasury:set',
@@ -547,8 +540,8 @@ export const useMainMessagePorts = () => {
           publicKey,
           freeBalance,
           nextBurn,
-          toBeAwardedAsStr,
-          spendPeriodAsStr,
+          toBeAwardedAsStr: strToBeAwarded,
+          spendPeriodAsStr: spendPeriod.toString(),
           spendPeriodElapsedBlocksAsStr,
         },
       });
