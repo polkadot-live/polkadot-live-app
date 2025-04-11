@@ -117,27 +117,36 @@ export interface PolkassemblyProposal {
   status: string;
 }
 
-export interface LinearDecreasing {
-  length: string;
-  floor: string;
-  ceil: string;
-}
-
-export interface Reciprocal {
-  factor: string;
-  xOffset: string;
-  yOffset: string;
-}
-
-export type MinApproval =
-  | { Reciprocal: Reciprocal }
-  | { LinearDecreasing: LinearDecreasing };
-
-export type MinSupport =
-  | { Reciprocal: Reciprocal }
-  | { LinearDecreasing: LinearDecreasing };
-
 export interface OneShotReturn {
   success: boolean;
   message?: string;
 }
+
+export interface SerializedTrackItem {
+  id: string;
+  info: {
+    name: string;
+    maxDeciding: string;
+    decisionDeposit: string;
+    preparePeriod: string;
+    decisionPeriod: string;
+    confirmPeriod: string;
+    minEnactmentPeriod: string;
+    minApproval: SerializedPalletReferendaCurve;
+    minSupport: SerializedPalletReferendaCurve;
+  };
+}
+
+export type SerializedPalletReferendaCurve =
+  | {
+      type: 'LinearDecreasing';
+      value: { length: string; floor: string; ceil: string };
+    }
+  | {
+      type: 'SteppedDecreasing';
+      value: { begin: string; end: string; step: string; period: string };
+    }
+  | {
+      type: 'Reciprocal';
+      value: { factor: string; xOffset: string; yOffset: string };
+    };

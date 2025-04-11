@@ -30,7 +30,7 @@ export class APIsController {
 
     // Set react state.
     const map = new Map<ChainID, FlattenedAPIData>();
-    this.clients.map((api) => map.set(api.chain, api.flatten()));
+    this.clients.map((c) => map.set(c.chain, c.flatten()));
     this.cachedSetChains(map);
   };
 
@@ -90,19 +90,17 @@ export class APIsController {
   /**
    * Returns a connected client for a given chain.
    */
-  static getConnectedApi = async (
-    chainId: ChainID
-  ): Promise<DedotApi<keyof ClientTypes> | null> => {
+  static getConnectedApi = async (chainId: ChainID) => {
     const client = this.get(chainId)!;
     switch (client.status()) {
       case 'connected': {
-        return client;
+        return this.castClient(chainId, client);
       }
       case 'reconnecting': {
         // Wait up to 15 seconds for instance to finish connecting.
         const connected = await this.tryConnect(chainId);
         connected && this.updateUiChainState(this.get(chainId)!);
-        return connected ? this.get(chainId)! : null;
+        return connected ? this.castClient(chainId, this.get(chainId)!) : null;
       }
       case 'disconnected': {
         // Wait up to 30 seconds to connect.
@@ -113,7 +111,7 @@ export class APIsController {
 
         // Return the connected instance if connection was successful.
         result && this.updateUiChainState(this.get(chainId)!);
-        return result ? this.get(chainId)! : null;
+        return result ? this.castClient(chainId, this.get(chainId)!) : null;
       }
       default: {
         return null;
@@ -126,10 +124,28 @@ export class APIsController {
    */
   static getConnectedApiOrThrow = async (chainId: ChainID) => {
     const client = await this.getConnectedApi(chainId);
-    if (!client) {
+    if (client === null) {
       throw new Error(`Error - Could not get API instance.`);
     }
+
     return client;
+  };
+
+  /**
+   * Utility to cast an API client to a specific chain.
+   */
+  static castClient = (
+    chainId: ChainID,
+    client: DedotApi<keyof ClientTypes>
+  ) => {
+    switch (chainId) {
+      case 'Polkadot':
+        return client as DedotApi<'polkadot'>;
+      case 'Kusama':
+        return client as DedotApi<'kusama'>;
+      case 'Westend':
+        return client as DedotApi<'westend'>;
+    }
   };
 
   /**
