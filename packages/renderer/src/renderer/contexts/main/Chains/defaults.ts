@@ -6,4 +6,10 @@ import type { ChainsContextInterface } from './types';
 
 export const defaultChainsContext: ChainsContextInterface = {
   chains: new Map(),
+  dedotChains: new Map(),
+  isWorking: () => false,
+  onConnectClick: () => new Promise(() => {}),
+  onDisconnectClick: () => new Promise(() => {}),
+  setWorkingEndpoint: () => {},
+  showWorkingSpinner: () => false,
 };

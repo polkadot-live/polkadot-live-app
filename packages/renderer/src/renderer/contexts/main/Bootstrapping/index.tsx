@@ -12,11 +12,13 @@ import React, {
 } from 'react';
 import { defaultBootstrappingContext } from './default';
 import { AccountsController } from '@ren/controller/AccountsController';
+import { APIsController as DedotAPIsController } from '@ren/controller/dedot/APIsController';
 import { APIsController } from '@ren/controller/APIsController';
 import { Config as RendererConfig } from '@ren/config/processes/renderer';
 import { ChainList } from '@ren/config/chains';
 import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
 import { IntervalsController } from '@ren/controller/IntervalsController';
+import { useConnections } from '../../common/Connections';
 import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
 import { disconnectAPIs } from '@ren/utils/ApiUtils';
 import type { BootstrappingInterface } from './types';
@@ -37,6 +39,7 @@ export const BootstrappingProvider = ({
   children: React.ReactNode;
 }) => {
   const { addIntervalSubscription } = useIntervalSubscriptions();
+  const { isOnlineMode } = useConnections();
 
   const [appLoading, setAppLoading] = useState(true);
   const [isAborting, setIsAborting] = useState(false);
@@ -63,8 +66,11 @@ export const BootstrappingProvider = ({
   };
 
   /// Step 1: Initialize chain APIs (disconnected).
-  const initChainAPIs = () =>
-    APIsController.initialize(Array.from(ChainList.keys()));
+  const initChainAPIs = () => {
+    const chainIds = Array.from(ChainList.keys());
+    APIsController.initialize(chainIds);
+    DedotAPIsController.initialize(chainIds);
+  };
 
   /// Step 2: Initialize accounts.
   const initAccounts = async () => await AccountsController.initialize();
@@ -101,6 +107,19 @@ export const BootstrappingProvider = ({
       window.removeEventListener('offline', handleOffline);
     };
   }, []);
+
+  /// Handle Dedot clients when online mode changes.
+  useEffect(() => {
+    const disconnectAll = async () => {
+      await DedotAPIsController.closeAll();
+    };
+
+    if (!isOnlineMode) {
+      disconnectAll();
+    } else {
+      // TODO: Handle online mode.
+    }
+  }, [isOnlineMode]);
 
   /// Handle abort flag.
   useEffect(() => {
@@ -179,6 +198,7 @@ export const BootstrappingProvider = ({
 
     // Disconnect from chains.
     await APIsController.closeAll();
+    await DedotAPIsController.closeAll();
   };
 
   /// Handle switching to online mode.
@@ -226,18 +246,23 @@ export const BootstrappingProvider = ({
   /// Re-subscribe to tasks when switching to a different endpoint.
   const handleNewEndpointForChain = async (
     chainId: ChainID,
-    newEndpoint: string
+    newEndpoint: string,
+    apiBackend = 'polkadot.js'
   ) => {
-    await APIsController.connectEndpoint(chainId, newEndpoint);
+    if (apiBackend === 'polkadot.js') {
+      await APIsController.connectEndpoint(chainId, newEndpoint);
 
-    // Re-subscribe account and chain tasks.
-    if (APIsController.getStatus(chainId) === 'connected') {
-      await Promise.all([
-        AccountsController.subscribeAccountsForChain(chainId),
-        SubscriptionsController.resubscribeChain(chainId),
-      ]);
+      // Re-subscribe account and chain tasks.
+      if (APIsController.getStatus(chainId) === 'connected') {
+        await Promise.all([
+          AccountsController.subscribeAccountsForChain(chainId),
+          SubscriptionsController.resubscribeChain(chainId),
+        ]);
+      }
+      syncSubscriptionsState();
+    } else {
+      await DedotAPIsController.connectEndpoint(chainId, newEndpoint);
     }
-    syncSubscriptionsState();
   };
 
   /// Util for initializing the intervals controller.
