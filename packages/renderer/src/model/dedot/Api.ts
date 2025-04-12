@@ -22,6 +22,16 @@ export class Api<T extends keyof ClientTypes> {
   }
 
   /**
+   * Getter.
+   */
+  getApi = () => {
+    if (this.api === null) {
+      throw Error('api is null');
+    }
+    return this.api;
+  };
+
+  /**
    * Clear an api if app goes offline.
    */
   clear = () => {

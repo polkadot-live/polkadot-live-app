@@ -4,11 +4,10 @@
 /// Dependencies.
 import { getOnlineStatus } from '@ren/utils/CommonUtils';
 import { AccountsController } from '@ren/controller/AccountsController';
-import { APIsController } from '@ren/controller/APIsController';
+import { APIsController as DedotAPIsController } from '@ren/controller/dedot/APIsController';
 import BigNumber from 'bignumber.js';
 import { chainUnits } from '@ren/config/chains';
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
-import { encodeAddress } from '@polkadot/util-crypto';
 import { ExtrinsicsController } from '@ren/controller/ExtrinsicsController';
 import {
   fetchBalanceForAccount,
@@ -17,11 +16,15 @@ import {
   getAddressChainId,
 } from '@ren/utils/AccountUtils';
 import { disconnectAPIs } from '@ren/utils/ApiUtils';
-import { isObject, u8aConcat } from '@polkadot/util';
-import { planckToUnit, rmCommas } from '@w3ux/utils';
+import {
+  serializeReferendumInfo,
+  getSerializedTracks,
+} from '@ren/utils/OpenGovUtils';
+import { planckToUnit } from '@w3ux/utils';
 import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
 import { IntervalsController } from '@ren/controller/IntervalsController';
 import { TaskOrchestrator } from '@ren/orchestrators/TaskOrchestrator';
+import { concatU8a, encodeAddress, hexToU8a, stringToU8a } from 'dedot/utils';
 
 /// Main window contexts.
 import { useAddresses } from '@app/contexts/main/Addresses';
@@ -37,7 +40,6 @@ import { useWalletConnect } from '@app/contexts/main/WalletConnect';
 
 /// Types.
 import type * as OG from '@polkadot-live/types/openGov';
-import type { AnyData } from '@polkadot-live/types/misc';
 import type { EventCallback } from '@polkadot-live/types/reporter';
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 import type {
@@ -356,18 +358,23 @@ export const useMainMessagePorts = () => {
     const { chainId } = ev.data.data;
 
     try {
-      const { api } = await APIsController.getConnectedApiOrThrow(chainId);
-      const result = api.consts.referenda.tracks.toHuman();
+      const { api } = await DedotAPIsController.getConnectedApiOrThrow(chainId);
+      if (!api) {
+        throw Error('api is null');
+      }
+
+      const tracks = api.consts.referenda.tracks;
+      const serialized = getSerializedTracks(tracks);
 
       ConfigRenderer.portToOpenGov?.postMessage({
         task: 'openGov:tracks:receive',
-        data: { result, chainId },
+        data: { serialized, chainId },
       });
     } catch (e) {
       console.error(e);
       ConfigRenderer.portToOpenGov?.postMessage({
         task: 'openGov:tracks:receive',
-        data: { result: null, chainId },
+        data: { serialized: null, chainId },
       });
     }
   };
@@ -380,71 +387,82 @@ export const useMainMessagePorts = () => {
     try {
       // Make API call to fetch referenda entries.
       const { chainId } = ev.data.data;
-      const { api } = await APIsController.getConnectedApiOrThrow(chainId);
-      const results = await api.query.referenda.referendumInfoFor.entries();
+      const { api } = await DedotAPIsController.getConnectedApiOrThrow(chainId);
+      if (!api) {
+        return;
+      }
 
       // Populate referenda map.
+      const results = await api.query.referenda.referendumInfoFor.entries();
       const allReferenda: OG.ReferendaInfo[] = [];
 
-      for (const [storageKey, storage] of results) {
-        const human: AnyData = storage.toHuman();
-        const refId = Number(rmCommas(String(storageKey.toHuman())));
-
-        if (isObject(human)) {
-          if ('Approved' in human) {
-            const isNull = human.Approved[1] === null;
-            const block = human.Approved[0];
-            const who = isNull ? null : human.Approved[1].who;
-            const amount = isNull ? null : human.Approved[1].amount;
-            const info: OG.RefApproved = { block, who, amount };
+      for (const [refId, storage] of results) {
+        if (storage !== undefined) {
+          if (storage.type === 'Approved') {
+            const info: OG.RefApproved = {
+              block: storage.value[0].toString(),
+              who: storage.value[1] ? String(storage.value[1].who.raw) : null,
+              amount: storage.value[1]
+                ? storage.value[1].amount.toString()
+                : null,
+            };
 
             allReferenda.push({ refId, refStatus: 'Approved', info });
-          } else if ('Cancelled' in human) {
-            const isNull = human.Cancelled[1] === null;
-            const block = human.Cancelled[0];
-            const who = isNull ? null : human.Cancelled[1].who;
-            const amount = isNull ? null : human.Cancelled[1].amount;
-            const info: OG.RefCancelled = { block, who, amount };
+          } else if (storage.type === 'Cancelled') {
+            const info: OG.RefCancelled = {
+              block: storage.value[0].toString(),
+              who: storage.value[1] ? String(storage.value[1].who.raw) : null,
+              amount: storage.value[1]
+                ? storage.value[1].amount.toString()
+                : null,
+            };
 
             allReferenda.push({ refId, refStatus: 'Cancelled', info });
-          } else if ('Rejected' in human) {
-            const block = human.Rejected[0];
-            const who = human.Rejected[1].who;
-            const amount = human.Rejected[1].amount;
-            const info: OG.RefRejected = { block, who, amount };
+          } else if (storage.type === 'Rejected') {
+            const info: OG.RefRejected = {
+              block: storage.value[0].toString(),
+              who: storage.value[1] ? String(storage.value[1].who.raw) : null,
+              amount: storage.value[1]
+                ? storage.value[1].amount.toString()
+                : null,
+            };
 
             allReferenda.push({ refId, refStatus: 'Rejected', info });
-          } else if ('TimedOut' in human) {
-            const block = human.TimedOut[0];
-            const who = human.TimedOut[1].who;
-            const amount = human.TimedOut[1].amount;
-            const info: OG.RefTimedOut = { block, who, amount };
+          } else if (storage.type === 'TimedOut') {
+            const info: OG.RefTimedOut = {
+              block: storage.value[0].toString(),
+              who: storage.value[1] ? String(storage.value[1].who.raw) : null,
+              amount: storage.value[1]
+                ? storage.value[1].amount.toString()
+                : null,
+            };
 
             allReferenda.push({ refId, refStatus: 'TimedOut', info });
-          } else if ('Ongoing' in human) {
+          } else if (storage.type === 'Ongoing') {
+            const serRef = serializeReferendumInfo(storage.value);
+
             // In Queue
-            if (human.Ongoing.inQueue === true) {
-              const info: OG.RefOngoing = { ...human.Ongoing };
+            if (serRef.inQueue) {
+              const info = serRef as OG.RefOngoing;
               allReferenda.push({ refId, refStatus: 'Queueing', info });
             }
             // Preparing
-            else if (human.Ongoing.deciding === null) {
-              const info: OG.RefPreparing = { ...human.Ongoing };
+            else if (serRef.deciding === null) {
+              const info = serRef as OG.RefPreparing;
               allReferenda.push({ refId, refStatus: 'Preparing', info });
             }
             // Deciding
-            else if (human.Ongoing.deciding.confirming === null) {
-              const info: OG.RefDeciding = { ...human.Ongoing };
+            else if (serRef.deciding.confirming === null) {
+              const info = serRef as OG.RefDeciding;
               allReferenda.push({ refId, refStatus: 'Deciding', info });
             }
             // Confirming
-            else if (human.Ongoing.deciding.confirming !== null) {
-              const info: OG.RefConfirming = { ...human.Ongoing };
+            else if (serRef.deciding.confirming !== null) {
+              const info = serRef as OG.RefConfirming;
               allReferenda.push({ refId, refStatus: 'Confirming', info });
             }
-          } else if ('Killed' in human) {
-            const block = human.Killed;
-            const info: OG.RefKilled = { block };
+          } else if (storage.type === 'Killed') {
+            const info: OG.RefKilled = { block: storage.value.toString() };
             allReferenda.push({ refId, refStatus: 'Killed', info });
           }
         }
@@ -471,36 +489,35 @@ export const useMainMessagePorts = () => {
   const handleInitTreasury = async (ev: MessageEvent) => {
     try {
       const { chainId } = ev.data.data;
-      const { api } = await APIsController.getConnectedApiOrThrow(chainId);
+      const api = (
+        await DedotAPIsController.getConnectedApiOrThrow(chainId)
+      ).getApi();
 
-      // Get raw treasury public key.
       const EMPTY_U8A_32 = new Uint8Array(32);
-      const publicKey = u8aConcat(
-        'modl',
-        api.consts.treasury.palletId
-          ? api.consts.treasury.palletId.toU8a(true)
-          : 'py/trsry',
+      const hexPalletId = api.consts.treasury.palletId;
+      const u8aPalleId = hexPalletId
+        ? hexToU8a(hexPalletId)
+        : stringToU8a('py/trsry');
+
+      const publicKey = concatU8a(
+        stringToU8a('modl'),
+        u8aPalleId,
         EMPTY_U8A_32
       ).subarray(0, 32);
 
       // Get free balance.
-      const prefix: number = chainId === 'Polkadot' ? 0 : 2; // Kusama prefix 2
+      const prefix: number = api.consts.system.ss58Prefix;
       const encoded = encodeAddress(publicKey, prefix);
-      const result: AnyData = (
-        await api.query.system.account(encoded)
-      ).toHuman();
+      const result = await api.query.system.account(encoded);
 
       const { free } = result.data;
-      const freeBalance: string = planckToUnit(
-        BigInt(rmCommas(String(free))),
-        chainUnits(chainId)
-      ).toString();
+      const freeBalance: string = planckToUnit(free, chainUnits(chainId));
 
       // Get next burn.
       const burn = api.consts.treasury.burn;
-      const toBurn = new BigNumber(burn.toString())
+      const toBurn = new BigNumber(burn)
         .dividedBy(Math.pow(10, 6))
-        .multipliedBy(new BigNumber(rmCommas(String(free))));
+        .multipliedBy(new BigNumber(free.toString()));
 
       const nextBurn = planckToUnit(
         toBurn.toString(),
@@ -514,32 +531,25 @@ export const useMainMessagePorts = () => {
       ]);
 
       let toBeAwarded = 0n;
-      const toBeAwardedProposalIds = approvals.toHuman() as string[];
-
-      for (const [rawProposalId, rawProposalData] of proposals) {
-        const proposalId: string = (rawProposalId.toHuman() as [string])[0];
-        if (toBeAwardedProposalIds.includes(proposalId)) {
-          const proposal: AnyData = rawProposalData.toHuman();
-          toBeAwarded += BigInt(rmCommas(String(proposal.value)));
+      for (const [proposalId, proposalData] of proposals) {
+        if (approvals.includes(proposalId)) {
+          toBeAwarded += proposalData.value;
         }
       }
 
-      const toBeAwardedAsStr = planckToUnit(
-        toBeAwarded.toString(),
-        chainUnits(chainId)
-      ).toString();
+      const strToBeAwarded = planckToUnit(toBeAwarded, chainUnits(chainId));
 
       // Spend period + elapsed spend period.
-      const lastHeader = await api.rpc.chain.getHeader();
-      const blockHeight = lastHeader.number.toNumber();
+      const spendPeriod = api.consts.treasury.spendPeriod;
+      const lastHeader = await api.rpc.chain_getHeader();
+      const dedotBlockHeight = lastHeader?.number;
 
-      const spendPeriodAsStr = String(
-        api.consts.treasury.spendPeriod.toHuman()
-      );
-      const spendPeriodBn = new BigNumber(rmCommas(String(spendPeriodAsStr)));
-      const spendPeriodElapsedBlocksAsStr = new BigNumber(blockHeight)
-        .mod(spendPeriodBn)
-        .toString();
+      let spendPeriodElapsedBlocksAsStr = '0';
+      if (dedotBlockHeight) {
+        spendPeriodElapsedBlocksAsStr = new BigNumber(dedotBlockHeight)
+          .mod(new BigNumber(spendPeriod))
+          .toString();
+      }
 
       ConfigRenderer.portToOpenGov?.postMessage({
         task: 'openGov:treasury:set',
@@ -547,8 +557,8 @@ export const useMainMessagePorts = () => {
           publicKey,
           freeBalance,
           nextBurn,
-          toBeAwardedAsStr,
-          spendPeriodAsStr,
+          toBeAwardedAsStr: strToBeAwarded,
+          spendPeriodAsStr: spendPeriod.toString(),
           spendPeriodElapsedBlocksAsStr,
         },
       });

@@ -9,8 +9,12 @@ import { useReferenda } from '../contexts/openGov/Referenda';
 import { useTreasury } from '../contexts/openGov/Treasury';
 import { useReferendaSubscriptions } from '../contexts/openGov/ReferendaSubscriptions';
 import { renderToast } from '@polkadot-live/ui/utils';
-import type { ReferendaInfo } from '@polkadot-live/types/openGov';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type {
+  ReferendaInfo,
+  SerializedTrackItem,
+} from '@polkadot-live/types/openGov';
 
 export const useOpenGovMessagePorts = () => {
   const { receiveTracksData, setFetchingTracks } = useTracks();
@@ -38,10 +42,14 @@ export const useOpenGovMessagePorts = () => {
           // Message received from `main`.
           switch (ev.data.task) {
             case 'openGov:tracks:receive': {
-              const { result, chainId } = ev.data.data;
+              interface Target {
+                serialized: SerializedTrackItem[] | null;
+                chainId: ChainID;
+              }
+              const { serialized, chainId }: Target = ev.data.data;
 
-              if (result !== null) {
-                receiveTracksData(getTracks(result), chainId);
+              if (serialized !== null) {
+                receiveTracksData(getTracks(serialized), chainId);
               } else {
                 // TODO: UI error notification.
                 setFetchingTracks(false);
