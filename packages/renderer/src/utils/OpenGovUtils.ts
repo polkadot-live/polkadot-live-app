@@ -6,6 +6,7 @@ import { Track } from '@ren/model/Track';
 import type {
   RefDeciding,
   ReferendaInfo,
+  RefOngoing,
   RefStatus,
   SerializedPalletReferendaCurve,
   SerializedTrackItem,
@@ -16,6 +17,8 @@ import type {
   PalletReferendaCurve,
   PalletReferendaTrackInfo,
 } from '@dedot/chaintypes/substrate';
+import type { PalletReferendaReferendumStatus as PolkadotRefStatus } from '@dedot/chaintypes/polkadot';
+import type { PalletReferendaReferendumStatus as KusamaRefStatus } from '@dedot/chaintypes/kusama';
 
 /**
  * @name serializeCurve
@@ -143,6 +146,85 @@ export const getTracks = (serialized: SerializedTrackItem[]) =>
         parseCurve(item.info.minSupport)
       )
   );
+
+/**
+ * @name serializeReferendumInfo
+ * @summary Serialize referendum info data.
+ */
+export const serializeReferendumInfo = (
+  refStatus: PolkadotRefStatus | KusamaRefStatus
+): RefOngoing => {
+  const {
+    alarm,
+    deciding,
+    decisionDeposit,
+    enactment,
+    inQueue,
+    origin,
+    proposal,
+    submissionDeposit,
+    submitted,
+    tally,
+    track,
+  } = refStatus;
+
+  return {
+    alarm: alarm
+      ? [alarm[0].toString(), [alarm[1][0].toString(), alarm[1][0].toString()]]
+      : null,
+    deciding: deciding
+      ? {
+          confirming: deciding.confirming
+            ? deciding.confirming.toString()
+            : null,
+          since: deciding.since.toString(),
+        }
+      : null,
+    decisionDeposit: decisionDeposit
+      ? {
+          who: String(decisionDeposit.who),
+          amount: decisionDeposit.amount.toString(),
+        }
+      : null,
+    enactment: {
+      type: enactment.type,
+      value: enactment.value.toString(),
+    },
+    inQueue,
+    origin:
+      origin.type === 'System'
+        ? String(origin.value.type)
+        : origin.type === 'Origins'
+          ? String(origin.value)
+          : 'Unknown',
+    proposal:
+      proposal.type === 'Legacy'
+        ? {
+            type: 'Legacy',
+            value: { hash: proposal.value.hash.toString() },
+          }
+        : proposal.type === 'Inline'
+          ? { type: 'Inline', value: proposal.value.toString() }
+          : {
+              type: 'Lookup',
+              value: {
+                hash: proposal.value.hash.toString(),
+                len: proposal.value.len.toString(),
+              },
+            },
+    submissionDeposit: {
+      who: String(submissionDeposit.who),
+      amount: submissionDeposit.amount.toString(),
+    },
+    submitted: submitted.toString(),
+    tally: {
+      ayes: tally.ayes.toString(),
+      nays: tally.nays.toString(),
+      support: tally.support.toString(),
+    },
+    track: track.toString(),
+  };
+};
 
 /**
  * @name rmChars
@@ -299,13 +381,7 @@ export const renderOrigin = (referendum: ReferendaInfo) => {
     return 'Unknown';
   }
 
-  const originData = (referendum.info as RefDeciding).origin;
-
-  const origin =
-    'system' in originData
-      ? String(originData.system)
-      : String(originData.Origins);
-
+  const origin = (referendum.info as RefDeciding).origin;
   return getSpacedOrigin(origin);
 };
 

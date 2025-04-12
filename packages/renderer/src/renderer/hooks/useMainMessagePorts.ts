@@ -5,7 +5,6 @@
 import { getOnlineStatus } from '@ren/utils/CommonUtils';
 import { AccountsController } from '@ren/controller/AccountsController';
 import { APIsController as DedotAPIsController } from '@ren/controller/dedot/APIsController';
-import { APIsController } from '@ren/controller/APIsController';
 import BigNumber from 'bignumber.js';
 import { chainUnits } from '@ren/config/chains';
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
@@ -17,9 +16,11 @@ import {
   getAddressChainId,
 } from '@ren/utils/AccountUtils';
 import { disconnectAPIs } from '@ren/utils/ApiUtils';
-import { getSerializedTracks } from '@ren/utils/OpenGovUtils';
-import { isObject } from '@polkadot/util';
-import { planckToUnit, rmCommas } from '@w3ux/utils';
+import {
+  serializeReferendumInfo,
+  getSerializedTracks,
+} from '@ren/utils/OpenGovUtils';
+import { planckToUnit } from '@w3ux/utils';
 import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
 import { IntervalsController } from '@ren/controller/IntervalsController';
 import { TaskOrchestrator } from '@ren/orchestrators/TaskOrchestrator';
@@ -39,7 +40,6 @@ import { useWalletConnect } from '@app/contexts/main/WalletConnect';
 
 /// Types.
 import type * as OG from '@polkadot-live/types/openGov';
-import type { AnyData } from '@polkadot-live/types/misc';
 import type { EventCallback } from '@polkadot-live/types/reporter';
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 import type {
@@ -387,71 +387,74 @@ export const useMainMessagePorts = () => {
     try {
       // Make API call to fetch referenda entries.
       const { chainId } = ev.data.data;
-      const { api } = await APIsController.getConnectedApiOrThrow(chainId);
-      const results = await api.query.referenda.referendumInfoFor.entries();
+      const { api } = await DedotAPIsController.getConnectedApiOrThrow(chainId);
+      if (!api) {
+        return;
+      }
 
       // Populate referenda map.
+      const results = await api.query.referenda.referendumInfoFor.entries();
       const allReferenda: OG.ReferendaInfo[] = [];
 
-      for (const [storageKey, storage] of results) {
-        const human: AnyData = storage.toHuman();
-        const refId = Number(rmCommas(String(storageKey.toHuman())));
-
-        if (isObject(human)) {
-          if ('Approved' in human) {
-            const isNull = human.Approved[1] === null;
-            const block = human.Approved[0];
-            const who = isNull ? null : human.Approved[1].who;
-            const amount = isNull ? null : human.Approved[1].amount;
-            const info: OG.RefApproved = { block, who, amount };
+      for (const [refId, storage] of results) {
+        if (storage !== undefined) {
+          if (storage.type === 'Approved') {
+            const info: OG.RefApproved = {
+              block: storage.value[0].toString() || null,
+              who: String(storage.value[1]?.who) || null,
+              amount: storage.value[1]?.amount.toString() || null,
+            };
 
             allReferenda.push({ refId, refStatus: 'Approved', info });
-          } else if ('Cancelled' in human) {
-            const isNull = human.Cancelled[1] === null;
-            const block = human.Cancelled[0];
-            const who = isNull ? null : human.Cancelled[1].who;
-            const amount = isNull ? null : human.Cancelled[1].amount;
-            const info: OG.RefCancelled = { block, who, amount };
+          } else if (storage.type === 'Cancelled') {
+            const info: OG.RefCancelled = {
+              block: storage.value[0].toString() || null,
+              who: String(storage.value[1]?.who) || null,
+              amount: storage.value[1]?.amount.toString() || null,
+            };
 
             allReferenda.push({ refId, refStatus: 'Cancelled', info });
-          } else if ('Rejected' in human) {
-            const block = human.Rejected[0];
-            const who = human.Rejected[1].who;
-            const amount = human.Rejected[1].amount;
-            const info: OG.RefRejected = { block, who, amount };
+          } else if (storage.type === 'Rejected') {
+            const info: OG.RefRejected = {
+              block: storage.value[0].toString() || null,
+              who: String(storage.value[1]?.who) || null,
+              amount: storage.value[1]?.amount.toString() || null,
+            };
 
             allReferenda.push({ refId, refStatus: 'Rejected', info });
-          } else if ('TimedOut' in human) {
-            const block = human.TimedOut[0];
-            const who = human.TimedOut[1].who;
-            const amount = human.TimedOut[1].amount;
-            const info: OG.RefTimedOut = { block, who, amount };
+          } else if (storage.type === 'TimedOut') {
+            const info: OG.RefTimedOut = {
+              block: storage.value[0].toString() || null,
+              who: String(storage.value[1]?.who) || null,
+              amount: storage.value[1]?.amount.toString() || null,
+            };
 
             allReferenda.push({ refId, refStatus: 'TimedOut', info });
-          } else if ('Ongoing' in human) {
+          } else if (storage.type === 'Ongoing') {
+            const serRef = serializeReferendumInfo(storage.value);
+
             // In Queue
-            if (human.Ongoing.inQueue === true) {
-              const info: OG.RefOngoing = { ...human.Ongoing };
+            if (serRef.inQueue) {
+              const info = serRef as OG.RefOngoing;
               allReferenda.push({ refId, refStatus: 'Queueing', info });
             }
             // Preparing
-            else if (human.Ongoing.deciding === null) {
-              const info: OG.RefPreparing = { ...human.Ongoing };
+            else if (serRef.deciding === null) {
+              const info = serRef as OG.RefPreparing;
               allReferenda.push({ refId, refStatus: 'Preparing', info });
             }
             // Deciding
-            else if (human.Ongoing.deciding.confirming === null) {
-              const info: OG.RefDeciding = { ...human.Ongoing };
+            else if (serRef.deciding.confirming === null) {
+              const info = serRef as OG.RefDeciding;
               allReferenda.push({ refId, refStatus: 'Deciding', info });
             }
             // Confirming
-            else if (human.Ongoing.deciding.confirming !== null) {
-              const info: OG.RefConfirming = { ...human.Ongoing };
+            else if (serRef.deciding.confirming !== null) {
+              const info = serRef as OG.RefConfirming;
               allReferenda.push({ refId, refStatus: 'Confirming', info });
             }
-          } else if ('Killed' in human) {
-            const block = human.Killed;
-            const info: OG.RefKilled = { block };
+          } else if (storage.type === 'Killed') {
+            const info: OG.RefKilled = { block: storage.value.toString() };
             allReferenda.push({ refId, refStatus: 'Killed', info });
           }
         }

@@ -45,27 +45,27 @@ export interface ReferendaInfo {
 }
 
 export interface RefApproved {
-  block: string;
+  block: string | null;
   who: string | null;
   amount: string | null;
 }
 
 export interface RefCancelled {
-  block: string;
+  block: string | null;
   who: string | null;
   amount: string | null;
 }
 
 export interface RefRejected {
-  block: string;
-  who: string;
-  amount: string;
+  block: string | null;
+  who: string | null;
+  amount: string | null;
 }
 
 export interface RefTimedOut {
-  block: string;
-  who: string;
-  amount: string;
+  block: string | null;
+  who: string | null;
+  amount: string | null;
 }
 
 export interface RefKilled {
@@ -73,7 +73,7 @@ export interface RefKilled {
 }
 
 export interface RefOngoing {
-  alarm: [string, [string, string]];
+  alarm: [string, [string, string]] | null;
   deciding: {
     confirming: null | string;
     since: string;
@@ -82,21 +82,13 @@ export interface RefOngoing {
     amount: string;
     who: string;
   } | null;
-  enactment:
-    | {
-        After: string;
-      }
-    | { At: string };
+  enactment: { type: 'At'; value: string } | { type: 'After'; value: string };
   inQueue: boolean;
-  origin: { Origins: string } | { system: string };
+  origin: string;
   proposal:
-    | {
-        Lookup: {
-          hash: string;
-          len: string;
-        };
-      }
-    | { Inline: string };
+    | { type: 'Legacy'; value: { hash: string } }
+    | { type: 'Inline'; value: string }
+    | { type: 'Lookup'; value: { hash: string; len: string } };
   submissionDeposit: {
     amount: string;
     who: string;
