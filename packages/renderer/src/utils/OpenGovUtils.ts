@@ -181,7 +181,7 @@ export const serializeReferendumInfo = (
       : null,
     decisionDeposit: decisionDeposit
       ? {
-          who: String(decisionDeposit.who),
+          who: String(decisionDeposit.who.raw),
           amount: decisionDeposit.amount.toString(),
         }
       : null,
@@ -212,7 +212,7 @@ export const serializeReferendumInfo = (
               },
             },
     submissionDeposit: {
-      who: String(submissionDeposit.who),
+      who: String(submissionDeposit.who.raw),
       amount: submissionDeposit.amount.toString(),
     },
     submitted: submitted.toString(),

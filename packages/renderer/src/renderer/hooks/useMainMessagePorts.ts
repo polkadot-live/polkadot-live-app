@@ -400,33 +400,41 @@ export const useMainMessagePorts = () => {
         if (storage !== undefined) {
           if (storage.type === 'Approved') {
             const info: OG.RefApproved = {
-              block: storage.value[0].toString() || null,
-              who: String(storage.value[1]?.who) || null,
-              amount: storage.value[1]?.amount.toString() || null,
+              block: storage.value[0].toString(),
+              who: storage.value[1] ? String(storage.value[1].who.raw) : null,
+              amount: storage.value[1]
+                ? storage.value[1].amount.toString()
+                : null,
             };
 
             allReferenda.push({ refId, refStatus: 'Approved', info });
           } else if (storage.type === 'Cancelled') {
             const info: OG.RefCancelled = {
-              block: storage.value[0].toString() || null,
-              who: String(storage.value[1]?.who) || null,
-              amount: storage.value[1]?.amount.toString() || null,
+              block: storage.value[0].toString(),
+              who: storage.value[1] ? String(storage.value[1].who.raw) : null,
+              amount: storage.value[1]
+                ? storage.value[1].amount.toString()
+                : null,
             };
 
             allReferenda.push({ refId, refStatus: 'Cancelled', info });
           } else if (storage.type === 'Rejected') {
             const info: OG.RefRejected = {
-              block: storage.value[0].toString() || null,
-              who: String(storage.value[1]?.who) || null,
-              amount: storage.value[1]?.amount.toString() || null,
+              block: storage.value[0].toString(),
+              who: storage.value[1] ? String(storage.value[1].who.raw) : null,
+              amount: storage.value[1]
+                ? storage.value[1].amount.toString()
+                : null,
             };
 
             allReferenda.push({ refId, refStatus: 'Rejected', info });
           } else if (storage.type === 'TimedOut') {
             const info: OG.RefTimedOut = {
-              block: storage.value[0].toString() || null,
-              who: String(storage.value[1]?.who) || null,
-              amount: storage.value[1]?.amount.toString() || null,
+              block: storage.value[0].toString(),
+              who: storage.value[1] ? String(storage.value[1].who.raw) : null,
+              amount: storage.value[1]
+                ? storage.value[1].amount.toString()
+                : null,
             };
 
             allReferenda.push({ refId, refStatus: 'TimedOut', info });

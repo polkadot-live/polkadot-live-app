@@ -54,25 +54,25 @@ export interface ReferendaInfo {
 }
 
 export interface RefApproved {
-  block: string | null;
+  block: string;
   who: string | null;
   amount: string | null;
 }
 
 export interface RefCancelled {
-  block: string | null;
+  block: string;
   who: string | null;
   amount: string | null;
 }
 
 export interface RefRejected {
-  block: string | null;
+  block: string;
   who: string | null;
   amount: string | null;
 }
 
 export interface RefTimedOut {
-  block: string | null;
+  block: string;
   who: string | null;
   amount: string | null;
 }
