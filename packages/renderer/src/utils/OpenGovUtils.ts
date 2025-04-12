@@ -275,7 +275,6 @@ export function makeLinearCurve(length: number, floor: number, ceil: number) {
     const bnCeil = new BigNumber(ceil);
 
     const x = percentage * Math.pow(10, 9);
-    //const x = percentage * 100;
 
     const xValue = BigNumber.min(x, bnLength);
     const slope = new BigNumber(bnCeil).minus(bnFloor).dividedBy(bnLength);
@@ -284,10 +283,8 @@ export function makeLinearCurve(length: number, floor: number, ceil: number) {
     const perbill = new BigNumber(bnCeil)
       .minus(deducted)
       .toFixed(0, BigNumber.ROUND_DOWN);
-    //.toFixed(2, BigNumber.ROUND_DOWN);
 
     const calcValue = new BigNumber(perbill).div(Math.pow(10, 9)).toString();
-    //const calcValue = new BigNumber(perbill).div(Math.pow(10, 2)).toString();
     return BigNumber.max(calcValue, 0).toString();
   };
 }
