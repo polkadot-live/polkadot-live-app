@@ -6,28 +6,18 @@ import { Track } from '@ren/model/Track';
 import type {
   RefDeciding,
   ReferendaInfo,
+  ReferendumStatus,
   RefOngoing,
   RefStatus,
   SerializedPalletReferendaCurve,
   SerializedTrackItem,
 } from '@polkadot-live/types/openGov';
-import type { DedotClient } from 'dedot';
-import type {
-  PalletReferendaTrack,
-  WestendApi,
-} from '@dedot/chaintypes/westend';
+import type { PalletReferendaTrack } from '@dedot/chaintypes/westend';
+import type { RelayDedotClient } from '@polkadot-live/types/apis';
 import type {
   PalletReferendaCurve,
   PalletReferendaTrackInfo,
 } from '@dedot/chaintypes/substrate';
-import type {
-  PolkadotApi,
-  PalletReferendaReferendumStatus as PolkadotRefStatus,
-} from '@dedot/chaintypes/polkadot';
-import type {
-  KusamaApi,
-  PalletReferendaReferendumStatus as KusamaRefStatus,
-} from '@dedot/chaintypes/kusama';
 
 /**
  * @name serializeCurve
@@ -161,7 +151,7 @@ export const getTracks = (serialized: SerializedTrackItem[]) =>
  * @summary Serialize referendum info data.
  */
 export const serializeReferendumInfo = (
-  refStatus: PolkadotRefStatus | KusamaRefStatus
+  refStatus: ReferendumStatus
 ): RefOngoing => {
   const {
     alarm,
@@ -307,10 +297,7 @@ export function makeLinearCurve(length: number, floor: number, ceil: number) {
  * @summary Get current minimum approval and support percentages for a referendum.
  */
 export const getMinApprovalSupport = async (
-  api:
-    | DedotClient<PolkadotApi>
-    | DedotClient<KusamaApi>
-    | DedotClient<WestendApi>,
+  api: RelayDedotClient,
   referendumInfo: ReferendaInfo,
   track: Track
 ) => {

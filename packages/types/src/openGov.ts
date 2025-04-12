@@ -1,10 +1,19 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import type { PalletReferendaReferendumStatus as PolkadotRefStatus } from '@dedot/chaintypes/polkadot';
+import type { PalletReferendaReferendumStatus as KusamaRefStatus } from '@dedot/chaintypes/kusama';
+import type { PalletReferendaReferendumStatus as WestendRefStatus } from '@dedot/chaintypes/westend';
+
 export type RefInQueue = RefOngoing; // inQueue: true
 export type RefPreparing = RefOngoing; // deciding: null
 export type RefConfirming = RefOngoing; // deciding.confirming = <string>
 export type RefDeciding = RefOngoing; // deciding.confirming = null;
+
+export type ReferendumStatus =
+  | PolkadotRefStatus
+  | KusamaRefStatus
+  | WestendRefStatus;
 
 export interface PagedReferenda {
   page: number;
