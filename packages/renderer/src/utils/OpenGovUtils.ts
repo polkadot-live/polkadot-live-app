@@ -11,14 +11,23 @@ import type {
   SerializedPalletReferendaCurve,
   SerializedTrackItem,
 } from '@polkadot-live/types/openGov';
-import type { ApiPromise } from '@polkadot/api';
-import type { PalletReferendaTrack } from '@dedot/chaintypes/westend';
+import type { DedotClient } from 'dedot';
+import type {
+  PalletReferendaTrack,
+  WestendApi,
+} from '@dedot/chaintypes/westend';
 import type {
   PalletReferendaCurve,
   PalletReferendaTrackInfo,
 } from '@dedot/chaintypes/substrate';
-import type { PalletReferendaReferendumStatus as PolkadotRefStatus } from '@dedot/chaintypes/polkadot';
-import type { PalletReferendaReferendumStatus as KusamaRefStatus } from '@dedot/chaintypes/kusama';
+import type {
+  PolkadotApi,
+  PalletReferendaReferendumStatus as PolkadotRefStatus,
+} from '@dedot/chaintypes/polkadot';
+import type {
+  KusamaApi,
+  PalletReferendaReferendumStatus as KusamaRefStatus,
+} from '@dedot/chaintypes/kusama';
 
 /**
  * @name serializeCurve
@@ -298,7 +307,10 @@ export function makeLinearCurve(length: number, floor: number, ceil: number) {
  * @summary Get current minimum approval and support percentages for a referendum.
  */
 export const getMinApprovalSupport = async (
-  api: ApiPromise,
+  api:
+    | DedotClient<PolkadotApi>
+    | DedotClient<KusamaApi>
+    | DedotClient<WestendApi>,
   referendumInfo: ReferendaInfo,
   track: Track
 ) => {
@@ -318,8 +330,8 @@ export const getMinApprovalSupport = async (
 
   const result = { minApproval: '', minSupport: '' };
 
-  const lastHeader = await api.rpc.chain.getHeader();
-  const bnCurrentBlock = new BigNumber(lastHeader.number.toNumber());
+  const lastHeader = await api.rpc.chain_getHeader();
+  const bnCurrentBlock = new BigNumber(lastHeader!.number);
   const bnDecisionPeriod = new BigNumber(rmChars(String(track.decisionPeriod)));
 
   const { since } = info.deciding;

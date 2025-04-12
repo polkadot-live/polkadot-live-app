@@ -4,14 +4,11 @@
 import * as Utils from '@ren/utils/OpenGovUtils';
 import BigNumber from 'bignumber.js';
 import { Config as RendererConfig } from '@ren/config/processes/renderer';
-import { isObject } from '@polkadot/util';
 import { rmCommas } from '@w3ux/utils';
-import { APIsController as DedotAPIsController } from '@ren/controller/dedot/APIsController';
-import { APIsController } from '@ren/controller/APIsController';
+import { APIsController } from '@ren/controller/dedot/APIsController';
 import { EventsController } from '@ren/controller/EventsController';
 import { NotificationsController } from '@ren/controller/NotificationsController';
 import { formatBlocksToTime } from '@ren/utils/TimeUtils';
-import type { AnyData } from '@polkadot-live/types/misc';
 import type { OneShotReturn, RefDeciding } from '@polkadot-live/types/openGov';
 import type { NotificationData } from '@polkadot-live/types/reporter';
 import type {
@@ -71,23 +68,22 @@ const oneShot_openGov_referendumVotes = async (
   policy: NotificationPolicy = 'default'
 ): Promise<OneShotReturn> => {
   const { chainId, referendumId } = task;
-  const instance = await APIsController.getConnectedApi(chainId);
-
-  if (!instance || !referendumId) {
-    return !instance
-      ? { success: false, message: 'API instance not found.' }
-      : { success: false, message: 'Undefined referendum ID.' };
+  if (!referendumId) {
+    return { success: false, message: 'Undefined referendum ID.' };
   }
 
-  const { api } = instance;
+  const client = await APIsController.getConnectedApi(chainId);
+  if (!client || !client.api) {
+    return { success: false, message: 'API instance not found.' };
+  }
+
+  const { api } = client;
   const result = await api.query.referenda.referendumInfoFor(referendumId);
-  const human: AnyData = result.toHuman();
-
-  if (!isObject(human) || !('Ongoing' in human)) {
-    return { success: false, message: 'Referendum not ongoing.' };
+  if (!result || result.type !== 'Ongoing') {
+    return { success: false, message: 'Referendum is not ongoing.' };
   }
 
-  const info: RefDeciding = { ...human.Ongoing };
+  const info = Utils.serializeReferendumInfo(result.value);
   const { ayes, nays } = info.tally;
 
   const bnAyes = new BigNumber(rmCommas(String(ayes)));
@@ -143,7 +139,7 @@ const oneShot_openGov_decisionPeriod = async (
     return { success: false, message: 'Undefined referendum ID.' };
   }
 
-  const client = await DedotAPIsController.getConnectedApi(chainId);
+  const client = await APIsController.getConnectedApi(chainId);
   if (!client || !client.api) {
     return { success: false, message: 'API instance not found.' };
   }
@@ -151,7 +147,7 @@ const oneShot_openGov_decisionPeriod = async (
   const { api } = client;
   const result = await api.query.referenda.referendumInfoFor(referendumId);
   if (!result || result.type !== 'Ongoing') {
-    return { success: false, message: 'Referendum not being decided.' };
+    return { success: false, message: 'Referendum is not ongoing.' };
   }
 
   // Data for rendering.
@@ -229,35 +225,29 @@ const oneShot_openGov_thresholds = async (
   policy: NotificationPolicy = 'default'
 ): Promise<OneShotReturn> => {
   const { chainId, referendumId } = task;
-  const instance = await APIsController.getConnectedApi(chainId);
-
-  if (!instance || !referendumId) {
-    return !instance
-      ? { success: false, message: 'API instance not found.' }
-      : { success: false, message: 'Undefined referendum ID.' };
+  if (!referendumId) {
+    return { success: false, message: 'Undefined referendum ID.' };
   }
 
-  const { api } = instance;
+  const client = await APIsController.getConnectedApi(chainId);
+  if (!client || !client.api) {
+    return { success: false, message: 'API instance not found.' };
+  }
+
+  const { api } = client;
   const result = await api.query.referenda.referendumInfoFor(referendumId);
-  const human: AnyData = result.toHuman();
-
-  // Confirm result is a referendum that is ongoing.
-  if (!(isObject(human) || !('Ongoing' in human))) {
-    return { success: false, message: 'Referendum not ongoing.' };
+  if (!result || result.type !== 'Ongoing') {
+    return { success: false, message: 'Referendum is not ongoing.' };
   }
 
-  // Guarentee that the referendum is still in its deciding phase.
-  const info: RefDeciding = { ...human.Ongoing };
+  const info = Utils.serializeReferendumInfo(result.value) as RefDeciding;
   if (!info.deciding) {
     return { success: false, message: 'Referendum not being decided.' };
   }
 
   // Get track data for decision period.
   const originName = info.origin;
-
-  // TMP: Use Dedot client to get tracks data.
-  const client = await DedotAPIsController.getConnectedApi(chainId);
-  const tracks = client!.api!.consts.referenda.tracks;
+  const tracks = client.api.consts.referenda.tracks;
   const tracksData = Utils.getTracks(Utils.getSerializedTracks(tracks));
   const trackId = Utils.getOriginIdFromName(originName);
   const track = tracksData.find((t) => t.trackId === trackId);
