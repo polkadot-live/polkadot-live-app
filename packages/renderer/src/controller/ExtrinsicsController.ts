@@ -1,11 +1,12 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { APIsController as DedotAPIsController } from '@ren/controller/dedot/APIsController';
+import { APIsController } from '@ren/controller/dedot/APIsController';
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { chainUnits } from '@ren/config/chains';
 import { unitToPlanck } from '@w3ux/utils';
 import { hexToU8a } from 'dedot/utils';
+import { ExtraSignedExtension } from 'dedot';
 import {
   getAddressNonce,
   getNominationPoolRewards,
@@ -13,18 +14,17 @@ import {
 } from '@ren/utils/AccountUtils';
 
 import type { AnyData } from '@polkadot-live/types/misc';
+import type { Extrinsic } from 'dedot/codecs';
 import type {
   ActionMeta,
   ExtrinsicInfo,
   TxStatus,
 } from '@polkadot-live/types/tx';
-import { ExtraSignedExtension } from 'dedot';
 import type {
   ISubmittableExtrinsic,
   SignerPayloadJSON,
   SignerPayloadRaw,
 } from 'dedot/types';
-import type { Extrinsic } from 'dedot/codecs';
 
 type SubmittableExtrinsic = Extrinsic & ISubmittableExtrinsic;
 
@@ -75,9 +75,7 @@ export class ExtrinsicsController {
     const { chainId, from, pallet, method } = info.actionMeta;
 
     const args = this.getExtrinsicArgs(actionMeta);
-    const api = (
-      await DedotAPIsController.getConnectedApiOrThrow(chainId)
-    ).getApi();
+    const api = (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
 
     // Instantiate tx.
     console.log(`📝 New extrinsic: ${from}, ${pallet}, ${method}, ${args}`);
@@ -188,7 +186,7 @@ export class ExtrinsicsController {
       const { chainId, from } = info.actionMeta;
 
       const api = (
-        await DedotAPIsController.getConnectedApiOrThrow(chainId)
+        await APIsController.getConnectedApiOrThrow(chainId)
       ).getApi();
 
       // Create tx if it's not cached already.
@@ -329,7 +327,7 @@ export class ExtrinsicsController {
       }
 
       const api = (
-        await DedotAPIsController.getConnectedApiOrThrow(chainId)
+        await APIsController.getConnectedApiOrThrow(chainId)
       ).getApi();
 
       // Get cached tx and extra signer.
