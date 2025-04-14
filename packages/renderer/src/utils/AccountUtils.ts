@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { APIsController } from '@ren/controller/APIsController';
+import { APIsController as DedotAPIsController } from '@ren/controller/dedot/APIsController';
 import { AccountsController } from '@ren/controller/AccountsController';
 import { ChainList } from '@ren/config/chains';
 import {
@@ -114,14 +115,17 @@ export const fetchBalanceForAccount = async (account: Account) => {
     return;
   }
 
-  const { api } = await APIsController.getConnectedApiOrThrow(account.chain);
+  const api = (
+    await DedotAPIsController.getConnectedApiOrThrow(account.chain)
+  ).getApi();
+
   const result: AnyJson = await api.query.system.account(account.address);
 
   account.balance = {
-    nonce: BigInt(rmCommas(String(result.nonce))),
-    free: BigInt(rmCommas(String(result.data.free))),
-    reserved: BigInt(rmCommas(String(result.data.reserved))),
-    frozen: BigInt(rmCommas(String(result.data.frozen))),
+    nonce: BigInt(result.nonce),
+    free: result.data.free,
+    reserved: result.data.reserved,
+    frozen: result.data.frozen,
   } as AccountBalance;
 
   await AccountsController.set(account.chain, account);
@@ -132,17 +136,17 @@ export const fetchBalanceForAccount = async (account: Account) => {
  * @summary Return an account's current balance.
  */
 export const getBalanceForAccount = async (
+  api: RelayDedotClient,
   address: string,
   chainId: ChainID
 ): Promise<AccountBalance> => {
-  const { api } = await APIsController.getConnectedApiOrThrow(chainId);
-  const result: AnyJson = await api.query.system.account(address);
+  const result = await api.query.system.account(address);
 
   const balance: AccountBalance = {
-    nonce: BigInt(rmCommas(String(result.nonce))),
-    free: BigInt(rmCommas(String(result.data.free))),
-    reserved: BigInt(rmCommas(String(result.data.reserved))),
-    frozen: BigInt(rmCommas(String(result.data.frozen))),
+    nonce: BigInt(result.nonce),
+    free: result.data.free,
+    reserved: result.data.reserved,
+    frozen: result.data.frozen,
   };
 
   // Update account data if it is being managed by controller.
@@ -156,17 +160,6 @@ export const getBalanceForAccount = async (
 };
 
 /**
- * @name getExistentialDeposit
- * @summary Return the requested network's existential deposit as a big number.
- */
-export const getExistentialDeposit = async (
-  chainId: ChainID
-): Promise<bigint> => {
-  const { api } = await APIsController.getConnectedApiOrThrow(chainId);
-  return BigInt(rmCommas(String(api.consts.balances.existentialDeposit)));
-};
-
-/**
  * @name getSpendableBalance
  * @summary Return the requested account's spendable balance as a big number.
  */
@@ -174,14 +167,15 @@ export const getSpendableBalance = async (
   address: string,
   chainId: ChainID
 ): Promise<bigint> => {
-  const balance = await getBalanceForAccount(address, chainId);
+  const api = (
+    await DedotAPIsController.getConnectedApiOrThrow(chainId)
+  ).getApi();
 
   // Spendable balance equation:
   // spendable = free - max(max(frozen, reserved), ed)
-  const free = BigInt(rmCommas(String(balance.free)));
-  const frozen = BigInt(rmCommas(String(balance.frozen)));
-  const reserved = BigInt(rmCommas(String(balance.reserved)));
-  const ed = await getExistentialDeposit(chainId);
+  const balance = await getBalanceForAccount(api, address, chainId);
+  const { free, frozen, reserved } = balance;
+  const ed = api.consts.balances.existentialDeposit;
 
   const max = (a: bigint, b: bigint): bigint => (a > b ? a : b);
   let spendable = free - max(max(frozen, reserved), ed);
@@ -260,11 +254,12 @@ export const getNominationPoolRewards = async (
   address: string,
   chainId: ChainID
 ): Promise<bigint> => {
-  const { api } = await APIsController.getConnectedApiOrThrow(chainId);
-  const result: AnyJson =
-    await api.call.nominationPoolsApi.pendingRewards(address);
+  const api = (
+    await DedotAPIsController.getConnectedApiOrThrow(chainId)
+  ).getApi();
 
-  return BigInt(rmCommas(String(result)));
+  const result = await api.call.nominationPoolsApi.pendingRewards(address);
+  return result;
 };
 
 /**
