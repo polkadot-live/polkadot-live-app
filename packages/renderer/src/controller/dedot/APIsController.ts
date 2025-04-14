@@ -125,7 +125,7 @@ export class APIsController {
   static getConnectedApiOrThrow = async (chainId: ChainID) => {
     const client = await this.getConnectedApi(chainId);
     if (client === null) {
-      throw new Error(`Error - Could not get API instance.`);
+      throw new Error(`Error - Could not get API client.`);
     }
 
     return client;

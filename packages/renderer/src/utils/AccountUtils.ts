@@ -26,6 +26,7 @@ import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { Account } from '@ren/model/Account';
 import type { ApiPromise } from '@polkadot/api';
+import type { RelayDedotClient } from 'packages/types/src';
 
 /**
  * @name getAddressChainId
@@ -365,13 +366,9 @@ const getPoolAccounts = (poolId: number, api: ApiPromise) => {
  * @summary Get the live nonce for an address.
  */
 export const getAddressNonce = async (
-  address: string,
-  chainId: ChainID
-): Promise<bigint> => {
-  const instance = await APIsController.getConnectedApiOrThrow(chainId);
-  const result: AnyData = await instance.api.query.system.account(address);
-  return BigInt(rmCommas(String(result.nonce)));
-};
+  api: RelayDedotClient,
+  address: string
+): Promise<number> => (await api.query.system.account(address)).nonce;
 
 /**
  * @name checkAccountWithProperties
