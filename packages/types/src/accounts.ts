@@ -44,19 +44,21 @@ export interface AccountNominationPoolData {
 
 export interface NominationPoolRoles {
   depositor: string;
-  root: string;
-  nominator: string;
-  bouncer: string;
+  root?: string | undefined;
+  nominator?: string | undefined;
+  bouncer?: string | undefined;
 }
 
 export interface NominationPoolCommission {
-  changeRate: null | {
-    maxIncrease: string;
-    minDelay: string;
-  };
-  current: null | string[];
-  max: null | string;
-  throttleFrom: null | string;
+  current?: string[] | undefined;
+  max?: string | undefined;
+  changeRate?:
+    | {
+        maxIncrease: string;
+        minDelay: string;
+      }
+    | undefined;
+  throttleFrom?: string | undefined;
 }
 
 /*
