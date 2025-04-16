@@ -7,9 +7,9 @@ import { AccountsController } from '@ren/controller/AccountsController';
 import { ChainList } from '@ren/config/chains';
 import { checkAddress } from '@polkadot/util-crypto';
 import { getAccountNominatingData } from '@app/callbacks/nominating';
+import { bnToU8a } from '@polkadot/util';
 import {
   toU8a,
-  bnToU8a,
   concatU8a,
   encodeAddress,
   stringToU8a,
