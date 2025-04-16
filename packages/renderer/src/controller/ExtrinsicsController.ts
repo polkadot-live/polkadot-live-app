@@ -5,7 +5,7 @@ import { APIsController } from '@ren/controller/dedot/APIsController';
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { chainUnits } from '@ren/config/chains';
 import { unitToPlanck } from '@w3ux/utils';
-import { hexToU8a } from 'dedot/utils';
+import { concatU8a, hexToU8a } from 'dedot/utils';
 import { ExtraSignedExtension } from 'dedot';
 import {
   getAddressNonce,
@@ -25,6 +25,7 @@ import type {
   SignerPayloadJSON,
   SignerPayloadRaw,
 } from 'dedot/types';
+import * as $ from '@dedot/shape';
 
 type SubmittableExtrinsic = Extrinsic & ISubmittableExtrinsic;
 
@@ -219,14 +220,11 @@ export class ExtrinsicsController {
       console.log(`> Extrinsic is valid: ${JSON.stringify(verifyResult)}`);
 
       if (verifyResult.isValid) {
-        const nonce = (await getAddressNonce(api, from)).toString();
         const genesisHash = api.genesisHash;
+        const nonce = await getAddressNonce(api, from);
 
-        // Convert raw payload into byte array.
-        const raw =
-          rawPayload.type === 'bytes'
-            ? rawPayload.data
-            : hexToU8a(rawPayload.data);
+        const prefix = $.compactU32.encode(tx.callLength);
+        const prefixedRawPayload = concatU8a(prefix, hexToU8a(rawPayload.data));
 
         ConfigRenderer.portToAction?.postMessage({
           task: 'action:tx:report:data',
@@ -234,7 +232,7 @@ export class ExtrinsicsController {
             accountNonce: nonce,
             genesisHash,
             txId,
-            txPayload: raw,
+            txPayload: prefixedRawPayload,
           },
         });
       } else {
