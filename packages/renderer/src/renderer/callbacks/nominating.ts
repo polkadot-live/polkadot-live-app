@@ -158,47 +158,6 @@ export const getEraRewards = async (
 };
 
 /**
- * @name getAccountExposed
- * @summary Return `true` if address is exposed in `era`. Return `false` otherwise.
- * @deprecated staking.erasStakers replaced with staking.erasStakersPaged
- */
-export const getAccountExposed_deprecated = async (
-  api: ApiPromise,
-  era: number,
-  account: Account
-): Promise<boolean> => {
-  const result: AnyData = await api.query.staking.erasStakers.entries(era);
-
-  let exposed = false;
-  for (const val of result) {
-    // Check if account address is the validator.
-    if (val[0].toHuman() === account.address) {
-      exposed = true;
-      break;
-    }
-
-    // Check if account address is nominating this validator.
-    let counter = 0;
-    for (const { who } of val[1].toHuman().others) {
-      if (counter >= 512) {
-        break;
-      } else if (who === account.address) {
-        exposed = true;
-        break;
-      }
-      counter += 1;
-    }
-
-    // Break if the inner loop found exposure.
-    if (exposed) {
-      break;
-    }
-  }
-
-  return exposed;
-};
-
-/**
  * @name getAccountExposedWestend
  * @summary Return `true` if address is exposed in `era`. Return `false` otherwise.
  */

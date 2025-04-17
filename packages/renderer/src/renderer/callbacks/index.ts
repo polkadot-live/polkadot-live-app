@@ -9,7 +9,6 @@ import { Config as RendererConfig } from '@ren/config/processes/renderer';
 import { EventsController } from '@ren/controller/EventsController';
 import {
   areArraysEqual,
-  getAccountExposed_deprecated,
   getAccountNominatingData,
   getEraRewards,
 } from './nominating';
@@ -720,67 +719,6 @@ export class Callbacks {
    *
    * The nominating account needs to be in the top 512 nominators (have
    * enough stake) to earn rewards from a particular validator.
-   *
-   * @deprecated staking.erasStakers replaced with staking.erasStakersPaged
-   */
-  static async callback_nominating_exposure_deprecated(
-    data: AnyData,
-    entry: ApiCallEntry,
-    isOneShot = false
-  ): Promise<boolean> {
-    try {
-      // eslint-disable-next-line prettier/prettier
-      const era: number = parseInt(
-        (data.toHuman().index as string).replace(/,/g, '')
-      );
-      const account = checkAccountWithProperties(entry, ['nominatingData']);
-      const alreadyKnown = account.nominatingData!.lastCheckedEra >= era;
-
-      // Exit early if this era exposure is already known for this account.
-      if (!isOneShot && alreadyKnown) {
-        return true;
-      }
-
-      // Otherwise get exposure.
-      const { api } = await this.getApiOrThrow(account.chain);
-      const exposed = await getAccountExposed_deprecated(api, era, account);
-
-      // Update account data.
-      if (account.nominatingData!.lastCheckedEra < era) {
-        account.nominatingData!.exposed = exposed;
-        account.nominatingData!.lastCheckedEra = era;
-        await AccountsController.set(account.chain, account);
-        entry.task.account = account.flatten();
-      }
-
-      // Get notification.
-      const notification = this.getNotificationFlag(entry, isOneShot)
-        ? NotificationsController.getNotification(entry, account, {
-            era,
-            exposed,
-          })
-        : null;
-
-      // Handle notification and events in main process.
-      window.myAPI.sendEventTask({
-        action: 'events:persist',
-        data: {
-          event: EventsController.getEvent(entry, { era, exposed }),
-          notification,
-          isOneShot,
-        },
-      });
-
-      return true;
-    } catch (err) {
-      console.error(err);
-      return false;
-    }
-  }
-
-  /**
-   * @name callback_nominating_exposure
-   * @summary Callback for 'subscribe:account:nominating:exposure'
    */
   static async callback_nominating_exposure(
     data: AnyData,
