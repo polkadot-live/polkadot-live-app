@@ -675,18 +675,15 @@ export class Callbacks {
     try {
       // Check if account has nominating rewards from the previous era.
       const account = checkAccountWithProperties(entry, ['nominatingData']);
-      const { api } = await this.getApiOrThrow(account.chain);
-
-      // Fetch previous era.
-      const eraResult: AnyData = (
-        await api.query.staking.activeEra()
-      ).toHuman();
-
-      const era =
-        BigInt(parseInt((eraResult.index as string).replace(/,/g, ''))) - 1n;
 
       // Calculate rewards.
-      const eraRewards = await getEraRewards(account.address, api, Number(era));
+      const deApi = (
+        await DedotAPIsController.getConnectedApiOrThrow(account.chain)
+      ).getApi();
+
+      const eraResult = await deApi.query.staking.activeEra();
+      const lastEra = eraResult!.index - 1;
+      const eraRewards = await getEraRewards(account.address, deApi, lastEra);
 
       // Get notification and event.
       const notification = this.getNotificationFlag(entry, isOneShot)
@@ -698,7 +695,7 @@ export class Callbacks {
 
       const event = EventsController.getEvent(entry, {
         rewards: eraRewards.toString(),
-        era: era.toString(),
+        era: lastEra.toString(),
       });
 
       window.myAPI.sendEventTask({

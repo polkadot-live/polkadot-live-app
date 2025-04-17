@@ -27,60 +27,65 @@ interface ValidatorOverviewData {
  */
 export const getEraRewards = async (
   address: string,
-  api: ApiPromise,
+  api: RelayDedotClient,
   era: number
 ) => {
-  const showDebug = true;
-  const r1 = await api.query.staking.erasValidatorReward<AnyData>(era);
-  const r2 = await api.query.staking.erasRewardPoints<AnyData>(era);
+  const showDebug = false;
 
-  const eraTotalPayout = new BigNumber(rmCommas(r1.toHuman()));
-  const eraRewardPoints = r2.toHuman(); // total, individual
+  const eraPayoutResult = await api.query.staking.erasValidatorReward(era);
+  const eraTotalPayout = new BigNumber(eraPayoutResult!.toString());
+  const eraRewardPoints = await api.query.staking.erasRewardPoints(era);
+  const prefix = api.consts.system.ss58Prefix;
 
   // Cache the era's validator overviews.
   const validators = new Map<string, ValidatorOverviewData>();
   const overview = await api.query.staking.erasStakersOverview.entries(era);
+
+  // [[number, AccountId32], SpStakingPagedExposureMetadata][]
   for (const [keys, value] of overview) {
-    const vid = (keys.toHuman() as AnyData)[1] as string;
-    const { total, own, nominatorCount, pageCount }: AnyData = value.toHuman();
-    validators.set(vid, { total, own, nominatorCount, pageCount });
+    const vId = keys[1].address(prefix);
+    const { total, own, nominatorCount, pageCount } = value;
+    validators.set(vId, {
+      total: total.toString(),
+      own: own.toString(),
+      nominatorCount: nominatorCount.toString(),
+      pageCount: pageCount.toString(),
+    });
   }
 
   // Get address staking data for this era.
   const validatorIds = Array.from(validators.keys());
+  // [[number, AccountId32, number], SpStakingExposurePag][][]
   const pagedResults = await Promise.all(
-    validatorIds.map((vid) =>
-      api.query.staking.erasStakersPaged.entries(era, vid)
+    validatorIds.map((vId) =>
+      api.query.staking.erasStakersPaged.entries(era, new AccountId32(vId))
     )
   );
 
   // Map data is <validatorId, stakedAmount[]>
   const addressStake = new Map<string, string[]>();
-  const show = false;
-  for (const pagedResult of pagedResults) {
-    if (pagedResult[0] === undefined) {
-      continue;
-    }
+  const log = true;
+  for (const pageResult of pagedResults) {
+    // [[number, AccountId32, number], SpStakingExposurePag][]
+    const [obj] = pageResult;
+    const pageEra = obj[0][0];
+    const pageValidator = obj[0][1].address(prefix);
+    const page = obj[0][2];
+    showDebug && log && console.log(pageEra, pageValidator, page);
 
-    const [obj] = pagedResult;
-    const pageEra = (obj[0].toHuman() as AnyData)[0] || '0';
-    const pageValidator = (obj[0].toHuman() as AnyData)[1];
-    const page = (obj[0].toHuman() as AnyData)[2];
-    showDebug && show && console.log(pageEra, pageValidator, page);
-
-    const pageTotal = (obj[1].toHuman() as AnyData).pageTotal;
-    const others = (obj[1].toHuman() as AnyData).others;
-    showDebug && show && console.log(pageTotal);
+    const pageTotal = obj[1].pageTotal;
+    const others = obj[1].others;
+    showDebug && log && console.log(pageTotal);
 
     for (const { who, value } of others) {
-      showDebug && show && console.log(who, value);
-      if ((who as string) === address) {
+      showDebug && log && console.log(who, value);
+      if (who.address(prefix) === address) {
         addressStake.has(pageValidator)
           ? addressStake.set(pageValidator, [
               ...addressStake.get(pageValidator)!,
-              value,
+              value.toString(),
             ])
-          : addressStake.set(pageValidator, [value]);
+          : addressStake.set(pageValidator, [value.toString()]);
       }
     }
   }
@@ -94,13 +99,16 @@ export const getEraRewards = async (
   const commissions = new Map<string, string>();
   const vids = Array.from(addressStake.keys());
   const prefResults = await Promise.all(
-    vids.map((vid) => api.query.staking.erasValidatorPrefs<AnyData>(era, vid))
+    vids.map((vid) =>
+      api.query.staking.erasValidatorPrefs([era, new AccountId32(vid)])
+    )
   );
 
   for (let i = 0; i < prefResults.length; ++i) {
-    commissions.set(vids[i], prefResults[i].toHuman().commission);
+    commissions.set(vids[i], formatPerbillPercent(prefResults[i].commission));
   }
 
+  // TODO: Remove `rmCommas` call
   // Calculate unclaimed rewards for each nominated validator.
   let totalRewards = new BigNumber(0);
   for (const vid of vids) {
@@ -119,10 +127,14 @@ export const getEraRewards = async (
     const total = new BigNumber(rmCommas(vTotal));
 
     // Calculate available validator rewards for the era based on reward points.
-    const totalRewardPoints = new BigNumber(rmCommas(eraRewardPoints.total));
-    const validatorRewardPoints = new BigNumber(
-      rmCommas(eraRewardPoints.individual[String(vid)])
+    const totalRewardPoints = new BigNumber(
+      rmCommas(eraRewardPoints.total.toString())
     );
+
+    const pointsData = eraRewardPoints.individual.find(
+      (i) => i[0].address(prefix) === vid
+    )!;
+    const validatorRewardPoints = new BigNumber(pointsData[1]);
 
     const avail = eraTotalPayout
       .multipliedBy(validatorRewardPoints)

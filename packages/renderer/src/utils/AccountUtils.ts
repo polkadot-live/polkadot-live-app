@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { APIsController as DedotAPIsController } from '@ren/controller/dedot/APIsController';
+import { APIsController } from '@ren/controller/dedot/APIsController';
 import { AccountsController } from '@ren/controller/AccountsController';
 import { ChainList } from '@ren/config/chains';
 import { checkAddress } from '@polkadot/util-crypto';
@@ -113,7 +113,7 @@ export const fetchBalanceForAccount = async (account: Account) => {
   }
 
   const api = (
-    await DedotAPIsController.getConnectedApiOrThrow(account.chain)
+    await APIsController.getConnectedApiOrThrow(account.chain)
   ).getApi();
 
   const result: AnyJson = await api.query.system.account(account.address);
@@ -164,9 +164,7 @@ export const getSpendableBalance = async (
   address: string,
   chainId: ChainID
 ): Promise<bigint> => {
-  const api = (
-    await DedotAPIsController.getConnectedApiOrThrow(chainId)
-  ).getApi();
+  const api = (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
 
   // Spendable balance equation:
   // spendable = free - max(max(frozen, reserved), ed)
@@ -213,7 +211,7 @@ export const setNominatingDataForAccount = async (account: Account) => {
   }
 
   const api = (
-    await DedotAPIsController.getConnectedApiOrThrow(account.chain)
+    await APIsController.getConnectedApiOrThrow(account.chain)
   ).getApi();
 
   // Set account's nominator data.
@@ -253,10 +251,7 @@ export const getNominationPoolRewards = async (
   address: string,
   chainId: ChainID
 ): Promise<bigint> => {
-  const api = (
-    await DedotAPIsController.getConnectedApiOrThrow(chainId)
-  ).getApi();
-
+  const api = (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
   const result = await api.call.nominationPoolsApi.pendingRewards(address);
   return result;
 };
@@ -272,7 +267,7 @@ const setNominationPoolDataForAccount = async (account: Account) => {
   }
 
   const api = (
-    await DedotAPIsController.getConnectedApiOrThrow(account.chain)
+    await APIsController.getConnectedApiOrThrow(account.chain)
   ).getApi();
 
   // Return early if account is not currently in a nomination pool.
