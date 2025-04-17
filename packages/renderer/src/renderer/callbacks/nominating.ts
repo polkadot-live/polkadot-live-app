@@ -7,7 +7,6 @@ import { rmCommas } from '@w3ux/utils';
 import type { RelayDedotClient } from '@polkadot-live/types/apis';
 import type { Account } from '@ren/model/Account';
 import type { AnyData } from '@polkadot-live/types/misc';
-import type { ApiPromise } from '@polkadot/api';
 import type {
   AccountNominatingData,
   ValidatorData,
@@ -272,51 +271,68 @@ export const areArraysEqual = (arr1: string[], arr2: string[]): boolean => {
 /**
  * @name getPagedErasStakers
  * @summary Get an era validator and staker data.
+ * @todo Verify function is correct if used in future.
+ * @deprecated
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getPagedErasStakers = async (api: ApiPromise, era: string) => {
-  const overview: AnyData =
-    await api.query.staking.erasStakersOverview.entries(era);
+const getPagedErasStakers = async (api: RelayDedotClient, era: string) => {
+  const overview = await api.query.staking.erasStakersOverview.entries(
+    Number(era)
+  );
 
+  const prefix = api.consts.system.ss58Prefix;
   const validators = overview.reduce(
-    (prev: Record<string, AnyData>, [keys, value]: AnyData) => {
-      const validator = keys.toHuman()[1];
-      const { own, total } = value.toHuman();
-      return { ...prev, [validator]: { own, total } };
+    (prev: Record<string, AnyData>, [keys, value]) => {
+      const validator = keys[1].address(prefix);
+      const { own, total } = value;
+      return {
+        ...prev,
+        [validator]: { own: own.toString(), total: total.toString() },
+      };
     },
     {}
   );
 
   const validatorKeys = Object.keys(validators);
   const pagedResults = await Promise.all(
-    validatorKeys.map((v) => api.query.staking.erasStakersPaged.entries(era, v))
+    validatorKeys.map((v) =>
+      api.query.staking.erasStakersPaged.entries(
+        Number(era),
+        new AccountId32(v)
+      )
+    )
   );
 
   const result: AnyData[] = [];
   let i = 0;
   for (const pagedResult of pagedResults) {
+    // [[number, AccountId32, number], SpStakingExposurePage]
     const validator = validatorKeys[i];
     const { own, total } = validators[validator];
-    const others = pagedResult.reduce((prev: AnyData[], [, v]: AnyData) => {
-      const o = v.toHuman()?.others || [];
-      if (!o.length) {
-        return prev;
-      }
-      return prev.concat(o);
+
+    type Target = { who: string; value: string }[];
+    const others: Target = pagedResult.reduce((prev: Target, [, v]) => {
+      const o = v.others || [];
+      return !o.length
+        ? prev
+        : prev.concat(
+            o.map(({ who, value }) => ({
+              who: who.address(prefix),
+              value: rmCommas(value.toString()),
+            }))
+          );
     }, []);
 
     result.push({
-      keys: [rmCommas(era), validator],
+      keys: [era, validator],
       val: {
         total: rmCommas(total),
         own: rmCommas(own),
-        others: others.map(({ who, value }) => ({
-          who,
-          value: rmCommas(value),
-        })),
+        others,
       },
     });
     i++;
   }
+
   return result;
 };
