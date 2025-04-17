@@ -464,7 +464,7 @@ export const checkFlattenedAccountWithProperties = (
 };
 
 /**
- * @name formatPerbill Converts a Perbill value into a percentage string with fixed decimal places.
+ * @name formatPerbillPercent Converts a Perbill value into a percentage string with fixed decimal places.
  * @param perbill - A bigint or number representing a Perbill (0 to 1_000_000_000).
  * @param decimals - Number of decimal places to display (default: 2).
  * @returns A string like "12.34%"
