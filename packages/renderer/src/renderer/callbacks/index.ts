@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { AccountsController } from '@ren/controller/AccountsController';
+import { APIsController as DedotAPIsController } from '@ren/controller/dedot/APIsController';
 import { APIsController } from '@ren/controller/APIsController';
 import { checkAccountWithProperties } from '@ren/utils/AccountUtils';
 import { Config as RendererConfig } from '@ren/config/processes/renderer';
@@ -803,8 +804,10 @@ export class Callbacks {
       }
 
       // Cache previous exposure.
-      const { api } = await this.getApiOrThrow(account.chain);
       const { exposed: prevExposed } = account.nominatingData!;
+      const api = (
+        await DedotAPIsController.getConnectedApiOrThrow(account.chain)
+      ).getApi();
 
       // Update account nominating data.
       const maybeNominatingData = await getAccountNominatingData(api, account);
@@ -872,7 +875,9 @@ export class Callbacks {
       }
 
       // Get live nominator data and check to see if it has changed.
-      const { api } = await this.getApiOrThrow(account.chain);
+      const api = (
+        await DedotAPIsController.getConnectedApiOrThrow(account.chain)
+      ).getApi();
 
       // Cache previous commissions.
       const prev = account.nominatingData!.validators.map((v) => v.commission);
@@ -952,7 +957,9 @@ export class Callbacks {
       }
 
       // Get live nominator data and check to see if it has changed.
-      const { api } = await this.getApiOrThrow(account.chain);
+      const api = (
+        await DedotAPIsController.getConnectedApiOrThrow(account.chain)
+      ).getApi();
 
       // Cache previous nominations.
       const prev = account.nominatingData!.validators.map((v) => v.validatorId);

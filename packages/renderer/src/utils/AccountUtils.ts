@@ -1,7 +1,6 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { APIsController } from '@ren/controller/APIsController';
 import { APIsController as DedotAPIsController } from '@ren/controller/dedot/APIsController';
 import { AccountsController } from '@ren/controller/AccountsController';
 import { ChainList } from '@ren/config/chains';
@@ -213,7 +212,9 @@ export const setNominatingDataForAccount = async (account: Account) => {
     return;
   }
 
-  const { api } = await APIsController.getConnectedApiOrThrow(account.chain);
+  const api = (
+    await DedotAPIsController.getConnectedApiOrThrow(account.chain)
+  ).getApi();
 
   // Set account's nominator data.
   const maybeNominatingData = await getAccountNominatingData(api, account);
@@ -465,4 +466,28 @@ export const checkFlattenedAccountWithProperties = (
 
   // Otherwise, return the account.
   return entry.task.account;
+};
+
+/**
+ * @name formatPerbill Converts a Perbill value into a percentage string with fixed decimal places.
+ * @param perbill - A bigint or number representing a Perbill (0 to 1_000_000_000).
+ * @param decimals - Number of decimal places to display (default: 2).
+ * @returns A string like "12.34%"
+ */
+export const formatPerbillPercent = (
+  perbill: bigint | number,
+  decimals = 2
+): string => {
+  const BILLION = 1_000_000_000n;
+  const value = typeof perbill === 'number' ? BigInt(perbill) : perbill;
+
+  if (value < 0n || value > BILLION) {
+    throw new Error('Perbill must be between 0 and 1_000_000_000');
+  }
+
+  const percentage = (value * 10n ** BigInt(decimals + 2)) / BILLION; // scale to get decimal percentage
+  const integerPart = percentage / 10n ** BigInt(decimals);
+  const fractionPart = percentage % 10n ** BigInt(decimals);
+
+  return `${integerPart}.${fractionPart.toString().padStart(decimals, '0')}%`;
 };

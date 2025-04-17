@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import BigNumber from 'bignumber.js';
+import { formatPerbillPercent } from '@ren/utils/AccountUtils';
 import { rmCommas } from '@w3ux/utils';
+import type { RelayDedotClient } from '@polkadot-live/types/apis';
 import type { Account } from '@ren/model/Account';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ApiPromise } from '@polkadot/api';
@@ -10,6 +12,7 @@ import type {
   AccountNominatingData,
   ValidatorData,
 } from '@polkadot-live/types/accounts';
+import { AccountId32 } from 'dedot/codecs';
 
 interface ValidatorOverviewData {
   total: string;
@@ -188,11 +191,12 @@ export const getAccountExposed_deprecated = async (
  * @summary Return `true` if address is exposed in `era`. Return `false` otherwise.
  */
 export const getAccountExposed = async (
-  api: ApiPromise,
+  api: RelayDedotClient,
   era: number,
   account: Account,
   validatorData: ValidatorData[]
 ): Promise<boolean> => {
+  const prefix = api.consts.system.ss58Prefix;
   const validators = validatorData.map((v) => v.validatorId);
   let exposed = false;
 
@@ -205,21 +209,19 @@ export const getAccountExposed = async (
     }
 
     // Iterate validator paged exposures.
-    const result: AnyData = await api.query.staking.erasStakersPaged.entries(
-      era,
-      vId
-    );
+    // [[number, AccountId32, number], SpStakingExposurePage][]
+    const aId = new AccountId32(vId);
+    const result = await api.query.staking.erasStakersPaged.entries(era, aId);
 
     let counter = 0;
-
     for (const item of result) {
-      for (const { who } of item[1].toHuman().others) {
+      for (const { who } of item[1].others) {
         // Move to next validator if account is not in top 512 stakers for this validator.
         if (counter >= 512) {
           continue validatorLoop;
         }
         // We know the account is exposed for this era if their address is found.
-        if ((who as string) === account.address) {
+        if (who.address(prefix) === account.address) {
           exposed = true;
           break validatorLoop;
         }
@@ -236,37 +238,27 @@ export const getAccountExposed = async (
  * @summary Get an account's live nominating data.
  */
 export const getAccountNominatingData = async (
-  api: ApiPromise,
+  api: RelayDedotClient,
   account: Account
 ): Promise<AccountNominatingData | null> => {
-  // eslint-disable-next-line prettier/prettier
-  const nominatorData: AnyData = await api.query.staking.nominators(
-    account.address
-  );
-  const nominators = nominatorData.toHuman();
+  const nominators = await api.query.staking.nominators(account.address);
 
   // Return early if account is not nominating.
-  if (nominators === null) {
+  if (!nominators) {
     return null;
   }
 
-  // Get submitted in era.
-  const submittedIn: number = parseInt(
-    (nominators.submittedIn as string).replace(/,/g, '')
-  );
-
   // Get account's nominations.
+  const submittedIn = nominators.submittedIn;
   const validators: ValidatorData[] = [];
-  const eraData: AnyData = (await api.query.staking.activeEra()).toHuman();
-  const era: number = parseInt((eraData.index as string).replace(/,/g, ''));
+  const era = (await api.query.staking.activeEra())!.index;
+  const prefix = api.consts.system.ss58Prefix;
 
-  for (const validatorId of nominators.targets as string[]) {
-    const prefs: AnyData = (
-      await api.query.staking.erasValidatorPrefs(era, validatorId)
-    ).toHuman();
-
-    const commission: string = prefs.commission as string;
-    validators.push({ validatorId, commission });
+  for (const validatorId of nominators.targets) {
+    const address = validatorId.address(prefix);
+    const prefs = await api.query.staking.erasValidatorPrefs([era, address]);
+    const commission: string = formatPerbillPercent(prefs.commission);
+    validators.push({ validatorId: address, commission });
   }
 
   // Get exposed flag.
