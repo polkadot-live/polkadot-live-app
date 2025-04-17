@@ -24,7 +24,7 @@ import type { ApiCallEntry } from '@polkadot-live/types/subscriptions';
 import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { Account } from '@ren/model/Account';
-import type { RelayDedotClient } from 'packages/types/src';
+import type { RelayDedotClient } from '@polkadot-live/types/apis';
 
 /**
  * @name getAddressChainId
