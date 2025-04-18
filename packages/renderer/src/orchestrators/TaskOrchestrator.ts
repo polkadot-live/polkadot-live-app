@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { getOnlineStatus } from '@ren/utils/CommonUtils';
-import { APIsController as DedotAPIsController } from '@ren/controller/dedot/APIsController';
 import type { QueryMultiWrapper } from '@ren/model/QueryMultiWrapper';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 
@@ -125,47 +124,6 @@ export class TaskOrchestrator {
         wrapper.remove(task.chainId, task.action);
         break;
       }
-    }
-  }
-
-  /*-------------------------------------------------- 
-   API function call factory
-   --------------------------------------------------*/
-
-  // TODO: Get API instance from API context, wherever this execution flow starts.
-  // Tweak the logic to accept either a `null` or `Api` instance. If `null` is
-  // provided, we can assume we are in offline mode.
-
-  static async getApiCall(task: SubscriptionTask) {
-    const { action, chainId } = task;
-    const api = (
-      await DedotAPIsController.getConnectedApiOrThrow(chainId)
-    ).getApi();
-
-    switch (action) {
-      case 'subscribe:chain:timestamp':
-        return api.query.timestamp.now;
-      case 'subscribe:chain:currentSlot':
-        return api.query.babe.currentSlot;
-      case 'subscribe:account:balance:free':
-      case 'subscribe:account:balance:frozen':
-      case 'subscribe:account:balance:reserved':
-      case 'subscribe:account:balance:spendable':
-      case 'subscribe:account:nominationPools:rewards':
-        return api.query.system.account;
-      case 'subscribe:account:nominationPools:commission':
-      case 'subscribe:account:nominationPools:roles':
-      case 'subscribe:account:nominationPools:state':
-        return api.query.nominationPools.bondedPools;
-      case 'subscribe:account:nominationPools:renamed':
-        return api.query.nominationPools.metadata;
-      case 'subscribe:account:nominating:commission':
-      case 'subscribe:account:nominating:exposure':
-      case 'subscribe:account:nominating:nominations':
-      case 'subscribe:account:nominating:pendingPayouts':
-        return api.query.staking.activeEra;
-      default:
-        throw new Error('Subscription action not found');
     }
   }
 }

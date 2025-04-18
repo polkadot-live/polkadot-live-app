@@ -5,7 +5,6 @@ import * as Utils from '@ren/utils/CommonUtils';
 import { APIsController as DedotAPIsController } from '@ren/controller/dedot/APIsController';
 import { Callbacks } from '@app/callbacks';
 import { MainDebug } from '@ren/utils/DebugUtils';
-import { TaskOrchestrator } from '@ren/orchestrators/TaskOrchestrator';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { AnyData, AnyFunction } from '@polkadot-live/types/misc';
 import type {
@@ -385,7 +384,7 @@ export class QueryMultiWrapper {
     for (const [outerI, { task }] of entry.callEntries.entries()) {
       if (outerI === 0) {
         // First task in the array cannot share with previous tasks.
-        const apiCall: AnyFunction = await TaskOrchestrator.getApiCall(task);
+        const apiCall: AnyFunction = await QueryMultiWrapper.getApiCall(task);
         const args = SubscriptionsController.parseActionArgs(task) || [];
         queries.push({ fn: apiCall, args });
         continue;
@@ -407,7 +406,7 @@ export class QueryMultiWrapper {
             dataIndex: nextDataIndex,
           });
 
-          const apiCall: AnyFunction = await TaskOrchestrator.getApiCall(task);
+          const apiCall: AnyFunction = await QueryMultiWrapper.getApiCall(task);
           const args = SubscriptionsController.parseActionArgs(task) || [];
           queries.push({ fn: apiCall, args });
           break;
@@ -500,5 +499,42 @@ export class QueryMultiWrapper {
     const entry = this.subscriptions.get(chainId);
 
     return Boolean(entry?.callEntries.some((e) => e.task.action === action));
+  }
+
+  /**
+   * @name getApiQuery
+   * @summary Get the API query associated with a subscription.
+   */
+  static async getApiCall(task: SubscriptionTask) {
+    const { action, chainId } = task;
+    const api = (
+      await DedotAPIsController.getConnectedApiOrThrow(chainId)
+    ).getApi();
+
+    switch (action) {
+      case 'subscribe:chain:timestamp':
+        return api.query.timestamp.now;
+      case 'subscribe:chain:currentSlot':
+        return api.query.babe.currentSlot;
+      case 'subscribe:account:balance:free':
+      case 'subscribe:account:balance:frozen':
+      case 'subscribe:account:balance:reserved':
+      case 'subscribe:account:balance:spendable':
+      case 'subscribe:account:nominationPools:rewards':
+        return api.query.system.account;
+      case 'subscribe:account:nominationPools:commission':
+      case 'subscribe:account:nominationPools:roles':
+      case 'subscribe:account:nominationPools:state':
+        return api.query.nominationPools.bondedPools;
+      case 'subscribe:account:nominationPools:renamed':
+        return api.query.nominationPools.metadata;
+      case 'subscribe:account:nominating:commission':
+      case 'subscribe:account:nominating:exposure':
+      case 'subscribe:account:nominating:nominations':
+      case 'subscribe:account:nominating:pendingPayouts':
+        return api.query.staking.activeEra;
+      default:
+        throw new Error('Subscription action not found');
+    }
   }
 }
