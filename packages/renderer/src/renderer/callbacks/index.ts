@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { AccountsController } from '@ren/controller/AccountsController';
-import { APIsController as DedotAPIsController } from '@ren/controller/dedot/APIsController';
-import { APIsController } from '@ren/controller/APIsController';
+import { APIsController } from '@ren/controller/dedot/APIsController';
 import { checkAccountWithProperties } from '@ren/utils/AccountUtils';
 import { Config as RendererConfig } from '@ren/config/processes/renderer';
 import { EventsController } from '@ren/controller/EventsController';
@@ -310,20 +309,16 @@ export class Callbacks {
         return false;
       }
 
-      // Get API instance.
-      const { api } = await this.getApiOrThrow(account.chain);
-
       /**
        * Spendable balance equation:
        * spendable = free - max(max(frozen, reserved), ed)
        */
+      const api = await this.getApiOrThrow(account.chain);
+      const ed = api.consts.balances.existentialDeposit;
       const human = data.toHuman();
       const free = BigInt(rmCommas(human.data.free));
       const frozen = BigInt(rmCommas(human.data.frozen));
       const reserved = BigInt(rmCommas(human.data.reserved));
-      const ed = BigInt(
-        rmCommas(String(api.consts.balances.existentialDeposit))
-      );
 
       const max = (a: bigint, b: bigint): bigint => (a > b ? a : b);
       let spendable = free - max(max(frozen, reserved), ed);
@@ -388,14 +383,13 @@ export class Callbacks {
   ): Promise<boolean> {
     try {
       const account = checkAccountWithProperties(entry, ['nominationPoolData']);
-      const { api } = await this.getApiOrThrow(account.chain);
+      const api = await this.getApiOrThrow(account.chain);
 
       // Fetch pending rewards for the account.
-      const result = (
-        await api.call.nominationPoolsApi.pendingRewards(account.address)
-      ).toString();
+      const pending = await api.call.nominationPoolsApi.pendingRewards(
+        account.address
+      );
 
-      const pending = BigInt(result);
       const cur = BigInt(account.nominationPoolData!.poolPendingRewards);
       const isSame = cur === pending;
 
@@ -676,13 +670,10 @@ export class Callbacks {
       const account = checkAccountWithProperties(entry, ['nominatingData']);
 
       // Calculate rewards.
-      const deApi = (
-        await DedotAPIsController.getConnectedApiOrThrow(account.chain)
-      ).getApi();
-
-      const eraResult = await deApi.query.staking.activeEra();
+      const api = await this.getApiOrThrow(account.chain);
+      const eraResult = await api.query.staking.activeEra();
       const lastEra = eraResult!.index - 1;
-      const eraRewards = await getEraRewards(account.address, deApi, lastEra);
+      const eraRewards = await getEraRewards(account.address, api, lastEra);
 
       // Get notification and event.
       const notification = this.getNotificationFlag(entry, isOneShot)
@@ -740,9 +731,7 @@ export class Callbacks {
 
       // Cache previous exposure.
       const { exposed: prevExposed } = account.nominatingData!;
-      const api = (
-        await DedotAPIsController.getConnectedApiOrThrow(account.chain)
-      ).getApi();
+      const api = await this.getApiOrThrow(account.chain);
 
       // Update account nominating data.
       const maybeNominatingData = await getAccountNominatingData(api, account);
@@ -810,9 +799,7 @@ export class Callbacks {
       }
 
       // Get live nominator data and check to see if it has changed.
-      const api = (
-        await DedotAPIsController.getConnectedApiOrThrow(account.chain)
-      ).getApi();
+      const api = await this.getApiOrThrow(account.chain);
 
       // Cache previous commissions.
       const prev = account.nominatingData!.validators.map((v) => v.commission);
@@ -892,9 +879,7 @@ export class Callbacks {
       }
 
       // Get live nominator data and check to see if it has changed.
-      const api = (
-        await DedotAPIsController.getConnectedApiOrThrow(account.chain)
-      ).getApi();
+      const api = await this.getApiOrThrow(account.chain);
 
       // Cache previous nominations.
       const prev = account.nominatingData!.validators.map((v) => v.validatorId);
@@ -953,7 +938,7 @@ export class Callbacks {
    * @summary Get an API instance of throw.
    */
   private static getApiOrThrow = async (chainId: ChainID) =>
-    await APIsController.getConnectedApiOrThrow(chainId);
+    (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
 
   /**
    * @name showNotificationFlag

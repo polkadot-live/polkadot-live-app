@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import BigNumber from 'bignumber.js';
+import { AccountId32 } from 'dedot/codecs';
 import { formatPerbillPercent } from '@ren/utils/AccountUtils';
 import { rmCommas } from '@w3ux/utils';
 import type { RelayDedotClient } from '@polkadot-live/types/apis';
@@ -11,7 +12,6 @@ import type {
   AccountNominatingData,
   ValidatorData,
 } from '@polkadot-live/types/accounts';
-import { AccountId32 } from 'dedot/codecs';
 
 interface ValidatorOverviewData {
   total: string;
