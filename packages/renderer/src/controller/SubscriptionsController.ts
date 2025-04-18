@@ -1,6 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { AccountId32 } from 'dedot/codecs';
 import { accountTasks as allAccountTasks } from '@ren/config/subscriptions/account';
 import { chainTasks as allChainTasks } from '@ren/config/subscriptions/chain';
 import { AccountsController } from './AccountsController';
@@ -279,6 +280,48 @@ export class SubscriptionsController {
       }
       default: {
         return task;
+      }
+    }
+  };
+
+  /**
+   * @name parseActionArgs
+   * @summary Parse serialized args into correct data types for API arguments.
+   */
+  static parseActionArgs = (task: SubscriptionTask) => {
+    const { action, actionArgs: args } = task;
+    if (!args) {
+      return args;
+    }
+
+    switch (action) {
+      case 'subscribe:account:balance:free':
+      case 'subscribe:account:balance:frozen':
+      case 'subscribe:account:balance:reserved':
+      case 'subscribe:account:balance:spendable': {
+        const address: string = args[0];
+        const accountId = new AccountId32(address);
+        return [accountId];
+      }
+      case 'subscribe:account:nominationPools:rewards': {
+        const poolAddress: string = args[0];
+        const accountId = new AccountId32(poolAddress);
+        return [accountId];
+      }
+      case 'subscribe:account:nominationPools:state':
+      case 'subscribe:account:nominationPools:roles':
+      case 'subscribe:account:nominationPools:commission':
+      case 'subscribe:account:nominationPools:renamed': {
+        return [Number(args[0])];
+      }
+      case 'subscribe:account:nominating:commission':
+      case 'subscribe:account:nominating:exposure':
+      case 'subscribe:account:nominating:nominations':
+      case 'subscribe:account:nominating:pendingPayouts': {
+        return args;
+      }
+      default: {
+        return args;
       }
     }
   };

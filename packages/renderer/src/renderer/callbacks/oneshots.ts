@@ -1,13 +1,14 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { APIsController } from '@ren/controller/APIsController';
+import { APIsController } from '@ren/controller/dedot/APIsController';
 import { Callbacks } from '.';
 import type {
   ApiCallEntry,
   SubscriptionTask,
 } from '@polkadot-live/types/subscriptions';
-import type { ApiPromise } from '@polkadot/api';
+import type { RelayDedotClient } from 'packages/types/src';
+import { AccountId32 } from 'dedot/codecs';
 
 export const executeOneShot = async (
   task: SubscriptionTask
@@ -19,11 +20,12 @@ export const executeOneShot = async (
   }
 
   // Get API instance.
-  const instance = await APIsController.getConnectedApi(task.chainId);
-  if (!instance) {
+  const client = await APIsController.getConnectedApi(task.chainId);
+  if (!client || !client.api) {
     return false;
   }
-  const { api } = instance;
+
+  const { api } = client;
 
   switch (task.action) {
     case 'subscribe:account:balance:free': {
@@ -74,9 +76,10 @@ export const executeOneShot = async (
  */
 const oneShot_account_balance_free = async (
   task: SubscriptionTask,
-  api: ApiPromise
+  api: RelayDedotClient
 ): Promise<boolean> => {
-  const data = await api.query.system.account(task.account!.address);
+  const accountId = new AccountId32(task.account!.address);
+  const data = await api.query.system.account(accountId);
   const entry: ApiCallEntry = { curVal: null, task };
   return await Callbacks.callback_account_balance_free(data, entry, true);
 };
@@ -87,9 +90,10 @@ const oneShot_account_balance_free = async (
  */
 const oneShot_account_balance_frozen = async (
   task: SubscriptionTask,
-  api: ApiPromise
+  api: RelayDedotClient
 ): Promise<boolean> => {
-  const data = await api.query.system.account(task.account!.address);
+  const accountId = new AccountId32(task.account!.address);
+  const data = await api.query.system.account(accountId);
   const entry: ApiCallEntry = { curVal: null, task };
   return await Callbacks.callback_account_balance_frozen(data, entry, true);
 };
@@ -100,9 +104,10 @@ const oneShot_account_balance_frozen = async (
  */
 const oneShot_account_balance_reserved = async (
   task: SubscriptionTask,
-  api: ApiPromise
+  api: RelayDedotClient
 ): Promise<boolean> => {
-  const data = await api.query.system.account(task.account!.address);
+  const accountId = new AccountId32(task.account!.address);
+  const data = await api.query.system.account(accountId);
   const entry: ApiCallEntry = { curVal: null, task };
   return await Callbacks.callback_account_balance_reserved(data, entry, true);
 };
@@ -113,9 +118,10 @@ const oneShot_account_balance_reserved = async (
  */
 const oneShot_account_balance_spendable = async (
   task: SubscriptionTask,
-  api: ApiPromise
+  api: RelayDedotClient
 ): Promise<boolean> => {
-  const data = await api.query.system.account(task.account!.address);
+  const accountId = new AccountId32(task.account!.address);
+  const data = await api.query.system.account(accountId);
   const entry: ApiCallEntry = { curVal: null, task };
   return await Callbacks.callback_account_balance_spendable(data, entry, true);
 };
@@ -137,9 +143,10 @@ const oneShot_nomination_pool_rewards = async (
  */
 const oneShot_nomination_pool_state = async (
   task: SubscriptionTask,
-  api: ApiPromise
+  api: RelayDedotClient
 ): Promise<boolean> => {
-  const data = await api.query.nominationPools.bondedPools(task.actionArgs!);
+  const arg = Number(task.actionArgs![0]);
+  const data = await api.query.nominationPools.bondedPools(arg);
   const entry: ApiCallEntry = { curVal: null, task };
   return await Callbacks.callback_nomination_pool_state(data, entry, true);
 };
@@ -150,9 +157,10 @@ const oneShot_nomination_pool_state = async (
  */
 const oneShot_nomination_pool_renamed = async (
   task: SubscriptionTask,
-  api: ApiPromise
+  api: RelayDedotClient
 ): Promise<boolean> => {
-  const data = await api.query.nominationPools.metadata(task.actionArgs!);
+  const arg = Number(task.actionArgs![0]);
+  const data = await api.query.nominationPools.metadata(arg);
   const entry: ApiCallEntry = { curVal: null, task };
   return await Callbacks.callback_nomination_pool_renamed(data, entry, true);
 };
@@ -163,9 +171,10 @@ const oneShot_nomination_pool_renamed = async (
  */
 const oneShot_nomination_pool_roles = async (
   task: SubscriptionTask,
-  api: ApiPromise
+  api: RelayDedotClient
 ): Promise<boolean> => {
-  const data = await api.query.nominationPools.bondedPools(task.actionArgs!);
+  const arg = Number(task.actionArgs![0]);
+  const data = await api.query.nominationPools.bondedPools(arg);
   const entry: ApiCallEntry = { curVal: null, task };
   return await Callbacks.callback_nomination_pool_roles(data, entry, true);
 };
@@ -176,9 +185,10 @@ const oneShot_nomination_pool_roles = async (
  */
 const oneShot_nomination_pool_commission = async (
   task: SubscriptionTask,
-  api: ApiPromise
+  api: RelayDedotClient
 ): Promise<boolean> => {
-  const data = await api.query.nominationPools.bondedPools(task.actionArgs!);
+  const arg = Number(task.actionArgs![0]);
+  const data = await api.query.nominationPools.bondedPools(arg);
   const entry: ApiCallEntry = { curVal: null, task };
   return await Callbacks.callback_nomination_pool_commission(data, entry, true);
 };
@@ -200,7 +210,7 @@ const oneShot_nominating_era_rewards = async (
  */
 const oneShot_nominating_exposure = async (
   task: SubscriptionTask,
-  api: ApiPromise
+  api: RelayDedotClient
 ): Promise<boolean> => {
   const entry: ApiCallEntry = { curVal: null, task };
   const data = await api.query.staking.activeEra();
@@ -213,7 +223,7 @@ const oneShot_nominating_exposure = async (
  */
 const oneShot_nominating_commission = async (
   task: SubscriptionTask,
-  api: ApiPromise
+  api: RelayDedotClient
 ): Promise<boolean> => {
   const data = await api.query.staking.activeEra();
   const entry: ApiCallEntry = { curVal: null, task };
@@ -226,7 +236,7 @@ const oneShot_nominating_commission = async (
  */
 const oneShot_nominating_nominations = async (
   task: SubscriptionTask,
-  api: ApiPromise
+  api: RelayDedotClient
 ): Promise<boolean> => {
   const data = await api.query.staking.activeEra();
   const entry: ApiCallEntry = { curVal: null, task };

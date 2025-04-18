@@ -13,13 +13,19 @@ import {
 } from './nominating';
 import { NotificationsController } from '@ren/controller/NotificationsController';
 import { u8aToString, u8aUnwrapBytes } from '@polkadot/util';
-import { rmCommas } from '@w3ux/utils';
 import type { ApiCallEntry } from '@polkadot-live/types/subscriptions';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { EventCallback } from '@polkadot-live/types/reporter';
 import type { QueryMultiWrapper } from '@ren/model/QueryMultiWrapper';
-import type { NominationPoolRoles } from '@polkadot-live/types/accounts';
+import type {
+  NominationPoolCommission,
+  NominationPoolRoles,
+} from '@polkadot-live/types/accounts';
+import type {
+  PalletBalancesAccountData,
+  PalletNominationPoolsBondedPoolInner,
+} from '@dedot/chaintypes/substrate';
 
 export class Callbacks {
   /**
@@ -127,9 +133,11 @@ export class Callbacks {
       }
 
       // Get the received balance.
-      const human = data.toHuman();
-      const reserved = BigInt(rmCommas(human.data.reserved));
-      const free = BigInt(rmCommas(human.data.free)) - reserved;
+      const nonce = data.nonce as number;
+      const balance = data.data as PalletBalancesAccountData;
+
+      const reserved = balance.reserved;
+      const free = balance.free - reserved;
       const b = account.balance;
       const isSame = b.free ? free === b.free : false;
 
@@ -141,7 +149,7 @@ export class Callbacks {
       // Update account data if balance has changed.
       if (!isSame) {
         account.balance.free = free;
-        account.balance.nonce = BigInt(rmCommas(human.nonce));
+        account.balance.nonce = BigInt(nonce);
         await AccountsController.set(account.chain, account);
         entry.task.account = account.flatten();
       }
@@ -189,8 +197,9 @@ export class Callbacks {
       }
 
       // Get the received frozen balance.
-      const human = data.toHuman();
-      const frozen = BigInt(rmCommas(human.data.frozen));
+      const nonce = data.nonce as number;
+      const balance = data.data as PalletBalancesAccountData;
+      const frozen = balance.frozen;
       const b = account.balance;
       const isSame = b.frozen ? frozen === b.frozen : false;
 
@@ -202,7 +211,7 @@ export class Callbacks {
       // Update account data if balance has changed.
       if (!isSame) {
         account.balance.frozen = frozen;
-        account.balance.nonce = BigInt(rmCommas(human.nonce));
+        account.balance.nonce = BigInt(nonce);
         await AccountsController.set(account.chain, account);
         entry.task.account = account.flatten();
       }
@@ -250,8 +259,9 @@ export class Callbacks {
       }
 
       // Get the received reserved balance.
-      const human = data.toHuman();
-      const reserved = BigInt(rmCommas(human.data.reserved));
+      const nonce = data.nonce as number;
+      const balance = data.data as PalletBalancesAccountData;
+      const reserved = balance.reserved;
       const b = account.balance;
       const isSame = b.reserved ? reserved === b.reserved : false;
 
@@ -263,7 +273,7 @@ export class Callbacks {
       // Update account data if balance has changed.
       if (!isSame) {
         account.balance.reserved = reserved;
-        account.balance.nonce = BigInt(rmCommas(human.nonce));
+        account.balance.nonce = BigInt(nonce);
         await AccountsController.set(account.chain, account);
         entry.task.account = account.flatten();
       }
@@ -315,10 +325,12 @@ export class Callbacks {
        */
       const api = await this.getApiOrThrow(account.chain);
       const ed = api.consts.balances.existentialDeposit;
-      const human = data.toHuman();
-      const free = BigInt(rmCommas(human.data.free));
-      const frozen = BigInt(rmCommas(human.data.frozen));
-      const reserved = BigInt(rmCommas(human.data.reserved));
+      const nonce = data.nonce as number;
+      const balance = data.data as PalletBalancesAccountData;
+
+      const free = balance.free;
+      const frozen = balance.frozen;
+      const reserved = balance.reserved;
 
       const max = (a: bigint, b: bigint): bigint => (a > b ? a : b);
       let spendable = free - max(max(frozen, reserved), ed);
@@ -338,7 +350,7 @@ export class Callbacks {
 
       // Update account nonce if balance has changed.
       if (!isSame) {
-        account.balance.nonce = BigInt(rmCommas(human.nonce));
+        account.balance.nonce = BigInt(nonce);
         await AccountsController.set(account.chain, account);
         entry.task.account = account.flatten();
       }
@@ -438,7 +450,8 @@ export class Callbacks {
       const account = checkAccountWithProperties(entry, ['nominationPoolData']);
 
       // Get the received pool state.
-      const state: string = data.toHuman().state;
+      const casted = data as PalletNominationPoolsBondedPoolInner;
+      const state = casted.state as string;
       const cur = account.nominationPoolData!.poolState;
       const isSame = cur === state;
 
@@ -542,8 +555,17 @@ export class Callbacks {
       const account = checkAccountWithProperties(entry, ['nominationPoolData']);
 
       // Get the received pool roles.
-      const humanData: AnyData = data.toHuman();
-      const roles: NominationPoolRoles = humanData.roles;
+      const api = await this.getApiOrThrow(account.chain);
+      const prefix = api.consts.system.ss58Prefix;
+      const casted = data as PalletNominationPoolsBondedPoolInner;
+      const { depositor, root, nominator, bouncer } = casted.roles;
+
+      const roles: NominationPoolRoles = {
+        depositor: depositor.address(prefix),
+        root: root ? root.address(prefix) : undefined,
+        nominator: nominator ? nominator.address(prefix) : undefined,
+        bouncer: bouncer ? bouncer.address(prefix) : undefined,
+      };
 
       // Return if roles have not changed.
       const cur = account.nominationPoolData!.poolRoles;
@@ -603,8 +625,20 @@ export class Callbacks {
       const account = checkAccountWithProperties(entry, ['nominationPoolData']);
 
       // Get the received pool commission.
-      const humanData: AnyData = data.toHuman();
-      const { changeRate, current, max, throttleFrom } = humanData.commission;
+      const casted = data as PalletNominationPoolsBondedPoolInner;
+      const { changeRate, current, max, throttleFrom } = casted.commission;
+
+      const cur: NominationPoolCommission = {
+        current: current ? [current[0].toString(), current[1].raw] : undefined,
+        max: max ? max.toString() : undefined,
+        changeRate: changeRate
+          ? {
+              maxIncrease: changeRate.maxIncrease.toString(),
+              minDelay: changeRate.minDelay.toString(),
+            }
+          : undefined,
+        throttleFrom: throttleFrom ? throttleFrom.toString() : undefined,
+      };
 
       // Return if roles have not changed.
       const poolCommission = account.nominationPoolData!.poolCommission;
@@ -612,10 +646,11 @@ export class Callbacks {
       const isSame =
         // eslint-disable-next-line prettier/prettier
         JSON.stringify(poolCommission.changeRate) ===
-          JSON.stringify(changeRate) &&
-        JSON.stringify(poolCommission.current) === JSON.stringify(current) &&
-        poolCommission.throttleFrom === (throttleFrom as string | null) &&
-        poolCommission.max === (max as string | null);
+          JSON.stringify(cur.changeRate) &&
+        JSON.stringify(poolCommission.current) ===
+          JSON.stringify(cur.current) &&
+        poolCommission.throttleFrom === cur.throttleFrom &&
+        poolCommission.max === cur.max;
 
       if (!isOneShot && isSame) {
         return true;
@@ -623,12 +658,7 @@ export class Callbacks {
 
       // Update account and entry data.
       if (!isSame) {
-        account.nominationPoolData!.poolCommission = {
-          changeRate,
-          current,
-          max,
-          throttleFrom,
-        };
+        account.nominationPoolData!.poolCommission = cur;
         await AccountsController.set(account.chain, account);
         entry.task.account = account.flatten();
       }

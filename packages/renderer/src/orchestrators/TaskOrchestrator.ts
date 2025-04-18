@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { getOnlineStatus } from '@ren/utils/CommonUtils';
-import { APIsController } from '@ren/controller/APIsController';
+import { APIsController as DedotAPIsController } from '@ren/controller/dedot/APIsController';
 import type { QueryMultiWrapper } from '@ren/model/QueryMultiWrapper';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 
@@ -138,7 +138,9 @@ export class TaskOrchestrator {
 
   static async getApiCall(task: SubscriptionTask) {
     const { action, chainId } = task;
-    const { api } = await APIsController.getConnectedApiOrThrow(chainId);
+    const api = (
+      await DedotAPIsController.getConnectedApiOrThrow(chainId)
+    ).getApi();
 
     switch (action) {
       case 'subscribe:chain:timestamp':
@@ -146,30 +148,21 @@ export class TaskOrchestrator {
       case 'subscribe:chain:currentSlot':
         return api.query.babe.currentSlot;
       case 'subscribe:account:balance:free':
-        return api.query.system.account;
       case 'subscribe:account:balance:frozen':
-        return api.query.system.account;
       case 'subscribe:account:balance:reserved':
-        return api.query.system.account;
       case 'subscribe:account:balance:spendable':
-        return api.query.system.account;
       case 'subscribe:account:nominationPools:rewards':
         return api.query.system.account;
+      case 'subscribe:account:nominationPools:commission':
+      case 'subscribe:account:nominationPools:roles':
       case 'subscribe:account:nominationPools:state':
         return api.query.nominationPools.bondedPools;
       case 'subscribe:account:nominationPools:renamed':
         return api.query.nominationPools.metadata;
-      case 'subscribe:account:nominationPools:roles':
-        return api.query.nominationPools.bondedPools;
-      case 'subscribe:account:nominationPools:commission':
-        return api.query.nominationPools.bondedPools;
-      case 'subscribe:account:nominating:pendingPayouts':
-        return api.query.staking.activeEra;
-      case 'subscribe:account:nominating:exposure':
-        return api.query.staking.activeEra;
       case 'subscribe:account:nominating:commission':
-        return api.query.staking.activeEra;
+      case 'subscribe:account:nominating:exposure':
       case 'subscribe:account:nominating:nominations':
+      case 'subscribe:account:nominating:pendingPayouts':
         return api.query.staking.activeEra;
       default:
         throw new Error('Subscription action not found');
