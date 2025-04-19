@@ -16,6 +16,7 @@ import type { ProviderInterface } from '@polkadot/rpc-provider/types';
  * @property {string} endpoint - the endpoint of the chain.
  * @property {string[]} rpcs - rpc endpoints for connecting to the chain network.
  * @property {ChainStatus} status - API connection status.
+ * @deprecated
  */
 export class Api {
   private _api: ApiPromise | null;

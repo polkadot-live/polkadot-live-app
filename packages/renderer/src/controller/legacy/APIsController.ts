@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Utils from '@ren/utils/CommonUtils';
-import { Api } from '@ren/model/Api';
+import { Api } from '@ren/model/legacy/Api';
 import { ChainList } from '@ren/config/chains';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAPIData } from '@polkadot-live/types/apis';
@@ -10,6 +10,7 @@ import type { FlattenedAPIData } from '@polkadot-live/types/apis';
 /**
  * A static class that manages active api providers.
  * @class
+ * @deprecated
  */
 export class APIsController {
   static instances: Api[] = [];
