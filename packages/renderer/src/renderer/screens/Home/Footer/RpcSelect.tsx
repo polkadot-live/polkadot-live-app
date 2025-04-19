@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import { SelectRpcWrapper } from './Wrapper';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
+import { useConnections } from '@app/contexts/common/Connections';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAPIData } from '@polkadot-live/types/apis';
 
@@ -21,6 +22,7 @@ export const SelectRpc = ({
   const { chainId, endpoint } = apiData;
   const [selectedRpc, setSelectedRpc] = useState(endpoint);
   const { handleNewEndpointForChain } = useBootstrapping();
+  const { isConnected } = useConnections();
 
   /// Handle RPC change.
   const handleRpcChange = async (
@@ -44,7 +46,11 @@ export const SelectRpc = ({
 
   /// Get class name for connected status icon.
   const getStatusClass = () =>
-    apiData.status === 'connected' ? 'success' : 'danger';
+    !isConnected
+      ? 'danger'
+      : apiData.status === 'connected'
+        ? 'success'
+        : 'danger';
 
   return (
     <SelectRpcWrapper>

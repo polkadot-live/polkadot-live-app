@@ -72,11 +72,10 @@ export class Api<T extends keyof ClientTypes> {
    */
   disconnect = async () => {
     try {
-      if (this.api && this.status() !== 'disconnected') {
+      if (this.api !== null) {
         await this.api.disconnect();
+        this.api = null;
       }
-
-      this.api = null;
       console.log('❌ Dedot: %o', this.endpoint, ' DISCONNECTED');
     } catch (err) {
       console.log('!disconnect error');

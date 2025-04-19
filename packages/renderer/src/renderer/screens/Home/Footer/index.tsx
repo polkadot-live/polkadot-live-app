@@ -34,6 +34,7 @@ export const Footer = () => {
     getOnlineMode,
     darkMode,
     isBuildingExtrinsic,
+    isConnected,
     isImporting,
     isImportingAccount,
   } = useConnections();
@@ -134,7 +135,7 @@ export const Footer = () => {
                   <SelectRpc
                     apiData={apiData}
                     setWorkingEndpoint={setWorkingEndpoint}
-                    disabled={isWorking(chainId)}
+                    disabled={isWorking(chainId) || !isConnected}
                   />
 
                   {/* Connect button */}
@@ -148,7 +149,9 @@ export const Footer = () => {
                       <button
                         onClick={async () => await onConnectClick(chainId)}
                         disabled={
-                          apiData.status === 'connected' || isWorking(chainId)
+                          apiData.status === 'connected' ||
+                          isWorking(chainId) ||
+                          !isConnected
                         }
                       >
                         <FontAwesomeIcon
@@ -172,7 +175,9 @@ export const Footer = () => {
                           await onDisconnectClick(apiData.chainId)
                         }
                         disabled={
-                          !allowDisconnect(apiData) || isWorking(chainId)
+                          !allowDisconnect(apiData) ||
+                          isWorking(chainId) ||
+                          !isConnected
                         }
                       >
                         <FontAwesomeIcon

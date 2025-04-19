@@ -26,7 +26,7 @@ export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
   );
 
   const base = new Map<ChainID, boolean>(
-    ChainList.keys().map((c) => [c, false])
+    Array.from(ChainList.keys()).map((c) => [c, false])
   );
 
   const [workingConnects, setWorkingConnects] = useState(new Map(base));

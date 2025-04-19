@@ -17,7 +17,7 @@ import { Config as RendererConfig } from '@ren/config/processes/renderer';
 import { ChainList } from '@ren/config/chains';
 import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
 import { IntervalsController } from '@ren/controller/IntervalsController';
-import { useConnections } from '../../common/Connections';
+import { useConnections } from '@app/contexts/common/Connections';
 import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
 import { disconnectAPIs } from '@ren/utils/ApiUtils';
 import type { BootstrappingInterface } from './types';
@@ -38,7 +38,7 @@ export const BootstrappingProvider = ({
   children: React.ReactNode;
 }) => {
   const { addIntervalSubscription } = useIntervalSubscriptions();
-  const { isOnlineMode } = useConnections();
+  const { isConnected: systemConnected } = useConnections();
 
   const [appLoading, setAppLoading] = useState(true);
   const [isAborting, setIsAborting] = useState(false);
@@ -112,12 +112,12 @@ export const BootstrappingProvider = ({
       await APIsController.closeAll();
     };
 
-    if (!isOnlineMode) {
+    if (!systemConnected) {
       disconnectAll();
     } else {
       // TODO: Handle online mode.
     }
-  }, [isOnlineMode]);
+  }, [systemConnected]);
 
   /// Handle abort flag.
   useEffect(() => {

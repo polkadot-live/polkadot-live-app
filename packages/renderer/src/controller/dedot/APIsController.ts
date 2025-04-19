@@ -39,8 +39,12 @@ export class APIsController {
    */
   static close = async (chainId: ChainID) => {
     const client = this.clients.find((c) => c.chain === chainId);
-    if (client?.status() === 'connected') {
-      await client.disconnect();
+    if (client !== undefined) {
+      // Manually disconnect if system is online (disconnection initiated by user).
+      const isOnline: boolean = await Utils.getOnlineStatus();
+      if (isOnline) {
+        await client.disconnect();
+      }
       this.updateUiChainState(client);
     }
   };
