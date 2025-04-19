@@ -13,7 +13,6 @@ export const defaultTreasuryContext: TreasuryContextInterface = {
   getFormattedNextBurn: () => '',
   setFetchingTreasuryData: (fetching) => {},
   setTreasuryData: (d) => {},
-  getTreasuryEncodedAddress: () => null,
   getFormattedFreeBalance: () => '',
   getFormattedToBeAwarded: () => '',
   getFormattedElapsedSpendPeriod: () => '',
