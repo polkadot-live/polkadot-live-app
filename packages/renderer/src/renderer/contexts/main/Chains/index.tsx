@@ -3,7 +3,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import * as defaults from './defaults';
-import { APIsController as DedotAPIsController } from '@ren/controller/dedot/APIsController';
+import { APIsController } from '@ren/controller/dedot/APIsController';
 import type { ChainsContextInterface } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAPIData } from '@polkadot-live/types/apis';
@@ -55,14 +55,14 @@ export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
   // Handle clicking the api connect button.
   const onConnectClick = async (chainId: ChainID) => {
     setWorkingConnects((pv) => new Map(pv).set(chainId, true));
-    await DedotAPIsController.connectApi(chainId);
+    await APIsController.connectApi(chainId);
     setWorkingConnects((pv) => new Map(pv).set(chainId, false));
   };
 
   // Handle clicking the api disconnect button.
   const onDisconnectClick = async (chainId: ChainID) => {
     setWorkingDisconnects((pv) => new Map(pv).set(chainId, true));
-    await DedotAPIsController.close(chainId);
+    await APIsController.close(chainId);
     setWorkingDisconnects((pv) => new Map(pv).set(chainId, false));
   };
 
@@ -80,8 +80,8 @@ export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Cache chain state setter in controller for updaing UI.
   useEffect(() => {
-    DedotAPIsController.cachedSetChains = setChains;
-    DedotAPIsController.setUiTrigger = setUiTrigger;
+    APIsController.cachedSetChains = setChains;
+    APIsController.setUiTrigger = setUiTrigger;
   }, []);
 
   return (
