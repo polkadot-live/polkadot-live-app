@@ -4,7 +4,7 @@
 /// Dependencies.
 import { getOnlineStatus } from '@ren/utils/CommonUtils';
 import { AccountsController } from '@ren/controller/AccountsController';
-import { APIsController as DedotAPIsController } from '@ren/controller/dedot/APIsController';
+import { APIsController } from '@ren/controller/dedot/APIsController';
 import BigNumber from 'bignumber.js';
 import { chainUnits } from '@ren/config/chains';
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
@@ -358,7 +358,7 @@ export const useMainMessagePorts = () => {
     const { chainId } = ev.data.data;
 
     try {
-      const { api } = await DedotAPIsController.getConnectedApiOrThrow(chainId);
+      const { api } = await APIsController.getConnectedApiOrThrow(chainId);
       if (!api) {
         throw Error('api is null');
       }
@@ -387,7 +387,7 @@ export const useMainMessagePorts = () => {
     try {
       // Make API call to fetch referenda entries.
       const { chainId } = ev.data.data;
-      const { api } = await DedotAPIsController.getConnectedApiOrThrow(chainId);
+      const { api } = await APIsController.getConnectedApiOrThrow(chainId);
       if (!api) {
         return;
       }
@@ -490,7 +490,7 @@ export const useMainMessagePorts = () => {
     try {
       const { chainId } = ev.data.data;
       const api = (
-        await DedotAPIsController.getConnectedApiOrThrow(chainId)
+        await APIsController.getConnectedApiOrThrow(chainId)
       ).getApi();
 
       const EMPTY_U8A_32 = new Uint8Array(32);

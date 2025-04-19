@@ -3,11 +3,11 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import * as defaults from './defaults';
-import { APIsController } from '@ren/controller/APIsController';
-import { APIsController as DedotAPIsController } from '@ren/controller/dedot/APIsController';
+import { APIsController } from '@ren/controller/dedot/APIsController';
 import type { ChainsContextInterface } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAPIData } from '@polkadot-live/types/apis';
+import { ChainList } from '@ren/config/chains';
 
 export const ChainsContext = createContext<ChainsContextInterface>(
   defaults.defaultChainsContext
@@ -17,22 +17,17 @@ export const useChains = () => useContext(ChainsContext);
 
 export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
   const [uiTrigger, setUiTrigger] = useState(false);
+
+  /**
+   * Chains connected with Dedot.
+   */
   const [chains, setChains] = useState<Map<ChainID, FlattenedAPIData>>(
     new Map()
   );
 
-  /**
-   * Dedot
-   */
-  const [dedotChains, setDedotChains] = useState<
-    Map<ChainID, FlattenedAPIData>
-  >(new Map());
-
-  const base = new Map<ChainID, boolean>([
-    ['Polkadot', false],
-    ['Kusama', false],
-    ['Westend', false],
-  ]);
+  const base = new Map<ChainID, boolean>(
+    Array.from(ChainList.keys()).map((c) => [c, false])
+  );
 
   const [workingConnects, setWorkingConnects] = useState(new Map(base));
   const [workingDisconnects, setWorkingDisconnects] = useState(new Map(base));
@@ -59,14 +54,14 @@ export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
   // Handle clicking the api connect button.
   const onConnectClick = async (chainId: ChainID) => {
     setWorkingConnects((pv) => new Map(pv).set(chainId, true));
-    await DedotAPIsController.connectApi(chainId);
+    await APIsController.connectApi(chainId);
     setWorkingConnects((pv) => new Map(pv).set(chainId, false));
   };
 
   // Handle clicking the api disconnect button.
   const onDisconnectClick = async (chainId: ChainID) => {
     setWorkingDisconnects((pv) => new Map(pv).set(chainId, true));
-    await DedotAPIsController.close(chainId);
+    await APIsController.close(chainId);
     setWorkingDisconnects((pv) => new Map(pv).set(chainId, false));
   };
 
@@ -86,16 +81,12 @@ export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     APIsController.cachedSetChains = setChains;
     APIsController.setUiTrigger = setUiTrigger;
-
-    DedotAPIsController.cachedSetChains = setDedotChains;
-    DedotAPIsController.setUiTrigger = setUiTrigger;
   }, []);
 
   return (
     <ChainsContext.Provider
       value={{
         chains,
-        dedotChains,
         isWorking,
         onConnectClick,
         onDisconnectClick,

@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Utils from '@ren/utils/CommonUtils';
-import { APIsController } from '@ren/controller/APIsController';
+import { AccountId32 } from 'dedot/codecs';
+import { APIsController } from '@ren/controller/dedot/APIsController';
 import { Callbacks } from '@app/callbacks';
 import { MainDebug } from '@ren/utils/DebugUtils';
-import { TaskOrchestrator } from '@ren/orchestrators/TaskOrchestrator';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { AnyData, AnyFunction } from '@polkadot-live/types/misc';
 import type {
@@ -13,6 +13,7 @@ import type {
   QueryMultiEntry,
   ApiCallEntry,
 } from '@polkadot-live/types/subscriptions';
+import type { QueryWithParams } from 'dedot/types';
 
 const debug = MainDebug.extend('QueryMultiWrapper');
 
@@ -198,23 +199,20 @@ export class QueryMultiWrapper {
         return;
       }
 
+      const api = (
+        await APIsController.getConnectedApiOrThrow(chainId)
+      ).getApi();
+
       // Construct the argument for new queryMulti call.
-      const finalArg: AnyData = await this.buildQueryMultiArg(chainId);
-      const instance = await APIsController.getConnectedApiOrThrow(chainId);
+      const queries = await this.buildQueryMultiArg(chainId);
 
-      // Call queryMulti api.
-      const unsub = await instance.api.queryMulti(
-        finalArg,
-        // The queryMulti callback.
-        async (data: AnyData) => {
-          // Work out task to handle
-          const { callEntries } = this.subscriptions.get(chainId)!;
-
-          for (const entry of callEntries) {
-            await this.handleCallback(entry, data);
-          }
+      const unsub = await api.queryMulti(queries, async (data: AnyData) => {
+        // Work out task to handle
+        const { callEntries } = this.subscriptions.get(chainId)!;
+        for (const entry of callEntries) {
+          await this.handleCallback(entry, data);
         }
-      );
+      });
 
       // Replace the entry's unsub function
       this.replaceUnsub(chainId, unsub);
@@ -350,7 +348,7 @@ export class QueryMultiWrapper {
     const entry = this.subscriptions.get(chainId)!;
 
     // Unsubscribe from pervious query multi.
-    if (entry.unsub !== null) {
+    if (entry.unsub !== null && typeof entry.unsub === 'function') {
       entry.unsub();
     }
 
@@ -366,11 +364,11 @@ export class QueryMultiWrapper {
    */
   private async buildQueryMultiArg(chainId: ChainID) {
     // An array of arrays. The inner array represents a single API call.
-    const argument: AnyData = [];
+    const queries: QueryWithParams<AnyFunction>[] = [];
     const entry: QueryMultiEntry | undefined = this.subscriptions.get(chainId);
 
     if (!entry) {
-      return argument;
+      return queries;
     }
 
     // Data index registry tracks the entry index and its associated data index.
@@ -386,13 +384,9 @@ export class QueryMultiWrapper {
     for (const [outerI, { task }] of entry.callEntries.entries()) {
       if (outerI === 0) {
         // First task in the array cannot share with previous tasks.
-        const apiCall: AnyFunction = await TaskOrchestrator.getApiCall(task);
-
-        const callArray: AnyData[] = task.actionArgs
-          ? [apiCall].concat([...task.actionArgs])
-          : [apiCall];
-
-        argument.push(callArray);
+        const apiCall: AnyFunction = await QueryMultiWrapper.getApiCall(task);
+        const args = QueryMultiWrapper.parseActionArgs(task) || [];
+        queries.push({ fn: apiCall, args });
         continue;
       }
 
@@ -412,15 +406,11 @@ export class QueryMultiWrapper {
             dataIndex: nextDataIndex,
           });
 
-          const apiCall: AnyFunction = await TaskOrchestrator.getApiCall(task);
-          const callArray: AnyData[] = task.actionArgs
-            ? [apiCall].concat([...task.actionArgs])
-            : [apiCall];
-
-          argument.push(callArray);
+          const apiCall: AnyFunction = await QueryMultiWrapper.getApiCall(task);
+          const args = QueryMultiWrapper.parseActionArgs(task) || [];
+          queries.push({ fn: apiCall, args });
           break;
         } else {
-          // Check for shared call.
           if (task.apiCallAsString === innerT.apiCallAsString) {
             // Share if calls are the same with no args.
             if (!task.actionArgs && !innerT.actionArgs) {
@@ -498,7 +488,7 @@ export class QueryMultiWrapper {
       callEntries: [...updatedEntries],
     });
 
-    return argument;
+    return queries;
   }
 
   /**
@@ -510,4 +500,81 @@ export class QueryMultiWrapper {
 
     return Boolean(entry?.callEntries.some((e) => e.task.action === action));
   }
+
+  /**
+   * @name getApiQuery
+   * @summary Get the API query associated with a subscription.
+   */
+  static async getApiCall(task: SubscriptionTask) {
+    const { action, chainId } = task;
+    const api = (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
+
+    switch (action) {
+      case 'subscribe:chain:timestamp':
+        return api.query.timestamp.now;
+      case 'subscribe:chain:currentSlot':
+        return api.query.babe.currentSlot;
+      case 'subscribe:account:balance:free':
+      case 'subscribe:account:balance:frozen':
+      case 'subscribe:account:balance:reserved':
+      case 'subscribe:account:balance:spendable':
+      case 'subscribe:account:nominationPools:rewards':
+        return api.query.system.account;
+      case 'subscribe:account:nominationPools:commission':
+      case 'subscribe:account:nominationPools:roles':
+      case 'subscribe:account:nominationPools:state':
+        return api.query.nominationPools.bondedPools;
+      case 'subscribe:account:nominationPools:renamed':
+        return api.query.nominationPools.metadata;
+      case 'subscribe:account:nominating:commission':
+      case 'subscribe:account:nominating:exposure':
+      case 'subscribe:account:nominating:nominations':
+      case 'subscribe:account:nominating:pendingPayouts':
+        return api.query.staking.activeEra;
+      default:
+        throw new Error('Subscription action not found');
+    }
+  }
+
+  /**
+   * @name parseActionArgs
+   * @summary Parse serialized args into correct data types for API arguments.
+   */
+  static parseActionArgs = (task: SubscriptionTask) => {
+    const { action, actionArgs: args } = task;
+    if (!args) {
+      return args;
+    }
+
+    switch (action) {
+      case 'subscribe:account:balance:free':
+      case 'subscribe:account:balance:frozen':
+      case 'subscribe:account:balance:reserved':
+      case 'subscribe:account:balance:spendable': {
+        const address: string = args[0];
+        const accountId = new AccountId32(address);
+        return [accountId];
+      }
+      case 'subscribe:account:nominationPools:rewards': {
+        const poolAddress: string = args[0];
+        const accountId = new AccountId32(poolAddress);
+        return [accountId];
+      }
+      case 'subscribe:account:nominationPools:state':
+      case 'subscribe:account:nominationPools:roles':
+      case 'subscribe:account:nominationPools:commission':
+      case 'subscribe:account:nominationPools:renamed': {
+        return [Number(args[0])];
+      }
+      case 'subscribe:account:nominating:commission':
+      case 'subscribe:account:nominating:exposure':
+      case 'subscribe:account:nominating:nominations':
+      case 'subscribe:account:nominating:pendingPayouts': {
+        return args;
+      }
+      default: {
+        return args;
+      }
+    }
+  };
 }

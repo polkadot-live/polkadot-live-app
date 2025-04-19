@@ -14,7 +14,6 @@ export interface ChainInstance {
 
 export interface ChainsContextInterface {
   chains: Map<ChainID, FlattenedAPIData>;
-  dedotChains: Map<ChainID, FlattenedAPIData>;
   isWorking: (chainId: ChainID) => boolean;
   onConnectClick: (chainId: ChainID) => Promise<void>;
   onDisconnectClick: (chainId: ChainID) => Promise<void>;

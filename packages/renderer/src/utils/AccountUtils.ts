@@ -1,8 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { APIsController } from '@ren/controller/APIsController';
-import { APIsController as DedotAPIsController } from '@ren/controller/dedot/APIsController';
+import { APIsController } from '@ren/controller/dedot/APIsController';
 import { AccountsController } from '@ren/controller/AccountsController';
 import { ChainList } from '@ren/config/chains';
 import { checkAddress } from '@polkadot/util-crypto';
@@ -25,7 +24,7 @@ import type { ApiCallEntry } from '@polkadot-live/types/subscriptions';
 import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { Account } from '@ren/model/Account';
-import type { RelayDedotClient } from 'packages/types/src';
+import type { RelayDedotClient } from '@polkadot-live/types/apis';
 
 /**
  * @name getAddressChainId
@@ -114,7 +113,7 @@ export const fetchBalanceForAccount = async (account: Account) => {
   }
 
   const api = (
-    await DedotAPIsController.getConnectedApiOrThrow(account.chain)
+    await APIsController.getConnectedApiOrThrow(account.chain)
   ).getApi();
 
   const result: AnyJson = await api.query.system.account(account.address);
@@ -165,9 +164,7 @@ export const getSpendableBalance = async (
   address: string,
   chainId: ChainID
 ): Promise<bigint> => {
-  const api = (
-    await DedotAPIsController.getConnectedApiOrThrow(chainId)
-  ).getApi();
+  const api = (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
 
   // Spendable balance equation:
   // spendable = free - max(max(frozen, reserved), ed)
@@ -213,7 +210,9 @@ export const setNominatingDataForAccount = async (account: Account) => {
     return;
   }
 
-  const { api } = await APIsController.getConnectedApiOrThrow(account.chain);
+  const api = (
+    await APIsController.getConnectedApiOrThrow(account.chain)
+  ).getApi();
 
   // Set account's nominator data.
   const maybeNominatingData = await getAccountNominatingData(api, account);
@@ -252,10 +251,7 @@ export const getNominationPoolRewards = async (
   address: string,
   chainId: ChainID
 ): Promise<bigint> => {
-  const api = (
-    await DedotAPIsController.getConnectedApiOrThrow(chainId)
-  ).getApi();
-
+  const api = (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
   const result = await api.call.nominationPoolsApi.pendingRewards(address);
   return result;
 };
@@ -271,7 +267,7 @@ const setNominationPoolDataForAccount = async (account: Account) => {
   }
 
   const api = (
-    await DedotAPIsController.getConnectedApiOrThrow(account.chain)
+    await APIsController.getConnectedApiOrThrow(account.chain)
   ).getApi();
 
   // Return early if account is not currently in a nomination pool.
@@ -465,4 +461,28 @@ export const checkFlattenedAccountWithProperties = (
 
   // Otherwise, return the account.
   return entry.task.account;
+};
+
+/**
+ * @name formatPerbillPercent Converts a Perbill value into a percentage string with fixed decimal places.
+ * @param perbill - A bigint or number representing a Perbill (0 to 1_000_000_000).
+ * @param decimals - Number of decimal places to display (default: 2).
+ * @returns A string like "12.34%"
+ */
+export const formatPerbillPercent = (
+  perbill: bigint | number,
+  decimals = 2
+): string => {
+  const BILLION = 1_000_000_000n;
+  const value = typeof perbill === 'number' ? BigInt(perbill) : perbill;
+
+  if (value < 0n || value > BILLION) {
+    throw new Error('Perbill must be between 0 and 1_000_000_000');
+  }
+
+  const percentage = (value * 10n ** BigInt(decimals + 2)) / BILLION; // scale to get decimal percentage
+  const integerPart = percentage / 10n ** BigInt(decimals);
+  const fractionPart = percentage % 10n ** BigInt(decimals);
+
+  return `${integerPart}.${fractionPart.toString().padStart(decimals, '0')}%`;
 };
