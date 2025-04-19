@@ -7,6 +7,7 @@ import { APIsController } from '@ren/controller/dedot/APIsController';
 import type { ChainsContextInterface } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAPIData } from '@polkadot-live/types/apis';
+import { ChainList } from '@ren/config/chains';
 
 export const ChainsContext = createContext<ChainsContextInterface>(
   defaults.defaultChainsContext
@@ -18,17 +19,15 @@ export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
   const [uiTrigger, setUiTrigger] = useState(false);
 
   /**
-   * Dedot
+   * Chains connected with Dedot.
    */
   const [chains, setChains] = useState<Map<ChainID, FlattenedAPIData>>(
     new Map()
   );
 
-  const base = new Map<ChainID, boolean>([
-    ['Polkadot', false],
-    ['Kusama', false],
-    ['Westend', false],
-  ]);
+  const base = new Map<ChainID, boolean>(
+    ChainList.keys().map((c) => [c, false])
+  );
 
   const [workingConnects, setWorkingConnects] = useState(new Map(base));
   const [workingDisconnects, setWorkingDisconnects] = useState(new Map(base));
