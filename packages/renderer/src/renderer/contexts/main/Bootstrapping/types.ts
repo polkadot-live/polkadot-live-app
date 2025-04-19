@@ -15,8 +15,7 @@ export interface BootstrappingInterface {
   handleInitializeAppOnline: () => Promise<void>;
   handleNewEndpointForChain: (
     chainId: ChainID,
-    newEndpoint: string,
-    apiBackend: 'dedot' | 'polkadot.js'
+    newEndpoint: string
   ) => Promise<void>;
   syncOpenGovWindow: () => Promise<void>;
 }

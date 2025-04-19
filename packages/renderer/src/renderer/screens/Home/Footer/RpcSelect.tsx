@@ -16,7 +16,6 @@ interface SelectRpcProps {
 
 export const SelectRpc = ({
   apiData,
-  apiBackend,
   disabled,
   setWorkingEndpoint,
 }: SelectRpcProps) => {
@@ -40,7 +39,7 @@ export const SelectRpc = ({
     setSelectedRpc(newEndpoint);
 
     // Re-connect and subscribe to active tasks.
-    await handleNewEndpointForChain(chainId, newEndpoint, apiBackend);
+    await handleNewEndpointForChain(chainId, newEndpoint);
     setWorkingEndpoint && setWorkingEndpoint(chainId, false);
   };
 

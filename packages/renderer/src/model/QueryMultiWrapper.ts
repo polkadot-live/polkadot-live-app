@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Utils from '@ren/utils/CommonUtils';
-import { APIsController as DedotAPIsController } from '@ren/controller/dedot/APIsController';
+import { APIsController } from '@ren/controller/dedot/APIsController';
 import { Callbacks } from '@app/callbacks';
 import { MainDebug } from '@ren/utils/DebugUtils';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -200,7 +200,7 @@ export class QueryMultiWrapper {
       }
 
       const api = (
-        await DedotAPIsController.getConnectedApiOrThrow(chainId)
+        await APIsController.getConnectedApiOrThrow(chainId)
       ).getApi();
 
       // Construct the argument for new queryMulti call.
@@ -507,9 +507,7 @@ export class QueryMultiWrapper {
    */
   static async getApiCall(task: SubscriptionTask) {
     const { action, chainId } = task;
-    const api = (
-      await DedotAPIsController.getConnectedApiOrThrow(chainId)
-    ).getApi();
+    const api = (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
 
     switch (action) {
       case 'subscribe:chain:timestamp':

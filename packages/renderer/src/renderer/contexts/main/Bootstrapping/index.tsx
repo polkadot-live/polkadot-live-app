@@ -12,8 +12,7 @@ import React, {
 } from 'react';
 import { defaultBootstrappingContext } from './default';
 import { AccountsController } from '@ren/controller/AccountsController';
-import { APIsController as DedotAPIsController } from '@ren/controller/dedot/APIsController';
-import { APIsController } from '@ren/controller/APIsController';
+import { APIsController } from '@ren/controller/dedot/APIsController';
 import { Config as RendererConfig } from '@ren/config/processes/renderer';
 import { ChainList } from '@ren/config/chains';
 import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
@@ -69,7 +68,6 @@ export const BootstrappingProvider = ({
   const initChainAPIs = () => {
     const chainIds = Array.from(ChainList.keys());
     APIsController.initialize(chainIds);
-    DedotAPIsController.initialize(chainIds);
   };
 
   /// Step 2: Initialize accounts.
@@ -111,7 +109,7 @@ export const BootstrappingProvider = ({
   /// Handle Dedot clients when online mode changes.
   useEffect(() => {
     const disconnectAll = async () => {
-      await DedotAPIsController.closeAll();
+      await APIsController.closeAll();
     };
 
     if (!isOnlineMode) {
@@ -198,7 +196,6 @@ export const BootstrappingProvider = ({
 
     // Disconnect from chains.
     await APIsController.closeAll();
-    await DedotAPIsController.closeAll();
   };
 
   /// Handle switching to online mode.
@@ -246,23 +243,18 @@ export const BootstrappingProvider = ({
   /// Re-subscribe to tasks when switching to a different endpoint.
   const handleNewEndpointForChain = async (
     chainId: ChainID,
-    newEndpoint: string,
-    apiBackend = 'polkadot.js'
+    newEndpoint: string
   ) => {
-    if (apiBackend === 'polkadot.js') {
-      await APIsController.connectEndpoint(chainId, newEndpoint);
+    await APIsController.connectEndpoint(chainId, newEndpoint);
 
-      // Re-subscribe account and chain tasks.
-      if (APIsController.getStatus(chainId) === 'connected') {
-        await Promise.all([
-          AccountsController.subscribeAccountsForChain(chainId),
-          SubscriptionsController.resubscribeChain(chainId),
-        ]);
-      }
-      syncSubscriptionsState();
-    } else {
-      await DedotAPIsController.connectEndpoint(chainId, newEndpoint);
+    // Re-subscribe account and chain tasks.
+    if (APIsController.getStatus(chainId) === 'connected') {
+      await Promise.all([
+        AccountsController.subscribeAccountsForChain(chainId),
+        SubscriptionsController.resubscribeChain(chainId),
+      ]);
     }
+    syncSubscriptionsState();
   };
 
   /// Util for initializing the intervals controller.
