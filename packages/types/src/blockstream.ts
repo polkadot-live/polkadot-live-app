@@ -1,8 +1,8 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { GenericEvent, GenericExtrinsic } from '@polkadot/types';
-import type { Address } from '@polkadot/types/interfaces/runtime';
+//import type { GenericEvent, GenericExtrinsic } from '@polkadot/types';
+//import type { Address } from '@polkadot/types/interfaces/runtime';
 
 // An account can either be a concrete account (a @polkadot `Address`) or a wildcard.
 export type ExtendedAccount = ConcreteAccount | 'Wildcard';
@@ -16,7 +16,7 @@ export interface RawAccount {
 
 // An Actual account with nickname and config.
 export interface ConcreteAccount {
-  address: Address;
+  //address: Address;
   nickname: string;
   config: MethodSubscription;
 }
@@ -57,7 +57,7 @@ export type NotificationReportType = 'event' | 'extrinsic';
 // A generic notification that can be either an event or an extrinsic.
 export interface GenericNotification {
   type: NotificationReportType;
-  data: GenericExtrinsic | GenericEvent;
+  //data: GenericExtrinsic | GenericEvent;
 }
 
 // Subscribe only to the selected account events.

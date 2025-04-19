@@ -12,11 +12,12 @@ import React, {
 } from 'react';
 import { defaultBootstrappingContext } from './default';
 import { AccountsController } from '@ren/controller/AccountsController';
-import { APIsController } from '@ren/controller/APIsController';
+import { APIsController } from '@ren/controller/dedot/APIsController';
 import { Config as RendererConfig } from '@ren/config/processes/renderer';
 import { ChainList } from '@ren/config/chains';
 import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
 import { IntervalsController } from '@ren/controller/IntervalsController';
+import { useConnections } from '@app/contexts/common/Connections';
 import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
 import { disconnectAPIs } from '@ren/utils/ApiUtils';
 import type { BootstrappingInterface } from './types';
@@ -37,6 +38,7 @@ export const BootstrappingProvider = ({
   children: React.ReactNode;
 }) => {
   const { addIntervalSubscription } = useIntervalSubscriptions();
+  const { isConnected: systemConnected } = useConnections();
 
   const [appLoading, setAppLoading] = useState(true);
   const [isAborting, setIsAborting] = useState(false);
@@ -63,8 +65,10 @@ export const BootstrappingProvider = ({
   };
 
   /// Step 1: Initialize chain APIs (disconnected).
-  const initChainAPIs = () =>
-    APIsController.initialize(Array.from(ChainList.keys()));
+  const initChainAPIs = () => {
+    const chainIds = Array.from(ChainList.keys());
+    APIsController.initialize(chainIds);
+  };
 
   /// Step 2: Initialize accounts.
   const initAccounts = async () => await AccountsController.initialize();
@@ -101,6 +105,19 @@ export const BootstrappingProvider = ({
       window.removeEventListener('offline', handleOffline);
     };
   }, []);
+
+  /// Handle Dedot clients when online mode changes.
+  useEffect(() => {
+    const disconnectAll = async () => {
+      await APIsController.closeAll();
+    };
+
+    if (!systemConnected) {
+      disconnectAll();
+    } else {
+      // TODO: Handle online mode.
+    }
+  }, [systemConnected]);
 
   /// Handle abort flag.
   useEffect(() => {

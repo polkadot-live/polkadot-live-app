@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { HelpItemKey } from '@polkadot-live/types/help';
-import type { MinApproval, MinSupport } from '@polkadot-live/types/openGov';
+import type { PalletReferendaCurve } from '@dedot/chaintypes/substrate';
 
 /**
  * @name Track
@@ -19,8 +19,8 @@ export class Track {
   private _preparePeriod: string;
   private _trackId: number;
   private _label: string;
-  private _minApproval: MinApproval;
-  private _minSupport: MinSupport;
+  private _minApproval: PalletReferendaCurve;
+  private _minSupport: PalletReferendaCurve;
 
   constructor(
     confirmPeriod: string,
@@ -31,8 +31,8 @@ export class Track {
     trackName: string,
     preparePeriod: string,
     trackId: string,
-    minApproval: MinApproval,
-    minSupport: MinSupport
+    minApproval: PalletReferendaCurve,
+    minSupport: PalletReferendaCurve
   ) {
     this._confirmPeriod = confirmPeriod;
     this._decisionDeposit = decisionDeposit;

@@ -4,7 +4,6 @@
 import * as defaults from './default';
 import { Config as ConfigOpenGov } from '@ren/config/processes/openGov';
 import { createContext, useContext, useRef, useState } from 'react';
-import { encodeAddress } from '@polkadot/util-crypto';
 import BigNumber from 'bignumber.js';
 import { rmCommas } from '@w3ux/utils';
 import { formatBlocksToTime } from '@ren/utils/TimeUtils';
@@ -107,12 +106,6 @@ export const TreasuryProvider = ({
     dataCachedRef.current = true;
   };
 
-  /// Getter for the encoded treasury address.
-  const getTreasuryEncodedAddress = (): string | null => {
-    const prefix = 0; // Kusama 2, Substrate 42
-    return treasuryU8Pk ? encodeAddress(treasuryU8Pk, prefix) : null;
-  };
-
   /// Get readable free balance to render.
   const getFormattedFreeBalance = (): string => {
     if (!hasFetched) {
@@ -197,7 +190,6 @@ export const TreasuryProvider = ({
         hasFetched,
         setFetchingTreasuryData,
         setTreasuryData,
-        getTreasuryEncodedAddress,
         getFormattedFreeBalance,
         getFormattedNextBurn,
         getFormattedToBeAwarded,

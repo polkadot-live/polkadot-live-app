@@ -1,7 +1,8 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { APIsController } from '@ren/controller/APIsController';
+import { ChainList } from '@ren/config/chains';
+import { APIsController } from '@ren/controller/dedot/APIsController';
 import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
 import { AccountsController } from '@ren/controller/AccountsController';
 import { MainDebug } from './DebugUtils';
@@ -38,7 +39,7 @@ export const disconnectAPIs = async () => {
 
   if (isConnected) {
     await Promise.all(
-      (['Polkadot', 'Kusama', 'Westend'] as ChainID[])
+      Array.from(ChainList.keys())
         .filter((c) => !isApiInstanceRequiredFor(c))
         .map((c) => APIsController.close(c))
     );

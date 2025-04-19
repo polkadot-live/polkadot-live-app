@@ -1,21 +1,14 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as Utils from '@ren/utils/OpenGovUtils';
 import BigNumber from 'bignumber.js';
 import { Config as RendererConfig } from '@ren/config/processes/renderer';
-import { isObject } from '@polkadot/util';
 import { rmCommas } from '@w3ux/utils';
-import { APIsController } from '@ren/controller/APIsController';
+import { APIsController } from '@ren/controller/dedot/APIsController';
 import { EventsController } from '@ren/controller/EventsController';
 import { NotificationsController } from '@ren/controller/NotificationsController';
 import { formatBlocksToTime } from '@ren/utils/TimeUtils';
-import {
-  getMinApprovalSupport,
-  getTracks,
-  getOriginIdFromName,
-  rmChars,
-} from '@ren/utils/OpenGovUtils';
-import type { AnyData } from '@polkadot-live/types/misc';
 import type { OneShotReturn, RefDeciding } from '@polkadot-live/types/openGov';
 import type { NotificationData } from '@polkadot-live/types/reporter';
 import type {
@@ -75,23 +68,22 @@ const oneShot_openGov_referendumVotes = async (
   policy: NotificationPolicy = 'default'
 ): Promise<OneShotReturn> => {
   const { chainId, referendumId } = task;
-  const instance = await APIsController.getConnectedApi(chainId);
-
-  if (!instance || !referendumId) {
-    return !instance
-      ? { success: false, message: 'API instance not found.' }
-      : { success: false, message: 'Undefined referendum ID.' };
+  if (!referendumId) {
+    return { success: false, message: 'Undefined referendum ID.' };
   }
 
-  const { api } = instance;
+  const client = await APIsController.getConnectedApi(chainId);
+  if (!client || !client.api) {
+    return { success: false, message: 'API instance not found.' };
+  }
+
+  const { api } = client;
   const result = await api.query.referenda.referendumInfoFor(referendumId);
-  const human: AnyData = result.toHuman();
-
-  if (!isObject(human) || !('Ongoing' in human)) {
-    return { success: false, message: 'Referendum not ongoing.' };
+  if (!result || result.type !== 'Ongoing') {
+    return { success: false, message: 'Referendum is not ongoing.' };
   }
 
-  const info: RefDeciding = { ...human.Ongoing };
+  const info = Utils.serializeReferendumInfo(result.value);
   const { ayes, nays } = info.tally;
 
   const bnAyes = new BigNumber(rmCommas(String(ayes)));
@@ -143,20 +135,19 @@ const oneShot_openGov_decisionPeriod = async (
   policy: NotificationPolicy = 'default'
 ): Promise<OneShotReturn> => {
   const { chainId, referendumId } = task;
-  const instance = await APIsController.getConnectedApi(chainId);
-
-  if (!instance || !referendumId) {
-    return !instance
-      ? { success: false, message: 'API instance not found.' }
-      : { success: false, message: 'Undefined referendum ID.' };
+  if (!referendumId) {
+    return { success: false, message: 'Undefined referendum ID.' };
   }
 
-  const { api } = instance;
-  const result = await api.query.referenda.referendumInfoFor(referendumId);
-  const human: AnyData = result.toHuman();
+  const client = await APIsController.getConnectedApi(chainId);
+  if (!client || !client.api) {
+    return { success: false, message: 'API instance not found.' };
+  }
 
-  if (!isObject(human) || !('Ongoing' in human)) {
-    return { success: false, message: 'Referendum not being decided.' };
+  const { api } = client;
+  const result = await api.query.referenda.referendumInfoFor(referendumId);
+  if (!result || result.type !== 'Ongoing') {
+    return { success: false, message: 'Referendum is not ongoing.' };
   }
 
   // Data for rendering.
@@ -167,13 +158,13 @@ const oneShot_openGov_decisionPeriod = async (
     subtitle: 'Decision Period',
   };
 
-  const info: RefDeciding = { ...human.Ongoing };
+  const info = Utils.serializeReferendumInfo(result.value) as RefDeciding;
   if (!info.deciding) {
     return { success: false, message: 'Referendum not in decision period.' };
   }
 
-  const lastHeader = await api.rpc.chain.getHeader();
-  const bnCurrentBlock = new BigNumber(lastHeader.number.toNumber());
+  const lastHeader = await api.rpc.chain_getHeader();
+  const bnCurrentBlock = new BigNumber(lastHeader!.number);
   const { confirming } = info.deciding;
 
   if (confirming) {
@@ -185,15 +176,10 @@ const oneShot_openGov_decisionPeriod = async (
     const { since } = info.deciding;
 
     // Get origin and its decision period in number of blocks.
-    const originData = info.origin;
-    const originName =
-      'system' in originData
-        ? String(originData.system)
-        : String(originData.Origins);
-
-    const trackId = getOriginIdFromName(originName);
-    const tracksResult: AnyData = api.consts.referenda.tracks.toHuman();
-    const tracksData = getTracks(tracksResult);
+    const originName = info.origin;
+    const tracks = client!.api!.consts.referenda.tracks;
+    const tracksData = Utils.getTracks(Utils.getSerializedTracks(tracks));
+    const trackId = Utils.getOriginIdFromName(originName);
     const track = tracksData.find((t) => t.trackId === trackId);
     if (!track) {
       return { success: false, message: 'Referendum track not found.' };
@@ -239,46 +225,38 @@ const oneShot_openGov_thresholds = async (
   policy: NotificationPolicy = 'default'
 ): Promise<OneShotReturn> => {
   const { chainId, referendumId } = task;
-  const instance = await APIsController.getConnectedApi(chainId);
-
-  if (!instance || !referendumId) {
-    return !instance
-      ? { success: false, message: 'API instance not found.' }
-      : { success: false, message: 'Undefined referendum ID.' };
+  if (!referendumId) {
+    return { success: false, message: 'Undefined referendum ID.' };
   }
 
-  const { api } = instance;
+  const client = await APIsController.getConnectedApi(chainId);
+  if (!client || !client.api) {
+    return { success: false, message: 'API instance not found.' };
+  }
+
+  const { api } = client;
   const result = await api.query.referenda.referendumInfoFor(referendumId);
-  const human: AnyData = result.toHuman();
-
-  // Confirm result is a referendum that is ongoing.
-  if (!(isObject(human) || !('Ongoing' in human))) {
-    return { success: false, message: 'Referendum not ongoing.' };
+  if (!result || result.type !== 'Ongoing') {
+    return { success: false, message: 'Referendum is not ongoing.' };
   }
 
-  // Guarentee that the referendum is still in its deciding phase.
-  const info: RefDeciding = { ...human.Ongoing };
+  const info = Utils.serializeReferendumInfo(result.value) as RefDeciding;
   if (!info.deciding) {
     return { success: false, message: 'Referendum not being decided.' };
   }
 
   // Get track data for decision period.
-  const originData = info.origin;
-  const originName =
-    'system' in originData
-      ? String(originData.system)
-      : String(originData.Origins);
-
-  const trackId = getOriginIdFromName(originName);
-  const tracksResult: AnyData = api.consts.referenda.tracks.toHuman();
-  const tracksData = getTracks(tracksResult);
+  const originName = info.origin;
+  const tracks = client.api.consts.referenda.tracks;
+  const tracksData = Utils.getTracks(Utils.getSerializedTracks(tracks));
+  const trackId = Utils.getOriginIdFromName(originName);
   const track = tracksData.find((t) => t.trackId === trackId);
   if (!track) {
     return { success: false, message: 'Referendum track not found.' };
   }
 
   // Get current approval and support thresholds.
-  const thresholds = await getMinApprovalSupport(
+  const thresholds = await Utils.getMinApprovalSupport(
     api,
     { refId: referendumId, refStatus: 'Deciding', info },
     track
@@ -288,12 +266,12 @@ const oneShot_openGov_thresholds = async (
     return { success: false, message: 'Threshold data error.' };
   }
 
-  const formattedApp = new BigNumber(rmChars(thresholds.minApproval))
+  const formattedApp = new BigNumber(Utils.rmChars(thresholds.minApproval))
     .multipliedBy(100)
     .toFixed(2)
     .toString();
 
-  const formattedSup = new BigNumber(rmChars(thresholds.minSupport))
+  const formattedSup = new BigNumber(Utils.rmChars(thresholds.minSupport))
     .multipliedBy(100)
     .toFixed(2)
     .toString();

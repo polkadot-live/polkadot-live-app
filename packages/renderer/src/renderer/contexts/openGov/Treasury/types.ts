@@ -13,7 +13,6 @@ export interface TreasuryContextInterface {
   getFormattedNextBurn: () => string;
   setFetchingTreasuryData: (fetching: boolean) => void;
   setTreasuryData: (data: AnyData) => void;
-  getTreasuryEncodedAddress: () => string | null;
   getFormattedFreeBalance: () => string;
   getFormattedToBeAwarded: () => string;
   getFormattedElapsedSpendPeriod: () => string;

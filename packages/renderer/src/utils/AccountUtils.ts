@@ -1,20 +1,19 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { APIsController } from '@ren/controller/APIsController';
+import { APIsController } from '@ren/controller/dedot/APIsController';
 import { AccountsController } from '@ren/controller/AccountsController';
 import { ChainList } from '@ren/config/chains';
-import {
-  BN,
-  bnToU8a,
-  stringToU8a,
-  u8aConcat,
-  u8aToString,
-  u8aUnwrapBytes,
-} from '@polkadot/util';
 import { checkAddress } from '@polkadot/util-crypto';
 import { getAccountNominatingData } from '@app/callbacks/nominating';
-import { rmCommas } from '@w3ux/utils';
+import { bnToU8a } from '@polkadot/util';
+import {
+  toU8a,
+  concatU8a,
+  encodeAddress,
+  stringToU8a,
+  hexToString,
+} from 'dedot/utils';
 import type {
   AccountBalance,
   FlattenedAccountData,
@@ -25,7 +24,7 @@ import type { ApiCallEntry } from '@polkadot-live/types/subscriptions';
 import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { Account } from '@ren/model/Account';
-import type { ApiPromise } from '@polkadot/api';
+import type { RelayDedotClient } from '@polkadot-live/types/apis';
 
 /**
  * @name getAddressChainId
@@ -113,14 +112,17 @@ export const fetchBalanceForAccount = async (account: Account) => {
     return;
   }
 
-  const { api } = await APIsController.getConnectedApiOrThrow(account.chain);
+  const api = (
+    await APIsController.getConnectedApiOrThrow(account.chain)
+  ).getApi();
+
   const result: AnyJson = await api.query.system.account(account.address);
 
   account.balance = {
-    nonce: BigInt(rmCommas(String(result.nonce))),
-    free: BigInt(rmCommas(String(result.data.free))),
-    reserved: BigInt(rmCommas(String(result.data.reserved))),
-    frozen: BigInt(rmCommas(String(result.data.frozen))),
+    nonce: BigInt(result.nonce),
+    free: result.data.free,
+    reserved: result.data.reserved,
+    frozen: result.data.frozen,
   } as AccountBalance;
 
   await AccountsController.set(account.chain, account);
@@ -131,17 +133,17 @@ export const fetchBalanceForAccount = async (account: Account) => {
  * @summary Return an account's current balance.
  */
 export const getBalanceForAccount = async (
+  api: RelayDedotClient,
   address: string,
   chainId: ChainID
 ): Promise<AccountBalance> => {
-  const { api } = await APIsController.getConnectedApiOrThrow(chainId);
-  const result: AnyJson = await api.query.system.account(address);
+  const result = await api.query.system.account(address);
 
   const balance: AccountBalance = {
-    nonce: BigInt(rmCommas(String(result.nonce))),
-    free: BigInt(rmCommas(String(result.data.free))),
-    reserved: BigInt(rmCommas(String(result.data.reserved))),
-    frozen: BigInt(rmCommas(String(result.data.frozen))),
+    nonce: BigInt(result.nonce),
+    free: result.data.free,
+    reserved: result.data.reserved,
+    frozen: result.data.frozen,
   };
 
   // Update account data if it is being managed by controller.
@@ -155,17 +157,6 @@ export const getBalanceForAccount = async (
 };
 
 /**
- * @name getExistentialDeposit
- * @summary Return the requested network's existential deposit as a big number.
- */
-export const getExistentialDeposit = async (
-  chainId: ChainID
-): Promise<bigint> => {
-  const { api } = await APIsController.getConnectedApiOrThrow(chainId);
-  return BigInt(rmCommas(String(api.consts.balances.existentialDeposit)));
-};
-
-/**
  * @name getSpendableBalance
  * @summary Return the requested account's spendable balance as a big number.
  */
@@ -173,14 +164,13 @@ export const getSpendableBalance = async (
   address: string,
   chainId: ChainID
 ): Promise<bigint> => {
-  const balance = await getBalanceForAccount(address, chainId);
+  const api = (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
 
   // Spendable balance equation:
   // spendable = free - max(max(frozen, reserved), ed)
-  const free = BigInt(rmCommas(String(balance.free)));
-  const frozen = BigInt(rmCommas(String(balance.frozen)));
-  const reserved = BigInt(rmCommas(String(balance.reserved)));
-  const ed = await getExistentialDeposit(chainId);
+  const balance = await getBalanceForAccount(api, address, chainId);
+  const { free, frozen, reserved } = balance;
+  const ed = api.consts.balances.existentialDeposit;
 
   const max = (a: bigint, b: bigint): bigint => (a > b ? a : b);
   let spendable = free - max(max(frozen, reserved), ed);
@@ -220,7 +210,9 @@ export const setNominatingDataForAccount = async (account: Account) => {
     return;
   }
 
-  const { api } = await APIsController.getConnectedApiOrThrow(account.chain);
+  const api = (
+    await APIsController.getConnectedApiOrThrow(account.chain)
+  ).getApi();
 
   // Set account's nominator data.
   const maybeNominatingData = await getAccountNominatingData(api, account);
@@ -259,11 +251,9 @@ export const getNominationPoolRewards = async (
   address: string,
   chainId: ChainID
 ): Promise<bigint> => {
-  const { api } = await APIsController.getConnectedApiOrThrow(chainId);
-  const result: AnyJson =
-    await api.call.nominationPoolsApi.pendingRewards(address);
-
-  return BigInt(rmCommas(String(result)));
+  const api = (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
+  const result = await api.call.nominationPoolsApi.pendingRewards(address);
+  return result;
 };
 
 /**
@@ -276,13 +266,13 @@ const setNominationPoolDataForAccount = async (account: Account) => {
     return;
   }
 
-  const { api } = await APIsController.getConnectedApiOrThrow(account.chain);
-  const result: AnyJson = (
-    await api.query.nominationPools.poolMembers(account.address)
-  ).toJSON();
+  const api = (
+    await APIsController.getConnectedApiOrThrow(account.chain)
+  ).getApi();
 
   // Return early if account is not currently in a nomination pool.
-  if (result === null) {
+  const result = await api.query.nominationPools.poolMembers(account.address);
+  if (!result) {
     return;
   }
 
@@ -291,23 +281,42 @@ const setNominationPoolDataForAccount = async (account: Account) => {
   const { reward: poolRewardAddress } = getPoolAccounts(poolId, api);
 
   // Get pending rewards for the account.
-  const pendingRewardsResult: AnyJson = (
+  const poolPendingRewards = (
     await api.call.nominationPoolsApi.pendingRewards(account.address)
   ).toString();
-  const poolPendingRewards = BigInt(rmCommas(pendingRewardsResult)).toString();
 
   // Get nomination pool data.
-  const npResult: AnyData = (
-    await api.query.nominationPools.bondedPools(poolId)
-  ).toHuman();
+  const npResult = await api.query.nominationPools.bondedPools(poolId);
+  if (!npResult) {
+    return;
+  }
 
   const poolState: string = npResult.state;
-  const poolRoles: NominationPoolRoles = npResult.roles;
-  const poolCommission: NominationPoolCommission = npResult.commission;
+  const { depositor, root, nominator, bouncer } = npResult.roles;
+  const { changeRate, current, max, throttleFrom } = npResult.commission;
+
+  const poolRoles: NominationPoolRoles = {
+    depositor: depositor.raw,
+    root: root?.raw || undefined,
+    nominator: nominator?.raw || undefined,
+    bouncer: bouncer?.raw || undefined,
+  };
+
+  const poolCommission: NominationPoolCommission = {
+    current: current ? [current[0].toString(), current[1].raw] : undefined,
+    max: max ? max.toString() : undefined,
+    changeRate: changeRate
+      ? {
+          maxIncrease: changeRate.maxIncrease.toString(),
+          minDelay: changeRate.minDelay.toString(),
+        }
+      : undefined,
+    throttleFrom: throttleFrom ? throttleFrom.toString() : undefined,
+  };
 
   // Get nomination pool name.
-  const poolMeta: AnyData = await api.query.nominationPools.metadata(poolId);
-  const poolName: string = u8aToString(u8aUnwrapBytes(poolMeta));
+  const poolMeta = await api.query.nominationPools.metadata(poolId);
+  const poolName: string = hexToString(poolMeta);
 
   if (poolRewardAddress) {
     // Add nomination pool data to account.
@@ -331,25 +340,20 @@ const setNominationPoolDataForAccount = async (account: Account) => {
  * @summary Generates pool stash and reward address for a pool id.
  * @param {number} poolId - id of the pool.
  */
-const getPoolAccounts = (poolId: number, api: ApiPromise) => {
+const getPoolAccounts = (poolId: number, api: RelayDedotClient) => {
   const createAccount = (pId: bigint, index: number): string => {
-    const EmptyH256 = new Uint8Array(32);
-    const ModPrefix = stringToU8a('modl');
-    const U32Opts = { bitLength: 32, isLe: true };
     const poolsPalletId = api.consts.nominationPools.palletId;
 
-    return api.registry
-      .createType(
-        'AccountId32',
-        u8aConcat(
-          ModPrefix,
-          poolsPalletId.toU8a(),
-          new Uint8Array([index]),
-          bnToU8a(new BN(pId.toString()), U32Opts),
-          EmptyH256
-        )
-      )
-      .toString();
+    const key = concatU8a(
+      stringToU8a('modl'),
+      toU8a(poolsPalletId),
+      new Uint8Array([index]),
+      bnToU8a(BigInt(poolId.toString())),
+      new Uint8Array(32)
+    );
+
+    const prefix = api.consts.system.ss58Prefix;
+    return encodeAddress(key.slice(0, 32), prefix);
   };
 
   const poolIdBigInt = BigInt(poolId);
@@ -365,13 +369,9 @@ const getPoolAccounts = (poolId: number, api: ApiPromise) => {
  * @summary Get the live nonce for an address.
  */
 export const getAddressNonce = async (
-  address: string,
-  chainId: ChainID
-): Promise<bigint> => {
-  const instance = await APIsController.getConnectedApiOrThrow(chainId);
-  const result: AnyData = await instance.api.query.system.account(address);
-  return BigInt(rmCommas(String(result.nonce)));
-};
+  api: RelayDedotClient,
+  address: string
+): Promise<number> => (await api.query.system.account(address)).nonce;
 
 /**
  * @name checkAccountWithProperties
@@ -461,4 +461,28 @@ export const checkFlattenedAccountWithProperties = (
 
   // Otherwise, return the account.
   return entry.task.account;
+};
+
+/**
+ * @name formatPerbillPercent Converts a Perbill value into a percentage string with fixed decimal places.
+ * @param perbill - A bigint or number representing a Perbill (0 to 1_000_000_000).
+ * @param decimals - Number of decimal places to display (default: 2).
+ * @returns A string like "12.34%"
+ */
+export const formatPerbillPercent = (
+  perbill: bigint | number,
+  decimals = 2
+): string => {
+  const BILLION = 1_000_000_000n;
+  const value = typeof perbill === 'number' ? BigInt(perbill) : perbill;
+
+  if (value < 0n || value > BILLION) {
+    throw new Error('Perbill must be between 0 and 1_000_000_000');
+  }
+
+  const percentage = (value * 10n ** BigInt(decimals + 2)) / BILLION; // scale to get decimal percentage
+  const integerPart = percentage / 10n ** BigInt(decimals);
+  const fractionPart = percentage % 10n ** BigInt(decimals);
+
+  return `${integerPart}.${fractionPart.toString().padStart(decimals, '0')}%`;
 };

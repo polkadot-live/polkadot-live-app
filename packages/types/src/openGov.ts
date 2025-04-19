@@ -1,10 +1,19 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import type { PalletReferendaReferendumStatus as PolkadotRefStatus } from '@dedot/chaintypes/polkadot';
+import type { PalletReferendaReferendumStatus as KusamaRefStatus } from '@dedot/chaintypes/kusama';
+import type { PalletReferendaReferendumStatus as WestendRefStatus } from '@dedot/chaintypes/westend';
+
 export type RefInQueue = RefOngoing; // inQueue: true
 export type RefPreparing = RefOngoing; // deciding: null
 export type RefConfirming = RefOngoing; // deciding.confirming = <string>
 export type RefDeciding = RefOngoing; // deciding.confirming = null;
+
+export type ReferendumStatus =
+  | PolkadotRefStatus
+  | KusamaRefStatus
+  | WestendRefStatus;
 
 export interface PagedReferenda {
   page: number;
@@ -58,14 +67,14 @@ export interface RefCancelled {
 
 export interface RefRejected {
   block: string;
-  who: string;
-  amount: string;
+  who: string | null;
+  amount: string | null;
 }
 
 export interface RefTimedOut {
   block: string;
-  who: string;
-  amount: string;
+  who: string | null;
+  amount: string | null;
 }
 
 export interface RefKilled {
@@ -73,7 +82,7 @@ export interface RefKilled {
 }
 
 export interface RefOngoing {
-  alarm: [string, [string, string]];
+  alarm: [string, [string, string]] | null;
   deciding: {
     confirming: null | string;
     since: string;
@@ -82,21 +91,13 @@ export interface RefOngoing {
     amount: string;
     who: string;
   } | null;
-  enactment:
-    | {
-        After: string;
-      }
-    | { At: string };
+  enactment: { type: 'At'; value: string } | { type: 'After'; value: string };
   inQueue: boolean;
-  origin: { Origins: string } | { system: string };
+  origin: string;
   proposal:
-    | {
-        Lookup: {
-          hash: string;
-          len: string;
-        };
-      }
-    | { Inline: string };
+    | { type: 'Legacy'; value: { hash: string } }
+    | { type: 'Inline'; value: string }
+    | { type: 'Lookup'; value: { hash: string; len: string } };
   submissionDeposit: {
     amount: string;
     who: string;
@@ -117,27 +118,36 @@ export interface PolkassemblyProposal {
   status: string;
 }
 
-export interface LinearDecreasing {
-  length: string;
-  floor: string;
-  ceil: string;
-}
-
-export interface Reciprocal {
-  factor: string;
-  xOffset: string;
-  yOffset: string;
-}
-
-export type MinApproval =
-  | { Reciprocal: Reciprocal }
-  | { LinearDecreasing: LinearDecreasing };
-
-export type MinSupport =
-  | { Reciprocal: Reciprocal }
-  | { LinearDecreasing: LinearDecreasing };
-
 export interface OneShotReturn {
   success: boolean;
   message?: string;
 }
+
+export interface SerializedTrackItem {
+  id: string;
+  info: {
+    name: string;
+    maxDeciding: string;
+    decisionDeposit: string;
+    preparePeriod: string;
+    decisionPeriod: string;
+    confirmPeriod: string;
+    minEnactmentPeriod: string;
+    minApproval: SerializedPalletReferendaCurve;
+    minSupport: SerializedPalletReferendaCurve;
+  };
+}
+
+export type SerializedPalletReferendaCurve =
+  | {
+      type: 'LinearDecreasing';
+      value: { length: string; floor: string; ceil: string };
+    }
+  | {
+      type: 'SteppedDecreasing';
+      value: { begin: string; end: string; step: string; period: string };
+    }
+  | {
+      type: 'Reciprocal';
+      value: { factor: string; xOffset: string; yOffset: string };
+    };
