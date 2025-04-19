@@ -4,7 +4,6 @@
 import * as themeVariables from '@ren/renderer/theme/variables';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import { faCircle as faCircleRegular } from '@fortawesome/free-regular-svg-icons';
-import { APIsController } from '@ren/controller/APIsController';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useChains } from '@app/contexts/main/Chains';
@@ -18,13 +17,12 @@ import { SelectRpc } from './RpcSelect';
 import { FlexRow } from '@polkadot-live/ui/styles';
 import { TooltipRx } from '@polkadot-live/ui/components';
 import { PuffLoader } from 'react-spinners';
-import type { ChainID, ChainStatus } from '@polkadot-live/types/chains';
+import type { FlattenedAPIData } from '@polkadot-live/types/apis';
 
 export const Footer = () => {
   const { appLoading, isConnecting, isAborting } = useBootstrapping();
   const {
     chains,
-    dedotChains,
     isWorking,
     onConnectClick,
     onDisconnectClick,
@@ -47,7 +45,7 @@ export const Footer = () => {
   // Flag controlling whether footer is expanded.
   const [expanded, setExpanded] = useState<boolean>(false);
 
-  // Get legacy polkadot.js chain connections count.
+  // Get number of connected APIs.
   const connectionsCount = () =>
     Array.from(chains.values()).filter(({ status }) => status === 'connected')
       .length;
@@ -55,15 +53,15 @@ export const Footer = () => {
   // Get header text.
   const getHeadingText = () => {
     if (getOnlineMode() && !isConnecting && !isAborting) {
-      const connections = dedotConnectionsCount() + connectionsCount();
+      const connections = connectionsCount();
       return `Connected to ${connections} network${connections === 1 ? '' : 's'}`;
     } else {
       return 'Offline';
     }
   };
 
-  // Method to determine whether an API can be disconnected.
-  const allowDisconnect = (chainId: ChainID, status: ChainStatus) =>
+  // Determine whether an API can be disconnected.
+  const allowDisconnect = ({ chainId, status }: FlattenedAPIData) =>
     appLoading ||
     status === 'disconnected' ||
     isBuildingExtrinsic ||
@@ -73,31 +71,21 @@ export const Footer = () => {
       : !chainHasSubscriptions(chainId) &&
         !chainHasIntervalSubscriptions(chainId);
 
-  // Method to get API disconnect button tooltip.
-  const getTooltipText = (chainId: ChainID, status: ChainStatus) =>
-    status === 'disconnected'
+  // Get API disconnect button tooltip.
+  const disconnectTooltip = (flattened: FlattenedAPIData) => {
+    const { chainId, status } = flattened;
+    return status === 'disconnected'
       ? 'Disconnected'
       : chainHasSubscriptions(chainId) || chainHasIntervalSubscriptions(chainId)
         ? 'Subscriptions Active'
-        : !allowDisconnect(chainId, status)
+        : !allowDisconnect(flattened)
           ? 'In-Use'
           : 'Disconnect';
+  };
 
-  // Handle disconnecting from a chain API.
-  const handleDisconnect = async (chainId: ChainID) =>
-    await APIsController.close(chainId);
-
-  // Dedot helpers.
-  const dedotConnectTooltip = (status: string) =>
+  // Helpers.
+  const connectTooltip = ({ status }: FlattenedAPIData) =>
     status === 'connected' ? 'Connected' : 'Connect';
-
-  const dedotDisconnectTooltip = (status: string) =>
-    status === 'disconnected' ? 'Disconnected' : 'Disconnect';
-
-  const dedotConnectionsCount = () =>
-    Array.from(dedotChains.values()).filter(
-      ({ status }) => status === 'connected'
-    ).length;
 
   return (
     <FooterWrapper className={expanded ? 'expanded' : undefined}>
@@ -134,7 +122,7 @@ export const Footer = () => {
           )}
         </FlexRow>
         {expanded &&
-          [...dedotChains.entries()].map(([chainId, apiData]) => (
+          [...chains.entries()].map(([chainId, apiData]) => (
             <NetworkItem key={`${chainId}_dedot_network`}>
               <div className="left">
                 {getIcon(chainId, 'icon')}
@@ -145,7 +133,6 @@ export const Footer = () => {
                   {/* RPC select box */}
                   <SelectRpc
                     apiData={apiData}
-                    apiBackend="dedot"
                     setWorkingEndpoint={setWorkingEndpoint}
                     disabled={isWorking(chainId)}
                   />
@@ -153,7 +140,7 @@ export const Footer = () => {
                   {/* Connect button */}
                   <div className="connect">
                     <TooltipRx
-                      text={dedotConnectTooltip(apiData.status)}
+                      text={connectTooltip(apiData)}
                       side="top"
                       style={{ zIndex: 99 }}
                       theme={theme}
@@ -175,7 +162,7 @@ export const Footer = () => {
                   {/* Disconnect button */}
                   <div className="disconnect">
                     <TooltipRx
-                      text={dedotDisconnectTooltip(apiData.status)}
+                      text={disconnectTooltip(apiData)}
                       side="top"
                       style={{ zIndex: 99 }}
                       theme={theme}
@@ -185,53 +172,8 @@ export const Footer = () => {
                           await onDisconnectClick(apiData.chainId)
                         }
                         disabled={
-                          apiData.status === 'disconnected' ||
-                          isWorking(chainId)
+                          !allowDisconnect(apiData) || isWorking(chainId)
                         }
-                      >
-                        <FontAwesomeIcon
-                          icon={FA.faCircleXmark}
-                          transform={'grow-2'}
-                        />
-                      </button>
-                    </TooltipRx>
-                  </div>
-                </FlexRow>
-              </div>
-            </NetworkItem>
-          ))}
-      </section>
-
-      {/* Polkadit.js Connections */}
-      <section className="network-list-wrapper">
-        <h3>Polkadot.js</h3>
-        {expanded &&
-          [...chains.entries()].map(([chainId, apiData]) => (
-            <NetworkItem key={`${chainId}_network`}>
-              <div className="left">
-                {getIcon(chainId, 'icon')}
-                <h4>{chainId}</h4>
-              </div>
-              <div className="right">
-                <FlexRow $gap={'1.5rem'}>
-                  {/* RPC select box */}
-                  <SelectRpc
-                    apiData={apiData}
-                    apiBackend="polkadot.js"
-                    disabled={false}
-                  />
-
-                  {/* Disconnect button */}
-                  <div className="disconnect">
-                    <TooltipRx
-                      text={getTooltipText(chainId, apiData.status)}
-                      side="left"
-                      style={{ zIndex: 99 }}
-                      theme={theme}
-                    >
-                      <button
-                        onClick={async () => await handleDisconnect(chainId)}
-                        disabled={!allowDisconnect(chainId, apiData.status)}
                       >
                         <FontAwesomeIcon
                           icon={FA.faCircleXmark}

@@ -9,7 +9,6 @@ import type { FlattenedAPIData } from '@polkadot-live/types/apis';
 
 interface SelectRpcProps {
   apiData: FlattenedAPIData;
-  apiBackend: 'dedot' | 'polkadot.js';
   disabled: boolean;
   setWorkingEndpoint?: (chainId: ChainID, val: boolean) => void;
 }
