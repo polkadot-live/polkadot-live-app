@@ -16,15 +16,76 @@ import {
 } from 'dedot/utils';
 import type {
   AccountBalance,
+  AccountNominationPoolData,
   FlattenedAccountData,
   NominationPoolCommission,
   NominationPoolRoles,
 } from '@polkadot-live/types/accounts';
-import type { ApiCallEntry } from '@polkadot-live/types/subscriptions';
+import type {
+  ApiCallEntry,
+  PostCallbackSyncFlags,
+} from '@polkadot-live/types/subscriptions';
 import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { Account } from '@ren/model/Account';
 import type { RelayDedotClient } from '@polkadot-live/types/apis';
+
+/**
+ * @name getPostCallbackSyncFlags
+ * @summary Get reset post callback sync flags.
+ */
+export const getPostCallbackSyncFlags = (): PostCallbackSyncFlags => ({
+  syncAccountBalance: false,
+  syncAccountNominating: false,
+  syncAccountNominationPool: false,
+});
+
+/**
+ * @name processOneShotPostCallback
+ * @summary Update managed account data after a one-shot callback if necessary.
+ */
+export const processOneShotPostCallback = async (
+  api: RelayDedotClient,
+  account: Account,
+  syncFlags: PostCallbackSyncFlags
+) => {
+  // Sync account balance.
+  if (syncFlags.syncAccountBalance) {
+    const balance = await getBalanceForAccount(
+      api,
+      account.address,
+      account.chain,
+      false
+    );
+    account.balance = balance;
+  }
+
+  // Sync account nominating data.
+  if (syncFlags.syncAccountNominating) {
+    const result = await getAccountNominatingData(api, account);
+    if (result) {
+      account.nominatingData = result;
+    }
+  }
+
+  // Sync account nomination pool data.
+  if (syncFlags.syncAccountNominationPool) {
+    const result = await getNominationPoolDataForAccount(account);
+    if (result) {
+      account.nominationPoolData = result;
+    }
+  }
+
+  // Update managed account data.
+  await AccountsController.set(account.chain, account);
+
+  // Reset flags.
+  syncFlags = {
+    syncAccountBalance: false,
+    syncAccountNominating: false,
+    syncAccountNominationPool: false,
+  };
+};
 
 /**
  * @name getAddressChainId
@@ -135,7 +196,8 @@ export const fetchBalanceForAccount = async (account: Account) => {
 export const getBalanceForAccount = async (
   api: RelayDedotClient,
   address: string,
-  chainId: ChainID
+  chainId: ChainID,
+  syncAccount = true
 ): Promise<AccountBalance> => {
   const result = await api.query.system.account(address);
 
@@ -147,10 +209,12 @@ export const getBalanceForAccount = async (
   };
 
   // Update account data if it is being managed by controller.
-  const account = AccountsController.get(chainId, address);
-  if (account) {
-    account.balance = balance;
-    await AccountsController.set(account.chain, account);
+  if (syncAccount) {
+    const account = AccountsController.get(chainId, address);
+    if (account) {
+      account.balance = balance;
+      await AccountsController.set(account.chain, account);
+    }
   }
 
   return balance;
@@ -231,7 +295,15 @@ export const setNominatingDataForAccount = async (account: Account) => {
 export const fetchAccountNominationPoolData = async () => {
   for (const [chainId, accounts] of AccountsController.accounts.entries()) {
     console.log(`fetching nomination pool data for chain: ${chainId}`);
-    await Promise.all(accounts.map((a) => setNominationPoolDataForAccount(a)));
+    await Promise.all(
+      accounts.map(async (a) => {
+        const result = await getNominationPoolDataForAccount(a);
+        if (result) {
+          a.nominationPoolData = result;
+          await AccountsController.set(a.chain, a);
+        }
+      })
+    );
   }
 };
 
@@ -240,7 +312,11 @@ export const fetchAccountNominationPoolData = async () => {
  * @summary Fetch nomination pool data for a single account.
  */
 export const fetchNominationPoolDataForAccount = async (account: Account) => {
-  await setNominationPoolDataForAccount(account);
+  const result = await getNominationPoolDataForAccount(account);
+  if (result) {
+    account.nominationPoolData = result;
+    await AccountsController.set(account.chain, account);
+  }
 };
 
 /**
@@ -261,9 +337,11 @@ export const getNominationPoolRewards = async (
  * @summary Utility that uses an API instance to get and update an account's nomination
  * pool data.
  */
-const setNominationPoolDataForAccount = async (account: Account) => {
+export const getNominationPoolDataForAccount = async (
+  account: Account
+): Promise<AccountNominationPoolData | null> => {
   if (!Array.from(ChainList.keys()).includes(account.chain)) {
-    return;
+    return null;
   }
 
   const api = (
@@ -273,7 +351,7 @@ const setNominationPoolDataForAccount = async (account: Account) => {
   // Return early if account is not currently in a nomination pool.
   const result = await api.query.nominationPools.poolMembers(account.address);
   if (!result) {
-    return;
+    return null;
   }
 
   // Get pool ID and reward address.
@@ -288,7 +366,7 @@ const setNominationPoolDataForAccount = async (account: Account) => {
   // Get nomination pool data.
   const npResult = await api.query.nominationPools.bondedPools(poolId);
   if (!npResult) {
-    return;
+    return null;
   }
 
   const poolState: string = npResult.state;
@@ -319,21 +397,16 @@ const setNominationPoolDataForAccount = async (account: Account) => {
   const poolMeta = await api.query.nominationPools.metadata(poolId);
   const poolName: string = hexToString(poolMeta);
 
-  if (poolRewardAddress) {
-    // Add nomination pool data to account.
-    account.nominationPoolData = {
-      poolId,
-      poolRewardAddress,
-      poolPendingRewards,
-      poolState,
-      poolName,
-      poolRoles,
-      poolCommission,
-    };
-
-    // Store updated account data in controller.
-    await AccountsController.set(account.chain, account);
-  }
+  // Add nomination pool data to account.
+  return {
+    poolId,
+    poolRewardAddress,
+    poolPendingRewards,
+    poolState,
+    poolName,
+    poolRoles,
+    poolCommission,
+  };
 };
 
 /**
