@@ -51,29 +51,21 @@ export const processOneShotPostCallback = async (
 ) => {
   // Sync account balance.
   if (syncFlags.syncAccountBalance) {
-    const balance = await getBalanceForAccount(
-      api,
-      account.address,
-      account.chain,
-      false
-    );
+    const { address, chain } = account;
+    const balance = await getBalanceForAccount(api, address, chain, false);
     account.balance = balance;
   }
 
   // Sync account nominating data.
   if (syncFlags.syncAccountNominating) {
     const result = await getAccountNominatingData(api, account);
-    if (result) {
-      account.nominatingData = result;
-    }
+    result && (account.nominatingData = result);
   }
 
   // Sync account nomination pool data.
   if (syncFlags.syncAccountNominationPool) {
     const result = await getNominationPoolDataForAccount(account);
-    if (result) {
-      account.nominationPoolData = result;
-    }
+    result && (account.nominationPoolData = result);
   }
 
   // Update managed account data.

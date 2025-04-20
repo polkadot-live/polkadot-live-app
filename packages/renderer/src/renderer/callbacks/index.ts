@@ -750,14 +750,16 @@ export class Callbacks {
 
       // Update account nominating data.
       const maybeNominatingData = await getAccountNominatingData(api, account);
-      if (maybeNominatingData) {
-        syncFlags.syncAccountNominating = true;
-      }
 
       // Return if exposure has not changed.
       const exposed = maybeNominatingData ? maybeNominatingData.exposed : false;
       if (!isOneShot && prevExposed === exposed) {
         return true;
+      }
+
+      // Update account nominating data in post process.
+      if (prevExposed !== exposed) {
+        syncFlags.syncAccountNominating = true;
       }
 
       // Get notification.
@@ -818,9 +820,6 @@ export class Callbacks {
 
       // Update account nominating data.
       const maybeNominatingData = await getAccountNominatingData(api, account);
-      if (maybeNominatingData) {
-        syncFlags.syncAccountNominating = true;
-      }
 
       // Return if commissions haven't changed.
       if (maybeNominatingData) {
@@ -829,6 +828,7 @@ export class Callbacks {
 
         if (!areEqual) {
           hasChanged = true;
+          syncFlags.syncAccountNominating = true;
         } else if (!isOneShot && areEqual) {
           return true;
         }
@@ -894,9 +894,6 @@ export class Callbacks {
 
       // Update account nominating data.
       const maybeNominatingData = await getAccountNominatingData(api, account);
-      if (maybeNominatingData) {
-        syncFlags.syncAccountNominating = true;
-      }
 
       // Return if nominations haven't changed.
       if (maybeNominatingData) {
@@ -905,6 +902,7 @@ export class Callbacks {
 
         if (!areEqual) {
           hasChanged = true;
+          syncFlags.syncAccountNominating = true;
         } else if (!isOneShot && areEqual) {
           return true;
         }

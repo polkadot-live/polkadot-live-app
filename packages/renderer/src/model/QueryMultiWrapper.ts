@@ -135,8 +135,8 @@ export class QueryMultiWrapper {
    */
   private async handleCallback(entry: ApiCallEntry, dataArr: AnyData) {
     const { action, justBuilt } = entry.task;
-    const subData = dataArr[entry.task.dataIndex!];
-    const sf = this.postCallbackSyncFlags;
+    const data = dataArr[entry.task.dataIndex!];
+    const flags = this.postCallbackSyncFlags;
 
     // Exit early if the task was just built (toggled on).
     if (justBuilt) {
@@ -146,47 +146,47 @@ export class QueryMultiWrapper {
 
     switch (action) {
       case 'subscribe:chain:timestamp': {
-        Callbacks.callback_query_timestamp_now(subData, entry, this);
+        Callbacks.callback_query_timestamp_now(data, entry, this);
         break;
       }
       case 'subscribe:chain:currentSlot': {
-        Callbacks.callback_query_babe_currentSlot(subData, entry, this);
+        Callbacks.callback_query_babe_currentSlot(data, entry, this);
         break;
       }
       case 'subscribe:account:balance:free': {
-        await Callbacks.callback_account_balance_free(subData, entry, sf);
+        await Callbacks.callback_account_balance_free(data, entry, flags);
         break;
       }
       case 'subscribe:account:balance:frozen': {
-        await Callbacks.callback_account_balance_frozen(subData, entry, sf);
+        await Callbacks.callback_account_balance_frozen(data, entry, flags);
         break;
       }
       case 'subscribe:account:balance:reserved': {
-        await Callbacks.callback_account_balance_reserved(subData, entry, sf);
+        await Callbacks.callback_account_balance_reserved(data, entry, flags);
         break;
       }
       case 'subscribe:account:balance:spendable': {
-        await Callbacks.callback_account_balance_spendable(subData, entry, sf);
+        await Callbacks.callback_account_balance_spendable(data, entry, flags);
         break;
       }
       case 'subscribe:account:nominationPools:rewards': {
-        await Callbacks.callback_nomination_pool_rewards(entry, sf);
+        await Callbacks.callback_nomination_pool_rewards(entry, flags);
         break;
       }
       case 'subscribe:account:nominationPools:state': {
-        await Callbacks.callback_nomination_pool_state(subData, entry, sf);
+        await Callbacks.callback_nomination_pool_state(data, entry, flags);
         break;
       }
       case 'subscribe:account:nominationPools:renamed': {
-        await Callbacks.callback_nomination_pool_renamed(subData, entry, sf);
+        await Callbacks.callback_nomination_pool_renamed(data, entry, flags);
         break;
       }
       case 'subscribe:account:nominationPools:roles': {
-        await Callbacks.callback_nomination_pool_roles(subData, entry, sf);
+        await Callbacks.callback_nomination_pool_roles(data, entry, flags);
         break;
       }
       case 'subscribe:account:nominationPools:commission': {
-        await Callbacks.callback_nomination_pool_commission(subData, entry, sf);
+        await Callbacks.callback_nomination_pool_commission(data, entry, flags);
         break;
       }
       case 'subscribe:account:nominating:pendingPayouts': {
@@ -194,15 +194,15 @@ export class QueryMultiWrapper {
         break;
       }
       case 'subscribe:account:nominating:exposure': {
-        await Callbacks.callback_nominating_exposure(subData, entry, sf);
+        await Callbacks.callback_nominating_exposure(data, entry, flags);
         break;
       }
       case 'subscribe:account:nominating:commission': {
-        await Callbacks.callback_nominating_commission(subData, entry, sf);
+        await Callbacks.callback_nominating_commission(data, entry, flags);
         break;
       }
       case 'subscribe:account:nominating:nominations': {
-        await Callbacks.callback_nominating_nominations(subData, entry, sf);
+        await Callbacks.callback_nominating_nominations(data, entry, flags);
         break;
       }
     }
@@ -267,29 +267,21 @@ export class QueryMultiWrapper {
     if (account) {
       // Sync account balance.
       if (this.postCallbackSyncFlags.syncAccountBalance) {
-        const balance = await getBalanceForAccount(
-          api,
-          account.address,
-          account.chain,
-          false
-        );
+        const { address, chain } = account;
+        const balance = await getBalanceForAccount(api, address, chain, false);
         account.balance = balance;
       }
 
       // Sync account nominating data.
       if (this.postCallbackSyncFlags.syncAccountNominating) {
         const result = await getAccountNominatingData(api, account);
-        if (result) {
-          account.nominatingData = result;
-        }
+        result && (account.nominatingData = result);
       }
 
       // Sync account nomination pool data.
       if (this.postCallbackSyncFlags.syncAccountNominationPool) {
         const result = await getNominationPoolDataForAccount(account);
-        if (result) {
-          account.nominationPoolData = result;
-        }
+        result && (account.nominationPoolData = result);
       }
 
       // Set updated account data in the appropriate entries.

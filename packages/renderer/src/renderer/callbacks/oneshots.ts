@@ -25,53 +25,92 @@ export const executeOneShot = async (
   if (!client || !client.api) {
     return false;
   }
-
   const { api } = client;
 
-  switch (task.action) {
-    case 'subscribe:account:balance:free': {
-      return await oneShot_account_balance_free(task, api);
-    }
-    case 'subscribe:account:balance:frozen': {
-      return await oneShot_account_balance_frozen(task, api);
-    }
-    case 'subscribe:account:balance:reserved': {
-      return await oneShot_account_balance_reserved(task, api);
-    }
-    case 'subscribe:account:balance:spendable': {
-      return await oneShot_account_balance_spendable(task, api);
-    }
-    case 'subscribe:account:nominationPools:state': {
-      return await oneShot_nomination_pool_state(task, api);
-    }
-    case 'subscribe:account:nominationPools:renamed': {
-      return await oneShot_nomination_pool_renamed(task, api);
-    }
-    case 'subscribe:account:nominationPools:rewards': {
-      return await oneShot_nomination_pool_rewards(task, api);
-    }
-    case 'subscribe:account:nominationPools:roles': {
-      return await oneShot_nomination_pool_roles(task, api);
-    }
-    case 'subscribe:account:nominationPools:commission': {
-      return await oneShot_nomination_pool_commission(task, api);
-    }
-    case 'subscribe:account:nominating:pendingPayouts': {
-      return await oneShot_nominating_era_rewards(task);
-    }
-    case 'subscribe:account:nominating:exposure': {
-      return await oneShot_nominating_exposure(task, api);
-    }
-    case 'subscribe:account:nominating:commission': {
-      return await oneShot_nominating_commission(task, api);
-    }
-    case 'subscribe:account:nominating:nominations': {
-      return await oneShot_nominating_nominations(task, api);
-    }
-    default: {
-      return false;
-    }
+  // Handle simple tasks.
+  if (task.action === 'subscribe:account:nominating:pendingPayouts') {
+    return await oneShot_nominating_era_rewards(task);
   }
+
+  // Handle tasks requiring account.
+  const account = getTaskAccount(task);
+  if (!account) {
+    return false;
+  }
+
+  // Args tuple.
+  type TupleArg = [SubscriptionTask, RelayDedotClient, PostCallbackSyncFlags];
+  const flags = getPostCallbackSyncFlags();
+  const args: TupleArg = [task, api, flags];
+  let result: boolean;
+
+  switch (task.action) {
+    case 'subscribe:account:balance:free':
+      result = await oneShot_account_balance_free(...args);
+      break;
+    case 'subscribe:account:balance:frozen':
+      result = await oneShot_account_balance_frozen(...args);
+      break;
+    case 'subscribe:account:balance:reserved':
+      result = await oneShot_account_balance_reserved(...args);
+      break;
+    case 'subscribe:account:balance:spendable':
+      result = await oneShot_account_balance_spendable(...args);
+      break;
+    case 'subscribe:account:nominationPools:state':
+      result = await oneShot_nomination_pool_state(...args);
+      break;
+    case 'subscribe:account:nominationPools:renamed':
+      result = await oneShot_nomination_pool_renamed(...args);
+      break;
+    case 'subscribe:account:nominationPools:rewards':
+      result = await oneShot_nomination_pool_rewards(task, flags);
+      break;
+    case 'subscribe:account:nominationPools:roles':
+      result = await oneShot_nomination_pool_roles(...args);
+      break;
+    case 'subscribe:account:nominationPools:commission':
+      result = await oneShot_nomination_pool_commission(...args);
+      break;
+    case 'subscribe:account:nominating:exposure':
+      result = await oneShot_nominating_exposure(...args);
+      break;
+    case 'subscribe:account:nominating:commission':
+      result = await oneShot_nominating_commission(...args);
+      break;
+    case 'subscribe:account:nominating:nominations':
+      result = await oneShot_nominating_nominations(...args);
+      break;
+    default:
+      result = false;
+      break;
+  }
+
+  result && (await postOneShotCallback(api, account, flags));
+  return result;
+};
+
+/**
+ * @name getTaskAccount
+ * @summary Get the account associated with a subscription task.
+ */
+const getTaskAccount = (task: SubscriptionTask): Account | null =>
+  task.account
+    ? AccountsController.get(task.chainId, task.account!.address) || null
+    : null;
+
+/**
+ * @name postOneShotCallback
+ * @summary Update managed account data after processing callback.
+ */
+const postOneShotCallback = async (
+  api: RelayDedotClient,
+  account: Account,
+  flags: PostCallbackSyncFlags
+) => {
+  await processOneShotPostCallback(api, account, flags);
+  const flattened = account!.flatten();
+  account.queryMulti?.updateEntryAccountData(account.chain, flattened);
 };
 
 /**
@@ -80,21 +119,14 @@ export const executeOneShot = async (
  */
 const oneShot_account_balance_free = async (
   task: SubscriptionTask,
-  api: RelayDedotClient
+  api: RelayDedotClient,
+  flags: PostCallbackSyncFlags
 ): Promise<boolean> => {
-  const account = getTaskAccount(task);
-  if (!account) {
-    return false;
-  }
-
-  const sf = getPostCallbackSyncFlags();
   const accountId = new AccountId32(task.account!.address);
   const data = await api.query.system.account(accountId);
   const entry: ApiCallEntry = { curVal: null, task };
   // eslint-disable-next-line prettier/prettier
-  const result = await Callbacks.callback_account_balance_free(data, entry, sf, true);
-  await postOneShotCallback(api, account, sf);
-  return result;
+  return await Callbacks.callback_account_balance_free(data, entry, flags, true);
 };
 
 /**
@@ -103,21 +135,14 @@ const oneShot_account_balance_free = async (
  */
 const oneShot_account_balance_frozen = async (
   task: SubscriptionTask,
-  api: RelayDedotClient
+  api: RelayDedotClient,
+  flags: PostCallbackSyncFlags
 ): Promise<boolean> => {
-  const account = getTaskAccount(task);
-  if (!account) {
-    return false;
-  }
-
-  const sf = getPostCallbackSyncFlags();
   const accountId = new AccountId32(task.account!.address);
   const data = await api.query.system.account(accountId);
   const entry: ApiCallEntry = { curVal: null, task };
   // eslint-disable-next-line prettier/prettier
-  const result = await Callbacks.callback_account_balance_frozen(data, entry, sf, true);
-  await postOneShotCallback(api, account, sf);
-  return result;
+  return await Callbacks.callback_account_balance_frozen(data, entry, flags, true);
 };
 
 /**
@@ -126,21 +151,14 @@ const oneShot_account_balance_frozen = async (
  */
 const oneShot_account_balance_reserved = async (
   task: SubscriptionTask,
-  api: RelayDedotClient
+  api: RelayDedotClient,
+  flags: PostCallbackSyncFlags
 ): Promise<boolean> => {
-  const account = getTaskAccount(task);
-  if (!account) {
-    return false;
-  }
-
-  const sf = getPostCallbackSyncFlags();
   const accountId = new AccountId32(task.account!.address);
   const data = await api.query.system.account(accountId);
   const entry: ApiCallEntry = { curVal: null, task };
   // eslint-disable-next-line prettier/prettier
-  const result = await Callbacks.callback_account_balance_reserved(data, entry, sf, true);
-  await postOneShotCallback(api, account, sf);
-  return result;
+  return await Callbacks.callback_account_balance_reserved(data, entry, flags, true);
 };
 
 /**
@@ -149,21 +167,14 @@ const oneShot_account_balance_reserved = async (
  */
 const oneShot_account_balance_spendable = async (
   task: SubscriptionTask,
-  api: RelayDedotClient
+  api: RelayDedotClient,
+  flags: PostCallbackSyncFlags
 ): Promise<boolean> => {
-  const account = getTaskAccount(task);
-  if (!account) {
-    return false;
-  }
-
-  const sf = getPostCallbackSyncFlags();
   const accountId = new AccountId32(task.account!.address);
   const data = await api.query.system.account(accountId);
   const entry: ApiCallEntry = { curVal: null, task };
   // eslint-disable-next-line prettier/prettier
-  const result = await Callbacks.callback_account_balance_spendable(data, entry, sf, true);
-  await postOneShotCallback(api, account, sf);
-  return result;
+  return await Callbacks.callback_account_balance_spendable(data, entry, flags, true);
 };
 
 /**
@@ -172,19 +183,10 @@ const oneShot_account_balance_spendable = async (
  */
 const oneShot_nomination_pool_rewards = async (
   task: SubscriptionTask,
-  api: RelayDedotClient
+  flags: PostCallbackSyncFlags
 ): Promise<boolean> => {
-  const account = getTaskAccount(task);
-  if (!account) {
-    return false;
-  }
-
-  const sf = getPostCallbackSyncFlags();
   const entry: ApiCallEntry = { curVal: null, task };
-  // eslint-disable-next-line prettier/prettier
-  const result = await Callbacks.callback_nomination_pool_rewards(entry, sf, true);
-  await postOneShotCallback(api, account, sf);
-  return result;
+  return await Callbacks.callback_nomination_pool_rewards(entry, flags, true);
 };
 
 /**
@@ -193,21 +195,14 @@ const oneShot_nomination_pool_rewards = async (
  */
 const oneShot_nomination_pool_state = async (
   task: SubscriptionTask,
-  api: RelayDedotClient
+  api: RelayDedotClient,
+  flags: PostCallbackSyncFlags
 ): Promise<boolean> => {
-  const account = getTaskAccount(task);
-  if (!account) {
-    return false;
-  }
-
-  const sf = getPostCallbackSyncFlags();
   const arg = Number(task.actionArgs![0]);
   const data = await api.query.nominationPools.bondedPools(arg);
   const entry: ApiCallEntry = { curVal: null, task };
   // eslint-disable-next-line prettier/prettier
-  const result = Callbacks.callback_nomination_pool_state(data, entry, sf, true);
-  await postOneShotCallback(api, account, sf);
-  return result;
+  return await Callbacks.callback_nomination_pool_state(data, entry, flags, true);
 };
 
 /**
@@ -216,21 +211,14 @@ const oneShot_nomination_pool_state = async (
  */
 const oneShot_nomination_pool_renamed = async (
   task: SubscriptionTask,
-  api: RelayDedotClient
+  api: RelayDedotClient,
+  flags: PostCallbackSyncFlags
 ): Promise<boolean> => {
-  const account = getTaskAccount(task);
-  if (!account) {
-    return false;
-  }
-
-  const sf = getPostCallbackSyncFlags();
   const arg = Number(task.actionArgs![0]);
   const data = await api.query.nominationPools.metadata(arg);
   const entry: ApiCallEntry = { curVal: null, task };
   // eslint-disable-next-line prettier/prettier
-  const result = await Callbacks.callback_nomination_pool_renamed(data, entry, sf, true);
-  await postOneShotCallback(api, account, sf);
-  return result;
+  return await Callbacks.callback_nomination_pool_renamed(data, entry, flags, true);
 };
 
 /**
@@ -239,21 +227,14 @@ const oneShot_nomination_pool_renamed = async (
  */
 const oneShot_nomination_pool_roles = async (
   task: SubscriptionTask,
-  api: RelayDedotClient
+  api: RelayDedotClient,
+  flags: PostCallbackSyncFlags
 ): Promise<boolean> => {
-  const account = getTaskAccount(task);
-  if (!account) {
-    return false;
-  }
-
-  const sf = getPostCallbackSyncFlags();
   const arg = Number(task.actionArgs![0]);
   const data = await api.query.nominationPools.bondedPools(arg);
   const entry: ApiCallEntry = { curVal: null, task };
   // eslint-disable-next-line prettier/prettier
-  const result = await Callbacks.callback_nomination_pool_roles(data, entry, sf, true);
-  await postOneShotCallback(api, account, sf);
-  return result;
+  return await Callbacks.callback_nomination_pool_roles(data, entry, flags, true);
 };
 
 /**
@@ -262,21 +243,14 @@ const oneShot_nomination_pool_roles = async (
  */
 const oneShot_nomination_pool_commission = async (
   task: SubscriptionTask,
-  api: RelayDedotClient
+  api: RelayDedotClient,
+  flags: PostCallbackSyncFlags
 ): Promise<boolean> => {
-  const account = getTaskAccount(task);
-  if (!account) {
-    return false;
-  }
-
-  const sf = getPostCallbackSyncFlags();
   const arg = Number(task.actionArgs![0]);
   const data = await api.query.nominationPools.bondedPools(arg);
   const entry: ApiCallEntry = { curVal: null, task };
   // eslint-disable-next-line prettier/prettier
-  const result = await Callbacks.callback_nomination_pool_commission(data, entry, sf, true);
-  await postOneShotCallback(api, account, sf);
-  return result;
+  return await Callbacks.callback_nomination_pool_commission(data, entry, flags, true);
 };
 
 /**
@@ -296,20 +270,12 @@ const oneShot_nominating_era_rewards = async (
  */
 const oneShot_nominating_exposure = async (
   task: SubscriptionTask,
-  api: RelayDedotClient
+  api: RelayDedotClient,
+  flags: PostCallbackSyncFlags
 ): Promise<boolean> => {
-  const account = getTaskAccount(task);
-  if (!account) {
-    return false;
-  }
-
-  const sf = getPostCallbackSyncFlags();
   const entry: ApiCallEntry = { curVal: null, task };
   const data = await api.query.staking.activeEra();
-  // eslint-disable-next-line prettier/prettier
-  const result = await Callbacks.callback_nominating_exposure(data, entry, sf, true);
-  await postOneShotCallback(api, account, sf);
-  return result;
+  return await Callbacks.callback_nominating_exposure(data, entry, flags, true);
 };
 
 /**
@@ -318,19 +284,13 @@ const oneShot_nominating_exposure = async (
  */
 const oneShot_nominating_commission = async (
   task: SubscriptionTask,
-  api: RelayDedotClient
+  api: RelayDedotClient,
+  flags: PostCallbackSyncFlags
 ): Promise<boolean> => {
-  const account = getTaskAccount(task);
-  if (!account) {
-    return false;
-  }
-  const sf = getPostCallbackSyncFlags();
   const data = await api.query.staking.activeEra();
   const entry: ApiCallEntry = { curVal: null, task };
   // eslint-disable-next-line prettier/prettier
-  const result = await Callbacks.callback_nominating_commission(data, entry, sf, true);
-  await postOneShotCallback(api, account, sf);
-  return result;
+  return await Callbacks.callback_nominating_commission(data, entry, flags, true);
 };
 
 /**
@@ -339,32 +299,11 @@ const oneShot_nominating_commission = async (
  */
 const oneShot_nominating_nominations = async (
   task: SubscriptionTask,
-  api: RelayDedotClient
+  api: RelayDedotClient,
+  flags: PostCallbackSyncFlags
 ): Promise<boolean> => {
-  const account = getTaskAccount(task);
-  if (!account) {
-    return false;
-  }
-  const sf = getPostCallbackSyncFlags();
   const data = await api.query.staking.activeEra();
   const entry: ApiCallEntry = { curVal: null, task };
   // eslint-disable-next-line prettier/prettier
-  const result = await Callbacks.callback_nominating_nominations(data, entry, sf, true);
-  await postOneShotCallback(api, account, sf);
-  return result;
+  return await Callbacks.callback_nominating_nominations(data, entry, flags, true);
 };
-
-const postOneShotCallback = async (
-  api: RelayDedotClient,
-  account: Account,
-  flags: PostCallbackSyncFlags
-) => {
-  await processOneShotPostCallback(api, account, flags);
-  const flattened = account!.flatten();
-  account.queryMulti?.updateEntryAccountData(account.chain, flattened);
-};
-
-const getTaskAccount = (task: SubscriptionTask): Account | null =>
-  task.account
-    ? AccountsController.get(task.chainId, task.account!.address) || null
-    : null;
