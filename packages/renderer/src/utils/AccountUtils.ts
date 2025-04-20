@@ -108,7 +108,7 @@ export const fetchAccountBalances = async () => {
  * @summary Fetch balance data for a single account.
  */
 export const fetchBalanceForAccount = async (account: Account) => {
-  if (!['Polkadot', 'Kusama', 'Westend'].includes(account.chain)) {
+  if (!Array.from(ChainList.keys()).includes(account.chain)) {
     return;
   }
 
@@ -206,7 +206,7 @@ export const fetchNominatingDataForAccount = async (account: Account) => {
  */
 export const setNominatingDataForAccount = async (account: Account) => {
   // Only allow nominating data on specific chains.
-  if (!['Polkadot', 'Kusama', 'Westend'].includes(account.chain)) {
+  if (!Array.from(ChainList.keys()).includes(account.chain)) {
     return;
   }
 
