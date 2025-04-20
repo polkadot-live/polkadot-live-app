@@ -14,4 +14,9 @@ export interface ChainInstance {
 
 export interface ChainsContextInterface {
   chains: Map<ChainID, FlattenedAPIData>;
+  isWorking: (chainId: ChainID) => boolean;
+  onConnectClick: (chainId: ChainID) => Promise<void>;
+  onDisconnectClick: (chainId: ChainID) => Promise<void>;
+  setWorkingEndpoint: (chainId: ChainID, val: boolean) => void;
+  showWorkingSpinner: () => boolean;
 }

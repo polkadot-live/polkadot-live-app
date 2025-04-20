@@ -4,21 +4,31 @@
 import { useState } from 'react';
 import { SelectRpcWrapper } from './Wrapper';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
+import { useConnections } from '@app/contexts/common/Connections';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAPIData } from '@polkadot-live/types/apis';
 
 interface SelectRpcProps {
   apiData: FlattenedAPIData;
+  disabled: boolean;
+  setWorkingEndpoint?: (chainId: ChainID, val: boolean) => void;
 }
 
-export const SelectRpc = ({ apiData }: SelectRpcProps) => {
+export const SelectRpc = ({
+  apiData,
+  disabled,
+  setWorkingEndpoint,
+}: SelectRpcProps) => {
   const { chainId, endpoint } = apiData;
   const [selectedRpc, setSelectedRpc] = useState(endpoint);
   const { handleNewEndpointForChain } = useBootstrapping();
+  const { isConnected } = useConnections();
 
   /// Handle RPC change.
   const handleRpcChange = async (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
+    setWorkingEndpoint && setWorkingEndpoint(chainId, true);
     const newEndpoint = event.target.value;
 
     // Exit early if endpoint hasn't changed.
@@ -31,11 +41,16 @@ export const SelectRpc = ({ apiData }: SelectRpcProps) => {
 
     // Re-connect and subscribe to active tasks.
     await handleNewEndpointForChain(chainId, newEndpoint);
+    setWorkingEndpoint && setWorkingEndpoint(chainId, false);
   };
 
   /// Get class name for connected status icon.
   const getStatusClass = () =>
-    apiData.status === 'connected' ? 'success' : 'danger';
+    !isConnected
+      ? 'danger'
+      : apiData.status === 'connected'
+        ? 'success'
+        : 'danger';
 
   return (
     <SelectRpcWrapper>
@@ -49,6 +64,7 @@ export const SelectRpc = ({ apiData }: SelectRpcProps) => {
           id={`${chainId}_rpcs`}
           value={selectedRpc}
           onChange={(e) => handleRpcChange(e)}
+          disabled={disabled}
         >
           {apiData.rpcs.map((rpc, i) => (
             <option key={i} value={rpc}>

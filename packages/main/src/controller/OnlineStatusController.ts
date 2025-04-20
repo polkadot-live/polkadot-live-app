@@ -59,7 +59,7 @@ export class OnlineStatusController {
    */
   private static async initialize() {
     this.onlineStatus = await this.isConnected();
-    this.startPollLoop();
+    //this.startPollLoop();
   }
 
   /**
@@ -80,10 +80,10 @@ export class OnlineStatusController {
 
       // Re-initialize class if app goes offline to prevent stalling
       // upon calling `isConnected`.
-      if (!status && this.intervalId) {
-        this.stopPollLoop();
-        await this.initialize();
-      }
+      //if (!status && this.intervalId) {
+      //  this.stopPollLoop();
+      //  await this.initialize();
+      //}
     }
   };
 
@@ -127,7 +127,7 @@ export class OnlineStatusController {
    * sets the app to offline mode.
    */
   static handleSuspend = async () => {
-    this.stopPollLoop();
+    //this.stopPollLoop();
     this.onlineStatus = false;
 
     await AppOrchestrator.next({
@@ -150,7 +150,7 @@ export class OnlineStatusController {
     });
 
     // Start a new polling interval.
-    this.stopPollLoop();
+    //this.stopPollLoop();
     await this.initialize();
   };
 }

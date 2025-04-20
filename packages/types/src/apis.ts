@@ -2,6 +2,25 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { ChainID, ChainStatus } from './chains';
+import type { DedotClient } from 'dedot';
+import type { KusamaApi, PolkadotApi, WestendApi } from '@dedot/chaintypes';
+
+/**
+ * Relay chain dodeot clients.
+ */
+export type RelayDedotClient =
+  | DedotClient<PolkadotApi>
+  | DedotClient<KusamaApi>
+  | DedotClient<WestendApi>;
+
+/**
+ * Mapping from ID to type
+ */
+export interface ClientTypes {
+  polkadot: PolkadotApi;
+  kusama: KusamaApi;
+  westend: WestendApi;
+}
 
 /*
  * Type for storing essential data for an API instance.

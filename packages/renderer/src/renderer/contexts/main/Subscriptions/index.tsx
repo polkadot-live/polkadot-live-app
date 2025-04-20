@@ -196,8 +196,11 @@ export const SubscriptionsProvider = ({
         }
 
         // Subscribe to tasks.
-        account.queryMulti &&
-          (await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti));
+        if (account.queryMulti) {
+          for (const task of tasks) {
+            await TaskOrchestrator.subscribeTask(task, account.queryMulti);
+          }
+        }
 
         // Analytics.
         const event = `subscriptions-account-category-${targetStatus === 'enable' ? 'off' : 'on'}`;

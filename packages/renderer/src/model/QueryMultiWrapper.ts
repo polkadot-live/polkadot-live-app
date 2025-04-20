@@ -2,16 +2,28 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Utils from '@ren/utils/CommonUtils';
-import { APIsController } from '@ren/controller/APIsController';
+import { AccountId32 } from 'dedot/codecs';
+import { AccountsController } from '@ren/controller/AccountsController';
+import { APIsController } from '@ren/controller/dedot/APIsController';
 import { Callbacks } from '@app/callbacks';
 import { MainDebug } from '@ren/utils/DebugUtils';
-import { TaskOrchestrator } from '@ren/orchestrators/TaskOrchestrator';
-import type { ChainID } from '@polkadot-live/types/chains';
+import { getAccountNominatingData } from '@ren/renderer/callbacks/nominating';
+import {
+  getBalanceForAccount,
+  getNominationPoolDataForAccount,
+} from '@ren/utils/AccountUtils';
+
 import type { AnyData, AnyFunction } from '@polkadot-live/types/misc';
+import type { Account } from './Account';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { FlattenedAccountData } from 'packages/types/src';
+import type { QueryWithParams } from 'dedot/types';
+import type { RelayDedotClient } from '@polkadot-live/types/apis';
 import type {
   SubscriptionTask,
   QueryMultiEntry,
   ApiCallEntry,
+  PostCallbackSyncFlags,
 } from '@polkadot-live/types/subscriptions';
 
 const debug = MainDebug.extend('QueryMultiWrapper');
@@ -21,6 +33,15 @@ export class QueryMultiWrapper {
    * API call entries (subscription tasks) are keyed by their chain ID.
    */
   private subscriptions = new Map<ChainID, QueryMultiEntry>();
+
+  /**
+   * Flag what data needs syncing after executing callbacks.
+   */
+  postCallbackSyncFlags: PostCallbackSyncFlags = {
+    syncAccountBalance: false,
+    syncAccountNominationPool: false,
+    syncAccountNominating: false,
+  };
 
   /**
    * @name requiresApiInstanceForChain
@@ -114,7 +135,8 @@ export class QueryMultiWrapper {
    */
   private async handleCallback(entry: ApiCallEntry, dataArr: AnyData) {
     const { action, justBuilt } = entry.task;
-    const subData = dataArr[entry.task.dataIndex!];
+    const data = dataArr[entry.task.dataIndex!];
+    const flags = this.postCallbackSyncFlags;
 
     // Exit early if the task was just built (toggled on).
     if (justBuilt) {
@@ -124,47 +146,47 @@ export class QueryMultiWrapper {
 
     switch (action) {
       case 'subscribe:chain:timestamp': {
-        Callbacks.callback_query_timestamp_now(subData, entry, this);
+        Callbacks.callback_query_timestamp_now(data, entry, this);
         break;
       }
       case 'subscribe:chain:currentSlot': {
-        Callbacks.callback_query_babe_currentSlot(subData, entry, this);
+        Callbacks.callback_query_babe_currentSlot(data, entry, this);
         break;
       }
       case 'subscribe:account:balance:free': {
-        await Callbacks.callback_account_balance_free(subData, entry);
+        await Callbacks.callback_account_balance_free(data, entry, flags);
         break;
       }
       case 'subscribe:account:balance:frozen': {
-        await Callbacks.callback_account_balance_frozen(subData, entry);
+        await Callbacks.callback_account_balance_frozen(data, entry, flags);
         break;
       }
       case 'subscribe:account:balance:reserved': {
-        await Callbacks.callback_account_balance_reserved(subData, entry);
+        await Callbacks.callback_account_balance_reserved(data, entry, flags);
         break;
       }
       case 'subscribe:account:balance:spendable': {
-        await Callbacks.callback_account_balance_spendable(subData, entry);
+        await Callbacks.callback_account_balance_spendable(data, entry, flags);
         break;
       }
       case 'subscribe:account:nominationPools:rewards': {
-        await Callbacks.callback_nomination_pool_rewards(entry);
+        await Callbacks.callback_nomination_pool_rewards(entry, flags);
         break;
       }
       case 'subscribe:account:nominationPools:state': {
-        await Callbacks.callback_nomination_pool_state(subData, entry);
+        await Callbacks.callback_nomination_pool_state(data, entry, flags);
         break;
       }
       case 'subscribe:account:nominationPools:renamed': {
-        await Callbacks.callback_nomination_pool_renamed(subData, entry);
+        await Callbacks.callback_nomination_pool_renamed(data, entry, flags);
         break;
       }
       case 'subscribe:account:nominationPools:roles': {
-        await Callbacks.callback_nomination_pool_roles(subData, entry);
+        await Callbacks.callback_nomination_pool_roles(data, entry, flags);
         break;
       }
       case 'subscribe:account:nominationPools:commission': {
-        await Callbacks.callback_nomination_pool_commission(subData, entry);
+        await Callbacks.callback_nomination_pool_commission(data, entry, flags);
         break;
       }
       case 'subscribe:account:nominating:pendingPayouts': {
@@ -172,15 +194,15 @@ export class QueryMultiWrapper {
         break;
       }
       case 'subscribe:account:nominating:exposure': {
-        await Callbacks.callback_nominating_exposure(subData, entry);
+        await Callbacks.callback_nominating_exposure(data, entry, flags);
         break;
       }
       case 'subscribe:account:nominating:commission': {
-        await Callbacks.callback_nominating_commission(subData, entry);
+        await Callbacks.callback_nominating_commission(data, entry, flags);
         break;
       }
       case 'subscribe:account:nominating:nominations': {
-        await Callbacks.callback_nominating_nominations(subData, entry);
+        await Callbacks.callback_nominating_nominations(data, entry, flags);
         break;
       }
     }
@@ -198,23 +220,23 @@ export class QueryMultiWrapper {
         return;
       }
 
+      const api = (
+        await APIsController.getConnectedApiOrThrow(chainId)
+      ).getApi();
+
       // Construct the argument for new queryMulti call.
-      const finalArg: AnyData = await this.buildQueryMultiArg(chainId);
-      const instance = await APIsController.getConnectedApiOrThrow(chainId);
+      const queries = await this.buildQueryMultiArg(chainId);
 
-      // Call queryMulti api.
-      const unsub = await instance.api.queryMulti(
-        finalArg,
-        // The queryMulti callback.
-        async (data: AnyData) => {
-          // Work out task to handle
-          const { callEntries } = this.subscriptions.get(chainId)!;
-
-          for (const entry of callEntries) {
-            await this.handleCallback(entry, data);
-          }
+      const unsub = await api.queryMulti(queries, async (data: AnyData) => {
+        // Work out task to handle
+        const { callEntries } = this.subscriptions.get(chainId)!;
+        for (const entry of callEntries) {
+          await this.handleCallback(entry, data);
         }
-      );
+
+        // Update managed state after all callbacks processed.
+        await this.postCallback(api, chainId, callEntries);
+      });
 
       // Replace the entry's unsub function
       this.replaceUnsub(chainId, unsub);
@@ -223,6 +245,79 @@ export class QueryMultiWrapper {
       // TODO: UI notification
     }
   }
+
+  /**
+   * @name postCallback
+   * @summary Update managed state after processing all callbacks.
+   */
+  private postCallback = async (
+    api: RelayDedotClient,
+    chainId: ChainID,
+    callEntries: ApiCallEntry[]
+  ) => {
+    // Get the task's associated account.
+    const firstEntry = callEntries.at(0);
+    let account: Account | undefined = undefined;
+    if (firstEntry !== undefined) {
+      const { task } = firstEntry;
+      const address = task.account ? task.account.address : null;
+      address && (account = AccountsController.get(chainId, address));
+    }
+
+    if (account) {
+      // Sync account balance.
+      if (this.postCallbackSyncFlags.syncAccountBalance) {
+        const { address, chain } = account;
+        const balance = await getBalanceForAccount(api, address, chain, false);
+        account.balance = balance;
+      }
+
+      // Sync account nominating data.
+      if (this.postCallbackSyncFlags.syncAccountNominating) {
+        const result = await getAccountNominatingData(api, account);
+        result && (account.nominatingData = result);
+      }
+
+      // Sync account nomination pool data.
+      if (this.postCallbackSyncFlags.syncAccountNominationPool) {
+        const result = await getNominationPoolDataForAccount(account);
+        result && (account.nominationPoolData = result);
+      }
+
+      // Set updated account data in the appropriate entries.
+      for (const entry of callEntries) {
+        if (entry.task.account) {
+          entry.task.account = account.flatten();
+        }
+      }
+
+      // Update managed account data.
+      await AccountsController.set(account.chain, account);
+
+      // Reset flags.
+      this.postCallbackSyncFlags = {
+        syncAccountBalance: false,
+        syncAccountNominating: false,
+        syncAccountNominationPool: false,
+      };
+    }
+  };
+
+  /**
+   * @name updateEntryAccountData
+   * @summary Updated cached flattened account data after processing a one-shot.
+   */
+  updateEntryAccountData = (
+    chainId: ChainID,
+    flattened: FlattenedAccountData
+  ) => {
+    const { callEntries } = this.subscriptions.get(chainId)!;
+    for (const entry of callEntries) {
+      if (entry.task.account) {
+        entry.task.account = flattened;
+      }
+    }
+  };
 
   /**
    * @name insert
@@ -350,7 +445,7 @@ export class QueryMultiWrapper {
     const entry = this.subscriptions.get(chainId)!;
 
     // Unsubscribe from pervious query multi.
-    if (entry.unsub !== null) {
+    if (entry.unsub !== null && typeof entry.unsub === 'function') {
       entry.unsub();
     }
 
@@ -366,11 +461,11 @@ export class QueryMultiWrapper {
    */
   private async buildQueryMultiArg(chainId: ChainID) {
     // An array of arrays. The inner array represents a single API call.
-    const argument: AnyData = [];
+    const queries: QueryWithParams<AnyFunction>[] = [];
     const entry: QueryMultiEntry | undefined = this.subscriptions.get(chainId);
 
     if (!entry) {
-      return argument;
+      return queries;
     }
 
     // Data index registry tracks the entry index and its associated data index.
@@ -386,13 +481,9 @@ export class QueryMultiWrapper {
     for (const [outerI, { task }] of entry.callEntries.entries()) {
       if (outerI === 0) {
         // First task in the array cannot share with previous tasks.
-        const apiCall: AnyFunction = await TaskOrchestrator.getApiCall(task);
-
-        const callArray: AnyData[] = task.actionArgs
-          ? [apiCall].concat([...task.actionArgs])
-          : [apiCall];
-
-        argument.push(callArray);
+        const apiCall: AnyFunction = await QueryMultiWrapper.getApiCall(task);
+        const args = QueryMultiWrapper.parseActionArgs(task) || [];
+        queries.push({ fn: apiCall, args });
         continue;
       }
 
@@ -412,15 +503,11 @@ export class QueryMultiWrapper {
             dataIndex: nextDataIndex,
           });
 
-          const apiCall: AnyFunction = await TaskOrchestrator.getApiCall(task);
-          const callArray: AnyData[] = task.actionArgs
-            ? [apiCall].concat([...task.actionArgs])
-            : [apiCall];
-
-          argument.push(callArray);
+          const apiCall: AnyFunction = await QueryMultiWrapper.getApiCall(task);
+          const args = QueryMultiWrapper.parseActionArgs(task) || [];
+          queries.push({ fn: apiCall, args });
           break;
         } else {
-          // Check for shared call.
           if (task.apiCallAsString === innerT.apiCallAsString) {
             // Share if calls are the same with no args.
             if (!task.actionArgs && !innerT.actionArgs) {
@@ -498,7 +585,7 @@ export class QueryMultiWrapper {
       callEntries: [...updatedEntries],
     });
 
-    return argument;
+    return queries;
   }
 
   /**
@@ -510,4 +597,81 @@ export class QueryMultiWrapper {
 
     return Boolean(entry?.callEntries.some((e) => e.task.action === action));
   }
+
+  /**
+   * @name getApiQuery
+   * @summary Get the API query associated with a subscription.
+   */
+  static async getApiCall(task: SubscriptionTask) {
+    const { action, chainId } = task;
+    const api = (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
+
+    switch (action) {
+      case 'subscribe:chain:timestamp':
+        return api.query.timestamp.now;
+      case 'subscribe:chain:currentSlot':
+        return api.query.babe.currentSlot;
+      case 'subscribe:account:balance:free':
+      case 'subscribe:account:balance:frozen':
+      case 'subscribe:account:balance:reserved':
+      case 'subscribe:account:balance:spendable':
+      case 'subscribe:account:nominationPools:rewards':
+        return api.query.system.account;
+      case 'subscribe:account:nominationPools:commission':
+      case 'subscribe:account:nominationPools:roles':
+      case 'subscribe:account:nominationPools:state':
+        return api.query.nominationPools.bondedPools;
+      case 'subscribe:account:nominationPools:renamed':
+        return api.query.nominationPools.metadata;
+      case 'subscribe:account:nominating:commission':
+      case 'subscribe:account:nominating:exposure':
+      case 'subscribe:account:nominating:nominations':
+      case 'subscribe:account:nominating:pendingPayouts':
+        return api.query.staking.activeEra;
+      default:
+        throw new Error('Subscription action not found');
+    }
+  }
+
+  /**
+   * @name parseActionArgs
+   * @summary Parse serialized args into correct data types for API arguments.
+   */
+  static parseActionArgs = (task: SubscriptionTask) => {
+    const { action, actionArgs: args } = task;
+    if (!args) {
+      return args;
+    }
+
+    switch (action) {
+      case 'subscribe:account:balance:free':
+      case 'subscribe:account:balance:frozen':
+      case 'subscribe:account:balance:reserved':
+      case 'subscribe:account:balance:spendable': {
+        const address: string = args[0];
+        const accountId = new AccountId32(address);
+        return [accountId];
+      }
+      case 'subscribe:account:nominationPools:rewards': {
+        const poolAddress: string = args[0];
+        const accountId = new AccountId32(poolAddress);
+        return [accountId];
+      }
+      case 'subscribe:account:nominationPools:state':
+      case 'subscribe:account:nominationPools:roles':
+      case 'subscribe:account:nominationPools:commission':
+      case 'subscribe:account:nominationPools:renamed': {
+        return [Number(args[0])];
+      }
+      case 'subscribe:account:nominating:commission':
+      case 'subscribe:account:nominating:exposure':
+      case 'subscribe:account:nominating:nominations':
+      case 'subscribe:account:nominating:pendingPayouts': {
+        return args;
+      }
+      default: {
+        return args;
+      }
+    }
+  };
 }

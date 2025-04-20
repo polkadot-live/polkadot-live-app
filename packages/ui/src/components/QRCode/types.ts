@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type React from 'react';
-import type { HexString } from '@polkadot/util/types';
+import type { HexString } from '@dedot/utils';
 import type { Html5Qrcode } from 'html5-qrcode';
 
 export interface Html5QrScannerProps {

@@ -2,25 +2,34 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { AccountsController } from '@ren/controller/AccountsController';
-import { APIsController } from '@ren/controller/APIsController';
+import { APIsController } from '@ren/controller/dedot/APIsController';
 import { checkAccountWithProperties } from '@ren/utils/AccountUtils';
 import { Config as RendererConfig } from '@ren/config/processes/renderer';
 import { EventsController } from '@ren/controller/EventsController';
 import {
   areArraysEqual,
-  getAccountExposed_deprecated,
   getAccountNominatingData,
   getEraRewards,
 } from './nominating';
 import { NotificationsController } from '@ren/controller/NotificationsController';
 import { u8aToString, u8aUnwrapBytes } from '@polkadot/util';
-import { rmCommas } from '@w3ux/utils';
-import type { ApiCallEntry } from '@polkadot-live/types/subscriptions';
+import type {
+  ApiCallEntry,
+  PostCallbackSyncFlags,
+} from '@polkadot-live/types/subscriptions';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { EventCallback } from '@polkadot-live/types/reporter';
 import type { QueryMultiWrapper } from '@ren/model/QueryMultiWrapper';
-import type { NominationPoolRoles } from '@polkadot-live/types/accounts';
+import type {
+  NominationPoolCommission,
+  NominationPoolRoles,
+} from '@polkadot-live/types/accounts';
+import type {
+  PalletBalancesAccountData,
+  PalletNominationPoolsBondedPoolInner,
+  PalletStakingActiveEraInfo,
+} from '@dedot/chaintypes/substrate';
 
 export class Callbacks {
   /**
@@ -114,6 +123,7 @@ export class Callbacks {
   static async callback_account_balance_free(
     data: AnyData,
     entry: ApiCallEntry,
+    syncFlags: PostCallbackSyncFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
@@ -128,9 +138,9 @@ export class Callbacks {
       }
 
       // Get the received balance.
-      const human = data.toHuman();
-      const reserved = BigInt(rmCommas(human.data.reserved));
-      const free = BigInt(rmCommas(human.data.free)) - reserved;
+      const balance = data.data as PalletBalancesAccountData;
+      const reserved = balance.reserved;
+      const free = balance.free - reserved;
       const b = account.balance;
       const isSame = b.free ? free === b.free : false;
 
@@ -141,10 +151,7 @@ export class Callbacks {
 
       // Update account data if balance has changed.
       if (!isSame) {
-        account.balance.free = free;
-        account.balance.nonce = BigInt(rmCommas(human.nonce));
-        await AccountsController.set(account.chain, account);
-        entry.task.account = account.flatten();
+        syncFlags.syncAccountBalance = true;
       }
 
       // Create event and parse into same format as persisted events.
@@ -176,6 +183,7 @@ export class Callbacks {
   static async callback_account_balance_frozen(
     data: AnyData,
     entry: ApiCallEntry,
+    syncFlags: PostCallbackSyncFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
@@ -190,8 +198,8 @@ export class Callbacks {
       }
 
       // Get the received frozen balance.
-      const human = data.toHuman();
-      const frozen = BigInt(rmCommas(human.data.frozen));
+      const balance = data.data as PalletBalancesAccountData;
+      const frozen = balance.frozen;
       const b = account.balance;
       const isSame = b.frozen ? frozen === b.frozen : false;
 
@@ -202,10 +210,7 @@ export class Callbacks {
 
       // Update account data if balance has changed.
       if (!isSame) {
-        account.balance.frozen = frozen;
-        account.balance.nonce = BigInt(rmCommas(human.nonce));
-        await AccountsController.set(account.chain, account);
-        entry.task.account = account.flatten();
+        syncFlags.syncAccountBalance = true;
       }
 
       // Create event and parse into same format as persisted events.
@@ -237,6 +242,7 @@ export class Callbacks {
   static async callback_account_balance_reserved(
     data: AnyData,
     entry: ApiCallEntry,
+    syncFlags: PostCallbackSyncFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
@@ -251,8 +257,8 @@ export class Callbacks {
       }
 
       // Get the received reserved balance.
-      const human = data.toHuman();
-      const reserved = BigInt(rmCommas(human.data.reserved));
+      const balance = data.data as PalletBalancesAccountData;
+      const reserved = balance.reserved;
       const b = account.balance;
       const isSame = b.reserved ? reserved === b.reserved : false;
 
@@ -263,10 +269,7 @@ export class Callbacks {
 
       // Update account data if balance has changed.
       if (!isSame) {
-        account.balance.reserved = reserved;
-        account.balance.nonce = BigInt(rmCommas(human.nonce));
-        await AccountsController.set(account.chain, account);
-        entry.task.account = account.flatten();
+        syncFlags.syncAccountBalance = true;
       }
 
       // Create an event and parse into same format as persisted event.
@@ -297,6 +300,7 @@ export class Callbacks {
   static async callback_account_balance_spendable(
     data: AnyData,
     entry: ApiCallEntry,
+    syncFlags: PostCallbackSyncFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
@@ -310,20 +314,17 @@ export class Callbacks {
         return false;
       }
 
-      // Get API instance.
-      const { api } = await this.getApiOrThrow(account.chain);
-
       /**
        * Spendable balance equation:
        * spendable = free - max(max(frozen, reserved), ed)
        */
-      const human = data.toHuman();
-      const free = BigInt(rmCommas(human.data.free));
-      const frozen = BigInt(rmCommas(human.data.frozen));
-      const reserved = BigInt(rmCommas(human.data.reserved));
-      const ed = BigInt(
-        rmCommas(String(api.consts.balances.existentialDeposit))
-      );
+      const api = await this.getApiOrThrow(account.chain);
+      const ed = api.consts.balances.existentialDeposit;
+      const balance = data.data as PalletBalancesAccountData;
+
+      const free = balance.free;
+      const frozen = balance.frozen;
+      const reserved = balance.reserved;
 
       const max = (a: bigint, b: bigint): bigint => (a > b ? a : b);
       let spendable = free - max(max(frozen, reserved), ed);
@@ -343,9 +344,7 @@ export class Callbacks {
 
       // Update account nonce if balance has changed.
       if (!isSame) {
-        account.balance.nonce = BigInt(rmCommas(human.nonce));
-        await AccountsController.set(account.chain, account);
-        entry.task.account = account.flatten();
+        syncFlags.syncAccountBalance = true;
       }
 
       // Create an event and parse into same format as persisted event.
@@ -384,18 +383,18 @@ export class Callbacks {
    */
   static async callback_nomination_pool_rewards(
     entry: ApiCallEntry,
+    syncFlags: PostCallbackSyncFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
       const account = checkAccountWithProperties(entry, ['nominationPoolData']);
-      const { api } = await this.getApiOrThrow(account.chain);
+      const api = await this.getApiOrThrow(account.chain);
 
       // Fetch pending rewards for the account.
-      const result = (
-        await api.call.nominationPoolsApi.pendingRewards(account.address)
-      ).toString();
+      const pending = await api.call.nominationPoolsApi.pendingRewards(
+        account.address
+      );
 
-      const pending = BigInt(result);
       const cur = BigInt(account.nominationPoolData!.poolPendingRewards);
       const isSame = cur === pending;
 
@@ -406,9 +405,7 @@ export class Callbacks {
 
       // Update account and entry data.
       if (!isSame) {
-        account.nominationPoolData!.poolPendingRewards = pending.toString();
-        await AccountsController.set(account.chain, account);
-        entry.task.account = account.flatten();
+        syncFlags.syncAccountNominationPool = true;
       }
 
       // Get event and notification.
@@ -438,13 +435,15 @@ export class Callbacks {
   static async callback_nomination_pool_state(
     data: AnyData,
     entry: ApiCallEntry,
+    syncFlags: PostCallbackSyncFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
       const account = checkAccountWithProperties(entry, ['nominationPoolData']);
 
       // Get the received pool state.
-      const state: string = data.toHuman().state;
+      const casted = data as PalletNominationPoolsBondedPoolInner;
+      const state = casted.state as string;
       const cur = account.nominationPoolData!.poolState;
       const isSame = cur === state;
 
@@ -454,9 +453,7 @@ export class Callbacks {
 
       // Update account and entry data.
       if (!isSame) {
-        account.nominationPoolData!.poolState = state;
-        await AccountsController.set(account.chain, account);
-        entry.task.account = account.flatten();
+        syncFlags.syncAccountNominationPool = true;
       }
 
       // Get notification.
@@ -490,6 +487,7 @@ export class Callbacks {
   static async callback_nomination_pool_renamed(
     data: AnyData,
     entry: ApiCallEntry,
+    syncFlags: PostCallbackSyncFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
@@ -506,9 +504,7 @@ export class Callbacks {
 
       // Update account and entry data.
       if (!isSame) {
-        account.nominationPoolData!.poolName = poolName;
-        await AccountsController.set(account.chain, account);
-        entry.task.account = account.flatten();
+        syncFlags.syncAccountNominationPool = true;
       }
 
       // Get notification.
@@ -537,19 +533,29 @@ export class Callbacks {
    * @name callback_nomination_pool_roles
    * @summary Callback for 'subscribe:account:nominationPools:roles'
    *
-   * When a nomination pool's name changes, dispatch an event and notificaiton.
+   * When a nomination pool's roles changes, dispatch an event and notificaiton.
    */
   static async callback_nomination_pool_roles(
     data: AnyData,
     entry: ApiCallEntry,
+    syncFlags: PostCallbackSyncFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
       const account = checkAccountWithProperties(entry, ['nominationPoolData']);
 
       // Get the received pool roles.
-      const humanData: AnyData = data.toHuman();
-      const roles: NominationPoolRoles = humanData.roles;
+      const api = await this.getApiOrThrow(account.chain);
+      const prefix = api.consts.system.ss58Prefix;
+      const casted = data as PalletNominationPoolsBondedPoolInner;
+      const { depositor, root, nominator, bouncer } = casted.roles;
+
+      const roles: NominationPoolRoles = {
+        depositor: depositor.address(prefix),
+        root: root ? root.address(prefix) : undefined,
+        nominator: nominator ? nominator.address(prefix) : undefined,
+        bouncer: bouncer ? bouncer.address(prefix) : undefined,
+      };
 
       // Return if roles have not changed.
       const cur = account.nominationPoolData!.poolRoles;
@@ -566,10 +572,7 @@ export class Callbacks {
 
       // Update account and entry data.
       if (!isSame) {
-        // eslint-disable-next-line prettier/prettier
-        account.nominationPoolData!.poolRoles = { ...roles };
-        await AccountsController.set(account.chain, account);
-        entry.task.account = account.flatten();
+        syncFlags.syncAccountNominationPool = true;
       }
 
       // Get notification.
@@ -603,14 +606,27 @@ export class Callbacks {
   static async callback_nomination_pool_commission(
     data: AnyData,
     entry: ApiCallEntry,
+    syncFlags: PostCallbackSyncFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
       const account = checkAccountWithProperties(entry, ['nominationPoolData']);
 
       // Get the received pool commission.
-      const humanData: AnyData = data.toHuman();
-      const { changeRate, current, max, throttleFrom } = humanData.commission;
+      const casted = data as PalletNominationPoolsBondedPoolInner;
+      const { changeRate, current, max, throttleFrom } = casted.commission;
+
+      const cur: NominationPoolCommission = {
+        current: current ? [current[0].toString(), current[1].raw] : undefined,
+        max: max ? max.toString() : undefined,
+        changeRate: changeRate
+          ? {
+              maxIncrease: changeRate.maxIncrease.toString(),
+              minDelay: changeRate.minDelay.toString(),
+            }
+          : undefined,
+        throttleFrom: throttleFrom ? throttleFrom.toString() : undefined,
+      };
 
       // Return if roles have not changed.
       const poolCommission = account.nominationPoolData!.poolCommission;
@@ -618,10 +634,11 @@ export class Callbacks {
       const isSame =
         // eslint-disable-next-line prettier/prettier
         JSON.stringify(poolCommission.changeRate) ===
-          JSON.stringify(changeRate) &&
-        JSON.stringify(poolCommission.current) === JSON.stringify(current) &&
-        poolCommission.throttleFrom === (throttleFrom as string | null) &&
-        poolCommission.max === (max as string | null);
+          JSON.stringify(cur.changeRate) &&
+        JSON.stringify(poolCommission.current) ===
+          JSON.stringify(cur.current) &&
+        poolCommission.throttleFrom === cur.throttleFrom &&
+        poolCommission.max === cur.max;
 
       if (!isOneShot && isSame) {
         return true;
@@ -629,14 +646,7 @@ export class Callbacks {
 
       // Update account and entry data.
       if (!isSame) {
-        account.nominationPoolData!.poolCommission = {
-          changeRate,
-          current,
-          max,
-          throttleFrom,
-        };
-        await AccountsController.set(account.chain, account);
-        entry.task.account = account.flatten();
+        syncFlags.syncAccountNominationPool = true;
       }
 
       // Get notification.
@@ -674,18 +684,12 @@ export class Callbacks {
     try {
       // Check if account has nominating rewards from the previous era.
       const account = checkAccountWithProperties(entry, ['nominatingData']);
-      const { api } = await this.getApiOrThrow(account.chain);
-
-      // Fetch previous era.
-      const eraResult: AnyData = (
-        await api.query.staking.activeEra()
-      ).toHuman();
-
-      const era =
-        BigInt(parseInt((eraResult.index as string).replace(/,/g, ''))) - 1n;
 
       // Calculate rewards.
-      const eraRewards = await getEraRewards(account.address, api, Number(era));
+      const api = await this.getApiOrThrow(account.chain);
+      const eraResult = await api.query.staking.activeEra();
+      const lastEra = eraResult!.index - 1;
+      const eraRewards = await getEraRewards(account.address, api, lastEra);
 
       // Get notification and event.
       const notification = this.getNotificationFlag(entry, isOneShot)
@@ -697,7 +701,7 @@ export class Callbacks {
 
       const event = EventsController.getEvent(entry, {
         rewards: eraRewards.toString(),
-        era: era.toString(),
+        era: lastEra.toString(),
       });
 
       window.myAPI.sendEventTask({
@@ -722,78 +726,16 @@ export class Callbacks {
    *
    * The nominating account needs to be in the top 512 nominators (have
    * enough stake) to earn rewards from a particular validator.
-   *
-   * @deprecated staking.erasStakers replaced with staking.erasStakersPaged
-   */
-  static async callback_nominating_exposure_deprecated(
-    data: AnyData,
-    entry: ApiCallEntry,
-    isOneShot = false
-  ): Promise<boolean> {
-    try {
-      // eslint-disable-next-line prettier/prettier
-      const era: number = parseInt(
-        (data.toHuman().index as string).replace(/,/g, '')
-      );
-      const account = checkAccountWithProperties(entry, ['nominatingData']);
-      const alreadyKnown = account.nominatingData!.lastCheckedEra >= era;
-
-      // Exit early if this era exposure is already known for this account.
-      if (!isOneShot && alreadyKnown) {
-        return true;
-      }
-
-      // Otherwise get exposure.
-      const { api } = await this.getApiOrThrow(account.chain);
-      const exposed = await getAccountExposed_deprecated(api, era, account);
-
-      // Update account data.
-      if (account.nominatingData!.lastCheckedEra < era) {
-        account.nominatingData!.exposed = exposed;
-        account.nominatingData!.lastCheckedEra = era;
-        await AccountsController.set(account.chain, account);
-        entry.task.account = account.flatten();
-      }
-
-      // Get notification.
-      const notification = this.getNotificationFlag(entry, isOneShot)
-        ? NotificationsController.getNotification(entry, account, {
-            era,
-            exposed,
-          })
-        : null;
-
-      // Handle notification and events in main process.
-      window.myAPI.sendEventTask({
-        action: 'events:persist',
-        data: {
-          event: EventsController.getEvent(entry, { era, exposed }),
-          notification,
-          isOneShot,
-        },
-      });
-
-      return true;
-    } catch (err) {
-      console.error(err);
-      return false;
-    }
-  }
-
-  /**
-   * @name callback_nominating_exposure
-   * @summary Callback for 'subscribe:account:nominating:exposure'
    */
   static async callback_nominating_exposure(
     data: AnyData,
     entry: ApiCallEntry,
+    syncFlags: PostCallbackSyncFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
-      // eslint-disable-next-line prettier/prettier
-      const era: number = parseInt(
-        (data.toHuman().index as string).replace(/,/g, '')
-      );
+      const casted = data as PalletStakingActiveEraInfo;
+      const era: number = casted.index;
       const account = checkAccountWithProperties(entry, ['nominatingData']);
       const alreadyKnown = account.nominatingData!.lastCheckedEra >= era;
 
@@ -803,22 +745,21 @@ export class Callbacks {
       }
 
       // Cache previous exposure.
-      const { api } = await this.getApiOrThrow(account.chain);
       const { exposed: prevExposed } = account.nominatingData!;
+      const api = await this.getApiOrThrow(account.chain);
 
       // Update account nominating data.
       const maybeNominatingData = await getAccountNominatingData(api, account);
-      maybeNominatingData
-        ? (account.nominatingData = { ...maybeNominatingData })
-        : (account.nominatingData = null);
-
-      await AccountsController.set(account.chain, account);
-      entry.task.account = account.flatten();
 
       // Return if exposure has not changed.
       const exposed = maybeNominatingData ? maybeNominatingData.exposed : false;
       if (!isOneShot && prevExposed === exposed) {
         return true;
+      }
+
+      // Update account nominating data in post process.
+      if (prevExposed !== exposed) {
+        syncFlags.syncAccountNominating = true;
       }
 
       // Get notification.
@@ -856,13 +797,12 @@ export class Callbacks {
   static async callback_nominating_commission(
     data: AnyData,
     entry: ApiCallEntry,
+    syncFlags: PostCallbackSyncFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
-      // eslint-disable-next-line prettier/prettier
-      const era: number = parseInt(
-        (data.toHuman().index as string).replace(/,/g, '')
-      );
+      const casted = data as PalletStakingActiveEraInfo;
+      const era: number = casted.index;
       const account = checkAccountWithProperties(entry, ['nominatingData']);
       const alreadyKnown = account.nominatingData!.lastCheckedEra >= era;
 
@@ -872,7 +812,7 @@ export class Callbacks {
       }
 
       // Get live nominator data and check to see if it has changed.
-      const { api } = await this.getApiOrThrow(account.chain);
+      const api = await this.getApiOrThrow(account.chain);
 
       // Cache previous commissions.
       const prev = account.nominatingData!.validators.map((v) => v.commission);
@@ -880,12 +820,6 @@ export class Callbacks {
 
       // Update account nominating data.
       const maybeNominatingData = await getAccountNominatingData(api, account);
-      maybeNominatingData
-        ? (account.nominatingData = { ...maybeNominatingData })
-        : (account.nominatingData = null);
-
-      await AccountsController.set(account.chain, account);
-      entry.task.account = account.flatten();
 
       // Return if commissions haven't changed.
       if (maybeNominatingData) {
@@ -894,6 +828,7 @@ export class Callbacks {
 
         if (!areEqual) {
           hasChanged = true;
+          syncFlags.syncAccountNominating = true;
         } else if (!isOneShot && areEqual) {
           return true;
         }
@@ -936,13 +871,12 @@ export class Callbacks {
   static async callback_nominating_nominations(
     data: AnyData,
     entry: ApiCallEntry,
+    syncFlags: PostCallbackSyncFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
-      // eslint-disable-next-line prettier/prettier
-      const era: number = parseInt(
-        (data.toHuman().index as string).replace(/,/g, '')
-      );
+      const casted = data as PalletStakingActiveEraInfo;
+      const era: number = casted.index;
       const account = checkAccountWithProperties(entry, ['nominatingData']);
       const alreadyKnown = account.nominatingData!.lastCheckedEra >= era;
 
@@ -952,7 +886,7 @@ export class Callbacks {
       }
 
       // Get live nominator data and check to see if it has changed.
-      const { api } = await this.getApiOrThrow(account.chain);
+      const api = await this.getApiOrThrow(account.chain);
 
       // Cache previous nominations.
       const prev = account.nominatingData!.validators.map((v) => v.validatorId);
@@ -960,12 +894,6 @@ export class Callbacks {
 
       // Update account nominating data.
       const maybeNominatingData = await getAccountNominatingData(api, account);
-      maybeNominatingData
-        ? (account.nominatingData = { ...maybeNominatingData })
-        : (account.nominatingData = null);
-
-      await AccountsController.set(account.chain, account);
-      entry.task.account = account.flatten();
 
       // Return if nominations haven't changed.
       if (maybeNominatingData) {
@@ -974,6 +902,7 @@ export class Callbacks {
 
         if (!areEqual) {
           hasChanged = true;
+          syncFlags.syncAccountNominating = true;
         } else if (!isOneShot && areEqual) {
           return true;
         }
@@ -1011,7 +940,7 @@ export class Callbacks {
    * @summary Get an API instance of throw.
    */
   private static getApiOrThrow = async (chainId: ChainID) =>
-    await APIsController.getConnectedApiOrThrow(chainId);
+    (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
 
   /**
    * @name showNotificationFlag

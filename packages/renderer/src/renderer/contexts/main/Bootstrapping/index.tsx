@@ -12,11 +12,12 @@ import React, {
 } from 'react';
 import { defaultBootstrappingContext } from './default';
 import { AccountsController } from '@ren/controller/AccountsController';
-import { APIsController } from '@ren/controller/APIsController';
+import { APIsController } from '@ren/controller/dedot/APIsController';
 import { Config as RendererConfig } from '@ren/config/processes/renderer';
 import { ChainList } from '@ren/config/chains';
 import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
 import { IntervalsController } from '@ren/controller/IntervalsController';
+import { useConnections } from '@app/contexts/common/Connections';
 import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
 import { disconnectAPIs } from '@ren/utils/ApiUtils';
 import type { BootstrappingInterface } from './types';
@@ -37,6 +38,7 @@ export const BootstrappingProvider = ({
   children: React.ReactNode;
 }) => {
   const { addIntervalSubscription } = useIntervalSubscriptions();
+  const { isConnected: systemConnected } = useConnections();
 
   const [appLoading, setAppLoading] = useState(true);
   const [isAborting, setIsAborting] = useState(false);
@@ -63,25 +65,34 @@ export const BootstrappingProvider = ({
   };
 
   /// Step 1: Initialize chain APIs (disconnected).
-  const initChainAPIs = () =>
-    APIsController.initialize(Array.from(ChainList.keys()));
+  const initChainAPIs = () => {
+    const chainIds = Array.from(ChainList.keys());
+    APIsController.initialize(chainIds);
+  };
 
   /// Step 2: Initialize accounts.
   const initAccounts = async () => await AccountsController.initialize();
 
   /// Step 3: Connect necessary API instances.
   const connectAPIs = async () => {
-    const chainIds = Array.from(AccountsController.accounts.keys());
-    await Promise.all(chainIds.map((c) => APIsController.connectApi(c)));
+    const isConnected: boolean = await Utils.getOnlineStatus();
+    if (isConnected) {
+      const chainIds = Array.from(AccountsController.accounts.keys());
+      await Promise.all(chainIds.map((c) => APIsController.connectApi(c)));
+    }
   };
 
   /// Step 4: Fetch current account data.
-  const fetchAccountData = async () =>
-    await Promise.all([
-      AccountUtils.fetchAccountBalances(),
-      AccountUtils.fetchAccountNominationPoolData(),
-      AccountUtils.fetchAccountNominatingData(),
-    ]);
+  const fetchAccountData = async () => {
+    const isConnected: boolean = await Utils.getOnlineStatus();
+    if (isConnected) {
+      await Promise.all([
+        AccountUtils.fetchAccountBalances(),
+        AccountUtils.fetchAccountNominationPoolData(),
+        AccountUtils.fetchAccountNominatingData(),
+      ]);
+    }
+  };
 
   /// Step 5: Initiate subscriptions.
   const initSubscriptions = async () => {
@@ -101,6 +112,19 @@ export const BootstrappingProvider = ({
       window.removeEventListener('offline', handleOffline);
     };
   }, []);
+
+  /// Handle Dedot clients when online mode changes.
+  useEffect(() => {
+    const disconnectAll = async () => {
+      await APIsController.closeAll();
+    };
+
+    if (!systemConnected) {
+      disconnectAll();
+    } else {
+      // TODO: Handle online mode.
+    }
+  }, [systemConnected]);
 
   /// Handle abort flag.
   useEffect(() => {
@@ -139,7 +163,7 @@ export const BootstrappingProvider = ({
         if (index === 4) {
           // Always initialize intervals controller.
           await task();
-        } else if (!refAborted.current && isConnected) {
+        } else if (!refAborted.current) {
           await task();
         }
       }
