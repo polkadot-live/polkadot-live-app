@@ -544,7 +544,7 @@ export class Callbacks {
    * @name callback_nomination_pool_roles
    * @summary Callback for 'subscribe:account:nominationPools:roles'
    *
-   * When a nomination pool's name changes, dispatch an event and notificaiton.
+   * When a nomination pool's roles changes, dispatch an event and notificaiton.
    */
   static async callback_nomination_pool_roles(
     data: AnyData,

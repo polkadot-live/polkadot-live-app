@@ -262,7 +262,7 @@ export const getNominationPoolRewards = async (
  * pool data.
  */
 const setNominationPoolDataForAccount = async (account: Account) => {
-  if (!['Polkadot', 'Kusama', 'Westend'].includes(account.chain)) {
+  if (!Array.from(ChainList.keys()).includes(account.chain)) {
     return;
   }
 
@@ -295,11 +295,12 @@ const setNominationPoolDataForAccount = async (account: Account) => {
   const { depositor, root, nominator, bouncer } = npResult.roles;
   const { changeRate, current, max, throttleFrom } = npResult.commission;
 
+  const prefix = api.consts.system.ss58Prefix;
   const poolRoles: NominationPoolRoles = {
-    depositor: depositor.raw,
-    root: root?.raw || undefined,
-    nominator: nominator?.raw || undefined,
-    bouncer: bouncer?.raw || undefined,
+    depositor: depositor.address(prefix),
+    root: root ? root.address(prefix) : undefined,
+    nominator: nominator ? nominator.address(prefix) : undefined,
+    bouncer: bouncer ? bouncer.address(prefix) : undefined,
   };
 
   const poolCommission: NominationPoolCommission = {
