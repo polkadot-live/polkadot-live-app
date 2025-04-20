@@ -13039,7 +13039,7 @@ __metadata:
     ip: "npm:^2.0.1"
     jsdom: "npm:^25.0.1"
     nx: "npm:^20.1.2"
-    prettier: "npm:^3.2.5"
+    prettier: "npm:^3.5.3"
     prettier-plugin-organize-imports: "npm:^3.2.4"
     qrcode-generator: "npm:^1.4.4"
     react: "npm:^18.2.0"
@@ -13152,16 +13152,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^3.2.5":
-  version: 3.2.5
-  resolution: "prettier@npm:3.2.5"
-  bin:
-    prettier: bin/prettier.cjs
-  checksum: ea327f37a7d46f2324a34ad35292af2ad4c4c3c3355da07313339d7e554320f66f65f91e856add8530157a733c6c4a897dc41b577056be5c24c40f739f5ee8c6
-  languageName: node
-  linkType: hard
-
-"prettier@npm:^3.4.2":
+"prettier@npm:^3.4.2, prettier@npm:^3.5.3":
   version: 3.5.3
   resolution: "prettier@npm:3.5.3"
   bin:
