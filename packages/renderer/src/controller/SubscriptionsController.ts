@@ -73,7 +73,9 @@ export class SubscriptionsController {
       serialized !== '' ? JSON.parse(serialized) : [];
 
     // Subscribe to tasks.
-    await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions);
+    for (const task of tasks) {
+      await TaskOrchestrator.subscribeTask(task, this.chainSubscriptions);
+    }
   }
 
   /**
@@ -88,9 +90,8 @@ export class SubscriptionsController {
 
     // Get subscription task array and subscribe to batched tasks.
     const tasks = this.chainSubscriptions?.getSubscriptionTasks() || [];
-
-    if (tasks.length) {
-      await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions);
+    for (const task of tasks) {
+      await TaskOrchestrator.subscribeTask(task, this.chainSubscriptions);
     }
   }
 
@@ -108,8 +109,9 @@ export class SubscriptionsController {
       .getSubscriptionTasks()
       .filter((task) => task.chainId === chainId);
 
-    tasks.length &&
-      (await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions));
+    for (const task of tasks) {
+      await TaskOrchestrator.subscribeTask(task, this.chainSubscriptions);
+    }
   }
 
   /**
@@ -132,7 +134,9 @@ export class SubscriptionsController {
    */
   static async subscribeChainTasks(tasks: SubscriptionTask[]) {
     if (this.chainSubscriptions) {
-      await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions);
+      for (const task of tasks) {
+        await TaskOrchestrator.subscribeTask(task, this.chainSubscriptions);
+      }
     } else {
       throw new Error(
         'Error: SubscriptionsController::subscribeChainTask QueryMultiWrapper null'
