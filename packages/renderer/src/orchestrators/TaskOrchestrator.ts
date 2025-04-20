@@ -35,6 +35,9 @@ export class TaskOrchestrator {
   /**
    * @name subscribeTasks
    * @summary Same as `subscribeTask` but for an array of subscription tasks.
+   *
+   * @deprecated The index registry needs to be built synchrously and one subscription
+   * task added at a time.
    */
   static async subscribeTasks(
     tasks: SubscriptionTask[],

@@ -75,17 +75,24 @@ export const BootstrappingProvider = ({
 
   /// Step 3: Connect necessary API instances.
   const connectAPIs = async () => {
-    const chainIds = Array.from(AccountsController.accounts.keys());
-    await Promise.all(chainIds.map((c) => APIsController.connectApi(c)));
+    const isConnected: boolean = await Utils.getOnlineStatus();
+    if (isConnected) {
+      const chainIds = Array.from(AccountsController.accounts.keys());
+      await Promise.all(chainIds.map((c) => APIsController.connectApi(c)));
+    }
   };
 
   /// Step 4: Fetch current account data.
-  const fetchAccountData = async () =>
-    await Promise.all([
-      AccountUtils.fetchAccountBalances(),
-      AccountUtils.fetchAccountNominationPoolData(),
-      AccountUtils.fetchAccountNominatingData(),
-    ]);
+  const fetchAccountData = async () => {
+    const isConnected: boolean = await Utils.getOnlineStatus();
+    if (isConnected) {
+      await Promise.all([
+        AccountUtils.fetchAccountBalances(),
+        AccountUtils.fetchAccountNominationPoolData(),
+        AccountUtils.fetchAccountNominatingData(),
+      ]);
+    }
+  };
 
   /// Step 5: Initiate subscriptions.
   const initSubscriptions = async () => {
@@ -156,7 +163,7 @@ export const BootstrappingProvider = ({
         if (index === 4) {
           // Always initialize intervals controller.
           await task();
-        } else if (!refAborted.current && isConnected) {
+        } else if (!refAborted.current) {
           await task();
         }
       }

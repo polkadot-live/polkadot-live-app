@@ -167,9 +167,11 @@ export const useMainMessagePorts = () => {
         }
 
         // Subscribe to tasks if app setting enabled.
-        !fromBackup &&
-          ConfigRenderer.enableAutomaticSubscriptions &&
-          (await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti));
+        if (!fromBackup && account.queryMulti !== null) {
+          for (const task of tasks) {
+            await TaskOrchestrator.subscribeTask(task, account.queryMulti);
+          }
+        }
 
         // Update React subscriptions state.
         SubscriptionsController.syncAccountSubscriptionsState();

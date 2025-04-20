@@ -66,6 +66,7 @@ export class AccountsController {
   /**
    * @name subscribeAccounts
    * @summary Fetched persisted tasks from the store and re-subscribe to them.
+   *
    */
   static async subscribeAccounts() {
     if (!this.accounts) {
@@ -78,13 +79,13 @@ export class AccountsController {
           (await window.myAPI.sendSubscriptionTask({
             action: 'subscriptions:account:getAll',
             data: { address: account.address },
-          })) || '';
-
-        const tasks: SubscriptionTask[] =
-          stored !== '' ? JSON.parse(stored) : [];
+          })) || '[]';
 
         if (account.queryMulti !== null) {
-          await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
+          const tasks: SubscriptionTask[] = JSON.parse(stored);
+          for (const task of tasks) {
+            await TaskOrchestrator.subscribeTask(task, account.queryMulti);
+          }
         }
       }
     }
@@ -108,7 +109,9 @@ export class AccountsController {
       );
 
       if (tasks.length && account.queryMulti) {
-        await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
+        for (const task of tasks) {
+          await TaskOrchestrator.subscribeTask(task, account.queryMulti);
+        }
       }
     }
   }
@@ -123,10 +126,11 @@ export class AccountsController {
   static async resubscribeAccounts() {
     for (const accounts of this.accounts.values()) {
       for (const account of accounts) {
-        const tasks = account.getSubscriptionTasks() || [];
-
-        if (tasks.length && account.queryMulti) {
-          await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
+        if (account.queryMulti) {
+          const tasks = account.getSubscriptionTasks() || [];
+          for (const task of tasks) {
+            await TaskOrchestrator.subscribeTask(task, account.queryMulti);
+          }
         }
       }
     }
@@ -148,7 +152,9 @@ export class AccountsController {
 
     // Send tasks to query multi wrapper for removal.
     if (tasks && tasks.length && account && account.queryMulti) {
-      await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
+      for (const task of tasks) {
+        await TaskOrchestrator.subscribeTask(task, account.queryMulti);
+      }
 
       // Remove tasks from electron store.
       // TODO: Batch removal of task data in electron store.

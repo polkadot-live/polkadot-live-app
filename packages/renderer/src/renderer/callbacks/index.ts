@@ -13,7 +13,10 @@ import {
 } from './nominating';
 import { NotificationsController } from '@ren/controller/NotificationsController';
 import { u8aToString, u8aUnwrapBytes } from '@polkadot/util';
-import type { ApiCallEntry } from '@polkadot-live/types/subscriptions';
+import type {
+  ApiCallEntry,
+  PostCallbackSyncFlags,
+} from '@polkadot-live/types/subscriptions';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { EventCallback } from '@polkadot-live/types/reporter';
@@ -25,6 +28,7 @@ import type {
 import type {
   PalletBalancesAccountData,
   PalletNominationPoolsBondedPoolInner,
+  PalletStakingActiveEraInfo,
 } from '@dedot/chaintypes/substrate';
 
 export class Callbacks {
@@ -119,6 +123,7 @@ export class Callbacks {
   static async callback_account_balance_free(
     data: AnyData,
     entry: ApiCallEntry,
+    syncFlags: PostCallbackSyncFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
@@ -133,9 +138,7 @@ export class Callbacks {
       }
 
       // Get the received balance.
-      const nonce = data.nonce as number;
       const balance = data.data as PalletBalancesAccountData;
-
       const reserved = balance.reserved;
       const free = balance.free - reserved;
       const b = account.balance;
@@ -148,10 +151,7 @@ export class Callbacks {
 
       // Update account data if balance has changed.
       if (!isSame) {
-        account.balance.free = free;
-        account.balance.nonce = BigInt(nonce);
-        await AccountsController.set(account.chain, account);
-        entry.task.account = account.flatten();
+        syncFlags.syncAccountBalance = true;
       }
 
       // Create event and parse into same format as persisted events.
@@ -183,6 +183,7 @@ export class Callbacks {
   static async callback_account_balance_frozen(
     data: AnyData,
     entry: ApiCallEntry,
+    syncFlags: PostCallbackSyncFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
@@ -197,7 +198,6 @@ export class Callbacks {
       }
 
       // Get the received frozen balance.
-      const nonce = data.nonce as number;
       const balance = data.data as PalletBalancesAccountData;
       const frozen = balance.frozen;
       const b = account.balance;
@@ -210,10 +210,7 @@ export class Callbacks {
 
       // Update account data if balance has changed.
       if (!isSame) {
-        account.balance.frozen = frozen;
-        account.balance.nonce = BigInt(nonce);
-        await AccountsController.set(account.chain, account);
-        entry.task.account = account.flatten();
+        syncFlags.syncAccountBalance = true;
       }
 
       // Create event and parse into same format as persisted events.
@@ -245,6 +242,7 @@ export class Callbacks {
   static async callback_account_balance_reserved(
     data: AnyData,
     entry: ApiCallEntry,
+    syncFlags: PostCallbackSyncFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
@@ -259,7 +257,6 @@ export class Callbacks {
       }
 
       // Get the received reserved balance.
-      const nonce = data.nonce as number;
       const balance = data.data as PalletBalancesAccountData;
       const reserved = balance.reserved;
       const b = account.balance;
@@ -272,10 +269,7 @@ export class Callbacks {
 
       // Update account data if balance has changed.
       if (!isSame) {
-        account.balance.reserved = reserved;
-        account.balance.nonce = BigInt(nonce);
-        await AccountsController.set(account.chain, account);
-        entry.task.account = account.flatten();
+        syncFlags.syncAccountBalance = true;
       }
 
       // Create an event and parse into same format as persisted event.
@@ -306,6 +300,7 @@ export class Callbacks {
   static async callback_account_balance_spendable(
     data: AnyData,
     entry: ApiCallEntry,
+    syncFlags: PostCallbackSyncFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
@@ -325,7 +320,6 @@ export class Callbacks {
        */
       const api = await this.getApiOrThrow(account.chain);
       const ed = api.consts.balances.existentialDeposit;
-      const nonce = data.nonce as number;
       const balance = data.data as PalletBalancesAccountData;
 
       const free = balance.free;
@@ -350,9 +344,7 @@ export class Callbacks {
 
       // Update account nonce if balance has changed.
       if (!isSame) {
-        account.balance.nonce = BigInt(nonce);
-        await AccountsController.set(account.chain, account);
-        entry.task.account = account.flatten();
+        syncFlags.syncAccountBalance = true;
       }
 
       // Create an event and parse into same format as persisted event.
@@ -391,6 +383,7 @@ export class Callbacks {
    */
   static async callback_nomination_pool_rewards(
     entry: ApiCallEntry,
+    syncFlags: PostCallbackSyncFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
@@ -412,9 +405,7 @@ export class Callbacks {
 
       // Update account and entry data.
       if (!isSame) {
-        account.nominationPoolData!.poolPendingRewards = pending.toString();
-        await AccountsController.set(account.chain, account);
-        entry.task.account = account.flatten();
+        syncFlags.syncAccountNominationPool = true;
       }
 
       // Get event and notification.
@@ -444,6 +435,7 @@ export class Callbacks {
   static async callback_nomination_pool_state(
     data: AnyData,
     entry: ApiCallEntry,
+    syncFlags: PostCallbackSyncFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
@@ -461,9 +453,7 @@ export class Callbacks {
 
       // Update account and entry data.
       if (!isSame) {
-        account.nominationPoolData!.poolState = state;
-        await AccountsController.set(account.chain, account);
-        entry.task.account = account.flatten();
+        syncFlags.syncAccountNominationPool = true;
       }
 
       // Get notification.
@@ -497,6 +487,7 @@ export class Callbacks {
   static async callback_nomination_pool_renamed(
     data: AnyData,
     entry: ApiCallEntry,
+    syncFlags: PostCallbackSyncFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
@@ -513,9 +504,7 @@ export class Callbacks {
 
       // Update account and entry data.
       if (!isSame) {
-        account.nominationPoolData!.poolName = poolName;
-        await AccountsController.set(account.chain, account);
-        entry.task.account = account.flatten();
+        syncFlags.syncAccountNominationPool = true;
       }
 
       // Get notification.
@@ -544,11 +533,12 @@ export class Callbacks {
    * @name callback_nomination_pool_roles
    * @summary Callback for 'subscribe:account:nominationPools:roles'
    *
-   * When a nomination pool's name changes, dispatch an event and notificaiton.
+   * When a nomination pool's roles changes, dispatch an event and notificaiton.
    */
   static async callback_nomination_pool_roles(
     data: AnyData,
     entry: ApiCallEntry,
+    syncFlags: PostCallbackSyncFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
@@ -582,10 +572,7 @@ export class Callbacks {
 
       // Update account and entry data.
       if (!isSame) {
-        // eslint-disable-next-line prettier/prettier
-        account.nominationPoolData!.poolRoles = { ...roles };
-        await AccountsController.set(account.chain, account);
-        entry.task.account = account.flatten();
+        syncFlags.syncAccountNominationPool = true;
       }
 
       // Get notification.
@@ -619,6 +606,7 @@ export class Callbacks {
   static async callback_nomination_pool_commission(
     data: AnyData,
     entry: ApiCallEntry,
+    syncFlags: PostCallbackSyncFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
@@ -658,9 +646,7 @@ export class Callbacks {
 
       // Update account and entry data.
       if (!isSame) {
-        account.nominationPoolData!.poolCommission = cur;
-        await AccountsController.set(account.chain, account);
-        entry.task.account = account.flatten();
+        syncFlags.syncAccountNominationPool = true;
       }
 
       // Get notification.
@@ -744,13 +730,12 @@ export class Callbacks {
   static async callback_nominating_exposure(
     data: AnyData,
     entry: ApiCallEntry,
+    syncFlags: PostCallbackSyncFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
-      // eslint-disable-next-line prettier/prettier
-      const era: number = parseInt(
-        (data.toHuman().index as string).replace(/,/g, '')
-      );
+      const casted = data as PalletStakingActiveEraInfo;
+      const era: number = casted.index;
       const account = checkAccountWithProperties(entry, ['nominatingData']);
       const alreadyKnown = account.nominatingData!.lastCheckedEra >= era;
 
@@ -765,17 +750,16 @@ export class Callbacks {
 
       // Update account nominating data.
       const maybeNominatingData = await getAccountNominatingData(api, account);
-      maybeNominatingData
-        ? (account.nominatingData = { ...maybeNominatingData })
-        : (account.nominatingData = null);
-
-      await AccountsController.set(account.chain, account);
-      entry.task.account = account.flatten();
 
       // Return if exposure has not changed.
       const exposed = maybeNominatingData ? maybeNominatingData.exposed : false;
       if (!isOneShot && prevExposed === exposed) {
         return true;
+      }
+
+      // Update account nominating data in post process.
+      if (prevExposed !== exposed) {
+        syncFlags.syncAccountNominating = true;
       }
 
       // Get notification.
@@ -813,13 +797,12 @@ export class Callbacks {
   static async callback_nominating_commission(
     data: AnyData,
     entry: ApiCallEntry,
+    syncFlags: PostCallbackSyncFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
-      // eslint-disable-next-line prettier/prettier
-      const era: number = parseInt(
-        (data.toHuman().index as string).replace(/,/g, '')
-      );
+      const casted = data as PalletStakingActiveEraInfo;
+      const era: number = casted.index;
       const account = checkAccountWithProperties(entry, ['nominatingData']);
       const alreadyKnown = account.nominatingData!.lastCheckedEra >= era;
 
@@ -837,12 +820,6 @@ export class Callbacks {
 
       // Update account nominating data.
       const maybeNominatingData = await getAccountNominatingData(api, account);
-      maybeNominatingData
-        ? (account.nominatingData = { ...maybeNominatingData })
-        : (account.nominatingData = null);
-
-      await AccountsController.set(account.chain, account);
-      entry.task.account = account.flatten();
 
       // Return if commissions haven't changed.
       if (maybeNominatingData) {
@@ -851,6 +828,7 @@ export class Callbacks {
 
         if (!areEqual) {
           hasChanged = true;
+          syncFlags.syncAccountNominating = true;
         } else if (!isOneShot && areEqual) {
           return true;
         }
@@ -893,13 +871,12 @@ export class Callbacks {
   static async callback_nominating_nominations(
     data: AnyData,
     entry: ApiCallEntry,
+    syncFlags: PostCallbackSyncFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
-      // eslint-disable-next-line prettier/prettier
-      const era: number = parseInt(
-        (data.toHuman().index as string).replace(/,/g, '')
-      );
+      const casted = data as PalletStakingActiveEraInfo;
+      const era: number = casted.index;
       const account = checkAccountWithProperties(entry, ['nominatingData']);
       const alreadyKnown = account.nominatingData!.lastCheckedEra >= era;
 
@@ -917,12 +894,6 @@ export class Callbacks {
 
       // Update account nominating data.
       const maybeNominatingData = await getAccountNominatingData(api, account);
-      maybeNominatingData
-        ? (account.nominatingData = { ...maybeNominatingData })
-        : (account.nominatingData = null);
-
-      await AccountsController.set(account.chain, account);
-      entry.task.account = account.flatten();
 
       // Return if nominations haven't changed.
       if (maybeNominatingData) {
@@ -931,6 +902,7 @@ export class Callbacks {
 
         if (!areEqual) {
           hasChanged = true;
+          syncFlags.syncAccountNominating = true;
         } else if (!isOneShot && areEqual) {
           return true;
         }

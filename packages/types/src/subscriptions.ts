@@ -39,6 +39,12 @@ export interface IntervalSubscription {
   justBuilt?: boolean;
 }
 
+export interface PostCallbackSyncFlags {
+  syncAccountBalance: boolean;
+  syncAccountNominationPool: boolean;
+  syncAccountNominating: boolean;
+}
+
 export type SubscriptionNextStatus = 'enable' | 'disable';
 
 export interface SubscriptionTask {

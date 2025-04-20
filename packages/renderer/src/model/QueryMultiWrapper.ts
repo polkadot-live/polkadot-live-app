@@ -3,17 +3,28 @@
 
 import * as Utils from '@ren/utils/CommonUtils';
 import { AccountId32 } from 'dedot/codecs';
+import { AccountsController } from '@ren/controller/AccountsController';
 import { APIsController } from '@ren/controller/dedot/APIsController';
 import { Callbacks } from '@app/callbacks';
 import { MainDebug } from '@ren/utils/DebugUtils';
-import type { ChainID } from '@polkadot-live/types/chains';
+import { getAccountNominatingData } from '@ren/renderer/callbacks/nominating';
+import {
+  getBalanceForAccount,
+  getNominationPoolDataForAccount,
+} from '@ren/utils/AccountUtils';
+
 import type { AnyData, AnyFunction } from '@polkadot-live/types/misc';
+import type { Account } from './Account';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { FlattenedAccountData } from 'packages/types/src';
+import type { QueryWithParams } from 'dedot/types';
+import type { RelayDedotClient } from '@polkadot-live/types/apis';
 import type {
   SubscriptionTask,
   QueryMultiEntry,
   ApiCallEntry,
+  PostCallbackSyncFlags,
 } from '@polkadot-live/types/subscriptions';
-import type { QueryWithParams } from 'dedot/types';
 
 const debug = MainDebug.extend('QueryMultiWrapper');
 
@@ -22,6 +33,15 @@ export class QueryMultiWrapper {
    * API call entries (subscription tasks) are keyed by their chain ID.
    */
   private subscriptions = new Map<ChainID, QueryMultiEntry>();
+
+  /**
+   * Flag what data needs syncing after executing callbacks.
+   */
+  postCallbackSyncFlags: PostCallbackSyncFlags = {
+    syncAccountBalance: false,
+    syncAccountNominationPool: false,
+    syncAccountNominating: false,
+  };
 
   /**
    * @name requiresApiInstanceForChain
@@ -115,7 +135,8 @@ export class QueryMultiWrapper {
    */
   private async handleCallback(entry: ApiCallEntry, dataArr: AnyData) {
     const { action, justBuilt } = entry.task;
-    const subData = dataArr[entry.task.dataIndex!];
+    const data = dataArr[entry.task.dataIndex!];
+    const flags = this.postCallbackSyncFlags;
 
     // Exit early if the task was just built (toggled on).
     if (justBuilt) {
@@ -125,47 +146,47 @@ export class QueryMultiWrapper {
 
     switch (action) {
       case 'subscribe:chain:timestamp': {
-        Callbacks.callback_query_timestamp_now(subData, entry, this);
+        Callbacks.callback_query_timestamp_now(data, entry, this);
         break;
       }
       case 'subscribe:chain:currentSlot': {
-        Callbacks.callback_query_babe_currentSlot(subData, entry, this);
+        Callbacks.callback_query_babe_currentSlot(data, entry, this);
         break;
       }
       case 'subscribe:account:balance:free': {
-        await Callbacks.callback_account_balance_free(subData, entry);
+        await Callbacks.callback_account_balance_free(data, entry, flags);
         break;
       }
       case 'subscribe:account:balance:frozen': {
-        await Callbacks.callback_account_balance_frozen(subData, entry);
+        await Callbacks.callback_account_balance_frozen(data, entry, flags);
         break;
       }
       case 'subscribe:account:balance:reserved': {
-        await Callbacks.callback_account_balance_reserved(subData, entry);
+        await Callbacks.callback_account_balance_reserved(data, entry, flags);
         break;
       }
       case 'subscribe:account:balance:spendable': {
-        await Callbacks.callback_account_balance_spendable(subData, entry);
+        await Callbacks.callback_account_balance_spendable(data, entry, flags);
         break;
       }
       case 'subscribe:account:nominationPools:rewards': {
-        await Callbacks.callback_nomination_pool_rewards(entry);
+        await Callbacks.callback_nomination_pool_rewards(entry, flags);
         break;
       }
       case 'subscribe:account:nominationPools:state': {
-        await Callbacks.callback_nomination_pool_state(subData, entry);
+        await Callbacks.callback_nomination_pool_state(data, entry, flags);
         break;
       }
       case 'subscribe:account:nominationPools:renamed': {
-        await Callbacks.callback_nomination_pool_renamed(subData, entry);
+        await Callbacks.callback_nomination_pool_renamed(data, entry, flags);
         break;
       }
       case 'subscribe:account:nominationPools:roles': {
-        await Callbacks.callback_nomination_pool_roles(subData, entry);
+        await Callbacks.callback_nomination_pool_roles(data, entry, flags);
         break;
       }
       case 'subscribe:account:nominationPools:commission': {
-        await Callbacks.callback_nomination_pool_commission(subData, entry);
+        await Callbacks.callback_nomination_pool_commission(data, entry, flags);
         break;
       }
       case 'subscribe:account:nominating:pendingPayouts': {
@@ -173,15 +194,15 @@ export class QueryMultiWrapper {
         break;
       }
       case 'subscribe:account:nominating:exposure': {
-        await Callbacks.callback_nominating_exposure(subData, entry);
+        await Callbacks.callback_nominating_exposure(data, entry, flags);
         break;
       }
       case 'subscribe:account:nominating:commission': {
-        await Callbacks.callback_nominating_commission(subData, entry);
+        await Callbacks.callback_nominating_commission(data, entry, flags);
         break;
       }
       case 'subscribe:account:nominating:nominations': {
-        await Callbacks.callback_nominating_nominations(subData, entry);
+        await Callbacks.callback_nominating_nominations(data, entry, flags);
         break;
       }
     }
@@ -212,6 +233,9 @@ export class QueryMultiWrapper {
         for (const entry of callEntries) {
           await this.handleCallback(entry, data);
         }
+
+        // Update managed state after all callbacks processed.
+        await this.postCallback(api, chainId, callEntries);
       });
 
       // Replace the entry's unsub function
@@ -221,6 +245,79 @@ export class QueryMultiWrapper {
       // TODO: UI notification
     }
   }
+
+  /**
+   * @name postCallback
+   * @summary Update managed state after processing all callbacks.
+   */
+  private postCallback = async (
+    api: RelayDedotClient,
+    chainId: ChainID,
+    callEntries: ApiCallEntry[]
+  ) => {
+    // Get the task's associated account.
+    const firstEntry = callEntries.at(0);
+    let account: Account | undefined = undefined;
+    if (firstEntry !== undefined) {
+      const { task } = firstEntry;
+      const address = task.account ? task.account.address : null;
+      address && (account = AccountsController.get(chainId, address));
+    }
+
+    if (account) {
+      // Sync account balance.
+      if (this.postCallbackSyncFlags.syncAccountBalance) {
+        const { address, chain } = account;
+        const balance = await getBalanceForAccount(api, address, chain, false);
+        account.balance = balance;
+      }
+
+      // Sync account nominating data.
+      if (this.postCallbackSyncFlags.syncAccountNominating) {
+        const result = await getAccountNominatingData(api, account);
+        result && (account.nominatingData = result);
+      }
+
+      // Sync account nomination pool data.
+      if (this.postCallbackSyncFlags.syncAccountNominationPool) {
+        const result = await getNominationPoolDataForAccount(account);
+        result && (account.nominationPoolData = result);
+      }
+
+      // Set updated account data in the appropriate entries.
+      for (const entry of callEntries) {
+        if (entry.task.account) {
+          entry.task.account = account.flatten();
+        }
+      }
+
+      // Update managed account data.
+      await AccountsController.set(account.chain, account);
+
+      // Reset flags.
+      this.postCallbackSyncFlags = {
+        syncAccountBalance: false,
+        syncAccountNominating: false,
+        syncAccountNominationPool: false,
+      };
+    }
+  };
+
+  /**
+   * @name updateEntryAccountData
+   * @summary Updated cached flattened account data after processing a one-shot.
+   */
+  updateEntryAccountData = (
+    chainId: ChainID,
+    flattened: FlattenedAccountData
+  ) => {
+    const { callEntries } = this.subscriptions.get(chainId)!;
+    for (const entry of callEntries) {
+      if (entry.task.account) {
+        entry.task.account = flattened;
+      }
+    }
+  };
 
   /**
    * @name insert
