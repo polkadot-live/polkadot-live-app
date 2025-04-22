@@ -12,7 +12,6 @@ import type {
   SerializedPalletReferendaCurve,
   SerializedTrackItem,
 } from '@polkadot-live/types/openGov';
-import type { PalletReferendaTrack } from '@dedot/chaintypes/westend';
 import type { RelayDedotClient } from '@polkadot-live/types/apis';
 import type {
   PalletReferendaCurve,
@@ -103,14 +102,13 @@ const parseCurve = (
  * @summary Serialize tracks for transmission.
  */
 export const getSerializedTracks = (
-  tracks: PalletReferendaTrack[] | [number, PalletReferendaTrackInfo][]
+  tracks: [number, PalletReferendaTrackInfo][]
 ) =>
   tracks.map((item) => {
-    const legacy = Array.isArray(item);
-    const info = legacy ? item[1] : item.info;
+    const info = item[1];
 
     return {
-      id: legacy ? item[0].toString() : item.id.toString(),
+      id: item[0].toString(),
       info: {
         name: info.name,
         maxDeciding: info.maxDeciding.toString(),
