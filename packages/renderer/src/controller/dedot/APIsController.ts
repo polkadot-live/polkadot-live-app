@@ -6,7 +6,11 @@ import * as smoldot from 'smoldot/no-auto-bytecode';
 import { Api as DedotApi } from '@ren/model/dedot/Api';
 import { ChainList } from '@ren/config/chains';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { ClientTypes, FlattenedAPIData } from '@polkadot-live/types/apis';
+import type {
+  ClientTypes,
+  FlattenedAPIData,
+  NodeEndpoint,
+} from '@polkadot-live/types/apis';
 import type { AnyData } from '@polkadot-live/types/misc';
 
 type ChainToKey<T extends ChainID> = T extends 'Polkadot'
@@ -106,7 +110,7 @@ export class APIsController {
   /**
    * Set and connect to an endpoint for a given client if online.
    */
-  static connectEndpoint = async (chainId: ChainID, endpoint: string) => {
+  static connectEndpoint = async (chainId: ChainID, endpoint: NodeEndpoint) => {
     const status = this.getStatus(chainId);
 
     switch (status) {
@@ -206,7 +210,10 @@ export class APIsController {
   /**
    * Set client endpoint.
    */
-  private static setClientEndpoint = (chainId: ChainID, endpoint: string) => {
+  private static setClientEndpoint = (
+    chainId: ChainID,
+    endpoint: NodeEndpoint
+  ) => {
     const client = this.get(chainId)!;
     client.endpoint = endpoint;
     this.set(client);
@@ -228,8 +235,8 @@ export class APIsController {
 
   private static getClient = <T extends ChainID>(
     chainId: T,
-    endpoint: string,
-    rpcs: string[]
+    endpoint: NodeEndpoint,
+    rpcs: NodeEndpoint[]
   ): DedotApi<ChainToKey<T>> =>
     new DedotApi<ChainToKey<T>>(endpoint, chainId, rpcs);
 

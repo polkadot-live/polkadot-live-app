@@ -20,11 +20,12 @@ import { IntervalsController } from '@ren/controller/IntervalsController';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
 import { disconnectAPIs } from '@ren/utils/ApiUtils';
+import type { AnyData } from '@polkadot-live/types/misc';
 import type { BootstrappingInterface } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { IpcTask } from '@polkadot-live/types/communication';
-import type { AnyData } from '@polkadot-live/types/misc';
+import type { NodeEndpoint } from '@polkadot-live/types/apis';
 
 export const BootstrappingContext = createContext<BootstrappingInterface>(
   defaultBootstrappingContext
@@ -250,7 +251,7 @@ export const BootstrappingProvider = ({
   /// Re-subscribe to tasks when switching to a different endpoint.
   const handleNewEndpointForChain = async (
     chainId: ChainID,
-    newEndpoint: string
+    newEndpoint: NodeEndpoint
   ) => {
     await APIsController.connectEndpoint(chainId, newEndpoint);
 

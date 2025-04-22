@@ -4,17 +4,21 @@
 import { ChainList } from '@ren/config/chains';
 import { DedotClient, WsProvider } from 'dedot';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { ClientTypes, FlattenedAPIData } from '@polkadot-live/types/apis';
+import type {
+  ClientTypes,
+  FlattenedAPIData,
+  NodeEndpoint,
+} from '@polkadot-live/types/apis';
 
 const isTestEnv = (): boolean => process.env.NODE_ENV === 'test';
 
 export class Api<T extends keyof ClientTypes> {
   api: DedotClient<ClientTypes[T]> | null;
   chain: ChainID;
-  endpoint: string;
-  rpcs: string[] = [];
+  endpoint: NodeEndpoint;
+  rpcs: NodeEndpoint[] = [];
 
-  constructor(endpoint: string, chainId: ChainID, rpcs: string[]) {
+  constructor(endpoint: NodeEndpoint, chainId: ChainID, rpcs: NodeEndpoint[]) {
     this.api = null;
     this.chain = chainId;
     this.endpoint = endpoint;

@@ -6,9 +6,10 @@ import PolkadotIcon from './svg/polkadotIcon.svg?react';
 import WestendIcon from './svg/westendIcon.svg?react';
 import KusamaIcon from './svg/kusamaIcon.svg?react';
 import PolkadotAppIcon from './svg/ledger/polkadot.svg?react';
+import { polkadot, ksmcc3, westend2 } from '@substrate/connect-known-chains';
 import type { ChainID, SelectNetworkData } from '@polkadot-live/types/chains';
 import type { FunctionComponent, SVGProps } from 'react';
-import { polkadot, ksmcc3, westend2 } from '@substrate/connect-known-chains';
+import type { NodeEndpoint } from '@polkadot-live/types/apis';
 
 interface Chain {
   icon: FunctionComponent<
@@ -20,7 +21,7 @@ interface Chain {
     >;
   };
   endpoints: {
-    rpcs: string[];
+    rpcs: NodeEndpoint[];
     lightClient: string;
   };
   units: number;
