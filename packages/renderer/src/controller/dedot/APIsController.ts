@@ -2,10 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Utils from '@ren/utils/CommonUtils';
+import * as smoldot from 'smoldot/no-auto-bytecode';
 import { Api as DedotApi } from '@ren/model/dedot/Api';
 import { ChainList } from '@ren/config/chains';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ClientTypes, FlattenedAPIData } from '@polkadot-live/types/apis';
+import type { AnyData } from '@polkadot-live/types/misc';
 
 type ChainToKey<T extends ChainID> = T extends 'Polkadot'
   ? 'polkadot'
@@ -15,6 +17,8 @@ type ChainToKey<T extends ChainID> = T extends 'Polkadot'
 
 export class APIsController {
   static clients: DedotApi<keyof ClientTypes>[] = [];
+  static smoldotClient: smoldot.Client | null = null;
+
   static setUiTrigger: React.Dispatch<React.SetStateAction<boolean>>;
   static cachedSetChains: React.Dispatch<
     React.SetStateAction<Map<ChainID, FlattenedAPIData>>
@@ -32,6 +36,34 @@ export class APIsController {
     const map = new Map<ChainID, FlattenedAPIData>();
     this.clients.map((c) => map.set(c.chain, c.flatten()));
     this.cachedSetChains(map);
+
+    // Initialize smoldot light client.
+    this.initSmoldot();
+  };
+
+  /**
+   * Initalize smoldot light client, make ready for chain connections.
+   */
+  private static initSmoldot = () => {
+    const worker = new Worker(new URL('./worker.ts', import.meta.url), {
+      type: 'module',
+    });
+
+    const bytecode: AnyData = new Promise((resolve) => {
+      worker.onmessage = (event) => {
+        resolve(event.data);
+      };
+    });
+
+    const { port1, port2 } = new MessageChannel();
+    worker.postMessage(port1, [port1]);
+
+    this.smoldotClient = smoldot.startWithBytecode({
+      bytecode,
+      forbidTcp: true,
+      forbidWs: true,
+      portToWorker: port2,
+    });
   };
 
   /**
