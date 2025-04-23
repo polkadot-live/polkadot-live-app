@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ChainList } from '@ren/config/chains';
-import { DedotClient, WsProvider } from 'dedot';
+import { DedotClient, SmoldotProvider, WsProvider } from 'dedot';
+import type * as smoldot from 'smoldot/no-auto-bytecode';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   ClientTypes,
@@ -45,13 +46,21 @@ export class Api<T extends keyof ClientTypes> {
   /**
    * Connect to an endpoint.
    */
-  connect = async () => {
+  connect = async (smoldotClient: smoldot.Client) => {
     try {
       if (this.api && this.status() !== 'disconnected') {
         return;
       }
 
-      const provider = new WsProvider(this.endpoint);
+      let provider: WsProvider | SmoldotProvider;
+      if (this.endpoint === 'smoldot') {
+        const chainSpec = ChainList.get(this.chain)!.endpoints.lightClient;
+        const chain = await smoldotClient.addChain({ chainSpec });
+        provider = new SmoldotProvider(chain);
+      } else {
+        provider = new WsProvider(this.endpoint);
+      }
+
       const api = await DedotClient.new<ClientTypes[T]>({
         provider,
         cacheMetadata: !isTestEnv(),
@@ -64,7 +73,7 @@ export class Api<T extends keyof ClientTypes> {
 
       this.api = api;
       this.chain = chainId;
-      console.log('⭕ Dedot: %o', this.endpoint, ' CONNECTED');
+      console.log('⭕ Dedot: %o', this.endpoint, ' CONNECTED', this.chain);
     } catch (err) {
       console.log('!connect error');
       console.error(err);

@@ -66,9 +66,9 @@ export const BootstrappingProvider = ({
   };
 
   /// Step 1: Initialize chain APIs (disconnected).
-  const initChainAPIs = () => {
+  const initChainAPIs = async () => {
     const chainIds = Array.from(ChainList.keys());
-    APIsController.initialize(chainIds);
+    await APIsController.initialize(chainIds);
   };
 
   /// Step 2: Initialize accounts.
@@ -139,7 +139,9 @@ export const BootstrappingProvider = ({
   const handleInitializeApp = async () => {
     if (!refAppInitialized.current) {
       setAppLoading(true);
-      initChainAPIs();
+
+      // Initialize APIs and smoldot light client.
+      await initChainAPIs();
 
       // Initialise online status controller and set online state.
       await window.myAPI.sendConnectionTaskAsync({

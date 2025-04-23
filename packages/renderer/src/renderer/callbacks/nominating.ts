@@ -166,31 +166,32 @@ export const getAccountExposed = async (
   account: Account,
   validatorData: ValidatorData[]
 ): Promise<boolean> => {
-  const prefix = api.consts.system.ss58Prefix;
   const validators = validatorData.map((v) => v.validatorId);
+  const prefix = api.consts.system.ss58Prefix;
   let exposed = false;
 
-  // Iterate validators account is nominating.
-  validatorLoop: for (const vId of validators) {
-    // Check if target address is the validator.
-    if (account.address === vId) {
-      exposed = true;
-      break;
-    }
+  // Check if target address is the validator.
+  if (validators.find((vId) => account.address === vId)) {
+    return true;
+  }
 
-    // Iterate validator paged exposures.
-    // [[number, AccountId32, number], SpStakingExposurePage][]
-    const aId = new AccountId32(vId);
-    const result = await api.query.staking.erasStakersPaged.entries(era, aId);
+  // Get paged data for each nominated validator.
+  const results = await Promise.all(
+    validators.map((vId) =>
+      api.query.staking.erasStakersPaged.entries(era, vId)
+    )
+  );
 
-    let counter = 0;
-    for (const item of result) {
-      for (const { who } of item[1].others) {
-        // Move to next validator if account is not in top 512 stakers for this validator.
-        if (counter >= 512) {
+  // Check if account is exposed in the current era.
+  validatorLoop: for (const result of results) {
+    for (const [, page] of result) {
+      let counter = 0;
+      for (const { who } of page.others) {
+        // Move to next validator if account is not in top 512 stakers.
+        if (counter > 512) {
           continue validatorLoop;
         }
-        // We know the account is exposed for this era if their address is found.
+        // Account is exposed in this era if its address is found.
         if (who.address(prefix) === account.address) {
           exposed = true;
           break validatorLoop;

@@ -31,7 +31,7 @@ export class APIsController {
   /**
    * Initalize disconnected API clients.
    */
-  static initialize = (chainIds: ChainID[]) => {
+  static initialize = async (chainIds: ChainID[]) => {
     for (const chainId of chainIds) {
       this.new(chainId);
     }
@@ -42,29 +42,31 @@ export class APIsController {
     this.cachedSetChains(map);
 
     // Initialize smoldot light client.
-    this.initSmoldot();
+    await this.initSmoldot();
   };
 
   /**
    * Initalize smoldot light client, make ready for chain connections.
    */
-  private static initSmoldot = () => {
+  private static initSmoldot = async () => {
+    const waitForWorkerMessage = async (worker: Worker): Promise<AnyData> =>
+      new Promise((resolve) => {
+        worker.onmessage = (event) => {
+          resolve(event.data);
+        };
+      });
+
     const worker = new Worker(new URL('./worker.ts', import.meta.url), {
       type: 'module',
     });
 
-    const bytecode: AnyData = new Promise((resolve) => {
-      worker.onmessage = (event) => {
-        resolve(event.data);
-      };
-    });
-
+    // Wait for bytecode.
+    const bytecode: AnyData = await waitForWorkerMessage(worker);
     const { port1, port2 } = new MessageChannel();
     worker.postMessage(port1, [port1]);
 
     this.smoldotClient = smoldot.startWithBytecode({
       bytecode,
-      forbidTcp: true,
       forbidWs: true,
       portToWorker: port2,
     });
@@ -102,7 +104,7 @@ export class APIsController {
       throw new Error(`connectApi: API for ${chainId} not found`);
     }
 
-    await client.connect();
+    await client.connect(this.smoldotClient!);
     this.set(client);
     this.updateUiChainState(client);
   };
@@ -145,7 +147,7 @@ export class APIsController {
       case 'disconnected': {
         // Wait up to 30 seconds to connect.
         const result = await Promise.race([
-          client.connect().then(() => true),
+          client.connect(this.smoldotClient!).then(() => true),
           Utils.waitMs(30_000, false),
         ]);
 
@@ -225,7 +227,7 @@ export class APIsController {
    */
   private static new = (chainId: ChainID) => {
     const chainMetaData = ChainList.get(chainId)!;
-    const endpoint = chainMetaData.endpoints.rpcs[0];
+    const endpoint: NodeEndpoint = chainMetaData.endpoints.rpcs[0];
     const rpcs = chainMetaData.endpoints.rpcs;
 
     console.log('🤖 Creating new api interface: %o', endpoint);
