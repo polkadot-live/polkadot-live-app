@@ -184,8 +184,8 @@ export const getAccountExposed = async (
 
   // Check if account is exposed in the current era.
   validatorLoop: for (const result of results) {
+    let counter = 0;
     for (const [, page] of result) {
-      let counter = 0;
       for (const { who } of page.others) {
         // Move to next validator if account is not in top 512 stakers.
         if (counter > 512) {
