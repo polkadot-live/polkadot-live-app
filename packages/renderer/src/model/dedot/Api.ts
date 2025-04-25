@@ -46,7 +46,7 @@ export class Api<T extends keyof ClientTypes> {
   /**
    * Connect to an endpoint.
    */
-  connect = async (smoldotClient: smoldot.Client) => {
+  connect = async (smoldotClient: smoldot.Client | null) => {
     try {
       if (this.api && this.status() !== 'disconnected') {
         return;
@@ -54,6 +54,9 @@ export class Api<T extends keyof ClientTypes> {
 
       let provider: WsProvider | SmoldotProvider;
       if (this.endpoint === 'smoldot') {
+        if (!smoldotClient) {
+          throw new Error('Error - smoldot client is null.');
+        }
         const chainSpec = ChainList.get(this.chain)!.endpoints.lightClient;
         const chain = await smoldotClient.addChain({ chainSpec });
         provider = new SmoldotProvider(chain);

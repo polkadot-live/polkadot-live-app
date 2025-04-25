@@ -68,6 +68,7 @@ export class APIsController {
     this.smoldotClient = smoldot.startWithBytecode({
       bytecode,
       forbidWs: true,
+      maxLogLevel: 0,
       portToWorker: port2,
     });
   };
@@ -104,7 +105,7 @@ export class APIsController {
       throw new Error(`connectApi: API for ${chainId} not found`);
     }
 
-    await client.connect(this.smoldotClient!);
+    await client.connect(this.smoldotClient);
     this.set(client);
     this.updateUiChainState(client);
   };
@@ -147,7 +148,7 @@ export class APIsController {
       case 'disconnected': {
         // Wait up to 30 seconds to connect.
         const result = await Promise.race([
-          client.connect(this.smoldotClient!).then(() => true),
+          client.connect(this.smoldotClient).then(() => true),
           Utils.waitMs(30_000, false),
         ]);
 
