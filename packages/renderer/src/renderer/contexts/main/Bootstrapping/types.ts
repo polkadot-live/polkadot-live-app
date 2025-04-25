@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { NodeEndpoint } from '@polkadot-live/types/apis';
 
 export interface BootstrappingInterface {
   appLoading: boolean;
@@ -15,7 +16,7 @@ export interface BootstrappingInterface {
   handleInitializeAppOnline: () => Promise<void>;
   handleNewEndpointForChain: (
     chainId: ChainID,
-    newEndpoint: string
+    newEndpoint: NodeEndpoint
   ) => Promise<void>;
   syncOpenGovWindow: () => Promise<void>;
 }

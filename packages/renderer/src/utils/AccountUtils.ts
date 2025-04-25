@@ -261,23 +261,27 @@ export const fetchNominatingDataForAccount = async (account: Account) => {
  * @summary Fetch nominating data for a single account.
  */
 export const setNominatingDataForAccount = async (account: Account) => {
-  // Only allow nominating data on specific chains.
-  if (!Array.from(ChainList.keys()).includes(account.chain)) {
-    return;
+  try {
+    // Only allow nominating data on specific chains.
+    if (!Array.from(ChainList.keys()).includes(account.chain)) {
+      return;
+    }
+
+    const api = (
+      await APIsController.getConnectedApiOrThrow(account.chain)
+    ).getApi();
+
+    // Set account's nominator data.
+    const maybeNominatingData = await getAccountNominatingData(api, account);
+    account.nominatingData = maybeNominatingData
+      ? { ...maybeNominatingData }
+      : null;
+
+    // Update account data in controller.
+    await AccountsController.set(account.chain, account);
+  } catch (err) {
+    console.error(err);
   }
-
-  const api = (
-    await APIsController.getConnectedApiOrThrow(account.chain)
-  ).getApi();
-
-  // Set account's nominator data.
-  const maybeNominatingData = await getAccountNominatingData(api, account);
-  if (maybeNominatingData) {
-    account.nominatingData = { ...maybeNominatingData };
-  }
-
-  // Update account data in controller.
-  await AccountsController.set(account.chain, account);
 };
 
 /**

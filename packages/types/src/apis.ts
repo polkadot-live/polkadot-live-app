@@ -5,6 +5,8 @@ import type { ChainID, ChainStatus } from './chains';
 import type { DedotClient } from 'dedot';
 import type { KusamaApi, PolkadotApi, WestendApi } from '@dedot/chaintypes';
 
+export type NodeEndpoint = `wss://${string}` | 'smoldot';
+
 /**
  * Relay chain dodeot clients.
  */
@@ -26,8 +28,8 @@ export interface ClientTypes {
  * Type for storing essential data for an API instance.
  */
 export interface FlattenedAPIData {
-  endpoint: string;
+  endpoint: NodeEndpoint;
   chainId: ChainID;
   status: ChainStatus;
-  rpcs: string[];
+  rpcs: NodeEndpoint[];
 }

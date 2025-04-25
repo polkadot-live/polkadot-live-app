@@ -2,13 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons';
-import * as Sc from '@substrate/connect';
 import PolkadotIcon from './svg/polkadotIcon.svg?react';
 import WestendIcon from './svg/westendIcon.svg?react';
 import KusamaIcon from './svg/kusamaIcon.svg?react';
 import PolkadotAppIcon from './svg/ledger/polkadot.svg?react';
+import { polkadot, ksmcc3, westend2 } from '@substrate/connect-known-chains';
 import type { ChainID, SelectNetworkData } from '@polkadot-live/types/chains';
 import type { FunctionComponent, SVGProps } from 'react';
+import type { NodeEndpoint } from '@polkadot-live/types/apis';
 
 interface Chain {
   icon: FunctionComponent<
@@ -20,7 +21,7 @@ interface Chain {
     >;
   };
   endpoints: {
-    rpcs: string[];
+    rpcs: NodeEndpoint[];
     lightClient: string;
   };
   units: number;
@@ -59,7 +60,7 @@ export const ChainList = new Map<ChainID, Chain>([
           'wss://rockx-dot.w3node.com/polka-public-dot/ws',
           'wss://dot-rpc.stakeworld.io',
         ],
-        lightClient: Sc.WellKnownChain.polkadot,
+        lightClient: polkadot,
       },
       units: 10,
       unit: 'DOT',
@@ -87,7 +88,7 @@ export const ChainList = new Map<ChainID, Chain>([
           'wss://rockx-ksm.w3node.com/polka-public-ksm/ws',
           'wss://ksm-rpc.stakeworld.io',
         ],
-        lightClient: Sc.WellKnownChain.ksmcc3,
+        lightClient: ksmcc3,
       },
       units: 12,
       unit: 'KSM',
@@ -112,7 +113,7 @@ export const ChainList = new Map<ChainID, Chain>([
           'wss://westend.public.curie.radiumblock.co/ws',
           'wss://rpc-westend.luckyfriday.io',
         ],
-        lightClient: Sc.WellKnownChain.westend2,
+        lightClient: westend2,
       },
       units: 12,
       unit: 'WND',

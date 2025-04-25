@@ -458,14 +458,17 @@ export class Callbacks {
 
       // Get notification.
       const notification = this.getNotificationFlag(entry, isOneShot)
-        ? NotificationsController.getNotification(entry, account, { prev: cur })
+        ? NotificationsController.getNotification(entry, account, {
+            cur: state,
+            prev: cur,
+          })
         : null;
 
       // Handle notification and events in main process.
       window.myAPI.sendEventTask({
         action: 'events:persist',
         data: {
-          event: EventsController.getEvent(entry, { prev: cur }),
+          event: EventsController.getEvent(entry, { cur: state, prev: cur }),
           notification,
           isOneShot,
         },
@@ -509,14 +512,17 @@ export class Callbacks {
 
       // Get notification.
       const notification = this.getNotificationFlag(entry, isOneShot)
-        ? NotificationsController.getNotification(entry, account, { prev: cur })
+        ? NotificationsController.getNotification(entry, account, {
+            cur: poolName,
+            prev: cur,
+          })
         : null;
 
       // Handle notification and events in main process.
       window.myAPI.sendEventTask({
         action: 'events:persist',
         data: {
-          event: EventsController.getEvent(entry, { prev: cur }),
+          event: EventsController.getEvent(entry, { cur: poolName, prev: cur }),
           notification,
           isOneShot,
         },
@@ -577,14 +583,17 @@ export class Callbacks {
 
       // Get notification.
       const notification = this.getNotificationFlag(entry, isOneShot)
-        ? NotificationsController.getNotification(entry, account, { prev: cur })
+        ? NotificationsController.getNotification(entry, account, {
+            cur: roles,
+            prev: cur,
+          })
         : null;
 
       // Handle notification and events in main process.
       window.myAPI.sendEventTask({
         action: 'events:persist',
         data: {
-          event: EventsController.getEvent(entry, { prev: cur }),
+          event: EventsController.getEvent(entry, { cur: roles, prev: cur }),
           notification,
           isOneShot,
         },
@@ -652,7 +661,8 @@ export class Callbacks {
       // Get notification.
       const notification = this.getNotificationFlag(entry, isOneShot)
         ? NotificationsController.getNotification(entry, account, {
-            poolCommission,
+            cur,
+            prev: poolCommission,
           })
         : null;
 
@@ -660,7 +670,10 @@ export class Callbacks {
       window.myAPI.sendEventTask({
         action: 'events:persist',
         data: {
-          event: EventsController.getEvent(entry, { poolCommission }),
+          event: EventsController.getEvent(entry, {
+            cur,
+            prev: poolCommission,
+          }),
           notification,
           isOneShot,
         },

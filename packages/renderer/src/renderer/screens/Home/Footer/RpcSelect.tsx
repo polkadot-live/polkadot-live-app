@@ -6,7 +6,7 @@ import { SelectRpcWrapper } from './Wrapper';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';
 import { useConnections } from '@app/contexts/common/Connections';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { FlattenedAPIData } from '@polkadot-live/types/apis';
+import type { NodeEndpoint, FlattenedAPIData } from '@polkadot-live/types/apis';
 
 interface SelectRpcProps {
   apiData: FlattenedAPIData;
@@ -29,7 +29,7 @@ export const SelectRpc = ({
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     setWorkingEndpoint && setWorkingEndpoint(chainId, true);
-    const newEndpoint = event.target.value;
+    const newEndpoint = event.target.value as NodeEndpoint;
 
     // Exit early if endpoint hasn't changed.
     if (newEndpoint === selectedRpc) {
@@ -66,6 +66,7 @@ export const SelectRpc = ({
           onChange={(e) => handleRpcChange(e)}
           disabled={disabled}
         >
+          <option value={'smoldot'}>Light Client</option>
           {apiData.rpcs.map((rpc, i) => (
             <option key={i} value={rpc}>
               {rpc}

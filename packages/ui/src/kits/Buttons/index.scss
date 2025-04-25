@@ -22,11 +22,13 @@ SPDX-License-Identifier: GPL-3.0-only */
 }
 
 @mixin btn-layout {
-  font-family: InterSemiBold, sans-serif;
-  font-weight: 600;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  & {
+    font-family: InterSemiBold, sans-serif;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 
   &.grow {
     flex: 1 1 0%;
@@ -82,9 +84,11 @@ SPDX-License-Identifier: GPL-3.0-only */
 }
 
 @mixin btn-disabled {
-  transition:
-    opacity var(--transition-duration),
-    color var(--transition-duration);
+  & {
+    transition:
+      opacity var(--transition-duration),
+      color var(--transition-duration);
+  }
 
   &:disabled {
     opacity: var(--opacity-disabled);
@@ -125,13 +129,15 @@ SPDX-License-Identifier: GPL-3.0-only */
   @include btn-spacing;
   @include btn-disabled;
 
-  background: var(--button-tertiary-background);
-  color: var(--text-color-secondary);
-  fill: var(--text-color-secondary);
-  border-radius: 50%;
-  padding: 0;
-  width: 1.35rem;
-  height: 1.35rem;
+  & {
+    background: var(--button-tertiary-background);
+    color: var(--text-color-secondary);
+    fill: var(--text-color-secondary);
+    border-radius: 50%;
+    padding: 0;
+    width: 1.35rem;
+    height: 1.35rem;
+  }
 
   &.background-secondary {
     background: var(--button-primary-background);
@@ -164,11 +170,13 @@ SPDX-License-Identifier: GPL-3.0-only */
   @include btn-icons;
   @include btn-disabled;
 
-  background: var(--text-color-primary);
-  border: 1px solid var(--text-color-primary);
-  border-radius: var(--button-border-radius-large);
-  color: var(--text-color-invert);
-  user-select: none;
+  & {
+    background: var(--text-color-primary);
+    border: 1px solid var(--text-color-primary);
+    border-radius: var(--button-border-radius-large);
+    color: var(--text-color-invert);
+    user-select: none;
+  }
 
   &.secondary-color {
     border-color: var(--text-color-secondary);
@@ -191,10 +199,12 @@ SPDX-License-Identifier: GPL-3.0-only */
   @include btn-icons;
   @include btn-disabled;
 
-  border: 1px solid var(--text-color-primary);
-  border-radius: var(--button-border-radius-large);
-  color: var(--text-color-primary);
-  user-select: none;
+  & {
+    border: 1px solid var(--text-color-primary);
+    border-radius: var(--button-border-radius-large);
+    color: var(--text-color-primary);
+    user-select: none;
+  }
 
   &.secondary-color {
     border-color: var(--text-color-secondary);
@@ -217,10 +227,12 @@ SPDX-License-Identifier: GPL-3.0-only */
   @include btn-icons;
   @include btn-disabled;
 
-  background: var(--accent-color-primary);
-  border: 1px solid var(--accent-color-primary);
-  border-radius: var(--button-border-radius-large);
-  color: white;
+  & {
+    background: var(--accent-color-primary);
+    border: 1px solid var(--accent-color-primary);
+    border-radius: var(--button-border-radius-large);
+    color: white;
+  }
 
   &.secondary-color {
     background: var(--accent-color-secondary);
@@ -243,9 +255,11 @@ SPDX-License-Identifier: GPL-3.0-only */
   @include btn-icons;
   @include btn-disabled;
 
-  border: 1px solid var(--accent-color-stroke);
-  border-radius: var(--button-border-radius-large);
-  color: var(--accent-color-stroke);
+  & {
+    border: 1px solid var(--accent-color-stroke);
+    border-radius: var(--button-border-radius-large);
+    color: var(--accent-color-stroke);
+  }
 
   &.secondary-color {
     border: 1px solid var(--accent-color-secondary);
@@ -268,10 +282,12 @@ SPDX-License-Identifier: GPL-3.0-only */
   @include btn-icons;
   @include btn-disabled;
 
-  background: var(--button-secondary-background);
-  border: 1px solid var(--button-secondary-background);
-  border-radius: var(--button-border-radius-large);
-  color: var(--text-color-primary);
+  & {
+    background: var(--button-secondary-background);
+    border: 1px solid var(--button-secondary-background);
+    border-radius: var(--button-border-radius-large);
+    color: var(--text-color-primary);
+  }
 
   &.sm {
     @include btn-small;
@@ -301,10 +317,12 @@ SPDX-License-Identifier: GPL-3.0-only */
   @include btn-disabled;
   @include btn-pulse;
 
-  border: 1px solid var(--accent-color-primary);
-  border-radius: var(--button-border-radius-small);
-  background: var(--accent-color-primary);
-  color: white;
+  & {
+    border: 1px solid var(--accent-color-primary);
+    border-radius: var(--button-border-radius-small);
+    background: var(--accent-color-primary);
+    color: white;
+  }
 
   &.secondary-color {
     border-color: var(--accent-color-secondary);
@@ -319,10 +337,12 @@ SPDX-License-Identifier: GPL-3.0-only */
   @include btn-icons;
   @include btn-disabled;
 
-  color: var(--text-color-primary);
-  border-radius: var(--button-border-radius-large);
-  font-size: var(--button-font-size-small);
-  padding: 0.1rem;
+  & {
+    color: var(--text-color-primary);
+    border-radius: var(--button-border-radius-large);
+    font-size: var(--button-font-size-small);
+    padding: 0.1rem;
+  }
 
   &.secondary-color {
     border-color: var(--text-color-secondary);

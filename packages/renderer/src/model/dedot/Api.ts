@@ -2,19 +2,24 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ChainList } from '@ren/config/chains';
-import { DedotClient, WsProvider } from 'dedot';
+import { DedotClient, SmoldotProvider, WsProvider } from 'dedot';
+import type * as smoldot from 'smoldot/no-auto-bytecode';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { ClientTypes, FlattenedAPIData } from '@polkadot-live/types/apis';
+import type {
+  ClientTypes,
+  FlattenedAPIData,
+  NodeEndpoint,
+} from '@polkadot-live/types/apis';
 
 const isTestEnv = (): boolean => process.env.NODE_ENV === 'test';
 
 export class Api<T extends keyof ClientTypes> {
   api: DedotClient<ClientTypes[T]> | null;
   chain: ChainID;
-  endpoint: string;
-  rpcs: string[] = [];
+  endpoint: NodeEndpoint;
+  rpcs: NodeEndpoint[] = [];
 
-  constructor(endpoint: string, chainId: ChainID, rpcs: string[]) {
+  constructor(endpoint: NodeEndpoint, chainId: ChainID, rpcs: NodeEndpoint[]) {
     this.api = null;
     this.chain = chainId;
     this.endpoint = endpoint;
@@ -41,13 +46,24 @@ export class Api<T extends keyof ClientTypes> {
   /**
    * Connect to an endpoint.
    */
-  connect = async () => {
+  connect = async (smoldotClient: smoldot.Client | null) => {
     try {
       if (this.api && this.status() !== 'disconnected') {
         return;
       }
 
-      const provider = new WsProvider(this.endpoint);
+      let provider: WsProvider | SmoldotProvider;
+      if (this.endpoint === 'smoldot') {
+        if (!smoldotClient) {
+          throw new Error('Error - smoldot client is null.');
+        }
+        const chainSpec = ChainList.get(this.chain)!.endpoints.lightClient;
+        const chain = await smoldotClient.addChain({ chainSpec });
+        provider = new SmoldotProvider(chain);
+      } else {
+        provider = new WsProvider(this.endpoint);
+      }
+
       const api = await DedotClient.new<ClientTypes[T]>({
         provider,
         cacheMetadata: !isTestEnv(),
@@ -60,7 +76,7 @@ export class Api<T extends keyof ClientTypes> {
 
       this.api = api;
       this.chain = chainId;
-      console.log('⭕ Dedot: %o', this.endpoint, ' CONNECTED');
+      console.log('⭕ Dedot: %o', this.endpoint, ' CONNECTED', this.chain);
     } catch (err) {
       console.log('!connect error');
       console.error(err);

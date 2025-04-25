@@ -12,6 +12,10 @@ import type {
   AccountNominatingData,
   ValidatorData,
 } from '@polkadot-live/types/accounts';
+import type {
+  SpStakingExposurePage,
+  SpStakingPagedExposureMetadata,
+} from '@dedot/chaintypes/substrate';
 
 interface ValidatorOverviewData {
   total: string;
@@ -30,7 +34,6 @@ export const getEraRewards = async (
   era: number
 ) => {
   const showDebug = false;
-
   const eraPayoutResult = await api.query.staking.erasValidatorReward(era);
   const eraTotalPayout = new BigNumber(eraPayoutResult!.toString());
   const eraRewardPoints = await api.query.staking.erasRewardPoints(era);
@@ -40,52 +43,74 @@ export const getEraRewards = async (
   const validators = new Map<string, ValidatorOverviewData>();
   const overview = await api.query.staking.erasStakersOverview.entries(era);
 
-  // [[number, AccountId32], SpStakingPagedExposureMetadata][]
-  for (const [keys, value] of overview) {
-    const vId = keys[1].address(prefix);
-    const { total, own, nominatorCount, pageCount } = value;
-    validators.set(vId, {
-      total: total.toString(),
-      own: own.toString(),
-      nominatorCount: nominatorCount.toString(),
-      pageCount: pageCount.toString(),
+  // Asynchronously cache validator metadata in map.
+  const asyncAddValidatorInfo = async (
+    keys: [number, AccountId32],
+    info: SpStakingPagedExposureMetadata
+  ) => {
+    validators.set(keys[1].address(prefix), {
+      total: info.total.toString(),
+      own: info.own.toString(),
+      nominatorCount: info.nominatorCount.toString(),
+      pageCount: info.pageCount.toString(),
     });
-  }
+  };
 
-  // Get address staking data for this era.
-  const validatorIds = Array.from(validators.keys());
-  // [[number, AccountId32, number], SpStakingExposurePag][][]
-  const pagedResults = await Promise.all(
-    validatorIds.map((vId) =>
-      api.query.staking.erasStakersPaged.entries(era, new AccountId32(vId))
-    )
+  await Promise.all(
+    overview.map(([keys, value]) => asyncAddValidatorInfo(keys, value))
   );
 
-  // Map data is <validatorId, stakedAmount[]>
+  // Map <validatorId, stakedAmount[]>
   const addressStake = new Map<string, string[]>();
-  const log = true;
-  for (const pageResult of pagedResults) {
-    // [[number, AccountId32, number], SpStakingExposurePag][]
-    const [obj] = pageResult;
-    const pageEra = obj[0][0];
-    const pageValidator = obj[0][1].address(prefix);
-    const page = obj[0][2];
-    showDebug && log && console.log(pageEra, pageValidator, page);
+  const validatorIds = Array.from(validators.keys());
 
-    const pageTotal = obj[1].pageTotal;
-    const others = obj[1].others;
-    showDebug && log && console.log(pageTotal);
+  // [[era, validatorId, zeroIndexPageCount], ...}][]
+  type PageResult = [[number, AccountId32, number], SpStakingExposurePage][];
 
-    for (const { who, value } of others) {
-      showDebug && log && console.log(who, value);
-      if (who.address(prefix) === address) {
-        addressStake.has(pageValidator)
-          ? addressStake.set(pageValidator, [
-              ...addressStake.get(pageValidator)!,
-              value.toString(),
-            ])
-          : addressStake.set(pageValidator, [value.toString()]);
-      }
+  const asyncFindStakeInOthers = async (other: {
+    who: AccountId32;
+    value: bigint;
+  }): Promise<string[]> => {
+    const { who, value } = other;
+    return who.address(prefix) === address ? [value.toString()] : [];
+  };
+
+  const asyncSetValidatorAddressStake = async (pageResult: PageResult) => {
+    for (const page of pageResult) {
+      const [, { others: os }] = page;
+      const vs = await Promise.all(os.map((o) => asyncFindStakeInOthers(o)));
+      return vs.flat();
+    }
+    return [];
+  };
+
+  // Query all eras stakers paged.
+  let eraStakersPaged: [
+    [number, AccountId32, number],
+    SpStakingExposurePage,
+  ][][] = [];
+
+  const batchSize = 30;
+  for (let i = 0; i < validatorIds.length; i += batchSize) {
+    const batch = validatorIds.slice(i, i + batchSize);
+    const results = await Promise.all(
+      batch.map((v) => api.query.staking.erasStakersPaged.entries(era, v))
+    );
+    eraStakersPaged = [...eraStakersPaged, ...results];
+  }
+
+  // Check if account has stake for each validator.
+  const valToStake = await Promise.all(
+    eraStakersPaged.map(async (page) => {
+      const vs = await asyncSetValidatorAddressStake(page);
+      return { vid: page[0][0][1].address(prefix), stake: vs };
+    })
+  );
+
+  // Set account stake in map.
+  for (const { vid, stake } of valToStake) {
+    if (stake.length > 0) {
+      addressStake.set(vid, stake);
     }
   }
 
@@ -96,45 +121,38 @@ export const getEraRewards = async (
 
   // Get nominated validator commissions.
   const commissions = new Map<string, string>();
-  const vids = Array.from(addressStake.keys());
-  const prefResults = await Promise.all(
-    vids.map((vid) =>
-      api.query.staking.erasValidatorPrefs([era, new AccountId32(vid)])
-    )
+  const vs = Array.from(addressStake.keys());
+  const prefs = await Promise.all(
+    vs.map((v) => api.query.staking.erasValidatorPrefs([era, v]))
+  );
+  prefs.forEach((p, i) =>
+    commissions.set(vs[i], formatPerbillPercent(p.commission))
   );
 
-  for (let i = 0; i < prefResults.length; ++i) {
-    commissions.set(vids[i], formatPerbillPercent(prefResults[i].commission));
-  }
-
-  // TODO: Remove `rmCommas` call
   // Calculate unclaimed rewards for each nominated validator.
   let totalRewards = new BigNumber(0);
-  for (const vid of vids) {
+  for (const v of vs) {
     // Parse commission to big number.
     const commission = new BigNumber(
-      commissions.get(vid)!.replace(/%/g, '')
+      commissions.get(v)!.replace(/%/g, '')
     ).multipliedBy(0.01);
 
     // Get total staked amount by the address.
     const staked = addressStake
-      .get(vid)!
-      .reduce((acc, cur) => acc.plus(rmCommas(cur)), new BigNumber(0));
+      .get(v)!
+      .reduce((acc, cur) => acc.plus(cur), new BigNumber(0));
 
     // Get validator's total stake.
-    const { total: vTotal } = validators.get(vid)!;
-    const total = new BigNumber(rmCommas(vTotal));
+    const { total: vTotal } = validators.get(v)!;
+    const total = new BigNumber(vTotal);
 
     // Calculate available validator rewards for the era based on reward points.
-    const totalRewardPoints = new BigNumber(
-      rmCommas(eraRewardPoints.total.toString())
-    );
-
+    const totalRewardPoints = new BigNumber(eraRewardPoints.total.toString());
     const pointsData = eraRewardPoints.individual.find(
-      (i) => i[0].address(prefix) === vid
+      (i) => i[0].address(prefix) === v
     )!;
-    const validatorRewardPoints = new BigNumber(pointsData[1]);
 
+    const validatorRewardPoints = new BigNumber(pointsData[1]);
     const avail = eraTotalPayout
       .multipliedBy(validatorRewardPoints)
       .dividedBy(totalRewardPoints);
@@ -147,9 +165,9 @@ export const getEraRewards = async (
           .minus(valCut)
           .multipliedBy(staked)
           .dividedBy(total)
-          .plus(address === vid ? valCut : 0);
+          .plus(address === v ? valCut : 0);
 
-    showDebug && console.log(`${vid}: ${eraRewardsForValidator.toString()}`);
+    showDebug && console.log(`${v}: ${eraRewardsForValidator.toString()}`);
     totalRewards = totalRewards.plus(eraRewardsForValidator);
   }
 
@@ -166,31 +184,32 @@ export const getAccountExposed = async (
   account: Account,
   validatorData: ValidatorData[]
 ): Promise<boolean> => {
-  const prefix = api.consts.system.ss58Prefix;
   const validators = validatorData.map((v) => v.validatorId);
+  const prefix = api.consts.system.ss58Prefix;
   let exposed = false;
 
-  // Iterate validators account is nominating.
-  validatorLoop: for (const vId of validators) {
-    // Check if target address is the validator.
-    if (account.address === vId) {
-      exposed = true;
-      break;
-    }
+  // Check if target address is the validator.
+  if (validators.find((vId) => account.address === vId)) {
+    return true;
+  }
 
-    // Iterate validator paged exposures.
-    // [[number, AccountId32, number], SpStakingExposurePage][]
-    const aId = new AccountId32(vId);
-    const result = await api.query.staking.erasStakersPaged.entries(era, aId);
+  // Get paged data for each nominated validator.
+  const results = await Promise.all(
+    validators.map((vId) =>
+      api.query.staking.erasStakersPaged.entries(era, vId)
+    )
+  );
 
+  // Check if account is exposed in the current era.
+  validatorLoop: for (const result of results) {
     let counter = 0;
-    for (const item of result) {
-      for (const { who } of item[1].others) {
-        // Move to next validator if account is not in top 512 stakers for this validator.
-        if (counter >= 512) {
+    for (const [, page] of result) {
+      for (const { who } of page.others) {
+        // Move to next validator if account is not in top 512 stakers.
+        if (counter > 512) {
           continue validatorLoop;
         }
-        // We know the account is exposed for this era if their address is found.
+        // Account is exposed in this era if its address is found.
         if (who.address(prefix) === account.address) {
           exposed = true;
           break validatorLoop;

@@ -20,11 +20,12 @@ import { IntervalsController } from '@ren/controller/IntervalsController';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
 import { disconnectAPIs } from '@ren/utils/ApiUtils';
+import type { AnyData } from '@polkadot-live/types/misc';
 import type { BootstrappingInterface } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { IpcTask } from '@polkadot-live/types/communication';
-import type { AnyData } from '@polkadot-live/types/misc';
+import type { NodeEndpoint } from '@polkadot-live/types/apis';
 
 export const BootstrappingContext = createContext<BootstrappingInterface>(
   defaultBootstrappingContext
@@ -65,9 +66,9 @@ export const BootstrappingProvider = ({
   };
 
   /// Step 1: Initialize chain APIs (disconnected).
-  const initChainAPIs = () => {
+  const initChainAPIs = async () => {
     const chainIds = Array.from(ChainList.keys());
-    APIsController.initialize(chainIds);
+    await APIsController.initialize(chainIds);
   };
 
   /// Step 2: Initialize accounts.
@@ -138,7 +139,9 @@ export const BootstrappingProvider = ({
   const handleInitializeApp = async () => {
     if (!refAppInitialized.current) {
       setAppLoading(true);
-      initChainAPIs();
+
+      // Initialize APIs and smoldot light client.
+      await initChainAPIs();
 
       // Initialise online status controller and set online state.
       await window.myAPI.sendConnectionTaskAsync({
@@ -250,7 +253,7 @@ export const BootstrappingProvider = ({
   /// Re-subscribe to tasks when switching to a different endpoint.
   const handleNewEndpointForChain = async (
     chainId: ChainID,
-    newEndpoint: string
+    newEndpoint: NodeEndpoint
   ) => {
     await APIsController.connectEndpoint(chainId, newEndpoint);
 

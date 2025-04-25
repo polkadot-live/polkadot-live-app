@@ -15,7 +15,10 @@ import {
 import { getUnixTime } from 'date-fns';
 
 import type { AnyData } from '@polkadot-live/types/misc';
-import type { NominationPoolRoles } from '@polkadot-live/types/accounts';
+import type {
+  NominationPoolCommission,
+  NominationPoolRoles,
+} from '@polkadot-live/types/accounts';
 import type {
   IntervalSubscription,
   ApiCallEntry,
@@ -418,8 +421,9 @@ export class EventsController {
 
         const { chainId } = entry.task;
         const { address, name: accountName, source } = flattenedAccount;
-        const { poolState, poolId } = flattenedAccount.nominationPoolData!;
-        const { prev }: { prev: string } = miscData;
+        const { poolId } = flattenedAccount.nominationPoolData!;
+        const { cur: poolState, prev }: { cur: string; prev: string } =
+          miscData;
 
         return {
           uid: '',
@@ -458,8 +462,8 @@ export class EventsController {
 
         const { chainId } = entry.task;
         const { address, name: accountName, source } = flattenedAccount;
-        const { poolName, poolId } = flattenedAccount.nominationPoolData!;
-        const { prev }: { prev: string } = miscData;
+        const { poolId } = flattenedAccount.nominationPoolData!;
+        const { cur: poolName, prev }: { cur: string; prev: string } = miscData;
 
         return {
           uid: '',
@@ -498,8 +502,11 @@ export class EventsController {
 
         const { chainId } = entry.task;
         const { address, name: accountName, source } = flattenedAccount;
-        const { poolRoles, poolId } = flattenedAccount.nominationPoolData!;
-        const { prev }: { prev: NominationPoolRoles } = miscData;
+        const { poolId } = flattenedAccount.nominationPoolData!;
+        const {
+          cur: poolRoles,
+          prev,
+        }: { cur: NominationPoolRoles; prev: NominationPoolRoles } = miscData;
 
         return {
           uid: '',
@@ -539,7 +546,11 @@ export class EventsController {
         const { chainId } = entry.task;
         const { address, name: accountName, source } = flattenedAccount;
         const { poolCommission } = flattenedAccount.nominationPoolData!;
-        const { poolCommission: prevCommission } = miscData;
+        const {
+          cur,
+          prev,
+        }: { cur: NominationPoolCommission; prev: NominationPoolCommission } =
+          miscData;
 
         return {
           uid: '',
@@ -555,10 +566,7 @@ export class EventsController {
             } as EventAccountData,
           },
           title: 'Nomination Pool Commission',
-          subtitle: getNominationPoolCommissionText(
-            poolCommission,
-            prevCommission
-          ),
+          subtitle: getNominationPoolCommissionText(cur, prev),
           data: {
             ...poolCommission,
           },

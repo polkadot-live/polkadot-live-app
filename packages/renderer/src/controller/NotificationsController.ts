@@ -15,8 +15,11 @@ import type {
   IntervalSubscription,
 } from '@polkadot-live/types/subscriptions';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { NominationPoolRoles } from '@polkadot-live/types/accounts';
 import type { NotificationData } from '@polkadot-live/types/reporter';
+import type {
+  NominationPoolCommission,
+  NominationPoolRoles,
+} from '@polkadot-live/types/accounts';
 
 export class NotificationsController {
   /**
@@ -113,38 +116,41 @@ export class NotificationsController {
         };
       }
       case 'subscribe:account:nominationPools:state': {
-        const { poolState } = account.nominationPoolData!;
-        const { prev }: { prev: string } = miscData;
+        const { cur, prev }: { cur: string; prev: string } = miscData;
 
         return {
           title: account.name,
-          body: getNominationPoolStateText(poolState, prev),
+          body: getNominationPoolStateText(cur, prev),
           subtitle: 'Nomiantion Pool State',
         };
       }
       case 'subscribe:account:nominationPools:renamed': {
-        const { poolName } = account.nominationPoolData!;
-        const { prev }: { prev: string } = miscData;
+        const { cur, prev }: { cur: string; prev: string } = miscData;
 
         return {
           title: account.name,
-          body: getNominationPoolRenamedText(poolName, prev),
+          body: getNominationPoolRenamedText(cur, prev),
           subtitle: 'Nomination Pool Name',
         };
       }
       case 'subscribe:account:nominationPools:roles': {
-        const { poolRoles } = account.nominationPoolData!;
-        const { prev }: { prev: NominationPoolRoles } = miscData;
+        const {
+          cur,
+          prev,
+        }: { cur: NominationPoolRoles; prev: NominationPoolRoles } = miscData;
 
         return {
           title: account.name,
-          body: getNominationPoolRolesText(poolRoles, prev),
+          body: getNominationPoolRolesText(cur, prev),
           subtitle: 'Nomination Pool Roles',
         };
       }
       case 'subscribe:account:nominationPools:commission': {
-        const { poolCommission: cur } = account.nominationPoolData!;
-        const { poolCommission: prev } = miscData;
+        const {
+          cur,
+          prev,
+        }: { cur: NominationPoolCommission; prev: NominationPoolCommission } =
+          miscData;
 
         return {
           title: account.name,

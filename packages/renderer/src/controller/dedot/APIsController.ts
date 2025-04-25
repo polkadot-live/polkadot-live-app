@@ -2,10 +2,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Utils from '@ren/utils/CommonUtils';
+import * as smoldot from 'smoldot/no-auto-bytecode';
 import { Api as DedotApi } from '@ren/model/dedot/Api';
 import { ChainList } from '@ren/config/chains';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { ClientTypes, FlattenedAPIData } from '@polkadot-live/types/apis';
+import type {
+  ClientTypes,
+  FlattenedAPIData,
+  NodeEndpoint,
+} from '@polkadot-live/types/apis';
+import type { AnyData } from '@polkadot-live/types/misc';
 
 type ChainToKey<T extends ChainID> = T extends 'Polkadot'
   ? 'polkadot'
@@ -15,6 +21,8 @@ type ChainToKey<T extends ChainID> = T extends 'Polkadot'
 
 export class APIsController {
   static clients: DedotApi<keyof ClientTypes>[] = [];
+  static smoldotClient: smoldot.Client | null = null;
+
   static setUiTrigger: React.Dispatch<React.SetStateAction<boolean>>;
   static cachedSetChains: React.Dispatch<
     React.SetStateAction<Map<ChainID, FlattenedAPIData>>
@@ -23,7 +31,7 @@ export class APIsController {
   /**
    * Initalize disconnected API clients.
    */
-  static initialize = (chainIds: ChainID[]) => {
+  static initialize = async (chainIds: ChainID[]) => {
     for (const chainId of chainIds) {
       this.new(chainId);
     }
@@ -32,6 +40,37 @@ export class APIsController {
     const map = new Map<ChainID, FlattenedAPIData>();
     this.clients.map((c) => map.set(c.chain, c.flatten()));
     this.cachedSetChains(map);
+
+    // Initialize smoldot light client.
+    await this.initSmoldot();
+  };
+
+  /**
+   * Initalize smoldot light client, make ready for chain connections.
+   */
+  private static initSmoldot = async () => {
+    const waitForWorkerMessage = async (worker: Worker): Promise<AnyData> =>
+      new Promise((resolve) => {
+        worker.onmessage = (event) => {
+          resolve(event.data);
+        };
+      });
+
+    const worker = new Worker(new URL('./worker.ts', import.meta.url), {
+      type: 'module',
+    });
+
+    // Wait for bytecode.
+    const bytecode: AnyData = await waitForWorkerMessage(worker);
+    const { port1, port2 } = new MessageChannel();
+    worker.postMessage(port1, [port1]);
+
+    this.smoldotClient = smoldot.startWithBytecode({
+      bytecode,
+      forbidWs: true,
+      maxLogLevel: 0,
+      portToWorker: port2,
+    });
   };
 
   /**
@@ -66,7 +105,7 @@ export class APIsController {
       throw new Error(`connectApi: API for ${chainId} not found`);
     }
 
-    await client.connect();
+    await client.connect(this.smoldotClient);
     this.set(client);
     this.updateUiChainState(client);
   };
@@ -74,7 +113,7 @@ export class APIsController {
   /**
    * Set and connect to an endpoint for a given client if online.
    */
-  static connectEndpoint = async (chainId: ChainID, endpoint: string) => {
+  static connectEndpoint = async (chainId: ChainID, endpoint: NodeEndpoint) => {
     const status = this.getStatus(chainId);
 
     switch (status) {
@@ -109,7 +148,7 @@ export class APIsController {
       case 'disconnected': {
         // Wait up to 30 seconds to connect.
         const result = await Promise.race([
-          client.connect().then(() => true),
+          client.connect(this.smoldotClient).then(() => true),
           Utils.waitMs(30_000, false),
         ]);
 
@@ -174,7 +213,10 @@ export class APIsController {
   /**
    * Set client endpoint.
    */
-  private static setClientEndpoint = (chainId: ChainID, endpoint: string) => {
+  private static setClientEndpoint = (
+    chainId: ChainID,
+    endpoint: NodeEndpoint
+  ) => {
     const client = this.get(chainId)!;
     client.endpoint = endpoint;
     this.set(client);
@@ -186,7 +228,7 @@ export class APIsController {
    */
   private static new = (chainId: ChainID) => {
     const chainMetaData = ChainList.get(chainId)!;
-    const endpoint = chainMetaData.endpoints.rpcs[0];
+    const endpoint: NodeEndpoint = chainMetaData.endpoints.rpcs[0];
     const rpcs = chainMetaData.endpoints.rpcs;
 
     console.log('🤖 Creating new api interface: %o', endpoint);
@@ -196,8 +238,8 @@ export class APIsController {
 
   private static getClient = <T extends ChainID>(
     chainId: T,
-    endpoint: string,
-    rpcs: string[]
+    endpoint: NodeEndpoint,
+    rpcs: NodeEndpoint[]
   ): DedotApi<ChainToKey<T>> =>
     new DedotApi<ChainToKey<T>>(endpoint, chainId, rpcs);
 
