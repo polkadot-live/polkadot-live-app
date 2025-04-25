@@ -9,6 +9,7 @@ import type {
   NominationPoolCommission,
   NominationPoolRoles,
 } from '@polkadot-live/types/accounts';
+import { formatPerbillPercent } from './AccountUtils';
 
 /**
  * @name timestampToDate
@@ -170,11 +171,17 @@ export const getBalanceText = (
 export const getNominationPoolCommissionText = (
   cur: NominationPoolCommission,
   prev: NominationPoolCommission
-) =>
+) => {
+  const hasCommission = cur.current !== undefined;
+  const fmtCommission = hasCommission
+    ? formatPerbillPercent(BigInt(cur.current![0]))
+    : 'not set';
+
   // TODO: Improve text message.
-  JSON.stringify(cur.changeRate) === JSON.stringify(prev.changeRate) &&
-  JSON.stringify(cur.current) === JSON.stringify(prev.current) &&
-  cur.throttleFrom === prev.throttleFrom &&
-  cur.max === prev.max
-    ? `Pool commission is ${cur.current}.`
-    : `Pool commission set to ${cur.current}.`;
+  return JSON.stringify(cur.changeRate) === JSON.stringify(prev.changeRate) &&
+    JSON.stringify(cur.current) === JSON.stringify(prev.current) &&
+    cur.throttleFrom === prev.throttleFrom &&
+    cur.max === prev.max
+    ? `Pool commission is ${fmtCommission}.`
+    : `Pool commission set to ${fmtCommission}.`;
+};

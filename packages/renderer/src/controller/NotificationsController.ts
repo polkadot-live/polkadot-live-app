@@ -15,8 +15,11 @@ import type {
   IntervalSubscription,
 } from '@polkadot-live/types/subscriptions';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { NominationPoolRoles } from '@polkadot-live/types/accounts';
 import type { NotificationData } from '@polkadot-live/types/reporter';
+import type {
+  NominationPoolCommission,
+  NominationPoolRoles,
+} from '@polkadot-live/types/accounts';
 
 export class NotificationsController {
   /**
@@ -144,7 +147,9 @@ export class NotificationsController {
       }
       case 'subscribe:account:nominationPools:commission': {
         const { poolCommission: cur } = account.nominationPoolData!;
-        const { poolCommission: prev } = miscData;
+        const {
+          poolCommission: prev,
+        }: { poolCommission: NominationPoolCommission } = miscData;
 
         return {
           title: account.name,
