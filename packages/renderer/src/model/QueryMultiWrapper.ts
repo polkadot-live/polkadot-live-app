@@ -33,6 +33,7 @@ export class QueryMultiWrapper {
    * API call entries (subscription tasks) are keyed by their chain ID.
    */
   private subscriptions = new Map<ChainID, QueryMultiEntry>();
+  private queries = new Map<ChainID, QueryWithParams<AnyFunction>[]>();
 
   /**
    * Flag what data needs syncing after executing callbacks.
@@ -213,19 +214,20 @@ export class QueryMultiWrapper {
    * @summary Dynamically build the query multi argument, and make the actual API call.
    * @param {ChainID} chainId - The target chain to subscribe to.
    */
-  async build(chainId: ChainID) {
+  async run(chainId: ChainID) {
     try {
       if (!this.subscriptions.get(chainId)) {
         console.log('🟠 queryMulti map is empty.');
         return;
       }
 
+      const queries = this.queries.get(chainId);
+      if (!queries) {
+        throw new Error('Error - no built queries.');
+      }
       const api = (
         await APIsController.getConnectedApiOrThrow(chainId)
       ).getApi();
-
-      // Construct the argument for new queryMulti call.
-      const queries = await this.buildQueryMultiArg(chainId);
 
       const unsub = await api.queryMulti(queries, async (data: AnyData) => {
         // Work out task to handle
@@ -456,16 +458,17 @@ export class QueryMultiWrapper {
   }
 
   /**
-   * @name buildQueryMultiArg
+   * @name build
    * @summary Dynamically build the query multi argument by iterating the target chain's call entries (subscription tasks).
    */
-  private async buildQueryMultiArg(chainId: ChainID) {
+  async build(chainId: ChainID) {
     // An array of arrays. The inner array represents a single API call.
     const queries: QueryWithParams<AnyFunction>[] = [];
     const entry: QueryMultiEntry | undefined = this.subscriptions.get(chainId);
 
     if (!entry) {
-      return queries;
+      this.queries.set(chainId, queries);
+      return;
     }
 
     // Data index registry tracks the entry index and its associated data index.
@@ -540,12 +543,12 @@ export class QueryMultiWrapper {
       return e;
     });
 
+    // Cache queries.
+    this.queries.set(chainId, queries);
     this.subscriptions.set(chainId, {
       ...entry,
       callEntries: [...updatedEntries],
     });
-
-    return queries;
   }
 
   /**

@@ -168,9 +168,7 @@ export const useMainMessagePorts = () => {
 
         // Subscribe to tasks if app setting enabled.
         if (!fromBackup && account.queryMulti !== null) {
-          for (const task of tasks) {
-            await TaskOrchestrator.subscribeTask(task, account.queryMulti);
-          }
+          await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
         }
 
         // Update React subscriptions state.

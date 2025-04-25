@@ -83,9 +83,7 @@ export class AccountsController {
 
         if (account.queryMulti !== null) {
           const tasks: SubscriptionTask[] = JSON.parse(stored);
-          for (const task of tasks) {
-            await TaskOrchestrator.subscribeTask(task, account.queryMulti);
-          }
+          await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
         }
       }
     }
@@ -109,9 +107,7 @@ export class AccountsController {
       );
 
       if (tasks.length && account.queryMulti) {
-        for (const task of tasks) {
-          await TaskOrchestrator.subscribeTask(task, account.queryMulti);
-        }
+        await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
       }
     }
   }
@@ -128,9 +124,7 @@ export class AccountsController {
       for (const account of accounts) {
         if (account.queryMulti) {
           const tasks = account.getSubscriptionTasks() || [];
-          for (const task of tasks) {
-            await TaskOrchestrator.subscribeTask(task, account.queryMulti);
-          }
+          await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
         }
       }
     }
@@ -152,9 +146,7 @@ export class AccountsController {
 
     // Send tasks to query multi wrapper for removal.
     if (tasks && tasks.length && account && account.queryMulti) {
-      for (const task of tasks) {
-        await TaskOrchestrator.subscribeTask(task, account.queryMulti);
-      }
+      await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
 
       // Remove tasks from electron store.
       // TODO: Batch removal of task data in electron store.

@@ -197,9 +197,7 @@ export const SubscriptionsProvider = ({
 
         // Subscribe to tasks.
         if (account.queryMulti) {
-          for (const task of tasks) {
-            await TaskOrchestrator.subscribeTask(task, account.queryMulti);
-          }
+          await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
         }
 
         // Analytics.

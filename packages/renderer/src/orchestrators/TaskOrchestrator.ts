@@ -29,15 +29,16 @@ export class TaskOrchestrator {
   ) {
     const isOnline: boolean = await getOnlineStatus();
     this.next(task, wrapper);
-    isOnline && (await wrapper.build(task.chainId));
+
+    if (isOnline) {
+      await wrapper.build(task.chainId);
+      await wrapper.run(task.chainId);
+    }
   }
 
   /**
    * @name subscribeTasks
    * @summary Same as `subscribeTask` but for an array of subscription tasks.
-   *
-   * @deprecated The index registry needs to be built synchrously and one subscription
-   * task added at a time.
    */
   static async subscribeTasks(
     tasks: SubscriptionTask[],
@@ -51,6 +52,7 @@ export class TaskOrchestrator {
     // Cache task in its owner account's query multi wrapper.
     for (const task of tasks) {
       this.next(task, wrapper);
+      await wrapper.build(task.chainId);
     }
 
     // Build the tasks if the app is in online mode.
@@ -58,7 +60,7 @@ export class TaskOrchestrator {
     if (isOnline) {
       const chainIds = new Set(tasks.map((t) => t.chainId));
       for (const chainId of chainIds) {
-        isOnline && (await wrapper.build(chainId));
+        await wrapper.run(chainId);
       }
     }
   }
