@@ -475,91 +475,53 @@ export class QueryMultiWrapper {
     }
 
     // First entry is always going to have dataIndex of 0.
-    const dataIndexRegistry: RegistryPair[] = [{ entryIndex: 0, dataIndex: 0 }];
+    const dataIndexRegistry: RegistryPair[] = [];
+
+    // Util: Get next registry index.
+    const getNextRegistryIndex = (): number =>
+      dataIndexRegistry.length === 0
+        ? 0
+        : dataIndexRegistry.reduce(
+            (acc, { dataIndex }) => (dataIndex > acc ? dataIndex : acc),
+            0
+          ) + 1;
+
+    // Util: Check if tasks can share an API call.
+    const tasksCanShare = (a: SubscriptionTask, b: SubscriptionTask) => {
+      const isSameQuery = a.apiCallAsString === b.apiCallAsString;
+      const isSameArgs = Utils.arraysAreEqual(
+        a.actionArgs || [],
+        b.actionArgs || []
+      );
+      return isSameQuery && isSameArgs;
+    };
 
     // Set each task's dataIndex.
-    for (const [outerI, { task }] of entry.callEntries.entries()) {
-      if (outerI === 0) {
-        // First task in the array cannot share with previous tasks.
-        const apiCall: AnyFunction = await QueryMultiWrapper.getApiCall(task);
-        const args = QueryMultiWrapper.parseActionArgs(task) || [];
-        queries.push({ fn: apiCall, args });
-        continue;
-      }
-
+    const iterable = entry.callEntries;
+    for (const [i, { task }] of iterable.entries()) {
       // Re-iterate entries up to outerI and check for shared api calls.
-      for (const [innerI, { task: innerT }] of entry.callEntries.entries()) {
-        if (innerI === outerI) {
-          // No shared call found. Increment by 1 to get next data index.
-          const nextDataIndex =
-            dataIndexRegistry.reduce(
-              (acc, { dataIndex }) => (dataIndex > acc ? dataIndex : acc),
-              0
-            ) + 1;
+      for (const [j, { task: innerT }] of iterable.entries()) {
+        if (i === j) {
+          const nextIndex = getNextRegistryIndex();
+          task.dataIndex = nextIndex;
 
-          task.dataIndex = nextDataIndex;
           dataIndexRegistry.push({
-            entryIndex: outerI,
-            dataIndex: nextDataIndex,
+            entryIndex: i,
+            dataIndex: nextIndex,
           });
 
           const apiCall: AnyFunction = await QueryMultiWrapper.getApiCall(task);
           const args = QueryMultiWrapper.parseActionArgs(task) || [];
           queries.push({ fn: apiCall, args });
           break;
-        } else {
-          if (task.apiCallAsString === innerT.apiCallAsString) {
-            // Share if calls are the same with no args.
-            if (!task.actionArgs && !innerT.actionArgs) {
-              task.dataIndex = innerT.dataIndex;
+        } else if (tasksCanShare(task, innerT)) {
+          task.dataIndex = innerT.dataIndex;
 
-              dataIndexRegistry.push({
-                entryIndex: outerI,
-                dataIndex: innerT.dataIndex!,
-              });
-              break;
-            } else {
-              // Check if action args are equal.
-              const outerHasArgs = task.actionArgs !== undefined;
-              const innerHasArgs = innerT.actionArgs !== undefined;
-
-              // Share api call if they both have no arguments.
-              if (!outerHasArgs && !innerHasArgs) {
-                task.dataIndex = innerT.dataIndex;
-
-                dataIndexRegistry.push({
-                  entryIndex: outerI,
-                  dataIndex: innerT.dataIndex!,
-                });
-                break;
-              }
-
-              // Not equal if one has args and the other doesn't.
-              if (
-                (outerHasArgs && !innerHasArgs) ||
-                (!outerHasArgs && innerHasArgs)
-              ) {
-                continue;
-              }
-
-              // Otherwise, check if action args are the same.
-              if (Utils.arraysAreEqual(task.actionArgs!, innerT.actionArgs!)) {
-                task.dataIndex = innerT.dataIndex;
-
-                dataIndexRegistry.push({
-                  entryIndex: outerI,
-                  dataIndex: innerT.dataIndex!,
-                });
-                break;
-              }
-
-              // Continue if api calls are equal but the action args are not equal.
-              continue;
-            }
-          } else {
-            // Continue of api calls are not equal.
-            continue;
-          }
+          dataIndexRegistry.push({
+            entryIndex: i,
+            dataIndex: innerT.dataIndex!,
+          });
+          break;
         }
       }
     }
@@ -570,11 +532,9 @@ export class QueryMultiWrapper {
     // Get updated entries with correct `dataIndex` for each task and set `justBuilt` flag.
     const updatedEntries = entry.callEntries.map((e, i) => {
       const { entryIndex, dataIndex } = dataIndexRegistry[i];
-
       if (entryIndex !== i) {
         throw new Error("indices don't match");
       }
-
       e.task.dataIndex = dataIndex;
       e.task.justBuilt = true;
       return e;
