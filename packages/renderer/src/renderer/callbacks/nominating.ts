@@ -121,45 +121,38 @@ export const getEraRewards = async (
 
   // Get nominated validator commissions.
   const commissions = new Map<string, string>();
-  const vids = Array.from(addressStake.keys());
-  const prefResults = await Promise.all(
-    vids.map((vid) =>
-      api.query.staking.erasValidatorPrefs([era, new AccountId32(vid)])
-    )
+  const vs = Array.from(addressStake.keys());
+  const prefs = await Promise.all(
+    vs.map((v) => api.query.staking.erasValidatorPrefs([era, v]))
+  );
+  prefs.forEach((p, i) =>
+    commissions.set(vs[i], formatPerbillPercent(p.commission))
   );
 
-  for (let i = 0; i < prefResults.length; ++i) {
-    commissions.set(vids[i], formatPerbillPercent(prefResults[i].commission));
-  }
-
-  // TODO: Remove `rmCommas` call
   // Calculate unclaimed rewards for each nominated validator.
   let totalRewards = new BigNumber(0);
-  for (const vid of vids) {
+  for (const v of vs) {
     // Parse commission to big number.
     const commission = new BigNumber(
-      commissions.get(vid)!.replace(/%/g, '')
+      commissions.get(v)!.replace(/%/g, '')
     ).multipliedBy(0.01);
 
     // Get total staked amount by the address.
     const staked = addressStake
-      .get(vid)!
-      .reduce((acc, cur) => acc.plus(rmCommas(cur)), new BigNumber(0));
+      .get(v)!
+      .reduce((acc, cur) => acc.plus(cur), new BigNumber(0));
 
     // Get validator's total stake.
-    const { total: vTotal } = validators.get(vid)!;
-    const total = new BigNumber(rmCommas(vTotal));
+    const { total: vTotal } = validators.get(v)!;
+    const total = new BigNumber(vTotal);
 
     // Calculate available validator rewards for the era based on reward points.
-    const totalRewardPoints = new BigNumber(
-      rmCommas(eraRewardPoints.total.toString())
-    );
-
+    const totalRewardPoints = new BigNumber(eraRewardPoints.total.toString());
     const pointsData = eraRewardPoints.individual.find(
-      (i) => i[0].address(prefix) === vid
+      (i) => i[0].address(prefix) === v
     )!;
-    const validatorRewardPoints = new BigNumber(pointsData[1]);
 
+    const validatorRewardPoints = new BigNumber(pointsData[1]);
     const avail = eraTotalPayout
       .multipliedBy(validatorRewardPoints)
       .dividedBy(totalRewardPoints);
@@ -172,9 +165,9 @@ export const getEraRewards = async (
           .minus(valCut)
           .multipliedBy(staked)
           .dividedBy(total)
-          .plus(address === vid ? valCut : 0);
+          .plus(address === v ? valCut : 0);
 
-    showDebug && console.log(`${vid}: ${eraRewardsForValidator.toString()}`);
+    showDebug && console.log(`${v}: ${eraRewardsForValidator.toString()}`);
     totalRewards = totalRewards.plus(eraRewardsForValidator);
   }
 
