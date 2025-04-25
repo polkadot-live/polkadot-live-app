@@ -73,9 +73,7 @@ export class SubscriptionsController {
       serialized !== '' ? JSON.parse(serialized) : [];
 
     // Subscribe to tasks.
-    for (const task of tasks) {
-      await TaskOrchestrator.subscribeTask(task, this.chainSubscriptions);
-    }
+    await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions);
   }
 
   /**
@@ -90,9 +88,7 @@ export class SubscriptionsController {
 
     // Get subscription task array and subscribe to batched tasks.
     const tasks = this.chainSubscriptions?.getSubscriptionTasks() || [];
-    for (const task of tasks) {
-      await TaskOrchestrator.subscribeTask(task, this.chainSubscriptions);
-    }
+    await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions);
   }
 
   /**
@@ -109,9 +105,7 @@ export class SubscriptionsController {
       .getSubscriptionTasks()
       .filter((task) => task.chainId === chainId);
 
-    for (const task of tasks) {
-      await TaskOrchestrator.subscribeTask(task, this.chainSubscriptions);
-    }
+    await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions);
   }
 
   /**
@@ -134,9 +128,7 @@ export class SubscriptionsController {
    */
   static async subscribeChainTasks(tasks: SubscriptionTask[]) {
     if (this.chainSubscriptions) {
-      for (const task of tasks) {
-        await TaskOrchestrator.subscribeTask(task, this.chainSubscriptions);
-      }
+      await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions);
     } else {
       throw new Error(
         'Error: SubscriptionsController::subscribeChainTask QueryMultiWrapper null'
