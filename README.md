@@ -37,3 +37,9 @@ yarn vendors
 # Start dev server.
 yarn watch
 ```
+
+## Attributions
+
+Polkadot Live is powered by **Dedot**, a next-generation JavaScript client for Polkadot and Polkadot SDK-based blockchains.
+
+- [dedot.dev](https://docs.dedot.dev/) ([Github](https://github.com/dedotdev/dedot))
