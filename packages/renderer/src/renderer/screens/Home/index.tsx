@@ -198,7 +198,6 @@ export const Home = () => {
         showMinimize={String(platform) === 'linux'}
         onDockToggle={onDockToggle}
         onMinimizeWindow={onMinimizeWindow}
-        onRestoreWindow={() => window.myAPI.restoreWindow('base')}
         version={version}
       >
         {/* Logic in cog menu context */}

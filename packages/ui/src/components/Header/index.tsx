@@ -4,7 +4,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faTimes,
-  faWindowRestore,
   faCircleChevronDown,
 } from '@fortawesome/free-solid-svg-icons';
 import { HeaderWrapper } from './Wrapper';
@@ -22,7 +21,6 @@ export const Header = ({
   onCloseWindow,
   onDockToggle,
   onMinimizeWindow,
-  onRestoreWindow,
   ToggleNode,
 }: HeaderProps) => (
   <HeaderWrapper>
@@ -34,15 +32,6 @@ export const Header = ({
       <div className="right">
         {showButtons ? (
           <div className="controls-wrapper">
-            {/* Restore base window */}
-            <button
-              type="button"
-              data-testid="restore-btn"
-              onClick={() => onRestoreWindow && onRestoreWindow()}
-            >
-              <FontAwesomeIcon transform={'shrink-1'} icon={faWindowRestore} />
-            </button>
-
             {/* Theme toggle */}
             {ToggleNode}
 
