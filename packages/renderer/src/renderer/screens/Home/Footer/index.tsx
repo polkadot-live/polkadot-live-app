@@ -111,7 +111,7 @@ export const Footer = () => {
       {/* Dedot Connections */}
       <section className="network-list-wrapper">
         <FlexRow $gap={'0.7rem'}>
-          <h3>Dedot</h3>
+          <h3>Networks</h3>
           {showWorkingSpinner() && (
             <div style={{ position: 'relative' }}>
               <PuffLoader
