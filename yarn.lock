@@ -1924,7 +1924,7 @@ __metadata:
     electron-store: "npm:^8.1.0"
     electron-unhandled: "npm:^4.0.1"
     ip: "npm:^2.0.1"
-    socket.io: "npm:^4.7.5"
+    socket.io: "npm:^4.8.1"
     ts-node: "npm:^10.9.2"
   languageName: unknown
   linkType: soft
@@ -11790,7 +11790,7 @@ __metadata:
     react-spinners: "npm:^0.14.1"
     react-toastify: "npm:^10.0.5"
     smoldot: "npm:^2.0.34"
-    socket.io: "npm:^4.7.5"
+    socket.io: "npm:^4.8.1"
     styled-components: "npm:^6.1.17"
     svg-inline-loader: "npm:^0.8.2"
     ts-node: "npm:^10.9.2"
@@ -13212,7 +13212,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"socket.io@npm:^4.7.5":
+"socket.io@npm:^4.8.1":
   version: 4.8.1
   resolution: "socket.io@npm:4.8.1"
   dependencies:
