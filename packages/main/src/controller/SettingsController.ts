@@ -30,7 +30,7 @@ export class SettingsController {
         appDarkMode: true,
         appSilenceOsNotifications: false,
         appSilenceExtrinsicsOsNotifications: false,
-        appShowOnAllWorkspaces: true,
+        appShowOnAllWorkspaces: false,
         appShowDebuggingSubscriptions: false,
         appEnableAutomaticSubscriptions: true,
         appEnablePolkassemblyApi: true,
