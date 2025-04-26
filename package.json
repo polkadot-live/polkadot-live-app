@@ -71,7 +71,7 @@
     "@walletconnect/modal": "^2.7.0",
     "@walletconnect/universal-provider": "^2.17.3",
     "@walletconnect/utils": "^2.17.3",
-    "@zondax/ledger-substrate": "^1.0.0",
+    "@zondax/ledger-substrate": "^1.1.1",
     "auto-launch": "^5.0.6",
     "axios": "^1.7.2",
     "bignumber.js": "^9.1.2",
