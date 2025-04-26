@@ -200,6 +200,7 @@ export const API: PreloadAPI = {
   openDevTools: (windowId: string) =>
     ipcRenderer.send('app:view:devTools', windowId),
 
+  // Currently unused.
   restoreWindow: (windowId: string) =>
     ipcRenderer.send('app:window:restore', windowId),
 

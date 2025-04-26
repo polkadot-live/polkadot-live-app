@@ -14,8 +14,7 @@ describe('Header', () => {
   const renderHeader = (
     showButtons: boolean,
     onCloseWindow?: AnyData,
-    onDockToggle?: AnyData,
-    onRestoreWindow?: AnyData
+    onDockToggle?: AnyData
   ) =>
     render(
       <Header
@@ -25,7 +24,6 @@ describe('Header', () => {
         version={mockVersion}
         onCloseWindow={onCloseWindow}
         onDockToggle={onDockToggle}
-        onRestoreWindow={onRestoreWindow}
       />
     );
 
@@ -41,25 +39,17 @@ describe('Header', () => {
   };
 
   it('should render the provided version string', () => {
-    renderHeader(true, vi.fn(), vi.fn(), vi.fn());
+    renderHeader(true, vi.fn(), vi.fn());
 
     const versionElement = screen.queryByTestId('version') as HTMLElement;
     expect(versionElement).toBeInTheDocument();
     expect(versionElement).toHaveTextContent(mockVersion);
   });
 
-  it('should call the provided onRestore function when the restore button is clicked', async () => {
-    const user = userEvent.setup();
-    const mockOnRestoreWindow = vi.fn();
-    renderHeader(true, vi.fn(), vi.fn(), mockOnRestoreWindow);
-
-    checkCalledOnClick(mockOnRestoreWindow, 'restore-btn', user);
-  });
-
   it('should call the provided onCloseWindow function when the close button is clicked', async () => {
     const user = userEvent.setup();
     const mockOnCloseWindow = vi.fn();
-    renderHeader(false, mockOnCloseWindow, vi.fn(), vi.fn());
+    renderHeader(false, mockOnCloseWindow, vi.fn());
 
     checkCalledOnClick(mockOnCloseWindow, 'close-btn', user);
   });

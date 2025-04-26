@@ -201,6 +201,11 @@ export class WindowsController {
       const { view } = maybeStoredView;
       this.base.window.contentView.removeChildView(view);
       this.views = this.views.filter((s) => s.id !== id);
+
+      // Hide base window if all tabs are closed.
+      if (this.views.length === 0) {
+        this.base.window.hide();
+      }
     }
   };
 

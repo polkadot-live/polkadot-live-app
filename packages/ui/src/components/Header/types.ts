@@ -12,6 +12,5 @@ export interface HeaderProps {
   onCloseWindow?: () => void;
   onDockToggle?: () => void;
   onMinimizeWindow?: () => void;
-  onRestoreWindow?: () => void;
   children?: React.ReactNode;
 }
