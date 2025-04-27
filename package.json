@@ -75,7 +75,7 @@
     "axios": "^1.7.2",
     "bignumber.js": "^9.1.2",
     "date-fns": "^3.6.0",
-    "dedot": "^0.9.4",
+    "dedot": "^0.9.5",
     "electron-localshortcut": "^3.2.1",
     "electron-squirrel-startup": "^1.0.1",
     "electron-store": "^8.1.0",
