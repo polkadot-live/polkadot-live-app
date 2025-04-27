@@ -84,20 +84,10 @@ export const getEraRewards = async (
     return [];
   };
 
-  // Query all eras stakers paged.
-  let eraStakersPaged: [
-    [number, AccountId32, number],
-    SpStakingExposurePage,
-  ][][] = [];
-
-  const batchSize = 30;
-  for (let i = 0; i < validatorIds.length; i += batchSize) {
-    const batch = validatorIds.slice(i, i + batchSize);
-    const results = await Promise.all(
-      batch.map((v) => api.query.staking.erasStakersPaged.entries(era, v))
-    );
-    eraStakersPaged = [...eraStakersPaged, ...results];
-  }
+  // Dedot implements batching from version 0.9.5 for processing hundreds of async queries.
+  const eraStakersPaged = await Promise.all(
+    validatorIds.map((v) => api.query.staking.erasStakersPaged.entries(era, v))
+  );
 
   // Check if account has stake for each validator.
   const valToStake = await Promise.all(

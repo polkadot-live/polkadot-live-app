@@ -4,10 +4,6 @@
   "version": "0.7.0-alpha",
   "description": "Decentralised Polkadot Notifications and Chain Interactions on the Desktop.",
   "type": "module",
-  "contributors": [
-    "Dane Bulat<dane.bulat@gmail.com>"
-  ],
-  "keywords": [],
   "private": true,
   "main": "packages/main/dist/main.cjs",
   "workspaces": [
@@ -33,10 +29,6 @@
   },
   "engines": {
     "node": ">=23.1.0"
-  },
-  "author": {
-    "name": "Dane Bulat",
-    "email": "dane.bulat@gmail.com"
   },
   "license": "GPL-3.0-only",
   "dependencies": {
@@ -75,7 +67,7 @@
     "axios": "^1.7.2",
     "bignumber.js": "^9.1.2",
     "date-fns": "^3.6.0",
-    "dedot": "^0.9.4",
+    "dedot": "^0.9.5",
     "electron-localshortcut": "^3.2.1",
     "electron-squirrel-startup": "^1.0.1",
     "electron-store": "^8.1.0",
