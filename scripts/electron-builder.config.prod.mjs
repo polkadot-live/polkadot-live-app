@@ -13,6 +13,9 @@ export default {
   compression: 'normal',
   copyright: `Copyright (C) ${new Date().getFullYear()} Polkadot Live Authors & Contributors`,
   productName: 'Polkadot Live',
+  extraMetadata: {
+    author: 'JKRB Investments Limited',
+  },
 
   /** Building */
   directories: {

@@ -4,9 +4,6 @@
   "version": "0.7.0-alpha",
   "description": "Decentralised Polkadot Notifications and Chain Interactions on the Desktop.",
   "type": "module",
-  "contributors": [
-    "Dane Bulat<dane.bulat@gmail.com>"
-  ],
   "keywords": [],
   "private": true,
   "main": "packages/main/dist/main.cjs",
@@ -33,10 +30,6 @@
   },
   "engines": {
     "node": ">=23.1.0"
-  },
-  "author": {
-    "name": "Dane Bulat",
-    "email": "dane.bulat@gmail.com"
   },
   "license": "GPL-3.0-only",
   "dependencies": {
