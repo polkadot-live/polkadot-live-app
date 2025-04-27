@@ -19,22 +19,7 @@
     "@types/debug": "^4.1.12",
     "@types/electron-localshortcut": "^3.1.0",
     "@types/ip": "^1.1.3",
-    "debug": "^4.3.4",
-    "electron": "^35.2.1",
-    "ts-node": "^10.9.2"
-  },
-  "dependencies": {
-    "@ledgerhq/hw-transport": "^6.31.4",
-    "@ledgerhq/hw-transport-node-hid": "^6.29.5",
-    "@polkadot-live/preload": "workspace:*",
-    "@zondax/ledger-substrate": "^1.1.1",
-    "auto-launch": "^5.0.6",
-    "electron-localshortcut": "^3.2.1",
-    "electron-squirrel-startup": "^1.0.1",
-    "electron-store": "^8.1.0",
-    "electron-unhandled": "^4.0.1",
-    "ip": "^2.0.1",
-    "socket.io": "^4.8.1"
+    "debug": "^4.3.4"
   },
   "packageManager": "yarn@4.0.2"
 }
