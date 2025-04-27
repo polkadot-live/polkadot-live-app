@@ -20,7 +20,7 @@
     "./kits/overlay/*": "./dist/mjs/kits/Overlay/*"
   },
   "scripts": {
-    "build": "gulp",
+    "build": "gulp --max-old-space-size=8192",
     "clear:dist": "[ -d \"node_modules\" ] && rm -fr \"node_modules\" || true",
     "clear": "([ -d \"dist\" ] && rm -fr \"dist\") || true && ([ -d \"node_modules\" ] && rm -fr \"node_modules\") || true",
     "lint": "eslint --fix --ext .ts,.tsx ./src && npx prettier --write ./src",
