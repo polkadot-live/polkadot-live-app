@@ -12,7 +12,7 @@ import type { AnyFunction } from '@polkadot-live/types/misc';
 export const hideDockIcon = () => {
   if (process.platform === 'darwin') {
     setTimeout(() => {
-      app.dock.hide();
+      app.dock && app.dock.hide();
     }, 2_000);
   }
 };
@@ -21,7 +21,7 @@ export const hideDockIcon = () => {
 export const showDockIcon = () => {
   if (process.platform === 'darwin') {
     setTimeout(() => {
-      app.dock.show();
+      app.dock && app.dock.show();
     }, 2_000);
   }
 };

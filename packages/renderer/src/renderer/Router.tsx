@@ -69,7 +69,10 @@ export const Router = () => {
   });
 
   return (
-    <HashRouter basename="/">
+    <HashRouter
+      basename="/"
+      future={{ v7_relativeSplatPath: true, v7_startTransition: true }}
+    >
       {windowId === 'tabs' ? (
         <Routes>
           <Route path={'/tabs'} element={<Tabs />} />

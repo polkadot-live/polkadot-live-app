@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as UI from '@polkadot-live/ui/components';
-import { faChrome } from '@fortawesome/free-brands-svg-icons';
 import {
   faExternalLinkAlt,
   faCircleDot,
@@ -13,7 +12,6 @@ import { GridTwoCol } from '@polkadot-live/ui/styles';
 import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
 import WalletConnectSVG from '@w3ux/extension-assets/WalletConnect.svg?react';
 import LedgerLogoSVG from '@w3ux/extension-assets/Ledger.svg?react';
-import { ButtonText } from '@polkadot-live/ui/kits/buttons';
 import { useHelp } from '@app/contexts/common/Help';
 import { useEffect } from 'react';
 import type { AccountSource } from '@polkadot-live/types/accounts';
@@ -104,20 +102,15 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
             />
           }
           childrenSubtitle={
-            <>
-              <ButtonText
-                text="BETA"
-                disabled
-                marginRight
-                style={{ opacity: 0.5, padding: 0 }}
-              />
-              <ButtonText
-                text="Chrome / Brave"
-                disabled
-                iconLeft={faChrome}
-                style={{ opacity: 0.5, padding: 0 }}
-              />
-            </>
+            <a
+              className="link stay"
+              href={`https://www.ledger.com/`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              ledger.com
+              <FontAwesomeIcon icon={faExternalLinkAlt} transform="shrink-6" />
+            </a>
           }
           styleLogoCont={{ paddingTop: '0.2rem' }}
         />
