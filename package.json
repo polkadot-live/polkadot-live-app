@@ -4,7 +4,6 @@
   "version": "0.7.0-alpha",
   "description": "Decentralised Polkadot Notifications and Chain Interactions on the Desktop.",
   "type": "module",
-  "keywords": [],
   "private": true,
   "main": "packages/main/dist/main.cjs",
   "workspaces": [
