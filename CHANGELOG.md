@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.8.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.7.0-alpha...v0.8.0-alpha) (2025-04-28)
+
+
+### Features
+
+* api disconnect button tooltips ([#946](https://github.com/polkadot-live/polkadot-live-app/issues/946)) ([6d5dd74](https://github.com/polkadot-live/polkadot-live-app/commit/6d5dd7470a06d70c4d13ba6018a1fa0ef6c58b37))
+* api timeouts and cleanup ([#947](https://github.com/polkadot-live/polkadot-live-app/issues/947)) ([dd78e86](https://github.com/polkadot-live/polkadot-live-app/commit/dd78e8632c503cdbfcd6752660909e4a0df2f67c))
+* dedot api model + controller ([#953](https://github.com/polkadot-live/polkadot-live-app/issues/953)) ([45883d2](https://github.com/polkadot-live/polkadot-live-app/commit/45883d288a30b0043c82ed8b33cb0629bc9cd37b))
+* dedot chain connections footer ui ([#955](https://github.com/polkadot-live/polkadot-live-app/issues/955)) ([d80faa6](https://github.com/polkadot-live/polkadot-live-app/commit/d80faa6ef849ac5feff9fa9aeda36fb57cd2d7d5))
+* dedot integration ([#954](https://github.com/polkadot-live/polkadot-live-app/issues/954)) ([8bdcca5](https://github.com/polkadot-live/polkadot-live-app/commit/8bdcca55e591fa8e9ec6f76d2555c07f2026850e))
+* disconnect chain api ([#935](https://github.com/polkadot-live/polkadot-live-app/issues/935)) ([739db1d](https://github.com/polkadot-live/polkadot-live-app/commit/739db1d44c190336f198bd378c7efe99816e7728))
+* light client integration ([#961](https://github.com/polkadot-live/polkadot-live-app/issues/961)) ([ebd1d71](https://github.com/polkadot-live/polkadot-live-app/commit/ebd1d718b7f98f76f590642cb48c0d00944814de))
+* send screen offline mode ([#952](https://github.com/polkadot-live/polkadot-live-app/issues/952)) ([beee1c0](https://github.com/polkadot-live/polkadot-live-app/commit/beee1c0d3eeac333aa71da28284b6177c9208f11))
+* ui edge cases ([#951](https://github.com/polkadot-live/polkadot-live-app/issues/951)) ([ed1542d](https://github.com/polkadot-live/polkadot-live-app/commit/ed1542de4c39b6560c2b843987f7fb0ac3a7c0fb))
+
+
+### Bug Fixes
+
+* api connections state ([#932](https://github.com/polkadot-live/polkadot-live-app/issues/932)) ([8d54228](https://github.com/polkadot-live/polkadot-live-app/commit/8d54228e68d6319d59d42e42cacc2a854fad887c))
+* batched task query building ([#962](https://github.com/polkadot-live/polkadot-live-app/issues/962)) ([c88a417](https://github.com/polkadot-live/polkadot-live-app/commit/c88a417ec5b148e357a3a0914a0d8f27353bdc18))
+* bootstrapping state ([#933](https://github.com/polkadot-live/polkadot-live-app/issues/933)) ([f277cc0](https://github.com/polkadot-live/polkadot-live-app/commit/f277cc02db34647a30a9010ba549a548e15bdfda))
+* debugging iteration ([#960](https://github.com/polkadot-live/polkadot-live-app/issues/960)) ([cde2240](https://github.com/polkadot-live/polkadot-live-app/commit/cde22402c00c33702cbb7ddf76a6654fccd5d05b))
+* encode nomination pool role addresses ([5e5641b](https://github.com/polkadot-live/polkadot-live-app/commit/5e5641bbb817db270f970deddeebabdde5187b58))
+* offline mode app initialization ([43ac522](https://github.com/polkadot-live/polkadot-live-app/commit/43ac522a42bf97fd76c99680a3faec5f600328ee))
+* queries data index registry building ([5222ac4](https://github.com/polkadot-live/polkadot-live-app/commit/5222ac48c33af65fff245fd96fbac7fe07623740))
+* referenda pagination ellipsis ([#934](https://github.com/polkadot-live/polkadot-live-app/issues/934)) ([d437aa5](https://github.com/polkadot-live/polkadot-live-app/commit/d437aa5e27b58f83c15ba01930286b843eeddd47))
+* undefined subscriptions exception ([a6bfe71](https://github.com/polkadot-live/polkadot-live-app/commit/a6bfe7159f3166bb95b5446c4173ffbf86b2c8af))
+* update managed data post callback ([45b505b](https://github.com/polkadot-live/polkadot-live-app/commit/45b505b461a44ba829c552f93cd4bebbb9fb3419))
+* westend balances ([#970](https://github.com/polkadot-live/polkadot-live-app/issues/970)) ([34b3ecc](https://github.com/polkadot-live/polkadot-live-app/commit/34b3ecc4001541925b91bda26d23479c147e80f2))
+
 ## [0.7.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.6.2-alpha...v0.7.0-alpha) (2025-03-24)
 
 
