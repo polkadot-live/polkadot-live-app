@@ -25,7 +25,7 @@ import type {
   ApiCallEntry,
   PostCallbackSyncFlags,
 } from '@polkadot-live/types/subscriptions';
-import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
+import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { Account } from '@ren/model/Account';
 import type { RelayDedotClient } from '@polkadot-live/types/apis';
@@ -169,7 +169,7 @@ export const fetchBalanceForAccount = async (account: Account) => {
     await APIsController.getConnectedApiOrThrow(account.chain)
   ).getApi();
 
-  const result: AnyJson = await api.query.system.account(account.address);
+  const result = await api.query.system.account(account.address);
 
   account.balance = {
     nonce: BigInt(result.nonce),
@@ -221,18 +221,16 @@ export const getSpendableBalance = async (
   chainId: ChainID
 ): Promise<bigint> => {
   const api = (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
-
-  // Spendable balance equation:
-  // spendable = free - max(max(frozen, reserved), ed)
-  const balance = await getBalanceForAccount(api, address, chainId);
-  const { free, frozen, reserved } = balance;
   const ed = api.consts.balances.existentialDeposit;
 
+  const balance = await getBalanceForAccount(api, address, chainId);
+  const { free, frozen, reserved } = balance;
   const max = (a: bigint, b: bigint): bigint => (a > b ? a : b);
-  let spendable = free - max(max(frozen, reserved), ed);
-  if (spendable < 0n) {
-    spendable = 0n;
-  }
+
+  const spendable =
+    chainId === 'Westend'
+      ? free - ed
+      : max(free - max(frozen, reserved) - ed, 0n);
 
   return spendable;
 };

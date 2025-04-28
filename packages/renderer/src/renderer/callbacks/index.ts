@@ -138,9 +138,15 @@ export class Callbacks {
       }
 
       // Get the received balance.
+      const chainId = account.chain;
       const balance = data.data as PalletBalancesAccountData;
-      const reserved = balance.reserved;
-      const free = balance.free - reserved;
+      const max = (a: bigint, b: bigint): bigint => (a > b ? a : b);
+
+      const free =
+        chainId === 'Westend'
+          ? balance.free
+          : balance.free - max(balance.reserved, balance.frozen);
+
       const b = account.balance;
       const isSame = b.free ? free === b.free : false;
 
@@ -198,8 +204,7 @@ export class Callbacks {
       }
 
       // Get the received frozen balance.
-      const balance = data.data as PalletBalancesAccountData;
-      const frozen = balance.frozen;
+      const { frozen } = data.data as PalletBalancesAccountData;
       const b = account.balance;
       const isSame = b.frozen ? frozen === b.frozen : false;
 
@@ -257,8 +262,7 @@ export class Callbacks {
       }
 
       // Get the received reserved balance.
-      const balance = data.data as PalletBalancesAccountData;
-      const reserved = balance.reserved;
+      const { reserved } = data.data as PalletBalancesAccountData;
       const b = account.balance;
       const isSame = b.reserved ? reserved === b.reserved : false;
 
@@ -320,24 +324,24 @@ export class Callbacks {
        */
       const api = await this.getApiOrThrow(account.chain);
       const ed = api.consts.balances.existentialDeposit;
-      const balance = data.data as PalletBalancesAccountData;
-
-      const free = balance.free;
-      const frozen = balance.frozen;
-      const reserved = balance.reserved;
+      const { free, frozen, reserved } = data.data as PalletBalancesAccountData;
+      const chainId = account.chain;
 
       const max = (a: bigint, b: bigint): bigint => (a > b ? a : b);
-      let spendable = free - max(max(frozen, reserved), ed);
-      if (spendable < 0n) {
-        spendable = 0n;
-      }
+      const spendable =
+        chainId === 'Westend'
+          ? free - ed
+          : max(free - max(frozen, reserved) - ed, 0n);
 
       // Check if spendable balance has changed.
       const b = account.balance;
-      const cur = max(b.free - max(max(b.frozen, b.reserved), ed), 0n);
-      const isSame = spendable === cur;
+      const cur =
+        chainId === 'Westend'
+          ? b.free - ed
+          : max(b.free - max(b.frozen, b.reserved) - ed, 0n);
 
       // Exit early if nothing has changed.
+      const isSame = spendable === cur;
       if (!isOneShot && isSame) {
         return true;
       }
