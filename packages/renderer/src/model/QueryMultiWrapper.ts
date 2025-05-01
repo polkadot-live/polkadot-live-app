@@ -135,9 +135,11 @@ export class QueryMultiWrapper {
    * @summary Main logic to handle entries (subscription tasks).
    */
   private async handleCallback(entry: ApiCallEntry, dataArr: AnyData) {
+    type TupleArg = [AnyData, ApiCallEntry, PostCallbackSyncFlags];
     const { action, justBuilt } = entry.task;
     const data = dataArr[entry.task.dataIndex!];
     const flags = this.postCallbackSyncFlags;
+    const args: TupleArg = [data, entry, flags];
 
     // Exit early if the task was just built (toggled on).
     if (justBuilt) {
@@ -155,19 +157,19 @@ export class QueryMultiWrapper {
         break;
       }
       case 'subscribe:account:balance:free': {
-        await Callbacks.callback_account_balance_free(data, entry, flags);
+        await Callbacks.callback_account_balance_free(...args);
         break;
       }
       case 'subscribe:account:balance:frozen': {
-        await Callbacks.callback_account_balance_frozen(data, entry, flags);
+        await Callbacks.callback_account_balance_frozen(...args);
         break;
       }
       case 'subscribe:account:balance:reserved': {
-        await Callbacks.callback_account_balance_reserved(data, entry, flags);
+        await Callbacks.callback_account_balance_reserved(...args);
         break;
       }
       case 'subscribe:account:balance:spendable': {
-        await Callbacks.callback_account_balance_spendable(data, entry, flags);
+        await Callbacks.callback_account_balance_spendable(...args);
         break;
       }
       case 'subscribe:account:nominationPools:rewards': {
@@ -175,19 +177,19 @@ export class QueryMultiWrapper {
         break;
       }
       case 'subscribe:account:nominationPools:state': {
-        await Callbacks.callback_nomination_pool_state(data, entry, flags);
+        await Callbacks.callback_nomination_pool_state(...args);
         break;
       }
       case 'subscribe:account:nominationPools:renamed': {
-        await Callbacks.callback_nomination_pool_renamed(data, entry, flags);
+        await Callbacks.callback_nomination_pool_renamed(...args);
         break;
       }
       case 'subscribe:account:nominationPools:roles': {
-        await Callbacks.callback_nomination_pool_roles(data, entry, flags);
+        await Callbacks.callback_nomination_pool_roles(...args);
         break;
       }
       case 'subscribe:account:nominationPools:commission': {
-        await Callbacks.callback_nomination_pool_commission(data, entry, flags);
+        await Callbacks.callback_nomination_pool_commission(...args);
         break;
       }
       case 'subscribe:account:nominating:pendingPayouts': {
@@ -195,15 +197,15 @@ export class QueryMultiWrapper {
         break;
       }
       case 'subscribe:account:nominating:exposure': {
-        await Callbacks.callback_nominating_exposure(data, entry, flags);
+        await Callbacks.callback_nominating_exposure(...args);
         break;
       }
       case 'subscribe:account:nominating:commission': {
-        await Callbacks.callback_nominating_commission(data, entry, flags);
+        await Callbacks.callback_nominating_commission(...args);
         break;
       }
       case 'subscribe:account:nominating:nominations': {
-        await Callbacks.callback_nominating_nominations(data, entry, flags);
+        await Callbacks.callback_nominating_nominations(...args);
         break;
       }
     }

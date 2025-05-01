@@ -4,7 +4,6 @@
 export * from './accounts';
 export * from './apis';
 export * from './backup';
-export * from './blockstream';
 export * from './communication';
 export * from './help';
 export * from './ledger';
