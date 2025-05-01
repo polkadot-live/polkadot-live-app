@@ -242,9 +242,7 @@ export const Home = () => {
 
               {/* Subscribe */}
               {sideNav.selectedId === 2 && (
-                <div className="container">
-                  <Manage addresses={getAddresses()} />
-                </div>
+                <Manage addresses={getAddresses()} />
               )}
 
               {/* Send */}
