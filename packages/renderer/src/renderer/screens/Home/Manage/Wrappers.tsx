@@ -11,7 +11,6 @@ export const Wrapper = styled.div`
   flex-flow: column wrap;
   align-items: center;
   height: 100%;
-  max-height: 100%;
 `;
 
 export const ItemsColumn = styled.div`
