@@ -31,10 +31,12 @@ export const Manage = ({ addresses }: ManageProps) => {
         display: 'flex',
         flexDirection: 'column',
         rowGap: '0.75rem',
-        padding: '2rem 0 1rem',
+        height: '100%',
       }}
     >
-      <MainHeading style={{ padding: '0 1rem 0' }}>Subscriptions</MainHeading>
+      <MainHeading style={{ padding: '2rem 1rem 0' }}>
+        Subscriptions
+      </MainHeading>
       <CarouselWrapper
         animate={section === 0 ? 'home' : 'next'}
         transition={{
@@ -59,7 +61,10 @@ export const Manage = ({ addresses }: ManageProps) => {
           },
         }}
       >
-        <div className="scrollable" style={{ padding: '0 1rem' }}>
+        <div
+          className="scrollable"
+          style={{ height: '100%', padding: '0 1rem' }}
+        >
           {/* List of accounts and chains */}
           <Wrapper>
             <Accounts
@@ -71,7 +76,10 @@ export const Manage = ({ addresses }: ManageProps) => {
             />
           </Wrapper>
         </div>
-        <div className="scrollable" style={{ padding: '0 1rem' }}>
+        <div
+          className="scrollable"
+          style={{ height: '100%', padding: '0 1rem 1rem' }}
+        >
           {/* Subscription toggles for selected account or chain */}
           <Permissions
             setSection={setSection}
