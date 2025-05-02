@@ -1,10 +1,10 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as Callbacks from '.';
 import { AccountId32 } from 'dedot/codecs';
 import { AccountsController } from '@ren/controller/AccountsController';
 import { APIsController } from '@ren/controller/dedot/APIsController';
-import { Callbacks } from '.';
 import {
   getPostCallbackFlags,
   processOneShotPostCallback,
