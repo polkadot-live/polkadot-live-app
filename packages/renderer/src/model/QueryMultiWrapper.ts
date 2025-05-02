@@ -6,7 +6,6 @@ import * as Utils from '@ren/utils/CommonUtils';
 import { AccountId32 } from 'dedot/codecs';
 import { AccountsController } from '@ren/controller/AccountsController';
 import { APIsController } from '@ren/controller/dedot/APIsController';
-import { MainDebug } from '@ren/utils/DebugUtils';
 import { getAccountNominatingData } from '@ren/renderer/callbacks/nominating';
 import { getBalance, getNominationPoolData } from '@ren/utils/AccountUtils';
 
@@ -22,8 +21,6 @@ import type {
   ApiCallEntry,
   PostCallbackFlags,
 } from '@polkadot-live/types/subscriptions';
-
-const debug = MainDebug.extend('QueryMultiWrapper');
 
 export class QueryMultiWrapper {
   /**
@@ -348,7 +345,7 @@ export class QueryMultiWrapper {
 
     // Insert new key if chain isn't cached yet.
     if (!this.subscriptions.has(task.chainId)) {
-      debug('🔷 Add chain and API entry.');
+      console.log('🔷 Add chain and API entry.');
 
       this.subscriptions.set(task.chainId, {
         unsub: null,
@@ -357,8 +354,6 @@ export class QueryMultiWrapper {
 
       return;
     }
-
-    debug('🔷 Update with new API entry.');
 
     // Otherwise update query multi subscriptions map.
     const entry = this.subscriptions.get(task.chainId);
@@ -393,7 +388,7 @@ export class QueryMultiWrapper {
    */
   remove(chainId: ChainID, action: string) {
     if (!this.actionExists(chainId, action)) {
-      debug("🟠 API call doesn't exist.");
+      console.log("🟠 API call doesn't exist.");
     } else {
       // Remove action from query multi map.
       const entry = this.subscriptions.get(chainId)!;
