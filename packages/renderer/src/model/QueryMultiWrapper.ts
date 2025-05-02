@@ -23,7 +23,7 @@ import type {
   SubscriptionTask,
   QueryMultiEntry,
   ApiCallEntry,
-  PostCallbackSyncFlags,
+  PostCallbackFlags,
 } from '@polkadot-live/types/subscriptions';
 
 const debug = MainDebug.extend('QueryMultiWrapper');
@@ -38,7 +38,7 @@ export class QueryMultiWrapper {
   /**
    * Flag what data needs syncing after executing callbacks.
    */
-  postCallbackSyncFlags: PostCallbackSyncFlags = {
+  postCallbackSyncFlags: PostCallbackFlags = {
     syncAccountBalance: false,
     syncAccountNominationPool: false,
     syncAccountNominating: false,
@@ -135,7 +135,7 @@ export class QueryMultiWrapper {
    * @summary Main logic to handle entries (subscription tasks).
    */
   private async handleCallback(entry: ApiCallEntry, dataArr: AnyData) {
-    type TupleArg = [AnyData, ApiCallEntry, PostCallbackSyncFlags];
+    type TupleArg = [AnyData, ApiCallEntry, PostCallbackFlags];
     const { action, justBuilt } = entry.task;
     const data = dataArr[entry.task.dataIndex!];
     const flags = this.postCallbackSyncFlags;

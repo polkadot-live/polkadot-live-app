@@ -39,7 +39,7 @@ export interface IntervalSubscription {
   justBuilt?: boolean;
 }
 
-export interface PostCallbackSyncFlags {
+export interface PostCallbackFlags {
   syncAccountBalance: boolean;
   syncAccountNominationPool: boolean;
   syncAccountNominating: boolean;

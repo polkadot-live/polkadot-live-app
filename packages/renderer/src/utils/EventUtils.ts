@@ -178,10 +178,6 @@ export const pushUniqueEvent = (
  * @name filter_query_system_account
  * @summary The new event is considered a duplicate if another event has
  * matching address and balance data.
- *
- * TODO:
- * Fix (something wrong with comparing account data and event data)
- * This filter function is currently not being used.
  */
 const filter_account_balance_free = (
   events: EventCallback[],

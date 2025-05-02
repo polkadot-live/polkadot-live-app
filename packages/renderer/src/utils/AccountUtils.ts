@@ -23,7 +23,7 @@ import type {
 } from '@polkadot-live/types/accounts';
 import type {
   ApiCallEntry,
-  PostCallbackSyncFlags,
+  PostCallbackFlags,
 } from '@polkadot-live/types/subscriptions';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -31,10 +31,10 @@ import type { Account } from '@ren/model/Account';
 import type { RelayDedotClient } from '@polkadot-live/types/apis';
 
 /**
- * @name getPostCallbackSyncFlags
+ * @name getPostCallbackFlags
  * @summary Get reset post callback sync flags.
  */
-export const getPostCallbackSyncFlags = (): PostCallbackSyncFlags => ({
+export const getPostCallbackFlags = (): PostCallbackFlags => ({
   syncAccountBalance: false,
   syncAccountNominating: false,
   syncAccountNominationPool: false,
@@ -47,7 +47,7 @@ export const getPostCallbackSyncFlags = (): PostCallbackSyncFlags => ({
 export const processOneShotPostCallback = async (
   api: RelayDedotClient,
   account: Account,
-  syncFlags: PostCallbackSyncFlags
+  syncFlags: PostCallbackFlags
 ) => {
   // Sync account balance.
   if (syncFlags.syncAccountBalance) {
@@ -433,7 +433,7 @@ const getPoolAccounts = (poolId: number, api: RelayDedotClient) => {
 };
 
 /**
- * @name getNonceForAddress
+ * @name getAddressNonce
  * @summary Get the live nonce for an address.
  */
 export const getAddressNonce = async (

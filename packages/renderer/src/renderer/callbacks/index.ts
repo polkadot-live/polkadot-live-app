@@ -15,7 +15,7 @@ import { NotificationsController } from '@ren/controller/NotificationsController
 import { u8aToString, u8aUnwrapBytes } from '@polkadot/util';
 import type {
   ApiCallEntry,
-  PostCallbackSyncFlags,
+  PostCallbackFlags,
 } from '@polkadot-live/types/subscriptions';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -123,7 +123,7 @@ export class Callbacks {
   static async callback_account_balance_free(
     data: AnyData,
     entry: ApiCallEntry,
-    syncFlags: PostCallbackSyncFlags,
+    syncFlags: PostCallbackFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
@@ -189,7 +189,7 @@ export class Callbacks {
   static async callback_account_balance_frozen(
     data: AnyData,
     entry: ApiCallEntry,
-    syncFlags: PostCallbackSyncFlags,
+    syncFlags: PostCallbackFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
@@ -247,7 +247,7 @@ export class Callbacks {
   static async callback_account_balance_reserved(
     data: AnyData,
     entry: ApiCallEntry,
-    syncFlags: PostCallbackSyncFlags,
+    syncFlags: PostCallbackFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
@@ -304,7 +304,7 @@ export class Callbacks {
   static async callback_account_balance_spendable(
     data: AnyData,
     entry: ApiCallEntry,
-    syncFlags: PostCallbackSyncFlags,
+    syncFlags: PostCallbackFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
@@ -387,7 +387,7 @@ export class Callbacks {
    */
   static async callback_nomination_pool_rewards(
     entry: ApiCallEntry,
-    syncFlags: PostCallbackSyncFlags,
+    syncFlags: PostCallbackFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
@@ -439,7 +439,7 @@ export class Callbacks {
   static async callback_nomination_pool_state(
     data: AnyData,
     entry: ApiCallEntry,
-    syncFlags: PostCallbackSyncFlags,
+    syncFlags: PostCallbackFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
@@ -494,7 +494,7 @@ export class Callbacks {
   static async callback_nomination_pool_renamed(
     data: AnyData,
     entry: ApiCallEntry,
-    syncFlags: PostCallbackSyncFlags,
+    syncFlags: PostCallbackFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
@@ -548,7 +548,7 @@ export class Callbacks {
   static async callback_nomination_pool_roles(
     data: AnyData,
     entry: ApiCallEntry,
-    syncFlags: PostCallbackSyncFlags,
+    syncFlags: PostCallbackFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
@@ -619,7 +619,7 @@ export class Callbacks {
   static async callback_nomination_pool_commission(
     data: AnyData,
     entry: ApiCallEntry,
-    syncFlags: PostCallbackSyncFlags,
+    syncFlags: PostCallbackFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
@@ -747,7 +747,7 @@ export class Callbacks {
   static async callback_nominating_exposure(
     data: AnyData,
     entry: ApiCallEntry,
-    syncFlags: PostCallbackSyncFlags,
+    syncFlags: PostCallbackFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
@@ -814,7 +814,7 @@ export class Callbacks {
   static async callback_nominating_commission(
     data: AnyData,
     entry: ApiCallEntry,
-    syncFlags: PostCallbackSyncFlags,
+    syncFlags: PostCallbackFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
@@ -888,7 +888,7 @@ export class Callbacks {
   static async callback_nominating_nominations(
     data: AnyData,
     entry: ApiCallEntry,
-    syncFlags: PostCallbackSyncFlags,
+    syncFlags: PostCallbackFlags,
     isOneShot = false
   ): Promise<boolean> {
     try {
