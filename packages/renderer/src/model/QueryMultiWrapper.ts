@@ -8,10 +8,7 @@ import { AccountsController } from '@ren/controller/AccountsController';
 import { APIsController } from '@ren/controller/dedot/APIsController';
 import { MainDebug } from '@ren/utils/DebugUtils';
 import { getAccountNominatingData } from '@ren/renderer/callbacks/nominating';
-import {
-  getBalanceForAccount,
-  getNominationPoolDataForAccount,
-} from '@ren/utils/AccountUtils';
+import { getBalance, getNominationPoolData } from '@ren/utils/AccountUtils';
 
 import type { AnyData, AnyFunction } from '@polkadot-live/types/misc';
 import type { Account } from './Account';
@@ -272,7 +269,7 @@ export class QueryMultiWrapper {
       // Sync account balance.
       if (this.postCallbackSyncFlags.syncAccountBalance) {
         const { address, chain } = account;
-        const balance = await getBalanceForAccount(api, address, chain, false);
+        const balance = await getBalance(api, address, chain, false);
         account.balance = balance;
       }
 
@@ -284,7 +281,7 @@ export class QueryMultiWrapper {
 
       // Sync account nomination pool data.
       if (this.postCallbackSyncFlags.syncAccountNominationPool) {
-        const result = await getNominationPoolDataForAccount(account);
+        const result = await getNominationPoolData(account);
         result && (account.nominationPoolData = result);
       }
 

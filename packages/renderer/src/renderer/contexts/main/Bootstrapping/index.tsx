@@ -88,9 +88,9 @@ export const BootstrappingProvider = ({
     const isConnected: boolean = await Utils.getOnlineStatus();
     if (isConnected) {
       await Promise.all([
-        AccountUtils.fetchAccountBalances(),
-        AccountUtils.fetchAccountNominationPoolData(),
-        AccountUtils.fetchAccountNominatingData(),
+        AccountUtils.setAccountBalances(),
+        AccountUtils.setAccountsNominationPoolData(),
+        AccountUtils.setAccountsNominatingData(),
       ]);
     }
   };
