@@ -85,87 +85,71 @@ export const pushUniqueEvent = (
 ): { events: EventCallback[]; updated: boolean } => {
   // Initially mark the event to push.
   let push = true;
+  const args: [EventCallback[], EventCallback] = [events, event];
 
   // Check if the new event is a duplicate of another persisted event.
   switch (event.taskAction) {
     /**
      * Standard Subscriptions
      */
-    case 'subscribe:account:balance:free': {
-      push = filter_account_balance_free(events, event);
+    case 'subscribe:account:balance:free':
+      push = filter_account_balance_free(...args);
       break;
-    }
-    case 'subscribe:account:balance:frozen': {
-      push = filter_account_balance_frozen(events, event);
+    case 'subscribe:account:balance:frozen':
+      push = filter_account_balance_frozen(...args);
       break;
-    }
-    case 'subscribe:account:balance:reserved': {
-      push = filter_account_balance_reserved(events, event);
+    case 'subscribe:account:balance:reserved':
+      push = filter_account_balance_reserved(...args);
       break;
-    }
-    case 'subscribe:account:balance:spendable': {
-      push = filter_account_balance_spendable(events, event);
+    case 'subscribe:account:balance:spendable':
+      push = filter_account_balance_spendable(...args);
       break;
-    }
-    case 'subscribe:account:nominationPools:rewards': {
-      push = filter_nomination_pool_rewards(events, event);
+    case 'subscribe:account:nominationPools:rewards':
+      push = filter_nomination_pool_rewards(...args);
       break;
-    }
-    case 'subscribe:account:nominationPools:state': {
-      push = filter_nomination_pool_state(events, event);
+    case 'subscribe:account:nominationPools:state':
+      push = filter_nomination_pool_state(...args);
       break;
-    }
-    case 'subscribe:account:nominationPools:renamed': {
-      push = filter_nomination_pool_renamed(events, event);
+    case 'subscribe:account:nominationPools:renamed':
+      push = filter_nomination_pool_renamed(...args);
       break;
-    }
-    case 'subscribe:account:nominationPools:roles': {
-      push = filter_nomination_pool_roles(events, event);
+    case 'subscribe:account:nominationPools:roles':
+      push = filter_nomination_pool_roles(...args);
       break;
-    }
-    case 'subscribe:account:nominationPools:commission': {
-      push = filter_nomination_pool_commission(events, event);
+    case 'subscribe:account:nominationPools:commission':
+      push = filter_nomination_pool_commission(...args);
       break;
-    }
-    case 'subscribe:account:nominating:pendingPayouts': {
-      push = filter_nominating_era_rewards(events, event);
+    case 'subscribe:account:nominating:pendingPayouts':
+      push = filter_nominating_era_rewards(...args);
       break;
-    }
-    case 'subscribe:account:nominating:exposure': {
-      push = filter_nominating_exposure(events, event);
+    case 'subscribe:account:nominating:exposure':
+      push = filter_nominating_exposure(...args);
       break;
-    }
-    case 'subscribe:account:nominating:commission': {
-      push = filter_nominating_commission(events, event);
+    case 'subscribe:account:nominating:commission':
+      push = filter_nominating_commission(...args);
       break;
-    }
-    case 'subscribe:account:nominating:nominations': {
-      push = filter_nominating_nominations(events, event);
+    case 'subscribe:account:nominating:nominations':
+      push = filter_nominating_nominations(...args);
       break;
-    }
+
     /**
      * Interval Subscriptions
      */
-    case 'subscribe:interval:openGov:referendumVotes': {
-      push = filter_openGov_referendumVotes(events, event);
+    case 'subscribe:interval:openGov:referendumVotes':
+      push = filter_openGov_referendumVotes(...args);
       break;
-    }
-    case 'subscribe:interval:openGov:decisionPeriod': {
-      push = filter_openGov_decisionPeriod(events, event);
+    case 'subscribe:interval:openGov:decisionPeriod':
+      push = filter_openGov_decisionPeriod(...args);
       break;
-    }
-    case 'subscribe:interval:openGov:referendumThresholds': {
-      push = filter_openGov_referendumThresholds(events, event);
+    case 'subscribe:interval:openGov:referendumThresholds':
+      push = filter_openGov_referendumThresholds(...args);
       break;
-    }
-    default: {
+    default:
       break;
-    }
   }
 
   // Add event to array if it's unique.
   let updated = false;
-
   if (push) {
     events.push(event);
     updated = true;
