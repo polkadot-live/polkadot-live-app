@@ -42,11 +42,11 @@ export class QueryMultiWrapper {
   };
 
   /**
-   * @name requiresApiInstanceForChain
+   * @name requiresChainApi
    * @summary Returns `true` if an API instance is required for the provided chain ID for this wrapper, and `false` otherwise.
    * @returns {boolean} Represents if API instance is required for the provided chainID.
    */
-  requiresApiInstanceForChain(chainId: ChainID): boolean {
+  requiresChainApi(chainId: ChainID): boolean {
     return this.subscriptions.has(chainId);
   }
 
