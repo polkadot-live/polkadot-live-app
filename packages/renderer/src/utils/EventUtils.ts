@@ -85,82 +85,67 @@ export const pushUniqueEvent = (
 ): { events: EventCallback[]; updated: boolean } => {
   // Initially mark the event to push.
   let push = true;
+  const args: [EventCallback[], EventCallback] = [events, event];
 
   // Check if the new event is a duplicate of another persisted event.
   switch (event.taskAction) {
     /**
      * Standard Subscriptions
      */
-    case 'subscribe:account:balance:free': {
-      push = filter_account_balance_free(events, event);
+    case 'subscribe:account:balance:free':
+      push = filter_account_balance_free(...args);
       break;
-    }
-    case 'subscribe:account:balance:frozen': {
-      push = filter_account_balance_frozen(events, event);
+    case 'subscribe:account:balance:frozen':
+      push = filter_account_balance_frozen(...args);
       break;
-    }
-    case 'subscribe:account:balance:reserved': {
-      push = filter_account_balance_reserved(events, event);
+    case 'subscribe:account:balance:reserved':
+      push = filter_account_balance_reserved(...args);
       break;
-    }
-    case 'subscribe:account:balance:spendable': {
-      push = filter_account_balance_spendable(events, event);
+    case 'subscribe:account:balance:spendable':
+      push = filter_account_balance_spendable(...args);
       break;
-    }
-    case 'subscribe:account:nominationPools:rewards': {
-      push = filter_nomination_pool_rewards(events, event);
+    case 'subscribe:account:nominationPools:rewards':
+      push = filter_nomination_pool_rewards(...args);
       break;
-    }
-    case 'subscribe:account:nominationPools:state': {
-      push = filter_nomination_pool_state(events, event);
+    case 'subscribe:account:nominationPools:state':
+      push = filter_nomination_pool_state(...args);
       break;
-    }
-    case 'subscribe:account:nominationPools:renamed': {
-      push = filter_nomination_pool_renamed(events, event);
+    case 'subscribe:account:nominationPools:renamed':
+      push = filter_nomination_pool_renamed(...args);
       break;
-    }
-    case 'subscribe:account:nominationPools:roles': {
-      push = filter_nomination_pool_roles(events, event);
+    case 'subscribe:account:nominationPools:roles':
+      push = filter_nomination_pool_roles(...args);
       break;
-    }
-    case 'subscribe:account:nominationPools:commission': {
-      push = filter_nomination_pool_commission(events, event);
+    case 'subscribe:account:nominationPools:commission':
+      push = filter_nomination_pool_commission(...args);
       break;
-    }
-    case 'subscribe:account:nominating:pendingPayouts': {
-      push = filter_nominating_era_rewards(events, event);
+    case 'subscribe:account:nominating:pendingPayouts':
+      push = filter_nominating_era_rewards(...args);
       break;
-    }
-    case 'subscribe:account:nominating:exposure': {
-      push = filter_nominating_exposure(events, event);
+    case 'subscribe:account:nominating:exposure':
+      push = filter_nominating_exposure(...args);
       break;
-    }
-    case 'subscribe:account:nominating:commission': {
-      push = filter_nominating_commission(events, event);
+    case 'subscribe:account:nominating:commission':
+      push = filter_nominating_commission(...args);
       break;
-    }
-    case 'subscribe:account:nominating:nominations': {
-      push = filter_nominating_nominations(events, event);
+    case 'subscribe:account:nominating:nominations':
+      push = filter_nominating_nominations(...args);
       break;
-    }
+
     /**
      * Interval Subscriptions
      */
-    case 'subscribe:interval:openGov:referendumVotes': {
-      push = filter_openGov_referendumVotes(events, event);
+    case 'subscribe:interval:openGov:referendumVotes':
+      push = filter_openGov_referendumVotes(...args);
       break;
-    }
-    case 'subscribe:interval:openGov:decisionPeriod': {
-      push = filter_openGov_decisionPeriod(events, event);
+    case 'subscribe:interval:openGov:decisionPeriod':
+      push = filter_openGov_decisionPeriod(...args);
       break;
-    }
-    case 'subscribe:interval:openGov:referendumThresholds': {
-      push = filter_openGov_referendumThresholds(events, event);
+    case 'subscribe:interval:openGov:referendumThresholds':
+      push = filter_openGov_referendumThresholds(...args);
       break;
-    }
-    default: {
+    default:
       break;
-    }
   }
 
   // Add event to array if it's unique.
@@ -178,29 +163,26 @@ export const pushUniqueEvent = (
  * @name filter_query_system_account
  * @summary The new event is considered a duplicate if another event has
  * matching address and balance data.
- *
- * TODO:
- * Fix (something wrong with comparing account data and event data)
- * This filter function is currently not being used.
  */
 const filter_account_balance_free = (
   events: EventCallback[],
   event: EventCallback
 ) => {
-  const { address } = event.who.data as EventAccountData;
-  const free: string = event.data.free;
   let isUnique = true;
+  const aWho = event.who.data as EventAccountData;
+  const aData: { free: string } = event.data;
 
-  events.forEach((e) => {
+  for (const e of events) {
     if (e.taskAction === event.taskAction && e.data) {
-      const { address: nextAddress } = e.who.data as EventAccountData;
-      const nextFree: string = e.data.free;
+      const bWho = e.who.data as EventAccountData;
+      const bData: { free: string } = e.data;
 
-      if (address === nextAddress && free === nextFree) {
+      if (aWho.address === bWho.address && aData.free === bData.free) {
         isUnique = false;
+        break;
       }
     }
-  });
+  }
 
   return isUnique;
 };
@@ -213,20 +195,21 @@ const filter_account_balance_frozen = (
   events: EventCallback[],
   event: EventCallback
 ) => {
-  const { address } = event.who.data as EventAccountData;
-  const frozen: string = event.data.frozen;
   let isUnique = true;
+  const aWho = event.who.data as EventAccountData;
+  const aData: { frozen: string } = event.data.frozen;
 
-  events.forEach((e) => {
+  for (const e of events) {
     if (e.taskAction === event.taskAction && e.data) {
-      const { address: nextAddress } = e.who.data as EventAccountData;
-      const nextFrozen: string = e.data.frozen;
+      const bWho = e.who.data as EventAccountData;
+      const bData: { frozen: string } = e.data.frozen;
 
-      if (address === nextAddress && frozen === nextFrozen) {
+      if (aWho.address === bWho.address && aData.frozen === bData.frozen) {
         isUnique = false;
+        break;
       }
     }
-  });
+  }
 
   return isUnique;
 };
@@ -239,20 +222,21 @@ const filter_account_balance_reserved = (
   events: EventCallback[],
   event: EventCallback
 ) => {
-  const { address } = event.who.data as EventAccountData;
-  const reserved: string = event.data.reserved;
   let isUnique = true;
+  const aWho = event.who.data as EventAccountData;
+  const aData: { reserved: string } = event.data;
 
-  events.forEach((e) => {
+  for (const e of events) {
     if (e.taskAction === event.taskAction && e.data) {
-      const { address: nextAddress } = e.who.data as EventAccountData;
-      const nextReserved: string = e.data.reserved;
+      const bWho = e.who.data as EventAccountData;
+      const bData: { reserved: string } = e.data;
 
-      if (address === nextAddress && reserved === nextReserved) {
+      if (aWho.address === bWho.address && aData.reserved === bData.reserved) {
         isUnique = false;
+        break;
       }
     }
-  });
+  }
 
   return isUnique;
 };
@@ -265,20 +249,24 @@ const filter_account_balance_spendable = (
   events: EventCallback[],
   event: EventCallback
 ) => {
-  const { address } = event.who.data as EventAccountData;
-  const spendable: string = event.data.spendable;
   let isUnique = true;
+  const aWho = event.who.data as EventAccountData;
+  const aData: { spendable: string } = event.data;
 
-  events.forEach((e) => {
+  for (const e of events) {
     if (e.taskAction === event.taskAction && e.data) {
-      const { address: nextAddress } = e.who.data as EventAccountData;
-      const nextSpendable: string = e.data.spendable;
+      const bWho = e.who.data as EventAccountData;
+      const bData: { spendable: string } = e.data;
 
-      if (address === nextAddress && spendable === nextSpendable) {
+      if (
+        aWho.address === bWho.address &&
+        aData.spendable === bData.spendable
+      ) {
         isUnique = false;
+        break;
       }
     }
-  });
+  }
 
   return isUnique;
 };
@@ -292,33 +280,32 @@ const filter_nomination_pool_rewards = (
   events: EventCallback[],
   event: EventCallback
 ) => {
-  interface Target {
-    pendingRewards: string;
-  }
-
-  const { address } = event.who.data as EventAccountData;
-  const { pendingRewards }: Target = event.data;
   let isUnique = true;
+  const aWho = event.who.data as EventAccountData;
+  const aData: { pendingRewards: string } = event.data;
 
-  events.forEach((e) => {
+  for (const e of events) {
     if (e.taskAction === event.taskAction && e.data) {
-      const { address: nextAddress } = e.who.data as EventAccountData;
-      const { pendingRewards: nextPendingRewards }: Target = e.data;
+      const bWho = e.who.data as EventAccountData;
+      const bData: { pendingRewards: string } = e.data;
 
-      if (address === nextAddress && pendingRewards === nextPendingRewards) {
+      if (
+        aWho.address === bWho.address &&
+        aData.pendingRewards === bData.pendingRewards
+      ) {
         isUnique = false;
+        break;
       }
     }
-  });
+  }
 
   // If the account has past nomination pool events, make them stale.
   // We don't want the user to try and submit out-of-date extrinsics.
   if (isUnique) {
     events = events.map((e) => {
       if (e.taskAction === event.taskAction && e.data) {
-        const { address: nextAddress } = e.who.data as EventAccountData;
-        address === nextAddress && (e.stale = true);
-        return e;
+        const bWho = e.who.data as EventAccountData;
+        aWho.address === bWho.address && (e.stale = true);
       }
       return e;
     });
@@ -336,24 +323,24 @@ const filter_nomination_pool_state = (
   events: EventCallback[],
   event: EventCallback
 ) => {
-  interface Target {
-    poolState: string;
-  }
-
-  const { address } = event.who.data as EventAccountData;
-  const { poolState }: Target = event.data;
   let isUnique = true;
+  const aWho = event.who.data as EventAccountData;
+  const aData: { poolState: string } = event.data;
 
-  events.forEach((e) => {
+  for (const e of events) {
     if (e.taskAction === event.taskAction && e.data) {
-      const { address: nextAddress } = e.who.data as EventAccountData;
-      const { poolState: nextPoolState }: Target = e.data;
+      const bWho = e.who.data as EventAccountData;
+      const bData: { poolState: string } = e.data;
 
-      if (address === nextAddress && poolState === nextPoolState) {
+      if (
+        aWho.address === bWho.address &&
+        aData.poolState === bData.poolState
+      ) {
         isUnique = false;
+        break;
       }
     }
-  });
+  }
 
   return isUnique;
 };
@@ -367,24 +354,21 @@ const filter_nomination_pool_renamed = (
   events: EventCallback[],
   event: EventCallback
 ): boolean => {
-  interface Target {
-    poolName: string;
-  }
-
-  const { address } = event.who.data as EventAccountData;
-  const { poolName }: Target = event.data;
   let isUnique = true;
+  const aWho = event.who.data as EventAccountData;
+  const aData: { poolName: string } = event.data;
 
-  events.forEach((e) => {
+  for (const e of events) {
     if (e.taskAction === event.taskAction && e.data) {
-      const { address: nextAddress } = e.who.data as EventAccountData;
-      const { poolName: nextPoolName }: Target = e.data;
+      const bWho = e.who.data as EventAccountData;
+      const bData: { poolName: string } = e.data;
 
-      if (address === nextAddress && poolName === nextPoolName) {
+      if (aWho.address === bWho.address && aData.poolName === bData.poolName) {
         isUnique = false;
+        break;
       }
     }
-  });
+  }
 
   return isUnique;
 };
@@ -398,28 +382,27 @@ const filter_nomination_pool_roles = (
   events: EventCallback[],
   event: EventCallback
 ): boolean => {
-  const { address } = event.who.data as EventAccountData;
-  const { depositor, root, nominator, bouncer }: NominationPoolRoles =
-    event.data;
-
   let isUnique = true;
+  const aWho = event.who.data as EventAccountData;
+  const aData: NominationPoolRoles = event.data;
 
-  events.forEach((e) => {
+  for (const e of events) {
     if (e.taskAction === event.taskAction && e.data) {
-      const { address: nextAddress } = e.who.data as EventAccountData;
-      const next: NominationPoolRoles = e.data;
+      const bWho = e.who.data as EventAccountData;
+      const bData: NominationPoolRoles = e.data;
 
       if (
-        address === nextAddress &&
-        depositor === next.depositor &&
-        root === next.root &&
-        nominator === next.nominator &&
-        bouncer === next.bouncer
+        aWho.address === bWho.address &&
+        aData.depositor === bData.depositor &&
+        aData.root === bData.root &&
+        aData.nominator === bData.nominator &&
+        aData.bouncer === bData.bouncer
       ) {
         isUnique = false;
+        break;
       }
     }
-  });
+  }
 
   return isUnique;
 };
@@ -433,28 +416,27 @@ const filter_nomination_pool_commission = (
   events: EventCallback[],
   event: EventCallback
 ): boolean => {
-  const { address } = event.who.data as EventAccountData;
-  const { changeRate, current, max, throttleFrom }: NominationPoolCommission =
-    event.data;
-
   let isUnique = true;
+  const aWho = event.who.data as EventAccountData;
+  const aData: NominationPoolCommission = event.data;
 
-  events.forEach((e) => {
+  for (const e of events) {
     if (e.taskAction === event.taskAction && e.data) {
-      const { address: nextAddress } = e.who.data as EventAccountData;
-      const next: NominationPoolCommission = e.data;
+      const bWho = e.who.data as EventAccountData;
+      const bData: NominationPoolCommission = e.data;
 
       if (
-        address === nextAddress &&
-        throttleFrom === next.throttleFrom &&
-        max === next.max &&
-        JSON.stringify(changeRate) === JSON.stringify(next.changeRate) &&
-        JSON.stringify(current) === JSON.stringify(next.current)
+        aWho.address === bWho.address &&
+        aData.throttleFrom === bData.throttleFrom &&
+        aData.max === bData.max &&
+        JSON.stringify(aData.changeRate) === JSON.stringify(bData.changeRate) &&
+        JSON.stringify(aData.current) === JSON.stringify(bData.current)
       ) {
         isUnique = false;
+        break;
       }
     }
-  });
+  }
 
   return isUnique;
 };
@@ -468,30 +450,25 @@ const filter_nominating_era_rewards = (
   events: EventCallback[],
   event: EventCallback
 ): boolean => {
-  interface Target {
-    eraRewards: string;
-    era: string;
-  }
-
-  const { address } = event.who.data as EventAccountData;
-  const { eraRewards, era }: Target = event.data;
-
   let isUnique = true;
+  const aWho = event.who.data as EventAccountData;
+  const aData: { eraRewards: string; era: string } = event.data;
 
-  events.forEach((e) => {
+  for (const e of events) {
     if (e.taskAction === event.taskAction && e.data) {
-      const { address: nextAddress } = e.who.data as EventAccountData;
-      const { era: nextEra, eraRewards: nextEraRewards }: Target = e.data;
+      const bWho = e.who.data as EventAccountData;
+      const bData: { eraRewards: string; era: string } = e.data;
 
       if (
-        address === nextAddress &&
-        era === nextEra &&
-        eraRewards === nextEraRewards
+        aWho.address === bWho.address &&
+        aData.era === bData.era &&
+        aData.eraRewards === bData.eraRewards
       ) {
         isUnique = false;
+        break;
       }
     }
-  });
+  }
 
   return isUnique;
 };
@@ -505,25 +482,25 @@ const filter_nominating_exposure = (
   events: EventCallback[],
   event: EventCallback
 ): boolean => {
-  const { address } = event.who.data as EventAccountData;
-  const { era, exposed } = event.data;
-
   let isUnique = true;
+  const aWho = event.who.data as EventAccountData;
+  const aData: { era: number; exposed: boolean } = event.data;
 
-  events.forEach((e) => {
+  for (const e of events) {
     if (e.taskAction === event.taskAction && e.data) {
-      const { address: nextAddress } = e.who.data as EventAccountData;
-      const { era: nextEra, exposed: nextExposed } = e.data;
+      const bWho = e.who.data as EventAccountData;
+      const bData: { era: number; exposed: boolean } = e.data;
 
       if (
-        address === nextAddress &&
-        era === nextEra &&
-        exposed === nextExposed
+        aWho.address === bWho.address &&
+        aData.era === bData.era &&
+        aData.exposed === bData.exposed
       ) {
         isUnique = false;
+        break;
       }
     }
-  });
+  }
 
   return isUnique;
 };
@@ -537,28 +514,25 @@ const filter_nominating_commission = (
   events: EventCallback[],
   event: EventCallback
 ): boolean => {
-  const { address } = event.who.data as EventAccountData;
-  const { era, hasChanged }: { era: number; hasChanged: boolean } = event.data;
-
   let isUnique = true;
+  const aWho = event.who.data as EventAccountData;
+  const aData: { era: number; hasChanged: boolean } = event.data;
 
-  events.forEach((e) => {
+  for (const e of events) {
     if (e.taskAction === event.taskAction && e.data) {
-      const { address: nextAddress } = e.who.data as EventAccountData;
-      const {
-        era: nextEra,
-        hasChanged: nextHasChanged,
-      }: { era: number; hasChanged: boolean } = e.data;
+      const bWho = e.who.data as EventAccountData;
+      const bData: { era: number; hasChanged: boolean } = e.data;
 
       if (
-        address === nextAddress &&
-        era === nextEra &&
-        hasChanged === nextHasChanged
+        aWho.address === bWho.address &&
+        aData.era === bData.era &&
+        aData.hasChanged === bData.hasChanged
       ) {
         isUnique = false;
+        break;
       }
     }
-  });
+  }
 
   return isUnique;
 };
@@ -572,28 +546,25 @@ const filter_nominating_nominations = (
   events: EventCallback[],
   event: EventCallback
 ): boolean => {
-  const { address } = event.who.data as EventAccountData;
-  const { era, hasChanged }: { era: number; hasChanged: boolean } = event.data;
-
   let isUnique = true;
+  const aWho = event.who.data as EventAccountData;
+  const aData: { era: number; hasChanged: boolean } = event.data;
 
-  events.forEach((e) => {
+  for (const e of events) {
     if (e.taskAction === event.taskAction && e.data) {
-      const { address: nextAddress } = e.who.data as EventAccountData;
-      const {
-        era: nextEra,
-        hasChanged: nextHasChanged,
-      }: { era: number; hasChanged: boolean } = e.data;
+      const bWho = e.who.data as EventAccountData;
+      const bData: { era: number; hasChanged: boolean } = e.data;
 
       if (
-        address === nextAddress &&
-        era === nextEra &&
-        hasChanged === nextHasChanged
+        aWho.address === bWho.address &&
+        aData.era === bData.era &&
+        aData.hasChanged === bData.hasChanged
       ) {
         isUnique = false;
+        break;
       }
     }
-  });
+  }
 
   return isUnique;
 };
@@ -607,32 +578,32 @@ const filter_openGov_referendumVotes = (
   events: EventCallback[],
   event: EventCallback
 ): boolean => {
-  const { referendumId, ayeVotes, nayVotes } = event.data;
-  const { chainId } = event.who.data as EventChainData;
   let isUnique = true;
 
-  events.forEach((e) => {
-    if (e.taskAction === event.taskAction && e.data) {
-      const { chainId: nextChainId } = e.who.data as
-        | EventChainData
-        | EventAccountData;
+  interface Target {
+    referendumId: number;
+    percentAyes: string;
+    percentNays: string;
+  }
+  const aWho = event.who.data as EventChainData;
+  const aData: Target = event.data;
 
-      const {
-        referendumId: nextReferendumId,
-        ayeVotes: nextAyeVotes,
-        nayVotes: nextNayVotes,
-      } = e.data;
+  for (const e of events) {
+    if (e.taskAction === event.taskAction && e.data) {
+      const bWho = e.who.data as EventChainData | EventAccountData;
+      const bData: Target = e.data;
 
       if (
-        referendumId === nextReferendumId &&
-        chainId === nextChainId &&
-        ayeVotes === nextAyeVotes &&
-        nayVotes === nextNayVotes
+        aWho.chainId === bWho.chainId &&
+        aData.referendumId === bData.referendumId &&
+        aData.percentAyes === bData.percentAyes &&
+        aData.percentNays === bData.percentNays
       ) {
         isUnique = false;
+        break;
       }
     }
-  });
+  }
 
   return isUnique;
 };
@@ -646,30 +617,25 @@ const filter_openGov_decisionPeriod = (
   events: EventCallback[],
   event: EventCallback
 ): boolean => {
-  const { referendumId, formattedTime } = event.data;
-  const { chainId } = event.who.data as EventChainData;
   let isUnique = true;
+  const aData: { referendumId: number; formattedTime: string } = event.data;
+  const aWho = event.who.data as EventChainData;
 
-  events.forEach((e) => {
+  for (const e of events) {
     if (e.taskAction === event.taskAction && e.data) {
-      const { chainId: nextChainId } = e.who.data as
-        | EventChainData
-        | EventAccountData;
-
-      const {
-        referendumId: nextReferendumId,
-        formattedTime: nextFormattedTime,
-      } = e.data;
+      const bWho = e.who.data as EventChainData | EventAccountData;
+      const bData: { referendumId: number; formattedTime: string } = e.data;
 
       if (
-        referendumId === nextReferendumId &&
-        chainId === nextChainId &&
-        formattedTime === nextFormattedTime
+        aWho.chainId === bWho.chainId &&
+        aData.referendumId === bData.referendumId &&
+        aData.formattedTime === bData.formattedTime
       ) {
         isUnique = false;
+        break;
       }
     }
-  });
+  }
 
   return isUnique;
 };
@@ -683,32 +649,32 @@ const filter_openGov_referendumThresholds = (
   events: EventCallback[],
   event: EventCallback
 ): boolean => {
-  const { referendumId, formattedApp, formattedSup } = event.data;
-  const { chainId } = event.who.data as EventChainData;
   let isUnique = true;
 
-  events.forEach((e) => {
-    if (e.taskAction === event.taskAction && e.data) {
-      const { chainId: nextChainId } = e.who.data as
-        | EventChainData
-        | EventAccountData;
+  interface Target {
+    referendumId: number;
+    formattedApp: string;
+    formattedSup: string;
+  }
+  const aData: Target = event.data;
+  const aWho = event.who.data as EventChainData;
 
-      const {
-        referendumId: nextReferendumId,
-        formattedApp: nextformattedApp,
-        formattedSup: nextformattedSup,
-      } = e.data;
+  for (const e of events) {
+    if (e.taskAction === event.taskAction && e.data) {
+      const bData: Target = e.data;
+      const bWho = e.who.data as EventChainData | EventAccountData;
 
       if (
-        referendumId === nextReferendumId &&
-        chainId === nextChainId &&
-        formattedApp === nextformattedApp &&
-        formattedSup === nextformattedSup
+        aWho.chainId === bWho.chainId &&
+        aData.referendumId === bData.referendumId &&
+        aData.formattedApp === bData.formattedApp &&
+        aData.formattedSup === bData.formattedSup
       ) {
         isUnique = false;
+        break;
       }
     }
-  });
+  }
 
   return isUnique;
 };

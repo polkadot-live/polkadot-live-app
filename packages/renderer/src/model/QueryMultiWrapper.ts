@@ -1,17 +1,13 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as Callbacks from '@app/callbacks';
 import * as Utils from '@ren/utils/CommonUtils';
 import { AccountId32 } from 'dedot/codecs';
 import { AccountsController } from '@ren/controller/AccountsController';
 import { APIsController } from '@ren/controller/dedot/APIsController';
-import { Callbacks } from '@app/callbacks';
-import { MainDebug } from '@ren/utils/DebugUtils';
 import { getAccountNominatingData } from '@ren/renderer/callbacks/nominating';
-import {
-  getBalanceForAccount,
-  getNominationPoolDataForAccount,
-} from '@ren/utils/AccountUtils';
+import { getBalance, getNominationPoolData } from '@ren/utils/AccountUtils';
 
 import type { AnyData, AnyFunction } from '@polkadot-live/types/misc';
 import type { Account } from './Account';
@@ -23,10 +19,8 @@ import type {
   SubscriptionTask,
   QueryMultiEntry,
   ApiCallEntry,
-  PostCallbackSyncFlags,
+  PostCallbackFlags,
 } from '@polkadot-live/types/subscriptions';
-
-const debug = MainDebug.extend('QueryMultiWrapper');
 
 export class QueryMultiWrapper {
   /**
@@ -38,18 +32,18 @@ export class QueryMultiWrapper {
   /**
    * Flag what data needs syncing after executing callbacks.
    */
-  postCallbackSyncFlags: PostCallbackSyncFlags = {
+  postCallbackSyncFlags: PostCallbackFlags = {
     syncAccountBalance: false,
     syncAccountNominationPool: false,
     syncAccountNominating: false,
   };
 
   /**
-   * @name requiresApiInstanceForChain
+   * @name requiresChainApi
    * @summary Returns `true` if an API instance is required for the provided chain ID for this wrapper, and `false` otherwise.
    * @returns {boolean} Represents if API instance is required for the provided chainID.
    */
-  requiresApiInstanceForChain(chainId: ChainID): boolean {
+  requiresChainApi(chainId: ChainID): boolean {
     return this.subscriptions.has(chainId);
   }
 
@@ -135,7 +129,7 @@ export class QueryMultiWrapper {
    * @summary Main logic to handle entries (subscription tasks).
    */
   private async handleCallback(entry: ApiCallEntry, dataArr: AnyData) {
-    type TupleArg = [AnyData, ApiCallEntry, PostCallbackSyncFlags];
+    type TupleArg = [AnyData, ApiCallEntry, PostCallbackFlags];
     const { action, justBuilt } = entry.task;
     const data = dataArr[entry.task.dataIndex!];
     const flags = this.postCallbackSyncFlags;
@@ -272,7 +266,7 @@ export class QueryMultiWrapper {
       // Sync account balance.
       if (this.postCallbackSyncFlags.syncAccountBalance) {
         const { address, chain } = account;
-        const balance = await getBalanceForAccount(api, address, chain, false);
+        const balance = await getBalance(api, address, chain, false);
         account.balance = balance;
       }
 
@@ -284,7 +278,7 @@ export class QueryMultiWrapper {
 
       // Sync account nomination pool data.
       if (this.postCallbackSyncFlags.syncAccountNominationPool) {
-        const result = await getNominationPoolDataForAccount(account);
+        const result = await getNominationPoolData(account);
         result && (account.nominationPoolData = result);
       }
 
@@ -351,7 +345,7 @@ export class QueryMultiWrapper {
 
     // Insert new key if chain isn't cached yet.
     if (!this.subscriptions.has(task.chainId)) {
-      debug('🔷 Add chain and API entry.');
+      console.log('🔷 Add chain and API entry.');
 
       this.subscriptions.set(task.chainId, {
         unsub: null,
@@ -360,8 +354,6 @@ export class QueryMultiWrapper {
 
       return;
     }
-
-    debug('🔷 Update with new API entry.');
 
     // Otherwise update query multi subscriptions map.
     const entry = this.subscriptions.get(task.chainId);
@@ -396,7 +388,7 @@ export class QueryMultiWrapper {
    */
   remove(chainId: ChainID, action: string) {
     if (!this.actionExists(chainId, action)) {
-      debug("🟠 API call doesn't exist.");
+      console.log("🟠 API call doesn't exist.");
     } else {
       // Remove action from query multi map.
       const entry = this.subscriptions.get(chainId)!;

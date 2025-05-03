@@ -161,6 +161,7 @@ export const Accounts = ({
     <div style={{ width: '100%' }}>
       <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
         <Accordion.Root
+          style={{ marginBottom: '1rem' }}
           className="AccordionRoot"
           type="multiple"
           value={accordionValue}

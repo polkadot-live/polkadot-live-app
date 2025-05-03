@@ -9,7 +9,7 @@ import type {
   NominationPoolCommission,
   NominationPoolRoles,
 } from '@polkadot-live/types/accounts';
-import { formatPerbillPercent } from './AccountUtils';
+import { perbillToPercent } from './AccountUtils';
 
 /**
  * @name timestampToDate
@@ -174,7 +174,7 @@ export const getNominationPoolCommissionText = (
 ) => {
   const hasCommission = cur.current !== undefined;
   const fmtCommission = hasCommission
-    ? formatPerbillPercent(BigInt(cur.current![0]))
+    ? perbillToPercent(BigInt(cur.current![0]))
     : 'not set';
 
   // TODO: Improve text message.

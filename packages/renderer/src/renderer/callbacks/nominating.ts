@@ -3,7 +3,7 @@
 
 import BigNumber from 'bignumber.js';
 import { AccountId32 } from 'dedot/codecs';
-import { formatPerbillPercent } from '@ren/utils/AccountUtils';
+import { perbillToPercent } from '@ren/utils/AccountUtils';
 import { rmCommas } from '@w3ux/utils';
 import type { RelayDedotClient } from '@polkadot-live/types/apis';
 import type { Account } from '@ren/model/Account';
@@ -116,7 +116,7 @@ export const getEraRewards = async (
     vs.map((v) => api.query.staking.erasValidatorPrefs([era, v]))
   );
   prefs.forEach((p, i) =>
-    commissions.set(vs[i], formatPerbillPercent(p.commission))
+    commissions.set(vs[i], perbillToPercent(p.commission))
   );
 
   // Calculate unclaimed rewards for each nominated validator.
@@ -236,7 +236,7 @@ export const getAccountNominatingData = async (
   for (const validatorId of nominators.targets) {
     const address = validatorId.address(prefix);
     const prefs = await api.query.staking.erasValidatorPrefs([era, address]);
-    const commission: string = formatPerbillPercent(prefs.commission);
+    const commission: string = perbillToPercent(prefs.commission);
     validators.push({ validatorId: address, commission });
   }
 

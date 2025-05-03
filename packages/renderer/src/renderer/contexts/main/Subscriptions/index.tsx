@@ -279,7 +279,7 @@ export const SubscriptionsProvider = ({
     }
 
     // Disconnect from API instance if there are no tasks that require it.
-    await ApiUtils.checkAndHandleApiDisconnect(task);
+    await ApiUtils.tryApiDisconnect(task);
   };
 
   return (

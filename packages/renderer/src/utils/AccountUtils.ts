@@ -23,7 +23,7 @@ import type {
 } from '@polkadot-live/types/accounts';
 import type {
   ApiCallEntry,
-  PostCallbackSyncFlags,
+  PostCallbackFlags,
 } from '@polkadot-live/types/subscriptions';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -31,10 +31,10 @@ import type { Account } from '@ren/model/Account';
 import type { RelayDedotClient } from '@polkadot-live/types/apis';
 
 /**
- * @name getPostCallbackSyncFlags
+ * @name getPostCallbackFlags
  * @summary Get reset post callback sync flags.
  */
-export const getPostCallbackSyncFlags = (): PostCallbackSyncFlags => ({
+export const getPostCallbackFlags = (): PostCallbackFlags => ({
   syncAccountBalance: false,
   syncAccountNominating: false,
   syncAccountNominationPool: false,
@@ -47,12 +47,12 @@ export const getPostCallbackSyncFlags = (): PostCallbackSyncFlags => ({
 export const processOneShotPostCallback = async (
   api: RelayDedotClient,
   account: Account,
-  syncFlags: PostCallbackSyncFlags
+  syncFlags: PostCallbackFlags
 ) => {
   // Sync account balance.
   if (syncFlags.syncAccountBalance) {
     const { address, chain } = account;
-    const balance = await getBalanceForAccount(api, address, chain, false);
+    const balance = await getBalance(api, address, chain, false);
     account.balance = balance;
   }
 
@@ -64,7 +64,7 @@ export const processOneShotPostCallback = async (
 
   // Sync account nomination pool data.
   if (syncFlags.syncAccountNominationPool) {
-    const result = await getNominationPoolDataForAccount(account);
+    const result = await getNominationPoolData(account);
     result && (account.nominationPoolData = result);
   }
 
@@ -146,21 +146,21 @@ export const generateUID = (): string => {
 };
 
 /**
- * @name fetchAccountBalances
- * @summary Fetch account's nonce and balance data from chain state.
+ * @name setAccountBalances
+ * @summary Set nonce and balance data for managed accounts.
  */
-export const fetchAccountBalances = async () => {
+export const setAccountBalances = async () => {
   for (const [chainId, accounts] of AccountsController.accounts.entries()) {
     console.log(`fetching balances for chain: ${chainId}`);
-    await Promise.all(accounts.map((a) => fetchBalanceForAccount(a)));
+    await Promise.all(accounts.map((a) => setBalance(a)));
   }
 };
 
 /**
- * @name fetchBalanceForAccount
- * @summary Fetch balance data for a single account.
+ * @name setBalance
+ * @summary Set balance data for a single account.
  */
-export const fetchBalanceForAccount = async (account: Account) => {
+export const setBalance = async (account: Account) => {
   if (!Array.from(ChainList.keys()).includes(account.chain)) {
     return;
   }
@@ -182,10 +182,10 @@ export const fetchBalanceForAccount = async (account: Account) => {
 };
 
 /**
- * @name getBalanceForAccount
+ * @name getBalance
  * @summary Return an account's current balance.
  */
-export const getBalanceForAccount = async (
+export const getBalance = async (
   api: RelayDedotClient,
   address: string,
   chainId: ChainID,
@@ -214,7 +214,7 @@ export const getBalanceForAccount = async (
 
 /**
  * @name getSpendableBalance
- * @summary Return the requested account's spendable balance as a big number.
+ * @summary Return an account's spendable balance as a big number.
  */
 export const getSpendableBalance = async (
   address: string,
@@ -222,43 +222,31 @@ export const getSpendableBalance = async (
 ): Promise<bigint> => {
   const api = (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
   const ed = api.consts.balances.existentialDeposit;
-
-  const balance = await getBalanceForAccount(api, address, chainId);
+  const balance = await getBalance(api, address, chainId);
   const { free, frozen, reserved } = balance;
   const max = (a: bigint, b: bigint): bigint => (a > b ? a : b);
 
-  const spendable =
-    chainId === 'Westend'
-      ? free - ed
-      : max(free - max(frozen, reserved) - ed, 0n);
-
-  return spendable;
+  return chainId == 'Westend'
+    ? free - ed
+    : max(free - max(frozen, reserved) - ed, 0n);
 };
 
 /**
- * @name fetchAccountNominatingData
- * @summary Fetch an account's nominated validator ids.
+ * @name setAccountsNominatingData
+ * @summary Set nominating data for managed accounts.
  */
-export const fetchAccountNominatingData = async () => {
+export const setAccountsNominatingData = async () => {
   for (const [chainId, accounts] of AccountsController.accounts.entries()) {
     console.log(`fetching nominating data for chain: ${chainId}`);
-    await Promise.all(accounts.map((a) => setNominatingDataForAccount(a)));
+    await Promise.all(accounts.map((a) => setNominatingData(a)));
   }
 };
 
 /**
- * @name fetchNominatingDataForAccount
- * @summary Fetch nomination pool data for a single account.
+ * @name setNominatingData
+ * @summary Set nominating data for a single account.
  */
-export const fetchNominatingDataForAccount = async (account: Account) => {
-  await setNominatingDataForAccount(account);
-};
-
-/**
- * @name setNominatingDataForAccount
- * @summary Fetch nominating data for a single account.
- */
-export const setNominatingDataForAccount = async (account: Account) => {
+export const setNominatingData = async (account: Account) => {
   try {
     // Only allow nominating data on specific chains.
     if (!Array.from(ChainList.keys()).includes(account.chain)) {
@@ -283,15 +271,15 @@ export const setNominatingDataForAccount = async (account: Account) => {
 };
 
 /**
- * @name fetchAccountNominationPoolData
- * @summary Fetch nomination pool data for all accounts managed by the accounts controller.
+ * @name setAccountsNominationPoolData
+ * @summary Set nomination pool data for managed accounts.
  */
-export const fetchAccountNominationPoolData = async () => {
+export const setAccountsNominationPoolData = async () => {
   for (const [chainId, accounts] of AccountsController.accounts.entries()) {
     console.log(`fetching nomination pool data for chain: ${chainId}`);
     await Promise.all(
       accounts.map(async (a) => {
-        const result = await getNominationPoolDataForAccount(a);
+        const result = await getNominationPoolData(a);
         if (result) {
           a.nominationPoolData = result;
           await AccountsController.set(a.chain, a);
@@ -302,11 +290,11 @@ export const fetchAccountNominationPoolData = async () => {
 };
 
 /**
- * @name fetchNominationPoolDataForAccount
- * @summary Fetch nomination pool data for a single account.
+ * @name setNominationPoolData
+ * @summary Set nomination pool data for a single account.
  */
-export const fetchNominationPoolDataForAccount = async (account: Account) => {
-  const result = await getNominationPoolDataForAccount(account);
+export const setNominationPoolData = async (account: Account) => {
+  const result = await getNominationPoolData(account);
   if (result) {
     account.nominationPoolData = result;
     await AccountsController.set(account.chain, account);
@@ -315,7 +303,7 @@ export const fetchNominationPoolDataForAccount = async (account: Account) => {
 
 /**
  * @name getNominationPoolRewards
- * @summary Get nomination pool rewards for an arbitrary address.
+ * @summary Get nomination pool rewards for an address.
  */
 export const getNominationPoolRewards = async (
   address: string,
@@ -327,11 +315,10 @@ export const getNominationPoolRewards = async (
 };
 
 /**
- * @name setNominationPoolDataForAccount
- * @summary Utility that uses an API instance to get and update an account's nomination
- * pool data.
+ * @name getNominationPoolData
+ * @summary Get an account's nomination pool data.
  */
-export const getNominationPoolDataForAccount = async (
+export const getNominationPoolData = async (
   account: Account
 ): Promise<AccountNominationPoolData | null> => {
   if (!Array.from(ChainList.keys()).includes(account.chain)) {
@@ -433,8 +420,8 @@ const getPoolAccounts = (poolId: number, api: RelayDedotClient) => {
 };
 
 /**
- * @name getNonceForAddress
- * @summary Get the live nonce for an address.
+ * @name getAddressNonce
+ * @summary Get the current nonce for an address.
  */
 export const getAddressNonce = async (
   api: RelayDedotClient,
@@ -532,12 +519,12 @@ export const checkFlattenedAccountWithProperties = (
 };
 
 /**
- * @name formatPerbillPercent Converts a Perbill value into a percentage string with fixed decimal places.
+ * @name perbillToPercent Converts a Perbill value into a percentage string with fixed decimal places.
  * @param perbill - A bigint or number representing a Perbill (0 to 1_000_000_000).
  * @param decimals - Number of decimal places to display (default: 2).
  * @returns A string like "12.34%"
  */
-export const formatPerbillPercent = (
+export const perbillToPercent = (
   perbill: bigint | number,
   decimals = 2
 ): string => {

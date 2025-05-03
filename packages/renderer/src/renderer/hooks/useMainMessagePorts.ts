@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 /// Dependencies.
+import * as AccountUtils from '@ren/utils/AccountUtils';
 import { getOnlineStatus } from '@ren/utils/CommonUtils';
 import { AccountsController } from '@ren/controller/AccountsController';
 import { APIsController } from '@ren/controller/dedot/APIsController';
@@ -9,12 +10,6 @@ import BigNumber from 'bignumber.js';
 import { chainUnits } from '@ren/config/chains';
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { ExtrinsicsController } from '@ren/controller/ExtrinsicsController';
-import {
-  fetchBalanceForAccount,
-  fetchNominatingDataForAccount,
-  fetchNominationPoolDataForAccount,
-  getAddressChainId,
-} from '@ren/utils/AccountUtils';
 import { disconnectAPIs } from '@ren/utils/ApiUtils';
 import {
   serializeReferendumInfo,
@@ -140,9 +135,9 @@ export const useMainMessagePorts = () => {
       // Fetch account data from network.
       const isOnline: boolean = await getOnlineStatus();
       if (isOnline) {
-        await fetchBalanceForAccount(account);
-        await fetchNominationPoolDataForAccount(account);
-        await fetchNominatingDataForAccount(account);
+        await AccountUtils.setBalance(account);
+        await AccountUtils.setNominationPoolData(account);
+        await AccountUtils.setNominatingData(account);
       }
 
       // Subscribe new account to all possible subscriptions if setting enabled.
@@ -276,7 +271,7 @@ export const useMainMessagePorts = () => {
       task: 'action:account:rename',
       data: {
         address,
-        chainId: getAddressChainId(address),
+        chainId: AccountUtils.getAddressChainId(address),
         newName,
       },
     });

@@ -5,29 +5,26 @@ import { ChainList } from '@ren/config/chains';
 import { APIsController } from '@ren/controller/dedot/APIsController';
 import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
 import { AccountsController } from '@ren/controller/AccountsController';
-import { MainDebug } from './DebugUtils';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 
-const debug = MainDebug.extend('ApiUtils');
-
 /**
- * @name checkAndHandleApiDisconnect
+ * @name tryApiDisconnect
  * @summary Disconnects from an API instance if its no longer required.
  */
-export const checkAndHandleApiDisconnect = async (task: SubscriptionTask) => {
+export const tryApiDisconnect = async (task: SubscriptionTask) => {
   const { chainId, status } = task;
 
   // Check if there are any chain or account tasks that require an API instance.
-  if (status === 'disable' && !isApiInstanceRequiredFor(chainId)) {
-    debug('🔷 Disconnect API instance for chain: %o', chainId);
+  if (status === 'disable' && !isApiRequired(chainId)) {
+    console.log('🔷 Disconnect API instance for chain: %o', chainId);
 
     await APIsController.close(chainId);
   }
 };
 
 /**
- * @name handleApiDisconnects
+ * @name disconnectAPIs
  * @summary Disconnect from any API instances that are not currently required.
  */
 export const disconnectAPIs = async () => {
@@ -40,26 +37,26 @@ export const disconnectAPIs = async () => {
   if (isConnected) {
     await Promise.all(
       Array.from(ChainList.keys())
-        .filter((c) => !isApiInstanceRequiredFor(c))
+        .filter((c) => !isApiRequired(c))
         .map((c) => APIsController.close(c))
     );
   }
 };
 
 /**
- * @name isApiInstanceRequiredFor
+ * @name isApiRequired
  * @summary Returns `true` if an API instance is still needed for any chain or account subscriptions.
  * @returns {boolean}
  */
-const isApiInstanceRequiredFor = (chainId: ChainID) => {
+const isApiRequired = (chainId: ChainID) => {
   // Return `true` if any chain subscriptions require an API instance of the chain ID.
-  if (SubscriptionsController.requiresApiInstanceForChain(chainId)) {
+  if (SubscriptionsController.requiresChainApi(chainId)) {
     return true;
   }
 
   // Return `true` if any account requires an API instance of the chain ID.
   for (const account of AccountsController.accounts.get(chainId) || []) {
-    if (account.queryMulti?.requiresApiInstanceForChain(chainId)) {
+    if (account.queryMulti?.requiresChainApi(chainId)) {
       return true;
     }
   }

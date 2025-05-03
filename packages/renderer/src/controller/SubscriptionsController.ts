@@ -145,12 +145,12 @@ export class SubscriptionsController {
   }
 
   /**
-   * @name requiresApiInstanceForChain
+   * @name requiresChainApi
    * @summary Returns `true` if an API instance is required for the provided chain ID for this wrapper, and `false` otherwise.
    * @returns {boolean} Represents if API instance is required for the provided chainID.
    */
-  static requiresApiInstanceForChain(chainId: ChainID) {
-    return this.chainSubscriptions?.requiresApiInstanceForChain(chainId);
+  static requiresChainApi(chainId: ChainID) {
+    return this.chainSubscriptions?.requiresChainApi(chainId);
   }
 
   /**
