@@ -578,30 +578,32 @@ const filter_openGov_referendumVotes = (
   events: EventCallback[],
   event: EventCallback
 ): boolean => {
-  const aWho = event.who.data as EventChainData;
-  const { referendumId, ayeVotes, nayVotes } = event.data;
   let isUnique = true;
 
-  events.forEach((e) => {
+  interface Target {
+    referendumId: number;
+    percentAyes: string;
+    percentNays: string;
+  }
+  const aWho = event.who.data as EventChainData;
+  const aData: Target = event.data;
+
+  for (const e of events) {
     if (e.taskAction === event.taskAction && e.data) {
       const bWho = e.who.data as EventChainData | EventAccountData;
-
-      const {
-        referendumId: nextReferendumId,
-        ayeVotes: nextAyeVotes,
-        nayVotes: nextNayVotes,
-      } = e.data;
+      const bData: Target = e.data;
 
       if (
-        referendumId === nextReferendumId &&
         aWho.chainId === bWho.chainId &&
-        ayeVotes === nextAyeVotes &&
-        nayVotes === nextNayVotes
+        aData.referendumId === bData.referendumId &&
+        aData.percentAyes === bData.percentAyes &&
+        aData.percentNays === bData.percentNays
       ) {
         isUnique = false;
+        break;
       }
     }
-  });
+  }
 
   return isUnique;
 };
@@ -615,30 +617,25 @@ const filter_openGov_decisionPeriod = (
   events: EventCallback[],
   event: EventCallback
 ): boolean => {
-  const { referendumId, formattedTime } = event.data;
-  const { chainId } = event.who.data as EventChainData;
   let isUnique = true;
+  const aData: { referendumId: number; formattedTime: string } = event.data;
+  const aWho = event.who.data as EventChainData;
 
-  events.forEach((e) => {
+  for (const e of events) {
     if (e.taskAction === event.taskAction && e.data) {
-      const { chainId: nextChainId } = e.who.data as
-        | EventChainData
-        | EventAccountData;
-
-      const {
-        referendumId: nextReferendumId,
-        formattedTime: nextFormattedTime,
-      } = e.data;
+      const bWho = e.who.data as EventChainData | EventAccountData;
+      const bData: { referendumId: number; formattedTime: string } = e.data;
 
       if (
-        referendumId === nextReferendumId &&
-        chainId === nextChainId &&
-        formattedTime === nextFormattedTime
+        aWho.chainId === bWho.chainId &&
+        aData.referendumId === bData.referendumId &&
+        aData.formattedTime === bData.formattedTime
       ) {
         isUnique = false;
+        break;
       }
     }
-  });
+  }
 
   return isUnique;
 };
@@ -652,32 +649,32 @@ const filter_openGov_referendumThresholds = (
   events: EventCallback[],
   event: EventCallback
 ): boolean => {
-  const { referendumId, formattedApp, formattedSup } = event.data;
-  const { chainId } = event.who.data as EventChainData;
   let isUnique = true;
 
-  events.forEach((e) => {
-    if (e.taskAction === event.taskAction && e.data) {
-      const { chainId: nextChainId } = e.who.data as
-        | EventChainData
-        | EventAccountData;
+  interface Target {
+    referendumId: number;
+    formattedApp: string;
+    formattedSup: string;
+  }
+  const aData: Target = event.data;
+  const aWho = event.who.data as EventChainData;
 
-      const {
-        referendumId: nextReferendumId,
-        formattedApp: nextformattedApp,
-        formattedSup: nextformattedSup,
-      } = e.data;
+  for (const e of events) {
+    if (e.taskAction === event.taskAction && e.data) {
+      const bData: Target = e.data;
+      const bWho = e.who.data as EventChainData | EventAccountData;
 
       if (
-        referendumId === nextReferendumId &&
-        chainId === nextChainId &&
-        formattedApp === nextformattedApp &&
-        formattedSup === nextformattedSup
+        aWho.chainId === bWho.chainId &&
+        aData.referendumId === bData.referendumId &&
+        aData.formattedApp === bData.formattedApp &&
+        aData.formattedSup === bData.formattedSup
       ) {
         isUnique = false;
+        break;
       }
     }
-  });
+  }
 
   return isUnique;
 };
