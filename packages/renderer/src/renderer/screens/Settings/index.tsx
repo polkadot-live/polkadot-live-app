@@ -7,7 +7,7 @@ import * as Styles from '@polkadot-live/ui/styles';
 
 import { LinksFooter } from '@ren/utils/RenderingUtils';
 import { Setting } from './Setting';
-import { SettingsList } from '@ren/config/settings';
+import { SettingsList } from '@polkadot-live/consts/settings';
 import { useEffect, useState } from 'react';
 import { Config as ConfigSettings } from '@ren/config/processes/settings';
 import { useDebug } from '@app/hooks/useDebug';
