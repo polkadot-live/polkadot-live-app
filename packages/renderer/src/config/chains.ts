@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons';
-import PolkadotIcon from './svg/polkadotIcon.svg?react';
-import WestendIcon from './svg/westendIcon.svg?react';
-import KusamaIcon from './svg/kusamaIcon.svg?react';
-import PolkadotAppIcon from './svg/ledger/polkadot.svg?react';
+import PolkadotIcon from '@polkadot-live/consts/svg/polkadotIcon.svg?react';
+import KusamaIcon from '@polkadot-live/consts/svg/kusamaIcon.svg?react';
+import WestendIcon from '@polkadot-live/consts/svg/westendIcon.svg?react';
+import PolkadotAppIcon from '@polkadot-live/consts/svg/ledger/polkadot.svg?react';
 import { polkadot, ksmcc3, westend2 } from '@substrate/connect-known-chains';
 import type { ChainID, SelectNetworkData } from '@polkadot-live/types/chains';
 import type { FunctionComponent, SVGProps } from 'react';

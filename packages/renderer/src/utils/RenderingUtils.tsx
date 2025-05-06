@@ -3,10 +3,10 @@
 
 import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/ui/styles';
-import PolkadotIcon from '@app/svg/polkadotIcon.svg?react';
-import WestendIcon from '@app/svg/westendIcon.svg?react';
-import KusamaIcon from '@app/svg/kusamaIcon.svg?react';
 
+import PolkadotIcon from '@polkadot-live/consts/svg/polkadotIcon.svg?react';
+import KusamaIcon from '@polkadot-live/consts/svg/kusamaIcon.svg?react';
+import WestendIcon from '@polkadot-live/consts/svg/westendIcon.svg?react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { useHelp } from '@app/contexts/common/Help';

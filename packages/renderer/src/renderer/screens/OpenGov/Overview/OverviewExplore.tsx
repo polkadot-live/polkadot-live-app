@@ -4,8 +4,8 @@
 import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/ui/styles';
 
-import PolkadotSVG from '@app/svg/polkadotIcon.svg?react';
-import KusamaSVG from '@app/svg/kusamaIcon.svg?react';
+import PolkadotIcon from '@polkadot-live/consts/svg/polkadotIcon.svg?react';
+import KusamaIcon from '@polkadot-live/consts/svg/kusamaIcon.svg?react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilePen, faList } from '@fortawesome/free-solid-svg-icons';
 import { NetworkHeader } from '../Wrappers';
@@ -66,11 +66,11 @@ export const OverviewExplore: React.FC<OverviewExploreProps> = ({
       <Styles.FlexColumn $rowGap={'0.25rem'}>
         <Styles.FlexRow $gap={'0.25rem'} style={{ marginTop: '1rem' }}>
           <NetworkHeader style={{ borderTopLeftRadius: '0.375rem' }}>
-            <PolkadotSVG width={'1.25rem'} opacity={0.8} />
+            <PolkadotIcon width={'1.25rem'} opacity={0.8} />
             <h4>Polkadot</h4>
           </NetworkHeader>
           <NetworkHeader style={{ borderTopRightRadius: '0.375rem' }}>
-            <KusamaSVG width={'2.2rem'} opacity={0.8} />
+            <KusamaIcon width={'2.2rem'} opacity={0.8} />
             <h4>Kusama</h4>
           </NetworkHeader>
         </Styles.FlexRow>
