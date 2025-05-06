@@ -1,13 +1,13 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
 import * as defaults from './defaults';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { APIsController } from '@ren/controller/dedot/APIsController';
+import { ChainList } from '@polkadot-live/consts/chains';
 import type { ChainsContextInterface } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAPIData } from '@polkadot-live/types/apis';
-import { ChainList } from '@ren/config/chains';
 
 export const ChainsContext = createContext<ChainsContextInterface>(
   defaults.defaultChainsContext

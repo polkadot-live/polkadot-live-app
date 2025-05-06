@@ -7,7 +7,7 @@ import { createContext, useContext, useRef, useState } from 'react';
 import BigNumber from 'bignumber.js';
 import { rmCommas } from '@w3ux/utils';
 import { formatBlocksToTime } from '@ren/utils/TimeUtils';
-import { chainCurrency } from '@ren/config/chains';
+import { chainCurrency } from '@polkadot-live/consts/chains';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { TreasuryContextInterface } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';

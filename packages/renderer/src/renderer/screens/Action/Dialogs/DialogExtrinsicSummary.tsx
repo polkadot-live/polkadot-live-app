@@ -5,7 +5,7 @@ import * as Dialog from '@radix-ui/react-dialog';
 import * as themeVariables from '../../../theme/variables';
 import * as Styles from '@polkadot-live/ui/styles';
 
-import { chainCurrency, chainUnits } from '@ren/config/chains';
+import { chainCurrency, chainUnits } from '@polkadot-live/consts/chains';
 import { useConnections } from '@app/contexts/common/Connections';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

@@ -1,0 +1,45 @@
+// Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
+// SPDX-License-Identifier: GPL-3.0-only
+
+import PolkadotIcon from '../../svg/polkadotIcon.svg?react';
+import KusamaIcon from '../../svg/kusamaIcon.svg?react';
+import WestendIcon from '../../svg/westendIcon.svg?react';
+import type { ChainIconProps } from './types';
+
+export const ChainIcon = ({
+  chainId,
+  className,
+  fill,
+  style,
+  width,
+}: ChainIconProps) => {
+  switch (chainId) {
+    case 'Polkadot':
+      return (
+        <PolkadotIcon
+          className={className}
+          fill={fill}
+          style={style}
+          width={width}
+        />
+      );
+    case 'Kusama':
+      return (
+        <KusamaIcon
+          className={className}
+          fill={fill}
+          style={style}
+          width={width}
+        />
+      );
+    case 'Westend':
+      return (
+        <WestendIcon
+          className={className}
+          fill={fill}
+          style={style}
+          width={width}
+        />
+      );
+  }
+};

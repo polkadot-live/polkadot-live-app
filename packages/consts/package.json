@@ -4,8 +4,7 @@
   "type": "module",
   "private": true,
   "exports": {
-    "./*": "./src/*.ts",
-    "./svg/*": "./src/svg/*"
+    "./*": "./src/*.ts"
   },
   "scripts": {
     "lint": "eslint --fix --ext .ts,.tsx . && npx prettier --write ./src",

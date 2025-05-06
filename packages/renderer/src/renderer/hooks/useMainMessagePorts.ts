@@ -7,7 +7,7 @@ import { getOnlineStatus } from '@ren/utils/CommonUtils';
 import { AccountsController } from '@ren/controller/AccountsController';
 import { APIsController } from '@ren/controller/dedot/APIsController';
 import BigNumber from 'bignumber.js';
-import { chainUnits } from '@ren/config/chains';
+import { chainUnits } from '@polkadot-live/consts/chains';
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { ExtrinsicsController } from '@ren/controller/ExtrinsicsController';
 import { disconnectAPIs } from '@ren/utils/ApiUtils';

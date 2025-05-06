@@ -3,7 +3,7 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { APIsController } from '@ren/controller/dedot/APIsController';
-import { ChainList } from '@ren/config/chains';
+import { ChainList } from '@polkadot-live/consts/chains';
 import type { Api } from '@ren/model/dedot/Api';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ClientTypes } from '@polkadot-live/types/apis';

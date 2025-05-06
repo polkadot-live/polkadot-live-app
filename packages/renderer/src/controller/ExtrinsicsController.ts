@@ -3,7 +3,7 @@
 
 import { APIsController } from '@ren/controller/dedot/APIsController';
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
-import { chainUnits } from '@ren/config/chains';
+import { chainUnits } from '@polkadot-live/consts/chains';
 import { unitToPlanck } from '@w3ux/utils';
 import { concatU8a, hexToU8a } from 'dedot/utils';
 import { ExtraSignedExtension } from 'dedot';

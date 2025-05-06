@@ -14,7 +14,7 @@ import {
   createImgSize,
   Html5QrCodePlugin,
   ScanWrapper,
-} from '@polkadot-live/ui/components/qrcode';
+} from '@polkadot-live/ui/components';
 import type { Html5Qrcode } from 'html5-qrcode';
 
 export const Reader = () => {

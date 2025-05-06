@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as UI from '@polkadot-live/ui/components'
+import * as UI from '@polkadot-live/ui/components';
 import { version } from '../../../../package.json';
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { useEffect, useState } from 'react';
@@ -24,7 +24,7 @@ import { FixedFlexWrapper, IconWrapper } from './Wrappers';
 import { BodyInterfaceWrapper } from '@app/Wrappers';
 import { ScrollWrapper } from '@polkadot-live/ui/styles';
 import { useSideNav } from '@polkadot-live/ui/contexts';
-import PolkadotIcon from '@polkadot-live/consts/svg/polkadotIcon.svg?react';
+import PolkadotIcon from '@polkadot-live/ui/svg/polkadotIcon.svg?react';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { EventCallback } from '@polkadot-live/types/reporter';
 import type { IpcRendererEvent } from 'electron';

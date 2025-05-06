@@ -15,7 +15,6 @@ import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useOverlay } from '@polkadot-live/ui/contexts';
-import { chainIcon } from '@ren/config/chains';
 import { getAddressChainId } from '@ren/utils/AccountUtils';
 import type { LedgerAddressProps } from '../types';
 
@@ -46,7 +45,7 @@ export const Address = ({ localAddress, setSection }: LedgerAddressProps) => {
       /* Data */
       address={address}
       accountName={name}
-      ChainIcon={chainIcon(getAddressChainId(address))}
+      chainId={getAddressChainId(address)}
       isConnected={getOnlineMode()}
       isImported={isImported}
       processingStatus={getStatusForAccount(address, 'ledger')}

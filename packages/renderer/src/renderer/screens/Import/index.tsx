@@ -8,8 +8,8 @@ import { Home } from './Home';
 import { ImportLedger } from './Ledger';
 import { ImportVault } from './Vault';
 import {
-  ModalSection,
   ModalMotionTwoSection,
+  ModalSection,
 } from '@polkadot-live/ui/kits/overlay';
 import { ImportReadOnly } from './ReadOnly';
 import { ImportWalletConnect } from './WalletConnect';

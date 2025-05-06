@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { chainCurrency, chainUnits } from '@ren/config/chains';
+import { chainCurrency, chainUnits } from '@polkadot-live/consts/chains';
 import { formatDistanceToNow } from 'date-fns';
 import { planckToUnit, rmCommas } from '@w3ux/utils';
 import type { ChainID } from '@polkadot-live/types/chains';

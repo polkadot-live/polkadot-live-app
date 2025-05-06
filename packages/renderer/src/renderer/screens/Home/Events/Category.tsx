@@ -5,7 +5,7 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 
 import { getEventChainId } from '@ren/utils/EventUtils';
-import { getCategory } from '@ren/config/chains';
+import { getCategory } from '@polkadot-live/consts/chains';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { EventGroup } from './Wrappers';
 import { EventItem } from './EventItem';

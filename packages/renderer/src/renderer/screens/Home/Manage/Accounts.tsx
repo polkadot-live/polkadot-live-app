@@ -5,11 +5,10 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as themeVariables from '../../../theme/variables';
 
-import { Identicon } from '@polkadot-live/ui/components';
+import { ChainIcon, Identicon } from '@polkadot-live/ui/components';
 import { ItemEntryWrapper, ItemsColumn } from './Wrappers';
 import { ButtonText } from '@polkadot-live/ui/kits/buttons';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { getIcon } from '@ren/utils/RenderingUtils';
 import { NoAccounts, NoOpenGov } from '../NoAccounts';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useManage } from '@app/contexts/main/Manage';
@@ -256,7 +255,12 @@ export const Accounts = ({
                         >
                           <div className="inner">
                             <div>
-                              <span>{getIcon(chainId, 'chain-icon')}</span>
+                              <span>
+                                <ChainIcon
+                                  chainId={chainId}
+                                  className="chain-icon"
+                                />
+                              </span>
                               <div className="content">
                                 <h3>{chainId}</h3>
                               </div>
@@ -295,7 +299,12 @@ export const Accounts = ({
                       >
                         <div className="inner">
                           <div>
-                            <span>{getIcon(chain, 'chain-icon')}</span>
+                            <span>
+                              <ChainIcon
+                                chainId={chain}
+                                className="chain-icon"
+                              />
+                            </span>
                             <div className="content">
                               <h3>{chain}</h3>
                             </div>

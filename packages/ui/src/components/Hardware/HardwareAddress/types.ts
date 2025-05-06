@@ -1,16 +1,17 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { ComponentBase } from '../../../types';
 import type { AnyData } from '@polkadot-live/types/misc';
 
 export type HardwareAddressProps = ComponentBase & {
   // The address to import.
   address: string;
+  // Chain ID for address.
+  chainId: ChainID;
   // Account processing status.
   processingStatus: boolean | null;
-  // Address chain icon SVG.
-  ChainIcon: AnyData;
   // App's connection status.
   isConnected: boolean;
   // Whether this address is imported in main window.

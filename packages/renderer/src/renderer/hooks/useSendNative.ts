@@ -3,7 +3,7 @@
 
 import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
 import { useEffect, useRef, useState } from 'react';
-import { chainUnits } from '@ren/config/chains';
+import { chainUnits } from '@polkadot-live/consts/chains';
 import { ellipsisFn, unitToPlanck } from '@w3ux/utils';
 import { formatDecimal } from '@ren/utils/TextUtils';
 import {

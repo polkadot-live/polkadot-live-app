@@ -1,7 +1,6 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AnyData } from './misc';
 import type { ChainID } from './chains';
 
 export interface WcSyncFlags {
@@ -16,7 +15,6 @@ export interface WcSyncFlags {
 
 export interface WcSelectNetwork {
   caipId: string;
-  ChainIcon: AnyData;
   chainId: ChainID;
   selected: boolean;
 }

@@ -3,7 +3,6 @@
 
 import * as wcConfig from '@ren/config/walletConnect';
 import { Config as ConfigAction } from '@ren/config/processes/action';
-import { chainIcon } from '@ren/config/chains';
 import React, {
   createContext,
   useContext,
@@ -31,6 +30,7 @@ import { useOverlay } from '@polkadot-live/ui/contexts';
 import { renderToast } from '@polkadot-live/ui/utils';
 import { generateUID } from '@ren/utils/AccountUtils';
 import { WalletConnectModal } from '@walletconnect/modal';
+import { ChainIcon } from '@polkadot-live/ui/components';
 
 const PAGINATION_ITEMS_PER_PAGE = 10;
 
@@ -234,7 +234,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         map.set(from, {
           accountName,
           address: from,
-          ChainIcon: chainIcon(chainId),
+          ChainIcon: <ChainIcon chainId={chainId} />,
           chainId,
         });
       }
