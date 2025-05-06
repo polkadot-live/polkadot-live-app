@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
-import { HelpConfig } from '@ren/config/help';
+import { HelpConfig } from '@polkadot-live/consts/help';
 import * as defaults from './defaults';
 import type {
   HelpContextInterface,

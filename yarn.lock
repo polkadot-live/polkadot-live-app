@@ -1917,6 +1917,14 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@polkadot-live/consts@workspace:*, @polkadot-live/consts@workspace:packages/consts":
+  version: 0.0.0-use.local
+  resolution: "@polkadot-live/consts@workspace:packages/consts"
+  dependencies:
+    "@polkadot-live/types": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@polkadot-live/main@workspace:packages/main":
   version: 0.0.0-use.local
   resolution: "@polkadot-live/main@workspace:packages/main"
@@ -1942,6 +1950,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@polkadot-live/renderer@workspace:packages/renderer"
   dependencies:
+    "@polkadot-live/consts": "workspace:*"
     "@polkadot-live/preload": "workspace:*"
     "@polkadot-live/types": "workspace:*"
     "@polkadot-live/ui": "workspace:*"

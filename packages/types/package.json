@@ -4,6 +4,7 @@
   "type": "module",
   "private": true,
   "exports": {
+    ".": "./src/index.ts",
     "./accounts": "./src/accounts.ts",
     "./apis": "./src/apis.ts",
     "./backup": "./src/backup.ts",
@@ -24,7 +25,6 @@
     "./chains/polkadot": "./src/chains/polkadot.ts",
     "./developerConsole/workspaces": "./src/developerConsole/workspaces.ts"
   },
-  "files": [],
   "scripts": {
     "lint": "eslint --fix --ext .ts,.tsx . && npx prettier --write ./src",
     "clear:dist": "([ -d \"dist\" ] && rm -fr \"dist\") || true && ([ -d \"node_modules\" ] && rm -fr \"node_modules\") || true",

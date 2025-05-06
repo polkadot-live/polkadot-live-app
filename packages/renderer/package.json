@@ -24,6 +24,7 @@
     "sass-loader": "^16.0.5"
   },
   "dependencies": {
+    "@polkadot-live/consts": "workspace:*",
     "@polkadot-live/preload": "workspace:*",
     "@polkadot-live/ui": "workspace:*"
   },
