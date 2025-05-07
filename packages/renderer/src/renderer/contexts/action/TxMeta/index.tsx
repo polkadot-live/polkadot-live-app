@@ -1,9 +1,8 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as wcConfig from '@ren/config/walletConnect';
-import { Config as ConfigAction } from '@ren/config/processes/action';
-import { chainIcon } from '@ren/config/chains';
+import * as wc from '@polkadot-live/consts/walletConnect';
+import { Config as ConfigAction } from '@ren/config/action';
 import React, {
   createContext,
   useContext,
@@ -31,6 +30,7 @@ import { useOverlay } from '@polkadot-live/ui/contexts';
 import { renderToast } from '@polkadot-live/ui/utils';
 import { generateUID } from '@ren/utils/AccountUtils';
 import { WalletConnectModal } from '@walletconnect/modal';
+import { ChainIcon } from '@polkadot-live/ui/components';
 
 const PAGINATION_ITEMS_PER_PAGE = 10;
 
@@ -147,7 +147,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         enableExplorer: false,
         explorerRecommendedWalletIds: 'NONE',
         explorerExcludedWalletIds: 'ALL',
-        projectId: wcConfig.WC_PROJECT_ID,
+        projectId: wc.WC_PROJECT_ID,
       });
 
       wcModal.current = modal;
@@ -234,7 +234,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         map.set(from, {
           accountName,
           address: from,
-          ChainIcon: chainIcon(chainId),
+          ChainIcon: <ChainIcon chainId={chainId} />,
           chainId,
         });
       }

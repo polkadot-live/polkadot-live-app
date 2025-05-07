@@ -7,7 +7,7 @@ import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as themeVariables from '../../../theme/variables';
 import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 
-import { chainCurrency } from '@ren/config/chains';
+import { chainCurrency } from '@polkadot-live/consts/chains';
 import { Identicon, MainHeading } from '@polkadot-live/ui/components';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useState } from 'react';

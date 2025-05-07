@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { executeIntervaledOneShot } from '@app/callbacks/intervaled';
-import { intervalDurationsConfig } from '@ren/config/subscriptions/interval';
+import { intervalDurationsConfig } from '@polkadot-live/consts/subscriptions/interval';
 import { secondsUntilNextMinute } from '@ren/utils/TimeUtils';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';

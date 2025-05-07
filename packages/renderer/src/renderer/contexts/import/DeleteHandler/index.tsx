@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { Config as ConfigImport } from '@ren/config/processes/import';
+import { Config as ConfigImport } from '@ren/config/import';
 import { createContext, useContext } from 'react';
 import { useAccountStatuses } from '../AccountStatuses';
 import { useAddresses } from '@app/contexts/import/Addresses';

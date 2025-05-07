@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ChainList } from '@ren/config/chains';
+import { ChainList } from '@polkadot-live/consts/chains';
 import { DedotClient, SmoldotProvider, WsProvider } from 'dedot';
 import type * as smoldot from 'smoldot/no-auto-bytecode';
 import type { ChainID } from '@polkadot-live/types/chains';

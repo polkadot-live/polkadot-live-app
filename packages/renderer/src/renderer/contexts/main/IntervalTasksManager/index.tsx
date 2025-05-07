@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
+import { Config as ConfigRenderer } from '@ren/config/renderer';
 import { executeIntervaledOneShot } from '@app/callbacks/intervaled';
 import { Flip, toast } from 'react-toastify';
 import { IntervalsController } from '@ren/controller/IntervalsController';

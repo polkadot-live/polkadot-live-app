@@ -244,7 +244,7 @@ export const Action = () => {
               <FontAwesomeIcon icon={FA.faCaretLeft} />
             </button>
             {getPageNumbers().map((i, j) => (
-              <FlexRow key={i} $row={'0.75rem'}>
+              <FlexRow key={i} $gap={'0.75rem'}>
                 {j === 2 && getPageNumbers().length !== 5 && pageCount > 4 && (
                   <button className="btn placeholder">
                     <FontAwesomeIcon className="icon" icon={FA.faEllipsis} />

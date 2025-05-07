@@ -1,7 +1,9 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
+import * as UI from '@polkadot-live/ui/components';
+import { version } from '../../../../package.json';
+import { Config as ConfigRenderer } from '@ren/config/renderer';
 import { useEffect, useState } from 'react';
 import { useAddresses } from '@app/contexts/main/Addresses';
 import { useAppSettings } from '@app/contexts/main/AppSettings';
@@ -19,21 +21,10 @@ import { Manage } from './Manage';
 import { Send } from './Send';
 import { Summary } from '@app/screens/Home/Summary';
 import { FixedFlexWrapper, IconWrapper } from './Wrappers';
-import IconSVG from '@app/svg/polkadotIcon.svg?react';
-import { version } from '../../../../package.json';
-
-/** Library */
 import { BodyInterfaceWrapper } from '@app/Wrappers';
-import {
-  Header,
-  SideNav,
-  GridSpinner,
-  Menu,
-} from '@polkadot-live/ui/components';
 import { ScrollWrapper } from '@polkadot-live/ui/styles';
 import { useSideNav } from '@polkadot-live/ui/contexts';
-
-/** Types */
+import PolkadotIcon from '@polkadot-live/ui/svg/polkadotIcon.svg?react';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { EventCallback } from '@polkadot-live/types/reporter';
 import type { IpcRendererEvent } from 'electron';
@@ -180,7 +171,7 @@ export const Home = () => {
 
   return (
     <>
-      <Header
+      <UI.Header
         ToggleNode={
           <Classic
             toggled={darkMode}
@@ -201,7 +192,7 @@ export const Home = () => {
         version={version}
       >
         {/* Logic in cog menu context */}
-        <Menu
+        <UI.Menu
           appFlags={cogMenu.getAppFlags()}
           connectLabel={cogMenu.getConnectionButtonText()}
           menuItems={cogMenu.getMenuItems()}
@@ -209,11 +200,11 @@ export const Home = () => {
           onSilenceNotifications={cogMenu.handleSilenceNotifications}
           silenceOsNotifications={silenceOsNotifications}
         />
-      </Header>
+      </UI.Header>
 
       <FixedFlexWrapper>
         {/* Side Navigation */}
-        <SideNav
+        <UI.SideNav
           handleSideNavCollapse={handleSideNavCollapse}
           navState={{
             isCollapsed: sideNavCollapsed,
@@ -224,12 +215,12 @@ export const Home = () => {
 
         <BodyInterfaceWrapper $maxHeight>
           <IconWrapper>
-            <IconSVG width={175} opacity={appLoading ? 0.01 : 0.02} />
+            <PolkadotIcon width={175} opacity={appLoading ? 0.01 : 0.02} />
           </IconWrapper>
 
           {appLoading ? (
             <div className="app-loading">
-              <GridSpinner />
+              <UI.GridSpinner />
               <p>Loading Polkadot Live</p>
             </div>
           ) : (

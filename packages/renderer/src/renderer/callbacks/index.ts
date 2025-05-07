@@ -4,7 +4,7 @@
 import { AccountsController } from '@ren/controller/AccountsController';
 import { APIsController } from '@ren/controller/dedot/APIsController';
 import { checkAccountWithProperties } from '@ren/utils/AccountUtils';
-import { Config as RendererConfig } from '@ren/config/processes/renderer';
+import { Config as RendererConfig } from '@ren/config/renderer';
 import { EventsController } from '@ren/controller/EventsController';
 import {
   areArraysEqual,

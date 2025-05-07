@@ -18,8 +18,8 @@ import './theme/utils.scss';
 import './theme/dialog.scss';
 
 // Library styles.
-import '@polkadot-live/ui/kits/buttons/index.scss';
-import '@polkadot-live/ui/kits/overlay/index.scss';
+import '@polkadot-live/ui/scss/buttons/index.scss';
+import '@polkadot-live/ui/scss/overlay/index.scss';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {

@@ -21,8 +21,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./packages/main/src/*"],
-      "@ren/*": ["./packages/renderer/src/*"],
       "@app/*": ["./packages/renderer/src/renderer/*"],
+      "@ren/*": ["./packages/renderer/src/*"],
     },
     "declarationMap": false,
     "noEmitOnError": true,

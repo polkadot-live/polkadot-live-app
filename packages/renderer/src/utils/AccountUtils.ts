@@ -3,7 +3,7 @@
 
 import { APIsController } from '@ren/controller/dedot/APIsController';
 import { AccountsController } from '@ren/controller/AccountsController';
-import { ChainList } from '@ren/config/chains';
+import { ChainList } from '@polkadot-live/consts/chains';
 import { checkAddress } from '@polkadot/util-crypto';
 import { getAccountNominatingData } from '@app/callbacks/nominating';
 import { bnToU8a } from '@polkadot/util';

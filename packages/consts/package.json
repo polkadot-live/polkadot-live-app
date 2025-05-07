@@ -1,0 +1,18 @@
+{
+  "name": "@polkadot-live/consts",
+  "version": "0.8.0-alpha",
+  "type": "module",
+  "private": true,
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "lint": "eslint --fix --ext .ts,.tsx . && npx prettier --write ./src",
+    "clear:dist": "([ -d \"dist\" ] && rm -fr \"dist\") || true && ([ -d \"node_modules\" ] && rm -fr \"node_modules\") || true",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@polkadot-live/types": "workspace:*"
+  },
+  "packageManager": "yarn@4.0.2"
+}

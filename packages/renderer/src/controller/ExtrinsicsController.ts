@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { APIsController } from '@ren/controller/dedot/APIsController';
-import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
-import { chainUnits } from '@ren/config/chains';
+import { Config as ConfigRenderer } from '@ren/config/renderer';
+import { chainUnits } from '@polkadot-live/consts/chains';
 import { unitToPlanck } from '@w3ux/utils';
 import { concatU8a, hexToU8a } from 'dedot/utils';
 import { ExtraSignedExtension } from 'dedot';

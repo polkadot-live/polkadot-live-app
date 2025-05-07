@@ -12,10 +12,9 @@ import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptio
 import { useState } from 'react';
 import { useSubscriptions } from '@app/contexts/main/Subscriptions';
 import { FooterWrapper, NetworkItem } from './Wrapper';
-import { getIcon } from '@ren/utils/RenderingUtils';
 import { SelectRpc } from './RpcSelect';
 import { FlexRow } from '@polkadot-live/ui/styles';
-import { TooltipRx } from '@polkadot-live/ui/components';
+import { ChainIcon, TooltipRx } from '@polkadot-live/ui/components';
 import { PuffLoader } from 'react-spinners';
 import type { FlattenedAPIData } from '@polkadot-live/types/apis';
 
@@ -126,7 +125,11 @@ export const Footer = () => {
           [...chains.entries()].map(([chainId, apiData]) => (
             <NetworkItem key={`${chainId}_dedot_network`}>
               <div className="left">
-                {getIcon(chainId, 'icon')}
+                <ChainIcon
+                  chainId={chainId}
+                  className="icon"
+                  style={{ fill: 'var(--text-color-primary)' }}
+                />
                 <h4>{chainId}</h4>
               </div>
               <div className="right">

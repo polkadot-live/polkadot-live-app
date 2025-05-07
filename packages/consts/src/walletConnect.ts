@@ -1,7 +1,6 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { chainIcon } from '@ren/config/chains';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { WcSelectNetwork } from '@polkadot-live/types/walletConnect';
 
@@ -16,19 +15,16 @@ export const WC_WESTEND_CAIP_ID = 'e143f23803ac50e8f6f8e62695d1ce9e';
 export const WcNetworks: WcSelectNetwork[] = [
   {
     caipId: WC_POLKADOT_CAIP_ID,
-    ChainIcon: chainIcon('Polkadot'),
     chainId: 'Polkadot',
     selected: false,
   },
   {
     caipId: WC_KUSAMA_CAIP_ID,
-    ChainIcon: chainIcon('Kusama'),
     chainId: 'Kusama',
     selected: false,
   },
   {
     caipId: WC_WESTEND_CAIP_ID,
-    ChainIcon: chainIcon('Westend'),
     chainId: 'Westend',
     selected: false,
   },

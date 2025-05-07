@@ -2,24 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons';
-import PolkadotIcon from './svg/polkadotIcon.svg?react';
-import WestendIcon from './svg/westendIcon.svg?react';
-import KusamaIcon from './svg/kusamaIcon.svg?react';
-import PolkadotAppIcon from './svg/ledger/polkadot.svg?react';
 import { polkadot, ksmcc3, westend2 } from '@substrate/connect-known-chains';
 import type { ChainID, SelectNetworkData } from '@polkadot-live/types/chains';
-import type { FunctionComponent, SVGProps } from 'react';
 import type { NodeEndpoint } from '@polkadot-live/types/apis';
 
 interface Chain {
-  icon: FunctionComponent<
-    SVGProps<SVGSVGElement> & { title?: string | undefined }
-  >;
-  ledger: {
-    icon: FunctionComponent<
-      SVGProps<SVGSVGElement> & { title?: string | undefined }
-    >;
-  };
   endpoints: {
     rpcs: NodeEndpoint[];
     lightClient: string;
@@ -41,10 +28,6 @@ export const ChainList = new Map<ChainID, Chain>([
   [
     'Polkadot',
     {
-      icon: PolkadotIcon,
-      ledger: {
-        icon: PolkadotAppIcon,
-      },
       endpoints: {
         rpcs: [
           'wss://rpc.polkadot.io',
@@ -70,10 +53,6 @@ export const ChainList = new Map<ChainID, Chain>([
   [
     'Kusama',
     {
-      icon: KusamaIcon,
-      ledger: {
-        icon: KusamaIcon,
-      },
       endpoints: {
         rpcs: [
           'wss://kusama-rpc.polkadot.io',
@@ -98,10 +77,6 @@ export const ChainList = new Map<ChainID, Chain>([
   [
     'Westend',
     {
-      icon: WestendIcon,
-      ledger: {
-        icon: WestendIcon,
-      },
       endpoints: {
         rpcs: [
           'wss://rpc.ibp.network/westend',
@@ -122,9 +97,6 @@ export const ChainList = new Map<ChainID, Chain>([
   ],
 ]);
 
-export const chainIcon = (chain: ChainID) =>
-  (ChainList.get(chain) as Chain).icon;
-
 export const chainCurrency = (chain: ChainID) =>
   (ChainList.get(chain) as Chain).unit;
 
@@ -139,21 +111,18 @@ export const getSelectNetworkData = (
   {
     network: 'Polkadot',
     ledgerId: 'dot',
-    ChainIcon: chainIcon('Polkadot'),
     iconWidth: 18,
     iconFill: '#ac2461',
   },
   {
     network: 'Kusama',
     ledgerId: 'kusama',
-    ChainIcon: chainIcon('Kusama'),
     iconWidth: 24,
     iconFill: darkMode ? '#e7e7e7' : '#2f2f2f',
   },
   {
     network: 'Westend',
     ledgerId: '',
-    ChainIcon: chainIcon('Westend'),
     iconWidth: 24,
     iconFill: darkMode ? '#e7e7e7' : '#2f2f2f',
   },

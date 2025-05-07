@@ -14,7 +14,7 @@ import {
   ButtonText,
 } from '@polkadot-live/ui/kits/buttons';
 import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
-import { InfoCard } from '@polkadot-live/ui/components';
+import { ChainIcon, InfoCard } from '@polkadot-live/ui/components';
 import {
   faCaretLeft,
   faCaretRight,
@@ -135,7 +135,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
             {/** Bredcrumb */}
             <UI.ControlsWrapper
               $padWrapper={true}
-              $padButton={false}
+              $padBottom={false}
               style={{ padding: '1rem 0 0 0' }}
             >
               <Styles.ResponsiveRow $smWidth="500px">
@@ -243,50 +243,47 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                       ) : (
                         <>
                           <ItemsColumn>
-                            {wcNetworks.map(
-                              ({ chainId, selected, ChainIcon }, i) => (
-                                <ImportAddressRow key={i}>
-                                  <ChainIcon
-                                    width={'20'}
-                                    fill={
-                                      chainId === 'Polkadot' ? '#ac2461' : ''
-                                    }
-                                  />
-                                  <div className="addressInfo">
-                                    <h2>{chainId}</h2>
-                                  </div>
-                                  <Styles.CheckboxRoot
-                                    $theme={theme}
-                                    className="CheckboxRoot"
-                                    id={`c${i}`}
-                                    checked={selected}
-                                    disabled={false}
-                                    onCheckedChange={(
-                                      checked: Checkbox.CheckedState
-                                    ) =>
-                                      setWcNetworks((prev) => {
-                                        const updated = prev.map((data) =>
-                                          data.chainId === chainId
-                                            ? {
-                                                ...data,
-                                                selected:
-                                                  typeof checked === 'string'
-                                                    ? false
-                                                    : Boolean(checked),
-                                              }
-                                            : data
-                                        );
-                                        return updated;
-                                      })
-                                    }
-                                  >
-                                    <Checkbox.Indicator className="CheckboxIndicator">
-                                      <CheckIcon />
-                                    </Checkbox.Indicator>
-                                  </Styles.CheckboxRoot>
-                                </ImportAddressRow>
-                              )
-                            )}
+                            {wcNetworks.map(({ chainId, selected }, i) => (
+                              <ImportAddressRow key={i}>
+                                <ChainIcon
+                                  chainId={chainId}
+                                  width={20}
+                                  fill={chainId === 'Polkadot' ? '#ac2461' : ''}
+                                />
+                                <div className="addressInfo">
+                                  <h2>{chainId}</h2>
+                                </div>
+                                <Styles.CheckboxRoot
+                                  $theme={theme}
+                                  className="CheckboxRoot"
+                                  id={`c${i}`}
+                                  checked={selected}
+                                  disabled={false}
+                                  onCheckedChange={(
+                                    checked: Checkbox.CheckedState
+                                  ) =>
+                                    setWcNetworks((prev) => {
+                                      const updated = prev.map((data) =>
+                                        data.chainId === chainId
+                                          ? {
+                                              ...data,
+                                              selected:
+                                                typeof checked === 'string'
+                                                  ? false
+                                                  : Boolean(checked),
+                                            }
+                                          : data
+                                      );
+                                      return updated;
+                                    })
+                                  }
+                                >
+                                  <Checkbox.Indicator className="CheckboxIndicator">
+                                    <CheckIcon />
+                                  </Checkbox.Indicator>
+                                </Styles.CheckboxRoot>
+                              </ImportAddressRow>
+                            ))}
                           </ItemsColumn>
                           <Styles.FlexColumn style={{ marginTop: '0.5rem' }}>
                             {!getOnlineMode() && renderOfflineWarning()}

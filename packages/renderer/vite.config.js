@@ -45,15 +45,15 @@ const getAliasConfig = () => {
     const srcUi = resolve(PROJECT_ROOT, 'packages', 'ui', 'src');
 
     const devDeps = [
-      ['@polkadot-live/ui/components/qrcode', `${srcUi}/components/QRCode`],
-      ['@polkadot-live/ui/kits/overlay', `${srcUi}/kits/Overlay`],
-      ['@polkadot-live/ui/kits/buttons', `${srcUi}/kits/Buttons`],
+      ['@polkadot-live/ui/kits/overlay', `${srcUi}/kits/Overlay/index.ts`],
+      ['@polkadot-live/ui/kits/buttons', `${srcUi}/kits/Buttons/index.ts`],
       ['@polkadot-live/ui/utils', `${srcUi}/utils`],
       ['@polkadot-live/ui/styles', `${srcUi}/styles`],
       ['@polkadot-live/ui/hooks', `${srcUi}/hooks`],
       ['@polkadot-live/ui/contexts', `${srcUi}/contexts`],
-      ['@polkadot-live/ui/help', `${srcUi}/components/Help`],
       ['@polkadot-live/ui/components', `${srcUi}/components`],
+      ['@polkadot-live/ui/scss/buttons', `${srcUi}/kits/Buttons`],
+      ['@polkadot-live/ui/scss/overlay', `${srcUi}/kits/Overlay`],
       ['@polkadot-live/ui', srcUi],
     ];
 

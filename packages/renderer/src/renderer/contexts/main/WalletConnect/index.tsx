@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import * as wcConfig from '@ren/config/walletConnect';
+import * as wc from '@polkadot-live/consts/walletConnect';
 
-import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
+import { Config as ConfigRenderer } from '@ren/config/renderer';
 import { ExtrinsicsController } from '@ren/controller/ExtrinsicsController';
 import UniversalProvider from '@walletconnect/universal-provider';
 import { createContext, useContext, useEffect, useRef } from 'react';
@@ -21,9 +21,9 @@ import type {
 import type { ExtrinsicInfo } from 'packages/types/src';
 
 const mapCaipChainId = new Map<string, ChainID>([
-  [wcConfig.WC_POLKADOT_CAIP_ID, 'Polkadot'],
-  [wcConfig.WC_KUSAMA_CAIP_ID, 'Kusama'],
-  [wcConfig.WC_WESTEND_CAIP_ID, 'Westend'],
+  [wc.WC_POLKADOT_CAIP_ID, 'Polkadot'],
+  [wc.WC_KUSAMA_CAIP_ID, 'Kusama'],
+  [wc.WC_WESTEND_CAIP_ID, 'Westend'],
 ]);
 
 export const WalletConnectContext =
@@ -90,9 +90,9 @@ export const WalletConnectProvider = ({
         .map(({ caipId }) => `polkadot:${caipId}`);
     } else {
       return [
-        `polkadot:${wcConfig.WC_POLKADOT_CAIP_ID}`,
-        `polkadot:${wcConfig.WC_KUSAMA_CAIP_ID}`,
-        `polkadot:${wcConfig.WC_WESTEND_CAIP_ID}`,
+        `polkadot:${wc.WC_POLKADOT_CAIP_ID}`,
+        `polkadot:${wc.WC_KUSAMA_CAIP_ID}`,
+        `polkadot:${wc.WC_WESTEND_CAIP_ID}`,
       ];
     }
   };
@@ -159,8 +159,8 @@ export const WalletConnectProvider = ({
     if (!wcProvider.current) {
       // Instantiate provider.
       const provider = await UniversalProvider.init({
-        projectId: wcConfig.WC_PROJECT_ID,
-        relayUrl: wcConfig.WC_RELAY_URL,
+        projectId: wc.WC_PROJECT_ID,
+        relayUrl: wc.WC_RELAY_URL,
         // TODO: metadata
       });
 
@@ -330,7 +330,7 @@ export const WalletConnectProvider = ({
     }
 
     // Get the accounts from the session.
-    const caip = wcConfig.getWalletConnectChainId(chainId);
+    const caip = wc.getWalletConnectChainId(chainId);
     const accounts: { address: string; caipId: string }[] = Object.values(
       wcSession.current.namespaces
     )
@@ -440,7 +440,7 @@ export const WalletConnectProvider = ({
 
       const { from, chainId } = info.actionMeta;
       const topic = wcSession.current.topic;
-      const caip = wcConfig.getWalletConnectChainId(chainId);
+      const caip = wc.getWalletConnectChainId(chainId);
 
       const result: AnyData = await wcProvider.current.client.request({
         chainId: `polkadot:${caip}`,

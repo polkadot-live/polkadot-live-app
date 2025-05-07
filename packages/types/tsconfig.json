@@ -12,10 +12,8 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-
     "declaration": true,
     "declarationDir": ".",
-    //"emitDeclarationOnly": true,
   },
   "include": ["./**/*.ts"],
 }

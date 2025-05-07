@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as ConfigImport } from '@ren/config/processes/import';
+import { Config as ConfigImport } from '@ren/config/import';
 
 /// Import window contexts.
 import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';

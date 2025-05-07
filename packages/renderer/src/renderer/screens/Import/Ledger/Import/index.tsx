@@ -15,7 +15,7 @@ import { useConnections } from '@app/contexts/common/Connections';
 import { useImportHandler } from '@app/contexts/import/ImportHandler';
 import { useLedgerHardware } from '@ren/renderer/contexts/import/LedgerHardware';
 
-import { InfoCard } from '@polkadot-live/ui/components';
+import { ChainIcon, InfoCard } from '@polkadot-live/ui/components';
 import {
   ButtonPrimaryInvert,
   ButtonText,
@@ -42,8 +42,9 @@ import { AddressListFooter, ImportAddressRow } from '../../Wrappers';
 import { InfoCardSteps } from '../../InfoCardSteps';
 import { determineStatusFromCodes } from './Utils';
 import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
-import { getSelectNetworkData } from '@ren/config/chains';
+import { getSelectNetworkData } from '@polkadot-live/consts/chains';
 import type { ImportProps } from './types';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   const { darkMode } = useConnections();
@@ -171,7 +172,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
             {/** Breadcrump */}
             <UI.ControlsWrapper
               $padWrapper={true}
-              $padButton={false}
+              $padBottom={false}
               style={{ padding: '1rem 0 0 0' }}
             >
               <Styles.ResponsiveRow $smWidth="450px">
@@ -257,7 +258,6 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                       ({
                                         network,
                                         ledgerId,
-                                        ChainIcon,
                                         iconWidth,
                                         iconFill,
                                       }) => (
@@ -268,6 +268,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                           <div className="innerRow">
                                             <div>
                                               <ChainIcon
+                                                chainId={network as ChainID}
                                                 width={iconWidth}
                                                 fill={iconFill}
                                                 style={{

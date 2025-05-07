@@ -5,7 +5,7 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as themeVariables from '../../../theme/variables';
 
-import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
+import { Config as ConfigRenderer } from '@ren/config/renderer';
 import { ItemsColumn } from './Wrappers';
 import {
   ControlsWrapper,

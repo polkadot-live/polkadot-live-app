@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as RendererConfig } from '@ren/config/processes/renderer';
+import { Config as RendererConfig } from '@ren/config/renderer';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { defaultAppSettingsContext } from './defaults';
 import type { AppSettingsContextInterface } from './types';

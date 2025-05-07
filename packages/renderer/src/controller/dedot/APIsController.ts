@@ -4,7 +4,7 @@
 import * as Utils from '@ren/utils/CommonUtils';
 import * as smoldot from 'smoldot/no-auto-bytecode';
 import { Api as DedotApi } from '@ren/model/dedot/Api';
-import { ChainList } from '@ren/config/chains';
+import { ChainList } from '@polkadot-live/consts/chains';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   ClientTypes,

@@ -17,14 +17,15 @@ import { ButtonMono } from '../../../kits/Buttons';
 import { validateAccountName } from '../../../utils';
 import { HardwareAddressWrapper } from './Wrapper';
 import { TooltipRx } from '../../TooltipRx';
+import { FlexRow } from '../../../styles';
+import { ChainIcon } from '../../ChainIcon';
 import type { FormEvent } from 'react';
 import type { HardwareAddressProps } from './types';
-import { FlexRow } from '../../../styles';
 
 export const HardwareAddress = ({
   address,
   accountName,
-  ChainIcon,
+  chainId,
   isConnected,
   isImported,
   processingStatus,
@@ -95,7 +96,10 @@ export const HardwareAddress = ({
           </div>
         </TooltipRx>
         <div className="input-wrapper">
-          <ChainIcon className={editing ? 'chain-icon' : 'chain-icon fade'} />
+          <ChainIcon
+            chainId={chainId}
+            className={editing ? 'chain-icon' : 'chain-icon fade'}
+          />
           <input
             style={{
               borderColor: editing

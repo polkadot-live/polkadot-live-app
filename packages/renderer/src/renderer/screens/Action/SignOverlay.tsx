@@ -15,7 +15,7 @@ import {
   QrDisplayPayload,
   ScanWrapper,
   createImgSize,
-} from '@polkadot-live/ui/components/qrcode';
+} from '@polkadot-live/ui/components';
 import { ButtonPrimary, ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
 import type { Html5Qrcode } from 'html5-qrcode';
 

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import { chainCurrency, chainUnits } from '@ren/config/chains';
+import { chainCurrency, chainUnits } from '@polkadot-live/consts/chains';
 import { planckToUnit } from '@w3ux/utils';
 import { useConnections } from '@app/contexts/common/Connections';
 import { Signer } from './Signer';
