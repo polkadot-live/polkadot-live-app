@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as wcConfig from '@ren/config/walletConnect';
+import * as wc from '@polkadot-live/consts/walletConnect';
 import { Config as ConfigAction } from '@ren/config/processes/action';
 import React, {
   createContext,
@@ -147,7 +147,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         enableExplorer: false,
         explorerRecommendedWalletIds: 'NONE',
         explorerExcludedWalletIds: 'ALL',
-        projectId: wcConfig.WC_PROJECT_ID,
+        projectId: wc.WC_PROJECT_ID,
       });
 
       wcModal.current = modal;

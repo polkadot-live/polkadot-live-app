@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import * as wcConfig from '@ren/config/walletConnect';
+import * as wc from '@polkadot-live/consts/walletConnect';
 
 import { Config as ConfigImport } from '@ren/config/processes/import';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
@@ -45,7 +45,7 @@ export const WalletConnectImportProvider = ({
    * WalletConnect networks and their selected state.
    */
   const [wcNetworks, setWcNetworks] = useState<WcSelectNetwork[]>(
-    wcConfig.WcNetworks
+    wc.WcNetworks
   );
 
   /**
@@ -57,7 +57,7 @@ export const WalletConnectImportProvider = ({
         enableExplorer: false,
         explorerRecommendedWalletIds: 'NONE',
         explorerExcludedWalletIds: 'ALL',
-        projectId: wcConfig.WC_PROJECT_ID,
+        projectId: wc.WC_PROJECT_ID,
       });
 
       wcModal.current = modal;
