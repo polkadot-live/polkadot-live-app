@@ -11,8 +11,6 @@ import type { RelayDedotClient } from '@polkadot-live/types/apis';
 /**
  * @name getPostCallbackFlags
  * @summary Get reset post callback sync flags.
- *
- * @todo Move to dedicated API/callbacks file.
  */
 export const getPostCallbackFlags = (): PostCallbackFlags => ({
   syncAccountBalance: false,
@@ -23,8 +21,6 @@ export const getPostCallbackFlags = (): PostCallbackFlags => ({
 /**
  * @name processOneShotPostCallback
  * @summary Update managed account data after a one-shot callback if necessary.
- *
- * @todo Move to dedicated API/callbacks file.
  */
 export const processOneShotPostCallback = async (
   api: RelayDedotClient,

@@ -25,8 +25,6 @@ export const arraysAreEqual = <T>(array1: T[], array2: T[]): boolean => {
 /**
  * @name generateUID
  * @summary Util for generating a UID in the browser.
- *
- * @todo Move to another file.
  */
 export const generateUID = (): string => {
   // Generate a random 16-byte array.
@@ -42,8 +40,6 @@ export const generateUID = (): string => {
 /**
  * @name getInitialChainAccordionValue
  * @summary Returns an initial chain ID in preferential order.
- *
- * @todo Move to another file.
  */
 export const getInitialChainAccordionValue = (chains: ChainID[]): ChainID =>
   chains.includes('Polkadot')
@@ -68,15 +64,13 @@ export const getOnlineStatus = async () =>
  */
 export const waitMs = async (ms: number, result: boolean): Promise<boolean> =>
   new Promise<boolean>((resolve) => setTimeout(() => resolve(result), ms));
+
 /**
  * @name perbillToPercent Converts a Perbill value into a percentage string with fixed decimal places.
  * @param perbill - A bigint or number representing a Perbill (0 to 1_000_000_000).
  * @param decimals - Number of decimal places to display (default: 2).
  * @returns A string like "12.34%"
- *
- * @todo Move to another file.
  */
-
 export const perbillToPercent = (
   perbill: bigint | number,
   decimals = 2

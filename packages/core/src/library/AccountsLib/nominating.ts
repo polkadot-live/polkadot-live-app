@@ -165,7 +165,7 @@ export const getEraRewards = async (
 };
 
 /**
- * @name getAccountExposedWestend
+ * @name getAccountExposed
  * @summary Return `true` if address is exposed in `era`. Return `false` otherwise.
  */
 export const getAccountExposed = async (

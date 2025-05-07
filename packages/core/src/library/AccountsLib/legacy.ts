@@ -11,7 +11,7 @@ import type { Account } from '../../model/Account';
  * @name setAccountBalances
  * @summary Set nonce and balance data for managed accounts.
  *
- * @todo Deprecate.
+ * @todo Deprecate or move to controller.
  */
 export const setAccountBalances = async () => {
   for (const [chainId, accounts] of AccountsController.accounts.entries()) {
@@ -24,7 +24,7 @@ export const setAccountBalances = async () => {
  * @name setBalance
  * @summary Set balance data for a single account.
  *
- * @todo Deprecate.
+ * @todo Deprecate or move to controller.
  */
 export const setBalance = async (account: Account) => {
   if (!Array.from(ChainList.keys()).includes(account.chain)) {
@@ -51,7 +51,7 @@ export const setBalance = async (account: Account) => {
  * @name setAccountsNominatingData
  * @summary Set nominating data for managed accounts.
  *
- * @todo Deprecate.
+ * @todo Deprecate or move to controller.
  */
 export const setAccountsNominatingData = async () => {
   for (const [chainId, accounts] of AccountsController.accounts.entries()) {
@@ -64,7 +64,7 @@ export const setAccountsNominatingData = async () => {
  * @name setNominatingData
  * @summary Set nominating data for a single account.
  *
- * @todo Deprecate.
+ * @todo Deprecate or move to controller.
  */
 export const setNominatingData = async (account: Account) => {
   try {
@@ -93,6 +93,8 @@ export const setNominatingData = async (account: Account) => {
 /**
  * @name setAccountsNominationPoolData
  * @summary Set nomination pool data for managed accounts.
+ *
+ * @todo Deprecate or move to controller.
  */
 export const setAccountsNominationPoolData = async () => {
   for (const [chainId, accounts] of AccountsController.accounts.entries()) {
@@ -112,6 +114,8 @@ export const setAccountsNominationPoolData = async () => {
 /**
  * @name setNominationPoolData
  * @summary Set nomination pool data for a single account.
+ *
+ * @todo Deprecate or move to controller.
  */
 export const setNominationPoolData = async (account: Account) => {
   const result = await getNominationPoolData(account);
