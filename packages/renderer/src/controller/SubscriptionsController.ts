@@ -1,8 +1,8 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { accountTasks as allAccountTasks } from '@ren/config/subscriptions/account';
-import { chainTasks as allChainTasks } from '@ren/config/subscriptions/chain';
+import { accountTasks } from '@polkadot-live/consts/subscriptions/account';
+import { chainTasks } from '@polkadot-live/consts/subscriptions/chain';
 import { AccountsController } from './AccountsController';
 import { QueryMultiWrapper } from '@ren/model/QueryMultiWrapper';
 import { TaskOrchestrator } from '@ren/orchestrators/TaskOrchestrator';
@@ -166,7 +166,7 @@ export class SubscriptionsController {
 
     // Merge active tasks into default tasks array.
     const allTasks = activeTasks
-      ? allChainTasks.map((t) => {
+      ? chainTasks.map((t) => {
           for (const active of activeTasks) {
             if (active.action === t.action && active.chainId === t.chainId) {
               return active;
@@ -174,7 +174,7 @@ export class SubscriptionsController {
           }
           return t;
         })
-      : allChainTasks;
+      : chainTasks;
 
     // Construct map from tasks array.
     const map = new Map<ChainID, SubscriptionTask[]>();
@@ -203,7 +203,7 @@ export class SubscriptionsController {
 
     for (const accounts of AccountsController.accounts.values()) {
       for (const a of accounts) {
-        const tasks = allAccountTasks
+        const tasks = accountTasks
           // Filter on account's chain ID.
           .filter((t) => t.chainId === a.chain)
           // Fill task arguments.
@@ -231,7 +231,7 @@ export class SubscriptionsController {
     account: Account,
     status: 'enable' | 'disable'
   ) =>
-    allAccountTasks
+    accountTasks
       .filter((t) => t.chainId === account.chain)
       .map((t) => SubscriptionsController.getTaskArgsForAccount(account, t))
       .map((t) => ({ ...t, status }) as SubscriptionTask);

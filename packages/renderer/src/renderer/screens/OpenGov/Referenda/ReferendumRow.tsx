@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as themeVariables from '../../../theme/variables';
-import { intervalTasks as allIntervalTasks } from '@ren/config/subscriptions/interval';
+import * as FA from '@fortawesome/free-solid-svg-icons';
+import { intervalTasks } from '@polkadot-live/consts/subscriptions/interval';
 import {
   ReferendumRowWrapper,
   RefStatusBadge,
@@ -18,14 +19,6 @@ import { useState } from 'react';
 import { useTaskHandler } from '@app/contexts/openGov/TaskHandler';
 import { usePolkassembly } from '@app/contexts/openGov/Polkassembly';
 import { motion } from 'framer-motion';
-import {
-  faChevronDown,
-  faChevronUp,
-  faInfo,
-  faMinus,
-  faPlus,
-  faHashtag,
-} from '@fortawesome/free-solid-svg-icons';
 import { TooltipRx } from '@polkadot-live/ui/components';
 import { FlexRow } from '@polkadot-live/ui/styles';
 import { ReferendumDropdownMenu } from '../Dropdowns';
@@ -60,7 +53,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
   const [expanded, setExpanded] = useState(false);
 
   const getIntervalSubscriptions = () =>
-    allIntervalTasks
+    intervalTasks
       .filter((t) => t.chainId === chainId)
       .filter((t) => {
         if ((['Preparing', 'Queueing'] as RefStatus[]).includes(refStatus)) {
@@ -75,7 +68,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
     <ReferendumRowWrapper>
       <FlexRow>
         <div className="RefID">
-          <FontAwesomeIcon icon={faHashtag} transform={'shrink-5'} />
+          <FontAwesomeIcon icon={FA.faHashtag} transform={'shrink-5'} />
           {refId}
         </div>
         {usePolkassemblyApi ? (
@@ -120,7 +113,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                       )
                     }
                   >
-                    <FontAwesomeIcon className="icon" icon={faPlus} />
+                    <FontAwesomeIcon className="icon" icon={FA.faPlus} />
                   </RoundLeftButton>
                 </span>
               </TooltipRx>
@@ -139,7 +132,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                       )
                     }
                   >
-                    <FontAwesomeIcon className="icon" icon={faMinus} />
+                    <FontAwesomeIcon className="icon" icon={FA.faMinus} />
                   </RoundLeftButton>
                 </span>
               </TooltipRx>
@@ -156,7 +149,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                 >
                   <FontAwesomeIcon
                     className="icon"
-                    icon={expanded ? faChevronUp : faChevronDown}
+                    icon={expanded ? FA.faChevronUp : FA.faChevronDown}
                   />
                 </RoundRightButton>
               </span>
@@ -198,7 +191,10 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                       disabled={!isOnline}
                       onClick={() => removeIntervalSubscription(t, referendum)}
                     >
-                      <FontAwesomeIcon icon={faMinus} transform={'shrink-4'} />
+                      <FontAwesomeIcon
+                        icon={FA.faMinus}
+                        transform={'shrink-4'}
+                      />
                     </button>
                   </TooltipRx>
                 ) : (
@@ -211,13 +207,16 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                       disabled={!isOnline}
                       onClick={() => addIntervalSubscription(t, referendum)}
                     >
-                      <FontAwesomeIcon icon={faPlus} transform={'shrink-2'} />
+                      <FontAwesomeIcon
+                        icon={FA.faPlus}
+                        transform={'shrink-2'}
+                      />
                     </button>
                   </TooltipRx>
                 )}
                 <p>{t.label}</p>
                 <span onClick={() => openHelp(t.helpKey)}>
-                  <FontAwesomeIcon icon={faInfo} transform={'shrink-0'} />
+                  <FontAwesomeIcon icon={FA.faInfo} transform={'shrink-0'} />
                 </span>
               </div>
             ))}
