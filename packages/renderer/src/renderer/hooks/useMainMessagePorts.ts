@@ -2,23 +2,25 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 /// Dependencies.
-import * as AccountUtils from '@ren/utils/AccountUtils';
-import { getOnlineStatus } from '@ren/utils/CommonUtils';
-import { AccountsController } from '@ren/controller/AccountsController';
-import { APIsController } from '@ren/controller/dedot/APIsController';
-import BigNumber from 'bignumber.js';
+import * as AccountsLib from '@polkadot-live/core/lib/accounts';
 import { chainUnits } from '@polkadot-live/consts/chains';
-import { Config as ConfigRenderer } from '@ren/config/renderer';
-import { ExtrinsicsController } from '@ren/controller/ExtrinsicsController';
-import { disconnectAPIs } from '@ren/utils/ApiUtils';
+import { Config as ConfigRenderer } from '@polkadot-live/core/config/renderer';
+import { getOnlineStatus } from '@polkadot-live/core/lib/common';
+import { disconnectAPIs } from '@polkadot-live/core/lib/api';
+import {
+  AccountsController,
+  APIsController,
+  ExtrinsicsController,
+  IntervalsController,
+  SubscriptionsController,
+} from '@polkadot-live/core/controllers';
+import BigNumber from 'bignumber.js';
 import {
   serializeReferendumInfo,
   getSerializedTracks,
-} from '@ren/utils/OpenGovUtils';
+} from '@polkadot-live/core/lib/openGov';
 import { planckToUnit } from '@w3ux/utils';
-import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
-import { IntervalsController } from '@ren/controller/IntervalsController';
-import { TaskOrchestrator } from '@ren/orchestrators/TaskOrchestrator';
+import { TaskOrchestrator } from '@polkadot-live/core/orchestrators';
 import { concatU8a, encodeAddress, hexToU8a, stringToU8a } from 'dedot/utils';
 
 /// Main window contexts.
@@ -135,9 +137,9 @@ export const useMainMessagePorts = () => {
       // Fetch account data from network.
       const isOnline: boolean = await getOnlineStatus();
       if (isOnline) {
-        await AccountUtils.setBalance(account);
-        await AccountUtils.setNominationPoolData(account);
-        await AccountUtils.setNominatingData(account);
+        await AccountsLib.setBalance(account);
+        await AccountsLib.setNominationPoolData(account);
+        await AccountsLib.setNominatingData(account);
       }
 
       // Subscribe new account to all possible subscriptions if setting enabled.
@@ -271,7 +273,7 @@ export const useMainMessagePorts = () => {
       task: 'action:account:rename',
       data: {
         address,
-        chainId: AccountUtils.getAddressChainId(address),
+        chainId: AccountsLib.getAddressChainId(address),
         newName,
       },
     });

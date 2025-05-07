@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { AccountsController } from '@ren/controller/AccountsController';
+import { AccountsController } from '@polkadot-live/core/controllers';
 import { useContext, createContext, useState, useRef, useEffect } from 'react';
 import type { AddressesContextInterface } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';

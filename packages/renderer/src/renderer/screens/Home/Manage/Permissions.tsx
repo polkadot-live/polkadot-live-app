@@ -5,7 +5,7 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as themeVariables from '../../../theme/variables';
 
-import { Config as ConfigRenderer } from '@ren/config/renderer';
+import { Config as ConfigRenderer } from '@polkadot-live/core/config/renderer';
 import { ItemsColumn } from './Wrappers';
 import {
   ControlsWrapper,
@@ -13,12 +13,14 @@ import {
   Switch,
 } from '@polkadot-live/ui/components';
 import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
-import { AccountsController } from '@ren/controller/AccountsController';
+import {
+  AccountsController,
+  IntervalsController,
+} from '@polkadot-live/core/controllers';
 import { ellipsisFn } from '@w3ux/utils';
-import { executeOneShot } from '@app/callbacks/oneshots';
+import { executeOneShot } from '@polkadot-live/core/oneshots';
 import { Flip, toast } from 'react-toastify';
 import { PermissionRow } from './PermissionRow';
-import { IntervalsController } from '@ren/controller/IntervalsController';
 import { IntervalRow } from './IntervalRow';
 import { showGroupTooltip, toolTipTextFor } from '@ren/utils/RenderingUtils';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';

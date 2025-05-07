@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { APIsController } from '@ren/controller/dedot/APIsController';
+import { APIsController } from '@polkadot-live/core/controllers';
 import { ChainList } from '@polkadot-live/consts/chains';
-import type { Api } from '@ren/model/dedot/Api';
+import type { Api } from '@polkadot-live/core/model';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ClientTypes } from '@polkadot-live/types/apis';
 

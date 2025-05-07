@@ -3,6 +3,7 @@
 
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import { chainCurrency, chainUnits } from '@polkadot-live/consts/chains';
+import { formatDecimal } from '@polkadot-live/core/lib/text';
 import { planckToUnit } from '@w3ux/utils';
 import { useConnections } from '@app/contexts/common/Connections';
 import { Signer } from './Signer';
@@ -11,7 +12,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ExtrinsicItemContentWrapper } from './Wrappers';
 import type { ExtrinsicItemContentProps } from './types';
 import type { ExTransferKeepAliveData } from '@polkadot-live/types/tx';
-import { formatDecimal } from '@ren/utils/TextUtils';
 
 /**
  * @name ExtrinsicItemContent

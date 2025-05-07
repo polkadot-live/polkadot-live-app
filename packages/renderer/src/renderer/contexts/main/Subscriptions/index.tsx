@@ -2,9 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { TaskQueue } from '@ren/orchestrators/TaskQueue';
-import * as ApiUtils from '@ren/utils/ApiUtils';
+import * as ApiLib from '@polkadot-live/core/lib/api';
 import * as defaults from './defaults';
+import {
+  AccountsController,
+  SubscriptionsController,
+} from '@polkadot-live/core/controllers';
+import { TaskOrchestrator, TaskQueue } from '@polkadot-live/core/orchestrators';
 import type { AnyFunction } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ReactNode } from 'react';
@@ -15,9 +19,6 @@ import type {
   TaskCategory,
   WrappedSubscriptionTasks,
 } from '@polkadot-live/types/subscriptions';
-import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
-import { AccountsController } from '@ren/controller/AccountsController';
-import { TaskOrchestrator } from '@ren/orchestrators/TaskOrchestrator';
 
 export const SubscriptionsContext =
   createContext<SubscriptionsContextInterface>(
@@ -212,7 +213,7 @@ export const SubscriptionsProvider = ({
     }
 
     // Disconnect from API instance if there are no tasks that require it.
-    await ApiUtils.disconnectAPIs();
+    await ApiLib.disconnectAPIs();
   };
 
   /// Execute queued subscription task.
@@ -279,7 +280,7 @@ export const SubscriptionsProvider = ({
     }
 
     // Disconnect from API instance if there are no tasks that require it.
-    await ApiUtils.tryApiDisconnect(task);
+    await ApiLib.tryApiDisconnect(task);
   };
 
   return (

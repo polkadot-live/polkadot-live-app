@@ -1,8 +1,8 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { getOnlineStatus } from '@ren/utils/CommonUtils';
-import { Config as ConfigRenderer } from '@ren/config/renderer';
+import { getOnlineStatus } from '@polkadot-live/core/lib/common';
+import { Config as ConfigRenderer } from '@polkadot-live/core/config/renderer';
 import { createContext, useContext } from 'react';
 import { defaultCogMenuContext } from './defaults';
 import { useAppSettings } from '@app/contexts/main/AppSettings';

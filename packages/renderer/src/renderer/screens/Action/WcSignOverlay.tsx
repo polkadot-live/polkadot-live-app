@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as ConfigAction } from '@ren/config/action';
+import { Config as ConfigAction } from '@polkadot-live/core/config/action';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useEffect } from 'react';
 import WalletConnectSVG from '@w3ux/extension-assets/WalletConnect.svg?react';

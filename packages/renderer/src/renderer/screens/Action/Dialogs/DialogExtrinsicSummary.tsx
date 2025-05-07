@@ -6,12 +6,12 @@ import * as themeVariables from '../../../theme/variables';
 import * as Styles from '@polkadot-live/ui/styles';
 
 import { chainCurrency, chainUnits } from '@polkadot-live/consts/chains';
+import { formatDecimal } from '@polkadot-live/core/lib/text';
 import { useConnections } from '@app/contexts/common/Connections';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTableList } from '@fortawesome/free-solid-svg-icons';
 import { ellipsisFn, planckToUnit } from '@w3ux/utils';
-import { formatDecimal } from '@ren/utils/TextUtils';
 import { CopyButton, Identicon, TooltipRx } from '@polkadot-live/ui/components';
 import { truncateDecimalPlaces } from '../Helpers';
 import { InfoPanel } from './Wrappers';

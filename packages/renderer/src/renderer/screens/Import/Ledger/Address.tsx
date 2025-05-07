@@ -8,14 +8,14 @@ import { renderToast } from '@polkadot-live/ui/utils';
 import {
   postRenameAccount,
   renameAccountInStore,
-} from '@ren/utils/ImportUtils';
+} from '@polkadot-live/core/lib/import';
 import { HardwareAddress } from '@polkadot-live/ui/components';
 import { Remove } from '../Addresses/Remove';
 import { useAccountStatuses } from '@app/contexts/import/AccountStatuses';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useOverlay } from '@polkadot-live/ui/contexts';
-import { getAddressChainId } from '@ren/utils/AccountUtils';
+import { getAddressChainId } from '@polkadot-live/core/lib/accounts';
 import type { LedgerAddressProps } from '../types';
 
 export const Address = ({ localAddress, setSection }: LedgerAddressProps) => {

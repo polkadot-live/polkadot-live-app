@@ -14,16 +14,14 @@ import {
   ButtonPrimaryInvert,
 } from '@polkadot-live/ui/kits/buttons';
 import { useAddresses } from '@app/contexts/import/Addresses';
-import { getSortedLocalAddresses } from '@ren/utils/ImportUtils';
+import { getSortedLocalAddresses } from '@polkadot-live/core/lib/import';
 import { useState } from 'react';
 import { faCaretLeft, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
 import { Address } from './Address';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import {
-  getAddressChainId,
-  getInitialChainAccordionValue,
-} from '@ren/utils/AccountUtils';
+import { getAddressChainId } from '@polkadot-live/core/lib/accounts';
+import { getInitialChainAccordionValue } from '@polkadot-live/core/lib/common';
 import type { ChainID } from '@polkadot-live/types/chains';
 
 interface ImportWcManageProps {

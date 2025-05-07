@@ -1,15 +1,15 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as ConfigRenderer } from '@ren/config/renderer';
-import { useEffect, useRef, useState } from 'react';
+import { Config as ConfigRenderer } from '@polkadot-live/core/config/renderer';
+import { formatDecimal } from '@polkadot-live/core/lib/text';
 import { chainUnits } from '@polkadot-live/consts/chains';
 import { ellipsisFn, unitToPlanck } from '@w3ux/utils';
-import { formatDecimal } from '@ren/utils/TextUtils';
+import { useEffect, useRef, useState } from 'react';
 import {
   getAddressChainId,
   getSpendableBalance,
-} from '@ren/utils/AccountUtils';
+} from '@polkadot-live/core/lib/accounts';
 
 import type {
   ActionMeta,

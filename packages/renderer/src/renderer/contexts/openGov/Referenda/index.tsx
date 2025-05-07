@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { Config as ConfigOpenGov } from '@ren/config/openGov';
+import { Config as ConfigOpenGov } from '@polkadot-live/core/config/openGov';
 import {
   createContext,
   useCallback,

@@ -14,7 +14,7 @@ import { useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ActionButton, InputWrapper } from './Wrappers';
-import { formatDecimal, getBalanceText } from '@ren/utils/TextUtils';
+import { formatDecimal, getBalanceText } from '@polkadot-live/core/lib/text';
 import {
   AccountNameWithTooltip,
   AddressWithTooltip,

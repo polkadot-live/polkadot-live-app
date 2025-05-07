@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { Config as ConfigOpenGov } from '@ren/config/openGov';
+import { Config as ConfigOpenGov } from '@polkadot-live/core/config/openGov';
 import { createContext, useContext, useRef, useState } from 'react';
 import { useConnections } from '../../common/Connections';
 import { setStateWithRef } from '@w3ux/utils';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { Track } from '@ren/model/Track';
+import type { Track } from '@polkadot-live/core/model';
 import type { TracksContextInterface } from './types';
 
 export const TracksContext = createContext<TracksContextInterface>(

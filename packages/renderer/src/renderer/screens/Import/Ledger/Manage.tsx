@@ -15,15 +15,13 @@ import {
   ButtonText,
   ButtonPrimaryInvert,
 } from '@polkadot-live/ui/kits/buttons';
-import { getSortedLocalLedgerAddresses } from '@ren/utils/ImportUtils';
+import { getSortedLocalLedgerAddresses } from '@polkadot-live/core/lib/import';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useState } from 'react';
 import { ItemsColumn } from '@app/screens/Home/Manage/Wrappers';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import {
-  getAddressChainId,
-  getInitialChainAccordionValue,
-} from '@ren/utils/AccountUtils';
+import { getAddressChainId } from '@polkadot-live/core/lib/accounts';
+import { getInitialChainAccordionValue } from '@polkadot-live/core/lib/common';
 import type { ImportLedgerManageProps } from '../types';
 import type { ChainID } from '@polkadot-live/types/chains';
 

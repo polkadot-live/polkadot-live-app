@@ -4,8 +4,8 @@
 import * as defaults from './defaults';
 import * as wc from '@polkadot-live/consts/walletConnect';
 
-import { Config as ConfigRenderer } from '@ren/config/renderer';
-import { ExtrinsicsController } from '@ren/controller/ExtrinsicsController';
+import { Config as ConfigRenderer } from '@polkadot-live/core/config/renderer';
+import { ExtrinsicsController } from '@polkadot-live/core/controllers';
 import UniversalProvider from '@walletconnect/universal-provider';
 import { createContext, useContext, useEffect, useRef } from 'react';
 import { encodeAddress } from 'dedot/utils';

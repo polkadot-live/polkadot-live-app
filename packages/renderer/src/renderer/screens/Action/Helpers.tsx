@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { chainCurrency, chainUnits } from '@polkadot-live/consts/chains';
+import { formatDecimal } from '@polkadot-live/core/lib/text';
 import { ellipsisFn, planckToUnit } from '@w3ux/utils';
 import {
   CopyButton,
@@ -11,7 +12,6 @@ import {
   TxInfoBadge,
 } from '@polkadot-live/ui/components';
 import { faCoins, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
-import { formatDecimal } from '@ren/utils/TextUtils';
 import { FlexRow } from '@polkadot-live/ui/styles';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type {

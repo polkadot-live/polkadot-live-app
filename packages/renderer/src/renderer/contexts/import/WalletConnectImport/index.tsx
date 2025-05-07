@@ -4,7 +4,7 @@
 import * as defaults from './defaults';
 import * as wc from '@polkadot-live/consts/walletConnect';
 
-import { Config as ConfigImport } from '@ren/config/import';
+import { Config as ConfigImport } from '@polkadot-live/core/config/import';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import type { WalletConnectImportContextInterface } from './types';

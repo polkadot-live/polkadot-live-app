@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as ConfigRenderer } from '@ren/config/renderer';
+import { Config as ConfigRenderer } from '@polkadot-live/core/config/renderer';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import * as themeVariables from '@app/theme/variables';
 import { useBootstrapping } from '@app/contexts/main/Bootstrapping';

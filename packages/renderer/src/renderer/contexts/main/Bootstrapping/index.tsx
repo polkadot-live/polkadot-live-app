@@ -1,8 +1,9 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Utils from '@ren/utils/CommonUtils';
-import * as AccountUtils from '@ren/utils/AccountUtils';
+import * as AccountsLib from '@polkadot-live/core/lib/accounts';
+import * as CommonLib from '@polkadot-live/core/lib/common';
+import * as smoldot from 'smoldot/no-auto-bytecode';
 import React, {
   createContext,
   useContext,
@@ -10,16 +11,18 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import {
+  AccountsController,
+  APIsController,
+  SubscriptionsController,
+  IntervalsController,
+} from '@polkadot-live/core/controllers';
 import { defaultBootstrappingContext } from './default';
-import { AccountsController } from '@ren/controller/AccountsController';
-import { APIsController } from '@ren/controller/dedot/APIsController';
-import { Config as RendererConfig } from '@ren/config/renderer';
+import { Config as RendererConfig } from '@polkadot-live/core/config/renderer';
 import { ChainList } from '@polkadot-live/consts/chains';
-import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
-import { IntervalsController } from '@ren/controller/IntervalsController';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useIntervalSubscriptions } from '@app/contexts/main/IntervalSubscriptions';
-import { disconnectAPIs } from '@ren/utils/ApiUtils';
+import { disconnectAPIs } from '@polkadot-live/core/lib/api';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { BootstrappingInterface } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -66,8 +69,34 @@ export const BootstrappingProvider = ({
   };
 
   /// Step 1: Initialize chain APIs (disconnected).
+  const initSmoldot = async () => {
+    const waitForWorkerMessage = async (worker: Worker): Promise<AnyData> =>
+      new Promise((resolve) => {
+        worker.onmessage = (event) => {
+          resolve(event.data);
+        };
+      });
+
+    const worker = new Worker(new URL('./worker.ts', import.meta.url), {
+      type: 'module',
+    });
+
+    // Wait for bytecode.
+    const bytecode: AnyData = await waitForWorkerMessage(worker);
+    const { port1, port2 } = new MessageChannel();
+    worker.postMessage(port1, [port1]);
+
+    APIsController.smoldotClient = smoldot.startWithBytecode({
+      bytecode,
+      forbidWs: true,
+      maxLogLevel: 0,
+      portToWorker: port2,
+    });
+  };
+
   const initChainAPIs = async () => {
     const chainIds = Array.from(ChainList.keys());
+    await initSmoldot();
     await APIsController.initialize(chainIds);
   };
 
@@ -76,7 +105,7 @@ export const BootstrappingProvider = ({
 
   /// Step 3: Connect necessary API instances.
   const connectAPIs = async () => {
-    const isConnected: boolean = await Utils.getOnlineStatus();
+    const isConnected: boolean = await CommonLib.getOnlineStatus();
     if (isConnected) {
       const chainIds = Array.from(AccountsController.accounts.keys());
       await Promise.all(chainIds.map((c) => APIsController.connectApi(c)));
@@ -85,12 +114,12 @@ export const BootstrappingProvider = ({
 
   /// Step 4: Fetch current account data.
   const fetchAccountData = async () => {
-    const isConnected: boolean = await Utils.getOnlineStatus();
+    const isConnected: boolean = await CommonLib.getOnlineStatus();
     if (isConnected) {
       await Promise.all([
-        AccountUtils.setAccountBalances(),
-        AccountUtils.setAccountsNominationPoolData(),
-        AccountUtils.setAccountsNominatingData(),
+        AccountsLib.setAccountBalances(),
+        AccountsLib.setAccountsNominationPoolData(),
+        AccountsLib.setAccountsNominatingData(),
       ]);
     }
   };
@@ -149,7 +178,7 @@ export const BootstrappingProvider = ({
         data: null,
       });
 
-      const isConnected: boolean = await Utils.getOnlineStatus();
+      const isConnected: boolean = await CommonLib.getOnlineStatus();
       window.myAPI.relaySharedState('isOnlineMode', isConnected);
       window.myAPI.relaySharedState('isConnected', isConnected);
 
@@ -202,7 +231,10 @@ export const BootstrappingProvider = ({
 
     // Report online status to renderers.
     window.myAPI.relaySharedState('isOnlineMode', false);
-    window.myAPI.relaySharedState('isConnected', await Utils.getOnlineStatus());
+    window.myAPI.relaySharedState(
+      'isConnected',
+      await CommonLib.getOnlineStatus()
+    );
 
     // Disconnect from chains.
     await APIsController.closeAll();
@@ -244,7 +276,7 @@ export const BootstrappingProvider = ({
       await handleInitializeAppOffline();
     } else {
       // Report online status to renderers.
-      const status = await Utils.getOnlineStatus();
+      const status = await CommonLib.getOnlineStatus();
       window.myAPI.relaySharedState('isOnlineMode', status);
       window.myAPI.relaySharedState('isConnected', status);
     }
@@ -269,7 +301,7 @@ export const BootstrappingProvider = ({
 
   /// Util for initializing the intervals controller.
   const initIntervalsController = async () => {
-    const isConnected: boolean = await Utils.getOnlineStatus();
+    const isConnected: boolean = await CommonLib.getOnlineStatus();
     const ipcTask: IpcTask = { action: 'interval:task:get', data: null };
     const serialized = (await window.myAPI.sendIntervalTask(ipcTask)) || '[]';
     const tasks: IntervalSubscription[] = JSON.parse(serialized);

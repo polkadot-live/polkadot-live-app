@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { Track } from '@ren/model/Track';
+import type { Track } from '@polkadot-live/core/model';
 
 export interface TracksContextInterface {
   tracksMap: Map<ChainID, Track[]>;

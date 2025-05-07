@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { Config as ConfigImport } from '@ren/config/import';
+import { Config as ConfigImport } from '@polkadot-live/core/config/import';
 import { createContext, useContext } from 'react';
 import { useAccountStatuses } from '../AccountStatuses';
 import { useAddresses } from '@app/contexts/import/Addresses';
-import { getAddressChainId } from '@ren/utils/AccountUtils';
+import { getAddressChainId } from '@polkadot-live/core/lib/accounts';
 import type { AccountSource } from '@polkadot-live/types/accounts';
 import type { DeleteHandlerContextInterface } from './types';
 import type { IpcTask } from '@polkadot-live/types/communication';

@@ -7,7 +7,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { QRVieweraWrapper } from '../Wrappers';
 import { ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
-import { checkValidAddress } from '@ren/utils/AccountUtils';
+import { checkValidAddress } from '@polkadot-live/core/lib/accounts';
 import { useAddresses } from '@app/contexts/import/Addresses';
 import { useImportHandler } from '@app/contexts/import/ImportHandler';
 import {

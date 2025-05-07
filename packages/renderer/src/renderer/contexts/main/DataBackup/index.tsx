@@ -2,20 +2,22 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 /// Dependencies.
-import { getOnlineStatus } from '@ren/utils/CommonUtils';
+import { getOnlineStatus } from '@polkadot-live/core/lib/common';
 import { createContext, useContext } from 'react';
 import { defaultDataBackupContext } from './default';
-import { AccountsController } from '@ren/controller/AccountsController';
-import { IntervalsController } from '@ren/controller/IntervalsController';
-import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
-import { getAddressChainId } from '@ren/utils/AccountUtils';
+import {
+  AccountsController,
+  IntervalsController,
+  SubscriptionsController,
+} from '@polkadot-live/core/controllers';
+import { getAddressChainId } from '@polkadot-live/core/lib/accounts';
 import {
   getFromBackupFile,
   postToExtrinsics,
   postToImport,
   postToOpenGov,
   postToSettings,
-} from '@ren/utils/ImportUtils';
+} from '@polkadot-live/core/lib/import';
 
 /// Main window contexts.
 import { useEvents } from '@app/contexts/main/Events';
