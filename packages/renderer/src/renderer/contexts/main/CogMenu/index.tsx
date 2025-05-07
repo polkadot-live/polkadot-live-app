@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { getOnlineStatus } from '@ren/utils/CommonUtils';
-import { Config as ConfigRenderer } from '@ren/config/processes/renderer';
+import { Config as ConfigRenderer } from '@ren/config/renderer';
 import { createContext, useContext } from 'react';
 import { defaultCogMenuContext } from './defaults';
 import { useAppSettings } from '@app/contexts/main/AppSettings';

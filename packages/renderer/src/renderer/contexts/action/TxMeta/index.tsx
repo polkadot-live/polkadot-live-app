@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as wc from '@polkadot-live/consts/walletConnect';
-import { Config as ConfigAction } from '@ren/config/processes/action';
+import { Config as ConfigAction } from '@ren/config/action';
 import React, {
   createContext,
   useContext,

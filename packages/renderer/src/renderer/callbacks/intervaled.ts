@@ -3,7 +3,7 @@
 
 import * as Utils from '@ren/utils/OpenGovUtils';
 import BigNumber from 'bignumber.js';
-import { Config as RendererConfig } from '@ren/config/processes/renderer';
+import { Config as RendererConfig } from '@ren/config/renderer';
 import { rmCommas } from '@w3ux/utils';
 import { APIsController } from '@ren/controller/dedot/APIsController';
 import { EventsController } from '@ren/controller/EventsController';

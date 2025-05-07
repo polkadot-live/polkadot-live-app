@@ -13,7 +13,7 @@ import React, {
 import { defaultBootstrappingContext } from './default';
 import { AccountsController } from '@ren/controller/AccountsController';
 import { APIsController } from '@ren/controller/dedot/APIsController';
-import { Config as RendererConfig } from '@ren/config/processes/renderer';
+import { Config as RendererConfig } from '@ren/config/renderer';
 import { ChainList } from '@polkadot-live/consts/chains';
 import { SubscriptionsController } from '@ren/controller/SubscriptionsController';
 import { IntervalsController } from '@ren/controller/IntervalsController';

@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as ConfigAction } from '@ren/config/processes/action';
+import { Config as ConfigAction } from '@ren/config/action';
 import { useEffect } from 'react';
 import { useTxMeta } from '@app/contexts/action/TxMeta';
 import { useOverlay } from '@polkadot-live/ui/contexts';

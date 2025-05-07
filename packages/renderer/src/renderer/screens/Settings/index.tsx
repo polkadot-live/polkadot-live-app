@@ -9,7 +9,7 @@ import { LinksFooter } from '@ren/utils/RenderingUtils';
 import { Setting } from './Setting';
 import { SettingsList } from '@polkadot-live/consts/settings';
 import { useEffect, useState } from 'react';
-import { Config as ConfigSettings } from '@ren/config/processes/settings';
+import { Config as ConfigSettings } from '@ren/config/settings';
 import { useDebug } from '@app/hooks/useDebug';
 import { useSettingsMessagePorts } from '@app/hooks/useSettingsMessagePorts';
 import { ItemsColumn } from '../Home/Manage/Wrappers';
