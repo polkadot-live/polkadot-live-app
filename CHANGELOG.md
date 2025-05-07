@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.1-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.8.0-alpha...v0.8.1-alpha) (2025-05-07)
+
+
+### Bug Fixes
+
+* subscriptions carousel scroll ([#975](https://github.com/polkadot-live/polkadot-live-app/issues/975)) ([efef62a](https://github.com/polkadot-live/polkadot-live-app/commit/efef62a9144a9e81d0fc00c9e350c04c219edc81))
+
 ## [0.8.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.7.0-alpha...v0.8.0-alpha) (2025-04-28)
 
 
