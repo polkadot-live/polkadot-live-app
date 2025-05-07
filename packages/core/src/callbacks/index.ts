@@ -10,10 +10,10 @@ import {
 } from '../controllers';
 import { checkAccountWithProperties } from '../library/AccountsLib';
 import {
-  areArraysEqual,
   getAccountNominatingData,
   getEraRewards,
 } from '../library/AccountsLib/nominating';
+import { areSortedArraysEqual } from '../library/CommonLib';
 import { u8aToString, u8aUnwrapBytes } from '@polkadot/util';
 import type {
   ApiCallEntry,
@@ -840,7 +840,7 @@ export const callback_nominating_commission = async (
     // Return if commissions haven't changed.
     if (maybeNominatingData) {
       const cur = maybeNominatingData.validators.map((v) => v.commission);
-      const areEqual = areArraysEqual(prev, cur);
+      const areEqual = areSortedArraysEqual(prev, cur);
 
       if (!areEqual) {
         hasChanged = true;
@@ -914,7 +914,7 @@ export const callback_nominating_nominations = async (
     // Return if nominations haven't changed.
     if (maybeNominatingData) {
       const cur = maybeNominatingData.validators.map((v) => v.validatorId);
-      const areEqual = areArraysEqual(prev, cur);
+      const areEqual = areSortedArraysEqual(prev, cur);
 
       if (!areEqual) {
         hasChanged = true;

@@ -257,27 +257,6 @@ export const getAccountNominatingData = async (
 };
 
 /**
- * @name areArraysEqual
- * @summary Checks if two string arrays are equal, returns `true` or `false`.
- */
-export const areArraysEqual = (arr1: string[], arr2: string[]): boolean => {
-  if (arr1.length !== arr2.length) {
-    return false;
-  }
-
-  const sortedArr1 = [...arr1].sort();
-  const sortedArr2 = [...arr2].sort();
-
-  for (let i = 0; i < sortedArr1.length; i++) {
-    if (sortedArr1[i] !== sortedArr2[i]) {
-      return false;
-    }
-  }
-
-  return true;
-};
-
-/**
  * @name getPagedErasStakers
  * @summary Get an era validator and staker data.
  * @todo Verify function is correct if used in future.
