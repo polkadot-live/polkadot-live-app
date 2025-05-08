@@ -1,10 +1,10 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as CommonLib from '../library/CommonLib';
+import * as CommonLib from '@core/library/CommonLib';
 import type * as smoldot from 'smoldot/no-auto-bytecode';
 
-import { Api } from '../model';
+import { Api } from '@core/model';
 import { ChainList } from '@polkadot-live/consts/chains';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
@@ -40,9 +40,6 @@ export class APIsController {
     const map = new Map<ChainID, FlattenedAPIData>();
     this.clients.map((c) => map.set(c.chain, c.flatten()));
     this.cachedSetChains(map);
-
-    // Initialize smoldot light client.
-    //await this.initSmoldot();
   };
 
   /**

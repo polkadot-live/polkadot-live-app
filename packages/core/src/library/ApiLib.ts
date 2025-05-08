@@ -1,9 +1,11 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { AccountsController } from '../controllers/AccountsController';
-import { APIsController } from '../controllers/APIsController';
-import { SubscriptionsController } from '../controllers/SubscriptionsController';
+import {
+  AccountsController,
+  APIsController,
+  SubscriptionsController,
+} from '@core/controllers';
 import { ChainList } from '@polkadot-live/consts/chains';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';

@@ -1,10 +1,13 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { AccountsController } from '../controllers';
-import { getBalance, getNominationPoolData } from './AccountsLib';
-import { getAccountNominatingData } from './AccountsLib/nominating';
-import type { Account } from '../model';
+import { AccountsController } from '@core/controllers';
+import {
+  getAccountNominatingData,
+  getBalance,
+  getNominationPoolData,
+} from '@core/library/AccountsLib';
+import type { Account } from '@core/model';
 import type { PostCallbackFlags } from '@polkadot-live/types/subscriptions';
 import type { RelayDedotClient } from '@polkadot-live/types/apis';
 

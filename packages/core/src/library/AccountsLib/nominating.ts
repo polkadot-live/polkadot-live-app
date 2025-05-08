@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import BigNumber from 'bignumber.js';
-import { perbillToPercent } from '../CommonLib';
+import { perbillToPercent } from '@core/library/CommonLib';
+import type { Account } from '@core/model/Account';
 import { AccountId32 } from 'dedot/codecs';
 import { rmCommas } from '@w3ux/utils';
-import type { Account } from '../../model/Account';
 import type { RelayDedotClient } from '@polkadot-live/types/apis';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type {

@@ -1,8 +1,8 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as ConfigRenderer } from '../config/renderer';
-import { APIsController } from '../controllers/APIsController';
+import { Config as ConfigRenderer } from '@core/config/renderer';
+import { APIsController } from '@core/controllers/APIsController';
 import { chainUnits } from '@polkadot-live/consts/chains';
 import { unitToPlanck } from '@w3ux/utils';
 import { concatU8a, hexToU8a } from 'dedot/utils';
@@ -11,7 +11,7 @@ import {
   getAddressNonce,
   getNominationPoolRewards,
   getSpendableBalance,
-} from '../library/AccountsLib';
+} from '@core/library/AccountsLib';
 
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { Extrinsic } from 'dedot/codecs';

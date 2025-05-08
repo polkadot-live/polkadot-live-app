@@ -1,9 +1,9 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { QueryMultiWrapper } from '../model';
+import { getOnlineStatus } from '@core/library/CommonLib';
+import type { QueryMultiWrapper } from '@core/model';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
-import { getOnlineStatus } from '../library/CommonLib';
 
 /**
  * This class is used in the main window renderer.

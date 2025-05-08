@@ -1,16 +1,16 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Utils from '../library/OpenGovLib';
+import * as Utils from '@core/library/OpenGovLib';
 import BigNumber from 'bignumber.js';
-import { Config as RendererConfig } from '../config/renderer';
 import { rmCommas } from '@w3ux/utils';
-import { formatBlocksToTime } from '../library/TimeLib';
+import { Config as RendererConfig } from '@core/config/renderer';
+import { formatBlocksToTime } from '@core/library/TimeLib';
 import {
   APIsController,
   EventsController,
   NotificationsController,
-} from '../controllers';
+} from '@core/controllers';
 import type { OneShotReturn, RefDeciding } from '@polkadot-live/types/openGov';
 import type { NotificationData } from '@polkadot-live/types/reporter';
 import type {

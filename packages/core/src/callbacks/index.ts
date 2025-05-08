@@ -1,19 +1,19 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as RendererConfig } from '../config/renderer';
+import { Config as RendererConfig } from '@core/config/renderer';
+import { checkAccountWithProperties } from '@core/library/AccountsLib';
+import { areSortedArraysEqual } from '@core/library/CommonLib';
 import {
   AccountsController,
   APIsController,
   EventsController,
   NotificationsController,
-} from '../controllers';
-import { checkAccountWithProperties } from '../library/AccountsLib';
+} from '@core/controllers';
 import {
   getAccountNominatingData,
   getEraRewards,
-} from '../library/AccountsLib/nominating';
-import { areSortedArraysEqual } from '../library/CommonLib';
+} from '@core/library/AccountsLib/nominating';
 import { u8aToString, u8aUnwrapBytes } from '@polkadot/util';
 import type {
   ApiCallEntry,
@@ -22,7 +22,7 @@ import type {
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { EventCallback } from '@polkadot-live/types/reporter';
-import type { QueryMultiWrapper } from '../model';
+import type { QueryMultiWrapper } from '@core/model';
 import type {
   NominationPoolCommission,
   NominationPoolRoles,

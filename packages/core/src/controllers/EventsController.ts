@@ -4,14 +4,14 @@
 import {
   checkAccountWithProperties,
   checkFlattenedAccountProperties,
-} from '../library/AccountsLib';
+} from '@core/library/AccountsLib';
 import {
   getBalanceText,
   getNominationPoolCommissionText,
   getNominationPoolRenamedText,
   getNominationPoolRolesText,
   getNominationPoolStateText,
-} from '../library/TextLib';
+} from '@core/library/TextLib';
 import { getUnixTime } from 'date-fns';
 
 import type { AnyData } from '@polkadot-live/types/misc';

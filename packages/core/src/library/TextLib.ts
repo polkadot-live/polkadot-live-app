@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { perbillToPercent } from './CommonLib';
+import { perbillToPercent } from '@core/library/CommonLib';
 import { chainCurrency, chainUnits } from '@polkadot-live/consts/chains';
 import { formatDistanceToNow } from 'date-fns';
 import { planckToUnit, rmCommas } from '@w3ux/utils';
@@ -230,6 +230,7 @@ export const toolTipTextFor = (category: TaskCategory) => {
 /**
  * @name timestampToDate
  * @summary Format a timestamp into a date to render on an event item.
+ * @todo Remove or integrate.
  */
 export const timestampToDate = (timestamp: number): string => {
   // Convert timestamp to milliseconds

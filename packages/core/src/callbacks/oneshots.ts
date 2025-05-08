@@ -1,19 +1,19 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Callbacks from '.';
+import * as Callbacks from '@core/callbacks';
 import { AccountId32 } from 'dedot/codecs';
-import { AccountsController, APIsController } from '../controllers';
+import { AccountsController, APIsController } from '@core/controllers';
 import {
   getPostCallbackFlags,
   processOneShotPostCallback,
-} from '../library/CallbacksLib';
+} from '@core/library/CallbacksLib';
 import type {
   ApiCallEntry,
   PostCallbackFlags,
   SubscriptionTask,
 } from '@polkadot-live/types/subscriptions';
-import type { Account } from '../model/Account';
+import type { Account } from '@core/model/Account';
 import type { RelayDedotClient } from '@polkadot-live/types/apis';
 
 export const executeOneShot = async (
