@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as UI from '@polkadot-live/ui/components';
-import { LinksFooter } from '@ren/utils/RenderingUtils';
 import React, { useEffect, useState } from 'react';
 import { Home } from './Home';
 import { ImportLedger } from './Ledger';
@@ -15,12 +14,15 @@ import { ImportReadOnly } from './ReadOnly';
 import { ImportWalletConnect } from './WalletConnect';
 import { useImportMessagePorts } from '@app/hooks/useImportMessagePorts';
 import { useDebug } from '@app/hooks/useDebug';
+import { useHelp } from '@app/contexts/common/Help';
 import type { AccountSource } from '@polkadot-live/types/accounts';
 
 export const Import: React.FC = () => {
   // Set up port communication for `import` window.
   useImportMessagePorts();
   useDebug(window.myAPI.getWindowId());
+
+  const { openHelp } = useHelp();
 
   // Active section
   const [section, setSection] = useState<number>(0);
@@ -77,7 +79,7 @@ export const Import: React.FC = () => {
         >
           <UI.ScrollableMax>
             <Home setSection={setSection} setSource={setSource} />
-            <LinksFooter />
+            <UI.LinksFooter openHelp={openHelp} />
           </UI.ScrollableMax>
         </div>
         <div
@@ -92,7 +94,7 @@ export const Import: React.FC = () => {
           {section === 1 && (
             <UI.ScrollableMax>
               {renderImportScreen()}
-              <LinksFooter />
+              <UI.LinksFooter openHelp={openHelp} />
             </UI.ScrollableMax>
           )}
         </div>

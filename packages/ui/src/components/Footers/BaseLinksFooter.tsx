@@ -26,7 +26,7 @@ interface LinksFooterProps {
   handlePrivacyClick: () => void;
 }
 
-export const LinksFooter = ({
+export const BaseLinksFooter = ({
   handleDisclaimerClick,
   handlePrivacyClick,
 }: LinksFooterProps) => (

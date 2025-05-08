@@ -10,18 +10,18 @@ import * as themeVariables from '../../theme/variables';
 import { DropdownExtrinsicsFilter, ExtrinsicDropdownMenu } from './Dropdowns';
 import { ellipsisFn } from '@w3ux/utils';
 import { formatDistanceToNow } from 'date-fns';
-import { useTxMeta } from '@app/contexts/action/TxMeta';
 import { useActionMessagePorts } from '@app/hooks/useActionMessagePorts';
 import { useDebug } from '@app/hooks/useDebug';
+import { useConnections } from '@app/contexts/common/Connections';
+import { useHelp } from '@app/contexts/common/Help';
+import { useTxMeta } from '@app/contexts/action/TxMeta';
 import { getExtrinsicTitle } from './Helpers';
 import { ExtrinsicItemContent } from './ExtrinsicItemContent';
 import { EmptyWrapper, FlexRow, PadWrapper } from '@polkadot-live/ui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import { TriggerRightIconWrapper } from './Wrappers';
-import { useConnections } from '@app/contexts/common/Connections';
 import { BarLoader } from 'react-spinners';
-import { LinksFooter, OfflineWarning } from '@ren/utils/RenderingUtils';
 import { DialogExtrinsicSummary } from './Dialogs';
 import { useEffect, useState } from 'react';
 import { PaginationRow } from '../OpenGov/Referenda/Wrappers';
@@ -45,6 +45,8 @@ export const Action = () => {
   // Set up port communication for `action` window.
   useActionMessagePorts();
   useDebug(window.myAPI.getWindowId());
+
+  const { openHelp } = useHelp();
 
   // Get state and setters from TxMeta context.
   const {
@@ -214,7 +216,7 @@ export const Action = () => {
         />
 
         {!getOnlineMode() && (
-          <OfflineWarning style={{ marginBottom: '1.25rem' }} />
+          <UI.OfflineWarning style={{ marginBottom: '1.25rem' }} />
         )}
 
         {Array.from(extrinsics.keys()).length === 0 && (
@@ -373,7 +375,7 @@ export const Action = () => {
           </UI.AccordionWrapper>
         )}
       </PadWrapper>
-      <LinksFooter />
+      <UI.LinksFooter openHelp={openHelp} />
     </UI.ScrollableMax>
   );
 };

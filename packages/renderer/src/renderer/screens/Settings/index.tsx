@@ -5,10 +5,10 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/ui/styles';
 
-import { LinksFooter } from '@ren/utils/RenderingUtils';
 import { Setting } from './Setting';
 import { SettingsList } from '@polkadot-live/consts/settings';
 import { useEffect, useState } from 'react';
+import { useHelp } from '@app/contexts/common/Help';
 import { Config as ConfigSettings } from '@polkadot-live/core/config/settings';
 import { useDebug } from '@app/hooks/useDebug';
 import { useSettingsMessagePorts } from '@app/hooks/useSettingsMessagePorts';
@@ -21,6 +21,7 @@ export const Settings: React.FC = () => {
   useSettingsMessagePorts();
   useDebug(window.myAPI.getWindowId());
 
+  const { openHelp } = useHelp();
   /**
    * Accordion state.
    */
@@ -142,7 +143,7 @@ export const Settings: React.FC = () => {
         {/* Workspaces Accordion Item */}
         {/* <Workspaces /> */}
       </Styles.PadWrapper>
-      <LinksFooter />
+      <UI.LinksFooter openHelp={openHelp} />
     </UI.ScrollableMax>
   );
 };

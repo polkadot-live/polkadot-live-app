@@ -10,8 +10,8 @@ import { useOpenGovMessagePorts } from '@app/hooks/useOpenGovMessagePorts';
 import { useEffect, useState } from 'react';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useDebug } from '@app/hooks/useDebug';
+import { useHelp } from '@app/contexts/common/Help';
 import { useTreasury } from '@app/contexts/openGov/Treasury';
-import { LinksFooter } from '@ren/utils/RenderingUtils';
 import { Overview } from './Overview';
 import { Referenda } from './Referenda';
 import { Tracks } from './Tracks';
@@ -22,6 +22,7 @@ export const OpenGov: React.FC = () => {
   useDebug(window.myAPI.getWindowId());
 
   const { getOnlineMode } = useConnections();
+  const { openHelp } = useHelp();
   const { treasuryChainId, initTreasury } = useTreasury();
 
   const [section, setSection] = useState<number>(0);
@@ -75,7 +76,7 @@ export const OpenGov: React.FC = () => {
                 setSectionContent={setSectionContent}
               />
             </Styles.PadWrapper>
-            <LinksFooter />
+            <UI.LinksFooter openHelp={openHelp} />
           </UI.ScrollableMax>
         </section>
 

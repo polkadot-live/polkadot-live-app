@@ -6,7 +6,6 @@ import * as Styles from '@polkadot-live/ui/styles';
 import * as themeVariables from '../../../theme/variables';
 
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
-import { OfflineWarning, TooltipWrapper } from '@ren/utils/RenderingUtils';
 import { TreasuryStats } from '../Wrappers';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useHelp } from '@app/contexts/common/Help';
@@ -77,7 +76,7 @@ export const OverviewTreasury: React.FC = () => {
                 </UI.TooltipRx>
 
                 {/* Select Box */}
-                <TooltipWrapper
+                <UI.TooltipWrapper
                   theme={theme}
                   wrap={!getOnlineMode()}
                   tooltipText={'Offline'}
@@ -93,9 +92,9 @@ export const OverviewTreasury: React.FC = () => {
                       <option value="Kusama">Kusama</option>
                     </select>
                   </div>
-                </TooltipWrapper>
+                </UI.TooltipWrapper>
 
-                {!getOnlineMode() && <OfflineWarning />}
+                {!getOnlineMode() && <UI.OfflineWarning />}
               </Styles.FlexRow>
             </UI.ControlsWrapper>
 

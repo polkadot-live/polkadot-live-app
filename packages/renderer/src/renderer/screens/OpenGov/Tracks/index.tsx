@@ -3,11 +3,11 @@
 
 import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/ui/styles';
-import { LinksFooter } from '@ren/utils/RenderingUtils';
 import { Config as ConfigOpenGov } from '@polkadot-live/core/config/openGov';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useTracks } from '@app/contexts/openGov/Tracks';
 import { useEffect, useState } from 'react';
+import { useHelp } from '@app/contexts/common/Help';
 import {
   faArrowDownShortWide,
   faCaretLeft,
@@ -20,6 +20,7 @@ import type { TracksProps } from '../types';
 
 export const Tracks = ({ setSection }: TracksProps) => {
   const { getOnlineMode } = useConnections();
+  const { openHelp } = useHelp();
 
   const {
     activeChainId: chainId,
@@ -135,7 +136,7 @@ export const Tracks = ({ setSection }: TracksProps) => {
           </section>
         </Styles.FlexColumn>
       </Styles.PadWrapper>
-      <LinksFooter />
+      <UI.LinksFooter openHelp={openHelp} />
     </UI.ScrollableMax>
   );
 };

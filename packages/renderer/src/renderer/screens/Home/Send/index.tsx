@@ -28,7 +28,6 @@ import {
 
 import { useSendNative } from '@ren/renderer/hooks/useSendNative';
 import { DialogRecipient } from './Dialogs';
-import { OfflineWarning } from '@ren/utils/RenderingUtils';
 import type { SendAccordionValue } from './types';
 
 export const Send: React.FC = () => {
@@ -132,7 +131,7 @@ export const Send: React.FC = () => {
 
       <FlexColumn $rowGap={'0'}>
         {!getOnlineMode() && (
-          <OfflineWarning
+          <UI.OfflineWarning
             text={'Disabled in offline mode'}
             style={{ margin: '0 0 1.25rem 0.25rem' }}
           />

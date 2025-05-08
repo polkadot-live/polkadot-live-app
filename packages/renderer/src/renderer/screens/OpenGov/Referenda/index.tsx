@@ -6,7 +6,6 @@ import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/ui/styles';
 import * as Tabs from '@radix-ui/react-tabs';
 import * as Wrappers from './Wrappers';
-import { LinksFooter } from '@ren/utils/RenderingUtils';
 import { HistoryRow } from './HistoryRow';
 import { DropdownReferendaFilter } from '../Dropdowns';
 
@@ -24,6 +23,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useConnections } from '@app/contexts/common/Connections';
 import { useEffect, useState } from 'react';
+import { useHelp } from '@app/contexts/common/Help';
 import { usePolkassembly } from '@app/contexts/openGov/Polkassembly';
 import { useReferenda } from '@app/contexts/openGov/Referenda';
 import { useTracks } from '@app/contexts/openGov/Tracks';
@@ -59,6 +59,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     updateTrackFilter,
   } = useReferenda();
 
+  const { openHelp } = useHelp();
   const { fetchingMetadata } = usePolkassembly();
   const { fetchingTracks, getOrderedTracks } = useTracks();
   const { isSubscribedToReferendum, isNotSubscribedToAny } =
@@ -431,7 +432,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
           </section>
         </Styles.FlexColumn>
       </Styles.PadWrapper>
-      <LinksFooter />
+      <UI.LinksFooter openHelp={openHelp} />
     </UI.ScrollableMax>
   );
 };

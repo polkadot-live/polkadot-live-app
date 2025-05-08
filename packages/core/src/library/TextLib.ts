@@ -209,25 +209,6 @@ export const renderTimeAgo = (timestamp: number): string => {
 };
 
 /**
- * @name toolTipTextFor
- * @summary Utility for fetching tooltip text for a subscription switch.
- * For subscrption tasks associated with an account.
- */
-export const toolTipTextFor = (category: TaskCategory) => {
-  switch (category) {
-    case 'Nominating': {
-      return 'Not Nominating';
-    }
-    case 'Nomination Pools': {
-      return 'Not In Nomination Pool';
-    }
-    default: {
-      return '';
-    }
-  }
-};
-
-/**
  * @name timestampToDate
  * @summary Format a timestamp into a date to render on an event item.
  * @todo Remove or integrate.
@@ -248,6 +229,25 @@ export const timestampToDate = (timestamp: number): string => {
   const formattedDate = `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`;
 
   return formattedDate;
+};
+
+/**
+ * @name toolTipTextFor
+ * @summary Utility for fetching tooltip text for a subscription switch.
+ * For subscrption tasks associated with an account.
+ */
+export const toolTipTextFor = (category: TaskCategory) => {
+  switch (category) {
+    case 'Nominating': {
+      return 'Not Nominating';
+    }
+    case 'Nomination Pools': {
+      return 'Not In Nomination Pool';
+    }
+    default: {
+      return '';
+    }
+  }
 };
 
 /**

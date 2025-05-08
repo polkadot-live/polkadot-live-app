@@ -22,7 +22,7 @@ import { executeOneShot } from '@polkadot-live/core/oneshots';
 import { Flip, toast } from 'react-toastify';
 import { PermissionRow } from './PermissionRow';
 import { IntervalRow } from './IntervalRow';
-import { showGroupTooltip, toolTipTextFor } from '@ren/utils/RenderingUtils';
+import { showGroupTooltip, toolTipTextFor } from '@polkadot-live/core/lib/text';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 
