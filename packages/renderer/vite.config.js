@@ -31,8 +31,8 @@ const PROJECT_ROOT = join(PACKAGE_ROOT, '../..');
 const getAliasConfig = () => {
   let alias = [
     {
-      find: '@app',
-      replacement: resolve(PACKAGE_ROOT, 'src', 'renderer'),
+      find: '@core',
+      replacement: resolve(PROJECT_ROOT, 'packages', 'core', 'src'),
     },
     {
       find: '@ren',
