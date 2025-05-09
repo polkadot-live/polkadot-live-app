@@ -31,7 +31,7 @@ export default defineConfig({
   build: {
     emptyOutDir: true,
     lib: {
-      // Point to TS source files for IDE.
+      // Each item controls output file names.
       entry: {
         index: join(PACKAGE_ROOT, 'src/index.ts'),
         components: join(PACKAGE_ROOT, 'src/components/index.ts'),
@@ -45,7 +45,7 @@ export default defineConfig({
       formats: ['es'],
       fileName: (format) => `index.${format}.js`,
     },
-    minify: process.env.MODE !== 'development',
+    minify: process.env.MODE === 'production',
     reportCompressedSize: false,
     rollupOptions: {
       // Exclude dependencies from the bundle.
@@ -53,14 +53,14 @@ export default defineConfig({
         ...Object.keys(pkg.dependencies || {}),
         ...Object.keys(pkg.peerDependencies || {}),
         ...Object.keys(pkgRoot.dependencies || {}),
-        ...Object.keys(pkgRoot.peerDependencies|| {}),
+        ...Object.keys(pkgRoot.peerDependencies || {}),
       ],
       output: {
         dir: 'dist',
         entryFileNames: '[name].[format].js',
       },
     },
-    sourcemap: process.env.MODE === 'development',
+    sourcemap: process.env.MODE !== 'production',
     target: `chrome${chrome}`,
   },
   plugins: [

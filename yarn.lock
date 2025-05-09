@@ -1960,6 +1960,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@polkadot-live/core@workspace:*, @polkadot-live/core@workspace:packages/core":
+  version: 0.0.0-use.local
+  resolution: "@polkadot-live/core@workspace:packages/core"
+  dependencies:
+    "@polkadot-live/consts": "workspace:*"
+    "@polkadot-live/types": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@polkadot-live/main@workspace:packages/main":
   version: 0.0.0-use.local
   resolution: "@polkadot-live/main@workspace:packages/main"
@@ -1986,6 +1995,7 @@ __metadata:
   resolution: "@polkadot-live/renderer@workspace:packages/renderer"
   dependencies:
     "@polkadot-live/consts": "workspace:*"
+    "@polkadot-live/core": "workspace:*"
     "@polkadot-live/preload": "workspace:*"
     "@polkadot-live/types": "workspace:*"
     "@polkadot-live/ui": "workspace:*"
