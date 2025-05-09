@@ -21,9 +21,11 @@ import { useAddresses } from '@ren/contexts/import/Addresses';
 import { useImportHandler } from '@ren/contexts/import/ImportHandler';
 
 /// Util imports.
-import { getAddressChainId } from '@core/library/AccountsLib';
-import { getInitialChainAccordionValue } from '@core/library/CommonLib';
-import { getSortedLocalAddresses } from '@core/library/ImportLib';
+import {
+  getAddressChainId,
+  getInitialChainAccordionValue,
+  getSortedLocalAddresses,
+} from '@polkadot-live/core';
 
 /// Type imports.
 import type { FormEvent } from 'react';

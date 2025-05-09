@@ -5,7 +5,7 @@ import {
   AccountsController,
   APIsController,
   SubscriptionsController,
-} from '@core/controllers';
+} from '../controllers';
 import { ChainList } from '@polkadot-live/consts/chains';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';

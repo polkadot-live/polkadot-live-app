@@ -19,8 +19,10 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
 import { Switch, TooltipRx } from '@polkadot-live/ui/components';
-import { IntervalsController } from '@core/controllers';
-import { getShortIntervalLabel } from '@core/library/TextLib';
+import {
+  IntervalsController,
+  getShortIntervalLabel,
+} from '@polkadot-live/core';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { IntervalRowProps } from './types';
 

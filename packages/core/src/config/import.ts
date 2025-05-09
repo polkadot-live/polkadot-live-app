@@ -2,24 +2,24 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 /**
- * @name Config
+ * @name ConfigImport
  * @summary Configuration class for the `import` window. Accessed in the import renderer.
  */
-export class Config {
+export class ConfigImport {
   // Cache the import window's message port to to facilitate communication to the `main` renderer.
   private static _portImport: MessagePort;
 
   // Get the `import` window's message port.
   static get portImport(): MessagePort {
-    if (!Config._portImport) {
+    if (!this._portImport) {
       throw new Error('_portImport still undefined.');
     }
 
-    return Config._portImport;
+    return this._portImport;
   }
 
   // Set the `import` window's message port.
   static set portImport(port: MessagePort) {
-    Config._portImport = port;
+    this._portImport = port;
   }
 }

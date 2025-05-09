@@ -7,8 +7,8 @@ import {
   getNominationPoolRenamedText,
   getNominationPoolRolesText,
   getNominationPoolStateText,
-} from '@core/library/TextLib';
-import type { Account } from '@core/model';
+} from '../library/TextLib';
+import type { Account } from '../model';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type {
   ApiCallEntry,

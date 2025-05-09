@@ -1,9 +1,17 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as AccountsLib from '@core/library/AccountsLib';
-import * as CommonLib from '@core/library/CommonLib';
 import * as smoldot from 'smoldot/no-auto-bytecode';
+import * as Core from '@polkadot-live/core';
+import {
+  disconnectAPIs,
+  AccountsController,
+  APIsController,
+  ConfigRenderer,
+  SubscriptionsController,
+  IntervalsController,
+} from '@polkadot-live/core';
+
 import React, {
   createContext,
   useContext,
@@ -11,18 +19,10 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {
-  AccountsController,
-  APIsController,
-  SubscriptionsController,
-  IntervalsController,
-} from '@core/controllers';
 import { defaultBootstrappingContext } from './default';
-import { Config as RendererConfig } from '@core/config/renderer';
 import { ChainList } from '@polkadot-live/consts/chains';
 import { useConnections } from '@ren/contexts/common/Connections';
 import { useIntervalSubscriptions } from '@ren/contexts/main/IntervalSubscriptions';
-import { disconnectAPIs } from '@core/library/ApiLib';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { BootstrappingInterface } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -105,7 +105,7 @@ export const BootstrappingProvider = ({
 
   /// Step 3: Connect necessary API instances.
   const connectAPIs = async () => {
-    const isConnected: boolean = await CommonLib.getOnlineStatus();
+    const isConnected: boolean = await Core.getOnlineStatus();
     if (isConnected) {
       const chainIds = Array.from(AccountsController.accounts.keys());
       await Promise.all(chainIds.map((c) => APIsController.connectApi(c)));
@@ -114,12 +114,12 @@ export const BootstrappingProvider = ({
 
   /// Step 4: Fetch current account data.
   const fetchAccountData = async () => {
-    const isConnected: boolean = await CommonLib.getOnlineStatus();
+    const isConnected: boolean = await Core.getOnlineStatus();
     if (isConnected) {
       await Promise.all([
-        AccountsLib.setAccountBalances(),
-        AccountsLib.setAccountsNominationPoolData(),
-        AccountsLib.setAccountsNominatingData(),
+        Core.setAccountBalances(),
+        Core.setAccountsNominationPoolData(),
+        Core.setAccountsNominatingData(),
       ]);
     }
   };
@@ -158,11 +158,11 @@ export const BootstrappingProvider = ({
 
   /// Handle abort flag.
   useEffect(() => {
-    if (RendererConfig.abortConnecting) {
-      RendererConfig.abortConnecting = false;
+    if (ConfigRenderer.abortConnecting) {
+      ConfigRenderer.abortConnecting = false;
       refAborted.current = true;
     }
-  }, [RendererConfig.abortConnecting]);
+  }, [ConfigRenderer.abortConnecting]);
 
   /// Handle app initialization.
   const handleInitializeApp = async () => {
@@ -178,7 +178,7 @@ export const BootstrappingProvider = ({
         data: null,
       });
 
-      const isConnected: boolean = await CommonLib.getOnlineStatus();
+      const isConnected: boolean = await Core.getOnlineStatus();
       window.myAPI.relaySharedState('isOnlineMode', isConnected);
       window.myAPI.relaySharedState('isConnected', isConnected);
 
@@ -231,10 +231,7 @@ export const BootstrappingProvider = ({
 
     // Report online status to renderers.
     window.myAPI.relaySharedState('isOnlineMode', false);
-    window.myAPI.relaySharedState(
-      'isConnected',
-      await CommonLib.getOnlineStatus()
-    );
+    window.myAPI.relaySharedState('isConnected', await Core.getOnlineStatus());
 
     // Disconnect from chains.
     await APIsController.closeAll();
@@ -276,7 +273,7 @@ export const BootstrappingProvider = ({
       await handleInitializeAppOffline();
     } else {
       // Report online status to renderers.
-      const status = await CommonLib.getOnlineStatus();
+      const status = await Core.getOnlineStatus();
       window.myAPI.relaySharedState('isOnlineMode', status);
       window.myAPI.relaySharedState('isConnected', status);
     }
@@ -301,7 +298,7 @@ export const BootstrappingProvider = ({
 
   /// Util for initializing the intervals controller.
   const initIntervalsController = async () => {
-    const isConnected: boolean = await CommonLib.getOnlineStatus();
+    const isConnected: boolean = await Core.getOnlineStatus();
     const ipcTask: IpcTask = { action: 'interval:task:get', data: null };
     const serialized = (await window.myAPI.sendIntervalTask(ipcTask)) || '[]';
     const tasks: IntervalSubscription[] = JSON.parse(serialized);
@@ -330,7 +327,7 @@ export const BootstrappingProvider = ({
 
     // Add tasks to React state in main and open gov window.
     for (const task of tasks) {
-      RendererConfig.portToOpenGov?.postMessage({
+      ConfigRenderer.portToOpenGov?.postMessage({
         task: 'openGov:task:add',
         data: {
           serialized: JSON.stringify({ ...task }),

@@ -5,7 +5,7 @@ import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/ui/styles';
 import * as Kits from '@polkadot-live/ui/kits/overlay';
 
-import { Config as ConfigOpenGov } from '@core/config/openGov';
+import { ConfigOpenGov } from '@polkadot-live/core';
 import { useOpenGovMessagePorts } from '@ren/hooks/useOpenGovMessagePorts';
 import { useEffect, useState } from 'react';
 import { useConnections } from '@ren/contexts/common/Connections';

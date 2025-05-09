@@ -2,22 +2,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 /// Dependencies.
-import { getOnlineStatus } from '@core/library/CommonLib';
 import { createContext, useContext } from 'react';
 import { defaultDataBackupContext } from './default';
+import * as Core from '@polkadot-live/core';
 import {
+  getOnlineStatus,
+  getAddressChainId,
   AccountsController,
   IntervalsController,
   SubscriptionsController,
-} from '@core/controllers';
-import { getAddressChainId } from '@core/library/AccountsLib';
-import {
-  getFromBackupFile,
-  postToExtrinsics,
-  postToImport,
-  postToOpenGov,
-  postToSettings,
-} from '@core/library/ImportLib';
+} from '@polkadot-live/core';
 
 /// Main window contexts.
 import { useEvents } from '@ren/contexts/main/Events';
@@ -70,7 +64,7 @@ export const DataBackupProvider = ({
     // Render toastify message in settings window.
     switch (msg) {
       case 'success': {
-        postToSettings('settings:render:toast', {
+        Core.postToSettings('settings:render:toast', {
           success: result,
           text: 'Data exported successfully.',
         });
@@ -85,14 +79,14 @@ export const DataBackupProvider = ({
         break;
       }
       case 'error': {
-        postToSettings('settings:render:toast', {
+        Core.postToSettings('settings:render:toast', {
           success: result,
           text: 'Data export error.',
         });
         break;
       }
       case 'executing': {
-        postToSettings('settings:render:toast', {
+        Core.postToSettings('settings:render:toast', {
           success: result,
           text: 'Export dialog is already open.',
         });
@@ -129,12 +123,12 @@ export const DataBackupProvider = ({
           await importAccountTaskData(s);
           await importExtrinsicsData(s);
 
-          postToSettings('settings:render:toast', {
+          Core.postToSettings('settings:render:toast', {
             success: response.result,
             text: 'Data imported successfully.',
           });
         } catch (err) {
-          postToSettings('settings:render:toast', {
+          Core.postToSettings('settings:render:toast', {
             success: false,
             text: 'Error parsing JSON.',
           });
@@ -153,7 +147,7 @@ export const DataBackupProvider = ({
         break;
       }
       case 'error': {
-        postToSettings('settings:render:toast', {
+        Core.postToSettings('settings:render:toast', {
           success: response.result,
           text: 'Data import error.',
         });
@@ -171,7 +165,7 @@ export const DataBackupProvider = ({
     handleImportAddress: ImportFunc,
     handleRemoveAddress: RemoveFunc
   ) => {
-    const s_addresses = getFromBackupFile('addresses', serialized);
+    const s_addresses = Core.getFromBackupFile('addresses', serialized);
     if (!s_addresses) {
       return;
     }
@@ -201,7 +195,7 @@ export const DataBackupProvider = ({
 
         // Add address and its status to import window's state.
         importWindowOpen &&
-          postToImport('import:account:add', {
+          Core.postToImport('import:account:add', {
             json: JSON.stringify(a),
             source,
           });
@@ -213,11 +207,11 @@ export const DataBackupProvider = ({
         if (a.isImported) {
           const data = { data: { data: { address, chainId, name, source } } };
           await handleImportAddress(new MessageEvent('message', data), true);
-          postToImport('import:address:update', { address: a, source });
+          Core.postToImport('import:address:update', { address: a, source });
         } else {
           const data = { data: { data: { address, chainId } } };
           await handleRemoveAddress(new MessageEvent('message', data));
-          postToImport('import:address:update', { address: a, source });
+          Core.postToImport('import:address:update', { address: a, source });
         }
 
         // Update managed account names.
@@ -235,7 +229,7 @@ export const DataBackupProvider = ({
 
   /// Extract extrinsics data from an imported text file and send to application.
   const importExtrinsicsData = async (serialized: string): Promise<void> => {
-    const s_extrinsics = getFromBackupFile('extrinsics', serialized);
+    const s_extrinsics = Core.getFromBackupFile('extrinsics', serialized);
     if (!s_extrinsics) {
       return;
     }
@@ -245,14 +239,14 @@ export const DataBackupProvider = ({
       data: { serialized: s_extrinsics },
     })) as string;
 
-    postToExtrinsics('action:tx:import', {
+    Core.postToExtrinsics('action:tx:import', {
       serialized: s_extrinsics_synced,
     });
   };
 
   /// Extract event data from an imported text file and send to application.
   const importEventData = async (serialized: string): Promise<void> => {
-    const s_events = getFromBackupFile('events', serialized);
+    const s_events = Core.getFromBackupFile('events', serialized);
     if (!s_events) {
       return;
     }
@@ -269,7 +263,7 @@ export const DataBackupProvider = ({
 
   /// Extract interval task data from an imported text file and send to application.
   const importIntervalData = async (serialized: string): Promise<void> => {
-    const s_tasks = getFromBackupFile('intervals', serialized);
+    const s_tasks = Core.getFromBackupFile('intervals', serialized);
     if (!s_tasks) {
       return;
     }
@@ -313,17 +307,21 @@ export const DataBackupProvider = ({
     // Update state in OpenGov window.
     if (await window.myAPI.isViewOpen('openGov')) {
       inserts.forEach((t) => {
-        postToOpenGov('openGov:task:add', { serialized: JSON.stringify(t) });
+        Core.postToOpenGov('openGov:task:add', {
+          serialized: JSON.stringify(t),
+        });
       });
       updates.forEach((t) => {
-        postToOpenGov('openGov:task:update', { serialized: JSON.stringify(t) });
+        Core.postToOpenGov('openGov:task:update', {
+          serialized: JSON.stringify(t),
+        });
       });
     }
   };
 
   /// Extract account subscription data from an imported text file and send to application.
   const importAccountTaskData = async (serialized: string) => {
-    const s_tasks = getFromBackupFile('accountTasks', serialized);
+    const s_tasks = Core.getFromBackupFile('accountTasks', serialized);
     if (!s_tasks) {
       return;
     }

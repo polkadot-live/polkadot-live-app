@@ -14,7 +14,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useConnections } from '@ren/contexts/common/Connections';
 import { useHelp } from '@ren/contexts/common/Help';
-import { showGroupTooltip, toolTipTextFor } from '@core/library/TextLib';
+import { showGroupTooltip, toolTipTextFor } from '@polkadot-live/core';
 import type { PermissionRowProps } from './types';
 
 export const PermissionRow = ({

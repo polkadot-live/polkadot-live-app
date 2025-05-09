@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import { StickyHeading, TrackItem } from './Wrappers';
-import { formatChainUnits } from '@core/library/TextLib';
+import { formatChainUnits, formatBlocksToTime } from '@polkadot-live/core';
 import { motion } from 'framer-motion';
 import {
   faAngleDown,
@@ -12,7 +12,6 @@ import {
   faHashtag,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { formatBlocksToTime } from '@core/library/TimeLib';
 import { useHelp } from '@ren/contexts/common/Help';
 import { useTracks } from '@ren/contexts/openGov/Tracks';
 import { FlexRow } from '@polkadot-live/ui/styles';

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as wc from '@polkadot-live/consts/walletConnect';
-import { Config as ConfigAction } from '@core/config/action';
+import { ConfigAction, generateUID } from '@polkadot-live/core';
 import React, {
   createContext,
   useContext,
@@ -28,7 +28,6 @@ import { SignOverlay } from '@ren/screens/Action/SignOverlay';
 import { WcSignOverlay } from '@ren/screens/Action/WcSignOverlay';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { renderToast } from '@polkadot-live/ui/utils';
-import { generateUID } from '@core/library/CommonLib';
 import { WalletConnectModal } from '@walletconnect/modal';
 import { ChainIcon } from '@polkadot-live/ui/components';
 

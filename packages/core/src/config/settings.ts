@@ -2,23 +2,23 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 /**
- * @name Config
+ * @name ConfigSettings
  * @summary Configuration class for the `settings` window. Accessed in the settings renderer.
  */
-export class Config {
+export class ConfigSettings {
   // Cache the settings window's message port to facilitate communication to the `main` renderer.
   private static _portSettings: MessagePort;
 
   // Accessors.
   static get portSettings(): MessagePort {
-    if (!Config._portSettings) {
+    if (!this._portSettings) {
       throw new Error('_portSettings still undefined');
     }
 
-    return Config._portSettings;
+    return this._portSettings;
   }
 
   static set portSettings(port: MessagePort) {
-    Config._portSettings = port;
+    this._portSettings = port;
   }
 }

@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as RendererConfig } from '@core/config/renderer';
+import { ConfigRenderer } from '@polkadot-live/core';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { defaultAppSettingsContext } from './defaults';
 import type { AppSettingsContextInterface } from './types';
@@ -65,11 +65,11 @@ export const AppSettingsProvider = ({
       } = await window.myAPI.getAppSettings();
 
       // Set cached notifications flag in renderer config.
-      RendererConfig.silenceNotifications = appSilenceOsNotifications;
-      RendererConfig.showDebuggingSubscriptions = appShowDebuggingSubscriptions;
-      RendererConfig.enableAutomaticSubscriptions =
+      ConfigRenderer.silenceNotifications = appSilenceOsNotifications;
+      ConfigRenderer.showDebuggingSubscriptions = appShowDebuggingSubscriptions;
+      ConfigRenderer.enableAutomaticSubscriptions =
         appEnableAutomaticSubscriptions;
-      RendererConfig.keepOutdatedEvents = appKeepOutdatedEvents;
+      ConfigRenderer.keepOutdatedEvents = appKeepOutdatedEvents;
 
       // Set settings state.
       setDockToggled(appDocked);
@@ -111,7 +111,7 @@ export const AppSettingsProvider = ({
   const handleToggleSilenceOsNotifications = () => {
     setSilenceOsNotifications((prev) => {
       const newFlag = !prev;
-      RendererConfig.silenceNotifications = newFlag;
+      ConfigRenderer.silenceNotifications = newFlag;
       return newFlag;
     });
 
@@ -128,7 +128,7 @@ export const AppSettingsProvider = ({
   const handleToggleShowDebuggingSubscriptions = () => {
     setShowDebuggingSubscriptions((prev) => {
       const newFlag = !prev;
-      RendererConfig.showDebuggingSubscriptions = newFlag;
+      ConfigRenderer.showDebuggingSubscriptions = newFlag;
       return newFlag;
     });
 
@@ -139,7 +139,7 @@ export const AppSettingsProvider = ({
   const handleToggleEnableAutomaticSubscriptions = () => {
     setEnableAutomaticSubscriptions((prev) => {
       const newFlag = !prev;
-      RendererConfig.enableAutomaticSubscriptions = newFlag;
+      ConfigRenderer.enableAutomaticSubscriptions = newFlag;
       return newFlag;
     });
 
@@ -154,8 +154,8 @@ export const AppSettingsProvider = ({
 
   /// Handle toggling keep outdated events setting.
   const handleToggleKeepOutdatedEvents = () => {
-    const newFlag = !RendererConfig.keepOutdatedEvents;
-    RendererConfig.keepOutdatedEvents = newFlag;
+    const newFlag = !ConfigRenderer.keepOutdatedEvents;
+    ConfigRenderer.keepOutdatedEvents = newFlag;
     handleToggleSetting('settings:execute:keepOutdatedEvents');
   };
 

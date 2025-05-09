@@ -31,10 +31,6 @@ const PROJECT_ROOT = join(PACKAGE_ROOT, '../..');
 const getAliasConfig = () => {
   let alias = [
     {
-      find: '@core',
-      replacement: resolve(PROJECT_ROOT, 'packages', 'core', 'src'),
-    },
-    {
       find: '@ren',
       replacement: resolve(PACKAGE_ROOT, 'src'),
     },
@@ -43,6 +39,7 @@ const getAliasConfig = () => {
   if (process.env.MODE === 'development') {
     // Map alias paths to the package.json exports to align development and production.
     const srcUi = resolve(PROJECT_ROOT, 'packages', 'ui', 'src');
+    const srcCore = resolve(PROJECT_ROOT, 'packages', 'core', 'src');
 
     const devDeps = [
       ['@polkadot-live/ui/kits/overlay', `${srcUi}/kits/Overlay/index.ts`],
@@ -55,6 +52,7 @@ const getAliasConfig = () => {
       ['@polkadot-live/ui/scss/buttons', `${srcUi}/kits/Buttons`],
       ['@polkadot-live/ui/scss/overlay', `${srcUi}/kits/Overlay`],
       ['@polkadot-live/ui', srcUi],
+      ['@polkadot-live/core', srcCore],
     ];
 
     const devAlias = devDeps.map(([find, path]) => ({

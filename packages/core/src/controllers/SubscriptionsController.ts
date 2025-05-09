@@ -1,12 +1,12 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { QueryMultiWrapper } from '@core/model/QueryMultiWrapper';
-import { TaskOrchestrator } from '@core/orchestrators/TaskOrchestrator';
-import { AccountsController } from '@core/controllers';
+import { QueryMultiWrapper } from '../model/QueryMultiWrapper';
+import { TaskOrchestrator } from '../orchestrators/TaskOrchestrator';
+import { AccountsController } from '../controllers';
 import { accountTasks } from '@polkadot-live/consts/subscriptions/account';
 import { chainTasks } from '@polkadot-live/consts/subscriptions/chain';
-import type { Account } from '@core/model';
+import type { Account } from '../model';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 

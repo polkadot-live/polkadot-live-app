@@ -11,9 +11,9 @@
   ],
   "scripts": {
     "asar:list": "asar list",
-    "build": "nx run-many -t build",
-    "build:ui": "nx build @polkadot-live/ui",
-    "build:ui:dev": "nx build:dev @polkadot-live/ui",
+    "build": "cross-env MODE=production nx run-many -t build",
+    "build:ui": "nx build:dev @polkadot-live/ui",
+    "build:core": "nx build:dev @polkadot-live/core",
     "lint": "nx run-many -t lint",
     "typecheck": "nx run-many -t typecheck",
     "clear:dist": "nx run-many -t clear:dist",

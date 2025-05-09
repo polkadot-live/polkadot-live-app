@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { Config as ConfigOpenGov } from '@core/config/openGov';
+import { ConfigOpenGov } from '@polkadot-live/core';
 import { createContext, useContext } from 'react';
 import { useReferendaSubscriptions } from '../ReferendaSubscriptions';
 import { renderToast } from '@polkadot-live/ui/utils';

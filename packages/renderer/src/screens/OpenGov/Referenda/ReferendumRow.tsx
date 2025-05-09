@@ -9,7 +9,7 @@ import {
   RefStatusBadge,
   TitleWithOrigin,
 } from './Wrappers';
-import { renderOrigin } from '@core/library/OpenGovLib';
+import { renderOrigin } from '@polkadot-live/core';
 import { useConnections } from '@ren/contexts/common/Connections';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useReferenda } from '@ren/contexts/openGov/Referenda';

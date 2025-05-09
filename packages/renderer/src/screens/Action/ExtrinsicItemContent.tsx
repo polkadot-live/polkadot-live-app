@@ -3,7 +3,7 @@
 
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import { chainCurrency, chainUnits } from '@polkadot-live/consts/chains';
-import { formatDecimal } from '@core/library/TextLib';
+import { formatDecimal } from '@polkadot-live/core';
 import { planckToUnit } from '@w3ux/utils';
 import { useConnections } from '@ren/contexts/common/Connections';
 import { Signer } from './Signer';

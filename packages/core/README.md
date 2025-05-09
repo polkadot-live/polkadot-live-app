@@ -1,3 +1,3 @@
 # @polkadot-live/core
 
-Core functions consumed by Polkadot Live distributions.
+Core infrastructure consumed by Polkadot Live distributions.

@@ -1,16 +1,16 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Utils from '@core/library/OpenGovLib';
+import * as Utils from '../library/OpenGovLib';
 import BigNumber from 'bignumber.js';
 import { rmCommas } from '@w3ux/utils';
-import { Config as RendererConfig } from '@core/config/renderer';
-import { formatBlocksToTime } from '@core/library/TimeLib';
+import { ConfigRenderer } from '../config';
+import { formatBlocksToTime } from '../library/TimeLib';
 import {
   APIsController,
   EventsController,
   NotificationsController,
-} from '@core/controllers';
+} from '../controllers';
 import type { OneShotReturn, RefDeciding } from '@polkadot-live/types/openGov';
 import type { NotificationData } from '@polkadot-live/types/reporter';
 import type {
@@ -314,5 +314,5 @@ const getNotificationFlag = (
   policy === 'one-shot'
     ? true
     : policy !== 'none' &&
-      !RendererConfig.silenceNotifications &&
+      !ConfigRenderer.silenceNotifications &&
       task.enableOsNotifications;

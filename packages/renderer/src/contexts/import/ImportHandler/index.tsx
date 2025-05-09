@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { Config as ConfigImport } from '@core/config/import';
-import { getAddressChainId } from '@core/library/AccountsLib';
+import { ConfigImport, getAddressChainId } from '@polkadot-live/core';
 import { createContext, useContext } from 'react';
 import { useAccountStatuses } from '@ren/contexts/import/AccountStatuses';
 import { useAddresses } from '@ren/contexts/import/Addresses';

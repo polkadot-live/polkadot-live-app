@@ -1,17 +1,17 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Callbacks from '@core/callbacks';
-import * as Utils from '@core/library/CommonLib';
-import { AccountsController, APIsController } from '@core/controllers';
+import * as Callbacks from '../callbacks';
+import * as Utils from '../library/CommonLib';
+import { AccountsController, APIsController } from '../controllers';
 import { AccountId32 } from 'dedot/codecs';
 import {
   getBalance,
   getNominationPoolData,
   getAccountNominatingData,
-} from '@core/library/AccountsLib';
+} from '../library/AccountsLib';
 
-import type { Account } from '@core/model/Account';
+import type { Account } from './Account';
 import type { AnyData, AnyFunction } from '@polkadot-live/types/misc';
 import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';

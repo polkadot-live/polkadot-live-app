@@ -3,7 +3,7 @@
 
 import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/ui/styles';
-import { Config as ConfigOpenGov } from '@core/config/openGov';
+import { ConfigOpenGov } from '@polkadot-live/core';
 import { useConnections } from '@ren/contexts/common/Connections';
 import { useTracks } from '@ren/contexts/openGov/Tracks';
 import { useEffect, useState } from 'react';

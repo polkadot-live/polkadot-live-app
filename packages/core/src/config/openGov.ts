@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 /**
- * @name Config
+ * @name ConfigOpenGov
  * @summary Configuration class for the `openGov` window. Accessed in the openGov renderer.
  */
-export class Config {
+export class ConfigOpenGov {
   // Cache the Open Gov window's message port to facilitate communication to the `main` renderer.
   private static _portOpenGov: MessagePort;
   static _portExists = false;

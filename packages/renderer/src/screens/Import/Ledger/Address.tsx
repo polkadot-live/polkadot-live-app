@@ -6,16 +6,16 @@ import { Confirm } from '../Addresses/Confirm';
 import { Delete } from '../Addresses/Delete';
 import { renderToast } from '@polkadot-live/ui/utils';
 import {
+  getAddressChainId,
   postRenameAccount,
   renameAccountInStore,
-} from '@core/library/ImportLib';
+} from '@polkadot-live/core';
 import { HardwareAddress } from '@polkadot-live/ui/components';
 import { Remove } from '../Addresses/Remove';
 import { useAccountStatuses } from '@ren/contexts/import/AccountStatuses';
 import { useAddresses } from '@ren/contexts/import/Addresses';
 import { useConnections } from '@ren/contexts/common/Connections';
 import { useOverlay } from '@polkadot-live/ui/contexts';
-import { getAddressChainId } from '@core/library/AccountsLib';
 import type { LedgerAddressProps } from '../types';
 
 export const Address = ({ localAddress, setSection }: LedgerAddressProps) => {

@@ -2,10 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import * as ApiLib from '@core/library/ApiLib';
+import * as Core from '@polkadot-live/core';
 import * as defaults from './defaults';
-import { AccountsController, SubscriptionsController } from '@core/controllers';
-import { TaskOrchestrator, TaskQueue } from '@core/orchestrators';
+import {
+  AccountsController,
+  TaskOrchestrator,
+  TaskQueue,
+  SubscriptionsController,
+} from '@polkadot-live/core';
 import type { AnyFunction } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ReactNode } from 'react';
@@ -210,7 +214,7 @@ export const SubscriptionsProvider = ({
     }
 
     // Disconnect from API instance if there are no tasks that require it.
-    await ApiLib.disconnectAPIs();
+    await Core.disconnectAPIs();
   };
 
   /// Execute queued subscription task.
@@ -277,7 +281,7 @@ export const SubscriptionsProvider = ({
     }
 
     // Disconnect from API instance if there are no tasks that require it.
-    await ApiLib.tryApiDisconnect(task);
+    await Core.tryApiDisconnect(task);
   };
 
   return (

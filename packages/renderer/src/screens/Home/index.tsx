@@ -3,7 +3,7 @@
 
 import * as UI from '@polkadot-live/ui/components';
 import { version } from '../../../package.json';
-import { Config as ConfigRenderer } from '@core/config/renderer';
+import { ConfigRenderer } from '@polkadot-live/core';
 import { useEffect, useState } from 'react';
 import { useAddresses } from '@ren/contexts/main/Addresses';
 import { useAppSettings } from '@ren/contexts/main/AppSettings';

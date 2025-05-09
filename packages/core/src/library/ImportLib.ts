@@ -1,14 +1,13 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as ConfigImport } from '@core/config/import';
-import { Config as ConfigRenderer } from '@core/config/renderer';
+import { ConfigImport, ConfigRenderer } from '../config';
 import type {
   AccountSource,
   LedgerLocalAddress,
   LocalAddress,
 } from '@polkadot-live/types/accounts';
-import { getAddressChainId } from '@core/library/AccountsLib';
+import { getAddressChainId } from '../library/AccountsLib';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IpcTask } from '@polkadot-live/types/communication';

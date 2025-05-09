@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { chainCurrency, chainUnits } from '@polkadot-live/consts/chains';
-import { formatDecimal } from '@core/library/TextLib';
+import { formatDecimal } from '@polkadot-live/core';
 import { ellipsisFn, planckToUnit } from '@w3ux/utils';
 import {
   CopyButton,

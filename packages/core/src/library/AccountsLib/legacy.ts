@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ChainList } from '@polkadot-live/consts/chains';
-import { AccountsController, APIsController } from '@core/controllers';
+import { AccountsController, APIsController } from '../../controllers';
 import {
   getAccountNominatingData,
   getNominationPoolData,
-} from '@core/library/AccountsLib';
+} from '../AccountsLib';
+import type { Account } from '../../model';
 import type { AccountBalance } from '@polkadot-live/types/accounts';
-import type { Account } from '@core/model/Account';
 
 /**
  * @name setAccountBalances

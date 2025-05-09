@@ -11,7 +11,7 @@ import { NoEvents } from './NoEvents';
 import { EventGroup, Wrapper } from './Wrappers';
 import { faSort, faLayerGroup } from '@fortawesome/free-solid-svg-icons';
 import { EventItem } from './EventItem';
-import { getEventChainId } from '@core/library/EventsLib';
+import { getEventChainId } from '@polkadot-live/core';
 import {
   MainHeading,
   ControlsWrapper,

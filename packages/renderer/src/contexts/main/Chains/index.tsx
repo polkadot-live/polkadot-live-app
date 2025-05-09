@@ -3,7 +3,7 @@
 
 import * as defaults from './defaults';
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { APIsController } from '@core/controllers';
+import { APIsController } from '@polkadot-live/core';
 import { ChainList } from '@polkadot-live/consts/chains';
 import type { ChainsContextInterface } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';

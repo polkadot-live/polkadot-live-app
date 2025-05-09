@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 /**
- * @name Config
+ * @name ConfigRenderer
  * @summary Configuration class for the `main` window. Accessed in the main renderer.
  */
-export class Config {
+export class ConfigRenderer {
   // Cache the main window's message ports to communicate with child windows.
   static _portToImport: MessagePort;
   static _portToAction: MessagePort;

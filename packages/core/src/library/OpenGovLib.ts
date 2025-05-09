@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import BigNumber from 'bignumber.js';
-import { Track } from '@core/model';
+import { Track } from '../model';
 import type {
   RefDeciding,
   ReferendaInfo,

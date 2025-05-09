@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as ConfigSettings } from '@core/config/settings';
+import { ConfigSettings } from '@polkadot-live/core';
 
 /// Settings window contexts.
 import { useEffect } from 'react';

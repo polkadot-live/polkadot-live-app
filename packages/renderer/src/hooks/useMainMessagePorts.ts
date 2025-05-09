@@ -2,25 +2,21 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 /// Dependencies.
-import * as AccountsLib from '@core/library/AccountsLib';
-import { chainUnits } from '@polkadot-live/consts/chains';
-import { Config as ConfigRenderer } from '@core/config/renderer';
-import { getOnlineStatus } from '@core/library/CommonLib';
-import { disconnectAPIs } from '@core/library/ApiLib';
+import * as Core from '@polkadot-live/core';
 import {
+  ConfigRenderer,
+  getOnlineStatus,
+  disconnectAPIs,
   AccountsController,
   APIsController,
   ExtrinsicsController,
   IntervalsController,
   SubscriptionsController,
-} from '@core/controllers';
+  TaskOrchestrator,
+} from '@polkadot-live/core';
 import BigNumber from 'bignumber.js';
-import {
-  serializeReferendumInfo,
-  getSerializedTracks,
-} from '@core/library/OpenGovLib';
+import { chainUnits } from '@polkadot-live/consts/chains';
 import { planckToUnit } from '@w3ux/utils';
-import { TaskOrchestrator } from '@core/orchestrators';
 import { concatU8a, encodeAddress, hexToU8a, stringToU8a } from 'dedot/utils';
 
 /// Main window contexts.
@@ -138,9 +134,9 @@ export const useMainMessagePorts = () => {
       const isOnline: boolean = await getOnlineStatus();
 
       if (isOnline) {
-        await AccountsLib.setBalance(account);
-        await AccountsLib.setNominationPoolData(account);
-        await AccountsLib.setNominatingData(account);
+        await Core.setBalance(account);
+        await Core.setNominationPoolData(account);
+        await Core.setNominatingData(account);
       }
 
       // Subscribe new account to all possible subscriptions if setting enabled.
@@ -275,7 +271,7 @@ export const useMainMessagePorts = () => {
       task: 'action:account:rename',
       data: {
         address,
-        chainId: AccountsLib.getAddressChainId(address),
+        chainId: Core.getAddressChainId(address),
         newName,
       },
     });
@@ -363,7 +359,7 @@ export const useMainMessagePorts = () => {
       }
 
       const tracks = api.consts.referenda.tracks;
-      const serialized = getSerializedTracks(tracks);
+      const serialized = Core.getSerializedTracks(tracks);
 
       ConfigRenderer.portToOpenGov?.postMessage({
         task: 'openGov:tracks:receive',
@@ -438,7 +434,7 @@ export const useMainMessagePorts = () => {
 
             allReferenda.push({ refId, refStatus: 'TimedOut', info });
           } else if (storage.type === 'Ongoing') {
-            const serRef = serializeReferendumInfo(storage.value);
+            const serRef = Core.serializeReferendumInfo(storage.value);
 
             // In Queue
             if (serRef.inQueue) {

@@ -1,8 +1,8 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { QueryMultiWrapper } from '@core/model';
-import { TaskOrchestrator } from '@core/orchestrators';
+import { QueryMultiWrapper } from '../model';
+import { TaskOrchestrator } from '../orchestrators';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 import type {
@@ -30,7 +30,7 @@ export type ImportedAccounts = Map<ChainID, Account[]>;
  * @property {hainID} chain - chain account belongs to.
  * @property {Map<ChainID, AccountNominationPoolData>} nominationPoolData - account nomination pool data.
  */
-export class Account {
+export class Account implements Account {
   private _source: AccountSource;
   private _name: string;
   private _queryMulti: QueryMultiWrapper | null = null;

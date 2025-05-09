@@ -1,8 +1,8 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Account } from '@core/model';
-import { TaskOrchestrator } from '@core/orchestrators';
+import { Account } from '../model';
+import { TaskOrchestrator } from '../orchestrators';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   AccountSource,
@@ -10,7 +10,7 @@ import type {
   StoredAccount,
 } from '@polkadot-live/types/accounts';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
-import type { ImportedAccounts } from '@core/model';
+import type { ImportedAccounts } from '../model';
 
 /**
  * A static class to provide an interface for managing imported accounts.

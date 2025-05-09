@@ -4,11 +4,11 @@
 import * as themeVariables from '../../../theme/variables';
 import { Confirm } from '../Addresses/Confirm';
 import { Delete } from '../Addresses/Delete';
-import { getAddressChainId } from '@core/library/AccountsLib';
 import {
+  getAddressChainId,
   postRenameAccount,
   renameAccountInStore,
-} from '@core/library/ImportLib';
+} from '@polkadot-live/core';
 import { HardwareAddress } from '@polkadot-live/ui/components';
 import { renderToast } from '@polkadot-live/ui/utils';
 import { Remove } from '../Addresses/Remove';

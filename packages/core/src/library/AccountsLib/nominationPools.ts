@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { APIsController } from '@core/controllers/APIsController';
+import { APIsController } from '../../controllers/APIsController';
 import { ChainList } from '@polkadot-live/consts/chains';
 import {
   toU8a,
@@ -16,7 +16,7 @@ import type {
   NominationPoolCommission,
   NominationPoolRoles,
 } from '@polkadot-live/types/accounts';
-import type { Account } from '@core/model';
+import type { Account } from '../../model';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { RelayDedotClient } from '@polkadot-live/types/apis';
 
