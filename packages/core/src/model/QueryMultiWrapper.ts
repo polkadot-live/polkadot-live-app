@@ -4,7 +4,6 @@
 import * as Callbacks from '../callbacks';
 import * as Utils from '../library/CommonLib';
 import { AccountsController, APIsController } from '../controllers';
-import { AccountId32 } from 'dedot/codecs';
 import {
   getBalance,
   getNominationPoolData,
@@ -613,13 +612,11 @@ export class QueryMultiWrapper {
       case 'subscribe:account:balance:reserved':
       case 'subscribe:account:balance:spendable': {
         const address: string = args[0];
-        const accountId = new AccountId32(address);
-        return [accountId];
+        return [address];
       }
       case 'subscribe:account:nominationPools:rewards': {
         const poolAddress: string = args[0];
-        const accountId = new AccountId32(poolAddress);
-        return [accountId];
+        return [poolAddress];
       }
       case 'subscribe:account:nominationPools:state':
       case 'subscribe:account:nominationPools:roles':

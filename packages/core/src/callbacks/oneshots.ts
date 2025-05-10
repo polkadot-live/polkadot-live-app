@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Callbacks from '../callbacks';
-import { AccountId32 } from 'dedot/codecs';
 import { AccountsController, APIsController } from '../controllers';
 import {
   getPostCallbackFlags,
@@ -121,8 +120,8 @@ const oneShot_account_balance_free = async (
   api: RelayDedotClient,
   flags: PostCallbackFlags
 ): Promise<boolean> => {
-  const accountId = new AccountId32(task.account!.address);
-  const data = await api.query.system.account(accountId);
+  const { address } = task.account!;
+  const data = await api.query.system.account(address);
   const entry: ApiCallEntry = { curVal: null, task };
   // eslint-disable-next-line prettier/prettier
   return await Callbacks.callback_account_balance_free(data, entry, flags, true);
@@ -137,8 +136,8 @@ const oneShot_account_balance_frozen = async (
   api: RelayDedotClient,
   flags: PostCallbackFlags
 ): Promise<boolean> => {
-  const accountId = new AccountId32(task.account!.address);
-  const data = await api.query.system.account(accountId);
+  const { address } = task.account!;
+  const data = await api.query.system.account(address);
   const entry: ApiCallEntry = { curVal: null, task };
   // eslint-disable-next-line prettier/prettier
   return await Callbacks.callback_account_balance_frozen(data, entry, flags, true);
@@ -153,8 +152,8 @@ const oneShot_account_balance_reserved = async (
   api: RelayDedotClient,
   flags: PostCallbackFlags
 ): Promise<boolean> => {
-  const accountId = new AccountId32(task.account!.address);
-  const data = await api.query.system.account(accountId);
+  const { address } = task.account!;
+  const data = await api.query.system.account(address);
   const entry: ApiCallEntry = { curVal: null, task };
   // eslint-disable-next-line prettier/prettier
   return await Callbacks.callback_account_balance_reserved(data, entry, flags, true);
@@ -169,8 +168,8 @@ const oneShot_account_balance_spendable = async (
   api: RelayDedotClient,
   flags: PostCallbackFlags
 ): Promise<boolean> => {
-  const accountId = new AccountId32(task.account!.address);
-  const data = await api.query.system.account(accountId);
+  const { address } = task.account!;
+  const data = await api.query.system.account(address);
   const entry: ApiCallEntry = { curVal: null, task };
   // eslint-disable-next-line prettier/prettier
   return await Callbacks.callback_account_balance_spendable(data, entry, flags, true);
