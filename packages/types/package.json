@@ -26,7 +26,7 @@
     "./developerConsole/workspaces": "./src/developerConsole/workspaces.ts"
   },
   "scripts": {
-    "lint": "eslint --fix --ext .ts,.tsx . && npx prettier --write ./src",
+    "lint": "eslint --fix --ext .ts,.tsx ./src",
     "clear:dist": "([ -d \"dist\" ] && rm -fr \"dist\") || true && ([ -d \"node_modules\" ] && rm -fr \"node_modules\") || true",
     "typecheck": "tsc --noEmit"
   },

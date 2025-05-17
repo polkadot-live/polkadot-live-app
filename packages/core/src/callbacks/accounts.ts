@@ -645,8 +645,7 @@ export const callback_nomination_pool_commission = async (
     const poolCommission = account.nominationPoolData!.poolCommission;
 
     const isSame =
-      // eslint-disable-next-line prettier/prettier
-        JSON.stringify(poolCommission.changeRate) ===
+      JSON.stringify(poolCommission.changeRate) ===
         JSON.stringify(cur.changeRate) &&
       JSON.stringify(poolCommission.current) === JSON.stringify(cur.current) &&
       poolCommission.throttleFrom === cur.throttleFrom &&

@@ -15,7 +15,7 @@
     "plugin:react-hooks/recommended",
     "plugin:prettier/recommended"
   ],
-  "plugins": ["@typescript-eslint", "import", "unused-imports"],
+  "plugins": ["@typescript-eslint", "import", "prettier", "unused-imports"],
   "settings": {
     "react": {
       "version": "detect"
@@ -50,6 +50,9 @@
     }
   },
   "rules": {
+    // Prettier
+    // ---------
+    "prettier/prettier": ["error"],
     // Stylistic
     // ---------
     "curly": "error",

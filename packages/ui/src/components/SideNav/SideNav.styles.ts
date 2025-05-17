@@ -36,8 +36,9 @@ export const NavItemWrapper = styled(motion.button).attrs<{
   line-height: 1.75rem;
   border: none;
   border-radius: 0.375rem;
-  transition-property: color, background-color, border-color,
-    text-decoration-color, fill, stroke, width, height;
+  transition-property:
+    color, background-color, border-color, text-decoration-color, fill, stroke,
+    width, height;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 200ms;
   cursor: pointer;
