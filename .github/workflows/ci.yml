@@ -49,4 +49,5 @@ jobs:
       - run: yarn install
       - run: yarn vendors
       - run: yarn build:ui
+      - run: yarn build:core
       - run: yarn lint

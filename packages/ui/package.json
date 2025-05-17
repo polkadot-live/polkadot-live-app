@@ -40,11 +40,11 @@
     "./svg/*": "./dist/svg/*"
   },
   "scripts": {
-    "build": "vite build --config vite.config.js",
+    "build": "cross-env MODE=production vite build --config vite.config.js",
     "build:dev": "cross-env MODE=development vite build --config vite.config.js",
     "clear:dist": "[ -d \"node_modules\" ] && rm -fr \"node_modules\" || true",
     "clear": "([ -d \"dist\" ] && rm -fr \"dist\") || true && ([ -d \"node_modules\" ] && rm -fr \"node_modules\") || true",
-    "lint": "eslint --fix --ext .ts,.tsx ./src && npx prettier --write ./src",
+    "lint": "eslint --fix --ext .ts,.tsx ./src",
     "typecheck": "tsc --noEmit",
     "test": "npx vitest run --passWithNoTests",
     "test:ui": "npx vitest --ui"

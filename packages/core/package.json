@@ -1,0 +1,26 @@
+{
+  "name": "@polkadot-live/core",
+  "version": "0.8.0-alpha",
+  "type": "module",
+  "private": true,
+  "files": [
+    "dist/**"
+  ],
+  "main": "./dist/index.es.js",
+  "exports": {
+    "import": "./dist/index.es.js",
+    "types": "./dist/index.d.ts"
+  },
+  "scripts": {
+    "build": "cross-env MODE=production vite build --config vite.config.js",
+    "build:dev": "cross-env MODE=development vite build --config vite.config.js",
+    "lint": "eslint --fix --ext .ts,.tsx ./src",
+    "clear:dist": "([ -d \"dist\" ] && rm -fr \"dist\") || true && ([ -d \"node_modules\" ] && rm -fr \"node_modules\") || true",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@polkadot-live/consts": "workspace:*",
+    "@polkadot-live/types": "workspace:*"
+  },
+  "packageManager": "yarn@4.0.2"
+}

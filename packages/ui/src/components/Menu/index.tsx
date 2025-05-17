@@ -35,13 +35,9 @@ export const Menu = ({
 
   const alerterRf = useRef(null);
 
-  useOutsideAlerter(
-    alerterRf,
-    () => {
-      toggleMenu(!menuOpenRef.current);
-    },
-    ['dropdown-toggle']
-  );
+  useOutsideAlerter(alerterRf, () => {
+    toggleMenu(!menuOpenRef.current);
+  }, ['dropdown-toggle']);
 
   return (
     <>

@@ -29,4 +29,5 @@ export * from './Switch';
 export * from './Tooltip';
 export * from './TooltipRx';
 export * from './Tx';
+export * from './Utils';
 export * from './Wrappers';
