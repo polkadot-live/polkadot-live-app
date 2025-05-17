@@ -105,10 +105,15 @@ export const BootstrappingProvider = ({
 
   /// Step 3: Connect necessary API instances.
   const connectAPIs = async () => {
-    const isConnected: boolean = await Core.getOnlineStatus();
-    if (isConnected) {
-      const chainIds = Array.from(AccountsController.accounts.keys());
-      await Promise.all(chainIds.map((c) => APIsController.connectApi(c)));
+    try {
+      const isConnected: boolean = await Core.getOnlineStatus();
+      if (isConnected) {
+        const chainIds = Array.from(AccountsController.accounts.keys());
+        await Promise.all(chainIds.map((c) => APIsController.connectApi(c)));
+      }
+    } catch (err) {
+      // TODO: Handle connection error.
+      console.error(err);
     }
   };
 

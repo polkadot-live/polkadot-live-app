@@ -3,7 +3,7 @@
 
 import * as defaults from './defaults';
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { APIsController } from '@polkadot-live/core';
+import { APIsController, waitMs } from '@polkadot-live/core';
 import { ChainList } from '@polkadot-live/consts/chains';
 import type { ChainsContextInterface } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -53,9 +53,23 @@ export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Handle clicking the api connect button.
   const onConnectClick = async (chainId: ChainID) => {
-    setWorkingConnects((pv) => new Map(pv).set(chainId, true));
-    await APIsController.connectApi(chainId);
-    setWorkingConnects((pv) => new Map(pv).set(chainId, false));
+    try {
+      setWorkingConnects((pv) => new Map(pv).set(chainId, true));
+
+      const success = await Promise.race([
+        APIsController.connectApi(chainId).then(() => true),
+        waitMs(40_000, false),
+      ]);
+
+      setWorkingConnects((pv) => new Map(pv).set(chainId, false));
+
+      if (!success) {
+        console.error(`${chainId} Error: Connection timeout`);
+      }
+    } catch (err) {
+      // TODO: Handle connection error.
+      console.error(err);
+    }
   };
 
   // Handle clicking the api disconnect button.
