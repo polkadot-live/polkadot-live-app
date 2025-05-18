@@ -330,14 +330,14 @@ export const callback_account_balance_spendable = async (
     const max = (a: bigint, b: bigint): bigint => (a > b ? a : b);
     const spendable =
       chainId === 'Westend'
-        ? free - ed
+        ? max(free - ed, 0n)
         : max(free - max(frozen, reserved) - ed, 0n);
 
     // Check if spendable balance has changed.
     const b = account.balance;
     const cur =
       chainId === 'Westend'
-        ? b.free - ed
+        ? max(b.free - ed, 0n)
         : max(b.free - max(b.frozen, b.reserved) - ed, 0n);
 
     // Exit early if nothing has changed.

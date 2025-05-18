@@ -61,6 +61,6 @@ export const getSpendableBalance = async (
   const max = (a: bigint, b: bigint): bigint => (a > b ? a : b);
 
   return chainId == 'Westend'
-    ? free - ed
+    ? max(free - ed, 0n)
     : max(free - max(frozen, reserved) - ed, 0n);
 };
