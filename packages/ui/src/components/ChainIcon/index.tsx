@@ -33,6 +33,7 @@ export const ChainIcon = ({
         />
       );
     case 'Westend':
+    case 'Westend Asset Hub':
       return (
         <WestendIcon
           className={className}

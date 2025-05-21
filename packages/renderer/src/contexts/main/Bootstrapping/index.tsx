@@ -20,7 +20,6 @@ import React, {
   useState,
 } from 'react';
 import { defaultBootstrappingContext } from './default';
-import { ChainList } from '@polkadot-live/consts/chains';
 import { useConnections } from '@ren/contexts/common/Connections';
 import { useIntervalSubscriptions } from '@ren/contexts/main/IntervalSubscriptions';
 import type { AnyData } from '@polkadot-live/types/misc';
@@ -95,8 +94,7 @@ export const BootstrappingProvider = ({
   };
 
   const initChainAPIs = async () => {
-    const chainIds = Array.from(ChainList.keys());
-    await APIsController.initialize(chainIds);
+    await APIsController.initialize();
     await initSmoldot();
   };
 

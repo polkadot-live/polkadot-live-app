@@ -565,7 +565,7 @@ export class QueryMultiWrapper {
    * @name getApiQuery
    * @summary Get the API query associated with a subscription.
    */
-  static async getApiCall(task: SubscriptionTask) {
+  static async getApiCall(task: SubscriptionTask): Promise<AnyData> {
     const { action, chainId } = task;
     const api = (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
 

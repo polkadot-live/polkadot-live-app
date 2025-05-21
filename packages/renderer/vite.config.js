@@ -40,6 +40,8 @@ const getAliasConfig = () => {
     // Map alias paths to the package.json exports to align development and production.
     const srcUi = resolve(PROJECT_ROOT, 'packages', 'ui', 'src');
     const srcCore = resolve(PROJECT_ROOT, 'packages', 'core', 'src');
+    const srcConsts = resolve(PROJECT_ROOT, 'packages', 'consts', 'src');
+    const srcTypes = resolve(PROJECT_ROOT, 'packages', 'types', 'src');
 
     const devDeps = [
       ['@polkadot-live/ui/kits/overlay', `${srcUi}/kits/Overlay/index.ts`],
@@ -53,6 +55,8 @@ const getAliasConfig = () => {
       ['@polkadot-live/ui/scss/overlay', `${srcUi}/kits/Overlay`],
       ['@polkadot-live/ui', srcUi],
       ['@polkadot-live/core', srcCore],
+      ['@polkadot-live/consts', srcConsts],
+      ['@polkadot-live/types', srcTypes],
     ];
 
     const devAlias = devDeps.map(([find, path]) => ({
