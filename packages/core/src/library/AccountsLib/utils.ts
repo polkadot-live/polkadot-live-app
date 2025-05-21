@@ -16,6 +16,11 @@ import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
  */
 export const getAddressChainId = (address: string): ChainID => {
   for (const [chainId, { prefix }] of ChainList.entries()) {
+    // TODO: Refactor. Generic substrate addresses imported as Westend Asset Hub accounts.
+    if (chainId === 'Westend') {
+      continue;
+    }
+
     const result = checkAddress(address, prefix);
 
     if (result !== null) {

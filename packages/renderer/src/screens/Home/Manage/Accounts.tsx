@@ -49,7 +49,11 @@ export const Accounts = ({
     const sorted = new Map<ChainID | 'Empty', FlattenedAccountData[]>();
 
     // Insert map keys in a certain order.
-    for (const chainId of ['Polkadot', 'Kusama', 'Westend'] as ChainID[]) {
+    for (const chainId of [
+      'Polkadot',
+      'Kusama',
+      'Westend Asset Hub',
+    ] as ChainID[]) {
       sorted.set(chainId, []);
     }
 

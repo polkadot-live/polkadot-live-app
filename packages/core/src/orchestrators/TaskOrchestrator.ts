@@ -71,8 +71,9 @@ export class TaskOrchestrator {
     switch (task.chainId) {
       // Identify chain ID
       case 'Polkadot':
+      case 'Kusama':
       case 'Westend':
-      case 'Kusama': {
+      case 'Westend Asset Hub': {
         // Return if data is missing for certain tasks.
         switch (task.action) {
           case 'subscribe:account:nominationPools:rewards':

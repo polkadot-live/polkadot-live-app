@@ -233,7 +233,7 @@ export class SubscriptionsController {
   ) =>
     accountTasks
       .filter((t) => t.chainId === account.chain)
-      .map((t) => SubscriptionsController.getTaskArgsForAccount(account, t))
+      .map((t) => this.getTaskArgsForAccount(account, t))
       .map((t) => ({ ...t, status }) as SubscriptionTask);
 
   /**
