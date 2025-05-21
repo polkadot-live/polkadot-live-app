@@ -61,6 +61,8 @@ export class ExtrinsicsController {
     let pargs: AnyData;
     if (action === 'balances_transferKeepAlive') {
       pargs = [args[0], BigInt(args[1])];
+    } else if (action === 'nominationPools_pendingRewards_bond') {
+      pargs = [{ type: 'Rewards' }];
     } else {
       pargs = args;
     }
@@ -79,7 +81,7 @@ export class ExtrinsicsController {
     const api = (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
 
     // Instantiate tx.
-    console.log(`📝 New extrinsic: ${from}, ${pallet}, ${method}, ${args}`);
+    console.log(`📝 New extrinsic: ${chainId}, ${from}, ${pallet}, ${method}`);
     const tx = api.tx[pallet][method](...args);
     this.txPayloads.set(txId, { tx });
 
