@@ -66,10 +66,7 @@ export const SelectRpc = ({
           onChange={(e) => handleRpcChange(e)}
           disabled={disabled}
         >
-          {chainId !== 'Westend Asset Hub' && (
-            <option value={'smoldot'}>Light Client</option>
-          )}
-
+          <option value={'smoldot'}>Light Client</option>
           {apiData.rpcs.map((rpc, i) => (
             <option key={i} value={rpc}>
               {rpc}
