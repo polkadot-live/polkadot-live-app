@@ -52,7 +52,11 @@ export const getSortedLocalAddresses = (addresses: LocalAddress[]) => {
   const sorted = new Map<ChainID, LocalAddress[]>();
 
   // Insert keys in a preferred order.
-  for (const chainId of ['Polkadot', 'Kusama', 'Westend'] as ChainID[]) {
+  for (const chainId of [
+    'Polkadot',
+    'Kusama',
+    'Westend Asset Hub',
+  ] as ChainID[]) {
     const filtered = addresses
       .filter((a) => getAddressChainId(a.address) === chainId)
       .sort((a, b) => a.name.localeCompare(b.name));

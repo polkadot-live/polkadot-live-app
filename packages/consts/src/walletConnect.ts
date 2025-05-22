@@ -11,6 +11,7 @@ export const WC_RELAY_URL = 'wss://relay.walletconnect.com';
 export const WC_POLKADOT_CAIP_ID = '91b171bb158e2d3848fa23a9f1c25182';
 export const WC_KUSAMA_CAIP_ID = 'b0a8d493285c2df73290dfb7e61f870f';
 export const WC_WESTEND_CAIP_ID = 'e143f23803ac50e8f6f8e62695d1ce9e';
+export const WC_WESTMINT_CAIP_ID = '67f9723393ef76214df0118c34bbbd3d';
 
 export const WcNetworks: WcSelectNetwork[] = [
   {
@@ -24,8 +25,8 @@ export const WcNetworks: WcSelectNetwork[] = [
     selected: false,
   },
   {
-    caipId: WC_WESTEND_CAIP_ID,
-    chainId: 'Westend',
+    caipId: WC_WESTMINT_CAIP_ID,
+    chainId: 'Westend Asset Hub',
     selected: false,
   },
 ];
@@ -38,5 +39,7 @@ export const getWalletConnectChainId = (chainId: ChainID) => {
       return WC_KUSAMA_CAIP_ID;
     case 'Westend':
       return WC_WESTEND_CAIP_ID;
+    case 'Westend Asset Hub':
+      return WC_WESTMINT_CAIP_ID;
   }
 };

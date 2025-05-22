@@ -9,7 +9,7 @@ import {
 } from './AccountsLib';
 import type { Account } from '../model';
 import type { PostCallbackFlags } from '@polkadot-live/types/subscriptions';
-import type { RelayDedotClient } from '@polkadot-live/types/apis';
+import type { DedotClientSet } from '@polkadot-live/types/apis';
 
 /**
  * @name getPostCallbackFlags
@@ -26,7 +26,7 @@ export const getPostCallbackFlags = (): PostCallbackFlags => ({
  * @summary Update managed account data after a one-shot callback if necessary.
  */
 export const processOneShotPostCallback = async (
-  api: RelayDedotClient,
+  api: DedotClientSet,
   account: Account,
   syncFlags: PostCallbackFlags
 ) => {

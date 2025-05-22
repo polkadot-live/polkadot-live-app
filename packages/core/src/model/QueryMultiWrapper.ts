@@ -15,7 +15,7 @@ import type { AnyData, AnyFunction } from '@polkadot-live/types/misc';
 import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { QueryWithParams } from 'dedot/types';
-import type { RelayDedotClient } from '@polkadot-live/types/apis';
+import type { DedotClientSet } from '@polkadot-live/types/apis';
 import type {
   SubscriptionTask,
   QueryMultiEntry,
@@ -250,7 +250,7 @@ export class QueryMultiWrapper {
    * @summary Update managed state after processing all callbacks.
    */
   private postCallback = async (
-    api: RelayDedotClient,
+    api: DedotClientSet,
     chainId: ChainID,
     callEntries: ApiCallEntry[]
   ) => {
@@ -565,7 +565,7 @@ export class QueryMultiWrapper {
    * @name getApiQuery
    * @summary Get the API query associated with a subscription.
    */
-  static async getApiCall(task: SubscriptionTask) {
+  static async getApiCall(task: SubscriptionTask): Promise<AnyData> {
     const { action, chainId } = task;
     const api = (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
 

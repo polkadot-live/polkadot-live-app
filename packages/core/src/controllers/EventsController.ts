@@ -383,7 +383,7 @@ export class EventsController {
                 pallet: 'nominationPools',
                 method: 'bondExtra',
                 chainId,
-                args: [{ Rewards: null }],
+                args: [],
                 data: { extra: pending.toString() },
               },
             },

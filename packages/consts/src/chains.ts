@@ -2,7 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons';
-import { polkadot, ksmcc3, westend2 } from '@substrate/connect-known-chains';
+import {
+  polkadot,
+  ksmcc3,
+  westend2,
+  westend2_asset_hub,
+} from '@substrate/connect-known-chains';
 import type { ChainID, SelectNetworkData } from '@polkadot-live/types/chains';
 import type { NodeEndpoint } from '@polkadot-live/types/apis';
 
@@ -89,6 +94,25 @@ export const ChainList = new Map<ChainID, Chain>([
           'wss://rpc-westend.luckyfriday.io',
         ],
         lightClient: westend2,
+      },
+      units: 12,
+      unit: 'WND',
+      prefix: 42,
+    },
+  ],
+  [
+    'Westend Asset Hub',
+    {
+      endpoints: {
+        rpcs: [
+          'wss://sys.ibp.network/asset-hub-westend',
+          'wss://asset-hub-westend-rpc.dwellir.com',
+          'wss://westmint-rpc-tn.dwellir.com',
+          'wss://asset-hub-westend.dotters.network',
+          'wss://westend-asset-hub-rpc.polkadot.io',
+          'wss://asset-hub-westend.rpc.permanence.io',
+        ],
+        lightClient: westend2_asset_hub,
       },
       units: 12,
       unit: 'WND',

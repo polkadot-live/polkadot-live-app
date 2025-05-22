@@ -58,7 +58,20 @@ export class Api<T extends keyof ClientTypes> {
           throw new Error('Error - smoldot client is null.');
         }
         const chainSpec = ChainList.get(this.chain)!.endpoints.lightClient;
-        const chain = await smoldotClient.addChain({ chainSpec });
+
+        // TODO: Refactor getting `potentialRelayChains`.
+        const chain = await smoldotClient.addChain({
+          chainSpec,
+          potentialRelayChains:
+            this.chain === 'Westend Asset Hub'
+              ? [
+                  await smoldotClient.addChain({
+                    chainSpec: ChainList.get('Westend')!.endpoints.lightClient,
+                  }),
+                ]
+              : undefined,
+        });
+
         provider = new SmoldotProvider(chain);
       } else {
         provider = new WsProvider(this.endpoint);

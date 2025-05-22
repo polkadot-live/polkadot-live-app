@@ -18,7 +18,7 @@ import type {
 } from '@polkadot-live/types/accounts';
 import type { Account } from '../../model';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { RelayDedotClient } from '@polkadot-live/types/apis';
+import type { DedotClientSet } from '@polkadot-live/types/apis';
 
 /**
  * @name getNominationPoolRewards
@@ -40,7 +40,7 @@ export const getNominationPoolRewards = async (
  * @summary Generates pool stash and reward address for a pool id.
  * @param {number} poolId - id of the pool.
  */
-const getPoolAccounts = (poolId: number, api: RelayDedotClient) => {
+const getPoolAccounts = (poolId: number, api: DedotClientSet) => {
   const createAccount = (pId: bigint, index: number): string => {
     const poolsPalletId = api.consts.nominationPools.palletId;
 

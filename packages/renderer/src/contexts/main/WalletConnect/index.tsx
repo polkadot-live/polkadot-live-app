@@ -23,6 +23,7 @@ const mapCaipChainId = new Map<string, ChainID>([
   [wc.WC_POLKADOT_CAIP_ID, 'Polkadot'],
   [wc.WC_KUSAMA_CAIP_ID, 'Kusama'],
   [wc.WC_WESTEND_CAIP_ID, 'Westend'],
+  [wc.WC_WESTMINT_CAIP_ID, 'Westend Asset Hub'],
 ]);
 
 export const WalletConnectContext =
@@ -108,6 +109,9 @@ export const WalletConnectProvider = ({
         return 2;
       }
       case 'Westend': {
+        return 42;
+      }
+      case 'Westend Asset Hub': {
         return 42;
       }
     }

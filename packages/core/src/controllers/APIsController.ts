@@ -17,7 +17,9 @@ type ChainToKey<T extends ChainID> = T extends 'Polkadot'
   ? 'polkadot'
   : T extends 'Kusama'
     ? 'kusama'
-    : 'westend';
+    : T extends 'Westend'
+      ? 'westend'
+      : 'westmint';
 
 export class APIsController {
   static clients: Api<keyof ClientTypes>[] = [];
@@ -31,7 +33,8 @@ export class APIsController {
   /**
    * Initalize disconnected API clients.
    */
-  static initialize = async (chainIds: ChainID[]) => {
+  static initialize = async () => {
+    const chainIds = ChainList.keys();
     for (const chainId of chainIds) {
       this.new(chainId);
     }
@@ -154,6 +157,8 @@ export class APIsController {
         return client as Api<'kusama'>;
       case 'Westend':
         return client as Api<'westend'>;
+      case 'Westend Asset Hub':
+        return client as Api<'westmint'>;
     }
   };
 

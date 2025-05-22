@@ -4,6 +4,7 @@
 import type { PalletReferendaReferendumStatus as PolkadotRefStatus } from '@dedot/chaintypes/polkadot';
 import type { PalletReferendaReferendumStatus as KusamaRefStatus } from '@dedot/chaintypes/kusama';
 import type { PalletReferendaReferendumStatus as WestendRefStatus } from '@dedot/chaintypes/westend';
+import type { PalletReferendaReferendumStatusOriginCaller } from '@dedot/chaintypes/westend-asset-hub';
 
 export type RefInQueue = RefOngoing; // inQueue: true
 export type RefPreparing = RefOngoing; // deciding: null
@@ -13,7 +14,8 @@ export type RefDeciding = RefOngoing; // deciding.confirming = null;
 export type ReferendumStatus =
   | PolkadotRefStatus
   | KusamaRefStatus
-  | WestendRefStatus;
+  | WestendRefStatus
+  | PalletReferendaReferendumStatusOriginCaller;
 
 export interface PagedReferenda {
   page: number;
