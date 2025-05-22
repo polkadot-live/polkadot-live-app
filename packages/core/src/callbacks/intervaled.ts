@@ -182,7 +182,6 @@ const oneShot_openGov_decisionPeriod = async (
     type T = [number, PalletReferendaTrackDetails][];
     const originName = info.origin;
     const tracks = client!.api!.consts.referenda.tracks;
-
     const tracksData = Utils.getTracks(Utils.getSerializedTracks(tracks as T));
     const trackId = Utils.getOriginIdFromName(originName);
     const track = tracksData.find((t) => t.trackId === trackId);
