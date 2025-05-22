@@ -4,7 +4,7 @@
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { ConfirmWrapper } from '../Wrappers';
 import { ButtonMonoInvert, ButtonMono } from '@polkadot-live/ui/kits/buttons';
-import { useWorkspaces } from '@ren/contexts/settings/Workspaces';
+import { useWorkspaces } from '@ren/contexts/settings';
 import { Flip, toast } from 'react-toastify';
 import type { WorkspaceItem } from '@polkadot-live/types/developerConsole/workspaces';
 

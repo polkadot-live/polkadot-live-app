@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useEffect, useState } from 'react';
-import { useAddresses } from '@ren/contexts/import/Addresses';
+import { useAddresses } from '@ren/contexts/import';
 import { Manage } from './Manage';
 import { Import } from './Import';
 import type { ImportLedgerProps } from '../types';

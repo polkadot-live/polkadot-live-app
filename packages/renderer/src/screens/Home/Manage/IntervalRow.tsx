@@ -3,10 +3,8 @@
 
 import * as themeVariables from '../../../theme/variables';
 import { useEffect, useRef, useState } from 'react';
-import { useBootstrapping } from '@ren/contexts/main/Bootstrapping';
-import { useConnections } from '@ren/contexts/common/Connections';
-import { useHelp } from '@ren/contexts/common/Help';
-import { useIntervalTasksManager } from '@ren/contexts/main/IntervalTasksManager';
+import { useBootstrapping, useIntervalTasksManager } from '@ren/contexts/main';
+import { useConnections, useHelp } from '@ren/contexts/common';
 import { TaskEntryWrapper } from './Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {

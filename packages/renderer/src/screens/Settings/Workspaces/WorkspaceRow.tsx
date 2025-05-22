@@ -9,9 +9,8 @@ import {
   SortControlButton,
 } from '@polkadot-live/ui/components';
 import { useTooltip, useOverlay } from '@polkadot-live/ui/contexts';
-import { useWorkspaces } from '@ren/contexts/settings/Workspaces';
+import { useWebsocketServer, useWorkspaces } from '@ren/contexts/settings';
 import { Confirm } from './Confirm';
-import { useWebsocketServer } from '@ren/contexts/settings/WebsocketServer';
 import type { WorkspaceRowProps } from '../types';
 
 export const WorkspaceRow = ({ workspace }: WorkspaceRowProps) => {

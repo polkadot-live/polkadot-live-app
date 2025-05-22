@@ -8,9 +8,8 @@ import {
 } from '@polkadot-live/core';
 import { Flip, toast } from 'react-toastify';
 import { createContext, useContext } from 'react';
-import { useConnections } from '@ren/contexts/common/Connections';
-import { useManage } from '@ren/contexts/main/Manage';
-import { useIntervalSubscriptions } from '@ren/contexts/main/IntervalSubscriptions';
+import { useConnections } from '@ren/contexts/common';
+import { useManage, useIntervalSubscriptions } from '@ren/contexts/main';
 import type { AnyFunction } from '@polkadot-live/types/misc';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { IntervalTasksManagerContextInterface } from './types';

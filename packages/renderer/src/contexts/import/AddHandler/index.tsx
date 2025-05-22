@@ -4,9 +4,8 @@
 import * as defaults from './defaults';
 import { ConfigImport, getAddressChainId } from '@polkadot-live/core';
 import { createContext, useContext } from 'react';
-import { useAccountStatuses } from '@ren/contexts/import/AccountStatuses';
-import { useAddresses } from '@ren/contexts/import/Addresses';
-import { useConnections } from '@ren/contexts/common/Connections';
+import { useAccountStatuses, useAddresses } from '@ren/contexts/import';
+import { useConnections } from '@ren/contexts/common';
 import type { AddHandlerContextInterface } from './types';
 import type { IpcTask } from '@polkadot-live/types/communication';
 import type { AccountSource } from '@polkadot-live/types/accounts';

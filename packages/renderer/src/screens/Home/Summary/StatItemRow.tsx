@@ -6,8 +6,7 @@ import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as Styles from '@polkadot-live/ui/styles';
 import * as UI from '@polkadot-live/ui/components';
 
-import { useConnections } from '@ren/contexts/common/Connections';
-import { useHelp } from '@ren/contexts/common/Help';
+import { useConnections, useHelp } from '@ren/contexts/common';
 import { ellipsisFn } from '@w3ux/utils';
 import { StatItemRowWrapper } from './Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

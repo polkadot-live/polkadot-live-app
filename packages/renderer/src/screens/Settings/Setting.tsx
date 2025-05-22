@@ -5,10 +5,9 @@ import { faInfo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SettingWrapper } from './Wrappers';
 import { EllipsisSpinner, Switch } from '@polkadot-live/ui/components';
-import { useHelp } from '@ren/contexts/common/Help';
+import { useConnections, useHelp } from '@ren/contexts/common';
 import { ButtonMonoInvert } from '@polkadot-live/ui/kits/buttons';
-import { useConnections } from '@ren/contexts/common/Connections';
-import { useSettingFlags } from '@ren/contexts/settings/SettingFlags';
+import { useSettingFlags } from '@ren/contexts/settings';
 import type { SettingProps } from './types';
 import type { SettingAction, SettingItem } from '@polkadot-live/types/settings';
 

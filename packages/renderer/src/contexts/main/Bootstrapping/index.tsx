@@ -20,8 +20,8 @@ import React, {
   useState,
 } from 'react';
 import { defaultBootstrappingContext } from './default';
-import { useConnections } from '@ren/contexts/common/Connections';
-import { useIntervalSubscriptions } from '@ren/contexts/main/IntervalSubscriptions';
+import { useConnections } from '@ren/contexts/common';
+import { useIntervalSubscriptions } from '@ren/contexts/main';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { BootstrappingInterface } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';

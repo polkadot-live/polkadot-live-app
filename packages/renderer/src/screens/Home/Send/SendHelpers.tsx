@@ -6,7 +6,7 @@ import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/ui/styles';
 import * as themeVariables from '../../../theme/variables';
 
-import { useConnections } from '@ren/contexts/common/Connections';
+import { useConnections } from '@ren/contexts/common';
 import { ellipsisFn } from '@w3ux/utils';
 import { PuffLoader } from 'react-spinners';
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';

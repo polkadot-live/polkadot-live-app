@@ -7,15 +7,17 @@ import * as wc from '@polkadot-live/consts/walletConnect';
 import { ConfigImport } from '@polkadot-live/core';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
+import {
+  useAccountStatuses,
+  useAddresses,
+  useImportHandler,
+} from '@ren/contexts/import';
+import { WalletConnectModal } from '@walletconnect/modal';
 import type { WalletConnectImportContextInterface } from './types';
 import type {
   WcFetchedAddress,
   WcSelectNetwork,
 } from '@polkadot-live/types/walletConnect';
-import { useAccountStatuses } from '@ren/contexts/import/AccountStatuses';
-import { useAddresses } from '@ren/contexts/import/Addresses';
-import { useImportHandler } from '@ren/contexts/import/ImportHandler';
-import { WalletConnectModal } from '@walletconnect/modal';
 
 export const WalletConnectImportContext =
   createContext<WalletConnectImportContextInterface>(

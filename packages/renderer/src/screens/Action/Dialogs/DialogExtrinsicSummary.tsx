@@ -7,7 +7,7 @@ import * as Styles from '@polkadot-live/ui/styles';
 
 import { chainCurrency, chainUnits } from '@polkadot-live/consts/chains';
 import { formatDecimal } from '@polkadot-live/core';
-import { useConnections } from '@ren/contexts/common/Connections';
+import { useConnections } from '@ren/contexts/common';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTableList } from '@fortawesome/free-solid-svg-icons';

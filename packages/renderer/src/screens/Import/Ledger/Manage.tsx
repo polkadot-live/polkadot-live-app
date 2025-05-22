@@ -20,7 +20,7 @@ import {
   getSortedLocalLedgerAddresses,
   getInitialChainAccordionValue,
 } from '@polkadot-live/core';
-import { useAddresses } from '@ren/contexts/import/Addresses';
+import { useAddresses } from '@ren/contexts/import';
 import { useState } from 'react';
 import { ItemsColumn } from '@ren/screens/Home/Manage/Wrappers';
 import { ChevronDownIcon } from '@radix-ui/react-icons';

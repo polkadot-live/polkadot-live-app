@@ -12,9 +12,8 @@ import {
 } from '@polkadot-live/core';
 import { HardwareAddress } from '@polkadot-live/ui/components';
 import { Remove } from '../Addresses/Remove';
-import { useAccountStatuses } from '@ren/contexts/import/AccountStatuses';
-import { useAddresses } from '@ren/contexts/import/Addresses';
-import { useConnections } from '@ren/contexts/common/Connections';
+import { useAccountStatuses, useAddresses } from '@ren/contexts/import';
+import { useConnections } from '@ren/contexts/common';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import type { LedgerAddressProps } from '../types';
 

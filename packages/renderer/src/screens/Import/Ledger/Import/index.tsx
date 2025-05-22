@@ -9,11 +9,13 @@ import * as Select from '@radix-ui/react-select';
 import * as themeVariables from '../../../../theme/variables';
 
 import { useEffect, useState } from 'react';
-import { useAccountStatuses } from '@ren/contexts/import/AccountStatuses';
-import { useAddresses } from '@ren/contexts/import/Addresses';
-import { useConnections } from '@ren/contexts/common/Connections';
-import { useImportHandler } from '@ren/contexts/import/ImportHandler';
-import { useLedgerHardware } from '@ren/contexts/import/LedgerHardware';
+import { useConnections } from '@ren/contexts/common';
+import {
+  useAccountStatuses,
+  useAddresses,
+  useImportHandler,
+  useLedgerHardware,
+} from '@ren/contexts/import';
 
 import { ChainIcon, InfoCard } from '@polkadot-live/ui/components';
 import {

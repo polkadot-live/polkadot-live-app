@@ -14,7 +14,7 @@ import {
 } from '@polkadot-live/core';
 
 /// Main window contexts.
-import { useEvents } from '@ren/contexts/main/Events';
+import { useEvents } from '@ren/contexts/main';
 import { useManage } from '../Manage';
 import { useIntervalSubscriptions } from '../IntervalSubscriptions';
 

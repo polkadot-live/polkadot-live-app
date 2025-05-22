@@ -11,9 +11,8 @@ import {
 import { WorkspacesContainer } from '../Wrappers';
 import { WorkspaceRow } from './WorkspaceRow';
 import { faPlugCircleXmark, faPlug } from '@fortawesome/free-solid-svg-icons';
-import { useWebsocketServer } from '@ren/contexts/settings/WebsocketServer';
+import { useWebsocketServer, useWorkspaces } from '@ren/contexts/settings';
 import { useEffect } from 'react';
-import { useWorkspaces } from '@ren/contexts/settings/Workspaces';
 import type { IpcRendererEvent } from 'electron';
 
 export const Workspaces = () => {

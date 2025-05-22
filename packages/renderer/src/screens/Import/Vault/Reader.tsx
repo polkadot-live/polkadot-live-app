@@ -1,15 +1,17 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useAccountStatuses } from '@ren/contexts/import/AccountStatuses';
+import {
+  useAccountStatuses,
+  useAddresses,
+  useImportHandler,
+} from '@ren/contexts/import';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { QRVieweraWrapper } from '../Wrappers';
 import { ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
 import { checkValidAddress } from '@polkadot-live/core';
-import { useAddresses } from '@ren/contexts/import/Addresses';
-import { useImportHandler } from '@ren/contexts/import/ImportHandler';
 import {
   createImgSize,
   Html5QrCodePlugin,

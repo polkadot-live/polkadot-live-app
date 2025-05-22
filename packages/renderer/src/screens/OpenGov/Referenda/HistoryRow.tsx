@@ -5,8 +5,7 @@ import * as Wrappers from './Wrappers';
 import type * as OG from '@polkadot-live/types/openGov';
 
 import { renderOrigin } from '@polkadot-live/core';
-import { usePolkassembly } from '@ren/contexts/openGov/Polkassembly';
-import { useReferenda } from '@ren/contexts/openGov/Referenda';
+import { usePolkassembly, useReferenda } from '@ren/contexts/openGov';
 import { FlexRow } from '@polkadot-live/ui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHashtag } from '@fortawesome/free-solid-svg-icons';

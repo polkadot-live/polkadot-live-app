@@ -7,8 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilePen, faList } from '@fortawesome/free-solid-svg-icons';
 import { NetworkHeader } from '../Wrappers';
 import { useEffect } from 'react';
-import { useTracks } from '@ren/contexts/openGov/Tracks';
-import { useReferenda } from '@ren/contexts/openGov/Referenda';
+import { useTracks, useReferenda } from '@ren/contexts/openGov';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { OverviewExploreProps } from './types';
 

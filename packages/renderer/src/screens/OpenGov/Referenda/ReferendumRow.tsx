@@ -10,14 +10,15 @@ import {
   TitleWithOrigin,
 } from './Wrappers';
 import { renderOrigin } from '@polkadot-live/core';
-import { useConnections } from '@ren/contexts/common/Connections';
+import { useConnections, useHelp } from '@ren/contexts/common';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useReferenda } from '@ren/contexts/openGov/Referenda';
-import { useReferendaSubscriptions } from '@ren/contexts/openGov/ReferendaSubscriptions';
-import { useHelp } from '@ren/contexts/common/Help';
+import {
+  usePolkassembly,
+  useReferenda,
+  useReferendaSubscriptions,
+  useTaskHandler,
+} from '@ren/contexts/openGov';
 import { useState } from 'react';
-import { useTaskHandler } from '@ren/contexts/openGov/TaskHandler';
-import { usePolkassembly } from '@ren/contexts/openGov/Polkassembly';
 import { motion } from 'framer-motion';
 import { TooltipRx } from '@polkadot-live/ui/components';
 import { FlexRow } from '@polkadot-live/ui/styles';

@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 // General contexts.
-import { HelpProvider } from '@ren/contexts/common/Help';
-import { ConnectionsProvider } from '@ren/contexts/common/Connections';
+import { ConnectionsProvider, HelpProvider } from '@ren/contexts/common';
 import {
   OverlayProvider,
   SideNavProvider,
@@ -11,47 +10,55 @@ import {
 } from '@polkadot-live/ui/contexts';
 
 // Tabs contexts.
-import { TabsProvider } from '@ren/contexts/tabs/Tabs';
+import { TabsProvider } from '@ren/contexts/tabs';
 
 // Main window contexts.
-import { AddressesProvider } from '@ren/contexts/main/Addresses';
-import { AppSettingsProvider } from '@ren/contexts/main/AppSettings';
-import { BootstrappingProvider } from '@ren/contexts/main/Bootstrapping';
-import { ChainsProvider } from '@ren/contexts/main/Chains';
-import { EventsProvider } from '@ren/contexts/main/Events';
-import { ManageProvider } from '@ren/contexts/main/Manage';
-import { SubscriptionsProvider } from '@ren/contexts/main/Subscriptions';
-import { IntervalSubscriptionsProvider } from '@ren/contexts/main/IntervalSubscriptions';
-import { IntervalTasksManagerProvider } from '@ren/contexts/main/IntervalTasksManager';
-import { DataBackupProvider } from '@ren/contexts/main/DataBackup';
-import { CogMenuProvider } from '@ren/contexts/main/CogMenu';
-import { WalletConnectProvider } from '@ren/contexts/main/WalletConnect';
+import {
+  AddressesProvider,
+  AppSettingsProvider,
+  BootstrappingProvider,
+  ChainsProvider,
+  CogMenuProvider,
+  DataBackupProvider,
+  EventsProvider,
+  IntervalSubscriptionsProvider,
+  IntervalTasksManagerProvider,
+  ManageProvider,
+  SubscriptionsProvider,
+  WalletConnectProvider,
+} from '@ren/contexts/main';
 
 // Import window contexts.
-import { AccountStatusesProvider as ImportAccountStatusesProvider } from '@ren/contexts/import/AccountStatuses';
-import { AddressesProvider as ImportAddressesProvider } from '@ren/contexts/import/Addresses';
-import { ImportHandlerProvider } from '@ren/contexts/import/ImportHandler';
-import { AddHandlerProvider } from '@ren/contexts/import/AddHandler';
-import { RemoveHandlerProvider } from '@ren/contexts/import/RemoveHandler';
-import { DeleteHandlerProvider } from '@ren/contexts/import/DeleteHandler';
-import { LedgerHardwareProvider } from '@ren/contexts/import/LedgerHardware';
-import { WalletConnectImportProvider } from '@ren/contexts/import/WalletConnectImport';
+import {
+  AccountStatusesProvider,
+  AddressesProvider as ImportAddressesProvider,
+  AddHandlerProvider,
+  DeleteHandlerProvider,
+  ImportHandlerProvider,
+  LedgerHardwareProvider,
+  RemoveHandlerProvider,
+  WalletConnectImportProvider,
+} from '@ren/contexts/import';
 
 // Settings window contexts.
-import { SettingFlagsProvider } from '@ren/contexts/settings/SettingFlags';
-import { WebsocketServerProvider } from '@ren/contexts/settings/WebsocketServer';
-import { WorkspacesProvider } from '@ren/contexts/settings/Workspaces';
+import {
+  SettingFlagsProvider,
+  WebsocketServerProvider,
+  WorkspacesProvider,
+} from '@ren/contexts/settings';
 
 // Actions window contexts.
-import { TxMetaProvider } from '@ren/contexts/action/TxMeta';
+import { TxMetaProvider } from '@ren/contexts/action';
 
 // OpenGov window contexts.
-import { TracksProvider } from '@ren/contexts/openGov/Tracks';
-import { TreasuryProvider } from '@ren/contexts/openGov/Treasury';
-import { ReferendaProvider } from '@ren/contexts/openGov/Referenda';
-import { ReferendaSubscriptionsProvider } from '@ren/contexts/openGov/ReferendaSubscriptions';
-import { TaskHandlerProvider } from '@ren/contexts/openGov/TaskHandler';
-import { PolkassemblyProvider } from '@ren/contexts/openGov/Polkassembly';
+import {
+  PolkassemblyProvider,
+  ReferendaProvider,
+  ReferendaSubscriptionsProvider,
+  TaskHandlerProvider,
+  TracksProvider,
+  TreasuryProvider,
+} from '@ren/contexts/openGov';
 
 // Other imports.
 import { Theme } from './Theme';
@@ -96,7 +103,7 @@ const getProvidersForWindow = () => {
         TooltipProvider,
         ConnectionsProvider,
         ImportAddressesProvider,
-        ImportAccountStatusesProvider,
+        AccountStatusesProvider,
         // Requires useAccountStatuses + useAddresses
         ImportHandlerProvider,
         // Requires useAccountStatuses + useAddresses

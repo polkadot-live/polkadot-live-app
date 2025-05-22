@@ -18,18 +18,20 @@ import BigNumber from 'bignumber.js';
 import { chainUnits } from '@polkadot-live/consts/chains';
 import { planckToUnit } from '@w3ux/utils';
 import { concatU8a, encodeAddress, hexToU8a, stringToU8a } from 'dedot/utils';
+import { useEffect } from 'react';
 
 /// Main window contexts.
-import { useAddresses } from '@ren/contexts/main/Addresses';
-import { useAppSettings } from '@ren/contexts/main/AppSettings';
-import { useBootstrapping } from '@ren/contexts/main/Bootstrapping';
-import { useEffect } from 'react';
-import { useEvents } from '@ren/contexts/main/Events';
-import { useManage } from '@ren/contexts/main/Manage';
-import { useSubscriptions } from '@ren/contexts/main/Subscriptions';
-import { useIntervalSubscriptions } from '@ren/contexts/main/IntervalSubscriptions';
-import { useDataBackup } from '@ren/contexts/main/DataBackup';
-import { useWalletConnect } from '@ren/contexts/main/WalletConnect';
+import {
+  useAddresses,
+  useAppSettings,
+  useBootstrapping,
+  useDataBackup,
+  useEvents,
+  useIntervalSubscriptions,
+  useManage,
+  useSubscriptions,
+  useWalletConnect,
+} from '@ren/contexts/main';
 
 /// Types.
 import type * as OG from '@polkadot-live/types/openGov';

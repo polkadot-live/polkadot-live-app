@@ -23,9 +23,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 /** Temp */
-import { useAddresses } from '@ren/contexts/import/Addresses';
-import { useConnections } from '@ren/contexts/common/Connections';
-import { useWalletConnectImport } from '@ren/contexts/import/WalletConnectImport';
+import { useAddresses, useWalletConnectImport } from '@ren/contexts/import';
+import { useConnections } from '@ren/contexts/common';
 import { useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { WcSessionButton } from './Wrappers';

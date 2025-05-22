@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useState } from 'react';
-import { useManage } from '@ren/contexts/main/Manage';
+import { useManage } from '@ren/contexts/main';
 import { CarouselWrapper } from '../Wrappers';
 import { Accounts } from './Accounts';
 import { Permissions } from './Permissions';

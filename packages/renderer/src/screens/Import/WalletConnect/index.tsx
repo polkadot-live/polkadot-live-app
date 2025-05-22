@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import { Import } from './Import';
-import { useAddresses } from '@ren/contexts/import/Addresses';
+import { useAddresses } from '@ren/contexts/import';
 import { Manage } from './Manage';
 
 interface ImportWalletConnectProps {

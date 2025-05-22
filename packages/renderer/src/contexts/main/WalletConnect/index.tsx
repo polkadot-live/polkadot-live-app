@@ -8,7 +8,7 @@ import { ConfigRenderer, ExtrinsicsController } from '@polkadot-live/core';
 import UniversalProvider from '@walletconnect/universal-provider';
 import { createContext, useContext, useEffect, useRef } from 'react';
 import { encodeAddress } from 'dedot/utils';
-import { useConnections } from '@ren/contexts/common/Connections';
+import { useConnections } from '@ren/contexts/common';
 import { getSdkError } from '@walletconnect/utils';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';

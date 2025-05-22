@@ -5,7 +5,7 @@ import { useOverlay } from '@polkadot-live/ui/contexts';
 import { Identicon } from '@polkadot-live/ui/components';
 import { ConfirmWrapper } from './Wrappers';
 import { ButtonMonoInvert, ButtonMono } from '@polkadot-live/ui/kits/buttons';
-import { useRemoveHandler } from '@ren/contexts/import/RemoveHandler';
+import { useRemoveHandler } from '@ren/contexts/import';
 import type { RemoveProps } from './types';
 
 export const Remove = ({ address, source, accountName }: RemoveProps) => {

@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useHelp } from '@ren/contexts/common/Help';
+import { useHelp } from '@ren/contexts/common';
 import { faCaretRight, faInfo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FlexRow } from '@polkadot-live/ui/styles';

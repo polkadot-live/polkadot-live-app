@@ -24,7 +24,7 @@ import {
   getSortedLocalAddresses,
 } from '@polkadot-live/core';
 import { useState } from 'react';
-import { useAddresses } from '@ren/contexts/import/Addresses';
+import { useAddresses } from '@ren/contexts/import';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import type { ManageVaultProps } from '../types';

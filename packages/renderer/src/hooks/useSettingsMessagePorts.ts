@@ -5,7 +5,7 @@ import { ConfigSettings } from '@polkadot-live/core';
 
 /// Settings window contexts.
 import { useEffect } from 'react';
-import { useSettingFlags } from '@ren/contexts/settings/SettingFlags';
+import { useSettingFlags } from '@ren/contexts/settings';
 
 export const useSettingsMessagePorts = () => {
   const { setWindowDocked, setSilenceOsNotifications, renderToastify } =

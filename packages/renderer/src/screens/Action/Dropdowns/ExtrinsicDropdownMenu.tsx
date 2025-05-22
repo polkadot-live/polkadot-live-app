@@ -6,11 +6,11 @@ import * as themeVariables from '@ren/theme/variables';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 
 import { useState } from 'react';
-import { useConnections } from '@ren/contexts/common/Connections';
+import { useConnections } from '@ren/contexts/common';
 import { DropdownMenuContent } from '@polkadot-live/ui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconButton } from './Wrappers';
-import { useTxMeta } from '@ren/contexts/action/TxMeta';
+import { useTxMeta } from '@ren/contexts/action';
 import type { ExtrinsicDropdownMenuProps } from './types';
 
 /**

@@ -4,9 +4,8 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import * as themeVariables from '../../../../theme/variables';
 
-import { useConnections } from '@ren/contexts/common/Connections';
-import { usePolkassembly } from '@ren/contexts/openGov/Polkassembly';
-import { useReferenda } from '@ren/contexts/openGov/Referenda';
+import { useConnections } from '@ren/contexts/common';
+import { usePolkassembly, useReferenda } from '@ren/contexts/openGov';
 import { useState } from 'react';
 import {
   FlexColumn,

@@ -14,7 +14,7 @@ import { ImportReadOnly } from './ReadOnly';
 import { ImportWalletConnect } from './WalletConnect';
 import { useImportMessagePorts } from '@ren/hooks/useImportMessagePorts';
 import { useDebug } from '@ren/hooks/useDebug';
-import { useHelp } from '@ren/contexts/common/Help';
+import { useHelp } from '@ren/contexts/common';
 import type { AccountSource } from '@polkadot-live/types/accounts';
 
 export const Import: React.FC = () => {

@@ -13,7 +13,7 @@ import {
   ButtonText,
   ButtonPrimaryInvert,
 } from '@polkadot-live/ui/kits/buttons';
-import { useAddresses } from '@ren/contexts/import/Addresses';
+import { useAddresses } from '@ren/contexts/import';
 import {
   getAddressChainId,
   getSortedLocalAddresses,

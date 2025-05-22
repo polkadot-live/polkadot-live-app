@@ -4,11 +4,13 @@
 import { ConfigImport } from '@polkadot-live/core';
 
 /// Import window contexts.
-import { useAccountStatuses } from '@ren/contexts/import/AccountStatuses';
-import { useAddresses } from '@ren/contexts/import/Addresses';
-import { useImportHandler } from '@ren/contexts/import/ImportHandler';
-import { useRemoveHandler } from '@ren/contexts/import/RemoveHandler';
-import { useWalletConnectImport } from '@ren/contexts/import/WalletConnectImport';
+import {
+  useAccountStatuses,
+  useAddresses,
+  useImportHandler,
+  useRemoveHandler,
+  useWalletConnectImport,
+} from '@ren/contexts/import';
 import { useEffect } from 'react';
 import { renderToast } from '@polkadot-live/ui/utils';
 import type {

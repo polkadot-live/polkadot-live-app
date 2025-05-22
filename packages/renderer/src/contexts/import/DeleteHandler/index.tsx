@@ -5,7 +5,7 @@ import * as defaults from './defaults';
 import { ConfigImport, getAddressChainId } from '@polkadot-live/core';
 import { createContext, useContext } from 'react';
 import { useAccountStatuses } from '../AccountStatuses';
-import { useAddresses } from '@ren/contexts/import/Addresses';
+import { useAddresses } from '@ren/contexts/import';
 import type { AccountSource } from '@polkadot-live/types/accounts';
 import type { DeleteHandlerContextInterface } from './types';
 import type { IpcTask } from '@polkadot-live/types/communication';

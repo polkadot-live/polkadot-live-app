@@ -11,7 +11,7 @@ import { Home } from './screens/Home';
 import { Import } from '@ren/screens/Import';
 import { Settings } from './screens/Settings';
 import { OpenGov } from './screens/OpenGov';
-import { useHelp } from './contexts/common/Help';
+import { useHelp } from './contexts/common';
 import { useTheme } from 'styled-components';
 import { ToastContainer } from 'react-toastify';
 import type { AnyJson } from '@polkadot-live/types/misc';
