@@ -17,6 +17,7 @@ import type {
   IntervalSubscription,
   NotificationPolicy,
 } from '@polkadot-live/types/subscriptions';
+import type { PalletReferendaTrackDetails } from '@dedot/chaintypes/substrate';
 
 /// Debugging function.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -178,9 +179,10 @@ const oneShot_openGov_decisionPeriod = async (
     const { since } = info.deciding;
 
     // Get origin and its decision period in number of blocks.
+    type T = [number, PalletReferendaTrackDetails][];
     const originName = info.origin;
     const tracks = client!.api!.consts.referenda.tracks;
-    const tracksData = Utils.getTracks(Utils.getSerializedTracks(tracks));
+    const tracksData = Utils.getTracks(Utils.getSerializedTracks(tracks as T));
     const trackId = Utils.getOriginIdFromName(originName);
     const track = tracksData.find((t) => t.trackId === trackId);
     if (!track) {
@@ -248,9 +250,10 @@ const oneShot_openGov_thresholds = async (
   }
 
   // Get track data for decision period.
+  type T = [number, PalletReferendaTrackDetails][];
   const originName = info.origin;
   const tracks = client.api.consts.referenda.tracks;
-  const tracksData = Utils.getTracks(Utils.getSerializedTracks(tracks));
+  const tracksData = Utils.getTracks(Utils.getSerializedTracks(tracks as T));
   const trackId = Utils.getOriginIdFromName(originName);
   const track = tracksData.find((t) => t.trackId === trackId);
   if (!track) {

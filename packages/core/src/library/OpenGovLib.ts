@@ -15,7 +15,7 @@ import type {
 import type { DedotClientSet } from '@polkadot-live/types/apis';
 import type {
   PalletReferendaCurve,
-  PalletReferendaTrackInfo,
+  PalletReferendaTrackDetails,
 } from '@dedot/chaintypes/substrate';
 
 /**
@@ -102,7 +102,7 @@ const parseCurve = (
  * @summary Serialize tracks for transmission.
  */
 export const getSerializedTracks = (
-  tracks: [number, PalletReferendaTrackInfo][]
+  tracks: [number, PalletReferendaTrackDetails][]
 ) =>
   tracks.map((item) => {
     const info = item[1];
