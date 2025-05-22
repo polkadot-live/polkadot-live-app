@@ -3,10 +3,12 @@
 
 import { ConfigOpenGov, getTracks } from '@polkadot-live/core';
 import { useEffect } from 'react';
-import { useTracks } from '@ren/contexts/openGov';
-import { useReferenda } from '../contexts/openGov/Referenda';
-import { useTreasury } from '../contexts/openGov/Treasury';
-import { useReferendaSubscriptions } from '../contexts/openGov/ReferendaSubscriptions';
+import {
+  useReferenda,
+  useReferendaSubscriptions,
+  useTracks,
+  useTreasury,
+} from '@ren/contexts/openGov';
 import { renderToast } from '@polkadot-live/ui/utils';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { ChainID } from '@polkadot-live/types/chains';

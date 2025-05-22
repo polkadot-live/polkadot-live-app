@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useTooltip } from '../../contexts/Tooltip';
+import { useTooltip } from '../../contexts';
 import { useEffect, useRef } from 'react';
 import { Wrapper } from './Wrapper';
 import type { AnyData } from '@polkadot-live/types/misc';

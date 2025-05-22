@@ -11,7 +11,7 @@ import {
   restrictToParentElement,
 } from '@dnd-kit/modifiers';
 import { version } from '../../../package.json';
-import { useTabs } from '@ren/contexts/tabs/Tabs';
+import { useTabs } from '@ren/contexts/tabs';
 import { Header } from '@polkadot-live/ui/components';
 import { useDebug } from '@ren/hooks/useDebug';
 import { TabsWrapper } from './Wrappers';

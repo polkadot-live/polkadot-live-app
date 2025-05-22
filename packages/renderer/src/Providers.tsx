@@ -10,7 +10,7 @@ import {
 } from '@polkadot-live/ui/contexts';
 
 // Tabs contexts.
-import { TabsProvider } from '@ren/contexts/tabs/Tabs';
+import { TabsProvider } from '@ren/contexts/tabs';
 
 // Main window contexts.
 import {
