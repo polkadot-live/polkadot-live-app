@@ -5,7 +5,7 @@ import BigNumber from 'bignumber.js';
 import { perbillToPercent } from '../CommonLib';
 import { AccountId32 } from 'dedot/codecs';
 import { rmCommas } from '@w3ux/utils';
-import type { RelayDedotClient } from '@polkadot-live/types/apis';
+import type { DedotClientSet } from '@polkadot-live/types/apis';
 import type { AnyData } from '@polkadot-live/types/misc';
 
 import type { Account } from '../../model';
@@ -31,7 +31,7 @@ interface ValidatorOverviewData {
  */
 export const getEraRewards = async (
   address: string,
-  api: RelayDedotClient,
+  api: DedotClientSet,
   era: number
 ) => {
   const showDebug = false;
@@ -170,7 +170,7 @@ export const getEraRewards = async (
  * @summary Return `true` if address is exposed in `era`. Return `false` otherwise.
  */
 export const getAccountExposed = async (
-  api: RelayDedotClient,
+  api: DedotClientSet,
   era: number,
   account: Account,
   validatorData: ValidatorData[]
@@ -218,7 +218,7 @@ export const getAccountExposed = async (
  * @summary Get an account's live nominating data.
  */
 export const getAccountNominatingData = async (
-  api: RelayDedotClient,
+  api: DedotClientSet,
   account: Account
 ): Promise<AccountNominatingData | null> => {
   const nominators = await api.query.staking.nominators(account.address);
@@ -264,7 +264,7 @@ export const getAccountNominatingData = async (
  * @deprecated
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getPagedErasStakers = async (api: RelayDedotClient, era: string) => {
+const getPagedErasStakers = async (api: DedotClientSet, era: string) => {
   const overview = await api.query.staking.erasStakersOverview.entries(
     Number(era)
   );

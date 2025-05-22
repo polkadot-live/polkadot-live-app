@@ -12,7 +12,7 @@ import type {
   SerializedPalletReferendaCurve,
   SerializedTrackItem,
 } from '@polkadot-live/types/openGov';
-import type { RelayDedotClient } from '@polkadot-live/types/apis';
+import type { DedotClientSet } from '@polkadot-live/types/apis';
 import type {
   PalletReferendaCurve,
   PalletReferendaTrackInfo,
@@ -292,7 +292,7 @@ export function makeLinearCurve(length: number, floor: number, ceil: number) {
  * @summary Get current minimum approval and support percentages for a referendum.
  */
 export const getMinApprovalSupport = async (
-  api: RelayDedotClient,
+  api: DedotClientSet,
   referendumInfo: ReferendaInfo,
   track: Track
 ) => {

@@ -3,14 +3,19 @@
 
 import type { ChainID, ChainStatus } from './chains';
 import type { DedotClient } from 'dedot';
-import type { KusamaApi, PolkadotApi, WestendApi, WestendAssetHubApi } from '@dedot/chaintypes';
+import type {
+  KusamaApi,
+  PolkadotApi,
+  WestendApi,
+  WestendAssetHubApi,
+} from '@dedot/chaintypes';
 
 export type NodeEndpoint = `wss://${string}` | 'smoldot';
 
 /**
  * Chain dodeot clients.
  */
-export type RelayDedotClient =
+export type DedotClientSet =
   | DedotClient<PolkadotApi>
   | DedotClient<KusamaApi>
   | DedotClient<WestendApi>

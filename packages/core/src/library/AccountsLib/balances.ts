@@ -4,14 +4,14 @@
 import { AccountsController, APIsController } from '../../controllers';
 import type { AccountBalance } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { RelayDedotClient } from '@polkadot-live/types/apis';
+import type { DedotClientSet } from '@polkadot-live/types/apis';
 
 /**
  * @name getAddressNonce
  * @summary Get the current nonce for an address.
  */
 export const getAddressNonce = async (
-  api: RelayDedotClient,
+  api: DedotClientSet,
   address: string
 ): Promise<number> => (await api.query.system.account(address)).nonce;
 
@@ -20,7 +20,7 @@ export const getAddressNonce = async (
  * @summary Return an account's current balance.
  */
 export const getBalance = async (
-  api: RelayDedotClient,
+  api: DedotClientSet,
   address: string,
   chainId: ChainID,
   syncAccount = true
