@@ -12,7 +12,7 @@ import {
   faHashtag,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useHelp } from '@ren/contexts/common/Help';
+import { useHelp } from '@ren/contexts/common';
 import { useTracks } from '@ren/contexts/openGov/Tracks';
 import { FlexRow } from '@polkadot-live/ui/styles';
 import type { HelpItemKey } from '@polkadot-live/types/help';

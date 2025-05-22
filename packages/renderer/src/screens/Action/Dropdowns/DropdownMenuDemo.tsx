@@ -9,7 +9,7 @@ import {
   DropdownMenuSubContent,
 } from '@polkadot-live/ui/styles';
 import { useState } from 'react';
-import { useConnections } from '@ren/contexts/common/Connections';
+import { useConnections } from '@ren/contexts/common';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
 import { IconButton } from './Wrappers';

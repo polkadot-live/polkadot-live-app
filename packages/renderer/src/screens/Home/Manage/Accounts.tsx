@@ -10,7 +10,7 @@ import { ItemEntryWrapper, ItemsColumn } from './Wrappers';
 import { ButtonText } from '@polkadot-live/ui/kits/buttons';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { NoAccounts, NoOpenGov } from '../NoAccounts';
-import { useConnections } from '@ren/contexts/common/Connections';
+import { useConnections } from '@ren/contexts/common';
 import { useManage } from '@ren/contexts/main/Manage';
 import { useSubscriptions } from '@ren/contexts/main/Subscriptions';
 import { useEffect, useState } from 'react';

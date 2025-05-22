@@ -6,7 +6,7 @@ import * as themeVariables from '@ren/theme/variables';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as Styles from '@polkadot-live/ui/styles';
 import { CheckboxRx, TooltipRx } from '@polkadot-live/ui/components';
-import { useConnections } from '@ren/contexts/common/Connections';
+import { useConnections } from '@ren/contexts/common';
 import { usePolkassembly } from '@ren/contexts/openGov/Polkassembly';
 import { useReferenda } from '@ren/contexts/openGov/Referenda';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

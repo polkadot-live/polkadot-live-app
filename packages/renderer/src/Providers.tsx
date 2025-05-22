@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 // General contexts.
-import { HelpProvider } from '@ren/contexts/common/Help';
-import { ConnectionsProvider } from '@ren/contexts/common/Connections';
+import { ConnectionsProvider, HelpProvider } from '@ren/contexts/common';
 import {
   OverlayProvider,
   SideNavProvider,
@@ -43,7 +42,7 @@ import { WebsocketServerProvider } from '@ren/contexts/settings/WebsocketServer'
 import { WorkspacesProvider } from '@ren/contexts/settings/Workspaces';
 
 // Actions window contexts.
-import { TxMetaProvider } from '@ren/contexts/action/TxMeta';
+import { TxMetaProvider } from '@ren/contexts/action';
 
 // OpenGov window contexts.
 import { TracksProvider } from '@ren/contexts/openGov/Tracks';

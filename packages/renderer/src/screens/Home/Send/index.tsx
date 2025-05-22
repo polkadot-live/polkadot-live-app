@@ -9,7 +9,7 @@ import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 
 import { chainCurrency } from '@polkadot-live/consts/chains';
 import { Identicon, MainHeading } from '@polkadot-live/ui/components';
-import { useConnections } from '@ren/contexts/common/Connections';
+import { useConnections } from '@ren/contexts/common';
 import { useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

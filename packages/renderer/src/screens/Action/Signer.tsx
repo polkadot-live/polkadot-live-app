@@ -4,8 +4,8 @@
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { ButtonSubmit } from '@polkadot-live/ui/kits/buttons';
 import { faSquarePen } from '@fortawesome/free-solid-svg-icons';
-import { useConnections } from '@ren/contexts/common/Connections';
-import { useTxMeta } from '@ren/contexts/action/TxMeta';
+import { useConnections } from '@ren/contexts/common';
+import { useTxMeta } from '@ren/contexts/action';
 import type { SubmitProps } from './types';
 
 export const Signer = ({

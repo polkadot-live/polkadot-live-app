@@ -24,7 +24,7 @@ import {
 
 /** Temp */
 import { useAddresses } from '@ren/contexts/import/Addresses';
-import { useConnections } from '@ren/contexts/common/Connections';
+import { useConnections } from '@ren/contexts/common';
 import { useWalletConnectImport } from '@ren/contexts/import/WalletConnectImport';
 import { useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';

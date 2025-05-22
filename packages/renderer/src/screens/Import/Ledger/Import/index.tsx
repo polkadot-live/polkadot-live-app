@@ -11,7 +11,7 @@ import * as themeVariables from '../../../../theme/variables';
 import { useEffect, useState } from 'react';
 import { useAccountStatuses } from '@ren/contexts/import/AccountStatuses';
 import { useAddresses } from '@ren/contexts/import/Addresses';
-import { useConnections } from '@ren/contexts/common/Connections';
+import { useConnections } from '@ren/contexts/common';
 import { useImportHandler } from '@ren/contexts/import/ImportHandler';
 import { useLedgerHardware } from '@ren/contexts/import/LedgerHardware';
 

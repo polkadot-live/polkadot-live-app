@@ -7,7 +7,7 @@ import { faCircle as faCircleRegular } from '@fortawesome/free-regular-svg-icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useBootstrapping } from '@ren/contexts/main/Bootstrapping';
 import { useChains } from '@ren/contexts/main/Chains';
-import { useConnections } from '@ren/contexts/common/Connections';
+import { useConnections } from '@ren/contexts/common';
 import { useIntervalSubscriptions } from '@ren/contexts/main/IntervalSubscriptions';
 import { useState } from 'react';
 import { useSubscriptions } from '@ren/contexts/main/Subscriptions';

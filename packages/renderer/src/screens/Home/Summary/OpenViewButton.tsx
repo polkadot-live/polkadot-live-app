@@ -1,7 +1,7 @@
 // Copyright 2024 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useConnections } from '@ren/contexts/common/Connections';
+import { useConnections } from '@ren/contexts/common';
 import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { FlexColumn } from '@polkadot-live/ui/styles';

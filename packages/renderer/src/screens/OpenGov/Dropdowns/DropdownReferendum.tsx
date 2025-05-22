@@ -4,7 +4,7 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import * as themeVariables from '@ren/theme/variables';
 
-import { useConnections } from '@ren/contexts/common/Connections';
+import { useConnections } from '@ren/contexts/common';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { DropdownMenuContent } from '@polkadot-live/ui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

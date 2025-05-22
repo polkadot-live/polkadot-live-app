@@ -29,7 +29,7 @@ import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 
 /// Contexts.
 import { useAppSettings } from '@ren/contexts/main/AppSettings';
-import { useConnections } from '@ren/contexts/common/Connections';
+import { useConnections } from '@ren/contexts/common';
 import { useSubscriptions } from '@ren/contexts/main/Subscriptions';
 import { useEffect, useState } from 'react';
 import { useBootstrapping } from '@ren/contexts/main/Bootstrapping';

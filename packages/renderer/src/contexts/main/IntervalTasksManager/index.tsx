@@ -8,7 +8,7 @@ import {
 } from '@polkadot-live/core';
 import { Flip, toast } from 'react-toastify';
 import { createContext, useContext } from 'react';
-import { useConnections } from '@ren/contexts/common/Connections';
+import { useConnections } from '@ren/contexts/common';
 import { useManage } from '@ren/contexts/main/Manage';
 import { useIntervalSubscriptions } from '@ren/contexts/main/IntervalSubscriptions';
 import type { AnyFunction } from '@polkadot-live/types/misc';

@@ -7,8 +7,7 @@ import * as themeVariables from '../../../theme/variables';
 
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { TreasuryStats } from '../Wrappers';
-import { useConnections } from '@ren/contexts/common/Connections';
-import { useHelp } from '@ren/contexts/common/Help';
+import { useConnections, useHelp } from '@ren/contexts/common';
 import { useTreasury } from '@ren/contexts/openGov/Treasury';
 import type { ChainID } from '@polkadot-live/types/chains';
 

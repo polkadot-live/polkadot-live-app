@@ -4,7 +4,7 @@
 import * as themeVariables from '../../../theme/variables';
 
 import { useEffect, useState, memo } from 'react';
-import { useConnections } from '@ren/contexts/common/Connections';
+import { useConnections } from '@ren/contexts/common';
 import { useEvents } from '@ren/contexts/main/Events';
 import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 import { AnimatePresence } from 'framer-motion';

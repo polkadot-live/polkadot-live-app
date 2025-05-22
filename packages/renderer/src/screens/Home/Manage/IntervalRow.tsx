@@ -4,8 +4,7 @@
 import * as themeVariables from '../../../theme/variables';
 import { useEffect, useRef, useState } from 'react';
 import { useBootstrapping } from '@ren/contexts/main/Bootstrapping';
-import { useConnections } from '@ren/contexts/common/Connections';
-import { useHelp } from '@ren/contexts/common/Help';
+import { useConnections, useHelp } from '@ren/contexts/common';
 import { useIntervalTasksManager } from '@ren/contexts/main/IntervalTasksManager';
 import { TaskEntryWrapper } from './Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

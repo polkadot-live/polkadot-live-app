@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ConfigAction } from '@polkadot-live/core';
-import { useConnections } from '@ren/contexts/common/Connections';
+import { useConnections } from '@ren/contexts/common';
 import { useEffect } from 'react';
 import WalletConnectSVG from '@w3ux/extension-assets/WalletConnect.svg?react';
 import { ButtonPrimary, ButtonSecondary } from '@polkadot-live/ui/kits/buttons';

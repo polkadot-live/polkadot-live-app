@@ -3,7 +3,7 @@
 
 import { ConfigAction } from '@polkadot-live/core';
 import { useEffect } from 'react';
-import { useTxMeta } from '@ren/contexts/action/TxMeta';
+import { useTxMeta } from '@ren/contexts/action';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { renderToast } from '@polkadot-live/ui/utils';
 import type { ActionMeta } from '@polkadot-live/types/tx';

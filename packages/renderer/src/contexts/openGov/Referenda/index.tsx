@@ -11,7 +11,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { useConnections } from '@ren/contexts/common/Connections';
+import { useConnections } from '@ren/contexts/common';
 import { usePolkassembly } from '../Polkassembly';
 import { setStateWithRef } from '@w3ux/utils';
 import type { ChainID } from '@polkadot-live/types/chains';

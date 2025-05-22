@@ -10,8 +10,8 @@ import {
   FlexColumn,
   FlexRow,
 } from '@polkadot-live/ui/styles';
-import { useConnections } from '@ren/contexts/common/Connections';
-import { useTxMeta } from '@ren/contexts/action/TxMeta';
+import { useConnections } from '@ren/contexts/common';
+import { useTxMeta } from '@ren/contexts/action';
 import { CheckboxRx, TooltipRx } from '@polkadot-live/ui/components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FilterButton } from './Wrappers';

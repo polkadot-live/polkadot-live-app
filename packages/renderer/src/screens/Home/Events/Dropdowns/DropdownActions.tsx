@@ -5,7 +5,7 @@ import { ConfigRenderer } from '@polkadot-live/core';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import * as themeVariables from '@ren/theme/variables';
 import { useBootstrapping } from '@ren/contexts/main/Bootstrapping';
-import { useConnections } from '@ren/contexts/common/Connections';
+import { useConnections } from '@ren/contexts/common';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCaretDown,

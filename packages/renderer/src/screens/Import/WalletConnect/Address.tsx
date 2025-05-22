@@ -14,7 +14,7 @@ import { renderToast } from '@polkadot-live/ui/utils';
 import { Remove } from '../Addresses/Remove';
 import { useAccountStatuses } from '@ren/contexts/import/AccountStatuses';
 import { useAddresses } from '@ren/contexts/import/Addresses';
-import { useConnections } from '@ren/contexts/common/Connections';
+import { useConnections } from '@ren/contexts/common';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import type { AddressProps } from '../Addresses/types';
 

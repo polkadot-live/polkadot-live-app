@@ -12,7 +12,7 @@ import { GridTwoCol } from '@polkadot-live/ui/styles';
 import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
 import WalletConnectSVG from '@w3ux/extension-assets/WalletConnect.svg?react';
 import LedgerLogoSVG from '@w3ux/extension-assets/Ledger.svg?react';
-import { useHelp } from '@ren/contexts/common/Help';
+import { useHelp } from '@ren/contexts/common';
 import { useEffect } from 'react';
 import type { AccountSource } from '@polkadot-live/types/accounts';
 import type { HomeProps } from './types';

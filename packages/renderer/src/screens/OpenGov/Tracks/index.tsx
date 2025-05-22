@@ -4,10 +4,9 @@
 import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/ui/styles';
 import { ConfigOpenGov } from '@polkadot-live/core';
-import { useConnections } from '@ren/contexts/common/Connections';
+import { useConnections, useHelp } from '@ren/contexts/common';
 import { useTracks } from '@ren/contexts/openGov/Tracks';
 import { useEffect, useState } from 'react';
-import { useHelp } from '@ren/contexts/common/Help';
 import {
   faArrowDownShortWide,
   faCaretLeft,

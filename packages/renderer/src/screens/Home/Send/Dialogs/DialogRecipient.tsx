@@ -6,7 +6,7 @@ import * as Styles from '@polkadot-live/ui/styles';
 import * as themeVariables from '../../../../theme/variables';
 import * as Icons from '@radix-ui/react-icons';
 
-import { useConnections } from '@ren/contexts/common/Connections';
+import { useConnections } from '@ren/contexts/common';
 import { useEffect, useRef, useState } from 'react';
 import { checkAddress } from '@polkadot/util-crypto';
 import { Identicon } from '@polkadot-live/ui/components';

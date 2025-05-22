@@ -20,7 +20,7 @@ import React, {
   useState,
 } from 'react';
 import { defaultBootstrappingContext } from './default';
-import { useConnections } from '@ren/contexts/common/Connections';
+import { useConnections } from '@ren/contexts/common';
 import { useIntervalSubscriptions } from '@ren/contexts/main/IntervalSubscriptions';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { BootstrappingInterface } from './types';
