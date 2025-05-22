@@ -10,7 +10,7 @@ import { useOpenGovMessagePorts } from '@ren/hooks/useOpenGovMessagePorts';
 import { useEffect, useState } from 'react';
 import { useConnections, useHelp } from '@ren/contexts/common';
 import { useDebug } from '@ren/hooks/useDebug';
-import { useTreasury } from '@ren/contexts/openGov/Treasury';
+import { useTreasury } from '@ren/contexts/openGov';
 import { Overview } from './Overview';
 import { Referenda } from './Referenda';
 import { Tracks } from './Tracks';

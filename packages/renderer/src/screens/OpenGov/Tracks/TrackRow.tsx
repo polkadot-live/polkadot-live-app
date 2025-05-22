@@ -13,7 +13,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useHelp } from '@ren/contexts/common';
-import { useTracks } from '@ren/contexts/openGov/Tracks';
+import { useTracks } from '@ren/contexts/openGov';
 import { FlexRow } from '@polkadot-live/ui/styles';
 import type { HelpItemKey } from '@polkadot-live/types/help';
 import type { TrackRowProps } from '../types';

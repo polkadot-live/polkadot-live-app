@@ -23,12 +23,14 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useConnections, useHelp } from '@ren/contexts/common';
 import { useEffect, useState } from 'react';
-import { usePolkassembly } from '@ren/contexts/openGov/Polkassembly';
-import { useReferenda } from '@ren/contexts/openGov/Referenda';
-import { useTracks } from '@ren/contexts/openGov/Tracks';
+import {
+  usePolkassembly,
+  useReferenda,
+  useReferendaSubscriptions,
+  useTracks,
+} from '@ren/contexts/openGov';
 import { ReferendumRow } from './ReferendumRow';
 import { renderPlaceholders } from '@polkadot-live/ui/utils';
-import { useReferendaSubscriptions } from '@ren/contexts/openGov/ReferendaSubscriptions';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { PuffLoader } from 'react-spinners';

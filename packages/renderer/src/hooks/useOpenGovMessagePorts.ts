@@ -3,7 +3,7 @@
 
 import { ConfigOpenGov, getTracks } from '@polkadot-live/core';
 import { useEffect } from 'react';
-import { useTracks } from '@ren/contexts/openGov/Tracks';
+import { useTracks } from '@ren/contexts/openGov';
 import { useReferenda } from '../contexts/openGov/Referenda';
 import { useTreasury } from '../contexts/openGov/Treasury';
 import { useReferendaSubscriptions } from '../contexts/openGov/ReferendaSubscriptions';

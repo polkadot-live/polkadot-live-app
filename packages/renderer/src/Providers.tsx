@@ -49,12 +49,14 @@ import { WorkspacesProvider } from '@ren/contexts/settings/Workspaces';
 import { TxMetaProvider } from '@ren/contexts/action';
 
 // OpenGov window contexts.
-import { TracksProvider } from '@ren/contexts/openGov/Tracks';
-import { TreasuryProvider } from '@ren/contexts/openGov/Treasury';
-import { ReferendaProvider } from '@ren/contexts/openGov/Referenda';
-import { ReferendaSubscriptionsProvider } from '@ren/contexts/openGov/ReferendaSubscriptions';
-import { TaskHandlerProvider } from '@ren/contexts/openGov/TaskHandler';
-import { PolkassemblyProvider } from '@ren/contexts/openGov/Polkassembly';
+import {
+  PolkassemblyProvider,
+  ReferendaProvider,
+  ReferendaSubscriptionsProvider,
+  TaskHandlerProvider,
+  TracksProvider,
+  TreasuryProvider,
+} from '@ren/contexts/openGov';
 
 // Other imports.
 import { Theme } from './Theme';

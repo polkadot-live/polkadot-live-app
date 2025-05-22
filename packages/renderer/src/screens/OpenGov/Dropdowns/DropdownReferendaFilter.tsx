@@ -7,8 +7,7 @@ import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as Styles from '@polkadot-live/ui/styles';
 import { CheckboxRx, TooltipRx } from '@polkadot-live/ui/components';
 import { useConnections } from '@ren/contexts/common';
-import { usePolkassembly } from '@ren/contexts/openGov/Polkassembly';
-import { useReferenda } from '@ren/contexts/openGov/Referenda';
+import { usePolkassembly, useReferenda } from '@ren/contexts/openGov';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { DropdownReferendaFilterProps } from './types';
 
