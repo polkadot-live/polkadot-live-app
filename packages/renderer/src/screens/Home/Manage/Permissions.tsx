@@ -28,13 +28,15 @@ import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 
 /// Contexts.
-import { useAppSettings } from '@ren/contexts/main/AppSettings';
-import { useConnections } from '@ren/contexts/common';
-import { useSubscriptions } from '@ren/contexts/main/Subscriptions';
 import { useEffect, useState } from 'react';
-import { useBootstrapping } from '@ren/contexts/main/Bootstrapping';
-import { useManage } from '@ren/contexts/main/Manage';
-import { useIntervalSubscriptions } from '@ren/contexts/main/IntervalSubscriptions';
+import { useConnections } from '@ren/contexts/common';
+import {
+  useAppSettings,
+  useBootstrapping,
+  useIntervalSubscriptions,
+  useManage,
+  useSubscriptions,
+} from '@ren/contexts/main';
 
 /// Type imports.
 import type { AnyFunction } from '@polkadot-live/types/misc';

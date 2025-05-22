@@ -5,12 +5,14 @@ import * as themeVariables from '@ren/theme/variables';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import { faCircle as faCircleRegular } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useBootstrapping } from '@ren/contexts/main/Bootstrapping';
-import { useChains } from '@ren/contexts/main/Chains';
+import {
+  useBootstrapping,
+  useChains,
+  useIntervalSubscriptions,
+  useSubscriptions,
+} from '@ren/contexts/main';
 import { useConnections } from '@ren/contexts/common';
-import { useIntervalSubscriptions } from '@ren/contexts/main/IntervalSubscriptions';
 import { useState } from 'react';
-import { useSubscriptions } from '@ren/contexts/main/Subscriptions';
 import { FooterWrapper, NetworkItem } from './Wrapper';
 import { SelectRpc } from './RpcSelect';
 import { FlexRow } from '@polkadot-live/ui/styles';

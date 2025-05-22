@@ -4,9 +4,8 @@
 import { ConfigRenderer, getOnlineStatus } from '@polkadot-live/core';
 import { createContext, useContext } from 'react';
 import { defaultCogMenuContext } from './defaults';
-import { useAppSettings } from '@ren/contexts/main/AppSettings';
+import { useAppSettings, useBootstrapping } from '@ren/contexts/main';
 import { useConnections, useHelp } from '@ren/contexts/common';
-import { useBootstrapping } from '@ren/contexts/main/Bootstrapping';
 import { Flip, toast } from 'react-toastify';
 import type { CogMenuContextInterface } from './types';
 import type { MenuItemData } from '@polkadot-live/ui/components';

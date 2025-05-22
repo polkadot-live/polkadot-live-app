@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import { SelectRpcWrapper } from './Wrapper';
-import { useBootstrapping } from '@ren/contexts/main/Bootstrapping';
+import { useBootstrapping } from '@ren/contexts/main';
 import { useConnections } from '@ren/contexts/common';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { NodeEndpoint, FlattenedAPIData } from '@polkadot-live/types/apis';

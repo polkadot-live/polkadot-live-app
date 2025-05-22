@@ -4,7 +4,7 @@
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 
-import { useEvents } from '@ren/contexts/main/Events';
+import { useEvents } from '@ren/contexts/main';
 import { useState, useMemo } from 'react';
 import { Category } from './Category';
 import { NoEvents } from './NoEvents';

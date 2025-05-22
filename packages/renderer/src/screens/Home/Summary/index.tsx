@@ -7,9 +7,11 @@ import * as FA from '@fortawesome/free-solid-svg-icons';
 
 import { useEffect, useRef, useState } from 'react';
 import { useSideNav } from '@polkadot-live/ui/contexts';
-import { useEvents } from '@ren/contexts/main/Events';
-import { useAddresses } from '@ren/contexts/main/Addresses';
-import { useIntervalSubscriptions } from '@ren/contexts/main/IntervalSubscriptions';
+import {
+  useAddresses,
+  useEvents,
+  useIntervalSubscriptions,
+} from '@ren/contexts/main';
 import { MainHeading } from '@polkadot-live/ui/components';
 import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 import { ChevronDownIcon } from '@radix-ui/react-icons';

@@ -5,12 +5,14 @@ import * as UI from '@polkadot-live/ui/components';
 import { version } from '../../../package.json';
 import { ConfigRenderer } from '@polkadot-live/core';
 import { useEffect, useState } from 'react';
-import { useAddresses } from '@ren/contexts/main/Addresses';
-import { useAppSettings } from '@ren/contexts/main/AppSettings';
-import { useBootstrapping } from '@ren/contexts/main/Bootstrapping';
-import { useCogMenu } from '@ren/contexts/main/CogMenu';
+import {
+  useAddresses,
+  useAppSettings,
+  useBootstrapping,
+  useCogMenu,
+  useEvents,
+} from '@ren/contexts/main';
 import { useConnections, useHelp } from '@ren/contexts/common';
-import { useEvents } from '@ren/contexts/main/Events';
 import { useInitIpcHandlers } from '@ren/hooks/useInitIpcHandlers';
 import { useMainMessagePorts } from '@ren/hooks/useMainMessagePorts';
 import { Classic } from '@theme-toggles/react';

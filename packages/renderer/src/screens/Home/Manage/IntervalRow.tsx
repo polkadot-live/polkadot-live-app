@@ -3,9 +3,8 @@
 
 import * as themeVariables from '../../../theme/variables';
 import { useEffect, useRef, useState } from 'react';
-import { useBootstrapping } from '@ren/contexts/main/Bootstrapping';
+import { useBootstrapping, useIntervalTasksManager } from '@ren/contexts/main';
 import { useConnections, useHelp } from '@ren/contexts/common';
-import { useIntervalTasksManager } from '@ren/contexts/main/IntervalTasksManager';
 import { TaskEntryWrapper } from './Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
