@@ -5,7 +5,7 @@ import { useOverlay } from '@polkadot-live/ui/contexts';
 import { Identicon } from '@polkadot-live/ui/components';
 import { ConfirmWrapper } from './Wrappers';
 import { ButtonMonoInvert, ButtonMono } from '@polkadot-live/ui/kits/buttons';
-import { useAddHandler } from '@ren/contexts/import/AddHandler';
+import { useAddHandler } from '@ren/contexts/import';
 import type { ConfirmProps } from './types';
 
 export const Confirm = ({ address, name, source }: ConfirmProps) => {

@@ -27,14 +27,16 @@ import { CogMenuProvider } from '@ren/contexts/main/CogMenu';
 import { WalletConnectProvider } from '@ren/contexts/main/WalletConnect';
 
 // Import window contexts.
-import { AccountStatusesProvider as ImportAccountStatusesProvider } from '@ren/contexts/import/AccountStatuses';
-import { AddressesProvider as ImportAddressesProvider } from '@ren/contexts/import/Addresses';
-import { ImportHandlerProvider } from '@ren/contexts/import/ImportHandler';
-import { AddHandlerProvider } from '@ren/contexts/import/AddHandler';
-import { RemoveHandlerProvider } from '@ren/contexts/import/RemoveHandler';
-import { DeleteHandlerProvider } from '@ren/contexts/import/DeleteHandler';
-import { LedgerHardwareProvider } from '@ren/contexts/import/LedgerHardware';
-import { WalletConnectImportProvider } from '@ren/contexts/import/WalletConnectImport';
+import {
+  AccountStatusesProvider,
+  AddressesProvider as ImportAddressesProvider,
+  AddHandlerProvider,
+  DeleteHandlerProvider,
+  ImportHandlerProvider,
+  LedgerHardwareProvider,
+  RemoveHandlerProvider,
+  WalletConnectImportProvider,
+} from '@ren/contexts/import';
 
 // Settings window contexts.
 import { SettingFlagsProvider } from '@ren/contexts/settings/SettingFlags';
@@ -95,7 +97,7 @@ const getProvidersForWindow = () => {
         TooltipProvider,
         ConnectionsProvider,
         ImportAddressesProvider,
-        ImportAccountStatusesProvider,
+        AccountStatusesProvider,
         // Requires useAccountStatuses + useAddresses
         ImportHandlerProvider,
         // Requires useAccountStatuses + useAddresses
