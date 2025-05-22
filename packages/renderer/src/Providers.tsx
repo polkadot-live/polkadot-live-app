@@ -41,9 +41,11 @@ import {
 } from '@ren/contexts/import';
 
 // Settings window contexts.
-import { SettingFlagsProvider } from '@ren/contexts/settings/SettingFlags';
-import { WebsocketServerProvider } from '@ren/contexts/settings/WebsocketServer';
-import { WorkspacesProvider } from '@ren/contexts/settings/Workspaces';
+import {
+  SettingFlagsProvider,
+  WebsocketServerProvider,
+  WorkspacesProvider,
+} from '@ren/contexts/settings';
 
 // Actions window contexts.
 import { TxMetaProvider } from '@ren/contexts/action';

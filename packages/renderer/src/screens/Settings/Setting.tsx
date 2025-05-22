@@ -7,7 +7,7 @@ import { SettingWrapper } from './Wrappers';
 import { EllipsisSpinner, Switch } from '@polkadot-live/ui/components';
 import { useConnections, useHelp } from '@ren/contexts/common';
 import { ButtonMonoInvert } from '@polkadot-live/ui/kits/buttons';
-import { useSettingFlags } from '@ren/contexts/settings/SettingFlags';
+import { useSettingFlags } from '@ren/contexts/settings';
 import type { SettingProps } from './types';
 import type { SettingAction, SettingItem } from '@polkadot-live/types/settings';
 
