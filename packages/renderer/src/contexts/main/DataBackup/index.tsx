@@ -218,7 +218,7 @@ export const DataBackupProvider = ({
         const account = AccountsController.get(chainId, address);
         if (account) {
           account.name = name;
-          await AccountsController.set(chainId, account);
+          await AccountsController.set(account);
         }
       }
 

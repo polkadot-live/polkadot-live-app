@@ -45,12 +45,12 @@ export const processOneShotPostCallback = async (
 
   // Sync account nomination pool data.
   if (syncFlags.syncAccountNominationPool) {
-    const result = await getNominationPoolData(account);
+    const result = await getNominationPoolData(account, api);
     result && (account.nominationPoolData = result);
   }
 
   // Update managed account data.
-  await AccountsController.set(account.chain, account);
+  await AccountsController.set(account);
 
   // Reset flags.
   syncFlags = {

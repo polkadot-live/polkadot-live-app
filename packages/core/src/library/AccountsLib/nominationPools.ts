@@ -69,15 +69,12 @@ const getPoolAccounts = (poolId: number, api: DedotClientSet) => {
  * @summary Get an account's nomination pool data.
  */
 export const getNominationPoolData = async (
-  account: Account
+  account: Account,
+  api: DedotClientSet
 ): Promise<AccountNominationPoolData | null> => {
   if (!Array.from(ChainList.keys()).includes(account.chain)) {
     return null;
   }
-
-  const api = (
-    await APIsController.getConnectedApiOrThrow(account.chain)
-  ).getApi();
 
   // Return early if account is not currently in a nomination pool.
   const result = await api.query.nominationPools.poolMembers(account.address);
