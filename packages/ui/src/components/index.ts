@@ -1,7 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-export * from './Accordion';
 export * from './AccordionRx';
 export * from './ActionItem';
 export * from './Cards';
@@ -26,7 +25,6 @@ export * from './SideNav';
 export * from './SortControls';
 export * from './Stats';
 export * from './Switch';
-export * from './Tooltip';
 export * from './TooltipRx';
 export * from './Tx';
 export * from './Utils';

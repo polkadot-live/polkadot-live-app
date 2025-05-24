@@ -2,9 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import {
-  AccordionItem,
-  AccordionPanel,
-  AccordionCaretHeader,
   ControlsWrapper,
   SortControlButton,
 } from '@polkadot-live/ui/components';
@@ -50,55 +47,51 @@ export const Workspaces = () => {
   });
 
   return (
-    <AccordionItem key={`workspaces_settings`}>
-      <AccordionCaretHeader
-        title="Workspaces - Developer Console"
-        itemIndex={3}
-        wide={true}
-      />
-      <AccordionPanel>
-        <>
-          <ControlsWrapper
-            $padBottom={false}
-            style={{ margin: '2rem 0', alignItems: 'baseline' }}
+    /* AccordionItem */
+    <div key={`workspaces_settings`}>
+      {/* AccordionCaretHeader */}
+      <span>Workspaces - Developer Console</span>
+      <div>
+        <ControlsWrapper
+          $padBottom={false}
+          style={{ margin: '2rem 0', alignItems: 'baseline' }}
+        >
+          <SortControlButton
+            isActive={!isListening}
+            isDisabled={false}
+            onLabel="Connect"
+            offLabel="Disconnect"
+            faIcon={isListening ? faPlugCircleXmark : faPlug}
+            fixedWidth={false}
+            onClick={async () => await handleConnectButtonClick()}
+          />
+          <span
+            style={{
+              fontSize: '0.95rem',
+              color: isListening ? 'lightgreen' : 'red',
+            }}
           >
-            <SortControlButton
-              isActive={!isListening}
-              isDisabled={false}
-              onLabel="Connect"
-              offLabel="Disconnect"
-              faIcon={isListening ? faPlugCircleXmark : faPlug}
-              fixedWidth={false}
-              onClick={async () => await handleConnectButtonClick()}
-            />
-            <span
-              style={{
-                fontSize: '0.95rem',
-                color: isListening ? 'lightgreen' : 'red',
-              }}
-            >
-              {isListening ? 'Connected' : 'Disconnected'}
-            </span>
-          </ControlsWrapper>
+            {isListening ? 'Connected' : 'Disconnected'}
+          </span>
+        </ControlsWrapper>
 
-          <WorkspacesContainer>
-            {workspaces.length ? (
-              <>
-                {getOrderedWorkspaces().map((workspace) => (
-                  <WorkspaceRow
-                    key={`${workspace.index}_${workspace.label}`}
-                    workspace={workspace}
-                  />
-                ))}
-              </>
-            ) : (
-              <div style={{ padding: '0 1.5rem' }}>
-                <p>No workspaces.</p>
-              </div>
-            )}
-          </WorkspacesContainer>
-        </>
-      </AccordionPanel>
-    </AccordionItem>
+        <WorkspacesContainer>
+          {workspaces.length ? (
+            <>
+              {getOrderedWorkspaces().map((workspace) => (
+                <WorkspaceRow
+                  key={`${workspace.index}_${workspace.label}`}
+                  workspace={workspace}
+                />
+              ))}
+            </>
+          ) : (
+            <div style={{ padding: '0 1.5rem' }}>
+              <p>No workspaces.</p>
+            </div>
+          )}
+        </WorkspacesContainer>
+      </div>
+    </div>
   );
 };

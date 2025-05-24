@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { MainInterfaceWrapper } from '@ren/Wrappers';
-import { Overlay, Tooltip, Help } from '@polkadot-live/ui/components';
+import { Overlay, Help } from '@polkadot-live/ui/components';
 import { useEffect, useState } from 'react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
 import { Action } from '@ren/screens/Action';
@@ -49,7 +49,6 @@ export const RouterInner = () => {
         setStatus={setStatus}
       />
       <Overlay />
-      <Tooltip />
       <ToastContainer stacked />
       <Routes>{addRoutesForWindow()}</Routes>
     </MainInterfaceWrapper>
