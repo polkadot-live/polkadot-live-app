@@ -41,6 +41,7 @@ import type {
   IntervalSubscription,
   SubscriptionTask,
 } from '@polkadot-live/types/subscriptions';
+import type { PalletReferendaTrackDetails } from '@dedot/chaintypes/substrate';
 import type { WcSelectNetwork } from '@polkadot-live/types/walletConnect';
 
 // TODO: Move to WalletConnect file.
@@ -360,8 +361,9 @@ export const useMainMessagePorts = () => {
         throw Error('api is null');
       }
 
+      type T = [number, PalletReferendaTrackDetails][];
       const tracks = api.consts.referenda.tracks;
-      const serialized = Core.getSerializedTracks(tracks);
+      const serialized = Core.getSerializedTracks(tracks as T);
 
       ConfigRenderer.portToOpenGov?.postMessage({
         task: 'openGov:tracks:receive',

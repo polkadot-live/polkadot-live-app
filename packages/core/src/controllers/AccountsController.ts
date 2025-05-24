@@ -34,8 +34,7 @@ export class AccountsController {
   };
 
   /**
-   * @name initialize
-   * @summary Injects accounts into class from store.
+   * Injects accounts into class from store.
    */
   static async initialize() {
     const serialized: string =
@@ -64,9 +63,7 @@ export class AccountsController {
   }
 
   /**
-   * @name subscribeAccounts
-   * @summary Fetched persisted tasks from the store and re-subscribe to them.
-   *
+   * Fetched persisted tasks from the store and re-subscribe to them.
    */
   static async subscribeAccounts() {
     if (!this.accounts) {
@@ -90,8 +87,7 @@ export class AccountsController {
   }
 
   /**
-   * @name subscribeAccountsForChain
-   * @summary Same as `subscribeAccounts` but for a specific chain.
+   * Same as `subscribeAccounts` but for a specific chain.
    */
   static async subscribeAccountsForChain(chainId: ChainID) {
     // Get accounts for provided chain ID.
@@ -113,8 +109,7 @@ export class AccountsController {
   }
 
   /**
-   * @name resubscribeAccounts
-   * @summary Recalls the `queryMulti` api and subscribes to the wrapper's cached
+   * Recalls the `queryMulti` api and subscribes to the wrapper's cached
    * subscription tasks. This method is called when the app goes into online mode.
    *
    * @deprecated Currently not being called.
@@ -131,8 +126,7 @@ export class AccountsController {
   }
 
   /**
-   * @name removeAllSubscriptions
-   * @summary Unsubscribe from all active tasks. Called when an imported account is removed.
+   * Unsubscribe from all active tasks. Called when an imported account is removed.
    */
   static async removeAllSubscriptions(account: Account) {
     // Get all active tasks and set their status to `disable`.
@@ -163,15 +157,13 @@ export class AccountsController {
   }
 
   /**
-   * @name get
-   * @summary Gets an account from the `accounts` property.
+   * Gets an account from the `accounts` property.
    */
   static get = (chain: ChainID, address?: string): Account | undefined =>
     this.accounts.get(chain)?.find((a) => a.address === address);
 
   /**
-   * @name getAllFlattenedAccountData
-   * @summary Gets all essential account data (flattened) for ease of use.
+   * Gets all essential account data (flattened) for ease of use.
    */
   static getAllFlattenedAccountData = (): FlattenedAccounts => {
     const map: FlattenedAccounts = new Map();
@@ -187,8 +179,7 @@ export class AccountsController {
   };
 
   /**
-   * @name set
-   * @summary Updates an Account in the `accounts` property.
+   * Updates an Account in the `accounts` property.
    */
   static set = async (chain: ChainID, account: Account) => {
     this.accounts.set(
@@ -206,8 +197,7 @@ export class AccountsController {
   };
 
   /**
-   * @name add
-   * @summary Adds an account to the list of imported accounts. Fails if the account already exists.
+   * Adds an account to the list of imported accounts. Fails if the account already exists.
    */
   static add = (
     chain: ChainID,
@@ -225,19 +215,21 @@ export class AccountsController {
   };
 
   /**
-   * @name remove
-   * @summary Removes an account from the list of imported accounts if it exists.
+   * Removes a managed account and updates store.
    */
-  static remove = (chain: ChainID, address: string) => {
-    if (this.accountExists(chain, address)) {
-      // Remove account from map.
-      this.setAccounts(this.spliceAccount(address));
+  static remove = (chainId: ChainID, address: string) => {
+    if (this.accountExists(chainId, address)) {
+      const filtered = this.accounts
+        .get(chainId)!
+        .filter((a) => a.address !== address);
+
+      this.accounts.set(chainId, filtered);
+      this.setAccounts(this.accounts);
     }
   };
 
   /**
-   * @name pushAccount
-   * @summary Pushes an account to the list of imported accounts for a chain.
+   * Pushes an account to the list of imported accounts for a chain.
    */
   private static pushAccount = (
     chain: ChainID,
@@ -249,25 +241,7 @@ export class AccountsController {
   };
 
   /**
-   * @name spliceAccount
-   * @summary Splices an account from the imported accounts list.
-   */
-  private static spliceAccount = (address: string): ImportedAccounts => {
-    const filtered: ImportedAccounts = new Map();
-
-    for (const [chain, accounts] of this.accounts) {
-      filtered.set(
-        chain,
-        accounts.filter((a) => a.address !== address)
-      );
-    }
-
-    return filtered;
-  };
-
-  /**
-   * @name setAccounts
-   * @summary Utility to update accounts, both in class and in store.
+   * Utility to update accounts, both in class and in store.
    */
   private static setAccounts = (accounts: ImportedAccounts) => {
     this.accounts = accounts;
@@ -284,8 +258,7 @@ export class AccountsController {
   };
 
   /**
-   * @name accountExists
-   * @summary Utility to check whether an account exists.
+   * Utility to check whether an account exists.
    */
   private static accountExists = (chain: ChainID, address: string): boolean => {
     for (const accounts of this.accounts.values()) {
@@ -298,8 +271,7 @@ export class AccountsController {
   };
 
   /**
-   * @name serializeAccounts
-   * @summary Serialize imported accounts for Electron store.
+   * Serialize imported accounts for Electron store.
    * Note: Account implements toJSON method for serializing account data correctly.
    */
   private static serializeAccounts = () => {
