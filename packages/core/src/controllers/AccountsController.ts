@@ -197,21 +197,25 @@ export class AccountsController {
   };
 
   /**
-   * Adds an account to the list of imported accounts. Fails if the account already exists.
+   * Adds a managed account. Fails if the account already exists.
    */
   static add = (
-    chain: ChainID,
+    chainId: ChainID,
     source: AccountSource,
     address: string,
     name: string
   ): Account | false => {
-    if (this.accountExists(chain, address)) {
+    if (this.accountExists(chainId, address)) {
       return false;
-    } else {
-      const account = new Account(chain, source, address, name);
-      this.setAccounts(this.pushAccount(chain, account));
-      return account;
     }
+
+    // Create account and add to the managed accounts map.
+    const account = new Account(chainId, source, address, name);
+    this.accounts.get(chainId)?.push(account) ||
+      this.accounts.set(chainId, [account]);
+
+    this.updateAll();
+    return account;
   };
 
   /**
@@ -224,29 +228,14 @@ export class AccountsController {
         .filter((a) => a.address !== address);
 
       this.accounts.set(chainId, filtered);
-      this.setAccounts(this.accounts);
+      this.updateAll();
     }
   };
 
   /**
-   * Pushes an account to the list of imported accounts for a chain.
+   * Utility to update accounts in store.
    */
-  private static pushAccount = (
-    chain: ChainID,
-    account: Account
-  ): ImportedAccounts => {
-    const updated: ImportedAccounts = this.accounts;
-    updated.get(chain)?.push(account) || updated.set(chain, [account]);
-    return updated;
-  };
-
-  /**
-   * Utility to update accounts, both in class and in store.
-   */
-  private static setAccounts = (accounts: ImportedAccounts) => {
-    this.accounts = accounts;
-
-    // Send IPC message to update persisted imported accounts.
+  private static updateAll = () => {
     window.myAPI
       .sendAccountTask({
         action: 'account:updateAll',
