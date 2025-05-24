@@ -136,10 +136,15 @@ export const useMainMessagePorts = () => {
       // Fetch account data from network.
       const isOnline: boolean = await getOnlineStatus();
 
+      // Fetch the account's chain API.
+      const res = await APIsController.getConnectedApiOrThrow(chainId);
+      const api = res.getApi();
+
+      // Use AccountsController to sync account state.
       if (isOnline) {
-        await Core.setBalance(account);
-        await Core.setNominationPoolData(account);
-        await Core.setNominatingData(account);
+        await AccountsController.syncBalance(account, api);
+        await AccountsController.syncNominationPoolData(account, api);
+        await AccountsController.syncNominatingData(account, api);
       }
 
       // Subscribe new account to all possible subscriptions if setting enabled.
@@ -250,7 +255,7 @@ export const useMainMessagePorts = () => {
     if (account) {
       // Set new account name and persist new account data to storage.
       account.name = newName;
-      await AccountsController.set(chainId, account);
+      await AccountsController.set(account);
 
       // Update account react state.
       AccountsController.syncState();

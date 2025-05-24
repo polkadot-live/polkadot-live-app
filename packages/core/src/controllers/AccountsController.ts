@@ -2,13 +2,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Account } from '../model';
+import { getAccountNominatingData, getNominationPoolData } from '../library';
 import { TaskOrchestrator } from '../orchestrators';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
+  AccountBalance,
   AccountSource,
   FlattenedAccounts,
   StoredAccount,
 } from '@polkadot-live/types/accounts';
+import type { DedotClientSet } from '@polkadot-live/types/apis';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 import type { ImportedAccounts } from '../model';
 
@@ -61,6 +64,98 @@ export class AccountsController {
       );
     }
   }
+
+  /**
+   * Get chain IDs of managed accounts.
+   */
+  static getManagedChains = (): ChainID[] => Array.from(this.accounts.keys());
+
+  /**
+   * Set up-to-date balances for all managed accounts.
+   */
+  static syncAllBalances = async (api: DedotClientSet, chainId: ChainID) => {
+    console.log(`fetching balances for chain: ${chainId}`);
+    const accounts = this.accounts.get(chainId);
+    if (accounts) {
+      await Promise.all(accounts.map((a) => this.syncBalance(a, api)));
+    }
+  };
+
+  /**
+   * Set up-to-date balance for a single managed account.
+   */
+  static syncBalance = async (account: Account, api: DedotClientSet) => {
+    const result = await api.query.system.account(account.address);
+
+    account.balance = {
+      nonce: BigInt(result.nonce),
+      free: result.data.free,
+      reserved: result.data.reserved,
+      frozen: result.data.frozen,
+    } as AccountBalance;
+
+    await this.set(account);
+  };
+
+  /**
+   * Set up-to-date nominating data for all managed accounts.
+   */
+  static syncAllNominatingData = async (
+    api: DedotClientSet,
+    chainId: ChainID
+  ) => {
+    console.log(`fetching nominating data for chain: ${chainId}`);
+    const accounts = this.accounts.get(chainId);
+    if (accounts) {
+      await Promise.all(accounts.map((a) => this.syncNominatingData(a, api)));
+    }
+  };
+
+  /**
+   * Set up-to-date nominating data for a single managed accounts.
+   */
+  static syncNominatingData = async (account: Account, api: DedotClientSet) => {
+    try {
+      const maybeNominatingData = await getAccountNominatingData(api, account);
+      account.nominatingData = maybeNominatingData
+        ? { ...maybeNominatingData }
+        : null;
+
+      await this.set(account);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  /**
+   * Set up-to-date nomination pool data for all managed accounts.
+   */
+  static syncAllNominationPoolData = async (
+    api: DedotClientSet,
+    chainId: ChainID
+  ) => {
+    console.log(`fetching nomination pool data for chain: ${chainId}`);
+    const accounts = this.accounts.get(chainId);
+    if (accounts) {
+      await Promise.all(
+        accounts.map((a) => this.syncNominationPoolData(a, api))
+      );
+    }
+  };
+
+  /**
+   * Set up-to-date nomination pool data for a single managed accounts.
+   */
+  static syncNominationPoolData = async (
+    account: Account,
+    api: DedotClientSet
+  ) => {
+    const result = await getNominationPoolData(account, api);
+    if (result) {
+      account.nominationPoolData = result;
+      await this.set(account);
+    }
+  };
 
   /**
    * Fetched persisted tasks from the store and re-subscribe to them.
@@ -179,17 +274,18 @@ export class AccountsController {
   };
 
   /**
-   * Updates an Account in the `accounts` property.
+   * Updates an Account in the `accounts` property and store.
    */
-  static set = async (chain: ChainID, account: Account) => {
+  static set = async (account: Account) => {
+    const chainId = account.chain;
+
     this.accounts.set(
-      chain,
+      chainId,
       this.accounts
-        .get(chain)
+        .get(chainId)
         ?.map((a) => (a.address === account.address ? account : a)) || []
     );
 
-    // Send IPC message to update persisted accounts in store.
     await window.myAPI.sendAccountTask({
       action: 'account:updateAll',
       data: { accounts: this.serializeAccounts() },

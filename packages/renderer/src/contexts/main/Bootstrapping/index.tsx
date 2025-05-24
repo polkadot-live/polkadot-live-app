@@ -118,11 +118,18 @@ export const BootstrappingProvider = ({
   /// Step 4: Fetch current account data.
   const fetchAccountData = async () => {
     const isConnected: boolean = await Core.getOnlineStatus();
-    if (isConnected) {
+    if (!isConnected) {
+      return;
+    }
+
+    for (const chainId of AccountsController.getManagedChains()) {
+      const res = await APIsController.getConnectedApiOrThrow(chainId);
+      const api = res.getApi();
+
       await Promise.all([
-        Core.setAccountBalances(),
-        Core.setAccountsNominationPoolData(),
-        Core.setAccountsNominatingData(),
+        AccountsController.syncAllBalances(api, chainId),
+        AccountsController.syncAllNominatingData(api, chainId),
+        AccountsController.syncAllNominationPoolData(api, chainId),
       ]);
     }
   };

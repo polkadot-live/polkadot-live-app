@@ -3,6 +3,5 @@
 
 export * from './balances';
 export * from './utils';
-export * from './legacy';
 export * from './nominating';
 export * from './nominationPools';
