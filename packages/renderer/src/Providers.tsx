@@ -3,11 +3,7 @@
 
 // General contexts.
 import { ConnectionsProvider, HelpProvider } from '@ren/contexts/common';
-import {
-  OverlayProvider,
-  SideNavProvider,
-  TooltipProvider,
-} from '@polkadot-live/ui/contexts';
+import { OverlayProvider, SideNavProvider } from '@polkadot-live/ui/contexts';
 
 // Tabs contexts.
 import { TabsProvider } from '@ren/contexts/tabs';
@@ -75,7 +71,6 @@ const getProvidersForWindow = () => {
       return withProviders(
         HelpProvider,
         OverlayProvider,
-        TooltipProvider,
         ConnectionsProvider,
         AddressesProvider,
         AppSettingsProvider,
@@ -100,7 +95,6 @@ const getProvidersForWindow = () => {
       return withProviders(
         HelpProvider,
         OverlayProvider,
-        TooltipProvider,
         ConnectionsProvider,
         ImportAddressesProvider,
         AccountStatusesProvider,
@@ -122,7 +116,6 @@ const getProvidersForWindow = () => {
       return withProviders(
         HelpProvider,
         OverlayProvider,
-        TooltipProvider,
         ConnectionsProvider,
         SettingFlagsProvider,
         WebsocketServerProvider,
@@ -133,7 +126,6 @@ const getProvidersForWindow = () => {
       return withProviders(
         HelpProvider,
         OverlayProvider,
-        TooltipProvider,
         ConnectionsProvider,
         TxMetaProvider
       )(Theme);
@@ -142,7 +134,6 @@ const getProvidersForWindow = () => {
       return withProviders(
         HelpProvider,
         OverlayProvider,
-        TooltipProvider,
         ConnectionsProvider,
         TracksProvider,
         TreasuryProvider,

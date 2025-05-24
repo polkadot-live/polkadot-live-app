@@ -3,11 +3,9 @@
 
 import { faWarning } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useTooltip } from '../../../contexts';
 import styled from 'styled-components';
 
 interface WarningIconProps {
-  tooltip: string;
   iconColor: string;
   iconTransform?: string;
 }
@@ -20,26 +18,12 @@ export const WarningIconWrapper = styled.div`
   }
 `;
 
-export const WarningIcon = ({
-  tooltip,
-  iconColor,
-  iconTransform,
-}: WarningIconProps) => {
-  const { setTooltipTextAndOpen } = useTooltip();
-
-  return (
-    <div
-      className="tooltip-trigger-element"
-      data-tooltip-text={tooltip}
-      onMouseMove={() => setTooltipTextAndOpen(tooltip)}
-    >
-      <WarningIconWrapper>
-        <FontAwesomeIcon
-          color={iconColor}
-          icon={faWarning}
-          transform={iconTransform ? iconTransform : 'grow-0'}
-        />
-      </WarningIconWrapper>
-    </div>
-  );
-};
+export const WarningIcon = ({ iconColor, iconTransform }: WarningIconProps) => (
+  <WarningIconWrapper>
+    <FontAwesomeIcon
+      color={iconColor}
+      icon={faWarning}
+      transform={iconTransform ? iconTransform : 'grow-0'}
+    />
+  </WarningIconWrapper>
+);

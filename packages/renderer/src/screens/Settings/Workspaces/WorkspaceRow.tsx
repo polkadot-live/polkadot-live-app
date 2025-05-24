@@ -8,7 +8,7 @@ import {
   ControlsWrapper,
   SortControlButton,
 } from '@polkadot-live/ui/components';
-import { useTooltip, useOverlay } from '@polkadot-live/ui/contexts';
+import { useOverlay } from '@polkadot-live/ui/contexts';
 import { useWebsocketServer, useWorkspaces } from '@ren/contexts/settings';
 import { Confirm } from './Confirm';
 import type { WorkspaceRowProps } from '../types';
@@ -16,7 +16,6 @@ import type { WorkspaceRowProps } from '../types';
 export const WorkspaceRow = ({ workspace }: WorkspaceRowProps) => {
   const { createdAt, index, label } = workspace;
 
-  const { wrapWithTooltip } = useTooltip();
   const { openOverlayWith } = useOverlay();
   const { launchWorkspace } = useWorkspaces();
   const { isListening } = useWebsocketServer();
@@ -46,26 +45,26 @@ export const WorkspaceRow = ({ workspace }: WorkspaceRowProps) => {
             style={{ marginBottom: 0 }}
             className="button-tweaks"
           >
-            {wrapWithTooltip(
+            <span>
               <SortControlButton
                 isActive={true}
                 isDisabled={!isListening || true} // enable when developer console integrated
                 faIcon={faLink}
                 onClick={() => handleLaunch()}
                 fixedWidth={false}
-              />,
-              'Launch In Console'
-            )}
-            {wrapWithTooltip(
+              />
+              Launch In Console
+            </span>
+            <span>
               <SortControlButton
                 isActive={true}
                 isDisabled={false}
                 faIcon={faTrash}
                 onClick={() => handleDelete()}
                 fixedWidth={false}
-              />,
-              'Delete'
-            )}
+              />
+              Delete
+            </span>
           </ControlsWrapper>
         </div>
       </>
