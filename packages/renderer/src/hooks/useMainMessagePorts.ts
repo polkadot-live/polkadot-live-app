@@ -41,6 +41,7 @@ import type {
   IntervalSubscription,
   SubscriptionTask,
 } from '@polkadot-live/types/subscriptions';
+import type { PalletReferendaTrackDetails } from '@dedot/chaintypes/substrate';
 import type { WcSelectNetwork } from '@polkadot-live/types/walletConnect';
 
 // TODO: Move to WalletConnect file.
@@ -132,13 +133,12 @@ export const useMainMessagePorts = () => {
         return;
       }
 
-      // Fetch account data from network.
+      // Sync managed account data if online.
       const isOnline: boolean = await getOnlineStatus();
-
       if (isOnline) {
-        await Core.setBalance(account);
-        await Core.setNominationPoolData(account);
-        await Core.setNominatingData(account);
+        const res = await APIsController.getConnectedApiOrThrow(chainId);
+        const api = res.getApi();
+        await AccountsController.syncAccount(account, api);
       }
 
       // Subscribe new account to all possible subscriptions if setting enabled.
@@ -249,7 +249,7 @@ export const useMainMessagePorts = () => {
     if (account) {
       // Set new account name and persist new account data to storage.
       account.name = newName;
-      await AccountsController.set(chainId, account);
+      await AccountsController.set(account);
 
       // Update account react state.
       AccountsController.syncState();
@@ -360,8 +360,9 @@ export const useMainMessagePorts = () => {
         throw Error('api is null');
       }
 
+      type T = [number, PalletReferendaTrackDetails][];
       const tracks = api.consts.referenda.tracks;
-      const serialized = Core.getSerializedTracks(tracks);
+      const serialized = Core.getSerializedTracks(tracks as T);
 
       ConfigRenderer.portToOpenGov?.postMessage({
         task: 'openGov:tracks:receive',

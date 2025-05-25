@@ -279,7 +279,7 @@ export class QueryMultiWrapper {
 
       // Sync account nomination pool data.
       if (this.postCallbackSyncFlags.syncAccountNominationPool) {
-        const result = await getNominationPoolData(account);
+        const result = await getNominationPoolData(account, api);
         result && (account.nominationPoolData = result);
       }
 
@@ -291,7 +291,7 @@ export class QueryMultiWrapper {
       }
 
       // Update managed account data.
-      await AccountsController.set(account.chain, account);
+      await AccountsController.set(account);
 
       // Reset flags.
       this.postCallbackSyncFlags = {
