@@ -30,7 +30,7 @@ export type ImportedAccounts = Map<ChainID, Account[]>;
  * @property {hainID} chain - chain account belongs to.
  * @property {Map<ChainID, AccountNominationPoolData>} nominationPoolData - account nomination pool data.
  */
-export class Account implements Account {
+export class Account {
   private _source: AccountSource;
   private _name: string;
   private _queryMulti: QueryMultiWrapper | null = null;
