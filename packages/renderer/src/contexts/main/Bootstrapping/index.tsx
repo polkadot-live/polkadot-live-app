@@ -125,12 +125,7 @@ export const BootstrappingProvider = ({
     for (const chainId of AccountsController.getManagedChains()) {
       const res = await APIsController.getConnectedApiOrThrow(chainId);
       const api = res.getApi();
-
-      await Promise.all([
-        AccountsController.syncAllBalances(api, chainId),
-        AccountsController.syncAllNominatingData(api, chainId),
-        AccountsController.syncAllNominationPoolData(api, chainId),
-      ]);
+      await AccountsController.syncAllAccounts(api, chainId);
     }
   };
 

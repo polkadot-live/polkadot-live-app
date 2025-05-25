@@ -133,18 +133,12 @@ export const useMainMessagePorts = () => {
         return;
       }
 
-      // Fetch account data from network.
+      // Sync managed account data if online.
       const isOnline: boolean = await getOnlineStatus();
-
-      // Fetch the account's chain API.
-      const res = await APIsController.getConnectedApiOrThrow(chainId);
-      const api = res.getApi();
-
-      // Use AccountsController to sync account state.
       if (isOnline) {
-        await AccountsController.syncBalance(account, api);
-        await AccountsController.syncNominationPoolData(account, api);
-        await AccountsController.syncNominatingData(account, api);
+        const res = await APIsController.getConnectedApiOrThrow(chainId);
+        const api = res.getApi();
+        await AccountsController.syncAccount(account, api);
       }
 
       // Subscribe new account to all possible subscriptions if setting enabled.

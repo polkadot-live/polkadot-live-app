@@ -71,6 +71,28 @@ export class AccountsController {
   static getManagedChains = (): ChainID[] => Array.from(this.accounts.keys());
 
   /**
+   * Sync live data for all managed accounts.
+   */
+  static syncAllAccounts = async (api: DedotClientSet, chainId: ChainID) => {
+    await Promise.all([
+      this.syncAllBalances(api, chainId),
+      this.syncAllNominatingData(api, chainId),
+      this.syncAllNominationPoolData(api, chainId),
+    ]);
+  };
+
+  /**
+   * Sync live data for a single managed account.
+   */
+  static syncAccount = async (account: Account, api: DedotClientSet) => {
+    await Promise.all([
+      this.syncBalance(account, api),
+      this.syncNominationPoolData(account, api),
+      this.syncNominatingData(account, api),
+    ]);
+  };
+
+  /**
    * Set up-to-date balances for all managed accounts.
    */
   static syncAllBalances = async (api: DedotClientSet, chainId: ChainID) => {
