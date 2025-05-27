@@ -6,7 +6,6 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import type { ConnectionsContextInterface } from './types';
 import type { IpcRendererEvent } from 'electron';
 import type { SyncID } from '@polkadot-live/types/communication';
-import type { WcSyncFlags } from '@polkadot-live/types/walletConnect';
 import type { PersistedSettings } from '@polkadot-live/types/settings';
 
 /**
@@ -27,128 +26,63 @@ export const ConnectionsProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  // Flag set to `true` when app is in online mode.
-  const [isConnected, setIsConnected] = useState(false);
+  /**
+   * Cache with default values.
+   */
+  const [cache, setCache] = useState(
+    new Map<SyncID, boolean>([
+      ['account:importing', false],
+      ['backup:exporting', false],
+      ['backup:importing', false],
+      ['extrinsic:building', false],
+      ['mode:connected', false],
+      ['mode:online', false],
+      ['wc:account:approved', false],
+      ['wc:account:verifying', false],
+      ['wc:connecting', false],
+      ['wc:disconnecting', false],
+      ['wc:initialized', false],
+      ['wc:session:restored', false],
+    ])
+  );
 
-  // Flag shared between renderers (not main process).
-  const [isOnlineMode, setIsOnlineMode] = useState(false);
+  // Return `true` if app has internet connectivity.
+  const isConnected = (): boolean => cache.get('mode:connected') || false;
 
-  // Flag set to `true` when app is importing data from backup file.
-  const [isImporting, setIsImporting] = useState(false);
-
-  // Flag set to `true` when app is adding an account to main window.
-  const [isImportingAccount, setIsImportingAccount] = useState(false);
+  const cacheGet = (key: SyncID): boolean => cache.get(key) || false;
 
   // Flag set to `true` when app's theme is dark mode.
   const [darkMode, setDarkMode] = useState(true);
 
-  // Flag set to `true` when an extrinsic is getting built.
-  const [isBuildingExtrinsic, setIsBuildingExtrinsic] = useState(false);
-
-  // WalletConnect flags.
-  const [wcSyncFlags, setWcSyncFlags] = useState<WcSyncFlags>({
-    wcConnecting: false,
-    wcDisconnecting: false,
-    wcInitialized: false,
-    wcSessionRestored: false,
-    wcAccountApproved: false,
-    wcVerifyingAccount: false,
-  });
-
   useEffect(() => {
-    const getAsBoolean = async (syncId: SyncID) =>
-      (await window.myAPI.getSharedState(syncId)) as boolean;
-
     // Synchronize flags in store.
     const syncSharedStateOnMount = async () => {
+      // TODO: Integrate into cache.
       const settings: PersistedSettings = await window.myAPI.getAppSettings();
       setDarkMode(settings.appDarkMode);
 
-      setIsConnected(await getAsBoolean('mode:connected'));
-      setIsOnlineMode(await getAsBoolean('mode:online'));
-      setIsImporting(await getAsBoolean('backup:importing'));
-      setIsImportingAccount(await getAsBoolean('account:importing'));
-      setIsBuildingExtrinsic(await getAsBoolean('extrinsic:building'));
-
-      // Get WalletConnect flags asynchronously.
-      const results = await Promise.all([
-        getAsBoolean('wc:connecting'),
-        getAsBoolean('wc:disconnecting'),
-        getAsBoolean('wc:initialized'),
-        getAsBoolean('wc:session:restored'),
-        getAsBoolean('wc:account:approved'),
-        getAsBoolean('wc:account:verifying'),
-      ]);
-
-      setWcSyncFlags({
-        wcConnecting: results[0],
-        wcDisconnecting: results[1],
-        wcInitialized: results[2],
-        wcSessionRestored: results[3],
-        wcAccountApproved: results[4],
-        wcVerifyingAccount: results[5],
-      });
+      // TODO: Optimise with one IPC.
+      for (const key of Array.from(cache.keys())) {
+        const res = (await window.myAPI.getSharedState(key)) as boolean;
+        setCache((pv) => new Map(pv).set(key, res));
+      }
     };
 
-    // Listen for shared state syncing.
+    /**
+     * Listen for shared state syncing.
+     */
     window.myAPI.syncSharedState(
       (
         _: IpcRendererEvent,
         { syncId, state }: { syncId: SyncID; state: string | boolean }
       ) => {
         switch (syncId) {
-          case 'account:importing': {
-            setIsImportingAccount(state as boolean);
-            break;
-          }
-          case 'backup:importing': {
-            setIsImporting(state as boolean);
-            break;
-          }
-          case 'extrinsic:building': {
-            setIsBuildingExtrinsic(state as boolean);
-            break;
-          }
-          case 'mode:connected': {
-            setIsConnected(state as boolean);
-            break;
-          }
           case 'mode:dark': {
             setDarkMode(state as boolean);
             break;
           }
-          case 'mode:online': {
-            setIsOnlineMode(state as boolean);
-            break;
-          }
-          case 'wc:account:approved': {
-            const wcAccountApproved = state as boolean;
-            setWcSyncFlags((pv) => ({ ...pv, wcAccountApproved }));
-            break;
-          }
-          case 'wc:account:verifying': {
-            const wcVerifyingAccount = state as boolean;
-            setWcSyncFlags((pv) => ({ ...pv, wcVerifyingAccount }));
-            break;
-          }
-          case 'wc:connecting': {
-            const wcConnecting = state as boolean;
-            setWcSyncFlags((pv) => ({ ...pv, wcConnecting }));
-            break;
-          }
-          case 'wc:disconnecting': {
-            const wcDisconnecting = state as boolean;
-            setWcSyncFlags((pv) => ({ ...pv, wcDisconnecting }));
-            break;
-          }
-          case 'wc:initialized': {
-            const wcInitialized = state as boolean;
-            setWcSyncFlags((pv) => ({ ...pv, wcInitialized }));
-            break;
-          }
-          case 'wc:session:restored': {
-            const wcSessionRestored = state as boolean;
-            setWcSyncFlags((pv) => ({ ...pv, wcSessionRestored }));
+          default: {
+            setCache((pv) => new Map(pv).set(syncId, state as boolean));
             break;
           }
         }
@@ -161,19 +95,15 @@ export const ConnectionsProvider = ({
   /**
    * Return flag indicating whether app is in online or offline mode.
    */
-  const getOnlineMode = () => isConnected && isOnlineMode;
+  const getOnlineMode = () => isConnected() && cacheGet('mode:online');
 
   return (
     <ConnectionsContext.Provider
       value={{
         darkMode,
-        isConnected,
-        isImporting,
-        isImportingAccount,
-        isOnlineMode,
-        isBuildingExtrinsic,
-        wcSyncFlags,
+        cacheGet,
         getOnlineMode,
+        isConnected,
       }}
     >
       {children}

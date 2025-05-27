@@ -31,15 +31,7 @@ export const Footer = () => {
     showWorkingSpinner,
   } = useChains();
 
-  const {
-    getOnlineMode,
-    darkMode,
-    isBuildingExtrinsic,
-    isConnected,
-    isImporting,
-    isImportingAccount,
-  } = useConnections();
-
+  const { darkMode, getOnlineMode, isConnected, cacheGet } = useConnections();
   const { chainHasIntervalSubscriptions } = useIntervalSubscriptions();
   const { chainHasSubscriptions } = useSubscriptions();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
@@ -66,9 +58,9 @@ export const Footer = () => {
   const allowDisconnect = ({ chainId, status }: FlattenedAPIData) =>
     appLoading ||
     status === 'disconnected' ||
-    isBuildingExtrinsic ||
-    isImporting ||
-    isImportingAccount
+    cacheGet('account:importing') ||
+    cacheGet('backup:importing') ||
+    cacheGet('extrinsic:building')
       ? false
       : !chainHasSubscriptions(chainId) &&
         !chainHasIntervalSubscriptions(chainId);
@@ -140,7 +132,7 @@ export const Footer = () => {
                   <SelectRpc
                     apiData={apiData}
                     setWorkingEndpoint={setWorkingEndpoint}
-                    disabled={isWorking(chainId) || !isConnected}
+                    disabled={isWorking(chainId) || !isConnected()}
                   />
 
                   {/* Connect button */}
@@ -156,7 +148,7 @@ export const Footer = () => {
                         disabled={
                           apiData.status === 'connected' ||
                           isWorking(chainId) ||
-                          !isConnected
+                          !isConnected()
                         }
                       >
                         <FontAwesomeIcon
@@ -182,7 +174,7 @@ export const Footer = () => {
                         disabled={
                           !allowDisconnect(apiData) ||
                           isWorking(chainId) ||
-                          !isConnected
+                          !isConnected()
                         }
                       >
                         <FontAwesomeIcon

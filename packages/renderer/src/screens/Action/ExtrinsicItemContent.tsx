@@ -21,8 +21,9 @@ export const ExtrinsicItemContent = ({
   info,
   onClickSummary,
 }: ExtrinsicItemContentProps): React.ReactNode => {
-  const { isBuildingExtrinsic } = useConnections();
   const { chainId, data } = info.actionMeta;
+  const { cacheGet } = useConnections();
+  const isBuildingExtrinsic = cacheGet('extrinsic:building');
 
   const renderSummaryButton = () => (
     <button className="SummaryButton" onClick={() => onClickSummary()}>

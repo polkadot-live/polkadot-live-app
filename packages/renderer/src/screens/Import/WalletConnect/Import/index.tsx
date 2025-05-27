@@ -32,16 +32,11 @@ import { AddressListFooter, ImportAddressRow } from '../../Wrappers';
 import type { ImportProps } from './types';
 
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
-  const {
-    darkMode,
-    getOnlineMode,
-    wcSyncFlags: {
-      wcConnecting,
-      wcDisconnecting,
-      wcInitialized,
-      wcSessionRestored,
-    },
-  } = useConnections();
+  const { darkMode, getOnlineMode, cacheGet } = useConnections();
+  const wcConnecting = cacheGet('wc:connecting');
+  const wcDisconnecting = cacheGet('wc:disconnecting');
+  const wcInitialized = cacheGet('wc:initialized');
+  const wcSessionRestored = cacheGet('wc:session:restored');
 
   const { isAlreadyImported, wcAddresses } = useAddresses();
 

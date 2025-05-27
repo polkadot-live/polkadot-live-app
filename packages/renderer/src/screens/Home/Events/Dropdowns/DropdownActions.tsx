@@ -25,7 +25,8 @@ export const ActionsDropdown = ({
   uriActions,
 }: ActionsDropdownProps) => {
   const { isConnecting } = useBootstrapping();
-  const { darkMode, isBuildingExtrinsic, getOnlineMode } = useConnections();
+  const { cacheGet, darkMode, getOnlineMode } = useConnections();
+  const isBuildingExtrinsic = cacheGet('extrinsic:building');
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
   // Extract account source from event.

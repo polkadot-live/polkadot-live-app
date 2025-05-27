@@ -18,10 +18,11 @@ interface WcSignOverlayProps {
 }
 
 export const WcSignOverlay = ({ info }: WcSignOverlayProps) => {
-  const {
-    isBuildingExtrinsic,
-    wcSyncFlags: { wcSessionRestored, wcAccountApproved, wcVerifyingAccount },
-  } = useConnections();
+  const { cacheGet } = useConnections();
+  const isBuildingExtrinsic = cacheGet('extrinsic:building');
+  const wcAccountApproved = cacheGet('wc:account:approved');
+  const wcSessionRestored = cacheGet('wc:session:restored');
+  const wcVerifyingAccount = cacheGet('wc:account:verifying');
 
   const { setDisableClose, setStatus: setOverlayStatus } = useOverlay();
 

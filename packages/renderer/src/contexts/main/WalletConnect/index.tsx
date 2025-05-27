@@ -38,12 +38,11 @@ export const WalletConnectProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const {
-    getOnlineMode,
-    isConnected,
-    isOnlineMode,
-    wcSyncFlags: { wcInitialized, wcSessionRestored },
-  } = useConnections();
+  const { cacheGet, getOnlineMode, isConnected } = useConnections();
+  const connected = isConnected();
+  const onlineMode = cacheGet('mode:online');
+  const wcInitialized = cacheGet('wc:initialized');
+  const wcSessionRestored = cacheGet('wc:session:restored');
 
   const wcProvider = useRef<UniversalProvider | null>(null);
   const wcSession = useRef<AnyData | null>(null);
@@ -550,7 +549,7 @@ export const WalletConnectProvider = ({
       console.log('> Init wallet connect provider (Online).');
       initProvider();
     }
-  }, [isConnected, isOnlineMode]);
+  }, [connected, onlineMode]);
 
   useEffect(() => {
     wcInitializedRef.current = wcInitialized;

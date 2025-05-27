@@ -56,7 +56,8 @@ export const Permissions = ({
 }: PermissionsProps) => {
   const { showDebuggingSubscriptions } = useAppSettings();
   const { isConnecting } = useBootstrapping();
-  const { darkMode, getOnlineMode, isImporting } = useConnections();
+  const { cacheGet, darkMode, getOnlineMode } = useConnections();
+  const isImportingData = cacheGet('backup:importing');
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
   const { updateTask, handleQueuedToggle, toggleCategoryTasks, getTaskType } =
@@ -192,7 +193,7 @@ export const Permissions = ({
   /// Determine whether the toggle should be disabled based on the
   /// task and account data.
   const getDisabled = (task: SubscriptionTask) => {
-    if (!getOnlineMode() || isConnecting || isImporting) {
+    if (!getOnlineMode() || isConnecting || isImportingData) {
       return true;
     }
 
@@ -218,7 +219,7 @@ export const Permissions = ({
 
   /// Determines if interval task should be disabled.
   const isIntervalTaskDisabled = () =>
-    !getOnlineMode() || isConnecting || isImporting;
+    !getOnlineMode() || isConnecting || isImportingData;
 
   const maybeAccountAddress =
     categorisedTasks.size > 0

@@ -46,7 +46,7 @@ export const SelectRpc = ({
 
   /// Get class name for connected status icon.
   const getStatusClass = () =>
-    !isConnected
+    !isConnected()
       ? 'danger'
       : apiData.status === 'connected'
         ? 'success'

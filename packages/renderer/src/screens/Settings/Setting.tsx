@@ -16,7 +16,7 @@ export const Setting = ({ setting, handleSetting }: SettingProps) => {
 
   const { openHelp } = useHelp();
   const { getSwitchState, handleSwitchToggle } = useSettingFlags();
-  const { isImporting } = useConnections();
+  const { cacheGet } = useConnections();
 
   /// Handle a setting switch toggle.
   const handleSwitchToggleOuter = () => {
@@ -45,7 +45,7 @@ export const Setting = ({ setting, handleSetting }: SettingProps) => {
   const getDisabled = (action: SettingAction): boolean =>
     action === 'settings:execute:importData' ||
     action === 'settings:execute:exportData'
-      ? isImporting
+      ? cacheGet('backup:importing')
       : false;
 
   /// Get specific flag for import button.

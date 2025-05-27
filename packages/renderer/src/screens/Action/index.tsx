@@ -76,7 +76,8 @@ export const Action = () => {
       : setPage(page < pageCount ? page + 1 : page);
   };
 
-  const { isBuildingExtrinsic, darkMode, getOnlineMode } = useConnections();
+  const { cacheGet, darkMode, getOnlineMode } = useConnections();
+  const isBuildingExtrinsic = cacheGet('extrinsic:building');
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
   const [dialogInfo, setDialogInfo] = useState<ExtrinsicInfo | null>(null);
