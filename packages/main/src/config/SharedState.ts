@@ -1,70 +1,56 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { WcSyncFlags } from '@polkadot-live/types/walletConnect';
+import type { SyncID } from '@polkadot-live/types/communication';
 
 export class SharedState {
+  /**
+   * Cache with default values.
+   */
+  private static cache = new Map<SyncID, boolean>([
+    ['account:importing', false],
+    ['backup:importing', false],
+    ['extrinsic:building', false],
+    ['mode:online', false],
+    ['wc:account:approved', false],
+    ['wc:account:verifying', false],
+    ['wc:connecting', false],
+    ['wc:disconnecting', false],
+    ['wc:initialized', false],
+    ['wc:session:restored', false],
+  ]);
+
+  // TODO: Put in cache.
   private static _exportingData = false;
-  private static _onlineMode = false;
+
+  /**
+   * Get a cached value or `false` if it doesn't exist.
+   */
+  static get = (key: SyncID): boolean => this.cache.get(key) || false;
+
+  /**
+   * Set a cached value.
+   */
+  static set = (key: SyncID, value: boolean) => this.cache.set(key, value);
+
+  /**
+   * Get all WalletConnect flags.
+   */
+  static getWcFlags = () => ({
+    wcAccountApproved: Boolean(this.get('wc:account:approved')),
+    wcConnecting: Boolean(this.get('wc:account:approved')),
+    wcDisconnecting: Boolean(this.get('wc:account:approved')),
+    wcInitialized: Boolean(this.get('wc:account:approved')),
+    wcSessionRestored: Boolean(this.get('wc:account:approved')),
+    wcVerifyingAccount: Boolean(this.get('wc:account:approved')),
+  });
 
   // Relayed state.
-  private static _importingData = false;
-  private static _importingAccount = false;
-  private static _isBuildingExtrinsic = false;
-  private static _wcSyncFlags: WcSyncFlags = {
-    wcAccountApproved: false,
-    wcConnecting: false,
-    wcDisconnecting: false,
-    wcInitialized: false,
-    wcSessionRestored: false,
-    wcVerifyingAccount: false,
-  };
-
   static get exportingData(): boolean {
     return this._exportingData;
   }
 
   static set exportingData(flag: boolean) {
     this._exportingData = flag;
-  }
-
-  static get importingData(): boolean {
-    return this._importingData;
-  }
-
-  static set importingData(flag: boolean) {
-    this._importingData = flag;
-  }
-
-  static get importingAccount(): boolean {
-    return this._importingAccount;
-  }
-
-  static set importingAccount(flag: boolean) {
-    this._importingAccount = flag;
-  }
-
-  static get onlineMode(): boolean {
-    return this._onlineMode;
-  }
-
-  static set onlineMode(flag: boolean) {
-    this._onlineMode = flag;
-  }
-
-  static get isBuildingExtrinsic(): boolean {
-    return this._isBuildingExtrinsic;
-  }
-
-  static set isBuildingExtrinsic(flag: boolean) {
-    this._isBuildingExtrinsic = flag;
-  }
-
-  static get wcSyncFlags(): WcSyncFlags {
-    return this._wcSyncFlags;
-  }
-
-  static set wcSyncFlags(flags: WcSyncFlags) {
-    this._wcSyncFlags = flags;
   }
 }

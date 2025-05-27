@@ -381,64 +381,16 @@ app.whenReady().then(async () => {
 
   ipcMain.handle(
     'app:sharedState:get',
-    async (_, syncId: SyncID): Promise<string | boolean> => {
-      switch (syncId) {
-        case 'mode:connected': {
-          return OnlineStatusController.getStatus();
-        }
-        case 'backup:importing': {
-          return SharedState.importingData;
-        }
-        case 'account:importing': {
-          return SharedState.importingAccount;
-        }
-        case 'mode:online': {
-          return SharedState.onlineMode;
-        }
-        case 'extrinsic:building': {
-          return SharedState.isBuildingExtrinsic;
-        }
-        case 'wc:account:approved': {
-          return SharedState.wcSyncFlags.wcAccountApproved;
-        }
-        case 'wc:account:verifying': {
-          return SharedState.wcSyncFlags.wcVerifyingAccount;
-        }
-        case 'wc:connecting': {
-          return SharedState.wcSyncFlags.wcConnecting;
-        }
-        case 'wc:disconnecting': {
-          return SharedState.wcSyncFlags.wcDisconnecting;
-        }
-        case 'wc:initialized': {
-          return SharedState.wcSyncFlags.wcInitialized;
-        }
-        case 'wc:session:restored': {
-          return SharedState.wcSyncFlags.wcSessionRestored;
-        }
-        default: {
-          return false;
-        }
-      }
-    }
+    async (_, syncId: SyncID): Promise<string | boolean> =>
+      syncId === 'mode:connected'
+        ? OnlineStatusController.getStatus()
+        : SharedState.get(syncId)
   );
 
   ipcMain.on(
     'app:sharedState:relay',
     (_, syncId: SyncID, state: string | boolean) => {
       switch (syncId) {
-        case 'account:importing': {
-          SharedState.importingAccount = state as boolean;
-          break;
-        }
-        case 'backup:importing': {
-          SharedState.importingData = state as boolean;
-          break;
-        }
-        case 'extrinsic:building': {
-          SharedState.isBuildingExtrinsic = state as boolean;
-          break;
-        }
         case 'mode:connected': {
           break;
         }
@@ -456,44 +408,8 @@ app.whenReady().then(async () => {
           );
           break;
         }
-        case 'mode:online': {
-          SharedState.onlineMode = state as boolean;
-          break;
-        }
-        case 'wc:account:approved': {
-          const pv = { ...SharedState.wcSyncFlags };
-          const wcAccountApproved = state as boolean;
-          SharedState.wcSyncFlags = { ...pv, wcAccountApproved };
-          break;
-        }
-        case 'wc:account:verifying': {
-          const pv = { ...SharedState.wcSyncFlags };
-          const wcVerifyingAccount = state as boolean;
-          SharedState.wcSyncFlags = { ...pv, wcVerifyingAccount };
-          break;
-        }
-        case 'wc:connecting': {
-          const pv = { ...SharedState.wcSyncFlags };
-          const wcConnecting = state as boolean;
-          SharedState.wcSyncFlags = { ...pv, wcConnecting };
-          break;
-        }
-        case 'wc:disconnecting': {
-          const pv = { ...SharedState.wcSyncFlags };
-          const wcDisconnecting = state as boolean;
-          SharedState.wcSyncFlags = { ...pv, wcDisconnecting };
-          break;
-        }
-        case 'wc:initialized': {
-          const pv = { ...SharedState.wcSyncFlags };
-          const wcInitialized = state as boolean;
-          SharedState.wcSyncFlags = { ...pv, wcInitialized };
-          break;
-        }
-        case 'wc:session:restored': {
-          const pv = { ...SharedState.wcSyncFlags };
-          const wcSessionRestored = state as boolean;
-          SharedState.wcSyncFlags = { ...pv, wcSessionRestored };
+        default: {
+          SharedState.set(syncId, state as boolean);
           break;
         }
       }
