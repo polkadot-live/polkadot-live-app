@@ -184,8 +184,8 @@ export const BootstrappingProvider = ({
       });
 
       const isConnected: boolean = await Core.getOnlineStatus();
-      window.myAPI.relaySharedState('isOnlineMode', isConnected);
-      window.myAPI.relaySharedState('isConnected', isConnected);
+      window.myAPI.relaySharedState('mode:online', isConnected);
+      window.myAPI.relaySharedState('mode:connected', isConnected);
 
       const initTasks: (() => Promise<AnyData>)[] = [
         initAccounts,
@@ -235,8 +235,9 @@ export const BootstrappingProvider = ({
     IntervalsController.stopInterval();
 
     // Report online status to renderers.
-    window.myAPI.relaySharedState('isOnlineMode', false);
-    window.myAPI.relaySharedState('isConnected', await Core.getOnlineStatus());
+    const status = await Core.getOnlineStatus();
+    window.myAPI.relaySharedState('mode:connected', status);
+    window.myAPI.relaySharedState('mode:online', false);
 
     // Disconnect from chains.
     await APIsController.closeAll();
@@ -279,8 +280,8 @@ export const BootstrappingProvider = ({
     } else {
       // Report online status to renderers.
       const status = await Core.getOnlineStatus();
-      window.myAPI.relaySharedState('isOnlineMode', status);
-      window.myAPI.relaySharedState('isConnected', status);
+      window.myAPI.relaySharedState('mode:online', status);
+      window.myAPI.relaySharedState('mode:connected', status);
     }
   };
 

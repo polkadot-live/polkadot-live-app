@@ -383,19 +383,19 @@ app.whenReady().then(async () => {
     'app:sharedState:get',
     async (_, syncId: SyncID): Promise<string | boolean> => {
       switch (syncId) {
-        case 'isConnected': {
+        case 'mode:connected': {
           return OnlineStatusController.getStatus();
         }
-        case 'isImporting': {
+        case 'backup:importing': {
           return SharedState.importingData;
         }
-        case 'isImportingAccount': {
+        case 'account:importing': {
           return SharedState.importingAccount;
         }
-        case 'isOnlineMode': {
+        case 'mode:online': {
           return SharedState.onlineMode;
         }
-        case 'isBuildingExtrinsic': {
+        case 'extrinsic:building': {
           return SharedState.isBuildingExtrinsic;
         }
         case 'wc:account:approved': {
@@ -427,7 +427,22 @@ app.whenReady().then(async () => {
     'app:sharedState:relay',
     (_, syncId: SyncID, state: string | boolean) => {
       switch (syncId) {
-        case 'darkMode': {
+        case 'account:importing': {
+          SharedState.importingAccount = state as boolean;
+          break;
+        }
+        case 'backup:importing': {
+          SharedState.importingData = state as boolean;
+          break;
+        }
+        case 'extrinsic:building': {
+          SharedState.isBuildingExtrinsic = state as boolean;
+          break;
+        }
+        case 'mode:connected': {
+          break;
+        }
+        case 'mode:dark': {
           // Persist new flag to store.
           SettingsController.process({
             action: 'settings:set:darkMode',
@@ -441,23 +456,8 @@ app.whenReady().then(async () => {
           );
           break;
         }
-        case 'isConnected': {
-          break;
-        }
-        case 'isImporting': {
-          SharedState.importingData = state as boolean;
-          break;
-        }
-        case 'isImportingAccount': {
-          SharedState.importingAccount = state as boolean;
-          break;
-        }
-        case 'isOnlineMode': {
+        case 'mode:online': {
           SharedState.onlineMode = state as boolean;
-          break;
-        }
-        case 'isBuildingExtrinsic': {
-          SharedState.isBuildingExtrinsic = state as boolean;
           break;
         }
         case 'wc:account:approved': {

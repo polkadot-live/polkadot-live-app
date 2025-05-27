@@ -64,11 +64,11 @@ export const ConnectionsProvider = ({
       const settings: PersistedSettings = await window.myAPI.getAppSettings();
       setDarkMode(settings.appDarkMode);
 
-      setIsConnected(await getAsBoolean('isConnected'));
-      setIsOnlineMode(await getAsBoolean('isOnlineMode'));
-      setIsImporting(await getAsBoolean('isImporting'));
-      setIsImportingAccount(await getAsBoolean('isImportingAccount'));
-      setIsBuildingExtrinsic(await getAsBoolean('isBuildingExtrinsic'));
+      setIsConnected(await getAsBoolean('mode:connected'));
+      setIsOnlineMode(await getAsBoolean('mode:online'));
+      setIsImporting(await getAsBoolean('backup:importing'));
+      setIsImportingAccount(await getAsBoolean('account:importing'));
+      setIsBuildingExtrinsic(await getAsBoolean('extrinsic:building'));
 
       // Get WalletConnect flags asynchronously.
       const results = await Promise.all([
@@ -97,33 +97,38 @@ export const ConnectionsProvider = ({
         { syncId, state }: { syncId: SyncID; state: string | boolean }
       ) => {
         switch (syncId) {
-          case 'darkMode': {
-            setDarkMode(state as boolean);
-            break;
-          }
-          case 'isConnected': {
-            setIsConnected(state as boolean);
-            break;
-          }
-          case 'isImporting': {
-            setIsImporting(state as boolean);
-            break;
-          }
-          case 'isImportingAccount': {
+          case 'account:importing': {
             setIsImportingAccount(state as boolean);
             break;
           }
-          case 'isOnlineMode': {
-            setIsOnlineMode(state as boolean);
+          case 'backup:importing': {
+            setIsImporting(state as boolean);
             break;
           }
-          case 'isBuildingExtrinsic': {
+          case 'extrinsic:building': {
             setIsBuildingExtrinsic(state as boolean);
+            break;
+          }
+          case 'mode:connected': {
+            setIsConnected(state as boolean);
+            break;
+          }
+          case 'mode:dark': {
+            setDarkMode(state as boolean);
+            break;
+          }
+          case 'mode:online': {
+            setIsOnlineMode(state as boolean);
             break;
           }
           case 'wc:account:approved': {
             const wcAccountApproved = state as boolean;
             setWcSyncFlags((pv) => ({ ...pv, wcAccountApproved }));
+            break;
+          }
+          case 'wc:account:verifying': {
+            const wcVerifyingAccount = state as boolean;
+            setWcSyncFlags((pv) => ({ ...pv, wcVerifyingAccount }));
             break;
           }
           case 'wc:connecting': {
@@ -144,11 +149,6 @@ export const ConnectionsProvider = ({
           case 'wc:session:restored': {
             const wcSessionRestored = state as boolean;
             setWcSyncFlags((pv) => ({ ...pv, wcSessionRestored }));
-            break;
-          }
-          case 'wc:account:verifying': {
-            const wcVerifyingAccount = state as boolean;
-            setWcSyncFlags((pv) => ({ ...pv, wcVerifyingAccount }));
             break;
           }
         }

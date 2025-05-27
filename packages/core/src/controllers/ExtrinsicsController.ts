@@ -384,7 +384,7 @@ export class ExtrinsicsController {
         }
       });
     } catch (e) {
-      window.myAPI.relaySharedState('isBuildingExtrinsic', false);
+      window.myAPI.relaySharedState('extrinsic:building', false);
       console.log(e);
       this.postTxStatus('error', info);
     }

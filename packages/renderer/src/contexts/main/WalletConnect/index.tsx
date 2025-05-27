@@ -383,7 +383,7 @@ export const WalletConnectProvider = ({
       await cacheOrPrepareSession('extrinsics');
 
       window.myAPI.relaySharedState('wc:connecting', false);
-      window.myAPI.relaySharedState('isBuildingExtrinsic', false);
+      window.myAPI.relaySharedState('extrinsic:building', false);
 
       // Await approval and cache session and pairing topic.
       const session = await wcMetaRef.current!.approval();
@@ -434,7 +434,7 @@ export const WalletConnectProvider = ({
           const message = 'Error - Cancel pending signature before re-signing';
           sendToastError('extrinsics', message);
         }
-        window.myAPI.relaySharedState('isBuildingExtrinsic', false);
+        window.myAPI.relaySharedState('extrinsic:building', false);
         return;
       }
 
@@ -477,11 +477,11 @@ export const WalletConnectProvider = ({
       } else {
         // Signing canceled, don't submit transaction.
         wcTxSignMap.current.delete(txId);
-        window.myAPI.relaySharedState('isBuildingExtrinsic', false);
+        window.myAPI.relaySharedState('extrinsic:building', false);
       }
     } catch (error: AnyData) {
       wcTxSignMap.current.delete(info.txId);
-      window.myAPI.relaySharedState('isBuildingExtrinsic', false);
+      window.myAPI.relaySharedState('extrinsic:building', false);
 
       console.log(error);
       error.code === -32000

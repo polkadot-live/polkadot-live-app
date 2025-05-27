@@ -4,19 +4,25 @@
 import type { AnyData } from './misc';
 
 export type SyncID =
-  | 'darkMode'
-  | 'isBuildingExtrinsic'
-  | 'isConnected'
-  | 'isImporting'
-  | 'isImportingAccount'
-  | 'isOnlineMode'
-  // WalletConnect
+  // Importing an account to main window flag.
+  | 'account:importing'
+  // Importing data from backup file flag.
+  | 'backup:importing'
+  // Building extrinsics flag.
+  | 'extrinsic:building'
+  // Internet connection flag.
+  | 'mode:connected'
+  // Dark mode flag.
+  | 'mode:dark'
+  // Online mode flag.
+  | 'mode:online'
+  // WalletConnect flags.
+  | 'wc:account:approved'
+  | 'wc:account:verifying'
   | 'wc:connecting'
   | 'wc:disconnecting'
   | 'wc:initialized'
-  | 'wc:session:restored'
-  | 'wc:account:approved'
-  | 'wc:account:verifying';
+  | 'wc:session:restored';
 
 export interface RelayPortTask {
   windowId: string;

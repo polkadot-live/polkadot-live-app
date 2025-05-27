@@ -92,7 +92,7 @@ export const useMainMessagePorts = () => {
    */
   const handleImportAddress = async (ev: MessageEvent, fromBackup: boolean) => {
     try {
-      window.myAPI.relaySharedState('isImportingAccount', true);
+      window.myAPI.relaySharedState('account:importing', true);
       const { chainId, source, address, name: accountName } = ev.data.data;
 
       // Add address to accounts controller.
@@ -129,7 +129,7 @@ export const useMainMessagePorts = () => {
 
       // Return if account already exists and isn't being re-imported.
       if (!account) {
-        window.myAPI.relaySharedState('isImportingAccount', false);
+        window.myAPI.relaySharedState('account:importing', false);
         return;
       }
 
@@ -180,13 +180,13 @@ export const useMainMessagePorts = () => {
         data: { address, source, status: false, success: true, accountName },
       });
 
-      window.myAPI.relaySharedState('isImportingAccount', false);
+      window.myAPI.relaySharedState('account:importing', false);
       window.myAPI.umamiEvent('account-import', { source, chainId });
     } catch (err) {
       console.error(err);
       const { address, source, name: accountName } = ev.data.data;
 
-      window.myAPI.relaySharedState('isImportingAccount', false);
+      window.myAPI.relaySharedState('account:importing', false);
       ConfigRenderer.portToImport?.postMessage({
         task: 'import:account:processing',
         data: { address, source, status: false, success: false, accountName },
