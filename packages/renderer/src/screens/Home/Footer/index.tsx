@@ -31,7 +31,8 @@ export const Footer = () => {
     showWorkingSpinner,
   } = useChains();
 
-  const { darkMode, getOnlineMode, isConnected, cacheGet } = useConnections();
+  const { darkMode, getOnlineMode, cacheGet } = useConnections();
+  const isConnected = cacheGet('mode:connected');
   const { chainHasIntervalSubscriptions } = useIntervalSubscriptions();
   const { chainHasSubscriptions } = useSubscriptions();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
@@ -132,7 +133,7 @@ export const Footer = () => {
                   <SelectRpc
                     apiData={apiData}
                     setWorkingEndpoint={setWorkingEndpoint}
-                    disabled={isWorking(chainId) || !isConnected()}
+                    disabled={isWorking(chainId) || !isConnected}
                   />
 
                   {/* Connect button */}
@@ -148,7 +149,7 @@ export const Footer = () => {
                         disabled={
                           apiData.status === 'connected' ||
                           isWorking(chainId) ||
-                          !isConnected()
+                          !isConnected
                         }
                       >
                         <FontAwesomeIcon
@@ -174,7 +175,7 @@ export const Footer = () => {
                         disabled={
                           !allowDisconnect(apiData) ||
                           isWorking(chainId) ||
-                          !isConnected()
+                          !isConnected
                         }
                       >
                         <FontAwesomeIcon

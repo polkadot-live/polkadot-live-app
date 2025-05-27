@@ -8,5 +8,4 @@ export const defaultConnectionsContext: ConnectionsContextInterface = {
   darkMode: true,
   cacheGet: () => false,
   getOnlineMode: () => true,
-  isConnected: () => false,
 };

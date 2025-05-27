@@ -7,5 +7,4 @@ export interface ConnectionsContextInterface {
   darkMode: boolean;
   cacheGet: (key: SyncID) => boolean;
   getOnlineMode: () => boolean;
-  isConnected: () => boolean;
 }

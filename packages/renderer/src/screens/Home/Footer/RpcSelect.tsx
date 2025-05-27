@@ -22,7 +22,8 @@ export const SelectRpc = ({
   const { chainId, endpoint } = apiData;
   const [selectedRpc, setSelectedRpc] = useState(endpoint);
   const { handleNewEndpointForChain } = useBootstrapping();
-  const { isConnected } = useConnections();
+  const { cacheGet } = useConnections();
+  const isConnected = cacheGet('mode:connected');
 
   /// Handle RPC change.
   const handleRpcChange = async (
@@ -46,7 +47,7 @@ export const SelectRpc = ({
 
   /// Get class name for connected status icon.
   const getStatusClass = () =>
-    !isConnected()
+    !isConnected
       ? 'danger'
       : apiData.status === 'connected'
         ? 'success'

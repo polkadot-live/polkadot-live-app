@@ -46,16 +46,18 @@ export const ConnectionsProvider = ({
     ])
   );
 
-  // Return `true` if app has internet connectivity.
-  const isConnected = (): boolean => cache.get('mode:connected') || false;
-
+  /**
+   * Get a cached value.
+   */
   const cacheGet = (key: SyncID): boolean => cache.get(key) || false;
 
   // Flag set to `true` when app's theme is dark mode.
   const [darkMode, setDarkMode] = useState(true);
 
   useEffect(() => {
-    // Synchronize flags in store.
+    /**
+     * Synchronize flags in store.
+     */
     const syncSharedStateOnMount = async () => {
       // TODO: Integrate into cache.
       const settings: PersistedSettings = await window.myAPI.getAppSettings();
@@ -95,7 +97,8 @@ export const ConnectionsProvider = ({
   /**
    * Return flag indicating whether app is in online or offline mode.
    */
-  const getOnlineMode = () => isConnected() && cacheGet('mode:online');
+  const getOnlineMode = () =>
+    cacheGet('mode:connected') && cacheGet('mode:online');
 
   return (
     <ConnectionsContext.Provider
@@ -103,7 +106,6 @@ export const ConnectionsProvider = ({
         darkMode,
         cacheGet,
         getOnlineMode,
-        isConnected,
       }}
     >
       {children}

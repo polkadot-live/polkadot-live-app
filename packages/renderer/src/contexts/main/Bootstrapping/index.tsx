@@ -41,8 +41,8 @@ export const BootstrappingProvider = ({
   children: React.ReactNode;
 }) => {
   const { addIntervalSubscription } = useIntervalSubscriptions();
-  const { isConnected } = useConnections();
-  const connected = isConnected();
+  const { cacheGet } = useConnections();
+  const isConnected = cacheGet('mode:connected');
 
   const [appLoading, setAppLoading] = useState(true);
   const [isAborting, setIsAborting] = useState(false);
@@ -155,12 +155,12 @@ export const BootstrappingProvider = ({
       await APIsController.closeAll();
     };
 
-    if (!isConnected()) {
+    if (!isConnected) {
       disconnectAll();
     } else {
       // TODO: Handle online mode.
     }
-  }, [connected]);
+  }, [isConnected]);
 
   /// Handle abort flag.
   useEffect(() => {
