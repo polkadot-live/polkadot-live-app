@@ -9,6 +9,7 @@ export class SharedState {
    */
   private static cache = new Map<SyncID, boolean>([
     ['account:importing', false],
+    ['backup:exporting', false],
     ['backup:importing', false],
     ['extrinsic:building', false],
     ['mode:online', false],
@@ -19,9 +20,6 @@ export class SharedState {
     ['wc:initialized', false],
     ['wc:session:restored', false],
   ]);
-
-  // TODO: Put in cache.
-  private static _exportingData = false;
 
   /**
    * Get a cached value or `false` if it doesn't exist.
@@ -44,13 +42,4 @@ export class SharedState {
     wcSessionRestored: Boolean(this.get('wc:account:approved')),
     wcVerifyingAccount: Boolean(this.get('wc:account:approved')),
   });
-
-  // Relayed state.
-  static get exportingData(): boolean {
-    return this._exportingData;
-  }
-
-  static set exportingData(flag: boolean) {
-    this._exportingData = flag;
-  }
 }

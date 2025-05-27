@@ -6,6 +6,8 @@ import type { AnyData } from './misc';
 export type SyncID =
   // Importing an account to main window flag.
   | 'account:importing'
+  // Exporting backup data flag.
+  | 'backup:exporting'
   // Importing data from backup file flag.
   | 'backup:importing'
   // Building extrinsics flag.
