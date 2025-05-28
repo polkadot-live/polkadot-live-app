@@ -30,16 +30,4 @@ export class SharedState {
    * Set a cached value.
    */
   static set = (key: SyncID, value: boolean) => this.cache.set(key, value);
-
-  /**
-   * Get all WalletConnect flags.
-   */
-  static getWcFlags = () => ({
-    wcAccountApproved: Boolean(this.get('wc:account:approved')),
-    wcConnecting: Boolean(this.get('wc:account:approved')),
-    wcDisconnecting: Boolean(this.get('wc:account:approved')),
-    wcInitialized: Boolean(this.get('wc:account:approved')),
-    wcSessionRestored: Boolean(this.get('wc:account:approved')),
-    wcVerifyingAccount: Boolean(this.get('wc:account:approved')),
-  });
 }
