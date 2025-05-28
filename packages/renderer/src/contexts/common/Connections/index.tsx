@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
+import { initSharedState } from '@polkadot-live/consts/sharedState';
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { ConnectionsContextInterface } from './types';
 import type { IpcRendererEvent } from 'electron';
@@ -30,20 +31,7 @@ export const ConnectionsProvider = ({
    * Cache with default values.
    */
   const [cache, setCache] = useState(
-    new Map<SyncID, boolean>([
-      ['account:importing', false],
-      ['backup:exporting', false],
-      ['backup:importing', false],
-      ['extrinsic:building', false],
-      ['mode:connected', false],
-      ['mode:online', false],
-      ['wc:account:approved', false],
-      ['wc:account:verifying', false],
-      ['wc:connecting', false],
-      ['wc:disconnecting', false],
-      ['wc:initialized', false],
-      ['wc:session:restored', false],
-    ])
+    new Map<SyncID, boolean>(initSharedState())
   );
 
   /**

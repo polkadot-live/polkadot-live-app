@@ -2,24 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { SyncID } from '@polkadot-live/types/communication';
+import { initSharedState } from '@polkadot-live/consts/sharedState';
 
 export class SharedState {
   /**
    * Cache with default values.
    */
-  private static cache = new Map<SyncID, boolean>([
-    ['account:importing', false],
-    ['backup:exporting', false],
-    ['backup:importing', false],
-    ['extrinsic:building', false],
-    ['mode:online', false],
-    ['wc:account:approved', false],
-    ['wc:account:verifying', false],
-    ['wc:connecting', false],
-    ['wc:disconnecting', false],
-    ['wc:initialized', false],
-    ['wc:session:restored', false],
-  ]);
+  private static cache: Map<SyncID, boolean> = initSharedState();
 
   /**
    * Get a cached value or `false` if it doesn't exist.
