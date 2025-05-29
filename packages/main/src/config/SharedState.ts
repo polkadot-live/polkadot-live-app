@@ -8,7 +8,16 @@ export class SharedState {
   /**
    * Cache with default values.
    */
-  private static cache: Map<SyncID, boolean> = initSharedState();
+  private static cache = new Map<SyncID, boolean>();
+
+  /**
+   * Initialize shared state cache.
+   */
+  static initialize = (connected: boolean) => {
+    this.cache = initSharedState()
+      .set('mode:connected', connected)
+      .set('mode:online', connected);
+  };
 
   /**
    * Get a cached value or `false` if it doesn't exist.

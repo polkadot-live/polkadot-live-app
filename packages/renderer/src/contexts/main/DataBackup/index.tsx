@@ -6,7 +6,6 @@ import { createContext, useContext } from 'react';
 import { defaultDataBackupContext } from './default';
 import * as Core from '@polkadot-live/core';
 import {
-  getOnlineStatus,
   getAddressChainId,
   AccountsController,
   IntervalsController,
@@ -14,6 +13,7 @@ import {
 } from '@polkadot-live/core';
 
 /// Main window contexts.
+import { useConnections } from '@ren/contexts/common';
 import { useEvents } from '@ren/contexts/main';
 import { useManage } from '../Manage';
 import { useIntervalSubscriptions } from '../IntervalSubscriptions';
@@ -47,6 +47,9 @@ export const DataBackupProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { cacheGet } = useConnections();
+  const isOnline = cacheGet('mode:connected');
+
   const { setEvents } = useEvents();
   const {
     updateRenderedSubscriptions,
@@ -179,9 +182,6 @@ export const DataBackupProvider = ({
         source === 'ledger'
           ? (JSON.parse(ser) as LedgerLocalAddress[])
           : (JSON.parse(ser) as LocalAddress[]);
-
-      // Check connection status and set isImported to `false` if app is offline.
-      const isOnline: boolean = await getOnlineStatus();
 
       // Process parsed addresses.
       for (const a of parsed) {

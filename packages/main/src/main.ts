@@ -137,6 +137,11 @@ app.whenReady().then(async () => {
   const { appHideDockIcon } = SettingsController.getAppSettings();
   appHideDockIcon && hideDockIcon();
 
+  // Initialize shared state cache.
+  await OnlineStatusController.initialize();
+  const connected = OnlineStatusController.getStatus();
+  SharedState.initialize(connected);
+
   // ------------------------------
   // Create windows
   // ------------------------------
@@ -234,11 +239,6 @@ app.whenReady().then(async () => {
   /**
    * Online Status
    */
-
-  ipcMain.on(
-    'main:task:connection',
-    async (_, task: IpcTask) => await OnlineStatusController.process(task)
-  );
 
   ipcMain.handle(
     'main:task:connection:async',
@@ -382,17 +382,25 @@ app.whenReady().then(async () => {
   ipcMain.handle(
     'app:sharedState:get',
     async (_, syncId: SyncID): Promise<string | boolean> =>
-      syncId === 'mode:connected'
-        ? OnlineStatusController.getStatus()
-        : SharedState.get(syncId)
+      SharedState.get(syncId)
   );
 
   ipcMain.on(
     'app:sharedState:relay',
-    (_, syncId: SyncID, state: string | boolean) => {
+    async (_, syncId: SyncID, state: string | boolean) => {
       switch (syncId) {
         case 'mode:connected': {
-          break;
+          // Handle status change.
+          await OnlineStatusController.handleStatusChange();
+          const status = OnlineStatusController.getStatus();
+          SharedState.set('mode:connected', status);
+
+          WindowsController.relaySharedState('renderer:sharedState:set', {
+            syncId,
+            state: status,
+          });
+
+          return;
         }
         case 'mode:dark': {
           // Persist new flag to store.
