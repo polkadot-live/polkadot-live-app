@@ -1993,6 +1993,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@polkadot-live/main@workspace:packages/main"
   dependencies:
+    "@polkadot-live/consts": "workspace:*"
     "@polkadot-live/types": "workspace:*"
     "@types/auto-launch": "npm:^5.0.2"
     "@types/debug": "npm:^4.1.12"

@@ -27,12 +27,12 @@ export class BackupController {
     }
 
     // Return early if export dialog is already open.
-    if (SharedState.exportingData) {
+    if (SharedState.get('backup:exporting')) {
       return { result: false, msg: 'executing' };
     }
 
     // Render transparent browser window over base window.
-    SharedState.exportingData = true;
+    SharedState.set('backup:exporting', true);
     let overlay = null;
     if (process.platform !== 'linux') {
       overlay = WindowsController.getOverlay();
@@ -70,14 +70,14 @@ export class BackupController {
           encoding: 'utf8',
         });
 
-        SharedState.exportingData = false;
+        SharedState.set('backup:exporting', false);
         return { result: true, msg: 'success' };
       } catch (err) {
-        SharedState.exportingData = false;
+        SharedState.set('backup:exporting', false);
         return { result: false, msg: 'error' };
       }
     } else {
-      SharedState.exportingData = false;
+      SharedState.set('backup:exporting', false);
       return { result: false, msg: 'canceled' };
     }
   }

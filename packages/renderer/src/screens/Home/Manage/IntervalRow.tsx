@@ -27,7 +27,10 @@ import type { IntervalRowProps } from './types';
 export const IntervalRow = ({ task }: IntervalRowProps) => {
   const { openHelp } = useHelp();
   const { isConnecting } = useBootstrapping();
-  const { darkMode, getOnlineMode, isImporting } = useConnections();
+
+  const { cacheGet, darkMode, getOnlineMode } = useConnections();
+  const isImportingData = cacheGet('backup:importing');
+  const isOnlineMode = getOnlineMode();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
   const {
@@ -53,12 +56,12 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
   );
 
   const [isDisabled, setIsDisabled] = useState<boolean>(
-    isConnecting || !getOnlineMode() || isImporting
+    isConnecting || !getOnlineMode() || isImportingData
   );
 
   useEffect(() => {
-    setIsDisabled(isConnecting || !getOnlineMode() || isImporting);
-  }, [isConnecting, getOnlineMode(), isImporting]);
+    setIsDisabled(isConnecting || !getOnlineMode() || isImportingData);
+  }, [isConnecting, isOnlineMode, isImportingData]);
 
   useEffect(() => {
     const newStatusToBoolean = task.status === 'enable';

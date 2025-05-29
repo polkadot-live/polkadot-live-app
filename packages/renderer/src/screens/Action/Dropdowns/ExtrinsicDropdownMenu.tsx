@@ -25,7 +25,8 @@ export const ExtrinsicDropdownMenu = ({
   onSummaryClick,
 }: ExtrinsicDropdownMenuProps) => {
   const { showMockUI } = useTxMeta();
-  const { darkMode, isBuildingExtrinsic, getOnlineMode } = useConnections();
+  const { cacheGet, darkMode, getOnlineMode } = useConnections();
+  const isBuildingExtrinsic = cacheGet('extrinsic:building');
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
   const [open, setOpen] = useState<boolean>(false);

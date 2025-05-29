@@ -31,15 +31,8 @@ export const Footer = () => {
     showWorkingSpinner,
   } = useChains();
 
-  const {
-    getOnlineMode,
-    darkMode,
-    isBuildingExtrinsic,
-    isConnected,
-    isImporting,
-    isImportingAccount,
-  } = useConnections();
-
+  const { darkMode, getOnlineMode, cacheGet } = useConnections();
+  const isConnected = cacheGet('mode:connected');
   const { chainHasIntervalSubscriptions } = useIntervalSubscriptions();
   const { chainHasSubscriptions } = useSubscriptions();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
@@ -66,9 +59,9 @@ export const Footer = () => {
   const allowDisconnect = ({ chainId, status }: FlattenedAPIData) =>
     appLoading ||
     status === 'disconnected' ||
-    isBuildingExtrinsic ||
-    isImporting ||
-    isImportingAccount
+    cacheGet('account:importing') ||
+    cacheGet('backup:importing') ||
+    cacheGet('extrinsic:building')
       ? false
       : !chainHasSubscriptions(chainId) &&
         !chainHasIntervalSubscriptions(chainId);

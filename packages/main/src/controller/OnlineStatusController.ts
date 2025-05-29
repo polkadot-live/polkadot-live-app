@@ -34,8 +34,8 @@ export class OnlineStatusController {
       case 'connection:init': {
         await this.initialize();
 
-        // Set app mode in main config.
-        SharedState.onlineMode = this.onlineStatus;
+        // Set online mode in shared state.
+        SharedState.set('mode:online', this.onlineStatus);
         return;
       }
       // Get connection status and send to frontend.

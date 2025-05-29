@@ -41,7 +41,8 @@ export const BootstrappingProvider = ({
   children: React.ReactNode;
 }) => {
   const { addIntervalSubscription } = useIntervalSubscriptions();
-  const { isConnected: systemConnected } = useConnections();
+  const { cacheGet } = useConnections();
+  const isConnected = cacheGet('mode:connected');
 
   const [appLoading, setAppLoading] = useState(true);
   const [isAborting, setIsAborting] = useState(false);
@@ -104,8 +105,8 @@ export const BootstrappingProvider = ({
   /// Step 3: Connect necessary API instances.
   const connectAPIs = async () => {
     try {
-      const isConnected: boolean = await Core.getOnlineStatus();
-      if (isConnected) {
+      const isOnline: boolean = await Core.getOnlineStatus();
+      if (isOnline) {
         const chainIds = Array.from(AccountsController.accounts.keys());
         await Promise.all(chainIds.map((c) => APIsController.connectApi(c)));
       }
@@ -117,8 +118,8 @@ export const BootstrappingProvider = ({
 
   /// Step 4: Fetch current account data.
   const fetchAccountData = async () => {
-    const isConnected: boolean = await Core.getOnlineStatus();
-    if (!isConnected) {
+    const isOnline: boolean = await Core.getOnlineStatus();
+    if (!isOnline) {
       return;
     }
 
@@ -154,12 +155,12 @@ export const BootstrappingProvider = ({
       await APIsController.closeAll();
     };
 
-    if (!systemConnected) {
+    if (!isConnected) {
       disconnectAll();
     } else {
       // TODO: Handle online mode.
     }
-  }, [systemConnected]);
+  }, [isConnected]);
 
   /// Handle abort flag.
   useEffect(() => {
@@ -183,9 +184,9 @@ export const BootstrappingProvider = ({
         data: null,
       });
 
-      const isConnected: boolean = await Core.getOnlineStatus();
-      window.myAPI.relaySharedState('isOnlineMode', isConnected);
-      window.myAPI.relaySharedState('isConnected', isConnected);
+      const isOnline: boolean = await Core.getOnlineStatus();
+      window.myAPI.relaySharedState('mode:online', isOnline);
+      window.myAPI.relaySharedState('mode:connected', isOnline);
 
       const initTasks: (() => Promise<AnyData>)[] = [
         initAccounts,
@@ -235,8 +236,9 @@ export const BootstrappingProvider = ({
     IntervalsController.stopInterval();
 
     // Report online status to renderers.
-    window.myAPI.relaySharedState('isOnlineMode', false);
-    window.myAPI.relaySharedState('isConnected', await Core.getOnlineStatus());
+    const status = await Core.getOnlineStatus();
+    window.myAPI.relaySharedState('mode:connected', status);
+    window.myAPI.relaySharedState('mode:online', false);
 
     // Disconnect from chains.
     await APIsController.closeAll();
@@ -279,8 +281,8 @@ export const BootstrappingProvider = ({
     } else {
       // Report online status to renderers.
       const status = await Core.getOnlineStatus();
-      window.myAPI.relaySharedState('isOnlineMode', status);
-      window.myAPI.relaySharedState('isConnected', status);
+      window.myAPI.relaySharedState('mode:online', status);
+      window.myAPI.relaySharedState('mode:connected', status);
     }
   };
 
@@ -303,13 +305,13 @@ export const BootstrappingProvider = ({
 
   /// Util for initializing the intervals controller.
   const initIntervalsController = async () => {
-    const isConnected: boolean = await Core.getOnlineStatus();
+    const isOnline: boolean = await Core.getOnlineStatus();
     const ipcTask: IpcTask = { action: 'interval:task:get', data: null };
     const serialized = (await window.myAPI.sendIntervalTask(ipcTask)) || '[]';
     const tasks: IntervalSubscription[] = JSON.parse(serialized);
 
     // Insert subscriptions and start interval if online.
-    IntervalsController.insertSubscriptions(tasks, isConnected);
+    IntervalsController.insertSubscriptions(tasks, isOnline);
 
     // Add tasks to React state in main window.
     // When the OpenGov view is open, the task state is synced in a separate function.
