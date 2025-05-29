@@ -2,27 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { AppOrchestrator } from '@/orchestrators/AppOrchestrator';
-import { SharedState } from '@/config/SharedState';
 import http2 from 'http2';
 import type { IpcTask } from '@polkadot-live/types/communication';
 
 export class OnlineStatusController {
   private static onlineStatus = false;
   private static intervalId: NodeJS.Timeout | null = null;
-
-  /**
-   * @name process
-   * @summary Handle one-way connection tasks received from renderer.
-   */
-  static async process(task: IpcTask): Promise<void> {
-    switch (task.action) {
-      // Handle switching between online and offline.
-      case 'connection:setStatus': {
-        await this.handleStatusChange();
-        return;
-      }
-    }
-  }
 
   /**
    * @name processAsync
@@ -33,9 +18,6 @@ export class OnlineStatusController {
       // Handle initializing online status controller.
       case 'connection:init': {
         await this.initialize();
-
-        // Set online mode in shared state.
-        SharedState.set('mode:online', this.onlineStatus);
         return;
       }
       // Get connection status and send to frontend.
@@ -54,20 +36,11 @@ export class OnlineStatusController {
   }
 
   /**
-   * @name initialize
-   * @summary Set connection status and start connection polling loop.
-   */
-  private static async initialize() {
-    this.onlineStatus = await this.isConnected();
-    //this.startPollLoop();
-  }
-
-  /**
    * @name handleStatusChange
    * @summary Checks for a change in connection status and calls the appropriate
    * app task depending on whether the app has gone offline or online.
    */
-  private static handleStatusChange = async () => {
+  static handleStatusChange = async () => {
     const status = await this.isConnected();
 
     if (status !== this.onlineStatus) {
@@ -88,21 +61,13 @@ export class OnlineStatusController {
   };
 
   /**
-   * @name startPoll
-   * @summary Calls a connection handling function after a set interval for
-   * handling offline and online status changes.
+   * @name initialize
+   * @summary Set connection status and start connection polling loop.
    */
-  private static startPollLoop = () => {
-    const interval = 5000;
-    this.intervalId = setInterval(this.handleStatusChange, interval);
-  };
-
-  /**
-   * @name stopPoll
-   * @summary Stop the connection polling interval.
-   */
-  private static stopPollLoop = async () =>
-    this.intervalId && clearInterval(this.intervalId);
+  static async initialize() {
+    this.onlineStatus = await this.isConnected();
+    //this.startPollLoop();
+  }
 
   /**
    * @name isConnected
@@ -120,6 +85,23 @@ export class OnlineStatusController {
         client.destroy();
       });
     });
+
+  /**
+   * @name startPoll
+   * @summary Calls a connection handling function after a set interval for
+   * handling offline and online status changes.
+   */
+  private static startPollLoop = () => {
+    const interval = 5000;
+    this.intervalId = setInterval(this.handleStatusChange, interval);
+  };
+
+  /**
+   * @name stopPoll
+   * @summary Stop the connection polling interval.
+   */
+  private static stopPollLoop = async () =>
+    this.intervalId && clearInterval(this.intervalId);
 
   /**
    * @name handleSuspend

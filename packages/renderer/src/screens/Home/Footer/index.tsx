@@ -33,6 +33,7 @@ export const Footer = () => {
 
   const { darkMode, getOnlineMode, cacheGet } = useConnections();
   const isConnected = cacheGet('mode:connected');
+
   const { chainHasIntervalSubscriptions } = useIntervalSubscriptions();
   const { chainHasSubscriptions } = useSubscriptions();
   const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;

@@ -93,9 +93,6 @@ export const API: PreloadAPI = {
    * Online status
    */
 
-  sendConnectionTask: (task: IpcTask) =>
-    ipcRenderer.send('main:task:connection', task),
-
   sendConnectionTaskAsync: async (task: IpcTask) =>
     await ipcRenderer.invoke('main:task:connection:async', task),
 

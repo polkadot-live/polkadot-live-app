@@ -28,7 +28,7 @@ export const ConnectionsProvider = ({
   children: React.ReactNode;
 }) => {
   /**
-   * Cache with default values.
+   * Cache to control rendering logic only.
    */
   const [cache, setCache] = useState(
     new Map<SyncID, boolean>(initSharedState())
@@ -39,8 +39,16 @@ export const ConnectionsProvider = ({
    */
   const cacheGet = (key: SyncID): boolean => cache.get(key) || false;
 
-  // Flag set to `true` when app's theme is dark mode.
+  /**
+   * Flag set to `true` when app's theme is dark mode.
+   */
   const [darkMode, setDarkMode] = useState(true);
+
+  /**
+   * Return flag indicating whether app is in online or offline mode.
+   */
+  const getOnlineMode = () =>
+    cacheGet('mode:connected') && cacheGet('mode:online');
 
   useEffect(() => {
     /**
@@ -52,10 +60,13 @@ export const ConnectionsProvider = ({
       setDarkMode(settings.appDarkMode);
 
       // TODO: Optimise with one IPC.
-      for (const key of Array.from(cache.keys())) {
-        const res = (await window.myAPI.getSharedState(key)) as boolean;
-        setCache((pv) => new Map(pv).set(key, res));
+      const map: typeof cache = new Map();
+      for (const key of Array.from(initSharedState().keys())) {
+        const val = (await window.myAPI.getSharedState(key)) as boolean;
+        map.set(key, val);
       }
+
+      setCache(map);
     };
 
     /**
@@ -81,12 +92,6 @@ export const ConnectionsProvider = ({
 
     syncSharedStateOnMount();
   }, []);
-
-  /**
-   * Return flag indicating whether app is in online or offline mode.
-   */
-  const getOnlineMode = () =>
-    cacheGet('mode:connected') && cacheGet('mode:online');
 
   return (
     <ConnectionsContext.Provider

@@ -5,7 +5,6 @@
 import * as Core from '@polkadot-live/core';
 import {
   ConfigRenderer,
-  getOnlineStatus,
   disconnectAPIs,
   AccountsController,
   APIsController,
@@ -21,6 +20,7 @@ import { concatU8a, encodeAddress, hexToU8a, stringToU8a } from 'dedot/utils';
 import { useEffect } from 'react';
 
 /// Main window contexts.
+import { useConnections } from '@ren/contexts/common';
 import {
   useAddresses,
   useAppSettings,
@@ -53,6 +53,9 @@ export const useMainMessagePorts = () => {
   const { updateEventsOnAccountRename } = useEvents();
   const { syncOpenGovWindow } = useBootstrapping();
   const { exportDataToBackup, importDataFromBackup } = useDataBackup();
+
+  const { cacheGet } = useConnections();
+  const isOnline = cacheGet('mode:connected');
 
   const {
     connectWc,
@@ -134,7 +137,6 @@ export const useMainMessagePorts = () => {
       }
 
       // Sync managed account data if online.
-      const isOnline: boolean = await getOnlineStatus();
       if (isOnline) {
         const res = await APIsController.getConnectedApiOrThrow(chainId);
         const api = res.getApi();
