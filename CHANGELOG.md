@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.9.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.8.0-alpha...v0.9.0-alpha) (2025-05-29)
+
+
+### Features
+
+* westend asset hub integration ([#982](https://github.com/polkadot-live/polkadot-live-app/issues/982)) ([3c6332c](https://github.com/polkadot-live/polkadot-live-app/commit/3c6332cd4b2c4eeb31878781e11bb54022410e1d))
+
+
+### Bug Fixes
+
+* subscriptions carousel scroll ([#975](https://github.com/polkadot-live/polkadot-live-app/issues/975)) ([efef62a](https://github.com/polkadot-live/polkadot-live-app/commit/efef62a9144a9e81d0fc00c9e350c04c219edc81))
+* westend spendable balance ([#981](https://github.com/polkadot-live/polkadot-live-app/issues/981)) ([a8fcad5](https://github.com/polkadot-live/polkadot-live-app/commit/a8fcad56e29734dae8b35e37ea7914f133335618))
+
 ## [0.8.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.7.0-alpha...v0.8.0-alpha) (2025-04-28)
 
 
