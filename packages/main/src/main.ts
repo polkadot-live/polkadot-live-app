@@ -134,7 +134,8 @@ app.whenReady().then(async () => {
   }
 
   // Hide dock icon if we're on mac OS.
-  const { appHideDockIcon } = SettingsController.getAppSettings();
+  SettingsController.initialize();
+  const appHideDockIcon = SettingsController.get('setting:hide-dock-icon');
   appHideDockIcon && hideDockIcon();
 
   // Initialize shared state cache.
@@ -403,16 +404,9 @@ app.whenReady().then(async () => {
           return;
         }
         case 'mode:dark': {
-          // Persist new flag to store.
-          SettingsController.process({
-            action: 'settings:set:darkMode',
-            data: { state },
-          });
-
           // Set the background color for all open windows and views.
-          const { appDarkMode } = SettingsController.getAppSettings();
           WindowsController.setWindowsBackgroundColor(
-            appDarkMode ? ConfigMain.themeColorDark : ConfigMain.themeColorLight
+            state ? ConfigMain.themeColorDark : ConfigMain.themeColorLight
           );
           break;
         }

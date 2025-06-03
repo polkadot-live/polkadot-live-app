@@ -1,49 +1,57 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config } from '@/config/main';
 import { hideDockIcon, showDockIcon } from '@/utils/SystemUtils';
 import { store } from '@/main';
 import { WindowsController } from '@/controller/WindowsController';
+import { getDefaultSettings } from '@polkadot-live/consts/settings';
 import * as WindowUtils from '@/utils/WindowUtils';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { IpcTask } from '@polkadot-live/types/communication';
-import type {
-  PersistedSettings,
-  SettingAction,
-} from '@polkadot-live/types/settings';
+import type { SettingKey } from '@polkadot-live/types/settings';
 
 export class SettingsController {
   /**
-   * @name getAppSettings
-   * @summary Return the application settings structure, initialize if necessary.
+   * In-memory settings cache.
    */
-  static getAppSettings(): PersistedSettings {
-    const key = Config.settingsStorageKey;
+  private static settingsCache = getDefaultSettings();
 
-    if (store.has(key)) {
-      // Return persisted settings.
-      return (store as Record<string, AnyData>).get(key);
-    } else {
-      const settings: PersistedSettings = {
-        appDocked: false,
-        appDarkMode: true,
-        appSilenceOsNotifications: false,
-        appSilenceExtrinsicsOsNotifications: false,
-        appShowOnAllWorkspaces: false,
-        appShowDebuggingSubscriptions: false,
-        appEnableAutomaticSubscriptions: true,
-        appEnablePolkassemblyApi: true,
-        appKeepOutdatedEvents: true,
-        appHideDockIcon: false,
-        appCollapseSideNav: false,
-      };
+  /**
+   * Initialize settings cache by fetching persisted settings from store.
+   */
+  static initialize = () => {
+    const defaults = getDefaultSettings();
 
-      // Persist default settings to store and return them.
-      (store as Record<string, AnyData>).set(key, settings);
-      return settings;
+    for (const key of defaults.keys()) {
+      if (store.has(key)) {
+        const val = (store as Record<string, AnyData>).get(key) as boolean;
+        this.settingsCache.set(key, val);
+      } else {
+        const val = defaults.get(key)!;
+        (store as Record<string, AnyData>).set(key, val);
+      }
     }
-  }
+  };
+
+  /**
+   * Get a cached value or `false` if it doesn't exist.
+   */
+  static get = (key: SettingKey): boolean =>
+    Boolean(this.settingsCache.get(key));
+
+  /**
+   * Set a cached value.
+   */
+  static set = (key: SettingKey, value: boolean) => {
+    this.settingsCache.set(key, value);
+    (store as Record<string, AnyData>).set(key, value);
+  };
+
+  /**
+   * Provide serialized cache to requesting renderer.
+   */
+  static getAppSettings = () =>
+    JSON.stringify(Array.from(this.settingsCache.entries()));
 
   /**
    * @name process
@@ -51,27 +59,32 @@ export class SettingsController {
    */
   static process(task: IpcTask) {
     switch (task.action) {
-      case 'settings:set:docked': {
-        WindowUtils.handleNewDockFlag(task.data.flag);
-        break;
-      }
-      case 'settings:set:darkMode': {
-        const settings = this.getAppSettings();
-        settings.appDarkMode = task.data.state;
-        const key = Config.settingsStorageKey;
-        (store as Record<string, AnyData>).set(key, settings);
-        break;
-      }
-      case 'settings:toggle:allWorkspaces': {
-        this.toggleAllWorkspaces();
-        break;
-      }
-      case 'settings:toggle': {
-        this.toggleSetting(task.data.settingAction as SettingAction);
+      case 'settings:handle': {
+        const { key, val }: { key: SettingKey; val: boolean } = task.data;
+        this.set(key, val);
+        this.handle(key, val);
         break;
       }
     }
   }
+
+  private static handle = (key: SettingKey, val: boolean) => {
+    switch (key) {
+      case 'setting:docked-window': {
+        WindowUtils.handleNewDockFlag(val);
+        break;
+      }
+      case 'setting:show-all-workspaces': {
+        this.toggleAllWorkspaces();
+        break;
+      }
+      case 'setting:hide-dock-icon': {
+        const hide = this.settingsCache.get('setting:hide-dock-icon')!;
+        hide ? hideDockIcon() : showDockIcon();
+        break;
+      }
+    }
+  };
 
   /**
    * @name toggleAllWorkspaces
@@ -82,80 +95,12 @@ export class SettingsController {
       return;
     }
 
-    // Get new flag.
-    const settings = this.getAppSettings();
-    const flag = !settings.appShowOnAllWorkspaces;
-
-    // Update windows.
-    settings.appShowOnAllWorkspaces = flag;
+    const flag = Boolean(this.settingsCache.get('setting:show-all-workspaces'));
     WindowsController.setVisibleOnAllWorkspaces(flag);
-
-    // Update storage.
-    const key = Config.settingsStorageKey;
-    (store as Record<string, AnyData>).set(key, settings);
 
     // Re-hide dock if we're on macOS.
     // Electron will show the dock icon after calling the workspaces API.
-    settings.appHideDockIcon && hideDockIcon();
-  }
-
-  /**
-   * @name toggleSetting
-   * @summary Toggle an application setting and persist new setting to store.
-   */
-  private static toggleSetting(settingAction: SettingAction) {
-    const settings = this.getAppSettings();
-
-    switch (settingAction) {
-      case 'settings:execute:showDebuggingSubscriptions': {
-        const flag = !settings.appShowDebuggingSubscriptions;
-        settings.appShowDebuggingSubscriptions = flag;
-        break;
-      }
-      case 'settings:execute:silenceOsNotifications': {
-        const flag = !settings.appSilenceOsNotifications;
-        settings.appSilenceOsNotifications = flag;
-        break;
-      }
-      case 'settings:execute:silenceExtrinsicsOsNotifications': {
-        const flag = !settings.appSilenceExtrinsicsOsNotifications;
-        settings.appSilenceExtrinsicsOsNotifications = flag;
-        break;
-      }
-      case 'settings:execute:enableAutomaticSubscriptions': {
-        const flag = !settings.appEnableAutomaticSubscriptions;
-        settings.appEnableAutomaticSubscriptions = flag;
-        break;
-      }
-      case 'settings:execute:enablePolkassembly': {
-        const flag = !settings.appEnablePolkassemblyApi;
-        settings.appEnablePolkassemblyApi = flag;
-        break;
-      }
-      case 'settings:execute:keepOutdatedEvents': {
-        const flag = !settings.appKeepOutdatedEvents;
-        settings.appKeepOutdatedEvents = flag;
-        break;
-      }
-      case 'settings:execute:hideDockIcon': {
-        const flag = !settings.appHideDockIcon;
-        settings.appHideDockIcon = flag;
-
-        // Hide or show dock icon.
-        flag ? hideDockIcon() : showDockIcon();
-        break;
-      }
-      case 'settings:execute:collapseSideNav': {
-        const flag = !settings.appCollapseSideNav;
-        settings.appCollapseSideNav = flag;
-        break;
-      }
-      default: {
-        break;
-      }
-    }
-
-    const key = Config.settingsStorageKey;
-    (store as Record<string, AnyData>).set(key, settings);
+    const hideDock = Boolean(this.settingsCache.get('setting:hide-dock-icon'));
+    hideDock && hideDockIcon();
   }
 }

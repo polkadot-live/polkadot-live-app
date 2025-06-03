@@ -10,7 +10,6 @@ export class Config {
   // Storage keys.
   private static _chainSubscriptionsStorageKey = 'chain_subscriptions';
   private static _showDisclaimerKey = 'show_disclaimer';
-  private static _settingsStorageKey = 'app_settings';
   private static _workspacesStorageKey = 'developer_console_workspaces';
 
   // Raw account storage keys.
@@ -123,10 +122,6 @@ export class Config {
   }
 
   // Accessors.
-  static get settingsStorageKey(): string {
-    return Config._settingsStorageKey;
-  }
-
   static get workspacesStorageKey(): string {
     return Config._workspacesStorageKey;
   }

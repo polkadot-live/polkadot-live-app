@@ -48,9 +48,8 @@ export const DataBackupProvider = ({
   children: React.ReactNode;
 }) => {
   const { cacheGet } = useConnections();
-  const isOnline = cacheGet('mode:connected');
-
   const { setEvents } = useEvents();
+
   const {
     updateRenderedSubscriptions,
     tryAddIntervalSubscription,
@@ -185,6 +184,7 @@ export const DataBackupProvider = ({
 
       // Process parsed addresses.
       for (const a of parsed) {
+        const isOnline = cacheGet('mode:connected');
         a.isImported && !isOnline && (a.isImported = false);
 
         // Persist or update address in Electron store.

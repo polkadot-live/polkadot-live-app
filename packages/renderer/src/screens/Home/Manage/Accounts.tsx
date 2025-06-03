@@ -36,7 +36,11 @@ export const Accounts = ({
   setTypeClicked,
   setSelectedAccount,
 }: AccountsProps) => {
-  const { showDebuggingSubscriptions } = useAppSettings();
+  const { cacheGet } = useAppSettings();
+  const showDebuggingSubscriptions = cacheGet(
+    'setting:show-debugging-subscriptions'
+  );
+
   const { setRenderedSubscriptions, setDynamicIntervalTasks } = useManage();
   const { getChainSubscriptions, getAccountSubscriptions, chainSubscriptions } =
     useSubscriptions();

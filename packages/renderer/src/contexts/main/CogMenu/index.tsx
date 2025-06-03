@@ -35,8 +35,7 @@ export const CogMenuProvider = ({
   const isOnline = cacheGet('mode:connected');
 
   const { openHelp } = useHelp();
-  const { handleToggleSilenceOsNotifications, silenceOsNotifications } =
-    useAppSettings();
+  const { toggleSetting } = useAppSettings();
 
   /// Connection button text.
   const getConnectionButtonText = (): string => {
@@ -89,14 +88,7 @@ export const CogMenuProvider = ({
 
   /// Handle silence notifications.
   const handleSilenceNotifications = () => {
-    handleToggleSilenceOsNotifications();
-
-    ConfigRenderer.portToSettings?.postMessage({
-      task: 'settings:set:silenceOsNotifications',
-      data: {
-        silenced: !silenceOsNotifications,
-      },
-    });
+    toggleSetting('setting:silence-os-notifications');
   };
 
   /// Menu item data.

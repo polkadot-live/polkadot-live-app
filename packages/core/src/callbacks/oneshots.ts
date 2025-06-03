@@ -18,7 +18,6 @@ import type { DedotClientSet } from '@polkadot-live/types/apis';
 export const executeOneShot = async (
   task: SubscriptionTask
 ): Promise<boolean> => {
-  // Get API instance.
   const client = await APIsController.getConnectedApi(task.chainId);
   if (!client || !client.api) {
     return false;

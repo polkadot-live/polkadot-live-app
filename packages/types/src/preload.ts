@@ -8,7 +8,6 @@ import type { IpcTask, RelayPortTask, SyncID, TabData } from './communication';
 import type { IpcRendererEvent } from 'electron';
 import type { WorkspaceItem } from './developerConsole/workspaces';
 import type { AnyData } from './misc';
-import type { PersistedSettings } from './settings';
 
 export interface PreloadAPI {
   getWindowId: () => string;
@@ -41,7 +40,7 @@ export interface PreloadAPI {
   importAppData: () => Promise<ImportResult>;
 
   sendSettingTask: (task: IpcTask) => void;
-  getAppSettings: ApiGetAppSettings;
+  getAppSettings: () => Promise<string>;
 
   initializeApp: ApiInitializeApp;
   initializeAppOnline: ApiInitializeAppOnline;
@@ -125,7 +124,6 @@ type ApiOpenBrowserWindow = (url: string) => void;
 /**
  * New types
  */
-type ApiGetAppSettings = () => Promise<PersistedSettings>;
 
 type ApiInitializeApp = (callback: (_: IpcRendererEvent) => void) => void;
 

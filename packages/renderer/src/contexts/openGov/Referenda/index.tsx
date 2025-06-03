@@ -16,6 +16,7 @@ import { usePolkassembly } from '../Polkassembly';
 import { setStateWithRef } from '@w3ux/utils';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ReferendaContextInterface } from './types';
+import type { SettingKey } from '@polkadot-live/types/settings';
 import type {
   PagedReferenda,
   RefDeciding,
@@ -268,11 +269,14 @@ export const ReferendaProvider = ({
 
   // Fetch paged referenda metadata if necessary.
   const fetchFromPolkassembly = async (referenda: ReferendaInfo[]) => {
-    const { appEnablePolkassemblyApi } = await window.myAPI.getAppSettings();
-    setUsePolkassemblyApi(appEnablePolkassemblyApi);
+    const ser = await window.myAPI.getAppSettings();
+    const array: [SettingKey, boolean][] = JSON.parse(ser);
+    const map = new Map<SettingKey, boolean>(array);
+    const flag = Boolean(map.get('setting:enable-polkassembly'));
+    setUsePolkassemblyApi(flag);
 
     // Fetch proposal metadata if Polkassembly enabled.
-    if (appEnablePolkassemblyApi) {
+    if (flag) {
       await fetchProposals(activeReferendaChainRef.current, referenda);
     }
   };

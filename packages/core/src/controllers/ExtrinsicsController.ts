@@ -15,6 +15,7 @@ import {
 
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { Extrinsic } from 'dedot/codecs';
+import type { SettingKey } from '@polkadot-live/types/settings';
 import type {
   ActionMeta,
   ExtrinsicInfo,
@@ -257,10 +258,13 @@ export class ExtrinsicsController {
    * Utility for getting silence settings.
    */
   static silenceOsNotifications = async (): Promise<boolean> => {
-    const appSettings = await window.myAPI.getAppSettings();
+    const ser = await window.myAPI.getAppSettings();
+    const array: [SettingKey, boolean][] = JSON.parse(ser);
+    const map = new Map<SettingKey, boolean>(array);
+
     return (
-      appSettings.appSilenceOsNotifications ||
-      appSettings.appSilenceExtrinsicsOsNotifications
+      Boolean(map.get('setting:silence-os-notifications')) ||
+      Boolean(map.get('setting:silence-extrinsic-notifications'))
     );
   };
 

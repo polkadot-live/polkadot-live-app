@@ -22,6 +22,7 @@ export const Settings: React.FC = () => {
   useDebug(window.myAPI.getWindowId());
 
   const { openHelp } = useHelp();
+
   /**
    * Accordion state.
    */
@@ -87,10 +88,8 @@ export const Settings: React.FC = () => {
    */
   const handleSetting = (setting: SettingItem) => {
     ConfigSettings.portSettings.postMessage({
-      task: String(setting.action),
-      data: {
-        setting,
-      },
+      task: 'setting:execute',
+      data: { setting },
     });
   };
 
