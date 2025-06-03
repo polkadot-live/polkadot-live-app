@@ -8,6 +8,7 @@ import type { IpcTask, RelayPortTask, SyncID, TabData } from './communication';
 import type { IpcRendererEvent } from 'electron';
 import type { WorkspaceItem } from './developerConsole/workspaces';
 import type { AnyData } from './misc';
+import type { SettingKey } from './settings';
 
 export interface PreloadAPI {
   getWindowId: () => string;
@@ -40,7 +41,7 @@ export interface PreloadAPI {
   importAppData: () => Promise<ImportResult>;
 
   sendSettingTask: (task: IpcTask) => void;
-  getAppSettings: () => Promise<string>;
+  getAppSettings: () => Promise<Map<SettingKey, boolean>>;
 
   initializeApp: ApiInitializeApp;
   initializeAppOnline: ApiInitializeAppOnline;

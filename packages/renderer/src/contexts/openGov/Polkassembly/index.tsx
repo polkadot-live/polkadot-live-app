@@ -10,7 +10,6 @@ import type {
   ReferendaInfo,
 } from '@polkadot-live/types/openGov';
 import type { PolkassemblyContextInterface } from './types';
-import type { SettingKey } from '@polkadot-live/types/settings';
 
 export const PolkassemblyContext = createContext<PolkassemblyContextInterface>(
   defaults.defaultPolkassemblyContext
@@ -28,9 +27,7 @@ export const PolkassemblyProvider = ({
 
   useEffect(() => {
     const fetchSetting = async () => {
-      const ser = await window.myAPI.getAppSettings();
-      const array: [SettingKey, boolean][] = JSON.parse(ser);
-      const map = new Map<SettingKey, boolean>(array);
+      const map = await window.myAPI.getAppSettings();
       const flag = Boolean(map.get('setting:enable-polkassembly'));
       setUsePolkassemblyApi(flag);
     };

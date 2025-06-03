@@ -8,7 +8,6 @@ import { setStateWithRef } from '@w3ux/utils';
 import type { ConnectionsContextInterface } from './types';
 import type { IpcRendererEvent } from 'electron';
 import type { SyncID } from '@polkadot-live/types/communication';
-import type { SettingKey } from '@polkadot-live/types/settings';
 
 /**
  * Automatically listens for and sets shared state when the state is
@@ -56,9 +55,7 @@ export const ConnectionsProvider = ({
      */
     const sync = async () => {
       // TODO: Integrate into cache.
-      const ser = await window.myAPI.getAppSettings();
-      const array: [SettingKey, boolean][] = JSON.parse(ser);
-      const parsed = new Map<SettingKey, boolean>(array);
+      const parsed = await window.myAPI.getAppSettings();
       setDarkMode(Boolean(parsed.get('setting:dark-mode')));
 
       // TODO: Optimise with one IPC.

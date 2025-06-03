@@ -5,7 +5,7 @@ import * as defaults from './defaults';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { Flip, toast } from 'react-toastify';
 import type { SettingFlagsContextInterface } from './types';
-import type { SettingItem, SettingKey } from '@polkadot-live/types/settings';
+import type { SettingItem } from '@polkadot-live/types/settings';
 
 export const SettingFlagsContext = createContext<SettingFlagsContextInterface>(
   defaults.defaultSettingFlagsContext
@@ -37,9 +37,7 @@ export const SettingFlagsProvider = ({
   /// Fetch settings from store and set state.
   useEffect(() => {
     const sync = async () => {
-      const ser = await window.myAPI.getAppSettings();
-      const array: [SettingKey, boolean][] = JSON.parse(ser);
-      const map = new Map<SettingKey, boolean>(array);
+      const map = await window.myAPI.getAppSettings();
 
       setWindowDocked(Boolean(map.get('setting:docked-window')));
       setSilenceOsNotifications(

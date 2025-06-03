@@ -100,9 +100,7 @@ export const AppSettingsProvider = ({
   useEffect(() => {
     const sync = async () => {
       // Get settings from main process.
-      const ser = await window.myAPI.getAppSettings();
-      const array: [SettingKey, boolean][] = JSON.parse(ser);
-      const map = new Map<SettingKey, boolean>(array);
+      const map = await window.myAPI.getAppSettings();
       setStateWithRef(map, setCache, cacheRef);
 
       // TODO: Make config point to the actual cache.
