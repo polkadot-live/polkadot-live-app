@@ -41,8 +41,8 @@ export const AppSettingsProvider = ({
     const map = new Map(cacheRef.current).set(key, val);
     setStateWithRef(map, setCache, cacheRef);
 
-    // TMP: Update config.
-    updateConfig(key, val);
+    // Update settings cache in config.
+    ConfigRenderer.setAppSettings(map);
 
     // Update cache and store in main process.
     window.myAPI.sendSettingTask({
@@ -51,6 +51,9 @@ export const AppSettingsProvider = ({
     });
   };
 
+  /**
+   * Sync settings view with toggled value.
+   */
   const syncSettingsView = (key: SettingKey) => {
     switch (key) {
       case 'setting:docked-window': {
@@ -71,30 +74,6 @@ export const AppSettingsProvider = ({
   };
 
   /**
-   * TMP - Make config point to actual cache map.
-   */
-  const updateConfig = (key: SettingKey, val: boolean) => {
-    switch (key) {
-      case 'setting:silence-os-notifications': {
-        ConfigRenderer.silenceNotifications = val;
-        break;
-      }
-      case 'setting:show-debugging-subscriptions': {
-        ConfigRenderer.showDebuggingSubscriptions = val;
-        break;
-      }
-      case 'setting:automatic-subscriptions': {
-        ConfigRenderer.enableAutomaticSubscriptions = val;
-        break;
-      }
-      case 'setting:keep-outdated-events': {
-        ConfigRenderer.keepOutdatedEvents = val;
-        break;
-      }
-    }
-  };
-
-  /**
    * Sync settings cache with main process on mount.
    */
   useEffect(() => {
@@ -103,20 +82,8 @@ export const AppSettingsProvider = ({
       const map = await window.myAPI.getAppSettings();
       setStateWithRef(map, setCache, cacheRef);
 
-      // TODO: Make config point to the actual cache.
-      // Set cached notifications flag in renderer config.
-      ConfigRenderer.silenceNotifications = cacheGet(
-        'setting:silence-os-notifications'
-      );
-      ConfigRenderer.showDebuggingSubscriptions = cacheGet(
-        'setting:show-debugging-subscriptions'
-      );
-      ConfigRenderer.enableAutomaticSubscriptions = cacheGet(
-        'setting:automatic-subscriptions'
-      );
-      ConfigRenderer.keepOutdatedEvents = cacheGet(
-        'setting:keep-outdated-events'
-      );
+      // Make config point to the actual cache.
+      ConfigRenderer.setAppSettings(map);
     };
 
     sync();

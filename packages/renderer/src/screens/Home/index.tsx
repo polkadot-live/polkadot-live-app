@@ -102,7 +102,7 @@ export const Home = () => {
     window.myAPI.reportNewEvent(
       (_: IpcRendererEvent, eventData: EventCallback) => {
         // Remove any outdated events in the state, if setting enabled.
-        if (!ConfigRenderer.keepOutdatedEvents) {
+        if (!ConfigRenderer.getAppSeting('setting:keep-outdated-events')) {
           removeOutdatedEvents(eventData);
         }
 

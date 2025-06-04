@@ -1,6 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import type { SettingKey } from '@polkadot-live/types/settings';
+
 /**
  * @name ConfigRenderer
  * @summary Configuration class for the `main` window. Accessed in the main renderer.
@@ -13,10 +15,13 @@ export class ConfigRenderer {
   static _portToOpenGov: MessagePort;
 
   // App settings handled by main renderer (use in callbacks).
-  private static _silenceNotifications = false;
-  private static _showDebuggingSubscriptions = false;
-  private static _enableAutomaticSubscriptions = true;
-  private static _keepOutdatedEvents = true;
+  static _appSettings = new Map<SettingKey, boolean>();
+
+  static setAppSettings = (map: Map<SettingKey, boolean>) =>
+    (this._appSettings = map);
+
+  static getAppSeting = (key: SettingKey) =>
+    Boolean(this._appSettings.get(key));
 
   // Flag set to `true` when app wants to abort connection processing.
   private static _abortConnecting = false;
@@ -51,38 +56,6 @@ export class ConfigRenderer {
   }
   static set portToSettings(port: MessagePort) {
     this._portToSettings = port;
-  }
-
-  // Accessors for `_silenceNotifications` flag.
-  static get silenceNotifications(): boolean {
-    return this._silenceNotifications;
-  }
-  static set silenceNotifications(flag: boolean) {
-    this._silenceNotifications = flag;
-  }
-
-  // Accessors for `_showDebuggingSubscriptions` flag.
-  static get showDebuggingSubscriptions(): boolean {
-    return this._showDebuggingSubscriptions;
-  }
-  static set showDebuggingSubscriptions(flag: boolean) {
-    this._showDebuggingSubscriptions = flag;
-  }
-
-  // Accessors for `_enableAutomaticSubscriptions` flag.
-  static get enableAutomaticSubscriptions(): boolean {
-    return this._enableAutomaticSubscriptions;
-  }
-  static set enableAutomaticSubscriptions(flag: boolean) {
-    this._enableAutomaticSubscriptions = flag;
-  }
-
-  // Accessors for `_enableAutomaticSubscriptions` flag.
-  static get keepOutdatedEvents(): boolean {
-    return this._keepOutdatedEvents;
-  }
-  static set keepOutdatedEvents(flag: boolean) {
-    this._keepOutdatedEvents = flag;
   }
 
   // Accessors for `_abortConnecting` flag.

@@ -317,5 +317,5 @@ const getNotificationFlag = (
   policy === 'one-shot'
     ? true
     : policy !== 'none' &&
-      !ConfigRenderer.silenceNotifications &&
+      !ConfigRenderer.getAppSeting('setting:silence-os-notifications') &&
       task.enableOsNotifications;

@@ -135,10 +135,8 @@ export const useMainMessagePorts = () => {
 
       // Subscribe new account to all possible subscriptions if setting enabled.
       if (account.queryMulti !== null && !fromBackup) {
-        const status = ConfigRenderer.enableAutomaticSubscriptions
-          ? 'enable'
-          : 'disable';
-
+        const key = 'setting:automatic-subscriptions';
+        const status = ConfigRenderer.getAppSeting(key) ? 'enable' : 'disable';
         const tasks = SubscriptionsController.getAllSubscriptionsForAccount(
           account,
           status
@@ -671,10 +669,11 @@ export const useMainMessagePorts = () => {
    * @summary Handle debugging subcscriptions when setting is toggled.
    */
   const handleDebuggingSubscriptions = async () => {
-    toggleSetting('setting:show-debugging-subscriptions');
+    const key = 'setting:show-debugging-subscriptions';
+    toggleSetting(key);
 
     // Return if setting has been turned on.
-    if (ConfigRenderer.showDebuggingSubscriptions) {
+    if (ConfigRenderer.getAppSeting(key)) {
       return;
     }
 
