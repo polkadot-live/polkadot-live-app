@@ -2,10 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ConfigRenderer } from '@polkadot-live/core';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { defaultAppSettingsContext } from './defaults';
+import { getDefaultSettings } from '@polkadot-live/consts/settings';
+import { setStateWithRef } from '@w3ux/utils';
 import type { AppSettingsContextInterface } from './types';
-import type { SettingAction } from '@polkadot-live/types/settings';
+import type { SettingKey } from '@polkadot-live/types/settings';
 
 export const AppSettingsContext = createContext<AppSettingsContextInterface>(
   defaultAppSettingsContext
@@ -18,180 +20,80 @@ export const AppSettingsProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  /// Dock toggled.
-  const [dockToggled, setDockToggled] = useState<boolean>(true);
+  const [cache, setCache] = useState(getDefaultSettings());
+  const cacheRef = useRef(cache);
 
-  /// Silence notifications.
-  const [silenceOsNotifications, setSilenceOsNotifications] =
-    useState<boolean>(false);
+  /**
+   * Get value from cache.
+   */
+  const cacheGet = (key: SettingKey): boolean =>
+    Boolean(cacheRef.current.get(key));
 
-  /// Silence extrinsics notifications.
-  const [
-    silenceExtrinsicsOsNotifications,
-    setSilenceExtrinsicsOsNotifications,
-  ] = useState<boolean>(false);
+  /**
+   * Update settings cache and send IPC to update settings in main process.
+   */
+  const toggleSetting = (key: SettingKey) => {
+    syncSettingsView(key);
 
-  /// Show debugging subscriptions.
-  const [showDebuggingSubscriptions, setShowDebuggingSubscriptions] =
-    useState<boolean>(false);
+    // Set new setting value.
+    const cur = cacheGet(key);
+    const val = !cur;
+    const map = new Map(cacheRef.current).set(key, val);
+    setStateWithRef(map, setCache, cacheRef);
 
-  /// Enable automatic subscriptions.
-  const [enableAutomaticSubscriptions, setEnableAutomaticSubscriptions] =
-    useState<boolean>(true);
+    // Update settings cache in config.
+    ConfigRenderer.setAppSettings(map);
 
-  /// Enable Polkassembly API.
-  const [enablePolkassemblyApi, setEnablePolkassemblyApi] =
-    useState<boolean>(true);
+    // Update cache and store in main process.
+    window.myAPI.sendSettingTask({
+      action: 'settings:handle',
+      data: { key, val },
+    });
+  };
 
-  /// Hide dock icon.
-  const [hideDockIcon, setHideDockIcon] = useState<boolean>(false);
+  /**
+   * Sync settings view with toggled value.
+   */
+  const syncSettingsView = (key: SettingKey) => {
+    switch (key) {
+      case 'setting:docked-window': {
+        ConfigRenderer.portToSettings?.postMessage({
+          task: 'settings:set:dockedWindow',
+          data: { docked: !cacheGet(key) },
+        });
+        break;
+      }
+      case 'setting:silence-os-notifications': {
+        ConfigRenderer.portToSettings?.postMessage({
+          task: 'settings:set:silenceOsNotifications',
+          data: { silenced: !cacheGet(key) },
+        });
+        break;
+      }
+    }
+  };
 
-  /// Side nav collapsed flag.
-  const [sideNavCollapsed, setSideNavCollapsed] = useState<boolean>(false);
-
-  /// Get settings from main and initialise state.
+  /**
+   * Sync settings cache with main process on mount.
+   */
   useEffect(() => {
-    const initSettings = async () => {
-      const {
-        appDocked,
-        appSilenceOsNotifications,
-        appSilenceExtrinsicsOsNotifications,
-        appShowDebuggingSubscriptions,
-        appEnableAutomaticSubscriptions,
-        appEnablePolkassemblyApi,
-        appKeepOutdatedEvents,
-        appHideDockIcon,
-        appCollapseSideNav,
-      } = await window.myAPI.getAppSettings();
+    const sync = async () => {
+      // Get settings from main process.
+      const map = await window.myAPI.getAppSettings();
+      setStateWithRef(map, setCache, cacheRef);
 
-      // Set cached notifications flag in renderer config.
-      ConfigRenderer.silenceNotifications = appSilenceOsNotifications;
-      ConfigRenderer.showDebuggingSubscriptions = appShowDebuggingSubscriptions;
-      ConfigRenderer.enableAutomaticSubscriptions =
-        appEnableAutomaticSubscriptions;
-      ConfigRenderer.keepOutdatedEvents = appKeepOutdatedEvents;
-
-      // Set settings state.
-      setDockToggled(appDocked);
-      setSilenceOsNotifications(appSilenceOsNotifications);
-      setSilenceExtrinsicsOsNotifications(appSilenceExtrinsicsOsNotifications);
-      setShowDebuggingSubscriptions(appShowDebuggingSubscriptions);
-      setEnableAutomaticSubscriptions(appEnableAutomaticSubscriptions);
-      setEnablePolkassemblyApi(appEnablePolkassemblyApi);
-      setHideDockIcon(appHideDockIcon);
-      setSideNavCollapsed(appCollapseSideNav);
+      // Make config point to the actual cache.
+      ConfigRenderer.setAppSettings(map);
     };
 
-    initSettings();
+    sync();
   }, []);
-
-  /// Handle toggling a setting in main process.
-  const handleToggleSetting = (settingAction: SettingAction) => {
-    window.myAPI.sendSettingTask({
-      action: 'settings:toggle',
-      data: { settingAction },
-    });
-  };
-
-  /// Handle toggling the docked window state.
-  const handleDockedToggle = () => {
-    setDockToggled((prev) => {
-      const docked = !prev;
-
-      window.myAPI.sendSettingTask({
-        action: 'settings:set:docked',
-        data: { flag: docked },
-      });
-
-      return docked;
-    });
-  };
-
-  /// Handle toggling native OS notifications from main renderer UI.
-  const handleToggleSilenceOsNotifications = () => {
-    setSilenceOsNotifications((prev) => {
-      const newFlag = !prev;
-      ConfigRenderer.silenceNotifications = newFlag;
-      return newFlag;
-    });
-
-    handleToggleSetting('settings:execute:silenceOsNotifications');
-  };
-
-  /// Handle toggling extrinsics native OS notifications.
-  const handleToggleSilenceExtrinsicOsNotifications = () => {
-    setSilenceExtrinsicsOsNotifications(!silenceExtrinsicsOsNotifications);
-    handleToggleSetting('settings:execute:silenceExtrinsicsOsNotifications');
-  };
-
-  /// Handle toggling show debugging subscriptions.
-  const handleToggleShowDebuggingSubscriptions = () => {
-    setShowDebuggingSubscriptions((prev) => {
-      const newFlag = !prev;
-      ConfigRenderer.showDebuggingSubscriptions = newFlag;
-      return newFlag;
-    });
-
-    handleToggleSetting('settings:execute:showDebuggingSubscriptions');
-  };
-
-  /// Handle toggling enable automatic subscriptions.
-  const handleToggleEnableAutomaticSubscriptions = () => {
-    setEnableAutomaticSubscriptions((prev) => {
-      const newFlag = !prev;
-      ConfigRenderer.enableAutomaticSubscriptions = newFlag;
-      return newFlag;
-    });
-
-    handleToggleSetting('settings:execute:enableAutomaticSubscriptions');
-  };
-
-  /// Handle toggling enable Polkassembly API.
-  const handleToggleEnablePolkassemblyApi = () => {
-    setEnablePolkassemblyApi(!enablePolkassemblyApi);
-    handleToggleSetting('settings:execute:enablePolkassembly');
-  };
-
-  /// Handle toggling keep outdated events setting.
-  const handleToggleKeepOutdatedEvents = () => {
-    const newFlag = !ConfigRenderer.keepOutdatedEvents;
-    ConfigRenderer.keepOutdatedEvents = newFlag;
-    handleToggleSetting('settings:execute:keepOutdatedEvents');
-  };
-
-  /// Handle toggling hide dock icon setting.
-  const handleToggleHideDockIcon = () => {
-    setHideDockIcon(!hideDockIcon);
-    handleToggleSetting('settings:execute:hideDockIcon');
-  };
-
-  /// Handle collapse/expand side nav.
-  const handleSideNavCollapse = () => {
-    setSideNavCollapsed((pv) => !pv);
-    handleToggleSetting('settings:execute:collapseSideNav');
-  };
 
   return (
     <AppSettingsContext.Provider
       value={{
-        dockToggled,
-        silenceOsNotifications,
-        silenceExtrinsicsOsNotifications,
-        showDebuggingSubscriptions,
-        enableAutomaticSubscriptions,
-        enablePolkassemblyApi,
-        hideDockIcon,
-        sideNavCollapsed,
-        setSilenceOsNotifications,
-        handleDockedToggle,
-        handleToggleSilenceOsNotifications,
-        handleToggleSilenceExtrinsicOsNotifications,
-        handleToggleShowDebuggingSubscriptions,
-        handleToggleEnableAutomaticSubscriptions,
-        handleToggleEnablePolkassemblyApi,
-        handleToggleKeepOutdatedEvents,
-        handleToggleHideDockIcon,
-        handleSideNavCollapse,
+        cacheGet,
+        toggleSetting,
       }}
     >
       {children}

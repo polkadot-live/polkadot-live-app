@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as smoldot from 'smoldot/no-auto-bytecode';
-import * as Core from '@polkadot-live/core';
 import {
   disconnectAPIs,
   AccountsController,
@@ -10,6 +9,7 @@ import {
   ConfigRenderer,
   SubscriptionsController,
   IntervalsController,
+  getOnlineStatus,
 } from '@polkadot-live/core';
 
 import React, {
@@ -54,18 +54,11 @@ export const BootstrappingProvider = ({
 
   /// Notify main process there may be a change in connection status.
   const handleOnline = () => {
-    window.myAPI.sendConnectionTask({
-      action: 'connection:setStatus',
-      data: null,
-    });
+    window.myAPI.relaySharedState('mode:connected', true);
   };
 
-  /// Notify main process there may be a change in connection status.
   const handleOffline = () => {
-    window.myAPI.sendConnectionTask({
-      action: 'connection:setStatus',
-      data: null,
-    });
+    window.myAPI.relaySharedState('mode:connected', false);
   };
 
   /// Step 1: Initialize chain APIs (disconnected).
@@ -105,7 +98,7 @@ export const BootstrappingProvider = ({
   /// Step 3: Connect necessary API instances.
   const connectAPIs = async () => {
     try {
-      const isOnline: boolean = await Core.getOnlineStatus();
+      const isOnline = await getOnlineStatus();
       if (isOnline) {
         const chainIds = Array.from(AccountsController.accounts.keys());
         await Promise.all(chainIds.map((c) => APIsController.connectApi(c)));
@@ -118,24 +111,25 @@ export const BootstrappingProvider = ({
 
   /// Step 4: Fetch current account data.
   const fetchAccountData = async () => {
-    const isOnline: boolean = await Core.getOnlineStatus();
-    if (!isOnline) {
-      return;
-    }
-
-    for (const chainId of AccountsController.getManagedChains()) {
-      const res = await APIsController.getConnectedApiOrThrow(chainId);
-      const api = res.getApi();
-      await AccountsController.syncAllAccounts(api, chainId);
+    const isOnline = await getOnlineStatus();
+    if (isOnline) {
+      for (const chainId of AccountsController.getManagedChains()) {
+        const res = await APIsController.getConnectedApiOrThrow(chainId);
+        const api = res.getApi();
+        await AccountsController.syncAllAccounts(api, chainId);
+      }
     }
   };
 
   /// Step 5: Initiate subscriptions.
   const initSubscriptions = async () => {
-    await Promise.all([
-      AccountsController.subscribeAccounts(),
-      SubscriptionsController.initChainSubscriptions(),
-    ]);
+    const isOnline = await getOnlineStatus();
+    if (isOnline) {
+      await Promise.all([
+        AccountsController.subscribeAccounts(),
+        SubscriptionsController.initChainSubscriptions(),
+      ]);
+    }
   };
 
   /// Handle event listeners.
@@ -177,16 +171,6 @@ export const BootstrappingProvider = ({
 
       // Initialize APIs and smoldot light client.
       await initChainAPIs();
-
-      // Initialise online status controller and set online state.
-      await window.myAPI.sendConnectionTaskAsync({
-        action: 'connection:init',
-        data: null,
-      });
-
-      const isOnline: boolean = await Core.getOnlineStatus();
-      window.myAPI.relaySharedState('mode:online', isOnline);
-      window.myAPI.relaySharedState('mode:connected', isOnline);
 
       const initTasks: (() => Promise<AnyData>)[] = [
         initAccounts,
@@ -236,8 +220,8 @@ export const BootstrappingProvider = ({
     IntervalsController.stopInterval();
 
     // Report online status to renderers.
-    const status = await Core.getOnlineStatus();
-    window.myAPI.relaySharedState('mode:connected', status);
+    const isOnline = await getOnlineStatus();
+    window.myAPI.relaySharedState('mode:connected', isOnline);
     window.myAPI.relaySharedState('mode:online', false);
 
     // Disconnect from chains.
@@ -280,9 +264,9 @@ export const BootstrappingProvider = ({
       await handleInitializeAppOffline();
     } else {
       // Report online status to renderers.
-      const status = await Core.getOnlineStatus();
-      window.myAPI.relaySharedState('mode:online', status);
-      window.myAPI.relaySharedState('mode:connected', status);
+      const isOnline = await getOnlineStatus();
+      window.myAPI.relaySharedState('mode:connected', isOnline);
+      window.myAPI.relaySharedState('mode:online', isOnline);
     }
   };
 
@@ -305,12 +289,12 @@ export const BootstrappingProvider = ({
 
   /// Util for initializing the intervals controller.
   const initIntervalsController = async () => {
-    const isOnline: boolean = await Core.getOnlineStatus();
     const ipcTask: IpcTask = { action: 'interval:task:get', data: null };
     const serialized = (await window.myAPI.sendIntervalTask(ipcTask)) || '[]';
     const tasks: IntervalSubscription[] = JSON.parse(serialized);
 
     // Insert subscriptions and start interval if online.
+    const isOnline = await getOnlineStatus();
     IntervalsController.insertSubscriptions(tasks, isOnline);
 
     // Add tasks to React state in main window.

@@ -8,6 +8,7 @@ import { contextBridge, ipcRenderer } from 'electron';
 import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
 import type { PreloadAPI } from '@polkadot-live/types/preload';
 import type { IpcTask, SyncID } from '@polkadot-live/types/communication';
+import type { SettingKey } from '@polkadot-live/types/settings';
 
 if (!process.env.VITEST) {
   console.log(global.location.search);
@@ -93,9 +94,6 @@ export const API: PreloadAPI = {
    * Online status
    */
 
-  sendConnectionTask: (task: IpcTask) =>
-    ipcRenderer.send('main:task:connection', task),
-
   sendConnectionTaskAsync: async (task: IpcTask) =>
     await ipcRenderer.invoke('main:task:connection:async', task),
 
@@ -156,7 +154,11 @@ export const API: PreloadAPI = {
   sendSettingTask: (task: IpcTask) =>
     ipcRenderer.send('main:task:settings', task),
 
-  getAppSettings: async () => await ipcRenderer.invoke('app:settings:get'),
+  getAppSettings: async () => {
+    const ser = await ipcRenderer.invoke('app:settings:get');
+    const array: [SettingKey, boolean][] = JSON.parse(ser);
+    return new Map<SettingKey, boolean>(array);
+  },
 
   /**
    * Initialization

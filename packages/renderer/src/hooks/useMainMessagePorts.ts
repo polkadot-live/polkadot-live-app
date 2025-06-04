@@ -5,7 +5,6 @@
 import * as Core from '@polkadot-live/core';
 import {
   ConfigRenderer,
-  getOnlineStatus,
   disconnectAPIs,
   AccountsController,
   APIsController,
@@ -21,6 +20,7 @@ import { concatU8a, encodeAddress, hexToU8a, stringToU8a } from 'dedot/utils';
 import { useEffect } from 'react';
 
 /// Main window contexts.
+import { useConnections } from '@ren/contexts/common';
 import {
   useAddresses,
   useAppSettings,
@@ -42,6 +42,7 @@ import type {
   SubscriptionTask,
 } from '@polkadot-live/types/subscriptions';
 import type { PalletReferendaTrackDetails } from '@dedot/chaintypes/substrate';
+import type { SettingItem } from '@polkadot-live/types/settings';
 import type { WcSelectNetwork } from '@polkadot-live/types/walletConnect';
 
 // TODO: Move to WalletConnect file.
@@ -53,6 +54,8 @@ export const useMainMessagePorts = () => {
   const { updateEventsOnAccountRename } = useEvents();
   const { syncOpenGovWindow } = useBootstrapping();
   const { exportDataToBackup, importDataFromBackup } = useDataBackup();
+
+  const { cacheGet } = useConnections();
 
   const {
     connectWc,
@@ -71,17 +74,7 @@ export const useMainMessagePorts = () => {
     tryRemoveIntervalSubscription,
   } = useManage();
 
-  const {
-    handleDockedToggle,
-    handleToggleSilenceOsNotifications,
-    handleToggleSilenceExtrinsicOsNotifications,
-    handleToggleShowDebuggingSubscriptions,
-    handleToggleEnableAutomaticSubscriptions,
-    handleToggleEnablePolkassemblyApi,
-    handleToggleKeepOutdatedEvents,
-    handleToggleHideDockIcon,
-  } = useAppSettings();
-
+  const { toggleSetting } = useAppSettings();
   const { updateAccountNameInTasks, updateTask } = useSubscriptions();
   const { addIntervalSubscription, removeIntervalSubscription } =
     useIntervalSubscriptions();
@@ -134,8 +127,7 @@ export const useMainMessagePorts = () => {
       }
 
       // Sync managed account data if online.
-      const isOnline: boolean = await getOnlineStatus();
-      if (isOnline) {
+      if (cacheGet('mode:connected')) {
         const res = await APIsController.getConnectedApiOrThrow(chainId);
         const api = res.getApi();
         await AccountsController.syncAccount(account, api);
@@ -143,9 +135,11 @@ export const useMainMessagePorts = () => {
 
       // Subscribe new account to all possible subscriptions if setting enabled.
       if (account.queryMulti !== null && !fromBackup) {
+        const key = 'setting:automatic-subscriptions';
+        const status = ConfigRenderer.getAppSeting(key) ? 'enable' : 'disable';
         const tasks = SubscriptionsController.getAllSubscriptionsForAccount(
           account,
-          'enable'
+          status
         );
 
         // Update persisted state and React state for tasks.
@@ -675,10 +669,11 @@ export const useMainMessagePorts = () => {
    * @summary Handle debugging subcscriptions when setting is toggled.
    */
   const handleDebuggingSubscriptions = async () => {
-    handleToggleShowDebuggingSubscriptions();
+    const key = 'setting:show-debugging-subscriptions';
+    toggleSetting(key);
 
     // Return if setting has been turned on.
-    if (ConfigRenderer.showDebuggingSubscriptions) {
+    if (ConfigRenderer.getAppSeting(key)) {
       return;
     }
 
@@ -705,14 +700,6 @@ export const useMainMessagePorts = () => {
       // Unsubscribe from active debuggin tasks.
       await SubscriptionsController.subscribeChainTasks(active);
     }
-  };
-
-  /**
-   * @name handleEnableAutomaticSubscriptions
-   * @summary Handle toggling the handle automatic subscriptions setting.
-   */
-  const handleEnableAutomaticSubscriptions = () => {
-    handleToggleEnableAutomaticSubscriptions();
   };
 
   /**
@@ -838,54 +825,29 @@ export const useMainMessagePorts = () => {
         ConfigRenderer.portToSettings.onmessage = async (ev: MessageEvent) => {
           // Message received from `settings`.
           switch (ev.data.task) {
-            case 'settings:execute:dockedWindow': {
-              handleDockedToggle();
-              break;
-            }
-            case 'settings:execute:showOnAllWorkspaces': {
-              window.myAPI.sendSettingTask({
-                action: 'settings:toggle:allWorkspaces',
-                data: null,
-              });
-              break;
-            }
-            case 'settings:execute:silenceOsNotifications': {
-              handleToggleSilenceOsNotifications();
-              break;
-            }
-            case 'settings:execute:silenceExtrinsicsOsNotifications': {
-              handleToggleSilenceExtrinsicOsNotifications();
-              break;
-            }
-            case 'settings:execute:showDebuggingSubscriptions': {
-              await handleDebuggingSubscriptions();
-              break;
-            }
-            case 'settings:execute:enableAutomaticSubscriptions': {
-              handleEnableAutomaticSubscriptions();
-              break;
-            }
-            case 'settings:execute:enablePolkassembly': {
-              handleToggleEnablePolkassemblyApi();
-              break;
-            }
-            case 'settings:execute:keepOutdatedEvents': {
-              handleToggleKeepOutdatedEvents();
-              break;
-            }
-            case 'settings:execute:hideDockIcon': {
-              handleToggleHideDockIcon();
-              break;
-            }
-            case 'settings:execute:exportData': {
-              await exportDataToBackup();
-              break;
-            }
-            case 'settings:execute:importData': {
-              await importDataFromBackup(
-                handleImportAddress,
-                handleRemoveAddress
-              );
+            case 'setting:execute': {
+              const { setting }: { setting: SettingItem } = ev.data.data;
+
+              // Handle data import.
+              if (setting.key === 'setting:import-data') {
+                await importDataFromBackup(
+                  handleImportAddress,
+                  handleRemoveAddress
+                );
+                return;
+              }
+              // Handle data export.
+              if (setting.key === 'setting:export-data') {
+                await exportDataToBackup();
+                return;
+              }
+              // Handle debugging subscriptions state.
+              if (setting.key === 'setting:show-debugging-subscriptions') {
+                await handleDebuggingSubscriptions();
+                return;
+              }
+
+              toggleSetting(setting.key);
               break;
             }
             default: {

@@ -5,22 +5,6 @@
 import type { AppSettingsContextInterface } from './types';
 
 export const defaultAppSettingsContext: AppSettingsContextInterface = {
-  dockToggled: true,
-  silenceOsNotifications: false,
-  silenceExtrinsicsOsNotifications: false,
-  showDebuggingSubscriptions: false,
-  enableAutomaticSubscriptions: true,
-  enablePolkassemblyApi: true,
-  hideDockIcon: false,
-  sideNavCollapsed: false,
-  setSilenceOsNotifications: (b) => {},
-  handleDockedToggle: () => {},
-  handleToggleSilenceOsNotifications: () => {},
-  handleToggleSilenceExtrinsicOsNotifications: () => {},
-  handleToggleShowDebuggingSubscriptions: () => {},
-  handleToggleEnableAutomaticSubscriptions: () => {},
-  handleToggleEnablePolkassemblyApi: () => {},
-  handleToggleKeepOutdatedEvents: () => {},
-  handleToggleHideDockIcon: () => {},
-  handleSideNavCollapse: () => {},
+  cacheGet: () => false,
+  toggleSetting: () => {},
 };

@@ -14,18 +14,15 @@ import { useTreasury } from '@ren/contexts/openGov';
 import { Overview } from './Overview';
 import { Referenda } from './Referenda';
 import { Tracks } from './Tracks';
+import { FadeInWrapper } from '@polkadot-live/ui/utils';
 
-export const OpenGov: React.FC = () => {
+export const FadeOpenGov = () => {
   // Set up port communication for `openGov` window.
   useOpenGovMessagePorts();
   useDebug(window.myAPI.getWindowId());
 
-  const { getOnlineMode } = useConnections();
-  const { openHelp } = useHelp();
+  const { getOnlineMode, stateLoaded } = useConnections();
   const { treasuryChainId, initTreasury } = useTreasury();
-
-  const [section, setSection] = useState<number>(0);
-  const [sectionContent, setSectionContent] = useState('');
 
   // Initialize treasury data when window opens.
   useEffect(() => {
@@ -47,6 +44,18 @@ export const OpenGov: React.FC = () => {
       initTreasury(treasuryChainId);
     }
   }, [getOnlineMode()]);
+
+  return (
+    <FadeInWrapper show={stateLoaded}>
+      <OpenGov />
+    </FadeInWrapper>
+  );
+};
+
+export const OpenGov: React.FC = () => {
+  const { openHelp } = useHelp();
+  const [section, setSection] = useState<number>(0);
+  const [sectionContent, setSectionContent] = useState('');
 
   return (
     <Kits.ModalSection type="carousel" style={{ height: '100%' }}>

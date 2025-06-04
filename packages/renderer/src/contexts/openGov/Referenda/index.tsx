@@ -268,11 +268,12 @@ export const ReferendaProvider = ({
 
   // Fetch paged referenda metadata if necessary.
   const fetchFromPolkassembly = async (referenda: ReferendaInfo[]) => {
-    const { appEnablePolkassemblyApi } = await window.myAPI.getAppSettings();
-    setUsePolkassemblyApi(appEnablePolkassemblyApi);
+    const map = await window.myAPI.getAppSettings();
+    const flag = Boolean(map.get('setting:enable-polkassembly'));
+    setUsePolkassemblyApi(flag);
 
     // Fetch proposal metadata if Polkassembly enabled.
-    if (appEnablePolkassemblyApi) {
+    if (flag) {
       await fetchProposals(activeReferendaChainRef.current, referenda);
     }
   };

@@ -6,6 +6,7 @@ import type { ConnectionsContextInterface } from './types';
 
 export const defaultConnectionsContext: ConnectionsContextInterface = {
   darkMode: true,
+  stateLoaded: false,
   cacheGet: () => false,
   getOnlineMode: () => true,
 };

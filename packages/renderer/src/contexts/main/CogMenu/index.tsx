@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ConfigRenderer, getOnlineStatus } from '@polkadot-live/core';
+import { ConfigRenderer } from '@polkadot-live/core';
 import { createContext, useContext } from 'react';
 import { defaultCogMenuContext } from './defaults';
 import { useAppSettings, useBootstrapping } from '@ren/contexts/main';
@@ -31,11 +31,11 @@ export const CogMenuProvider = ({
     setIsConnecting,
   } = useBootstrapping();
 
-  const { getOnlineMode } = useConnections();
+  const { cacheGet, getOnlineMode } = useConnections();
+  const isOnline = cacheGet('mode:connected');
 
   const { openHelp } = useHelp();
-  const { handleToggleSilenceOsNotifications, silenceOsNotifications } =
-    useAppSettings();
+  const { toggleSetting } = useAppSettings();
 
   /// Connection button text.
   const getConnectionButtonText = (): string => {
@@ -62,9 +62,7 @@ export const CogMenuProvider = ({
       await handleInitializeAppOffline();
     } else {
       // Confirm online connection.
-      const status: boolean = await getOnlineStatus();
-
-      if (status) {
+      if (isOnline) {
         // Handle going online.
         setIsConnecting(true);
         await handleInitializeAppOnline();
@@ -90,14 +88,7 @@ export const CogMenuProvider = ({
 
   /// Handle silence notifications.
   const handleSilenceNotifications = () => {
-    handleToggleSilenceOsNotifications();
-
-    ConfigRenderer.portToSettings?.postMessage({
-      task: 'settings:set:silenceOsNotifications',
-      data: {
-        silenced: !silenceOsNotifications,
-      },
-    });
+    toggleSetting('setting:silence-os-notifications');
   };
 
   /// Menu item data.

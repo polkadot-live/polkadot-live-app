@@ -6,40 +6,27 @@ import type { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 export type OsPlatform = 'darwin' | 'linux' | 'win32';
 
-export interface PersistedSettings {
-  appDocked: boolean;
-  appDarkMode: boolean;
-  appSilenceOsNotifications: boolean;
-  appSilenceExtrinsicsOsNotifications: boolean;
-  appShowOnAllWorkspaces: boolean;
-  appShowDebuggingSubscriptions: boolean;
-  appEnableAutomaticSubscriptions: boolean;
-  appEnablePolkassemblyApi: boolean;
-  appKeepOutdatedEvents: boolean;
-  appHideDockIcon: boolean;
-  appCollapseSideNav: boolean;
-}
-
-export type SettingAction =
-  | 'settings:execute:dockedWindow'
-  | 'settings:execute:showOnAllWorkspaces'
-  | 'settings:execute:silenceOsNotifications'
-  | 'settings:execute:importData'
-  | 'settings:execute:exportData'
-  | 'settings:execute:showDebuggingSubscriptions'
-  | 'settings:execute:enableAutomaticSubscriptions'
-  | 'settings:execute:enablePolkassembly'
-  | 'settings:execute:keepOutdatedEvents'
-  | 'settings:execute:hideDockIcon'
-  | 'settings:execute:collapseSideNav'
-  | 'settings:execute:silenceExtrinsicsOsNotifications';
+export type SettingKey =
+  | 'setting:automatic-subscriptions'
+  | 'setting:collapse-side-nav'
+  | 'setting:dark-mode'
+  | 'setting:docked-window'
+  | 'setting:enable-polkassembly'
+  | 'setting:export-data'
+  | 'setting:hide-dock-icon'
+  | 'setting:import-data'
+  | 'setting:keep-outdated-events'
+  | 'setting:show-all-workspaces'
+  | 'setting:show-debugging-subscriptions'
+  | 'setting:silence-extrinsic-notifications'
+  | 'setting:silence-os-notifications';
 
 export interface SettingItem {
-  action: SettingAction;
   category: string;
   title: string;
   enabled: boolean;
   helpKey: HelpItemKey;
+  key: SettingKey;
   settingType: string;
   buttonText?: string;
   buttonIcon?: IconProp;

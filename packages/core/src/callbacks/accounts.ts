@@ -964,4 +964,5 @@ const getApiOrThrow = async (chainId: ChainID) =>
 const getNotificationFlag = (entry: ApiCallEntry, isOneShot: boolean) =>
   isOneShot
     ? true
-    : !ConfigRenderer.silenceNotifications && entry.task.enableOsNotifications;
+    : !ConfigRenderer.getAppSeting('setting:silence-os-notifications') &&
+      entry.task.enableOsNotifications;

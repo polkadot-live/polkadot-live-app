@@ -9,7 +9,7 @@ import { useConnections, useHelp } from '@ren/contexts/common';
 import { ButtonMonoInvert } from '@polkadot-live/ui/kits/buttons';
 import { useSettingFlags } from '@ren/contexts/settings';
 import type { SettingProps } from './types';
-import type { SettingAction, SettingItem } from '@polkadot-live/types/settings';
+import type { SettingItem, SettingKey } from '@polkadot-live/types/settings';
 
 export const Setting = ({ setting, handleSetting }: SettingProps) => {
   const { title, settingType, helpKey } = setting;
@@ -29,12 +29,12 @@ export const Setting = ({ setting, handleSetting }: SettingProps) => {
     handleSetting(setting);
 
     // Handle analytics.
-    switch (setting.action) {
-      case 'settings:execute:exportData': {
+    switch (setting.key) {
+      case 'setting:export-data': {
         window.myAPI.umamiEvent('backup-export', null);
         break;
       }
-      case 'settings:execute:importData': {
+      case 'setting:import-data': {
         window.myAPI.umamiEvent('backup-import', null);
         break;
       }
@@ -42,15 +42,14 @@ export const Setting = ({ setting, handleSetting }: SettingProps) => {
   };
 
   /// Determine if switch should be disabled.
-  const getDisabled = (action: SettingAction): boolean =>
-    action === 'settings:execute:importData' ||
-    action === 'settings:execute:exportData'
+  const getDisabled = (key: SettingKey): boolean =>
+    key === 'setting:import-data' || key === 'setting:export-data'
       ? cacheGet('backup:importing')
       : false;
 
   /// Get specific flag for import button.
-  const getImportFlag = ({ action }: SettingItem): boolean =>
-    action === 'settings:execute:importData' && getDisabled(action);
+  const getImportFlag = ({ key }: SettingItem): boolean =>
+    key === 'setting:import-data' && getDisabled(key);
 
   return (
     <SettingWrapper>
@@ -76,7 +75,7 @@ export const Setting = ({ setting, handleSetting }: SettingProps) => {
                 minHeight: '26px',
                 border: '1px solid var(--text-color-primary) !important',
               }}
-              disabled={getDisabled(setting.action)}
+              disabled={getDisabled(setting.key)}
               iconLeft={setting.buttonIcon}
               text={getImportFlag(setting) ? '' : setting.buttonText || ''}
               iconTransform="shrink-2"

@@ -1,14 +1,23 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { SyncID } from '@polkadot-live/types/communication';
 import { initSharedState } from '@polkadot-live/consts/sharedState';
+import type { SyncID } from '@polkadot-live/types/communication';
 
 export class SharedState {
   /**
    * Cache with default values.
    */
-  private static cache: Map<SyncID, boolean> = initSharedState();
+  private static cache = new Map<SyncID, boolean>();
+
+  /**
+   * Initialize shared state cache.
+   */
+  static initialize = (connected: boolean) => {
+    this.cache = initSharedState()
+      .set('mode:connected', connected)
+      .set('mode:online', connected);
+  };
 
   /**
    * Get a cached value or `false` if it doesn't exist.

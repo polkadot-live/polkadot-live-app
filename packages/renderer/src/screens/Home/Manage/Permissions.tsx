@@ -54,7 +54,11 @@ export const Permissions = ({
   typeClicked,
   setSection,
 }: PermissionsProps) => {
-  const { showDebuggingSubscriptions } = useAppSettings();
+  const { cacheGet: settingsCacheGet } = useAppSettings();
+  const showDebuggingSubscriptions = settingsCacheGet(
+    'setting:show-debugging-subscriptions'
+  );
+
   const { isConnecting } = useBootstrapping();
   const { cacheGet, darkMode, getOnlineMode } = useConnections();
   const isImportingData = cacheGet('backup:importing');

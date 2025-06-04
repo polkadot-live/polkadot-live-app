@@ -257,10 +257,10 @@ export class ExtrinsicsController {
    * Utility for getting silence settings.
    */
   static silenceOsNotifications = async (): Promise<boolean> => {
-    const appSettings = await window.myAPI.getAppSettings();
+    const map = await window.myAPI.getAppSettings();
     return (
-      appSettings.appSilenceOsNotifications ||
-      appSettings.appSilenceExtrinsicsOsNotifications
+      Boolean(map.get('setting:silence-os-notifications')) ||
+      Boolean(map.get('setting:silence-extrinsic-notifications'))
     );
   };
 

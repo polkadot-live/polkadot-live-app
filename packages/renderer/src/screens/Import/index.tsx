@@ -14,14 +14,24 @@ import { ImportReadOnly } from './ReadOnly';
 import { ImportWalletConnect } from './WalletConnect';
 import { useImportMessagePorts } from '@ren/hooks/useImportMessagePorts';
 import { useDebug } from '@ren/hooks/useDebug';
-import { useHelp } from '@ren/contexts/common';
+import { useConnections, useHelp } from '@ren/contexts/common';
+import { FadeInWrapper } from '@polkadot-live/ui/utils';
 import type { AccountSource } from '@polkadot-live/types/accounts';
 
-export const Import: React.FC = () => {
+export const FadeImport = () => {
   // Set up port communication for `import` window.
   useImportMessagePorts();
   useDebug(window.myAPI.getWindowId());
+  const { stateLoaded } = useConnections();
 
+  return (
+    <FadeInWrapper show={stateLoaded}>
+      <Import />
+    </FadeInWrapper>
+  );
+};
+
+export const Import: React.FC = () => {
   const { openHelp } = useHelp();
 
   // Active section

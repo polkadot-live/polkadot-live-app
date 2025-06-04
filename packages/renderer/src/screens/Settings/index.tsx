@@ -8,20 +8,31 @@ import * as Styles from '@polkadot-live/ui/styles';
 import { Setting } from './Setting';
 import { SettingsList } from '@polkadot-live/consts/settings';
 import { useEffect, useState } from 'react';
-import { useHelp } from '@ren/contexts/common';
+import { useConnections, useHelp } from '@ren/contexts/common';
 import { ConfigSettings } from '@polkadot-live/core';
 import { useDebug } from '@ren/hooks/useDebug';
 import { useSettingsMessagePorts } from '@ren/hooks/useSettingsMessagePorts';
 import { ItemsColumn } from '../Home/Manage/Wrappers';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
+import { FadeInWrapper } from '@polkadot-live/ui/utils';
 import type { OsPlatform, SettingItem } from '@polkadot-live/types/settings';
 
-export const Settings: React.FC = () => {
+export const FadeSettings = () => {
   // Set up port communication for `settings` window.
   useSettingsMessagePorts();
   useDebug(window.myAPI.getWindowId());
+  const { stateLoaded } = useConnections();
 
+  return (
+    <FadeInWrapper show={stateLoaded}>
+      <Settings />
+    </FadeInWrapper>
+  );
+};
+
+export const Settings: React.FC = () => {
   const { openHelp } = useHelp();
+
   /**
    * Accordion state.
    */
@@ -87,10 +98,8 @@ export const Settings: React.FC = () => {
    */
   const handleSetting = (setting: SettingItem) => {
     ConfigSettings.portSettings.postMessage({
-      task: String(setting.action),
-      data: {
-        setting,
-      },
+      task: 'setting:execute',
+      data: { setting },
     });
   };
 

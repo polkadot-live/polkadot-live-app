@@ -5,6 +5,7 @@ import type { SyncID } from '@polkadot-live/types/communication';
 
 export interface ConnectionsContextInterface {
   darkMode: boolean;
+  stateLoaded: boolean;
   cacheGet: (key: SyncID) => boolean;
   getOnlineMode: () => boolean;
 }

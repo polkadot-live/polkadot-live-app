@@ -134,8 +134,14 @@ app.whenReady().then(async () => {
   }
 
   // Hide dock icon if we're on mac OS.
-  const { appHideDockIcon } = SettingsController.getAppSettings();
+  SettingsController.initialize();
+  const appHideDockIcon = SettingsController.get('setting:hide-dock-icon');
   appHideDockIcon && hideDockIcon();
+
+  // Initialize shared state cache.
+  await OnlineStatusController.initialize();
+  const connected = OnlineStatusController.getStatus();
+  SharedState.initialize(connected);
 
   // ------------------------------
   // Create windows
@@ -234,11 +240,6 @@ app.whenReady().then(async () => {
   /**
    * Online Status
    */
-
-  ipcMain.on(
-    'main:task:connection',
-    async (_, task: IpcTask) => await OnlineStatusController.process(task)
-  );
 
   ipcMain.handle(
     'main:task:connection:async',
@@ -382,29 +383,30 @@ app.whenReady().then(async () => {
   ipcMain.handle(
     'app:sharedState:get',
     async (_, syncId: SyncID): Promise<string | boolean> =>
-      syncId === 'mode:connected'
-        ? OnlineStatusController.getStatus()
-        : SharedState.get(syncId)
+      SharedState.get(syncId)
   );
 
   ipcMain.on(
     'app:sharedState:relay',
-    (_, syncId: SyncID, state: string | boolean) => {
+    async (_, syncId: SyncID, state: string | boolean) => {
       switch (syncId) {
         case 'mode:connected': {
-          break;
-        }
-        case 'mode:dark': {
-          // Persist new flag to store.
-          SettingsController.process({
-            action: 'settings:set:darkMode',
-            data: { state },
+          // Handle status change.
+          await OnlineStatusController.handleStatusChange();
+          const status = OnlineStatusController.getStatus();
+          SharedState.set('mode:connected', status);
+
+          WindowsController.relaySharedState('renderer:sharedState:set', {
+            syncId,
+            state: status,
           });
 
+          return;
+        }
+        case 'mode:dark': {
           // Set the background color for all open windows and views.
-          const { appDarkMode } = SettingsController.getAppSettings();
           WindowsController.setWindowsBackgroundColor(
-            appDarkMode ? ConfigMain.themeColorDark : ConfigMain.themeColorLight
+            state ? ConfigMain.themeColorDark : ConfigMain.themeColorLight
           );
           break;
         }

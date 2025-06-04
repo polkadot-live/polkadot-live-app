@@ -5,12 +5,12 @@ import { MainInterfaceWrapper } from '@ren/Wrappers';
 import { Overlay, Help } from '@polkadot-live/ui/components';
 import { useEffect, useState } from 'react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
-import { Action } from '@ren/screens/Action';
+import { FadeAction } from '@ren/screens/Action';
 import { Tabs } from './screens/Tabs';
 import { Home } from './screens/Home';
-import { Import } from '@ren/screens/Import';
-import { Settings } from './screens/Settings';
-import { OpenGov } from './screens/OpenGov';
+import { FadeImport } from '@ren/screens/Import';
+import { FadeSettings } from './screens/Settings';
+import { FadeOpenGov } from './screens/OpenGov';
 import { useHelp } from './contexts/common';
 import { useTheme } from 'styled-components';
 import { ToastContainer } from 'react-toastify';
@@ -28,13 +28,13 @@ export const RouterInner = () => {
       case 'main':
         return <Route path={'/'} element={<Home />} />;
       case 'import':
-        return <Route path={'import'} element={<Import />} />;
+        return <Route path={'import'} element={<FadeImport />} />;
       case 'settings':
-        return <Route path={'settings'} element={<Settings />} />;
+        return <Route path={'settings'} element={<FadeSettings />} />;
       case 'action':
-        return <Route path={'action'} element={<Action />} />;
+        return <Route path={'action'} element={<FadeAction />} />;
       case 'openGov':
-        return <Route path={'openGov'} element={<OpenGov />} />;
+        return <Route path={'openGov'} element={<FadeOpenGov />} />;
       default:
         throw new Error('Window ID not recognized.');
     }

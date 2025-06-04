@@ -27,8 +27,9 @@ export const PolkassemblyProvider = ({
 
   useEffect(() => {
     const fetchSetting = async () => {
-      const { appEnablePolkassemblyApi } = await window.myAPI.getAppSettings();
-      setUsePolkassemblyApi(appEnablePolkassemblyApi);
+      const map = await window.myAPI.getAppSettings();
+      const flag = Boolean(map.get('setting:enable-polkassembly'));
+      setUsePolkassemblyApi(flag);
     };
 
     fetchSetting();

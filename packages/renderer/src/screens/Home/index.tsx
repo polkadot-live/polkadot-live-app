@@ -42,13 +42,10 @@ export const Home = () => {
   const { darkMode } = useConnections();
   const { openHelp } = useHelp();
 
-  const {
-    dockToggled,
-    sideNavCollapsed,
-    silenceOsNotifications,
-    handleDockedToggle,
-    handleSideNavCollapse,
-  } = useAppSettings();
+  const { cacheGet, toggleSetting } = useAppSettings();
+  const dockToggled = cacheGet('setting:docked-window');
+  const sideNavCollapsed = cacheGet('setting:collapse-side-nav');
+  const silenceOsNotifications = cacheGet('setting:silence-os-notifications');
 
   const { appLoading } = useBootstrapping();
   const cogMenu = useCogMenu();
@@ -105,7 +102,7 @@ export const Home = () => {
     window.myAPI.reportNewEvent(
       (_: IpcRendererEvent, eventData: EventCallback) => {
         // Remove any outdated events in the state, if setting enabled.
-        if (!ConfigRenderer.keepOutdatedEvents) {
+        if (!ConfigRenderer.getAppSeting('setting:keep-outdated-events')) {
           removeOutdatedEvents(eventData);
         }
 
@@ -150,14 +147,7 @@ export const Home = () => {
       return;
     }
 
-    handleDockedToggle();
-
-    ConfigRenderer.portToSettings?.postMessage({
-      task: 'settings:set:dockedWindow',
-      data: {
-        docked: !dockToggled,
-      },
-    });
+    toggleSetting('setting:docked-window');
 
     // Analytics.
     const event = `setting-toggle-${!dockToggled ? 'on' : 'off'}`;
@@ -178,6 +168,7 @@ export const Home = () => {
             toggled={darkMode}
             onToggle={() => {
               window.myAPI.relaySharedState('mode:dark', !darkMode);
+              toggleSetting('setting:dark-mode');
             }}
             className="theme-toggle"
             duration={300}
@@ -206,7 +197,9 @@ export const Home = () => {
       <FixedFlexWrapper>
         {/* Side Navigation */}
         <UI.SideNav
-          handleSideNavCollapse={handleSideNavCollapse}
+          handleSideNavCollapse={() =>
+            toggleSetting('setting:collapse-side-nav')
+          }
           navState={{
             isCollapsed: sideNavCollapsed,
             selectedId: sideNav.selectedId,

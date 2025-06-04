@@ -76,7 +76,7 @@ export class EventsController {
         const { event, notification, isOneShot }: Target = task.data;
 
         // Remove any outdated events of the same type, if setting enabled.
-        if (!SettingsController.getAppSettings().appKeepOutdatedEvents) {
+        if (!SettingsController.get('setting:keep-outdated-events')) {
           this.removeOutdatedEvents(event);
         }
 

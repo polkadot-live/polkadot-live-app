@@ -60,7 +60,7 @@ export const createTray = () => {
  * @returns The correct background color based on the active theme.
  */
 const getWindowBackgroundColor = (): string => {
-  const { appDarkMode } = SettingsController.getAppSettings();
+  const appDarkMode = SettingsController.get('setting:dark-mode');
   return appDarkMode ? ConfigMain.themeColorDark : ConfigMain.themeColorLight;
 };
 
@@ -116,7 +116,7 @@ export const createMainWindow = () => {
 
   mainWindow.once('ready-to-show', () => {
     // Freeze window if in docked mode.
-    if (SettingsController.getAppSettings().appDocked) {
+    if (SettingsController.get('setting:docked-window')) {
       mainWindow.setMovable(false);
       mainWindow.setResizable(false);
     }
@@ -244,12 +244,12 @@ export const createBaseWindow = () => {
   WindowsController.setTabsView(tabsView);
 
   // Show base window on all workspaces if setting is enabled.
-  const { appShowOnAllWorkspaces } = SettingsController.getAppSettings();
-  appShowOnAllWorkspaces && baseWindow.setVisibleOnAllWorkspaces(true);
+  const show = SettingsController.get('setting:show-all-workspaces');
+  show && baseWindow.setVisibleOnAllWorkspaces(true);
 
   // Hide dock icon.
-  const { appHideDockIcon } = SettingsController.getAppSettings();
-  appHideDockIcon && hideDockIcon();
+  const hide = SettingsController.get('setting:hide-dock-icon');
+  hide && hideDockIcon();
 };
 
 /**
@@ -433,13 +433,6 @@ export const handleNewDockFlag = (isDocked: boolean) => {
     throw new Error('Main window not found.');
   }
 
-  // Update storage.
-  const settings = SettingsController.getAppSettings();
-  settings.appDocked = isDocked;
-
-  const key = ConfigMain.settingsStorageKey;
-  (store as Record<string, AnyJson>).set(key, settings);
-
   // Update window.
   if (isDocked) {
     switch (process.platform) {
@@ -467,8 +460,8 @@ export const handleNewDockFlag = (isDocked: boolean) => {
  */
 export const setAllWorkspaceVisibilityForWindow = (windowId: string) => {
   const window = WindowsController.getWindow(windowId);
-  const { appShowOnAllWorkspaces } = SettingsController.getAppSettings();
-  window?.setVisibleOnAllWorkspaces(appShowOnAllWorkspaces);
+  const show = SettingsController.get('setting:show-all-workspaces');
+  window?.setVisibleOnAllWorkspaces(show);
 };
 
 /**

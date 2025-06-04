@@ -3,11 +3,11 @@
 
 import * as defaults from './defaults';
 import { initSharedState } from '@polkadot-live/consts/sharedState';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { setStateWithRef } from '@w3ux/utils';
 import type { ConnectionsContextInterface } from './types';
 import type { IpcRendererEvent } from 'electron';
 import type { SyncID } from '@polkadot-live/types/communication';
-import type { PersistedSettings } from '@polkadot-live/types/settings';
 
 /**
  * Automatically listens for and sets shared state when the state is
@@ -28,34 +28,45 @@ export const ConnectionsProvider = ({
   children: React.ReactNode;
 }) => {
   /**
-   * Cache with default values.
+   * Cache to control rendering logic only.
    */
-  const [cache, setCache] = useState(
-    new Map<SyncID, boolean>(initSharedState())
-  );
+  const [stateLoaded, setStateLoaded] = useState(false);
+  const [cache, setCache] = useState(initSharedState());
+  const cacheRef = useRef(cache);
+
+  /**
+   * Flag set to `true` when app's theme is dark mode.
+   */
+  const [darkMode, setDarkMode] = useState(true);
 
   /**
    * Get a cached value.
    */
-  const cacheGet = (key: SyncID): boolean => cache.get(key) || false;
+  const cacheGet = (key: SyncID): boolean => Boolean(cacheRef.current.get(key));
 
-  // Flag set to `true` when app's theme is dark mode.
-  const [darkMode, setDarkMode] = useState(true);
+  /**
+   * Return flag indicating whether app is in online or offline mode.
+   */
+  const getOnlineMode = () =>
+    cacheGet('mode:connected') && cacheGet('mode:online');
 
   useEffect(() => {
     /**
      * Synchronize flags in store.
      */
-    const syncSharedStateOnMount = async () => {
+    const sync = async () => {
       // TODO: Integrate into cache.
-      const settings: PersistedSettings = await window.myAPI.getAppSettings();
-      setDarkMode(settings.appDarkMode);
+      const parsed = await window.myAPI.getAppSettings();
+      setDarkMode(Boolean(parsed.get('setting:dark-mode')));
 
       // TODO: Optimise with one IPC.
-      for (const key of Array.from(cache.keys())) {
-        const res = (await window.myAPI.getSharedState(key)) as boolean;
-        setCache((pv) => new Map(pv).set(key, res));
+      const map: typeof cache = new Map();
+      for (const key of initSharedState().keys()) {
+        const val = (await window.myAPI.getSharedState(key)) as boolean;
+        map.set(key, val);
       }
+      setStateWithRef(map, setCache, cacheRef);
+      setStateLoaded(true);
     };
 
     /**
@@ -72,26 +83,22 @@ export const ConnectionsProvider = ({
             break;
           }
           default: {
-            setCache((pv) => new Map(pv).set(syncId, state as boolean));
+            const map = new Map(cacheRef.current).set(syncId, state as boolean);
+            setStateWithRef(map, setCache, cacheRef);
             break;
           }
         }
       }
     );
 
-    syncSharedStateOnMount();
+    sync();
   }, []);
-
-  /**
-   * Return flag indicating whether app is in online or offline mode.
-   */
-  const getOnlineMode = () =>
-    cacheGet('mode:connected') && cacheGet('mode:online');
 
   return (
     <ConnectionsContext.Provider
       value={{
         darkMode,
+        stateLoaded,
         cacheGet,
         getOnlineMode,
       }}
