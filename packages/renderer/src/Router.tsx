@@ -10,7 +10,7 @@ import { Tabs } from './screens/Tabs';
 import { Home } from './screens/Home';
 import { FadeImport } from '@ren/screens/Import';
 import { FadeSettings } from './screens/Settings';
-import { FadeInOpenGov } from './screens/OpenGov';
+import { FadeOpenGov } from './screens/OpenGov';
 import { useHelp } from './contexts/common';
 import { useTheme } from 'styled-components';
 import { ToastContainer } from 'react-toastify';
@@ -34,7 +34,7 @@ export const RouterInner = () => {
       case 'action':
         return <Route path={'action'} element={<FadeAction />} />;
       case 'openGov':
-        return <Route path={'openGov'} element={<FadeInOpenGov />} />;
+        return <Route path={'openGov'} element={<FadeOpenGov />} />;
       default:
         throw new Error('Window ID not recognized.');
     }

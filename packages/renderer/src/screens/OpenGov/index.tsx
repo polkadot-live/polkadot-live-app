@@ -16,7 +16,7 @@ import { Referenda } from './Referenda';
 import { Tracks } from './Tracks';
 import { FadeInWrapper } from '@polkadot-live/ui/utils';
 
-export const FadeInOpenGov = () => {
+export const FadeOpenGov = () => {
   // Set up port communication for `openGov` window.
   useOpenGovMessagePorts();
   useDebug(window.myAPI.getWindowId());
