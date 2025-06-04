@@ -30,6 +30,7 @@ export const ConnectionsProvider = ({
   /**
    * Cache to control rendering logic only.
    */
+  const [stateLoaded, setStateLoaded] = useState(false);
   const [cache, setCache] = useState(initSharedState());
   const cacheRef = useRef(cache);
 
@@ -65,6 +66,7 @@ export const ConnectionsProvider = ({
         map.set(key, val);
       }
       setStateWithRef(map, setCache, cacheRef);
+      setStateLoaded(true);
     };
 
     /**
@@ -96,6 +98,7 @@ export const ConnectionsProvider = ({
     <ConnectionsContext.Provider
       value={{
         darkMode,
+        stateLoaded,
         cacheGet,
         getOnlineMode,
       }}

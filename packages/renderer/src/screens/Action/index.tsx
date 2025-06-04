@@ -24,6 +24,7 @@ import { BarLoader } from 'react-spinners';
 import { DialogExtrinsicSummary } from './Dialogs';
 import { useEffect, useState } from 'react';
 import { PaginationRow } from '../OpenGov/Referenda/Wrappers';
+import { FadeInWrapper } from '@polkadot-live/ui/utils';
 import type { ExtrinsicInfo, TxStatus } from '@polkadot-live/types/tx';
 import type { TriggerRightIconProps } from './types';
 
@@ -40,11 +41,20 @@ const TriggerRightIcon = ({
   </TriggerRightIconWrapper>
 );
 
-export const Action = () => {
+export const FadeAction = () => {
   // Set up port communication for `action` window.
   useActionMessagePorts();
   useDebug(window.myAPI.getWindowId());
+  const { stateLoaded } = useConnections();
 
+  return (
+    <FadeInWrapper show={stateLoaded}>
+      <Action />
+    </FadeInWrapper>
+  );
+};
+
+export const Action = () => {
   const { openHelp } = useHelp();
 
   // Get state and setters from TxMeta context.
