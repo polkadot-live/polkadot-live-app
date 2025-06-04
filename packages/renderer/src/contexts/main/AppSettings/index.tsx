@@ -27,7 +27,7 @@ export const AppSettingsProvider = ({
    * Get value from cache.
    */
   const cacheGet = (key: SettingKey): boolean =>
-    cacheRef.current.get(key) || false;
+    Boolean(cacheRef.current.get(key));
 
   /**
    * Update settings cache and send IPC to update settings in main process.

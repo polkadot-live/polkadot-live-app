@@ -2,10 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { createContext, useContext, useEffect, useState } from 'react';
-import { Flip, toast } from 'react-toastify';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { getDefaultSettings } from '@polkadot-live/consts/settings';
+import { setStateWithRef } from '@w3ux/utils';
 import type { SettingFlagsContextInterface } from './types';
-import type { SettingItem } from '@polkadot-live/types/settings';
+import type { SettingKey, SettingItem } from '@polkadot-live/types/settings';
 
 export const SettingFlagsContext = createContext<SettingFlagsContextInterface>(
   defaults.defaultSettingFlagsContext
@@ -18,162 +19,70 @@ export const SettingFlagsProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  /// Store state of switch settings.
-  const [windowDocked, setWindowDocked] = useState(false);
-  const [silenceOsNotifications, setSilenceOsNotifications] = useState(false);
-  const [
-    silenceExtrinsicsOsNotifications,
-    setSilenceExtrinsicsOsNotifications,
-  ] = useState(false);
-  const [showOnAllWorkspaces, setShowOnAllWorkspaces] = useState(false);
-  const [showDebuggingSubscriptions, setShowDebuggingSubscriptions] =
-    useState(false);
-  const [enableAutomaticSubscriptions, setEnableAutomaticSubscriptions] =
-    useState(true);
-  const [enablePolkassemblyApi, setEnablePolkassemblyApi] = useState(true);
-  const [keepOutdatedEvents, setKeepOutdatedEvents] = useState(true);
-  const [hideDockIcon, setHideDockIcon] = useState(false);
+  const [cache, setCache] = useState(getDefaultSettings());
+  const cacheRef = useRef(cache);
 
-  /// Fetch settings from store and set state.
-  useEffect(() => {
-    const sync = async () => {
-      const map = await window.myAPI.getAppSettings();
+  /**
+   * Get value from cache.
+   */
+  const cacheGet = (key: SettingKey): boolean =>
+    Boolean(cacheRef.current.get(key));
 
-      setWindowDocked(Boolean(map.get('setting:docked-window')));
-      setSilenceOsNotifications(
-        Boolean(map.get('setting:silence-os-notifications'))
-      );
-      setSilenceExtrinsicsOsNotifications(
-        Boolean(map.get('setting:silence-extrinsic-notifications'))
-      );
-      setShowOnAllWorkspaces(Boolean(map.get('setting:show-all-workspaces')));
-      setShowDebuggingSubscriptions(
-        Boolean(map.get('setting:show-debugging-subscriptions'))
-      );
-      setEnableAutomaticSubscriptions(
-        Boolean(map.get('setting:automatic-subscriptions'))
-      );
-      setEnablePolkassemblyApi(Boolean(map.get('setting:enable-polkassembly')));
-      setKeepOutdatedEvents(Boolean(map.get('setting:keep-outdated-events')));
-      setHideDockIcon(Boolean(map.get('setting:hide-dock-icon')));
-    };
-
-    sync();
-  }, []);
-
-  /// Determine if a swtich is on or off.
-  const getSwitchState = (setting: SettingItem) => {
-    const { key } = setting;
-
-    switch (key) {
-      case 'setting:docked-window': {
-        return windowDocked;
-      }
-      case 'setting:silence-os-notifications': {
-        return silenceOsNotifications;
-      }
-      case 'setting:silence-extrinsic-notifications': {
-        return silenceExtrinsicsOsNotifications;
-      }
-      case 'setting:show-all-workspaces': {
-        return showOnAllWorkspaces;
-      }
-      case 'setting:show-debugging-subscriptions': {
-        return showDebuggingSubscriptions;
-      }
-      case 'setting:automatic-subscriptions': {
-        return enableAutomaticSubscriptions;
-      }
-      case 'setting:enable-polkassembly': {
-        return enablePolkassemblyApi;
-      }
-      case 'setting:keep-outdated-events': {
-        return keepOutdatedEvents;
-      }
-      case 'setting:hide-dock-icon': {
-        return hideDockIcon;
-      }
-      default: {
-        return true;
-      }
-    }
+  /**
+   * Set value in cache.
+   */
+  const cacheSet = (key: SettingKey, val: boolean) => {
+    const map = new Map(cacheRef.current).set(key, val);
+    setStateWithRef(map, setCache, cacheRef);
   };
 
-  /// Handle toggling a setting switch.
+  /**
+   * Determine if a swtich is on or off.
+   */
+  const getSwitchState = (setting: SettingItem) => {
+    const { key } = setting;
+    return cacheGet(key);
+  };
+
+  /**
+   * Handle toggling a setting switch.
+   */
   const handleSwitchToggle = (setting: SettingItem) => {
     const { key } = setting;
-    let umamiData = { settingId: '', toggledOn: false };
+    const val = !cacheGet(key);
+    const map = new Map(cacheRef.current).set(key, val);
+    setStateWithRef(map, setCache, cacheRef);
+
+    const umamiData = { settingId: '', toggledOn: val };
 
     switch (key) {
-      case 'setting:docked-window': {
-        umamiData = { settingId: 'dock-window', toggledOn: !windowDocked };
-        setWindowDocked(!windowDocked);
+      case 'setting:docked-window':
+        umamiData.settingId = 'dock-window';
         break;
-      }
-      case 'setting:silence-os-notifications': {
-        umamiData = {
-          settingId: 'silence-notifications',
-          toggledOn: !silenceOsNotifications,
-        };
-        setSilenceOsNotifications(!silenceOsNotifications);
+      case 'setting:silence-os-notifications':
+        umamiData.settingId = 'silence-notifications';
         break;
-      }
-      case 'setting:silence-extrinsic-notifications': {
-        umamiData = {
-          settingId: 'silence-extrinsics-notifications',
-          toggledOn: !silenceExtrinsicsOsNotifications,
-        };
-        setSilenceExtrinsicsOsNotifications(!silenceExtrinsicsOsNotifications);
+      case 'setting:silence-extrinsic-notifications':
+        umamiData.settingId = 'silence-extrinsics-notifications';
         break;
-      }
-      case 'setting:show-all-workspaces': {
-        umamiData = {
-          settingId: 'all-workspaces',
-          toggledOn: !showOnAllWorkspaces,
-        };
-        setShowOnAllWorkspaces(!showOnAllWorkspaces);
+      case 'setting:show-all-workspaces':
+        umamiData.settingId = 'all-workspaces';
         break;
-      }
-      case 'setting:show-debugging-subscriptions': {
-        umamiData = {
-          settingId: 'debugging-subscriptions',
-          toggledOn: !showDebuggingSubscriptions,
-        };
-        setShowDebuggingSubscriptions(!showDebuggingSubscriptions);
+      case 'setting:show-debugging-subscriptions':
+        umamiData.settingId = 'debugging-subscriptions';
         break;
-      }
-      case 'setting:automatic-subscriptions': {
-        umamiData = {
-          settingId: 'automatic-subscriptions',
-          toggledOn: !enableAutomaticSubscriptions,
-        };
-        setEnableAutomaticSubscriptions(!enableAutomaticSubscriptions);
+      case 'setting:automatic-subscriptions':
+        umamiData.settingId = 'automatic-subscriptions';
         break;
-      }
-      case 'setting:enable-polkassembly': {
-        umamiData = {
-          settingId: 'polkassembly-api',
-          toggledOn: !enablePolkassemblyApi,
-        };
-        setEnablePolkassemblyApi(!enablePolkassemblyApi);
+      case 'setting:enable-polkassembly':
+        umamiData.settingId = 'polkassembly-api';
         break;
-      }
-      case 'setting:keep-outdated-events': {
-        umamiData = {
-          settingId: 'outdated-events',
-          toggledOn: !keepOutdatedEvents,
-        };
-        setKeepOutdatedEvents(!keepOutdatedEvents);
+      case 'setting:keep-outdated-events':
+        umamiData.settingId = 'outdated-events';
         break;
-      }
-      case 'setting:hide-dock-icon': {
-        umamiData = { settingId: 'hide-dock-icon', toggledOn: !hideDockIcon };
-        setHideDockIcon(!hideDockIcon);
+      case 'setting:hide-dock-icon':
+        umamiData.settingId = 'hide-dock-icon';
         break;
-      }
-      default: {
-        break;
-      }
     }
 
     const { settingId, toggledOn } = umamiData;
@@ -181,52 +90,24 @@ export const SettingFlagsProvider = ({
     window.myAPI.umamiEvent(event, { setting: settingId });
   };
 
-  /// Render a toastify message.
-  const renderToastify = (success: boolean, text: string) => {
-    const toastId = `toast-export-data-${success}`;
-    const position = 'top-center';
-    const autoClose = 3000;
+  /**
+   * Sync settings with main process on mount.
+   */
+  useEffect(() => {
+    const sync = async () => {
+      const map = await window.myAPI.getAppSettings();
+      setStateWithRef(map, setCache, cacheRef);
+    };
 
-    if (success) {
-      toast.success(text, {
-        position,
-        autoClose,
-        hideProgressBar: true,
-        closeOnClick: true,
-        closeButton: false,
-        pauseOnHover: false,
-        draggable: false,
-        progress: undefined,
-        theme: 'dark',
-        transition: Flip,
-        toastId,
-      });
-    } else {
-      toast.error(text, {
-        position,
-        autoClose,
-        hideProgressBar: true,
-        closeOnClick: true,
-        closeButton: false,
-        pauseOnHover: false,
-        draggable: false,
-        progress: undefined,
-        theme: 'dark',
-        transition: Flip,
-        toastId,
-      });
-    }
-  };
+    sync();
+  }, []);
 
   return (
     <SettingFlagsContext.Provider
       value={{
-        setWindowDocked,
-        setSilenceOsNotifications,
-        setShowOnAllWorkspaces,
+        cacheSet,
         getSwitchState,
         handleSwitchToggle,
-        renderToastify,
       }}
     >
       {children}

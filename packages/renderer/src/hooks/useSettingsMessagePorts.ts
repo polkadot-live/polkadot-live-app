@@ -6,10 +6,10 @@ import { ConfigSettings } from '@polkadot-live/core';
 /// Settings window contexts.
 import { useEffect } from 'react';
 import { useSettingFlags } from '@ren/contexts/settings';
+import { renderToast } from '@polkadot-live/ui/utils';
 
 export const useSettingsMessagePorts = () => {
-  const { setWindowDocked, setSilenceOsNotifications, renderToastify } =
-    useSettingFlags();
+  const { cacheSet } = useSettingFlags();
 
   /**
    * @name handleReceivedPort
@@ -27,17 +27,18 @@ export const useSettingsMessagePorts = () => {
           switch (ev.data.task) {
             case 'settings:set:dockedWindow': {
               const { docked } = ev.data.data;
-              setWindowDocked(docked);
+              cacheSet('setting:docked-window', docked);
               break;
             }
             case 'settings:set:silenceOsNotifications': {
               const { silenced } = ev.data.data;
-              setSilenceOsNotifications(silenced);
+              cacheSet('setting:silence-os-notifications', silenced);
               break;
             }
             case 'settings:render:toast': {
               const { success, text } = ev.data.data;
-              renderToastify(success, text);
+              const toastId = `toast-export-data-${success}`;
+              renderToast(text, toastId, 'success');
               break;
             }
             default: {
