@@ -1,8 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as themeVariables from '../../../theme/variables';
-
 import { useEffect, useState, memo } from 'react';
 import { useConnections } from '@ren/contexts/common';
 import { useEvents } from '@ren/contexts/main';
@@ -25,10 +23,9 @@ export const Item = memo(function Item({ event }: ItemProps) {
   // The state of the event item display.
   const [display, setDisplay] = useState<'in' | 'fade' | 'out'>('in');
 
-  const { darkMode } = useConnections();
+  const { getTheme } = useConnections();
   const { dismissEvent } = useEvents();
-
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
+  const theme = getTheme();
   const { uid, title, subtitle, txActions, uriActions /*, data*/ } = event;
 
   // Extract address from event.

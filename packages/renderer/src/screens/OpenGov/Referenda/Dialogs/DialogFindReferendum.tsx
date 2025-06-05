@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Dialog from '@radix-ui/react-dialog';
-import * as themeVariables from '../../../../theme/variables';
-
 import { useConnections } from '@ren/contexts/common';
 import { usePolkassembly, useReferenda } from '@ren/contexts/openGov';
 import { useState } from 'react';
@@ -22,8 +20,8 @@ import type { AnyData } from '@polkadot-live/types/misc';
 import type { DialogFindReferendumProps } from './types';
 
 export const DialogFindReferendum = ({ tab }: DialogFindReferendumProps) => {
-  const { darkMode } = useConnections();
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
+  const { getTheme } = useConnections();
+  const theme = getTheme();
 
   const { getActiveReferenda, getHistoryReferenda, getItemsPerPage, setPage } =
     useReferenda();

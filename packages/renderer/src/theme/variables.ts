@@ -102,6 +102,7 @@ export const darkTheme = {
   backgroundDefault: '#171717',
   backgroundInvert: '#ddd',
   backgroundStatusOverlay: 'rgb(43 38 43 / 75%)',
+
   buttonHoverBackground: '#333',
   buttonPrimaryBackground: 'rgb(58 52 58)',
   modalBackgroundColor: 'rgb(22 18 22 / 70%)',
@@ -114,7 +115,7 @@ export const darkTheme = {
   accentColorPending: 'var(--accent-color-pending-dark)',
 };
 
-export const lightThene = {
+export const lightTheme = {
   /* General: Backgrounds */
   backgroundWindow: '#eee',
   backgroundSurface: '#dadada',
@@ -133,6 +134,7 @@ export const lightThene = {
   borderPrimaryColor: '#c0c0c0',
   borderSecondaryColor: '#8a8a8a',
   borderMidColor: '#a8a8a8',
+  borderSubtle: '#a8a8a8',
 
   /* General: Buttons */
   buttonBackgroundPrimary: '#d2d2d2',
@@ -198,6 +200,7 @@ export const lightThene = {
   navButtonBackgroundHover: '#c2c2c2',
   navButtonIcon: '#363636',
   navButtonText: '#5e5e5e',
+  navButtonIconActive: '#c9c9c9',
   navButtonTextActive: '#e9e9e9',
 
   /* Sort Controls */
@@ -214,8 +217,8 @@ export const lightThene = {
   backgroundInvert: '#333',
   backgroundStatusOverlay: 'rgb(255 255 255 / 85%)',
 
-  buttonPrimaryBackground: '#efeeee',
   buttonHoverBackground: '#e8e6e6',
+  buttonPrimaryBackground: '#efeeee',
   modalBackgroundColor: 'rgb(224 222 222 / 70%)',
 
   accentColorPrimary: 'var(--accent-color-primary-light)',

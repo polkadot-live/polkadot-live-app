@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import * as themeVariables from '@ren/theme/variables';
-
 import { useConnections } from '@ren/contexts/common';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { DropdownMenuContent } from '@polkadot-live/ui/styles';
@@ -26,8 +24,9 @@ export const ReferendumDropdownMenu = ({
   referendum,
 }: ReferendumDropdownMenuProps) => {
   const { openOverlayWith } = useOverlay();
-  const { darkMode } = useConnections();
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
+  const { cacheGet, getTheme } = useConnections();
+  const darkMode = cacheGet('mode:dark');
+  const theme = getTheme();
 
   const onPolkassemblyClick = () => {
     const { refId } = referendum;

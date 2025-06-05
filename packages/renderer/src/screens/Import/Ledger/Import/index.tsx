@@ -6,7 +6,6 @@ import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/ui/styles';
 import * as Checkbox from '@radix-ui/react-checkbox';
 import * as Select from '@radix-ui/react-select';
-import * as themeVariables from '../../../../theme/variables';
 
 import { useEffect, useState } from 'react';
 import { useConnections } from '@ren/contexts/common';
@@ -49,7 +48,7 @@ import type { ImportProps } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
 
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
-  const { darkMode } = useConnections();
+  const { cacheGet, getTheme } = useConnections();
   const { isAlreadyImported, ledgerAddresses } = useAddresses();
   const { insertAccountStatus } = useAccountStatuses();
   const { handleImportAddress } = useImportHandler();
@@ -67,7 +66,8 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   ]);
 
   const [showConnectStatus, setShowConnectStatus] = useState(false);
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
+  const darkMode = cacheGet('mode:dark');
+  const theme = getTheme();
 
   /**
    * Handle a checkbox click to add and remove selected addresses.

@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Dialog from '@radix-ui/react-dialog';
-import * as themeVariables from '../../../theme/variables';
 import * as Styles from '@polkadot-live/ui/styles';
 
 import { chainCurrency, chainUnits } from '@polkadot-live/consts/chains';
@@ -24,8 +23,8 @@ export const DialogExtrinsicSummary = ({
   setDialogOpen,
   renderTrigger = true,
 }: DialogExtrinsicSummaryProps) => {
-  const { darkMode } = useConnections();
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
+  const { getTheme } = useConnections();
+  const theme = getTheme();
 
   /**
    * Utils.

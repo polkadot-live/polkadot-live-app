@@ -3,7 +3,6 @@
 
 import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/ui/styles';
-import * as themeVariables from '../../../theme/variables';
 
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { TreasuryStats } from '../Wrappers';
@@ -13,8 +12,8 @@ import type { ChainID } from '@polkadot-live/types/chains';
 
 export const OverviewTreasury: React.FC = () => {
   const { openHelp } = useHelp();
-  const { darkMode, getOnlineMode } = useConnections();
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
+  const { getTheme, getOnlineMode } = useConnections();
+  const theme = getTheme();
 
   // Treasury context.
   const {

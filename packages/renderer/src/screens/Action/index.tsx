@@ -5,7 +5,6 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as Select from '@radix-ui/react-select';
 import * as UI from '@polkadot-live/ui/components';
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import * as themeVariables from '../../theme/variables';
 
 import { DropdownExtrinsicsFilter, ExtrinsicDropdownMenu } from './Dropdowns';
 import { ellipsisFn } from '@w3ux/utils';
@@ -86,9 +85,10 @@ export const Action = () => {
       : setPage(page < pageCount ? page + 1 : page);
   };
 
-  const { cacheGet, darkMode, getOnlineMode } = useConnections();
+  const { cacheGet, getTheme, getOnlineMode } = useConnections();
   const isBuildingExtrinsic = cacheGet('extrinsic:building');
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
+  const darkMode = cacheGet('mode:dark');
+  const theme = getTheme();
 
   const [dialogInfo, setDialogInfo] = useState<ExtrinsicInfo | null>(null);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);

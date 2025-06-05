@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import * as themeVariables from '@ren/theme/variables';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 
 import { useState } from 'react';
@@ -25,9 +24,9 @@ export const ExtrinsicDropdownMenu = ({
   onSummaryClick,
 }: ExtrinsicDropdownMenuProps) => {
   const { showMockUI } = useTxMeta();
-  const { cacheGet, darkMode, getOnlineMode } = useConnections();
+  const { cacheGet, getTheme, getOnlineMode } = useConnections();
   const isBuildingExtrinsic = cacheGet('extrinsic:building');
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
+  const theme = getTheme();
 
   const [open, setOpen] = useState<boolean>(false);
 

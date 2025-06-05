@@ -1,7 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as themeVariables from '../../../theme/variables';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import { intervalTasks } from '@polkadot-live/consts/subscriptions/interval';
 import {
@@ -29,10 +28,11 @@ import type { ReferendumRowProps } from '../types';
 
 export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
   const { openHelp } = useHelp();
+  const { cacheGet, getOnlineMode, getTheme } = useConnections();
 
-  const { darkMode, getOnlineMode } = useConnections();
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
+  const darkMode = cacheGet('mode:dark');
   const isOnline = getOnlineMode();
+  const theme = getTheme();
 
   const { refId, refStatus } = referendum;
   const { activeReferendaChainId: chainId } = useReferenda();

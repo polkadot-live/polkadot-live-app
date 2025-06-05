@@ -3,7 +3,6 @@
 
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
-import * as themeVariables from '../../../theme/variables';
 
 import { ItemsColumn } from './Wrappers';
 import {
@@ -60,9 +59,9 @@ export const Permissions = ({
   );
 
   const { isConnecting } = useBootstrapping();
-  const { cacheGet, darkMode, getOnlineMode } = useConnections();
+  const { cacheGet, getTheme, getOnlineMode } = useConnections();
   const isImportingData = cacheGet('backup:importing');
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
+  const theme = getTheme();
 
   const { updateTask, handleQueuedToggle, toggleCategoryTasks, getTaskType } =
     useSubscriptions();

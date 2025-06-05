@@ -4,7 +4,6 @@
 import * as Select from '@radix-ui/react-select';
 import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/ui/styles';
-import * as themeVariables from '../../../theme/variables';
 
 import { useConnections } from '@ren/contexts/common';
 import { ellipsisFn } from '@w3ux/utils';
@@ -172,8 +171,8 @@ export const SelectBox = ({
   disabled = false,
   onValueChange,
 }: SelectBoxProps) => {
-  const { darkMode } = useConnections();
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
+  const { getTheme } = useConnections();
+  const theme = getTheme();
 
   return (
     <Select.Root

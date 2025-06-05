@@ -141,7 +141,8 @@ app.whenReady().then(async () => {
   // Initialize shared state cache.
   await OnlineStatusController.initialize();
   const connected = OnlineStatusController.getStatus();
-  SharedState.initialize(connected);
+  const dark = SettingsController.get('setting:dark-mode');
+  SharedState.initialize(connected, dark);
 
   // ------------------------------
   // Create windows

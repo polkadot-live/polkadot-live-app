@@ -8,7 +8,8 @@ import { ThemeProvider } from 'styled-components';
 import { useConnections } from './contexts/common';
 
 export const Theme = () => {
-  const { darkMode } = useConnections();
+  const { cacheGet } = useConnections();
+  const darkMode = cacheGet('mode:dark');
 
   // Store initial theme in state.
   const [mode, setMode] = useState(darkMode ? 'dark' : 'light');

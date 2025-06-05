@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function */
 
+import * as themeVariables from '@ren/theme/variables';
 import type { ConnectionsContextInterface } from './types';
 
 export const defaultConnectionsContext: ConnectionsContextInterface = {
-  darkMode: true,
   stateLoaded: false,
   cacheGet: () => false,
   getOnlineMode: () => true,
+  getTheme: () => themeVariables.darkTheme,
 };

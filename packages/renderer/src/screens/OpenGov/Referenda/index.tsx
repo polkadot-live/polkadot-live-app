@@ -1,7 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as themeVariables from '../../../theme/variables';
 import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/ui/styles';
 import * as Tabs from '@radix-ui/react-tabs';
@@ -38,8 +37,8 @@ import { DialogFindReferendum } from './Dialogs';
 import type { ReferendaProps } from '../types';
 
 export const Referenda = ({ setSection }: ReferendaProps) => {
-  const { darkMode, getOnlineMode } = useConnections();
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
+  const { getTheme, getOnlineMode } = useConnections();
+  const theme = getTheme();
 
   const {
     activePagedReferenda,

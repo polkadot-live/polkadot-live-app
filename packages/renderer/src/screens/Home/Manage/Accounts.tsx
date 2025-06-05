@@ -3,7 +3,6 @@
 
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
-import * as themeVariables from '../../../theme/variables';
 
 import { ChainIcon, Identicon } from '@polkadot-live/ui/components';
 import { ItemEntryWrapper, ItemsColumn } from './Wrappers';
@@ -47,8 +46,8 @@ export const Accounts = ({
   const { getIntervalSubscriptionsForChain, getSortedKeys } =
     useIntervalSubscriptions();
 
-  const { darkMode } = useConnections();
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
+  const { getTheme } = useConnections();
+  const theme = getTheme();
 
   /// Categorise addresses by their chain ID, sort by name.
   const getSortedAddresses = () => {
