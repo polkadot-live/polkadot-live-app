@@ -4,7 +4,6 @@
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import * as themeVariables from '../../../theme/variables';
 import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 
 import { chainCurrency } from '@polkadot-live/consts/chains';
@@ -58,8 +57,8 @@ export const Send: React.FC = () => {
   /**
    * Addresses fetched from main process.
    */
-  const { darkMode } = useConnections();
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
+  const { getTheme } = useConnections();
+  const theme = getTheme();
 
   /**
    * Accordion state.

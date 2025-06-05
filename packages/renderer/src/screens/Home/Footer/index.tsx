@@ -1,7 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as themeVariables from '@ren/theme/variables';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import { faCircle as faCircleRegular } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -31,12 +30,12 @@ export const Footer = () => {
     showWorkingSpinner,
   } = useChains();
 
-  const { darkMode, getOnlineMode, cacheGet } = useConnections();
+  const { getOnlineMode, getTheme, cacheGet } = useConnections();
   const isConnected = cacheGet('mode:connected');
+  const theme = getTheme();
 
   const { chainHasIntervalSubscriptions } = useIntervalSubscriptions();
   const { chainHasSubscriptions } = useSubscriptions();
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
 
   // Flag controlling whether footer is expanded.
   const [expanded, setExpanded] = useState<boolean>(false);

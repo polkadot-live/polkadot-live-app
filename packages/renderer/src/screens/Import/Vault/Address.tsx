@@ -1,7 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as themeVariables from '../../../theme/variables';
 import { Confirm } from '../Addresses/Confirm';
 import { Delete } from '../Addresses/Delete';
 import {
@@ -22,9 +21,8 @@ export const Address = ({ localAddress, setSection }: AddressProps) => {
   const { openOverlayWith } = useOverlay();
   const { handleAddressImport } = useAddresses();
   const { getStatusForAccount } = useAccountStatuses();
-
-  const { darkMode, getOnlineMode } = useConnections();
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
+  const { getTheme, getOnlineMode } = useConnections();
+  const theme = getTheme();
 
   // Handler to rename an account.
   const renameHandler = async (who: string, newName: string) => {

@@ -1,7 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as themeVariables from '../../../theme/variables';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as Styles from '@polkadot-live/ui/styles';
 import * as UI from '@polkadot-live/ui/components';
@@ -32,9 +31,9 @@ export const StatItemRow = ({
   category?: string;
 }) => {
   const { openHelp } = useHelp();
-  const { darkMode } = useConnections();
+  const { getTheme } = useConnections();
+  const theme = getTheme();
 
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
   const mCol =
     kind === 'total'
       ? 'var(--text-color-primary)'

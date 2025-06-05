@@ -1,7 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as themeVariables from '../../../theme/variables';
 import { TaskEntryWrapper } from './Wrappers';
 import { Switch, TooltipRx } from '@polkadot-live/ui/components';
 import { useEffect, useState } from 'react';
@@ -25,8 +24,8 @@ export const PermissionRow = ({
   getTaskType,
 }: PermissionRowProps) => {
   const { openHelp } = useHelp();
-  const { darkMode } = useConnections();
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
+  const { getTheme } = useConnections();
+  const theme = getTheme();
 
   const [isToggled, setIsToggled] = useState<boolean>(task.status === 'enable');
   const [oneShotProcessing, setOneShotProcessing] = useState(false);

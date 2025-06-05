@@ -1,7 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as themeVariables from '../../../theme/variables';
 import { useEffect, useRef, useState } from 'react';
 import { useBootstrapping, useIntervalTasksManager } from '@ren/contexts/main';
 import { useConnections, useHelp } from '@ren/contexts/common';
@@ -28,10 +27,10 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
   const { openHelp } = useHelp();
   const { isConnecting } = useBootstrapping();
 
-  const { cacheGet, darkMode, getOnlineMode } = useConnections();
+  const { cacheGet, getOnlineMode, getTheme } = useConnections();
   const isImportingData = cacheGet('backup:importing');
   const isOnlineMode = getOnlineMode();
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
+  const theme = getTheme();
 
   const {
     handleIntervalToggle,

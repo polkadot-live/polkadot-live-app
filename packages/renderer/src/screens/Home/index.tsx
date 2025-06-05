@@ -39,8 +39,10 @@ export const Home = () => {
 
   const { getAddresses } = useAddresses();
   const { addEvent, markStaleEvent, removeOutdatedEvents } = useEvents();
-  const { darkMode } = useConnections();
   const { openHelp } = useHelp();
+
+  const { cacheGet: getSharedState } = useConnections();
+  const darkMode = getSharedState('mode:dark');
 
   const { cacheGet, toggleSetting } = useAppSettings();
   const dockToggled = cacheGet('setting:docked-window');

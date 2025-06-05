@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import * as themeVariables from '@ren/theme/variables';
 import * as Icons from '@radix-ui/react-icons';
 import {
   DropdownMenuContent,
@@ -18,8 +17,8 @@ import { IconButton } from './Wrappers';
  * Dropdown menu demo component showcasing features.
  */
 export const DropdownMenuDemo = () => {
-  const { darkMode } = useConnections();
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
+  const { getTheme } = useConnections();
+  const theme = getTheme();
 
   const [boxOneChecked, setBoxOneChecked] = useState(true);
   const [boxTwoChecked, setBoxTwoChecked] = useState(true);

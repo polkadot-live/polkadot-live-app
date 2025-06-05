@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import * as themeVariables from '@ren/theme/variables';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 
 import {
@@ -18,8 +17,8 @@ import { FilterButton } from './Wrappers';
 
 export const DropdownExtrinsicsFilter = () => {
   const { getSortedFilterOptions, setFilterOption } = useTxMeta();
-  const { darkMode } = useConnections();
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
+  const { getTheme } = useConnections();
+  const theme = getTheme();
 
   const renderFilterMark = (): boolean =>
     [

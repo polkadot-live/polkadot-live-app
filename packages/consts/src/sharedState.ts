@@ -10,6 +10,7 @@ export const initSharedState = () =>
     ['backup:importing', false],
     ['extrinsic:building', false],
     ['mode:connected', false],
+    ['mode:dark', true],
     ['mode:online', false],
     ['wc:account:approved', false],
     ['wc:account:verifying', false],

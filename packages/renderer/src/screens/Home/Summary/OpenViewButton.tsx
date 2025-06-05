@@ -16,7 +16,8 @@ export const OpenViewButton = ({
   umamiEvent,
 }: OpenViewButtonProps) => {
   const [isHovering, setIsHovering] = useState(false);
-  const { darkMode } = useConnections();
+  const { cacheGet } = useConnections();
+  const darkMode = cacheGet('mode:dark');
 
   return (
     <OpenViewButtonWrapper

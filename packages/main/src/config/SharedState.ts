@@ -13,8 +13,9 @@ export class SharedState {
   /**
    * Initialize shared state cache.
    */
-  static initialize = (connected: boolean) => {
+  static initialize = (connected: boolean, dark: boolean) => {
     this.cache = initSharedState()
+      .set('mode:dark', dark)
       .set('mode:connected', connected)
       .set('mode:online', connected);
   };

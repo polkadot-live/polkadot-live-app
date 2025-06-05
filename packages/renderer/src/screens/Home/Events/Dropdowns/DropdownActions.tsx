@@ -1,9 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ConfigRenderer } from '@polkadot-live/core';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import * as themeVariables from '@ren/theme/variables';
+import { ConfigRenderer } from '@polkadot-live/core';
 import { useBootstrapping } from '@ren/contexts/main';
 import { useConnections } from '@ren/contexts/common';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -25,9 +24,10 @@ export const ActionsDropdown = ({
   uriActions,
 }: ActionsDropdownProps) => {
   const { isConnecting } = useBootstrapping();
-  const { cacheGet, darkMode, getOnlineMode } = useConnections();
+  const { cacheGet, getTheme, getOnlineMode } = useConnections();
+  const darkMode = cacheGet('mode:dark');
   const isBuildingExtrinsic = cacheGet('extrinsic:building');
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
+  const theme = getTheme();
 
   // Extract account source from event.
   const source: AccountSource | null =

@@ -3,7 +3,6 @@
 
 import * as Dialog from '@radix-ui/react-dialog';
 import * as Styles from '@polkadot-live/ui/styles';
-import * as themeVariables from '../../../../theme/variables';
 import * as Icons from '@radix-ui/react-icons';
 
 import { useConnections } from '@ren/contexts/common';
@@ -33,8 +32,8 @@ export const DialogRecipient = ({
   sender,
   setReceiver,
 }: DialogRecipientProps) => {
-  const { darkMode, getOnlineMode } = useConnections();
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
+  const { getTheme, getOnlineMode } = useConnections();
+  const theme = getTheme();
 
   const [isOpen, setIsOpen] = useState(false);
   const [isInputValid, setIsInputValid] = useState(false);

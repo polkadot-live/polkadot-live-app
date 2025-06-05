@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
+import * as themeVariables from '@ren/theme/variables';
 import { initSharedState } from '@polkadot-live/consts/sharedState';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { setStateWithRef } from '@w3ux/utils';
@@ -35,11 +36,6 @@ export const ConnectionsProvider = ({
   const cacheRef = useRef(cache);
 
   /**
-   * Flag set to `true` when app's theme is dark mode.
-   */
-  const [darkMode, setDarkMode] = useState(true);
-
-  /**
    * Get a cached value.
    */
   const cacheGet = (key: SyncID): boolean => Boolean(cacheRef.current.get(key));
@@ -50,15 +46,19 @@ export const ConnectionsProvider = ({
   const getOnlineMode = () =>
     cacheGet('mode:connected') && cacheGet('mode:online');
 
+  /**
+   * Get theme variables.
+   */
+  const getTheme = (): typeof themeVariables.darkTheme => {
+    const { darkTheme, lightTheme } = themeVariables;
+    return cacheGet('mode:dark') ? darkTheme : lightTheme;
+  };
+
   useEffect(() => {
     /**
      * Synchronize flags in store.
      */
     const sync = async () => {
-      // TODO: Integrate into cache.
-      const parsed = await window.myAPI.getAppSettings();
-      setDarkMode(Boolean(parsed.get('setting:dark-mode')));
-
       // TODO: Optimise with one IPC.
       const map: typeof cache = new Map();
       for (const key of initSharedState().keys()) {
@@ -77,17 +77,8 @@ export const ConnectionsProvider = ({
         _: IpcRendererEvent,
         { syncId, state }: { syncId: SyncID; state: string | boolean }
       ) => {
-        switch (syncId) {
-          case 'mode:dark': {
-            setDarkMode(state as boolean);
-            break;
-          }
-          default: {
-            const map = new Map(cacheRef.current).set(syncId, state as boolean);
-            setStateWithRef(map, setCache, cacheRef);
-            break;
-          }
-        }
+        const map = new Map(cacheRef.current).set(syncId, state as boolean);
+        setStateWithRef(map, setCache, cacheRef);
       }
     );
 
@@ -97,10 +88,10 @@ export const ConnectionsProvider = ({
   return (
     <ConnectionsContext.Provider
       value={{
-        darkMode,
         stateLoaded,
         cacheGet,
         getOnlineMode,
+        getTheme,
       }}
     >
       {children}

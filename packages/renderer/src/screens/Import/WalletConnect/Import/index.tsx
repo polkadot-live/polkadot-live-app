@@ -5,7 +5,6 @@ import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/ui/styles';
 import * as AccordionRx from '@radix-ui/react-accordion';
 import * as Checkbox from '@radix-ui/react-checkbox';
-import * as themeVariables from '../../../../theme/variables';
 
 import { BarLoader } from 'react-spinners';
 import { CheckIcon, ChevronDownIcon } from '@radix-ui/react-icons';
@@ -32,15 +31,16 @@ import { AddressListFooter, ImportAddressRow } from '../../Wrappers';
 import type { ImportProps } from './types';
 
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
-  const { darkMode, getOnlineMode, cacheGet } = useConnections();
+  const { isAlreadyImported, wcAddresses } = useAddresses();
+  const { getOnlineMode, cacheGet, getTheme } = useConnections();
+
+  const theme = getTheme();
+  const darkMode = cacheGet('mode:dark');
   const wcConnecting = cacheGet('wc:connecting');
   const wcDisconnecting = cacheGet('wc:disconnecting');
   const wcInitialized = cacheGet('wc:initialized');
   const wcSessionRestored = cacheGet('wc:session:restored');
 
-  const { isAlreadyImported, wcAddresses } = useAddresses();
-
-  const theme = darkMode ? themeVariables.darkTheme : themeVariables.lightThene;
   const {
     isImporting,
     wcFetchedAddresses,
