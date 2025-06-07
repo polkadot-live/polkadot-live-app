@@ -105,7 +105,7 @@ export const useMainMessagePorts = () => {
             );
 
           for (const task of allTasks) {
-            updateTask('account', task, task.account?.address);
+            updateTask(task);
 
             await window.myAPI.sendSubscriptionTask({
               action: 'subscriptions:account:update',
@@ -150,7 +150,7 @@ export const useMainMessagePorts = () => {
             },
           });
 
-          updateTask('account', task, task.account?.address);
+          updateTask(task);
         }
 
         // Subscribe to tasks if app setting enabled.
@@ -691,7 +691,7 @@ export const useMainMessagePorts = () => {
           data: { serTask: JSON.stringify(activeTask) },
         });
 
-        updateTask('chain', activeTask);
+        updateTask(activeTask);
       }
 
       // Unsubscribe from active debuggin tasks.

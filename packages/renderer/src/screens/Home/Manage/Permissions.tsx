@@ -378,7 +378,7 @@ export const Permissions = ({
       });
 
       // Update react state for tasks.
-      updateTask('account', task, task.account.address);
+      updateTask(task);
 
       // Update cached task in account's query multi wrapper.
       const account = AccountsController.get(

@@ -96,33 +96,39 @@ export const SubscriptionsProvider = ({
 
   /// Update state of a task.
   /// TODO: Remove `!` non-null assertions.
-  const updateTask = (
-    type: string,
-    task: SubscriptionTask,
-    address?: string
-  ) => {
-    // Update all tasks state.
-    if (type === 'account') {
-      setAccountSubscriptionsState((prev) => {
-        const tasks = prev.get(address!);
-        !tasks
-          ? prev.set(address!, [{ ...task }])
-          : prev.set(
-              address!,
-              tasks.map((t) => (t.action === task.action ? task : t))
-            );
+  const updateTask = (task: SubscriptionTask) => {
+    const taskType = task.action.startsWith('subscribe:account')
+      ? 'account'
+      : 'chain';
 
-        return prev;
-      });
-    } else {
-      setChainSubscriptionsState((prev) => {
-        const tasks = prev.get(task.chainId)!;
-        prev.set(
-          task.chainId,
-          tasks.map((t) => (t.action === task.action ? task : t))
-        );
-        return prev;
-      });
+    // Update all tasks state.
+    switch (taskType) {
+      case 'account': {
+        const address = task.account!.address;
+        setAccountSubscriptionsState((prev) => {
+          const tasks = prev.get(address!);
+          !tasks
+            ? prev.set(address!, [{ ...task }])
+            : prev.set(
+                address!,
+                tasks.map((t) => (t.action === task.action ? task : t))
+              );
+
+          return prev;
+        });
+        break;
+      }
+      case 'chain': {
+        setChainSubscriptionsState((prev) => {
+          const tasks = prev.get(task.chainId)!;
+          prev.set(
+            task.chainId,
+            tasks.map((t) => (t.action === task.action ? task : t))
+          );
+          return prev;
+        });
+        break;
+      }
     }
 
     // Update rendered tasks.
@@ -168,7 +174,7 @@ export const SubscriptionsProvider = ({
             action: 'subscriptions:chain:update',
             data: { serTask: JSON.stringify(task) },
           });
-          updateTask('chain', task);
+          updateTask(task);
         }
 
         // Subscribe to tasks.
@@ -197,7 +203,7 @@ export const SubscriptionsProvider = ({
             },
           });
 
-          updateTask('account', task, task.account?.address);
+          updateTask(task);
         }
 
         // Subscribe to tasks.
@@ -244,7 +250,7 @@ export const SubscriptionsProvider = ({
         });
 
         // Update react state.
-        updateTask('chain', task);
+        updateTask(task);
         break;
       }
       case 'account': {
@@ -270,7 +276,7 @@ export const SubscriptionsProvider = ({
         });
 
         // Update react state.
-        updateTask('account', task, task.account?.address);
+        updateTask(task);
 
         // Analytics.
         const { action, category } = task;
