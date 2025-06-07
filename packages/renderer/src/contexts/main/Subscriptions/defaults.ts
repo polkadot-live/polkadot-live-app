@@ -10,12 +10,11 @@ export const defaultSubscriptionsContext: SubscriptionsContextInterface = {
   chainHasSubscriptions: () => false,
   getChainSubscriptions: () => [],
   getAccountSubscriptions: () => [],
-  updateTask: () => {},
   updateAccountNameInTasks: () => {},
   handleQueuedToggle: async (c) => {
     await new Promise(() => {});
   },
-  toggleCategoryTasks: async (c, i, ts, u) => {
+  toggleCategoryTasks: async (c, i, ts) => {
     await new Promise(() => {});
   },
   getTaskType: (t) => '',

@@ -12,6 +12,7 @@ import {
   AccountsController,
   ConfigRenderer,
   IntervalsController,
+  SubscriptionsController,
 } from '@polkadot-live/core';
 import {
   ControlsWrapper,
@@ -20,11 +21,11 @@ import {
 } from '@polkadot-live/ui/components';
 import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 import { ellipsisFn } from '@w3ux/utils';
-import { Flip, toast } from 'react-toastify';
 import { PermissionRow } from './PermissionRow';
 import { IntervalRow } from './IntervalRow';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
+import { renderToast } from '@polkadot-live/ui/utils';
 
 /// Contexts.
 import { useEffect, useState } from 'react';
@@ -63,14 +64,13 @@ export const Permissions = ({
   const isImportingData = cacheGet('backup:importing');
   const theme = getTheme();
 
-  const { updateTask, handleQueuedToggle, toggleCategoryTasks, getTaskType } =
+  const { handleQueuedToggle, toggleCategoryTasks, getTaskType } =
     useSubscriptions();
 
   const {
     activeChainId,
     renderedSubscriptions,
     dynamicIntervalTasksState,
-    updateRenderedSubscriptions,
     tryUpdateDynamicIntervalTask,
     getCategorisedDynamicIntervals,
   } = useManage();
@@ -177,19 +177,12 @@ export const Permissions = ({
   /// Handle a subscription toggle and update rendered subscription state.
   const handleToggle = async (task: SubscriptionTask) => {
     await handleQueuedToggle(task);
-    updateRenderedSubscriptions(task);
   };
 
   /// Handle toggling a subscription task group switch.
   const handleGroupSwitch = async (category: TaskCategory) => {
     const isOn = getCategoryToggles().get(category) || false;
-
-    await toggleCategoryTasks(
-      category,
-      isOn,
-      renderedSubscriptions,
-      updateRenderedSubscriptions
-    );
+    await toggleCategoryTasks(category, isOn, renderedSubscriptions);
   };
 
   /// TODO: Add `toggleable` field on subscription task type.
@@ -335,21 +328,7 @@ export const Permissions = ({
 
     if (!success) {
       setOneShotProcessing(false);
-
-      // Render error alert.
-      toast.error('API timed out.', {
-        position: 'top-right',
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        closeButton: false,
-        pauseOnHover: false,
-        draggable: false,
-        progress: undefined,
-        theme: 'dark',
-        transition: Flip,
-        toastId: 'toast-connection',
-      });
+      renderToast('API timed out.', 'toast-connection', 'error', 'top-right');
     } else {
       // Wait some time to avoid the spinner snapping.
       setTimeout(() => {
@@ -384,10 +363,7 @@ export const Permissions = ({
       });
 
       // Update react state for tasks.
-      updateTask('account', task, task.account.address);
-
-      // Update dynamic tasks.
-      updateRenderedSubscriptions(task);
+      SubscriptionsController.updateTaskState(task);
 
       // Update cached task in account's query multi wrapper.
       const account = AccountsController.get(

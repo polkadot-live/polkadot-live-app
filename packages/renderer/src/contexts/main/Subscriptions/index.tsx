@@ -10,7 +10,6 @@ import {
   TaskQueue,
   SubscriptionsController,
 } from '@polkadot-live/core';
-import type { AnyFunction } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ReactNode } from 'react';
 import type { SubscriptionsContextInterface } from './types';
@@ -95,37 +94,6 @@ export const SubscriptionsProvider = ({
     return subscriptions ? subscriptions : [];
   };
 
-  /// Update state of a task.
-  /// TODO: Remove `!` non-null assertions.
-  const updateTask = (
-    type: string,
-    task: SubscriptionTask,
-    address?: string
-  ) => {
-    if (type === 'account') {
-      setAccountSubscriptionsState((prev) => {
-        const tasks = prev.get(address!);
-        !tasks
-          ? prev.set(address!, [{ ...task }])
-          : prev.set(
-              address!,
-              tasks.map((t) => (t.action === task.action ? task : t))
-            );
-
-        return prev;
-      });
-    } else {
-      setChainSubscriptionsState((prev) => {
-        const tasks = prev.get(task.chainId)!;
-        prev.set(
-          task.chainId,
-          tasks.map((t) => (t.action === task.action ? task : t))
-        );
-        return prev;
-      });
-    }
-  };
-
   /// Return the type of subscription based on its action string.
   const getTaskType = (task: SubscriptionTask): SubscriptionTaskType =>
     task.action.startsWith('subscribe:account') ? 'account' : 'chain';
@@ -134,8 +102,7 @@ export const SubscriptionsProvider = ({
   const toggleCategoryTasks = async (
     category: TaskCategory,
     isOn: boolean,
-    rendererdSubscriptions: WrappedSubscriptionTasks,
-    updateRenderedSubscriptions: AnyFunction
+    rendererdSubscriptions: WrappedSubscriptionTasks
   ) => {
     // Get all tasks with the target status.
     const targetStatus = isOn ? 'enable' : 'disable';
@@ -163,8 +130,7 @@ export const SubscriptionsProvider = ({
             action: 'subscriptions:chain:update',
             data: { serTask: JSON.stringify(task) },
           });
-          updateTask('chain', task);
-          updateRenderedSubscriptions(task);
+          SubscriptionsController.updateTaskState(task);
         }
 
         // Subscribe to tasks.
@@ -173,12 +139,8 @@ export const SubscriptionsProvider = ({
       }
       case 'account': {
         // Get associated account.
-        const account = AccountsController.get(
-          tasks[0].chainId,
-          tasks[0].account?.address
-        );
-
-        // Return early if account not found.
+        const { chainId: cid, account: a } = tasks[0];
+        const account = AccountsController.get(cid, a?.address);
         if (!account) {
           return;
         }
@@ -192,9 +154,7 @@ export const SubscriptionsProvider = ({
               serTask: JSON.stringify(task),
             },
           });
-
-          updateTask('account', task, task.account?.address);
-          updateRenderedSubscriptions(task);
+          SubscriptionsController.updateTaskState(task);
         }
 
         // Subscribe to tasks.
@@ -234,30 +194,25 @@ export const SubscriptionsProvider = ({
     switch (getTaskType(task)) {
       case 'chain': {
         // Subscribe to and persist task.
-        await SubscriptionsController.subscribeChainTask(task);
+        await SubscriptionsController.subscribeChainTasks([task]);
         await window.myAPI.sendSubscriptionTask({
           action: 'subscriptions:chain:update',
           data: { serTask: JSON.stringify(task) },
         });
 
-        // Update react state.
-        updateTask('chain', task);
+        SubscriptionsController.updateTaskState(task);
         break;
       }
       case 'account': {
         // Fetch account task belongs to.
-        const account = AccountsController.get(
-          task.chainId,
-          task.account?.address
-        );
-
+        const { chainId: cid, account: a } = task;
+        const account = AccountsController.get(cid, a?.address);
         if (!account) {
           break;
         }
 
         // Subscribe to and persist the task.
-        await SubscriptionsController.subscribeAccountTask(task, account);
-
+        await AccountsController.subscribeTask(task);
         await window.myAPI.sendSubscriptionTask({
           action: 'subscriptions:account:update',
           data: {
@@ -265,9 +220,7 @@ export const SubscriptionsProvider = ({
             serTask: JSON.stringify(task),
           },
         });
-
-        // Update react state.
-        updateTask('account', task, task.account?.address);
+        SubscriptionsController.updateTaskState(task);
 
         // Analytics.
         const { action, category } = task;
@@ -292,7 +245,6 @@ export const SubscriptionsProvider = ({
         chainHasSubscriptions,
         getChainSubscriptions,
         getAccountSubscriptions,
-        updateTask,
         updateAccountNameInTasks,
         handleQueuedToggle,
         toggleCategoryTasks,

@@ -12,7 +12,6 @@ export const defaultManageContext: ManageContextInterface = {
   setActiveChainId: () => {},
   setDynamicIntervalTasks: () => {},
   setRenderedSubscriptions: () => {},
-  updateRenderedSubscriptions: () => {},
   tryUpdateDynamicIntervalTask: () => {},
   tryAddIntervalSubscription: (t) => {},
   tryRemoveIntervalSubscription: (t) => {},

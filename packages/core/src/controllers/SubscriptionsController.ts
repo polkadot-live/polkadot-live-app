@@ -6,9 +6,13 @@ import { TaskOrchestrator } from '../orchestrators/TaskOrchestrator';
 import { AccountsController } from '../controllers';
 import { accountTasks } from '@polkadot-live/consts/subscriptions/account';
 import { chainTasks } from '@polkadot-live/consts/subscriptions/chain';
+import { compareTasks } from '../library';
 import type { Account } from '../model';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
+import type {
+  SubscriptionTask,
+  WrappedSubscriptionTasks,
+} from '@polkadot-live/types/subscriptions';
 
 /**
  * Key naming convention of subscription tasks in store:
@@ -29,6 +33,9 @@ import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 export class SubscriptionsController {
   static chainSubscriptions: QueryMultiWrapper | null = null;
 
+  /**
+   * React state.
+   */
   static setChainSubscriptions: React.Dispatch<
     React.SetStateAction<Map<ChainID, SubscriptionTask[]>>
   >;
@@ -37,20 +44,64 @@ export class SubscriptionsController {
     React.SetStateAction<Map<string, SubscriptionTask[]>>
   >;
 
+  static setRenderedSubscriptionsState: React.Dispatch<
+    React.SetStateAction<WrappedSubscriptionTasks>
+  >;
+
   /**
    * Sync react state with managed controller data.
    */
+  static syncState = () => {
+    this.syncChainSubscriptionsState();
+    this.syncAccountSubscriptionsState();
+  };
+
   static syncChainSubscriptionsState = () => {
     const data = this.getChainSubscriptions();
     this.setChainSubscriptions(data);
   };
 
-  /**
-   * Sync react state with managed controller data.
-   */
   static syncAccountSubscriptionsState = () => {
     const data = this.getAccountSubscriptions();
     this.setAccountSubscriptions(data);
+  };
+
+  /**
+   * Update task caches.
+   */
+  static updateTaskState = (task: SubscriptionTask) => {
+    task.action.startsWith('subscribe:account')
+      ? this.updateAccountTaskState(task)
+      : this.updateChainTaskState(task);
+  };
+
+  private static updateAccountTaskState = (task: SubscriptionTask) => {
+    const { address: key } = task.account!;
+    this.setAccountSubscriptions((prev) => {
+      const tasks = prev.get(key);
+      const val = !tasks
+        ? [{ ...task }]
+        : tasks.map((t) => (compareTasks(task, t) ? task : t));
+      return prev.set(key, val);
+    });
+    this.updateRendererdTask(task);
+  };
+
+  private static updateChainTaskState = (task: SubscriptionTask) => {
+    const key = task.chainId;
+    this.setChainSubscriptions((prev) => {
+      const tasks = prev.get(key)!;
+      const val = tasks.map((t) => (compareTasks(task, t) ? task : t));
+      return prev.set(key, val);
+    });
+    this.updateRendererdTask(task);
+  };
+
+  static updateRendererdTask = (task: SubscriptionTask) => {
+    this.setRenderedSubscriptionsState((prev) => ({
+      ...prev,
+      tasks: prev.tasks.map((t) => (compareTasks(task, t) ? task : t)),
+    }));
   };
 
   /**
@@ -109,20 +160,6 @@ export class SubscriptionsController {
   }
 
   /**
-   * @name subscribeChainTask
-   * @summary Subscribe to a chain task.
-   */
-  static async subscribeChainTask(task: SubscriptionTask) {
-    if (this.chainSubscriptions) {
-      await TaskOrchestrator.subscribeTask(task, this.chainSubscriptions);
-    } else {
-      throw new Error(
-        'Error: SubscriptionsController::subscribeChainTask QueryMultiWrapper null'
-      );
-    }
-  }
-
-  /**
    * @name subscribeChainTasks
    * @summary Subscribe to a batch of chain tasks.
    */
@@ -134,14 +171,6 @@ export class SubscriptionsController {
         'Error: SubscriptionsController::subscribeChainTask QueryMultiWrapper null'
       );
     }
-  }
-
-  /**
-   * @name subscribeAccountTask
-   * @summary Subscribe to an account task.
-   */
-  static async subscribeAccountTask(task: SubscriptionTask, account: Account) {
-    await account.subscribeToTask(task);
   }
 
   /**

@@ -68,14 +68,13 @@ export const useMainMessagePorts = () => {
   } = useWalletConnect();
 
   const {
-    updateRenderedSubscriptions,
     setRenderedSubscriptions,
     tryAddIntervalSubscription,
     tryRemoveIntervalSubscription,
   } = useManage();
 
   const { toggleSetting } = useAppSettings();
-  const { updateAccountNameInTasks, updateTask } = useSubscriptions();
+  const { updateAccountNameInTasks } = useSubscriptions();
   const { addIntervalSubscription, removeIntervalSubscription } =
     useIntervalSubscriptions();
 
@@ -106,8 +105,7 @@ export const useMainMessagePorts = () => {
             );
 
           for (const task of allTasks) {
-            updateTask('account', task, task.account?.address);
-            updateRenderedSubscriptions(task);
+            SubscriptionsController.updateTaskState(task);
 
             await window.myAPI.sendSubscriptionTask({
               action: 'subscriptions:account:update',
@@ -152,8 +150,7 @@ export const useMainMessagePorts = () => {
             },
           });
 
-          updateTask('account', task, task.account?.address);
-          updateRenderedSubscriptions(task);
+          SubscriptionsController.updateTaskState(task);
         }
 
         // Subscribe to tasks if app setting enabled.
@@ -688,16 +685,16 @@ export const useMainMessagePorts = () => {
       }
 
       // Update state.
-      for (const activeTask of active) {
+      for (const task of active) {
         await window.myAPI.sendSubscriptionTask({
           action: 'subscriptions:chain:update',
-          data: { serTask: JSON.stringify(activeTask) },
+          data: { serTask: JSON.stringify(task) },
         });
-        updateTask('chain', activeTask);
-        updateRenderedSubscriptions(activeTask);
+
+        SubscriptionsController.updateTaskState(task);
       }
 
-      // Unsubscribe from active debuggin tasks.
+      // Unsubscribe from active debugging tasks.
       await SubscriptionsController.subscribeChainTasks(active);
     }
   };
