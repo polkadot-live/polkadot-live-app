@@ -20,11 +20,11 @@ import {
 } from '@polkadot-live/ui/components';
 import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 import { ellipsisFn } from '@w3ux/utils';
-import { Flip, toast } from 'react-toastify';
 import { PermissionRow } from './PermissionRow';
 import { IntervalRow } from './IntervalRow';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
+import { renderToast } from '@polkadot-live/ui/utils';
 
 /// Contexts.
 import { useEffect, useState } from 'react';
@@ -329,21 +329,7 @@ export const Permissions = ({
 
     if (!success) {
       setOneShotProcessing(false);
-
-      // Render error alert.
-      toast.error('API timed out.', {
-        position: 'top-right',
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        closeButton: false,
-        pauseOnHover: false,
-        draggable: false,
-        progress: undefined,
-        theme: 'dark',
-        transition: Flip,
-        toastId: 'toast-connection',
-      });
+      renderToast('API timed out.', 'toast-connection', 'error', 'top-right');
     } else {
       // Wait some time to avoid the spinner snapping.
       setTimeout(() => {
