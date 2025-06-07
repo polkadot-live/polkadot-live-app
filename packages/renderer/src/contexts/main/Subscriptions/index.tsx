@@ -256,7 +256,7 @@ export const SubscriptionsProvider = ({
         }
 
         // Subscribe to and persist the task.
-        await SubscriptionsController.subscribeAccountTask(task, account);
+        await AccountsController.subscribeTask(task);
 
         await window.myAPI.sendSubscriptionTask({
           action: 'subscriptions:account:update',

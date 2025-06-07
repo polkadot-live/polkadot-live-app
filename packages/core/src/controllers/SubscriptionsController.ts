@@ -131,14 +131,6 @@ export class SubscriptionsController {
   }
 
   /**
-   * @name subscribeAccountTask
-   * @summary Subscribe to an account task.
-   */
-  static async subscribeAccountTask(task: SubscriptionTask, account: Account) {
-    await account.subscribeToTask(task);
-  }
-
-  /**
    * @name requiresChainApi
    * @summary Returns `true` if an API instance is required for the provided chain ID for this wrapper, and `false` otherwise.
    * @returns {boolean} Represents if API instance is required for the provided chainID.

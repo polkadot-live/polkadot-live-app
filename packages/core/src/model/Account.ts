@@ -2,9 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { QueryMultiWrapper } from '../model';
-import { TaskOrchestrator } from '../orchestrators';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 import type {
   AccountBalance,
   AccountSource,
@@ -52,14 +50,6 @@ export class Account {
     this._queryMulti = new QueryMultiWrapper();
     this._chain = chain;
   }
-
-  subscribeToTask = async (task: SubscriptionTask) => {
-    if (this.queryMulti) {
-      await TaskOrchestrator.subscribeTask(task, this.queryMulti);
-    } else {
-      throw new Error('Error: Account::subscribeToTask QueryMultiWrapper null');
-    }
-  };
 
   getSubscriptionTasks = () => this._queryMulti?.getSubscriptionTasks();
 
