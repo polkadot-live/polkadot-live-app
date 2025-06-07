@@ -132,10 +132,7 @@ export const SubscriptionsProvider = ({
     }
 
     // Update rendered tasks.
-    SubscriptionsController.setRenderedSubscriptionsState((prev) => ({
-      ...prev,
-      tasks: prev.tasks.map((t) => (Core.compareTasks(task, t) ? task : t)),
-    }));
+    SubscriptionsController.updateRendererdTask(task);
   };
 
   /// Return the type of subscription based on its action string.

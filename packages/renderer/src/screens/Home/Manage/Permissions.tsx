@@ -70,7 +70,6 @@ export const Permissions = ({
     activeChainId,
     renderedSubscriptions,
     dynamicIntervalTasksState,
-    updateRenderedSubscriptions,
     tryUpdateDynamicIntervalTask,
     getCategorisedDynamicIntervals,
   } = useManage();
@@ -177,7 +176,6 @@ export const Permissions = ({
   /// Handle a subscription toggle and update rendered subscription state.
   const handleToggle = async (task: SubscriptionTask) => {
     await handleQueuedToggle(task);
-    updateRenderedSubscriptions(task);
   };
 
   /// Handle toggling a subscription task group switch.

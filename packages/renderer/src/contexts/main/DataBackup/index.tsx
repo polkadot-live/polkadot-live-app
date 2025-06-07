@@ -50,11 +50,8 @@ export const DataBackupProvider = ({
   const { cacheGet } = useConnections();
   const { setEvents } = useEvents();
 
-  const {
-    updateRenderedSubscriptions,
-    tryAddIntervalSubscription,
-    tryUpdateDynamicIntervalTask,
-  } = useManage();
+  const { tryAddIntervalSubscription, tryUpdateDynamicIntervalTask } =
+    useManage();
 
   const { addIntervalSubscription, updateIntervalSubscription } =
     useIntervalSubscriptions();
@@ -355,7 +352,7 @@ export const DataBackupProvider = ({
 
           // Otherwise subscribe to task.
           await AccountsController.subscribeTask(t);
-          updateRenderedSubscriptions(t);
+          SubscriptionsController.updateRendererdTask(t);
           valid.push(t);
         }
       }

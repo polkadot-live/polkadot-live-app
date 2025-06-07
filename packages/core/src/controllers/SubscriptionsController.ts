@@ -6,6 +6,7 @@ import { TaskOrchestrator } from '../orchestrators/TaskOrchestrator';
 import { AccountsController } from '../controllers';
 import { accountTasks } from '@polkadot-live/consts/subscriptions/account';
 import { chainTasks } from '@polkadot-live/consts/subscriptions/chain';
+import { compareTasks } from '../library';
 import type { Account } from '../model';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
@@ -66,6 +67,16 @@ export class SubscriptionsController {
   static syncAccountSubscriptionsState = () => {
     const data = this.getAccountSubscriptions();
     this.setAccountSubscriptions(data);
+  };
+
+  /**
+   * Update a rendered task.
+   */
+  static updateRendererdTask = (task: SubscriptionTask) => {
+    this.setRenderedSubscriptionsState((prev) => ({
+      ...prev,
+      tasks: prev.tasks.map((t) => (compareTasks(task, t) ? task : t)),
+    }));
   };
 
   /**

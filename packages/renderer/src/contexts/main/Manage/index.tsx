@@ -6,10 +6,9 @@ import { useState, createContext, useContext, useRef, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import type {
   IntervalSubscription,
-  SubscriptionTask,
   WrappedSubscriptionTasks,
 } from '@polkadot-live/types/subscriptions';
-import { compareTasks, SubscriptionsController } from '@polkadot-live/core';
+import { SubscriptionsController } from '@polkadot-live/core';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ManageContextInterface } from './types';
 
@@ -37,14 +36,6 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
   /// Set rendered subscriptions.
   const setRenderedSubscriptions = (wrapped: WrappedSubscriptionTasks) => {
     setRenderedSubscriptionsState({ ...wrapped });
-  };
-
-  /// Update a task in the the rendered subscription tasks state.
-  const updateRenderedSubscriptions = (task: SubscriptionTask) => {
-    setRenderedSubscriptionsState((prev) => ({
-      ...prev,
-      tasks: prev.tasks.map((t) => (compareTasks(task, t) ? task : t)),
-    }));
   };
 
   /// Set intervaled subscriptions with new tasks array.
@@ -153,7 +144,6 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
         renderedSubscriptions: renderedSubscriptionsState,
         setDynamicIntervalTasks,
         setRenderedSubscriptions,
-        updateRenderedSubscriptions,
         tryUpdateDynamicIntervalTask,
         tryAddIntervalSubscription,
         tryRemoveIntervalSubscription,
