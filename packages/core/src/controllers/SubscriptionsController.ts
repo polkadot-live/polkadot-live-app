@@ -117,20 +117,6 @@ export class SubscriptionsController {
   }
 
   /**
-   * @name subscribeChainTask
-   * @summary Subscribe to a chain task.
-   */
-  static async subscribeChainTask(task: SubscriptionTask) {
-    if (this.chainSubscriptions) {
-      await TaskOrchestrator.subscribeTask(task, this.chainSubscriptions);
-    } else {
-      throw new Error(
-        'Error: SubscriptionsController::subscribeChainTask QueryMultiWrapper null'
-      );
-    }
-  }
-
-  /**
    * @name subscribeChainTasks
    * @summary Subscribe to a batch of chain tasks.
    */

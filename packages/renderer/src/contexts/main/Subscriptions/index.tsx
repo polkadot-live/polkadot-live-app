@@ -234,7 +234,7 @@ export const SubscriptionsProvider = ({
     switch (getTaskType(task)) {
       case 'chain': {
         // Subscribe to and persist task.
-        await SubscriptionsController.subscribeChainTask(task);
+        await SubscriptionsController.subscribeChainTasks([task]);
         await window.myAPI.sendSubscriptionTask({
           action: 'subscriptions:chain:update',
           data: { serTask: JSON.stringify(task) },
