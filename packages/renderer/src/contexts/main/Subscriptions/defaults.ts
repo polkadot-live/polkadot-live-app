@@ -10,7 +10,6 @@ export const defaultSubscriptionsContext: SubscriptionsContextInterface = {
   chainHasSubscriptions: () => false,
   getChainSubscriptions: () => [],
   getAccountSubscriptions: () => [],
-  updateTask: () => {},
   updateAccountNameInTasks: () => {},
   handleQueuedToggle: async (c) => {
     await new Promise(() => {});

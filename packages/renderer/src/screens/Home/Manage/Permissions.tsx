@@ -12,6 +12,7 @@ import {
   AccountsController,
   ConfigRenderer,
   IntervalsController,
+  SubscriptionsController,
 } from '@polkadot-live/core';
 import {
   ControlsWrapper,
@@ -63,7 +64,7 @@ export const Permissions = ({
   const isImportingData = cacheGet('backup:importing');
   const theme = getTheme();
 
-  const { updateTask, handleQueuedToggle, toggleCategoryTasks, getTaskType } =
+  const { handleQueuedToggle, toggleCategoryTasks, getTaskType } =
     useSubscriptions();
 
   const {
@@ -362,7 +363,7 @@ export const Permissions = ({
       });
 
       // Update react state for tasks.
-      updateTask(task);
+      SubscriptionsController.updateTaskState(task);
 
       // Update cached task in account's query multi wrapper.
       const account = AccountsController.get(

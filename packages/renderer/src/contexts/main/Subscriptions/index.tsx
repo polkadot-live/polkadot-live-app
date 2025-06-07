@@ -94,47 +94,6 @@ export const SubscriptionsProvider = ({
     return subscriptions ? subscriptions : [];
   };
 
-  /// Update state of a task.
-  /// TODO: Remove `!` non-null assertions.
-  const updateTask = (task: SubscriptionTask) => {
-    const taskType = task.action.startsWith('subscribe:account')
-      ? 'account'
-      : 'chain';
-
-    // Update all tasks state.
-    switch (taskType) {
-      case 'account': {
-        const address = task.account!.address;
-        setAccountSubscriptionsState((prev) => {
-          const tasks = prev.get(address!);
-          !tasks
-            ? prev.set(address!, [{ ...task }])
-            : prev.set(
-                address!,
-                tasks.map((t) => (t.action === task.action ? task : t))
-              );
-
-          return prev;
-        });
-        break;
-      }
-      case 'chain': {
-        setChainSubscriptionsState((prev) => {
-          const tasks = prev.get(task.chainId)!;
-          prev.set(
-            task.chainId,
-            tasks.map((t) => (t.action === task.action ? task : t))
-          );
-          return prev;
-        });
-        break;
-      }
-    }
-
-    // Update rendered tasks.
-    SubscriptionsController.updateRendererdTask(task);
-  };
-
   /// Return the type of subscription based on its action string.
   const getTaskType = (task: SubscriptionTask): SubscriptionTaskType =>
     task.action.startsWith('subscribe:account') ? 'account' : 'chain';
@@ -171,7 +130,7 @@ export const SubscriptionsProvider = ({
             action: 'subscriptions:chain:update',
             data: { serTask: JSON.stringify(task) },
           });
-          updateTask(task);
+          SubscriptionsController.updateTaskState(task);
         }
 
         // Subscribe to tasks.
@@ -199,8 +158,7 @@ export const SubscriptionsProvider = ({
               serTask: JSON.stringify(task),
             },
           });
-
-          updateTask(task);
+          SubscriptionsController.updateTaskState(task);
         }
 
         // Subscribe to tasks.
@@ -246,8 +204,7 @@ export const SubscriptionsProvider = ({
           data: { serTask: JSON.stringify(task) },
         });
 
-        // Update react state.
-        updateTask(task);
+        SubscriptionsController.updateTaskState(task);
         break;
       }
       case 'account': {
@@ -272,8 +229,7 @@ export const SubscriptionsProvider = ({
           },
         });
 
-        // Update react state.
-        updateTask(task);
+        SubscriptionsController.updateTaskState(task);
 
         // Analytics.
         const { action, category } = task;
@@ -298,7 +254,6 @@ export const SubscriptionsProvider = ({
         chainHasSubscriptions,
         getChainSubscriptions,
         getAccountSubscriptions,
-        updateTask,
         updateAccountNameInTasks,
         handleQueuedToggle,
         toggleCategoryTasks,

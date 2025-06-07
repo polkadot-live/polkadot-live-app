@@ -61,17 +61,42 @@ export class SubscriptionsController {
     this.setChainSubscriptions(data);
   };
 
-  /**
-   * Sync react state with managed controller data.
-   */
   static syncAccountSubscriptionsState = () => {
     const data = this.getAccountSubscriptions();
     this.setAccountSubscriptions(data);
   };
 
   /**
-   * Update a rendered task.
+   * Update task caches.
    */
+  static updateTaskState = (task: SubscriptionTask) => {
+    task.action.startsWith('subscribe:account')
+      ? this.updateAccountTaskState(task)
+      : this.updateChainTaskState(task);
+  };
+
+  private static updateAccountTaskState = (task: SubscriptionTask) => {
+    const { address: key } = task.account!;
+    this.setAccountSubscriptions((prev) => {
+      const tasks = prev.get(key);
+      const val = !tasks
+        ? [{ ...task }]
+        : tasks.map((t) => (compareTasks(task, t) ? task : t));
+      return prev.set(key, val);
+    });
+    this.updateRendererdTask(task);
+  };
+
+  private static updateChainTaskState = (task: SubscriptionTask) => {
+    const key = task.chainId;
+    this.setChainSubscriptions((prev) => {
+      const tasks = prev.get(key)!;
+      const val = tasks.map((t) => (compareTasks(task, t) ? task : t));
+      return prev.set(key, val);
+    });
+    this.updateRendererdTask(task);
+  };
+
   static updateRendererdTask = (task: SubscriptionTask) => {
     this.setRenderedSubscriptionsState((prev) => ({
       ...prev,
