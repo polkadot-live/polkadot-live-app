@@ -22,6 +22,10 @@ import type { ImportedAccounts } from '../model';
  */
 export class AccountsController {
   static accounts: ImportedAccounts = new Map();
+
+  /**
+   * React state.
+   */
   static cachedSetAddresses: React.Dispatch<
     React.SetStateAction<FlattenedAccounts>
   >;

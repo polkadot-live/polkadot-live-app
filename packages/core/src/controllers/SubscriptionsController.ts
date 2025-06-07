@@ -29,6 +29,9 @@ import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 export class SubscriptionsController {
   static chainSubscriptions: QueryMultiWrapper | null = null;
 
+  /**
+   * React state.
+   */
   static setChainSubscriptions: React.Dispatch<
     React.SetStateAction<Map<ChainID, SubscriptionTask[]>>
   >;
@@ -40,6 +43,11 @@ export class SubscriptionsController {
   /**
    * Sync react state with managed controller data.
    */
+  static syncState = () => {
+    this.syncChainSubscriptionsState();
+    this.syncAccountSubscriptionsState();
+  };
+
   static syncChainSubscriptionsState = () => {
     const data = this.getChainSubscriptions();
     this.setChainSubscriptions(data);
