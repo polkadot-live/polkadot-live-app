@@ -10,7 +10,6 @@ import {
   TaskQueue,
   SubscriptionsController,
 } from '@polkadot-live/core';
-import type { AnyFunction } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ReactNode } from 'react';
 import type { SubscriptionsContextInterface } from './types';
@@ -102,6 +101,7 @@ export const SubscriptionsProvider = ({
     task: SubscriptionTask,
     address?: string
   ) => {
+    // Update all tasks state.
     if (type === 'account') {
       setAccountSubscriptionsState((prev) => {
         const tasks = prev.get(address!);
@@ -124,6 +124,12 @@ export const SubscriptionsProvider = ({
         return prev;
       });
     }
+
+    // Update rendered tasks.
+    SubscriptionsController.setRenderedSubscriptionsState((prev) => ({
+      ...prev,
+      tasks: prev.tasks.map((t) => (Core.compareTasks(task, t) ? task : t)),
+    }));
   };
 
   /// Return the type of subscription based on its action string.
@@ -134,8 +140,7 @@ export const SubscriptionsProvider = ({
   const toggleCategoryTasks = async (
     category: TaskCategory,
     isOn: boolean,
-    rendererdSubscriptions: WrappedSubscriptionTasks,
-    updateRenderedSubscriptions: AnyFunction
+    rendererdSubscriptions: WrappedSubscriptionTasks
   ) => {
     // Get all tasks with the target status.
     const targetStatus = isOn ? 'enable' : 'disable';
@@ -164,7 +169,6 @@ export const SubscriptionsProvider = ({
             data: { serTask: JSON.stringify(task) },
           });
           updateTask('chain', task);
-          updateRenderedSubscriptions(task);
         }
 
         // Subscribe to tasks.
@@ -194,7 +198,6 @@ export const SubscriptionsProvider = ({
           });
 
           updateTask('account', task, task.account?.address);
-          updateRenderedSubscriptions(task);
         }
 
         // Subscribe to tasks.

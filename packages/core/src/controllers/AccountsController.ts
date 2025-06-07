@@ -221,7 +221,7 @@ export class AccountsController {
     if (account && account.queryMulti !== null) {
       await TaskOrchestrator.subscribeTask(task, account.queryMulti);
     } else {
-      throw new Error('Error: Account::subscribeToTask QueryMultiWrapper null');
+      throw new Error('Error: Account::subscribeTask QueryMultiWrapper null');
     }
   };
 

@@ -8,7 +8,10 @@ import { accountTasks } from '@polkadot-live/consts/subscriptions/account';
 import { chainTasks } from '@polkadot-live/consts/subscriptions/chain';
 import type { Account } from '../model';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
+import type {
+  SubscriptionTask,
+  WrappedSubscriptionTasks,
+} from '@polkadot-live/types/subscriptions';
 
 /**
  * Key naming convention of subscription tasks in store:
@@ -38,6 +41,10 @@ export class SubscriptionsController {
 
   static setAccountSubscriptions: React.Dispatch<
     React.SetStateAction<Map<string, SubscriptionTask[]>>
+  >;
+
+  static setRenderedSubscriptionsState: React.Dispatch<
+    React.SetStateAction<WrappedSubscriptionTasks>
   >;
 
   /**

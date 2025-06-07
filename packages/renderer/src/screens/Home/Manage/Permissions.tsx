@@ -183,13 +183,7 @@ export const Permissions = ({
   /// Handle toggling a subscription task group switch.
   const handleGroupSwitch = async (category: TaskCategory) => {
     const isOn = getCategoryToggles().get(category) || false;
-
-    await toggleCategoryTasks(
-      category,
-      isOn,
-      renderedSubscriptions,
-      updateRenderedSubscriptions
-    );
+    await toggleCategoryTasks(category, isOn, renderedSubscriptions);
   };
 
   /// TODO: Add `toggleable` field on subscription task type.
@@ -385,9 +379,6 @@ export const Permissions = ({
 
       // Update react state for tasks.
       updateTask('account', task, task.account.address);
-
-      // Update dynamic tasks.
-      updateRenderedSubscriptions(task);
 
       // Update cached task in account's query multi wrapper.
       const account = AccountsController.get(

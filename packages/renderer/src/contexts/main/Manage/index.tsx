@@ -2,13 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { useState, createContext, useContext, useRef } from 'react';
+import { useState, createContext, useContext, useRef, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import type {
   IntervalSubscription,
   SubscriptionTask,
   WrappedSubscriptionTasks,
 } from '@polkadot-live/types/subscriptions';
+import { compareTasks, SubscriptionsController } from '@polkadot-live/core';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ManageContextInterface } from './types';
 
@@ -139,29 +140,10 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
     return map;
   };
 
-  /// Determine if two tasks are the same task.
-  const compareTasks = (a: SubscriptionTask, b: SubscriptionTask): boolean => {
-    // Different task types.
-    if (!a.account && b.account) {
-      return false;
-    }
-
-    // Compare chain tasks.
-    if (!a.account && !b.account) {
-      return a.chainId === b.chainId && a.action === b.action;
-    }
-
-    // Account account tasks.
-    if (a.account && b.account) {
-      return (
-        a.account.address === b.account.address &&
-        a.action === b.action &&
-        a.chainId === b.chainId
-      );
-    }
-
-    return false;
-  };
+  useEffect(() => {
+    SubscriptionsController.setRenderedSubscriptionsState =
+      setRenderedSubscriptionsState;
+  }, []);
 
   return (
     <ManageContext.Provider
