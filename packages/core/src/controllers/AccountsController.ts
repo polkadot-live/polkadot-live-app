@@ -22,6 +22,10 @@ import type { ImportedAccounts } from '../model';
  */
 export class AccountsController {
   static accounts: ImportedAccounts = new Map();
+
+  /**
+   * React state.
+   */
   static cachedSetAddresses: React.Dispatch<
     React.SetStateAction<FlattenedAccounts>
   >;
@@ -180,7 +184,7 @@ export class AccountsController {
   };
 
   /**
-   * Fetched persisted tasks from the store and re-subscribe to them.
+   * Fetch persisted tasks from the store and re-subscribe to them.
    */
   static async subscribeAccounts() {
     if (!this.accounts) {
@@ -202,6 +206,24 @@ export class AccountsController {
       }
     }
   }
+
+  /**
+   * Handle account subscription tasks.
+   */
+  static subscribeTask = async (task: SubscriptionTask) => {
+    if (!task.account?.address) {
+      return;
+    }
+
+    const { address, chain } = task.account;
+    const account = this.get(chain, address);
+
+    if (account && account.queryMulti !== null) {
+      await TaskOrchestrator.subscribeTask(task, account.queryMulti);
+    } else {
+      throw new Error('Error: Account::subscribeTask QueryMultiWrapper null');
+    }
+  };
 
   /**
    * Same as `subscribeAccounts` but for a specific chain.
@@ -332,7 +354,7 @@ export class AccountsController {
     this.accounts.get(chainId)?.push(account) ||
       this.accounts.set(chainId, [account]);
 
-    this.updateAll();
+    this.updateStore();
     return account;
   };
 
@@ -346,14 +368,14 @@ export class AccountsController {
         .filter((a) => a.address !== address);
 
       this.accounts.set(chainId, filtered);
-      this.updateAll();
+      this.updateStore();
     }
   };
 
   /**
    * Utility to update accounts in store.
    */
-  private static updateAll = () => {
+  private static updateStore = () => {
     window.myAPI
       .sendAccountTask({
         action: 'account:updateAll',

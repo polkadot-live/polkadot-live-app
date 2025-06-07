@@ -354,7 +354,7 @@ export const DataBackupProvider = ({
           }
 
           // Otherwise subscribe to task.
-          await account?.subscribeToTask(t);
+          await AccountsController.subscribeTask(t);
           updateRenderedSubscriptions(t);
           valid.push(t);
         }

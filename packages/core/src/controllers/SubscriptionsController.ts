@@ -8,7 +8,10 @@ import { accountTasks } from '@polkadot-live/consts/subscriptions/account';
 import { chainTasks } from '@polkadot-live/consts/subscriptions/chain';
 import type { Account } from '../model';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
+import type {
+  SubscriptionTask,
+  WrappedSubscriptionTasks,
+} from '@polkadot-live/types/subscriptions';
 
 /**
  * Key naming convention of subscription tasks in store:
@@ -29,6 +32,9 @@ import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 export class SubscriptionsController {
   static chainSubscriptions: QueryMultiWrapper | null = null;
 
+  /**
+   * React state.
+   */
   static setChainSubscriptions: React.Dispatch<
     React.SetStateAction<Map<ChainID, SubscriptionTask[]>>
   >;
@@ -37,9 +43,18 @@ export class SubscriptionsController {
     React.SetStateAction<Map<string, SubscriptionTask[]>>
   >;
 
+  static setRenderedSubscriptionsState: React.Dispatch<
+    React.SetStateAction<WrappedSubscriptionTasks>
+  >;
+
   /**
    * Sync react state with managed controller data.
    */
+  static syncState = () => {
+    this.syncChainSubscriptionsState();
+    this.syncAccountSubscriptionsState();
+  };
+
   static syncChainSubscriptionsState = () => {
     const data = this.getChainSubscriptions();
     this.setChainSubscriptions(data);
@@ -109,20 +124,6 @@ export class SubscriptionsController {
   }
 
   /**
-   * @name subscribeChainTask
-   * @summary Subscribe to a chain task.
-   */
-  static async subscribeChainTask(task: SubscriptionTask) {
-    if (this.chainSubscriptions) {
-      await TaskOrchestrator.subscribeTask(task, this.chainSubscriptions);
-    } else {
-      throw new Error(
-        'Error: SubscriptionsController::subscribeChainTask QueryMultiWrapper null'
-      );
-    }
-  }
-
-  /**
    * @name subscribeChainTasks
    * @summary Subscribe to a batch of chain tasks.
    */
@@ -134,14 +135,6 @@ export class SubscriptionsController {
         'Error: SubscriptionsController::subscribeChainTask QueryMultiWrapper null'
       );
     }
-  }
-
-  /**
-   * @name subscribeAccountTask
-   * @summary Subscribe to an account task.
-   */
-  static async subscribeAccountTask(task: SubscriptionTask, account: Account) {
-    await account.subscribeToTask(task);
   }
 
   /**

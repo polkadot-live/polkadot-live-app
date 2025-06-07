@@ -192,7 +192,7 @@ export const BootstrappingProvider = ({
 
       // Set application state.
       AccountsController.syncState();
-      syncSubscriptionsState();
+      SubscriptionsController.syncState();
       refAppInitialized.current = true; // Set app initialized flag.
 
       // Set app in offline mode if connection processing was aborted.
@@ -255,7 +255,7 @@ export const BootstrappingProvider = ({
       }
     }
 
-    syncSubscriptionsState();
+    SubscriptionsController.syncState();
     refSwitchingToOnline.current = false;
 
     if (refAborted.current) {
@@ -284,7 +284,7 @@ export const BootstrappingProvider = ({
         SubscriptionsController.resubscribeChain(chainId),
       ]);
     }
-    syncSubscriptionsState();
+    SubscriptionsController.syncState();
   };
 
   /// Util for initializing the intervals controller.
@@ -302,12 +302,6 @@ export const BootstrappingProvider = ({
     for (const task of tasks) {
       addIntervalSubscription({ ...task });
     }
-  };
-
-  /// Util for syncing react subscriptions state.
-  const syncSubscriptionsState = () => {
-    SubscriptionsController.syncChainSubscriptionsState();
-    SubscriptionsController.syncAccountSubscriptionsState();
   };
 
   /// Called when initializing the openGov window.

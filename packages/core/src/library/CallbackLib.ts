@@ -8,8 +8,41 @@ import {
   getNominationPoolData,
 } from './AccountsLib';
 import type { Account } from '../model';
-import type { PostCallbackFlags } from '@polkadot-live/types/subscriptions';
+import type {
+  PostCallbackFlags,
+  SubscriptionTask,
+} from '@polkadot-live/types/subscriptions';
 import type { DedotClientSet } from '@polkadot-live/types/apis';
+
+/**
+ * @name compareTasks
+ * @summary Determine if two tasks are the same task.
+ */
+export const compareTasks = (
+  a: SubscriptionTask,
+  b: SubscriptionTask
+): boolean => {
+  // Different task types.
+  if ((!a.account && b.account) || (a.account && !b.account)) {
+    return false;
+  }
+
+  // Compare chain tasks.
+  if (!a.account && !b.account) {
+    return a.chainId === b.chainId && a.action === b.action;
+  }
+
+  // Account account tasks.
+  if (a.account && b.account) {
+    return (
+      a.account.address === b.account.address &&
+      a.action === b.action &&
+      a.chainId === b.chainId
+    );
+  }
+
+  return false;
+};
 
 /**
  * @name getPostCallbackFlags

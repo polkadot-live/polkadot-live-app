@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Zoom, toast } from 'react-toastify';
-import type { ToastOptions } from 'react-toastify';
+import type { ToastOptions, ToastPosition } from 'react-toastify';
 
 /**
  * Util for rendering a toast notification.
@@ -10,10 +10,11 @@ import type { ToastOptions } from 'react-toastify';
 export const renderToast = (
   message: string,
   toastId: string,
-  toastType: 'error' | 'success'
+  toastType: 'error' | 'success',
+  position?: ToastPosition
 ) => {
   const args: ToastOptions<unknown> = {
-    position: 'top-center',
+    position: position ? position : 'top-center',
     autoClose: 3000,
     hideProgressBar: true,
     closeOnClick: true,
