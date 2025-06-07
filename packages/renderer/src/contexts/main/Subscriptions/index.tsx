@@ -139,12 +139,8 @@ export const SubscriptionsProvider = ({
       }
       case 'account': {
         // Get associated account.
-        const account = AccountsController.get(
-          tasks[0].chainId,
-          tasks[0].account?.address
-        );
-
-        // Return early if account not found.
+        const { chainId: cid, account: a } = tasks[0];
+        const account = AccountsController.get(cid, a?.address);
         if (!account) {
           return;
         }
@@ -209,18 +205,14 @@ export const SubscriptionsProvider = ({
       }
       case 'account': {
         // Fetch account task belongs to.
-        const account = AccountsController.get(
-          task.chainId,
-          task.account?.address
-        );
-
+        const { chainId: cid, account: a } = task;
+        const account = AccountsController.get(cid, a?.address);
         if (!account) {
           break;
         }
 
         // Subscribe to and persist the task.
         await AccountsController.subscribeTask(task);
-
         await window.myAPI.sendSubscriptionTask({
           action: 'subscriptions:account:update',
           data: {
@@ -228,7 +220,6 @@ export const SubscriptionsProvider = ({
             serTask: JSON.stringify(task),
           },
         });
-
         SubscriptionsController.updateTaskState(task);
 
         // Analytics.
