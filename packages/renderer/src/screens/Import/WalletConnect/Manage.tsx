@@ -14,17 +14,13 @@ import {
   ButtonPrimaryInvert,
 } from '@polkadot-live/ui/kits/buttons';
 import { useAddresses } from '@ren/contexts/import';
-import {
-  getAddressChainId,
-  getSortedLocalAddresses,
-  getInitialChainAccordionValue,
-} from '@polkadot-live/core';
 import { useState } from 'react';
 import { faCaretLeft, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { ItemsColumn } from '@ren/screens/Home/Manage/Wrappers';
 import { Address } from './Address';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';
 
 interface ImportWcManageProps {
   setSection: React.Dispatch<React.SetStateAction<number>>;
@@ -35,14 +31,10 @@ export const Manage = ({
   setSection,
   setShowImportUi,
 }: ImportWcManageProps) => {
-  const { wcAddresses: addresses } = useAddresses();
+  const { wcAddresses: genericAccounts } = useAddresses();
 
   /// Accordion state.
-  const [accordionValue, setAccordionValue] = useState<ChainID>(
-    getInitialChainAccordionValue([
-      ...new Set(addresses.map(({ address }) => getAddressChainId(address))),
-    ])
-  );
+  const [accordionValue, setAccordionValue] = useState<ChainID>('Polkadot');
 
   return (
     <Styles.PadWrapper>
@@ -80,7 +72,7 @@ export const Manage = ({
 
         {/* Address List */}
         <section>
-          {addresses.length && (
+          {genericAccounts.length && (
             <UI.AccordionWrapper $onePart={true}>
               <Accordion.Root
                 className="AccordionRoot"
@@ -89,34 +81,36 @@ export const Manage = ({
                 onValueChange={(val) => setAccordionValue(val as ChainID)}
               >
                 <Styles.FlexColumn>
-                  {Array.from(getSortedLocalAddresses(addresses).entries()).map(
-                    ([chainId, chainAddresses]) => (
-                      <Accordion.Item
-                        key={`${chainId}_wc_addresses`}
-                        className="AccordionItem"
-                        value={chainId}
-                      >
-                        <UI.AccordionTrigger narrow={true}>
-                          <ChevronDownIcon
-                            className="AccordionChevron"
-                            aria-hidden
-                          />
-                          <UI.TriggerHeader>{chainId}</UI.TriggerHeader>
-                        </UI.AccordionTrigger>
-                        <UI.AccordionContent transparent={true}>
-                          <ItemsColumn>
-                            {chainAddresses.map((localAddress) => (
-                              <Address
-                                key={`address_${localAddress.name}`}
-                                localAddress={localAddress}
-                                setSection={setSection}
-                              />
-                            ))}
-                          </ItemsColumn>
-                        </UI.AccordionContent>
-                      </Accordion.Item>
-                    )
-                  )}
+                  {Array.from(
+                    new Map<ChainID, ImportedGenericAccount[]>([
+                      ['Polkadot', genericAccounts],
+                    ]).entries()
+                  ).map(([chainId, accounts]) => (
+                    <Accordion.Item
+                      key={`${chainId}_wc_addresses`}
+                      className="AccordionItem"
+                      value={chainId}
+                    >
+                      <UI.AccordionTrigger narrow={true}>
+                        <ChevronDownIcon
+                          className="AccordionChevron"
+                          aria-hidden
+                        />
+                        <UI.TriggerHeader>{chainId}</UI.TriggerHeader>
+                      </UI.AccordionTrigger>
+                      <UI.AccordionContent transparent={true}>
+                        <ItemsColumn>
+                          {accounts.map((genericAccount) => (
+                            <Address
+                              key={`address_${genericAccount.accountName}`}
+                              genericAccount={genericAccount}
+                              setSection={setSection}
+                            />
+                          ))}
+                        </ItemsColumn>
+                      </UI.AccordionContent>
+                    </Accordion.Item>
+                  ))}
                 </Styles.FlexColumn>
               </Accordion.Root>
             </UI.AccordionWrapper>

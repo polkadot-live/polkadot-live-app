@@ -339,7 +339,10 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                         <>
                           <ItemsColumn>
                             {wcFetchedAddresses.map(
-                              ({ chainId, encoded, selected }, i) => (
+                              (
+                                { chainId, encoded, publicKeyHex, selected },
+                                i
+                              ) => (
                                 <ImportAddressRow key={encoded}>
                                   <div className="identicon">
                                     <UI.Identicon
@@ -369,7 +372,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                     </Styles.FlexRow>
                                   </div>
                                   <div className="right">
-                                    {isAlreadyImported(encoded) ? (
+                                    {isAlreadyImported(publicKeyHex) ? (
                                       <span className="imported">Imported</span>
                                     ) : (
                                       <Styles.CheckboxRoot

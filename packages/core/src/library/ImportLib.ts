@@ -17,13 +17,13 @@ import type { IpcTask } from '@polkadot-live/types/communication';
  * @summary Updates a stored account's name in the main process.
  */
 export const renameAccountInStore = async (
-  address: string,
+  publicKeyHex: string,
   source: AccountSource,
   newName: string
 ) => {
   const ipcTask: IpcTask = {
     action: 'raw-account:rename',
-    data: { source, address, newName },
+    data: { newName, publicKeyHex, source },
   };
 
   await window.myAPI.rawAccountTask(ipcTask);

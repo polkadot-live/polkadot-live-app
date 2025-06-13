@@ -7,8 +7,7 @@ import { setStateWithRef } from '@w3ux/utils';
 import type { AddressesContextInterface } from './types';
 import type {
   AccountSource,
-  LedgerLocalAddress,
-  LocalAddress,
+  ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
 import type { IpcTask } from '@polkadot-live/types/communication';
 
@@ -27,20 +26,19 @@ export const AddressesProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  type LLA = LedgerLocalAddress;
-  type LA = LocalAddress;
+  type IGA = ImportedGenericAccount;
 
   /// Addresses state.
-  const [ledgerAddresses, setLedgerAddresses] = useState<LLA[]>([]);
-  const [readOnlyAddresses, setReadOnlyAddresses] = useState<LA[]>([]);
-  const [vaultAddresses, setVaultAddresses] = useState<LA[]>([]);
-  const [wcAddresses, setWcAddresses] = useState<LA[]>([]);
+  const [ledgerAddresses, setLedgerAddresses] = useState<IGA[]>([]);
+  const [readOnlyAddresses, setReadOnlyAddresses] = useState<IGA[]>([]);
+  const [vaultAddresses, setVaultAddresses] = useState<IGA[]>([]);
+  const [wcAddresses, setWcAddresses] = useState<IGA[]>([]);
 
   /// References to addresses state.
-  const ledgerAddressesRef = useRef<LLA[]>([]);
-  const readOnlyAddressesRef = useRef<LA[]>([]);
-  const vaultAddressesRef = useRef<LA[]>([]);
-  const wcAddressesRef = useRef<LA[]>([]);
+  const ledgerAddressesRef = useRef<IGA[]>([]);
+  const readOnlyAddressesRef = useRef<IGA[]>([]);
+  const vaultAddressesRef = useRef<IGA[]>([]);
+  const wcAddressesRef = useRef<IGA[]>([]);
 
   /// Fetch address data from store when component loads.
   useEffect(() => {
@@ -97,35 +95,33 @@ export const AddressesProvider = ({
   }, []);
 
   /// Check if an address has already been imported.
-  const isAlreadyImported = (address: string): boolean => {
-    const checkAll = <T extends { address: string }>(
+  const isAlreadyImported = (targetPubKeyHex: string): boolean => {
+    const checkAll = <T extends { publicKeyHex: string }>(
       items: T[],
       target: string
     ): boolean =>
       items.reduce(
-        (acc, cur) => (acc ? acc : cur.address === target ? true : false),
+        (acc, { publicKeyHex }) =>
+          acc ? acc : publicKeyHex === target ? true : false,
         false
       );
 
     return (
-      checkAll(ledgerAddressesRef.current, address) ||
-      checkAll(vaultAddressesRef.current, address) ||
-      checkAll(readOnlyAddressesRef.current, address) ||
-      checkAll(wcAddressesRef.current, address)
+      checkAll(ledgerAddressesRef.current, targetPubKeyHex) ||
+      checkAll(vaultAddressesRef.current, targetPubKeyHex) ||
+      checkAll(readOnlyAddressesRef.current, targetPubKeyHex) ||
+      checkAll(wcAddressesRef.current, targetPubKeyHex)
     );
   };
 
   /// Update import window read-only addresses state and reference upon address import.
-  const handleAddressImport = (
-    source: AccountSource,
-    local: LocalAddress | LedgerLocalAddress
-  ) => {
-    switch (source) {
+  const handleAddressImport = (genericAccount: ImportedGenericAccount) => {
+    switch (genericAccount.source) {
       case 'ledger': {
-        setLedgerAddresses((prev: LedgerLocalAddress[]) => {
+        setLedgerAddresses((prev: ImportedGenericAccount[]) => {
           const updated = prev
-            .filter((a) => a.address !== local.address)
-            .concat([{ ...(local as LedgerLocalAddress) }]);
+            .filter((a) => a.publicKeyHex !== genericAccount.publicKeyHex)
+            .concat([{ ...genericAccount }]);
           ledgerAddressesRef.current = updated;
           return updated;
         });
@@ -133,10 +129,10 @@ export const AddressesProvider = ({
         break;
       }
       case 'read-only': {
-        setReadOnlyAddresses((prev: LocalAddress[]) => {
+        setReadOnlyAddresses((prev: ImportedGenericAccount[]) => {
           const updated = prev
-            .filter((a) => a.address !== local.address)
-            .concat([{ ...(local as LocalAddress) }]);
+            .filter((a) => a.publicKeyHex !== genericAccount.publicKeyHex)
+            .concat([{ ...genericAccount }]);
           readOnlyAddressesRef.current = updated;
           return updated;
         });
@@ -144,10 +140,10 @@ export const AddressesProvider = ({
         break;
       }
       case 'vault': {
-        setVaultAddresses((prev: LocalAddress[]) => {
+        setVaultAddresses((prev: ImportedGenericAccount[]) => {
           const updated = prev
-            .filter((a) => a.address !== local.address)
-            .concat([{ ...(local as LocalAddress) }]);
+            .filter((a) => a.publicKeyHex !== genericAccount.publicKeyHex)
+            .concat([{ ...genericAccount }]);
           vaultAddressesRef.current = updated;
           return updated;
         });
@@ -155,10 +151,10 @@ export const AddressesProvider = ({
         break;
       }
       case 'wallet-connect': {
-        setWcAddresses((prev: LocalAddress[]) => {
+        setWcAddresses((prev: ImportedGenericAccount[]) => {
           const updated = prev
-            .filter((a) => a.address !== local.address)
-            .concat([{ ...(local as LocalAddress) }]);
+            .filter((a) => a.publicKeyHex !== genericAccount.publicKeyHex)
+            .concat([{ ...genericAccount }]);
           wcAddressesRef.current = updated;
           return updated;
         });
@@ -171,13 +167,13 @@ export const AddressesProvider = ({
   /// Update import window read-only addresses state and reference upon address deletion.
   const handleAddressDelete = (
     source: AccountSource,
-    address: string
+    publicKeyHex: string
   ): boolean => {
     switch (source) {
       case 'ledger': {
         let goBack = false;
-        setLedgerAddresses((prev: LedgerLocalAddress[]) => {
-          const updated = prev.filter((a) => a.address !== address);
+        setLedgerAddresses((prev: ImportedGenericAccount[]) => {
+          const updated = prev.filter((a) => a.publicKeyHex !== publicKeyHex);
           ledgerAddressesRef.current = updated;
           updated.length === 0 && (goBack = true);
           return updated;
@@ -186,8 +182,8 @@ export const AddressesProvider = ({
         return goBack;
       }
       case 'read-only': {
-        setReadOnlyAddresses((prev: LocalAddress[]) => {
-          const updated = prev.filter((a) => a.address !== address);
+        setReadOnlyAddresses((prev: ImportedGenericAccount[]) => {
+          const updated = prev.filter((a) => a.publicKeyHex !== publicKeyHex);
           readOnlyAddressesRef.current = updated;
           return updated;
         });
@@ -196,8 +192,8 @@ export const AddressesProvider = ({
       }
       case 'vault': {
         let goBack = false;
-        setVaultAddresses((prev: LocalAddress[]) => {
-          const updated = prev.filter((a) => a.address !== address);
+        setVaultAddresses((prev: ImportedGenericAccount[]) => {
+          const updated = prev.filter((a) => a.publicKeyHex !== publicKeyHex);
           vaultAddressesRef.current = updated;
           updated.length === 0 && (goBack = true);
           return updated;
@@ -207,8 +203,8 @@ export const AddressesProvider = ({
       }
       case 'wallet-connect': {
         let goBack = false;
-        setWcAddresses((prev: LocalAddress[]) => {
-          const updated = prev.filter((a) => a.address !== address);
+        setWcAddresses((prev: ImportedGenericAccount[]) => {
+          const updated = prev.filter((a) => a.publicKeyHex !== publicKeyHex);
           wcAddressesRef.current = updated;
           updated.length === 0 && (goBack = true);
           return updated;
@@ -223,12 +219,12 @@ export const AddressesProvider = ({
   };
 
   /// Update import window read-only addresses state and reference upon address removal.
-  const handleAddressRemove = (source: AccountSource, address: string) => {
+  const handleAddressRemove = (source: AccountSource, publicKeyHex: string) => {
     switch (source) {
       case 'ledger': {
-        setLedgerAddresses((prev: LedgerLocalAddress[]) => {
+        setLedgerAddresses((prev: ImportedGenericAccount[]) => {
           const updated = prev.map((a) =>
-            a.address === address ? { ...a, isImported: false } : a
+            a.publicKeyHex === publicKeyHex ? { ...a, isImported: false } : a
           );
           ledgerAddressesRef.current = updated;
           return updated;
@@ -237,9 +233,9 @@ export const AddressesProvider = ({
         break;
       }
       case 'read-only': {
-        setReadOnlyAddresses((prev: LocalAddress[]) => {
+        setReadOnlyAddresses((prev: ImportedGenericAccount[]) => {
           const updated = prev.map((a) =>
-            a.address === address ? { ...a, isImported: false } : a
+            a.publicKeyHex === publicKeyHex ? { ...a, isImported: false } : a
           );
           readOnlyAddressesRef.current = updated;
           return updated;
@@ -248,9 +244,9 @@ export const AddressesProvider = ({
         break;
       }
       case 'vault': {
-        setVaultAddresses((prev: LocalAddress[]) => {
+        setVaultAddresses((prev: ImportedGenericAccount[]) => {
           const updated = prev.map((a) =>
-            a.address === address ? { ...a, isImported: false } : a
+            a.publicKeyHex === publicKeyHex ? { ...a, isImported: false } : a
           );
           vaultAddressesRef.current = updated;
           return updated;
@@ -259,9 +255,9 @@ export const AddressesProvider = ({
         break;
       }
       case 'wallet-connect': {
-        setWcAddresses((prev: LocalAddress[]) => {
+        setWcAddresses((prev: ImportedGenericAccount[]) => {
           const updated = prev.map((a) =>
-            a.address === address ? { ...a, isImported: false } : a
+            a.publicKeyHex === publicKeyHex ? { ...a, isImported: false } : a
           );
           wcAddressesRef.current = updated;
           return updated;
@@ -273,12 +269,12 @@ export const AddressesProvider = ({
   };
 
   /// Update import window read-only addresses state and reference upon address addition.
-  const handleAddressAdd = (source: AccountSource, address: string) => {
+  const handleAddressAdd = (source: AccountSource, publicKeyHex: string) => {
     switch (source) {
       case 'ledger': {
-        setLedgerAddresses((prev: LedgerLocalAddress[]) => {
+        setLedgerAddresses((prev: ImportedGenericAccount[]) => {
           const updated = prev.map((a) =>
-            a.address === address ? { ...a, isImported: true } : a
+            a.publicKeyHex === publicKeyHex ? { ...a, isImported: true } : a
           );
           ledgerAddressesRef.current = updated;
           return updated;
@@ -287,9 +283,9 @@ export const AddressesProvider = ({
         break;
       }
       case 'read-only': {
-        setReadOnlyAddresses((prev: LocalAddress[]) => {
+        setReadOnlyAddresses((prev: ImportedGenericAccount[]) => {
           const updated = prev.map((a) =>
-            a.address === address ? { ...a, isImported: true } : a
+            a.publicKeyHex === publicKeyHex ? { ...a, isImported: true } : a
           );
           readOnlyAddressesRef.current = updated;
           return updated;
@@ -298,9 +294,9 @@ export const AddressesProvider = ({
         break;
       }
       case 'vault': {
-        setVaultAddresses((prev: LocalAddress[]) => {
+        setVaultAddresses((prev: ImportedGenericAccount[]) => {
           const updated = prev.map((a) =>
-            a.address === address ? { ...a, isImported: true } : a
+            a.publicKeyHex === publicKeyHex ? { ...a, isImported: true } : a
           );
           vaultAddressesRef.current = updated;
           return updated;
@@ -309,9 +305,9 @@ export const AddressesProvider = ({
         break;
       }
       case 'wallet-connect': {
-        setWcAddresses((prev: LocalAddress[]) => {
+        setWcAddresses((prev: ImportedGenericAccount[]) => {
           const updated = prev.map((a) =>
-            a.address === address ? { ...a, isImported: true } : a
+            a.publicKeyHex === publicKeyHex ? { ...a, isImported: true } : a
           );
           wcAddressesRef.current = updated;
           return updated;

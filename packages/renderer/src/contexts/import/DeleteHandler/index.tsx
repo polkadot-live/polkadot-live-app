@@ -25,41 +25,48 @@ export const DeleteHandlerProvider = ({
   const { deleteAccountStatus } = useAccountStatuses();
   const { handleAddressDelete } = useAddresses();
 
-  /// Exposed function to delete an address.
+  /**
+   * Permanently delete a generic account.
+   */
   const handleDeleteAddress = async (
-    address: string,
-    source: AccountSource
+    publicKeyHex: string,
+    source: AccountSource,
+    address: string
   ): Promise<boolean> => {
     // Remove status entry from account statuses context.
-    deleteAccountStatus(address, source);
+    deleteAccountStatus(publicKeyHex, source);
 
     // Update addresses state and references.
-    const goBack = handleAddressDelete(source, address);
+    const goBack = handleAddressDelete(source, publicKeyHex);
 
     // Update Electron store, delete address data
-    await removeAddressFromStore(source, address);
+    await removeFromStore(source, publicKeyHex);
 
     // Delete in main renderer.
-    postAddressDeleteMessage(address);
+    postToMain(address);
 
     return goBack;
   };
 
-  /// Remove address entry from store.
-  const removeAddressFromStore = async (
+  /**
+   * Remove generic account from store.
+   */
+  const removeFromStore = async (
     source: AccountSource,
-    address: string
+    publicKeyHex: string
   ) => {
     const ipcTask: IpcTask = {
       action: 'raw-account:delete',
-      data: { source, address },
+      data: { publicKeyHex, source },
     };
 
     await window.myAPI.rawAccountTask(ipcTask);
   };
 
-  /// Send address data to main window to process removal.
-  const postAddressDeleteMessage = (address: string) => {
+  /**
+   * Send address data to main window to process removal.
+   */
+  const postToMain = (address: string) => {
     ConfigImport.portImport.postMessage({
       task: 'renderer:address:delete',
       data: {

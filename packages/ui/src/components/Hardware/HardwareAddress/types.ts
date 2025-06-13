@@ -21,7 +21,7 @@ export type HardwareAddressProps = ComponentBase & {
   // Theme object.
   theme: AnyData;
   // Handle rename.
-  renameHandler: (address: string, newName: string) => Promise<void>;
+  renameHandler: (newName: string) => Promise<void>;
   // Handle remove UI.
   openRemoveHandler: () => void;
   // Handle confirm import UI.

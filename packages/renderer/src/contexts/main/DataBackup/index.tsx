@@ -6,7 +6,6 @@ import { createContext, useContext } from 'react';
 import { defaultDataBackupContext } from './default';
 import * as Core from '@polkadot-live/core';
 import {
-  getAddressChainId,
   AccountsController,
   IntervalsController,
   SubscriptionsController,
@@ -26,15 +25,15 @@ import type {
 } from './types';
 import type {
   AccountSource,
-  LedgerLocalAddress,
-  LocalAddress,
+  ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
 import type { EventCallback } from '@polkadot-live/types/reporter';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { ExportResult, ImportResult } from '@polkadot-live/types/backup';
 import type {
   IntervalSubscription,
   SubscriptionTask,
 } from '@polkadot-live/types/subscriptions';
-import type { ExportResult, ImportResult } from '@polkadot-live/types/backup';
 
 export const DataBackupContext = createContext<DataBackupContextInterface>(
   defaultDataBackupContext
@@ -174,22 +173,20 @@ export const DataBackupProvider = ({
     const importWindowOpen = await window.myAPI.isViewOpen('import');
 
     for (const [source, ser] of p_map.entries()) {
-      const parsed =
-        source === 'ledger'
-          ? (JSON.parse(ser) as LedgerLocalAddress[])
-          : (JSON.parse(ser) as LocalAddress[]);
+      const genericAccounts: ImportedGenericAccount[] = JSON.parse(ser);
 
       // Process parsed addresses.
-      for (const a of parsed) {
+      for (const a of genericAccounts) {
         const isOnline = cacheGet('mode:connected');
         a.isImported && !isOnline && (a.isImported = false);
 
         // Persist or update address in Electron store.
         await window.myAPI.rawAccountTask({
           action: 'raw-account:import',
-          data: { source, serialized: JSON.stringify(a) },
+          data: { serialized: JSON.stringify(a) },
         });
 
+        // TODO: Update to generic accounts.
         // Add address and its status to import window's state.
         importWindowOpen &&
           Core.postToImport('import:account:add', {
@@ -198,23 +195,23 @@ export const DataBackupProvider = ({
           });
 
         // Handle importing or removing account from main window and setting `isImported` flag state.
-        const { address, name } = a;
-        const chainId = getAddressChainId(address);
+        const { accountName: aName, publicKeyHex } = a;
 
         if (a.isImported) {
-          const data = { data: { data: { address, chainId, name, source } } };
+          const data = { data: { data: { publicKeyHex, aName, source } } };
           await handleImportAddress(new MessageEvent('message', data), true);
           Core.postToImport('import:address:update', { address: a, source });
         } else {
-          const data = { data: { data: { address, chainId } } };
+          const data = { data: { data: { publicKeyHex } } };
           await handleRemoveAddress(new MessageEvent('message', data));
           Core.postToImport('import:address:update', { address: a, source });
         }
 
         // Update managed account names.
-        const account = AccountsController.get(chainId, address);
+        const chainId: ChainID = 'Polkadot'; // TMP: Placeholder
+        const account = AccountsController.get(chainId, publicKeyHex);
         if (account) {
-          account.name = name;
+          account.name = aName;
           await AccountsController.set(account);
         }
       }

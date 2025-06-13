@@ -4,15 +4,14 @@
 import * as defaults from './defaults';
 import { ConfigImport, getAddressChainId } from '@polkadot-live/core';
 import { createContext, useContext } from 'react';
+import { decodeAddress, u8aToHex } from 'dedot/utils';
 import { useAccountStatuses, useAddresses } from '@ren/contexts/import';
 import { useConnections } from '@ren/contexts/common';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ImportHandlerContextInterface } from './types';
-import type { IpcTask } from '@polkadot-live/types/communication';
 import type {
   AccountSource,
-  LedgerLocalAddress,
-  LocalAddress,
+  ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
 
 export const ImportHandlerContext =
@@ -40,99 +39,80 @@ export const ImportHandlerProvider = ({
     pubKey?: string,
     device?: AnyData
   ) => {
-    // Set processing flag for account.
-    const doMainImport = getOnlineMode() && mainImport;
-    setStatusForAccount(address, source, doMainImport);
-
-    const local = constructRawAddress(
-      address,
-      source,
-      accountName,
-      doMainImport,
-      device,
-      pubKey
-    );
+    // Construct generic account and set import status.
+    const genericAccount = construct(address, source, accountName, device);
+    const isImported = getOnlineMode() && mainImport;
+    genericAccount.isImported = isImported;
+    setStatusForAccount(genericAccount.publicKeyHex, source, isImported);
 
     // Update addresses state and references.
-    handleAddressImport(source, local);
+    handleAddressImport(genericAccount);
 
     // Persist account to store in main process.
-    await persistAddressToStore(source, local);
+    await persist(genericAccount);
 
     // Send data to main renderer for processing.
-    if (getOnlineMode() && mainImport) {
-      postAddressToMainWindow(address, source, accountName);
+    if (isImported) {
+      postToMain(genericAccount, genericAccount.publicKeyHex, address);
     }
   };
 
   /// Import an "imported" account from a data file.
   const handleImportAddressFromBackup = async (
-    imported: LocalAddress | LedgerLocalAddress,
-    source: AccountSource
+    genericAccount: ImportedGenericAccount
   ) => {
-    const { address, isImported } = imported;
+    const { publicKeyHex, isImported, source } = genericAccount;
 
     // Set processing flag for account if it needs importing.
     isImported
-      ? setStatusForAccount(address, source, true)
-      : insertAccountStatus(address, source);
+      ? setStatusForAccount(publicKeyHex, source, true)
+      : insertAccountStatus(publicKeyHex, source);
 
     // Update addresses state and references.
-    handleAddressImport(source, imported);
+    handleAddressImport(genericAccount);
   };
 
-  /// Construct raw address data structure.
-  const constructRawAddress = (
+  /**
+   * Construct a generic account.
+   */
+  const construct = (
     address: string,
     source: AccountSource,
     accountName: string,
-    isImported: boolean,
-    device?: AnyData,
-    pubKey?: string
-  ) =>
-    source === 'ledger'
-      ? ({
-          address,
-          device: { ...device },
-          isImported,
-          name: accountName,
-          pubKey: pubKey || '',
-          source,
-        } as LedgerLocalAddress)
-      : ({
-          address,
-          isImported,
-          name: accountName,
-          source,
-        } as LocalAddress);
+    device?: AnyData
+  ): ImportedGenericAccount => ({
+    accountName,
+    isImported: false,
+    publicKeyHex: u8aToHex(decodeAddress(address)),
+    source,
+    ledger: source === 'ledger' ? { ...device } : undefined,
+  });
 
-  /// Send local address to main process for persisting to store.
-  const persistAddressToStore = async (
-    source: AccountSource,
-    local: LocalAddress | LedgerLocalAddress
-  ) => {
-    const ipcTask: IpcTask = {
+  /**
+   * Persist generic account to store.
+   */
+  const persist = async (genericAccount: ImportedGenericAccount) => {
+    await window.myAPI.rawAccountTask({
       action: 'raw-account:persist',
-      data: {
-        source,
-        serialized: JSON.stringify(local),
-      },
-    };
-
-    await window.myAPI.rawAccountTask(ipcTask);
+      data: { serialized: JSON.stringify(genericAccount) },
+    });
   };
 
-  /// Send address data to main renderer to process.
-  const postAddressToMainWindow = (
-    address: string,
-    source: AccountSource,
-    accountName: string
+  /**
+   * Add address to main renderer.
+   */
+  const postToMain = (
+    genericAccount: ImportedGenericAccount,
+    publicKeyHex: string,
+    address: string // TODO: Remove
   ) => {
+    const { accountName, source } = genericAccount;
     ConfigImport.portImport.postMessage({
       task: 'renderer:address:import',
       data: {
         address,
         chainId: getAddressChainId(address),
+        publicKeyHex,
         name: accountName,
         source,
       },

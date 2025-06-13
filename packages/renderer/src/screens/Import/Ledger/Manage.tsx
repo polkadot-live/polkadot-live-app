@@ -15,30 +15,22 @@ import {
   ButtonText,
   ButtonPrimaryInvert,
 } from '@polkadot-live/ui/kits/buttons';
-import {
-  getAddressChainId,
-  getSortedLocalLedgerAddresses,
-  getInitialChainAccordionValue,
-} from '@polkadot-live/core';
 import { useAddresses } from '@ren/contexts/import';
 import { useState } from 'react';
 import { ItemsColumn } from '@ren/screens/Home/Manage/Wrappers';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import type { ImportLedgerManageProps } from '../types';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';
 
 export const Manage = ({
   setSection,
   setShowImportUi,
 }: ImportLedgerManageProps) => {
-  const { ledgerAddresses: addresses } = useAddresses();
+  const { ledgerAddresses: genericAccounts } = useAddresses();
 
   /// Accordion state.
-  const [accordionValue, setAccordionValue] = useState<ChainID>(
-    getInitialChainAccordionValue([
-      ...new Set(addresses.map(({ address }) => getAddressChainId(address))),
-    ])
-  );
+  const [accordionValue, setAccordionValue] = useState<ChainID>('Polkadot');
 
   return (
     <Styles.PadWrapper>
@@ -76,7 +68,7 @@ export const Manage = ({
 
         {/* Address List */}
         <section>
-          {addresses.length && (
+          {genericAccounts.length && (
             <UI.AccordionWrapper $onePart={true}>
               <Accordion.Root
                 className="AccordionRoot"
@@ -86,8 +78,10 @@ export const Manage = ({
               >
                 <Styles.FlexColumn>
                   {Array.from(
-                    getSortedLocalLedgerAddresses(addresses).entries()
-                  ).map(([chainId, chainAddresses]) => (
+                    new Map<ChainID, ImportedGenericAccount[]>([
+                      ['Polkadot', genericAccounts],
+                    ]).entries()
+                  ).map(([chainId, accounts]) => (
                     <Accordion.Item
                       key={`${chainId}_ledger_addresses`}
                       className="AccordionItem"
@@ -102,10 +96,10 @@ export const Manage = ({
                       </UI.AccordionTrigger>
                       <UI.AccordionContent transparent={true}>
                         <ItemsColumn>
-                          {chainAddresses.map((localAddress) => (
+                          {accounts.map((genericAccount) => (
                             <Address
-                              key={`address_${localAddress.name}`}
-                              localAddress={localAddress}
+                              key={`address_${genericAccount.accountName}`}
+                              genericAccount={genericAccount}
                               setSection={setSection}
                             />
                           ))}

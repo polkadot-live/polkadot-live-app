@@ -97,7 +97,7 @@ export interface AccountJson {
   _source: AccountSource;
 }
 
-/*
+/**
  * Type storing essential data for an account.
  */
 export interface FlattenedAccountData {
@@ -110,7 +110,23 @@ export interface FlattenedAccountData {
 }
 
 /**
- * Vault address type for import window.
+ * Address type for import window.
+ */
+export interface LedgerMetadata {
+  device: { id: string; productName: string };
+  accountIndex?: number;
+}
+
+export interface ImportedGenericAccount {
+  accountName: string;
+  isImported: boolean;
+  publicKeyHex: string;
+  source: AccountSource;
+  ledger?: LedgerMetadata;
+}
+
+/**
+ * @deprecated
  */
 export interface LocalAddress {
   address: string;
@@ -120,9 +136,8 @@ export interface LocalAddress {
 }
 
 /**
- * Ledger address type for import window.
+ * @deprecated Ledger address type for import window.
  */
-
 export interface LedgerLocalAddress {
   address: string;
   device: { id: string; productName: string };
@@ -132,12 +147,12 @@ export interface LedgerLocalAddress {
   pubKey: string;
 }
 
-// Type for `Account.state` property
-// Currently only supports Polkadot chain instance's state
-
 /**
  * @deprecated The type should not be used
+ * Type for `Account.state` property
+ * Currently only supports Polkadot chain instance's state
  */
+
 export interface AccountChainInstanceState {
   _account: AnyJson; // TODO: fix type
   _address: string;

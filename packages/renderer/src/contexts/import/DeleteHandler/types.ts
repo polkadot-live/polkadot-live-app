@@ -5,7 +5,8 @@ import type { AccountSource } from '@polkadot-live/types/accounts';
 
 export interface DeleteHandlerContextInterface {
   handleDeleteAddress: (
-    address: string,
-    source: AccountSource
+    publicKeyHex: string,
+    source: AccountSource,
+    address: string
   ) => Promise<boolean>;
 }

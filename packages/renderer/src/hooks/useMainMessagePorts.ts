@@ -85,7 +85,13 @@ export const useMainMessagePorts = () => {
   const handleImportAddress = async (ev: MessageEvent, fromBackup: boolean) => {
     try {
       window.myAPI.relaySharedState('account:importing', true);
-      const { chainId, source, address, name: accountName } = ev.data.data;
+      const {
+        address,
+        chainId,
+        name: accountName,
+        publicKeyHex,
+        source,
+      } = ev.data.data;
 
       // Add address to accounts controller.
       let account =
@@ -168,19 +174,33 @@ export const useMainMessagePorts = () => {
       // Send message back to import window to reset account's processing flag.
       ConfigRenderer.portToImport?.postMessage({
         task: 'import:account:processing',
-        data: { address, source, status: false, success: true, accountName },
+        data: {
+          accountName,
+          address,
+          publicKeyHex,
+          source,
+          status: false,
+          success: true,
+        },
       });
 
       window.myAPI.relaySharedState('account:importing', false);
       window.myAPI.umamiEvent('account-import', { source, chainId });
     } catch (err) {
       console.error(err);
-      const { address, source, name: accountName } = ev.data.data;
+      const { address, source, publicKeyHex, name: accountName } = ev.data.data;
 
       window.myAPI.relaySharedState('account:importing', false);
       ConfigRenderer.portToImport?.postMessage({
         task: 'import:account:processing',
-        data: { address, source, status: false, success: false, accountName },
+        data: {
+          accountName,
+          address,
+          publicKeyHex,
+          source,
+          status: false,
+          success: false,
+        },
       });
     }
   };
