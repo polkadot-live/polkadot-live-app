@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 /// Dependencies.
+import * as Core from '@polkadot-live/core';
 import { createContext, useContext } from 'react';
 import { defaultDataBackupContext } from './default';
-import * as Core from '@polkadot-live/core';
+import { encodeAddress, hexToU8a } from 'dedot/utils';
 import {
   AccountsController,
   IntervalsController,
@@ -55,7 +56,9 @@ export const DataBackupProvider = ({
   const { addIntervalSubscription, updateIntervalSubscription } =
     useIntervalSubscriptions();
 
-  /// Write Polkadot Live data to a file.
+  /**
+   * Write Polkadot Live data to a file.
+   */
   const exportDataToBackup = async () => {
     const { result, msg }: ExportResult = await window.myAPI.exportAppData();
 
@@ -96,7 +99,9 @@ export const DataBackupProvider = ({
     }
   };
 
-  /// Exported function for importing data from a backup file.
+  /**
+   * Exported function for importing data from a backup file.
+   */
   const importDataFromBackup = async (
     handleImportAddress: ImportFunc,
     handleRemoveAddress: RemoveFunc
@@ -157,7 +162,9 @@ export const DataBackupProvider = ({
     }
   };
 
-  /// Extract address data from an imported text file and send to application.
+  /**
+   * Import account data from backup file.
+   */
   const importAddressData = async (
     serialized: string,
     handleImportAddress: ImportFunc,
@@ -186,7 +193,6 @@ export const DataBackupProvider = ({
           data: { serialized: JSON.stringify(a) },
         });
 
-        // TODO: Update to generic accounts.
         // Add address and its status to import window's state.
         importWindowOpen &&
           Core.postToImport('import:account:add', {
@@ -195,23 +201,40 @@ export const DataBackupProvider = ({
           });
 
         // Handle importing or removing account from main window and setting `isImported` flag state.
-        const { accountName: aName, publicKeyHex } = a;
+        const { accountName, publicKeyHex } = a;
 
         if (a.isImported) {
-          const data = { data: { data: { publicKeyHex, aName, source } } };
+          const data = {
+            data: {
+              data: {
+                address: encodeAddress(hexToU8a(publicKeyHex), 0),
+                chainId: 'Polkadot' as ChainID,
+                name: accountName,
+                publicKeyHex,
+                source,
+              },
+            },
+          };
           await handleImportAddress(new MessageEvent('message', data), true);
-          Core.postToImport('import:address:update', { address: a, source });
+          Core.postToImport('import:address:update', { genericAccount: a });
         } else {
-          const data = { data: { data: { publicKeyHex } } };
+          const data = {
+            data: {
+              data: {
+                address: encodeAddress(hexToU8a(publicKeyHex), 0),
+                chainId: 'Polkadot' as ChainID,
+              },
+            },
+          };
           await handleRemoveAddress(new MessageEvent('message', data));
-          Core.postToImport('import:address:update', { address: a, source });
+          Core.postToImport('import:address:update', { genericAccount: a });
         }
 
         // Update managed account names.
         const chainId: ChainID = 'Polkadot'; // TMP: Placeholder
         const account = AccountsController.get(chainId, publicKeyHex);
         if (account) {
-          account.name = aName;
+          account.name = accountName;
           await AccountsController.set(account);
         }
       }
@@ -221,7 +244,9 @@ export const DataBackupProvider = ({
     }
   };
 
-  /// Extract extrinsics data from an imported text file and send to application.
+  /**
+   * Import extrinsics data from backup file.
+   */
   const importExtrinsicsData = async (serialized: string): Promise<void> => {
     const s_extrinsics = Core.getFromBackupFile('extrinsics', serialized);
     if (!s_extrinsics) {
@@ -255,7 +280,9 @@ export const DataBackupProvider = ({
     setEvents(parsed);
   };
 
-  /// Extract interval task data from an imported text file and send to application.
+  /**
+   * Import interval task data from backup file.
+   */
   const importIntervalData = async (serialized: string): Promise<void> => {
     const s_tasks = Core.getFromBackupFile('intervals', serialized);
     if (!s_tasks) {
@@ -313,7 +340,9 @@ export const DataBackupProvider = ({
     }
   };
 
-  /// Extract account subscription data from an imported text file and send to application.
+  /**
+   * Import subscription data from backup file.
+   */
   const importAccountTaskData = async (serialized: string) => {
     const s_tasks = Core.getFromBackupFile('accountTasks', serialized);
     if (!s_tasks) {
