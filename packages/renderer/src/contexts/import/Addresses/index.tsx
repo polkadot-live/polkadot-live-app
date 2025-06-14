@@ -40,6 +40,22 @@ export const AddressesProvider = ({
   const vaultAddressesRef = useRef<IGA[]>([]);
   const wcAddressesRef = useRef<IGA[]>([]);
 
+  /// Get accounts according to import source.
+  const getAccounts = (source: AccountSource): ImportedGenericAccount[] => {
+    switch (source) {
+      case 'ledger':
+        return ledgerAddresses;
+      case 'read-only':
+        return readOnlyAddresses;
+      case 'wallet-connect':
+        return wcAddresses;
+      case 'vault':
+        return vaultAddresses;
+      default:
+        return [];
+    }
+  };
+
   /// Fetch address data from store when component loads.
   useEffect(() => {
     const fetchAccounts = async () => {
@@ -325,11 +341,12 @@ export const AddressesProvider = ({
         readOnlyAddresses,
         vaultAddresses,
         wcAddresses,
-        isAlreadyImported,
+        getAccounts,
         handleAddressImport,
         handleAddressDelete,
         handleAddressRemove,
         handleAddressAdd,
+        isAlreadyImported,
       }}
     >
       {children}

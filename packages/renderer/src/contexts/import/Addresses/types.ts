@@ -11,7 +11,7 @@ export interface AddressesContextInterface {
   readOnlyAddresses: ImportedGenericAccount[];
   vaultAddresses: ImportedGenericAccount[];
   wcAddresses: ImportedGenericAccount[];
-
+  getAccounts: (source: AccountSource) => ImportedGenericAccount[];
   handleAddressImport: (genericAccount: ImportedGenericAccount) => void;
   handleAddressDelete: (source: AccountSource, publicKeyHex: string) => boolean;
   handleAddressRemove: (source: AccountSource, publicKeyHex: string) => void;

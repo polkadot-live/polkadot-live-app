@@ -9,6 +9,7 @@ export const defaultAddressesContext: AddressesContextInterface = {
   readOnlyAddresses: [],
   vaultAddresses: [],
   wcAddresses: [],
+  getAccounts: () => [],
   handleAddressImport: () => {},
   handleAddressDelete: () => false,
   handleAddressRemove: () => {},

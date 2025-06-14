@@ -1,20 +1,18 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { encodeAddress, hexToU8a } from 'dedot/utils';
-import { Confirm } from '../Addresses/Confirm';
-import { Delete } from '../Addresses/Delete';
+import { Confirm, Delete, Remove } from '../Actions';
+import { HardwareAddress } from '@polkadot-live/ui/components';
 import { renderToast } from '@polkadot-live/ui/utils';
 import { postRenameAccount, renameAccountInStore } from '@polkadot-live/core';
-import { HardwareAddress } from '@polkadot-live/ui/components';
-import { Remove } from '../Addresses/Remove';
 import { useAccountStatuses, useAddresses } from '@ren/contexts/import';
 import { useConnections } from '@ren/contexts/common';
 import { useOverlay } from '@polkadot-live/ui/contexts';
-import type { LedgerAddressProps } from '../types';
+import { encodeAddress, hexToU8a } from 'dedot/utils';
+import type { AddressProps } from './types';
 
-export const Address = ({ genericAccount, setSection }: LedgerAddressProps) => {
-  const { accountName, isImported, publicKeyHex } = genericAccount;
+export const Address = ({ genericAccount, setSection }: AddressProps) => {
+  const { accountName, isImported, publicKeyHex, source } = genericAccount;
   const { openOverlayWith } = useOverlay();
   const { handleAddressImport } = useAddresses();
   const { getStatusForAccount } = useAccountStatuses();
@@ -24,7 +22,7 @@ export const Address = ({ genericAccount, setSection }: LedgerAddressProps) => {
   // Handler to rename an account.
   const renameHandler = async (newName: string) => {
     // Update name in store in main process.
-    await renameAccountInStore(publicKeyHex, 'ledger', newName);
+    await renameAccountInStore(publicKeyHex, source, newName);
 
     // Post message to main renderer to process the account rename.
     const address = encodeAddress(publicKeyHex, 0); // TMP
@@ -44,7 +42,7 @@ export const Address = ({ genericAccount, setSection }: LedgerAddressProps) => {
       chainId={'Polkadot'}
       isConnected={getOnlineMode()}
       isImported={isImported}
-      processingStatus={getStatusForAccount(publicKeyHex, 'ledger')}
+      processingStatus={getStatusForAccount(publicKeyHex, source)}
       theme={theme}
       /* Handlers */
       openConfirmHandler={() =>
@@ -53,7 +51,7 @@ export const Address = ({ genericAccount, setSection }: LedgerAddressProps) => {
             address={encodeAddress(hexToU8a(publicKeyHex), 0)}
             publicKeyHex={publicKeyHex}
             name={accountName}
-            source="ledger"
+            source={source}
           />,
           'small'
         )
@@ -63,7 +61,7 @@ export const Address = ({ genericAccount, setSection }: LedgerAddressProps) => {
           <Delete
             address={encodeAddress(hexToU8a(publicKeyHex), 0)}
             publicKeyHex={publicKeyHex}
-            source="ledger"
+            source={source}
             setSection={setSection}
           />
         )
@@ -79,7 +77,7 @@ export const Address = ({ genericAccount, setSection }: LedgerAddressProps) => {
           <Remove
             address={encodeAddress(hexToU8a(publicKeyHex), 0)}
             publicKeyHex={publicKeyHex}
-            source="ledger"
+            source={source}
             accountName={accountName}
           />,
           'small'

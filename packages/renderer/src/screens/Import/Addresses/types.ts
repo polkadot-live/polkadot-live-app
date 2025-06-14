@@ -11,24 +11,7 @@ export interface AddressProps {
   genericAccount: ImportedGenericAccount;
   setSection: AnyFunction;
 }
-
-export interface ConfirmProps {
-  address: string;
-  publicKeyHex: string;
-  name: string;
+export interface ManageAccountsProps {
   source: AccountSource;
-}
-
-export interface RemoveProps {
-  accountName: string;
-  address: string;
-  publicKeyHex: string;
-  source: AccountSource;
-}
-
-export interface DeleteProps {
-  address: string;
-  publicKeyHex: string;
-  source: AccountSource;
-  setSection: AnyFunction | null;
+  setSection: React.Dispatch<React.SetStateAction<number>>;
 }
