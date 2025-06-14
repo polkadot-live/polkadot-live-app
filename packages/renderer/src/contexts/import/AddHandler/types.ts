@@ -5,8 +5,9 @@ import type { AccountSource } from '@polkadot-live/types/accounts';
 
 export interface AddHandlerContextInterface {
   handleAddAddress: (
-    address: string,
+    publicKeyHex: string,
     source: AccountSource,
-    accountName: string
+    accountName: string,
+    address: string
   ) => Promise<void>;
 }

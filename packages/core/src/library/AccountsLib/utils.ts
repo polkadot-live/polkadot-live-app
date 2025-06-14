@@ -32,7 +32,7 @@ export const getAddressChainId = (address: string): ChainID => {
     }
   }
 
-  throw new Error('Imported address not recognized.');
+  throw new Error(`Imported address not recognized: ${address}`);
 };
 
 /**

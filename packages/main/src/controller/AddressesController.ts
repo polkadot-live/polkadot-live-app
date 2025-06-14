@@ -7,8 +7,7 @@ import type { AnyData } from '@polkadot-live/types/misc';
 import type { IpcTask } from '@polkadot-live/types/communication';
 import type {
   AccountSource,
-  LedgerLocalAddress,
-  LocalAddress,
+  ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
 
 export class AddressesController {
@@ -78,30 +77,17 @@ export class AddressesController {
    * @summary Set the import flag of an address to `true`.
    */
   private static add(task: IpcTask) {
-    const { address, source, name } = task.data;
+    const { accountName, publicKeyHex, source } = task.data;
     const key = ConfigMain.getStorageKey(source);
+    const ser = JSON.stringify(
+      this.getStoredAddresses(key).map((a) =>
+        a.publicKeyHex === publicKeyHex
+          ? { ...a, accountName, isImported: true }
+          : a
+      )
+    );
 
-    if (source === 'ledger') {
-      // Update ledger address.
-      const stored = this.getStoredAddresses(key, true) as LedgerLocalAddress[];
-      const serialized = JSON.stringify(
-        stored.map((a) =>
-          a.address === address ? { ...a, name, isImported: true } : a
-        )
-      );
-
-      this.setInStore(key, serialized);
-    } else {
-      // Update stored vault or read-only accounts.
-      const stored = this.getStoredAddresses(key) as LocalAddress[];
-      const serialized = JSON.stringify(
-        stored.map((a) =>
-          a.address === address ? { ...a, name, isImported: true } : a
-        )
-      );
-
-      this.setInStore(key, serialized);
-    }
+    this.setInStore(key, ser);
   }
 
   /**
@@ -109,26 +95,15 @@ export class AddressesController {
    * @summary Delete a received address' data from store.
    */
   private static delete(task: IpcTask) {
-    const { source, address } = task.data;
+    const { publicKeyHex, source } = task.data;
     const key = ConfigMain.getStorageKey(source);
+    const ser = JSON.stringify(
+      this.getStoredAddresses(key).filter(
+        (a) => a.publicKeyHex !== publicKeyHex
+      )
+    );
 
-    if (source === 'ledger') {
-      // Update stored ledger accounts.
-      const stored = this.getStoredAddresses(key, true) as LedgerLocalAddress[];
-      const serialized = JSON.stringify(
-        stored.filter((a) => a.address !== address)
-      );
-
-      this.setInStore(key, serialized);
-    } else {
-      // Update stored vault or read-only accounts.
-      const stored = this.getStoredAddresses(key) as LocalAddress[];
-      const serialized = JSON.stringify(
-        stored.filter((a) => a.address !== address)
-      );
-
-      this.setInStore(key, serialized);
-    }
+    this.setInStore(key, ser);
   }
 
   /**
@@ -145,11 +120,7 @@ export class AddressesController {
       'wallet-connect',
     ] as AccountSource[]) {
       const key = ConfigMain.getStorageKey(source);
-      const fetched =
-        source === 'ledger'
-          ? (this.getStoredAddresses(key) as LedgerLocalAddress[])
-          : (this.getStoredAddresses(key) as LocalAddress[]);
-
+      const fetched = this.getStoredAddresses(key);
       if (fetched.length === 0) {
         continue;
       }
@@ -164,11 +135,9 @@ export class AddressesController {
    * @name getAllBySource
    * @summary Get all addresses from a particular source.
    */
-  static getAllBySource(
-    source: AccountSource
-  ): LedgerLocalAddress[] | LocalAddress[] {
+  static getAllBySource(source: AccountSource): ImportedGenericAccount[] {
     const key = ConfigMain.getStorageKey(source);
-    return this.getStoredAddresses(key, source === 'ledger');
+    return this.getStoredAddresses(key);
   }
 
   /**
@@ -186,24 +155,24 @@ export class AddressesController {
    * @summary Persist an address to store that's being imported from a backup file.
    */
   private static doImport(task: IpcTask) {
-    const { source, serialized } = task.data;
-    const parsed: LocalAddress | LedgerLocalAddress = JSON.parse(serialized);
-    const { address, isImported, name } = parsed;
+    const { serialized } = task.data;
+    const genericAccount: ImportedGenericAccount = JSON.parse(serialized);
+    const { accountName, isImported, publicKeyHex, source } = genericAccount;
 
-    if (this.isAlreadyPersisted(address)) {
+    if (this.isAlreadyPersisted(publicKeyHex)) {
       isImported
         ? this.add({
             action: 'raw-account:add',
-            data: { source, address, name },
+            data: { accountName, publicKeyHex, source },
           })
         : this.remove({
             action: 'raw-account:remove',
-            data: { source, address, name },
+            data: { accountName, publicKeyHex, source },
           });
     } else {
       this.persist({
         action: 'raw-account:persist',
-        data: { source, serialized },
+        data: { serialized },
       });
     }
   }
@@ -214,26 +183,14 @@ export class AddressesController {
    */
   private static persist(task: IpcTask) {
     try {
-      const { source, serialized } = task.data;
+      const { serialized } = task.data;
+      const genericAccount: ImportedGenericAccount = JSON.parse(serialized);
+      const { source, publicKeyHex } = genericAccount;
       const key = ConfigMain.getStorageKey(source);
 
-      if (source === 'ledger') {
-        // Persist ledger account.
-        const parsed: LedgerLocalAddress = JSON.parse(serialized);
-        const stored = this.getStoredAddresses(
-          key,
-          true
-        ) as LedgerLocalAddress[];
-
-        !this.isAlreadyPersisted(parsed.address) &&
-          this.setInStore(key, JSON.stringify([...stored, parsed]));
-      } else {
-        // Persist vault or read-only account.
-        const parsed: LocalAddress = JSON.parse(serialized);
-        const stored = this.getStoredAddresses(key) as LocalAddress[];
-
-        !this.isAlreadyPersisted(parsed.address) &&
-          this.setInStore(key, JSON.stringify([...stored, parsed]));
+      if (!this.isAlreadyPersisted(publicKeyHex)) {
+        const stored = this.getStoredAddresses(key);
+        this.setInStore(key, JSON.stringify([...stored, genericAccount]));
       }
     } catch (err) {
       console.log(err);
@@ -245,30 +202,17 @@ export class AddressesController {
    * @summary Set the import flag of an address to `false`.
    */
   private static remove(task: IpcTask) {
-    const { address, source, name } = task.data;
+    const { accountName, publicKeyHex, source } = task.data;
     const key = ConfigMain.getStorageKey(source);
+    const serialised = JSON.stringify(
+      this.getStoredAddresses(key).map((a) =>
+        a.publicKeyHex === publicKeyHex
+          ? { ...a, accountName, isImported: false }
+          : a
+      )
+    );
 
-    if (source === 'ledger') {
-      // Remove stored ledger accounts
-      const stored = this.getStoredAddresses(key, true) as LedgerLocalAddress[];
-      const serialised = JSON.stringify(
-        stored.map((a) =>
-          a.address === address ? { ...a, name, isImported: false } : a
-        )
-      );
-
-      this.setInStore(key, serialised);
-    } else {
-      // Remove stored vault or read-only account.
-      const stored = this.getStoredAddresses(key) as LocalAddress[];
-      const serialized = JSON.stringify(
-        stored.map((a) =>
-          a.address === address ? { ...a, name, isImported: false } : a
-        )
-      );
-
-      this.setInStore(key, serialized);
-    }
+    this.setInStore(key, serialised);
   }
 
   /**
@@ -276,26 +220,15 @@ export class AddressesController {
    * @summary Update a stored address' name.
    */
   private static rename(task: IpcTask) {
-    const { source, address, newName } = task.data;
+    const { newName, publicKeyHex, source } = task.data;
     const key = ConfigMain.getStorageKey(source);
+    const serialized = JSON.stringify(
+      this.getStoredAddresses(key).map((a) =>
+        a.publicKeyHex === publicKeyHex ? { ...a, accountName: newName } : a
+      )
+    );
 
-    if (source === 'ledger') {
-      // Rename ledger address data in store.
-      const stored = this.getStoredAddresses(key, true) as LedgerLocalAddress[];
-      const serialized = JSON.stringify(
-        stored.map((a) => (a.address === address ? { ...a, name: newName } : a))
-      );
-
-      this.setInStore(key, serialized);
-    } else {
-      // Rename vault and read-only address data in store.
-      const stored = this.getStoredAddresses(key) as LocalAddress[];
-      const serialized = JSON.stringify(
-        stored.map((a) => (a.address === address ? { ...a, name: newName } : a))
-      );
-
-      this.setInStore(key, serialized);
-    }
+    this.setInStore(key, serialized);
   }
 
   private static getFromStore(key: string) {
@@ -306,27 +239,11 @@ export class AddressesController {
     (store as Record<string, AnyData>).set(key, serialized);
   }
 
-  private static getStoredAddresses(
-    key: string,
-    ledger = false
-  ): LedgerLocalAddress[] | LocalAddress[] {
-    return ledger
-      ? store.has(key)
-        ? (JSON.parse(this.getFromStore(key)) as LedgerLocalAddress[])
-        : ([] as LedgerLocalAddress[])
-      : store.has(key)
-        ? (JSON.parse(this.getFromStore(key)) as LocalAddress[])
-        : ([] as LocalAddress[]);
+  private static getStoredAddresses(key: string): ImportedGenericAccount[] {
+    return store.has(key) ? JSON.parse(this.getFromStore(key)) : [];
   }
 
-  /// Currently not used.
-  private static throwIfExists(address: string) {
-    if (this.isAlreadyPersisted(address)) {
-      throw new Error(`Persist Error: Account ${address} already exists.`);
-    }
-  }
-
-  private static isAlreadyPersisted(address: string): boolean {
+  private static isAlreadyPersisted(publicKeyHex: string): boolean {
     for (const source of [
       'ledger',
       'read-only',
@@ -334,16 +251,10 @@ export class AddressesController {
       'wallet-connect',
     ] as AccountSource[]) {
       const key = ConfigMain.getStorageKey(source);
-      if (source === 'ledger') {
-        const stored = this.getStoredAddresses(key, true);
-        if (stored.find((a) => a.address === address)) {
-          return true;
-        }
-      } else {
-        const stored = this.getStoredAddresses(key);
-        if (stored.find((a) => a.address === address)) {
-          return true;
-        }
+      const stored = this.getStoredAddresses(key);
+
+      if (stored.find((a) => a.publicKeyHex === publicKeyHex)) {
+        return true;
       }
     }
 

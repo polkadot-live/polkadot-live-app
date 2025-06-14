@@ -3,22 +3,18 @@
 
 import type {
   AccountSource,
-  LedgerLocalAddress,
-  LocalAddress,
+  ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
 
 export interface AddressesContextInterface {
-  ledgerAddresses: LedgerLocalAddress[];
-  readOnlyAddresses: LocalAddress[];
-  vaultAddresses: LocalAddress[];
-  wcAddresses: LocalAddress[];
+  ledgerAddresses: ImportedGenericAccount[];
+  readOnlyAddresses: ImportedGenericAccount[];
+  vaultAddresses: ImportedGenericAccount[];
+  wcAddresses: ImportedGenericAccount[];
 
-  handleAddressImport: (
-    source: AccountSource,
-    local: LedgerLocalAddress | LocalAddress
-  ) => void;
-  handleAddressDelete: (source: AccountSource, address: string) => boolean;
-  handleAddressRemove: (source: AccountSource, address: string) => void;
-  handleAddressAdd: (source: AccountSource, address: string) => void;
-  isAlreadyImported: (address: string) => boolean;
+  handleAddressImport: (genericAccount: ImportedGenericAccount) => void;
+  handleAddressDelete: (source: AccountSource, publicKeyHex: string) => boolean;
+  handleAddressRemove: (source: AccountSource, publicKeyHex: string) => void;
+  handleAddressAdd: (source: AccountSource, publicKeyHex: string) => void;
+  isAlreadyImported: (targetPubKeyHex: string) => boolean;
 }

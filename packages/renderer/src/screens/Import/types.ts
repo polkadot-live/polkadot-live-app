@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { AnyFunction } from '@polkadot-live/types/misc';
-import type { LedgerLocalAddress } from '@polkadot-live/types/accounts';
+import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';
 
 export interface HomeProps {
   setSection: AnyFunction;
@@ -33,7 +33,7 @@ export interface ImportLedgerManageProps {
 }
 
 export interface LedgerAddressProps {
-  localAddress: LedgerLocalAddress;
+  genericAccount: ImportedGenericAccount;
   setSection: React.Dispatch<React.SetStateAction<number>>;
 }
 

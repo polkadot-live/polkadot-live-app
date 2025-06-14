@@ -8,13 +8,18 @@ import { useOverlay } from '@polkadot-live/ui/contexts';
 import { useDeleteHandler } from '@ren/contexts/import';
 import type { DeleteProps } from './types';
 
-export const Delete = ({ address, source, setSection }: DeleteProps) => {
+export const Delete = ({
+  address,
+  publicKeyHex,
+  source,
+  setSection,
+}: DeleteProps) => {
   const { setStatus } = useOverlay();
   const { handleDeleteAddress } = useDeleteHandler();
 
   // Click handler function.
   const handleDeleteClick = async () => {
-    const goBack = await handleDeleteAddress(address, source);
+    const goBack = await handleDeleteAddress(publicKeyHex, source, address);
     setStatus(0);
     goBack && setSection(0);
   };

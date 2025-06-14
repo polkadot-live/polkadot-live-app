@@ -18,6 +18,7 @@ import {
   ScanWrapper,
 } from '@polkadot-live/ui/components';
 import type { Html5Qrcode } from 'html5-qrcode';
+import { decodeAddress, u8aToHex } from 'dedot/utils';
 
 export const Reader = () => {
   const { setStatus: setOverlayStatus } = useOverlay();
@@ -56,28 +57,24 @@ export const Reader = () => {
 
     const maybeAddress: string = signature.split(':')?.[1];
     const isValid = checkValidAddress(maybeAddress);
-    const isImported = isAlreadyImported(maybeAddress);
 
-    const newFeedback = isValid
-      ? isImported
-        ? 'Account Already Added'
-        : 'Address Received'
-      : 'Invalid Address';
-
-    setFeedback(newFeedback);
-
-    // Import address if it's valid.
-    if (isValid && !isImported) {
+    if (!isValid) {
+      setFeedback('Invalid Address');
+    } else if (!isAlreadyImported(maybeAddress)) {
       stopHtml5QrCode();
+      setFeedback('Address Received');
       await handleVaultImport(maybeAddress);
+    } else {
+      setFeedback('Account Already Added');
     }
   };
 
   // Handle new vault address to local storage and close overlay.
   const handleVaultImport = async (address: string) => {
     const accountName = ellipsisFn(address);
+    const publicKeyHex: string = u8aToHex(decodeAddress(address));
 
-    insertAccountStatus(address, 'vault');
+    insertAccountStatus(publicKeyHex, 'vault');
     await handleImportAddress(address, 'vault', accountName, true);
     setImported(true);
   };

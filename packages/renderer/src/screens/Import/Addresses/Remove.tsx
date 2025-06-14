@@ -8,12 +8,17 @@ import { ButtonMonoInvert, ButtonMono } from '@polkadot-live/ui/kits/buttons';
 import { useRemoveHandler } from '@ren/contexts/import';
 import type { RemoveProps } from './types';
 
-export const Remove = ({ address, source, accountName }: RemoveProps) => {
+export const Remove = ({
+  address,
+  publicKeyHex,
+  source,
+  accountName,
+}: RemoveProps) => {
   const { setStatus } = useOverlay();
   const { handleRemoveAddress } = useRemoveHandler();
 
   const handleClickRemove = async () => {
-    await handleRemoveAddress(address, source, accountName);
+    await handleRemoveAddress(publicKeyHex, source, accountName, address);
     setStatus(0);
   };
 

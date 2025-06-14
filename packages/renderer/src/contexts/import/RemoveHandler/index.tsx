@@ -6,7 +6,6 @@ import { ConfigImport, getAddressChainId } from '@polkadot-live/core';
 import { createContext, useContext } from 'react';
 import { useAddresses } from '@ren/contexts/import';
 import type { AccountSource } from '@polkadot-live/types/accounts';
-import type { IpcTask } from '@polkadot-live/types/communication';
 import type { RemoveHandlerContextInterface } from './types';
 
 export const RemoveHandlerContext =
@@ -23,38 +22,43 @@ export const RemoveHandlerProvider = ({
 }) => {
   const { handleAddressRemove } = useAddresses();
 
-  /// Exposed function to remove an address.
+  /**
+   * Removed generic account from main window.
+   */
   const handleRemoveAddress = async (
-    address: string,
+    publicKeyHex: string,
     source: AccountSource,
-    accountName: string
+    accountName: string,
+    address: string
   ) => {
     // Update addresses state and references.
-    handleAddressRemove(source, address);
+    handleAddressRemove(source, publicKeyHex);
 
     // Update address data in store in main process.
-    await updateAddressInStore(source, address, accountName);
+    await updateAddressInStore(source, publicKeyHex, accountName);
 
     // Process removed address in main renderer.
-    postAddressToMainWindow(address);
+    postToMain(address);
   };
 
-  /// Update address in store.
+  /**
+   * Update address in store.
+   */
   const updateAddressInStore = async (
     source: AccountSource,
-    address: string,
+    publicKeyHex: string,
     accountName: string
   ) => {
-    const ipcTask: IpcTask = {
+    await window.myAPI.rawAccountTask({
       action: 'raw-account:remove',
-      data: { source, address, name: accountName },
-    };
-
-    await window.myAPI.rawAccountTask(ipcTask);
+      data: { accountName, publicKeyHex, source },
+    });
   };
 
-  /// Send address data to main window to process removal.
-  const postAddressToMainWindow = (address: string) => {
+  /**
+   * Send address data to main window to process removal.
+   */
+  const postToMain = (address: string) => {
     ConfigImport.portImport.postMessage({
       task: 'renderer:address:remove',
       data: {

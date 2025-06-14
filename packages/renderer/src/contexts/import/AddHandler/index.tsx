@@ -7,7 +7,6 @@ import { createContext, useContext } from 'react';
 import { useAccountStatuses, useAddresses } from '@ren/contexts/import';
 import { useConnections } from '@ren/contexts/common';
 import type { AddHandlerContextInterface } from './types';
-import type { IpcTask } from '@polkadot-live/types/communication';
 import type { AccountSource } from '@polkadot-live/types/accounts';
 
 export const AddHandlerContext = createContext<AddHandlerContextInterface>(
@@ -25,44 +24,50 @@ export const AddHandlerProvider = ({
   const { setStatusForAccount } = useAccountStatuses();
   const { handleAddressAdd } = useAddresses();
 
-  /// Exposed function to add an address.
+  /**
+   * Update generic account imported to main window.
+   */
   const handleAddAddress = async (
-    address: string,
+    publicKeyHex: string,
     source: AccountSource,
-    accountName: string
+    accountName: string,
+    address: string // TODO: Remove
   ) => {
     // Set processing flag for account.
-    setStatusForAccount(address, source, true);
+    setStatusForAccount(publicKeyHex, source, true);
 
     // Update addresses state and references.
-    handleAddressAdd(source, address);
+    handleAddressAdd(source, publicKeyHex);
 
     // Update address data in store in main process.
-    await updateAddressInStore(source, address, accountName);
+    await updateAddressInStore(source, publicKeyHex, accountName);
 
     // Process added address in main renderer.
     if (getOnlineMode()) {
-      postAddressToMainWindow(address, source, accountName);
+      postToMain(address, publicKeyHex, source, accountName);
     }
   };
 
-  /// Update address in store.
+  /**
+   * Update address in store.
+   */
   const updateAddressInStore = async (
     source: AccountSource,
-    address: string,
+    publicKeyHex: string,
     accountName: string
   ) => {
-    const ipcTask: IpcTask = {
+    await window.myAPI.rawAccountTask({
       action: 'raw-account:add',
-      data: { source, address, name: accountName },
-    };
-
-    await window.myAPI.rawAccountTask(ipcTask);
+      data: { accountName, publicKeyHex, source },
+    });
   };
 
-  /// Send address data to main renderer to process.
-  const postAddressToMainWindow = (
+  /**
+   * Send address data to main renderer to process.
+   */
+  const postToMain = (
     address: string,
+    publicKeyHex: string,
     source: AccountSource,
     accountName: string
   ) => {
@@ -71,6 +76,7 @@ export const AddHandlerProvider = ({
       data: {
         address,
         chainId: getAddressChainId(address),
+        publicKeyHex,
         name: accountName,
         source,
       },
