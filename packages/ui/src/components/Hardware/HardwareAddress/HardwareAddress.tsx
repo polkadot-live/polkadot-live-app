@@ -71,7 +71,7 @@ export const HardwareAddress = ({
     onRenameSuccess('Account name updated.', `toast-${trimmed}`);
 
     // Otherwise rename account.
-    renameHandler(address, trimmed).then(() => {
+    renameHandler(trimmed).then(() => {
       setEditName(trimmed);
       setEditing(false);
     });

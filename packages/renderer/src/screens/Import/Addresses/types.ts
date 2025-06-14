@@ -3,17 +3,18 @@
 
 import type {
   AccountSource,
-  LocalAddress,
+  ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
 import type { AnyFunction } from '@polkadot-live/types/misc';
 
 export interface AddressProps {
-  localAddress: LocalAddress;
+  genericAccount: ImportedGenericAccount;
   setSection: AnyFunction;
 }
 
 export interface ConfirmProps {
   address: string;
+  publicKeyHex: string;
   name: string;
   source: AccountSource;
 }
@@ -21,11 +22,13 @@ export interface ConfirmProps {
 export interface RemoveProps {
   accountName: string;
   address: string;
+  publicKeyHex: string;
   source: AccountSource;
 }
 
 export interface DeleteProps {
   address: string;
+  publicKeyHex: string;
   source: AccountSource;
   setSection: AnyFunction | null;
 }

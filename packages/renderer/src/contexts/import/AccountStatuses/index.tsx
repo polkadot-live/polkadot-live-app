@@ -38,26 +38,26 @@ export const AccountStatusesProvider = ({
     const map = new Map<string, boolean>();
     switch (source) {
       case 'ledger': {
-        for (const { address } of ledgerAddresses) {
-          map.set(address, false);
+        for (const { publicKeyHex } of ledgerAddresses) {
+          map.set(publicKeyHex, false);
         }
         return map;
       }
       case 'read-only': {
-        for (const { address } of readOnlyAddresses) {
-          map.set(address, false);
+        for (const { publicKeyHex } of readOnlyAddresses) {
+          map.set(publicKeyHex, false);
         }
         return map;
       }
       case 'vault': {
-        for (const { address } of vaultAddresses) {
-          map.set(address, false);
+        for (const { publicKeyHex } of vaultAddresses) {
+          map.set(publicKeyHex, false);
         }
         return map;
       }
       case 'wallet-connect': {
-        for (const { address } of wcAddresses) {
-          map.set(address, false);
+        for (const { publicKeyHex } of wcAddresses) {
+          map.set(publicKeyHex, false);
         }
         return map;
       }
@@ -89,7 +89,7 @@ export const AccountStatusesProvider = ({
 
   /// Set processing status of an account.
   const setStatusForAccount = (
-    address: string,
+    publicKeyHex: string,
     source: AccountSource,
     status: boolean
   ) => {
@@ -97,7 +97,7 @@ export const AccountStatusesProvider = ({
       case 'ledger': {
         setLedgerAccountStatuses((prev) => {
           const cloned = new Map(prev);
-          cloned.set(address, status);
+          cloned.set(publicKeyHex, status);
           return cloned;
         });
         break;
@@ -105,7 +105,7 @@ export const AccountStatusesProvider = ({
       case 'read-only': {
         setReadOnlyAccountStatuses((prev) => {
           const cloned = new Map(prev);
-          cloned.set(address, status);
+          cloned.set(publicKeyHex, status);
           return cloned;
         });
         break;
@@ -113,7 +113,7 @@ export const AccountStatusesProvider = ({
       case 'vault': {
         setVaultAccountStatuses((prev) => {
           const cloned = new Map(prev);
-          cloned.set(address, status);
+          cloned.set(publicKeyHex, status);
           return cloned;
         });
         break;
@@ -121,7 +121,7 @@ export const AccountStatusesProvider = ({
       case 'wallet-connect': {
         setWcAccountStatuses((prev) => {
           const cloned = new Map(prev);
-          cloned.set(address, status);
+          cloned.set(publicKeyHex, status);
           return cloned;
         });
         break;
@@ -133,19 +133,19 @@ export const AccountStatusesProvider = ({
   };
 
   /// Get the processing status of an account.
-  const getStatusForAccount = (address: string, source: AccountSource) => {
+  const getStatusForAccount = (publicKeyHex: string, source: AccountSource) => {
     switch (source) {
       case 'ledger': {
-        return ledgerAccountStatuses.get(address) || null;
+        return ledgerAccountStatuses.get(publicKeyHex) || null;
       }
       case 'read-only': {
-        return readOnlyAccountStatuses.get(address) || null;
+        return readOnlyAccountStatuses.get(publicKeyHex) || null;
       }
       case 'vault': {
-        return vaultAccountStatuses.get(address) || null;
+        return vaultAccountStatuses.get(publicKeyHex) || null;
       }
       case 'wallet-connect': {
-        return wcAccountStatuses.get(address) || null;
+        return wcAccountStatuses.get(publicKeyHex) || null;
       }
       default: {
         return null;
@@ -154,22 +154,22 @@ export const AccountStatusesProvider = ({
   };
 
   /// Insert an account status entry.
-  const insertAccountStatus = (address: string, source: AccountSource) => {
+  const insertAccountStatus = (publicKeyHex: string, source: AccountSource) => {
     switch (source) {
       case 'ledger': {
-        ledgerAccountStatuses.set(address, false);
+        ledgerAccountStatuses.set(publicKeyHex, false);
         break;
       }
       case 'read-only': {
-        readOnlyAccountStatuses.set(address, false);
+        readOnlyAccountStatuses.set(publicKeyHex, false);
         break;
       }
       case 'vault': {
-        vaultAccountStatuses.set(address, false);
+        vaultAccountStatuses.set(publicKeyHex, false);
         break;
       }
       case 'wallet-connect': {
-        wcAccountStatuses.set(address, false);
+        wcAccountStatuses.set(publicKeyHex, false);
         break;
       }
       default: {
@@ -179,29 +179,29 @@ export const AccountStatusesProvider = ({
   };
 
   /// Delete an account status entry.
-  const deleteAccountStatus = (address: string, source: AccountSource) => {
+  const deleteAccountStatus = (publicKeyHex: string, source: AccountSource) => {
     switch (source) {
       case 'ledger': {
-        if (ledgerAccountStatuses.has(address)) {
-          ledgerAccountStatuses.delete(address);
+        if (ledgerAccountStatuses.has(publicKeyHex)) {
+          ledgerAccountStatuses.delete(publicKeyHex);
         }
         break;
       }
       case 'read-only': {
-        if (readOnlyAccountStatuses.has(address)) {
-          readOnlyAccountStatuses.delete(address);
+        if (readOnlyAccountStatuses.has(publicKeyHex)) {
+          readOnlyAccountStatuses.delete(publicKeyHex);
         }
         break;
       }
       case 'vault': {
-        if (vaultAccountStatuses.has(address)) {
-          vaultAccountStatuses.delete(address);
+        if (vaultAccountStatuses.has(publicKeyHex)) {
+          vaultAccountStatuses.delete(publicKeyHex);
         }
         break;
       }
       case 'wallet-connect': {
-        if (wcAccountStatuses.has(address)) {
-          wcAccountStatuses.delete(address);
+        if (wcAccountStatuses.has(publicKeyHex)) {
+          wcAccountStatuses.delete(publicKeyHex);
         }
         break;
       }

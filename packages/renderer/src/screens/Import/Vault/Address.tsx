@@ -3,11 +3,7 @@
 
 import { Confirm } from '../Addresses/Confirm';
 import { Delete } from '../Addresses/Delete';
-import {
-  getAddressChainId,
-  postRenameAccount,
-  renameAccountInStore,
-} from '@polkadot-live/core';
+import { postRenameAccount, renameAccountInStore } from '@polkadot-live/core';
 import { HardwareAddress } from '@polkadot-live/ui/components';
 import { renderToast } from '@polkadot-live/ui/utils';
 import { Remove } from '../Addresses/Remove';
@@ -15,9 +11,10 @@ import { useAccountStatuses, useAddresses } from '@ren/contexts/import';
 import { useConnections } from '@ren/contexts/common';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import type { AddressProps } from '../Addresses/types';
+import { encodeAddress, hexToU8a } from 'dedot/utils';
 
-export const Address = ({ localAddress, setSection }: AddressProps) => {
-  const { address, isImported, name, source } = localAddress;
+export const Address = ({ genericAccount, setSection }: AddressProps) => {
+  const { accountName, isImported, publicKeyHex, source } = genericAccount;
   const { openOverlayWith } = useOverlay();
   const { handleAddressImport } = useAddresses();
   const { getStatusForAccount } = useAccountStatuses();
@@ -25,38 +22,50 @@ export const Address = ({ localAddress, setSection }: AddressProps) => {
   const theme = getTheme();
 
   // Handler to rename an account.
-  const renameHandler = async (who: string, newName: string) => {
+  const renameHandler = async (newName: string) => {
     // Update name in store in main process.
-    await renameAccountInStore(address, 'vault', newName);
+    await renameAccountInStore(publicKeyHex, source, newName);
 
     // Post message to main renderer to process the account rename.
-    postRenameAccount(who, newName);
+    const address = encodeAddress(publicKeyHex, 0); // TMP
+    postRenameAccount(address, newName);
 
     // Update import window address state
-    handleAddressImport(source, { ...localAddress, name: newName });
+    genericAccount.accountName = newName;
+    handleAddressImport(genericAccount);
   };
 
   return (
     <HardwareAddress
-      key={address}
+      key={publicKeyHex}
       /* Data */
-      address={address}
-      accountName={name}
-      chainId={getAddressChainId(address)}
+      address={publicKeyHex}
+      accountName={accountName}
+      chainId={'Polkadot'}
       isConnected={getOnlineMode()}
       isImported={isImported}
-      processingStatus={getStatusForAccount(address, source)}
+      processingStatus={getStatusForAccount(publicKeyHex, source)}
       theme={theme}
       /* Handlers */
       openConfirmHandler={() =>
         openOverlayWith(
-          <Confirm address={address} name={name} source="vault" />,
+          <Confirm
+            address={encodeAddress(hexToU8a(publicKeyHex), 0)}
+            publicKeyHex={publicKeyHex}
+            name={accountName}
+            source="vault"
+          />,
           'small'
         )
       }
       openDeleteHandler={() =>
         openOverlayWith(
-          <Delete address={address} source="vault" setSection={setSection} />
+          <Delete
+            address={encodeAddress(hexToU8a(publicKeyHex), 0)}
+            publicKeyHex={publicKeyHex}
+            source="vault"
+            setSection={setSection}
+          />
         )
       }
       onRenameError={(message, toastId) =>
@@ -67,7 +76,12 @@ export const Address = ({ localAddress, setSection }: AddressProps) => {
       }
       openRemoveHandler={() =>
         openOverlayWith(
-          <Remove address={address} source="vault" accountName={name} />,
+          <Remove
+            address={encodeAddress(hexToU8a(publicKeyHex), 0)}
+            publicKeyHex={publicKeyHex}
+            source="vault"
+            accountName={accountName}
+          />,
           'small'
         )
       }

@@ -12,6 +12,7 @@ export interface WcSelectNetwork {
 export interface WcFetchedAddress {
   chainId: ChainID;
   encoded: string;
+  publicKeyHex: string;
   substrate: string;
   selected: boolean;
 }

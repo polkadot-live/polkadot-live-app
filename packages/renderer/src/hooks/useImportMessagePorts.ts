@@ -13,11 +13,7 @@ import {
 } from '@ren/contexts/import';
 import { useEffect } from 'react';
 import { renderToast } from '@polkadot-live/ui/utils';
-import type {
-  AccountSource,
-  LedgerLocalAddress,
-  LocalAddress,
-} from '@polkadot-live/types/accounts';
+import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';
 import type { WcFetchedAddress } from '@polkadot-live/types/walletConnect';
 
 export const useImportMessagePorts = () => {
@@ -44,35 +40,35 @@ export const useImportMessagePorts = () => {
           switch (ev.data.task) {
             case 'import:account:add': {
               // Import an address from a backup file.
-              const { json, source }: { json: string; source: AccountSource } =
-                ev.data.data;
-
-              const parsed =
-                source === 'ledger'
-                  ? (JSON.parse(json) as LedgerLocalAddress)
-                  : (JSON.parse(json) as LocalAddress);
-
-              await handleImportAddressFromBackup(parsed, source);
+              const { json }: { json: string } = ev.data.data;
+              const genericAccount: ImportedGenericAccount = JSON.parse(json);
+              await handleImportAddressFromBackup(genericAccount);
               break;
             }
             case 'import:account:processing': {
-              const { address, source, status, success } = ev.data.data;
-              setStatusForAccount(address, source, status);
+              const { address, publicKeyHex, source, status, success } =
+                ev.data.data;
+              setStatusForAccount(publicKeyHex, source, status);
 
               console.log(`> import:account:processing`);
               console.log(ev.data);
 
               if (!success) {
                 const { accountName } = ev.data.data;
-                await handleRemoveAddress(address, source, accountName);
+                await handleRemoveAddress(
+                  publicKeyHex,
+                  source,
+                  accountName,
+                  address
+                );
                 renderToast('Account import error', 'import-error', 'error');
               }
               break;
             }
             case 'import:address:update': {
               // Update state for an address.
-              const { address, source } = ev.data.data;
-              handleAddressImport(source, address);
+              const { genericAccount } = ev.data.data;
+              handleAddressImport(genericAccount);
               break;
             }
             case 'import:wc:modal:open': {
