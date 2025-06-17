@@ -4,7 +4,10 @@
 import * as defaults from './defaults';
 import { createContext, useContext, useState } from 'react';
 import { useAddresses } from '../Addresses';
-import type { AccountSource } from '@polkadot-live/types/accounts';
+import type {
+  AccountSource,
+  ImportedGenericAccount,
+} from '@polkadot-live/types/accounts';
 import type { AccountStatusesContextInterface } from './types';
 
 export const AccountStatusesContext =
@@ -30,6 +33,14 @@ export const AccountStatusesProvider = ({
 }) => {
   const { ledgerAddresses, readOnlyAddresses, vaultAddresses, wcAddresses } =
     useAddresses();
+
+  /// Utility to determine if any encoded accounts are processing.
+  const anyProcessing = (genericAccount: ImportedGenericAccount): boolean => {
+    const { encodedAccounts, source } = genericAccount;
+    return Object.values(encodedAccounts)
+      .map(({ address }) => Boolean(getStatusForAccount(address, source)))
+      .some(Boolean);
+  };
 
   /// Utility to initialize account statuses to false.
   const fetchAccountStatuses = (
@@ -218,6 +229,7 @@ export const AccountStatusesProvider = ({
         readOnlyAccountStatuses,
         vaultAccountStatuses,
         wcAccountStatuses,
+        anyProcessing,
         setLedgerAccountStatuses,
         setReadOnlyAccountStatuses,
         setVaultAccountStatuses,

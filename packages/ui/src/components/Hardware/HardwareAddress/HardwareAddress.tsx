@@ -11,32 +11,34 @@ import {
 import { useState } from 'react';
 import { ellipsisFn, unescape } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Identicon } from '../../Identicon';
 import { EllipsisSpinner } from '../../Spinners';
 import { ButtonMono } from '../../../kits/Buttons';
 import { validateAccountName } from '../../../utils';
 import { HardwareAddressWrapper } from './Wrapper';
 import { TooltipRx } from '../../TooltipRx';
-import { FlexRow } from '../../../styles';
+import { FlexColumn, FlexRow } from '../../../styles';
 import { ChainIcon } from '../../ChainIcon';
+import { CopyButton } from '../../CopyButton';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { FormEvent } from 'react';
 import type { HardwareAddressProps } from './types';
 
 export const HardwareAddress = ({
-  address,
-  accountName,
-  chainId,
+  genericAccount,
   isConnected,
-  isImported,
-  processingStatus,
+  anyProcessing,
   theme,
+  isProcessing,
   renameHandler,
   openConfirmHandler,
   openRemoveHandler,
   openDeleteHandler,
   onRenameError,
   onRenameSuccess,
+  onClipboardCopy,
 }: HardwareAddressProps) => {
+  const { accountName, encodedAccounts } = genericAccount;
+
   // Store whether this address is being edited.
   const [editing, setEditing] = useState<boolean>(false);
 
@@ -49,7 +51,9 @@ export const HardwareAddress = ({
     setEditName(accountName);
   };
 
-  // Validate input and rename account.
+  /**
+   * Validate input and rename account.
+   */
   const commitEdit = () => {
     const trimmed = editName.trim();
 
@@ -77,29 +81,20 @@ export const HardwareAddress = ({
     });
   };
 
-  // Input change handler.
+  /**
+   * Input change handler.
+   */
   const handleChange = (e: FormEvent<HTMLInputElement>) => {
     let val = e.currentTarget.value || '';
     val = unescape(val);
     setEditName(val);
   };
 
-  // Utility to get processing status.
-  const isProcessing = () => processingStatus || false;
-
   return (
-    <HardwareAddressWrapper>
+    <HardwareAddressWrapper style={{ paddingBottom: '1.5rem' }}>
+      {/* Account name */}
       <FlexRow $gap={'0.75rem'} style={{ width: '100%' }}>
-        <TooltipRx text={ellipsisFn(address, 12)} side="right" theme={theme}>
-          <div className="identicon">
-            <Identicon value={address} />
-          </div>
-        </TooltipRx>
         <div className="input-wrapper">
-          <ChainIcon
-            chainId={chainId}
-            className={editing ? 'chain-icon' : 'chain-icon fade'}
-          />
           <input
             style={{
               borderColor: editing
@@ -107,7 +102,7 @@ export const HardwareAddress = ({
                 : 'var(--background-primary)',
             }}
             type="text"
-            disabled={isProcessing()}
+            disabled={anyProcessing}
             value={editing ? editName : accountName}
             onChange={(e) => handleChange(e)}
             onFocus={() => setEditing(true)}
@@ -119,7 +114,7 @@ export const HardwareAddress = ({
             }}
           />
 
-          {editing && !isProcessing() && (
+          {editing && !anyProcessing && (
             <FlexRow className="edit">
               <button
                 id="commit-btn"
@@ -137,56 +132,10 @@ export const HardwareAddress = ({
 
         {/* Account buttons */}
         <FlexRow $gap={'0.75rem'}>
-          {isImported && !isProcessing() ? (
-            <TooltipRx text={'Remove From Main Window'} theme={theme}>
-              <div style={{ position: 'relative' }}>
-                <ButtonMono
-                  className="action-btn white-hover"
-                  iconLeft={faMinus}
-                  iconTransform={'grow-0'}
-                  text={''}
-                  onClick={() => openRemoveHandler()}
-                />
-              </div>
-            </TooltipRx>
-          ) : (
-            <div>
-              {isProcessing() ? (
-                <div style={{ position: 'relative' }}>
-                  <ButtonMono
-                    disabled={!isConnected}
-                    iconLeft={faPlus}
-                    iconTransform="grow-0"
-                    text={''}
-                    className={'action-btn processing'}
-                  />
-                  <EllipsisSpinner style={{ top: '8px' }} />
-                </div>
-              ) : (
-                <TooltipRx
-                  text={
-                    isConnected ? 'Add To Main Window' : 'Currently Offline'
-                  }
-                  theme={theme}
-                >
-                  <div style={{ position: 'relative' }}>
-                    <ButtonMono
-                      disabled={!isConnected}
-                      iconLeft={faPlus}
-                      iconTransform="grow-0"
-                      text={''}
-                      onClick={() => openConfirmHandler()}
-                      className={'action-btn white-hover'}
-                    />
-                  </div>
-                </TooltipRx>
-              )}
-            </div>
-          )}
           <TooltipRx text={'Delete'} theme={theme}>
             <div style={{ position: 'relative' }}>
               <ButtonMono
-                disabled={isProcessing()}
+                disabled={anyProcessing}
                 className="action-btn white-hover"
                 iconLeft={faTrash}
                 iconTransform="shrink-2"
@@ -197,6 +146,82 @@ export const HardwareAddress = ({
           </TooltipRx>
         </FlexRow>
       </FlexRow>
+
+      {/* Encoded addresses */}
+      <FlexColumn $rowGap={'1.25rem'}>
+        {Array.from(Object.entries(encodedAccounts)).map(([cid, a]) => (
+          <FlexRow $gap={'1.25rem'} key={`${cid}-encoded`}>
+            {/* Chain icon */}
+            <ChainIcon
+              style={{
+                width: '14px',
+                height: '14px',
+                fill: cid === 'Polkadot' ? '#ac2461' : undefined,
+                marginLeft: '1rem',
+              }}
+              chainId={cid as ChainID}
+            />
+            <FlexRow $gap="0.6rem" style={{ flex: 1 }}>
+              <span>{ellipsisFn(a.address, 12)}</span>
+              <CopyButton
+                iconFontSize="0.96rem"
+                theme={theme}
+                onCopyClick={async () => await onClipboardCopy(a.address)}
+              />
+            </FlexRow>
+
+            {/* Manage buttons */}
+            <FlexRow $gap={'0.75rem'}>
+              {a.isImported && !isProcessing(a) ? (
+                <TooltipRx text={'Remove From Main Window'} theme={theme}>
+                  <div style={{ position: 'relative' }}>
+                    <ButtonMono
+                      className="action-btn white-hover"
+                      iconLeft={faMinus}
+                      iconTransform={'grow-0'}
+                      text={''}
+                      onClick={() => openRemoveHandler(a)}
+                    />
+                  </div>
+                </TooltipRx>
+              ) : (
+                <div>
+                  {isProcessing(a) ? (
+                    <div style={{ position: 'relative' }}>
+                      <ButtonMono
+                        disabled={!isConnected}
+                        iconLeft={faPlus}
+                        iconTransform="grow-0"
+                        text={''}
+                        className={'action-btn processing'}
+                      />
+                      <EllipsisSpinner style={{ top: '8px' }} />
+                    </div>
+                  ) : (
+                    <TooltipRx
+                      text={
+                        isConnected ? 'Add To Main Window' : 'Currently Offline'
+                      }
+                      theme={theme}
+                    >
+                      <div style={{ position: 'relative' }}>
+                        <ButtonMono
+                          disabled={!isConnected}
+                          iconLeft={faPlus}
+                          iconTransform="grow-0"
+                          text={''}
+                          onClick={() => openConfirmHandler(a)}
+                          className={'action-btn white-hover'}
+                        />
+                      </div>
+                    </TooltipRx>
+                  )}
+                </div>
+              )}
+            </FlexRow>
+          </FlexRow>
+        ))}
+      </FlexColumn>
     </HardwareAddressWrapper>
   );
 };

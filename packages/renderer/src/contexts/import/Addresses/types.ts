@@ -14,7 +14,6 @@ export interface AddressesContextInterface {
   getAccounts: (source: AccountSource) => ImportedGenericAccount[];
   handleAddressImport: (genericAccount: ImportedGenericAccount) => void;
   handleAddressDelete: (source: AccountSource, publicKeyHex: string) => boolean;
-  handleAddressRemove: (source: AccountSource, publicKeyHex: string) => void;
-  handleAddressAdd: (source: AccountSource, publicKeyHex: string) => void;
+  handleAddressUpdate: (genericAccount: ImportedGenericAccount) => void;
   isAlreadyImported: (targetPubKeyHex: string) => boolean;
 }

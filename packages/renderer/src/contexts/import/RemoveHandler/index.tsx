@@ -5,7 +5,10 @@ import * as defaults from './defaults';
 import { ConfigImport, getAddressChainId } from '@polkadot-live/core';
 import { createContext, useContext } from 'react';
 import { useAddresses } from '@ren/contexts/import';
-import type { AccountSource } from '@polkadot-live/types/accounts';
+import type {
+  EncodedAccount,
+  ImportedGenericAccount,
+} from '@polkadot-live/types/accounts';
 import type { RemoveHandlerContextInterface } from './types';
 
 export const RemoveHandlerContext =
@@ -20,22 +23,21 @@ export const RemoveHandlerProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { handleAddressRemove } = useAddresses();
+  const { handleAddressUpdate } = useAddresses();
 
   /**
    * Removed generic account from main window.
    */
   const handleRemoveAddress = async (
-    publicKeyHex: string,
-    source: AccountSource,
-    accountName: string,
-    address: string
+    encodedAccount: EncodedAccount,
+    genericAccount: ImportedGenericAccount
   ) => {
-    // Update addresses state and references.
-    handleAddressRemove(source, publicKeyHex);
+    const { address, chainId } = encodedAccount;
+    genericAccount.encodedAccounts[chainId].isImported = false;
 
-    // Update address data in store in main process.
-    await updateAddressInStore(source, publicKeyHex, accountName);
+    // Update React state and store.
+    handleAddressUpdate(genericAccount);
+    await updateAddressInStore(genericAccount);
 
     // Process removed address in main renderer.
     postToMain(address);
@@ -44,14 +46,10 @@ export const RemoveHandlerProvider = ({
   /**
    * Update address in store.
    */
-  const updateAddressInStore = async (
-    source: AccountSource,
-    publicKeyHex: string,
-    accountName: string
-  ) => {
+  const updateAddressInStore = async (account: ImportedGenericAccount) => {
     await window.myAPI.rawAccountTask({
-      action: 'raw-account:remove',
-      data: { accountName, publicKeyHex, source },
+      action: 'raw-account:update',
+      data: { serialized: JSON.stringify(account) },
     });
   };
 

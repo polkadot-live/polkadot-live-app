@@ -41,6 +41,10 @@ import type {
   IntervalSubscription,
   SubscriptionTask,
 } from '@polkadot-live/types/subscriptions';
+import type {
+  EncodedAccount,
+  ImportedGenericAccount,
+} from 'packages/types/src';
 import type { PalletReferendaTrackDetails } from '@dedot/chaintypes/substrate';
 import type { SettingItem } from '@polkadot-live/types/settings';
 import type { WcSelectNetwork } from '@polkadot-live/types/walletConnect';
@@ -85,18 +89,15 @@ export const useMainMessagePorts = () => {
   const handleImportAddress = async (ev: MessageEvent, fromBackup: boolean) => {
     try {
       window.myAPI.relaySharedState('account:importing', true);
-      const {
-        address,
-        chainId,
-        name: accountName,
-        publicKeyHex,
-        source,
-      } = ev.data.data;
+      const { serEncodedAccount, serGenericAccount } = ev.data.data;
+      const encoded: EncodedAccount = JSON.parse(serEncodedAccount);
+      const generic: ImportedGenericAccount = JSON.parse(serGenericAccount);
+      const { address, alias, chainId } = encoded;
+      const { source } = generic;
 
       // Add address to accounts controller.
       let account =
-        AccountsController.add(chainId, source, address, accountName) ||
-        undefined;
+        AccountsController.add(chainId, source, address, alias) || undefined;
 
       // Unsubscribe all tasks if the account exists and is being re-imported.
       if (fromBackup && !account) {
@@ -169,16 +170,14 @@ export const useMainMessagePorts = () => {
       }
 
       // Add account to address context state.
-      await importAddress(chainId, source, address, accountName, fromBackup);
+      await importAddress(chainId, source, address, alias, fromBackup);
 
       // Send message back to import window to reset account's processing flag.
       ConfigRenderer.portToImport?.postMessage({
         task: 'import:account:processing',
         data: {
-          accountName,
-          address,
-          publicKeyHex,
-          source,
+          serEncodedAccount,
+          serGenericAccount,
           status: false,
           success: true,
         },
@@ -187,21 +186,20 @@ export const useMainMessagePorts = () => {
       window.myAPI.relaySharedState('account:importing', false);
       window.myAPI.umamiEvent('account-import', { source, chainId });
     } catch (err) {
-      console.error(err);
-      const { address, source, publicKeyHex, name: accountName } = ev.data.data;
+      const { serEncodedAccount, serGenericAccount } = ev.data.data;
 
-      window.myAPI.relaySharedState('account:importing', false);
       ConfigRenderer.portToImport?.postMessage({
         task: 'import:account:processing',
         data: {
-          accountName,
-          address,
-          publicKeyHex,
-          source,
+          serEncodedAccount,
+          serGenericAccount,
           status: false,
           success: false,
         },
       });
+
+      window.myAPI.relaySharedState('account:importing', false);
+      console.error(err);
     }
   };
 

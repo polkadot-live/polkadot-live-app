@@ -8,7 +8,6 @@ const mixinAddressInput = css`
   color: var(--text-color-primary);
 
   width: 100%;
-  max-width: 380px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -73,7 +72,7 @@ export const HardwareAddressWrapper = styled.div`
     border: 1px dashed #1c1c1c;
     padding: 0.85rem 0.75rem;
     transition: border-color 150ms ease-out;
-    padding-left: 38px;
+    margin-bottom: 0.75rem;
 
     &:focus {
       background-color: var(--background-surface);

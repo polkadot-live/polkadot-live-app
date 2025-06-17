@@ -151,3 +151,16 @@ export const getSelectNetworkData = (
     iconFill: darkMode ? '#e7e7e7' : '#2f2f2f',
   },
 ];
+
+export const getSupportedChains = (): Record<ChainID, Chain> => {
+  const unsupported: ChainID[] = ['Westend'];
+  const record = {} as Record<ChainID, Chain>;
+
+  for (const [cid, chain] of Array.from(ChainList.entries())) {
+    if (!unsupported.includes(cid)) {
+      record[cid] = chain;
+    }
+  }
+
+  return record;
+};

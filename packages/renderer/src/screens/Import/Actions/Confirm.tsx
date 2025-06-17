@@ -8,17 +8,13 @@ import { ButtonMonoInvert, ButtonMono } from '@polkadot-live/ui/kits/buttons';
 import { useAddHandler } from '@ren/contexts/import';
 import type { ConfirmProps } from './types';
 
-export const Confirm = ({
-  address,
-  publicKeyHex,
-  name,
-  source,
-}: ConfirmProps) => {
+export const Confirm = ({ encodedAccount, genericAccount }: ConfirmProps) => {
+  const { address } = encodedAccount;
   const { setStatus } = useOverlay();
   const { handleAddAddress } = useAddHandler();
 
   const handleClickConfirm = async () => {
-    await handleAddAddress(publicKeyHex, source, name, address);
+    await handleAddAddress(encodedAccount, genericAccount);
     setStatus(0);
   };
 

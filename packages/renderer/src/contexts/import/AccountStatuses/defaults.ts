@@ -9,6 +9,7 @@ export const defaultAccountStatusesContext: AccountStatusesContextInterface = {
   readOnlyAccountStatuses: new Map(),
   vaultAccountStatuses: new Map(),
   wcAccountStatuses: new Map(),
+  anyProcessing: () => false,
   setLedgerAccountStatuses: () => {},
   setReadOnlyAccountStatuses: () => {},
   setVaultAccountStatuses: () => {},
