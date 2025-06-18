@@ -6,6 +6,7 @@ import { ConfigImport } from '@polkadot-live/core';
 import { getSupportedChains } from '@polkadot-live/consts/chains';
 import { createContext, useContext } from 'react';
 import { decodeAddress, encodeAddress, u8aToHex } from 'dedot/utils';
+import { renderToast } from '@polkadot-live/ui/utils';
 import { useAccountStatuses, useAddresses } from '@ren/contexts/import';
 import { useConnections } from '@ren/contexts/common';
 import type { AnyData } from '@polkadot-live/types/misc';
@@ -56,6 +57,11 @@ export const ImportHandlerProvider = ({
         enAccount.isImported = false;
       } else if (isImported) {
         postToMain(genericAccount, enAccount);
+      }
+
+      // Render success message if not importing to main window.
+      if (!enAccount.isImported) {
+        renderToast('Account added successfully', 'import-success', 'success');
       }
     }
 
