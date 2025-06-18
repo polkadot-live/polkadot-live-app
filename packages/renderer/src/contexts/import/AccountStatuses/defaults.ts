@@ -5,15 +5,7 @@
 import type { AccountStatusesContextInterface } from './types';
 
 export const defaultAccountStatusesContext: AccountStatusesContextInterface = {
-  ledgerAccountStatuses: new Map(),
-  readOnlyAccountStatuses: new Map(),
-  vaultAccountStatuses: new Map(),
-  wcAccountStatuses: new Map(),
   anyProcessing: () => false,
-  setLedgerAccountStatuses: () => {},
-  setReadOnlyAccountStatuses: () => {},
-  setVaultAccountStatuses: () => {},
-  setWcAccountStatuses: () => {},
   setStatusForAccount: () => {},
   getStatusForAccount: () => null,
   insertAccountStatus: () => {},
