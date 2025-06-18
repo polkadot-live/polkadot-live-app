@@ -49,10 +49,10 @@ import type { ChainID } from '@polkadot-live/types/chains';
 
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   const { cacheGet, getTheme } = useConnections();
-  const { isAlreadyImported, ledgerAddresses: genericAccounts } =
-    useAddresses();
   const { insertAccountStatus } = useAccountStatuses();
   const { handleImportAddress } = useImportHandler();
+  const { isAlreadyImported, getAccounts } = useAddresses();
+  const genericAccounts = getAccounts('ledger');
 
   const ledger = useLedgerHardware();
   const { connectedNetwork, selectedAddresses, receivedAddresses } =

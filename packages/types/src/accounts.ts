@@ -117,9 +117,16 @@ export interface LedgerMetadata {
   accountIndex?: number;
 }
 
+export interface EncodedAccount {
+  address: string;
+  alias: string;
+  chainId: ChainID;
+  isImported: boolean;
+}
+
 export interface ImportedGenericAccount {
   accountName: string;
-  isImported: boolean;
+  encodedAccounts: Record<ChainID, EncodedAccount>;
   publicKeyHex: string;
   source: AccountSource;
   ledger?: LedgerMetadata;

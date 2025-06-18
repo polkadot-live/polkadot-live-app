@@ -1,41 +1,28 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/ui/styles';
-
-import { Address } from './Address';
+import { Listing } from '../Addresses';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { renderToast } from '@polkadot-live/ui/utils';
 import { checkAddress } from '@polkadot/util-crypto';
+import { decodeAddress, u8aToHex } from 'dedot/utils';
 import { ellipsisFn, unescape } from '@w3ux/utils';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
-import { ItemsColumn } from '../../Home/Manage/Wrappers';
-import { ChevronDownIcon } from '@radix-ui/react-icons';
-
-/// Context imports.
 import {
   useAccountStatuses,
   useAddresses,
   useImportHandler,
 } from '@ren/contexts/import';
-
-/// Type imports.
 import type { FormEvent } from 'react';
 import type { ManageReadOnlyProps } from '../types';
-import type { ChainID } from '@polkadot-live/types/chains';
-import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';
 
 export const Manage = ({ setSection }: ManageReadOnlyProps) => {
-  const { readOnlyAddresses: genericAccounts, isAlreadyImported } =
-    useAddresses();
+  const { isAlreadyImported } = useAddresses();
   const { insertAccountStatus } = useAccountStatuses();
   const { handleImportAddress } = useImportHandler();
-
-  /// Accordion state.
-  const [accordionValue, setAccordionValue] = useState<ChainID>('Polkadot');
 
   /// Component state.
   const [editName, setEditName] = useState<string>('');
@@ -72,12 +59,17 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
   /// Handle import button click.
   const onImport = async () => {
     const trimmed = editName.trim();
+    const isValid = validateAddress(trimmed);
 
-    if (isAlreadyImported(trimmed)) {
-      renderToast('Address is already imported.', `toast-${trimmed}`, 'error');
-      return;
-    } else if (!validateAddress(trimmed)) {
+    // Validate address.
+    if (!isValid) {
       renderToast('Invalid Address.', `toast-${trimmed}`, 'error');
+      return;
+    }
+
+    // Check if public key is already imported.
+    if (isAlreadyImported(u8aToHex(decodeAddress(trimmed)))) {
+      renderToast('Address is already imported.', `toast-${trimmed}`, 'error');
       return;
     }
 
@@ -157,56 +149,8 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
           </Styles.FlexColumn>
         </section>
 
-        {/* Address List */}
-        <section>
-          <UI.AccordionWrapper $onePart={true}>
-            <Accordion.Root
-              className="AccordionRoot"
-              type="single"
-              value={accordionValue}
-              onValueChange={(val) => setAccordionValue(val as ChainID)}
-            >
-              <Styles.FlexColumn>
-                {Array.from(
-                  new Map<ChainID, ImportedGenericAccount[]>([
-                    ['Polkadot', genericAccounts],
-                  ]).entries()
-                ).map(([chainId, accounts]) => (
-                  <Accordion.Item
-                    key={`${chainId}_read_only_addresses`}
-                    className="AccordionItem"
-                    value={chainId}
-                  >
-                    <UI.AccordionTrigger narrow={true}>
-                      <ChevronDownIcon
-                        className="AccordionChevron"
-                        aria-hidden
-                      />
-                      <UI.TriggerHeader>{chainId}</UI.TriggerHeader>
-                    </UI.AccordionTrigger>
-                    <UI.AccordionContent transparent={true}>
-                      <ItemsColumn>
-                        {accounts.length ? (
-                          <>
-                            {accounts.map((genericAccount) => (
-                              <Address
-                                key={`address_${genericAccount.accountName}`}
-                                genericAccount={genericAccount}
-                                setSection={setSection}
-                              />
-                            ))}
-                          </>
-                        ) : (
-                          <p>No read only accounts imported.</p>
-                        )}
-                      </ItemsColumn>
-                    </UI.AccordionContent>
-                  </Accordion.Item>
-                ))}
-              </Styles.FlexColumn>
-            </Accordion.Root>
-          </UI.AccordionWrapper>
-        </section>
+        {/* Address Listing */}
+        <Listing source={'read-only'} setSection={setSection} />
       </Styles.FlexColumn>
     </Styles.PadWrapper>
   );

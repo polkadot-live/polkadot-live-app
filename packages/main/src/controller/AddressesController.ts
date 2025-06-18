@@ -17,10 +17,6 @@ export class AddressesController {
    */
   static process(task: IpcTask): string | void {
     switch (task.action) {
-      case 'raw-account:add': {
-        this.add(task);
-        break;
-      }
       case 'raw-account:delete': {
         this.delete(task);
         break;
@@ -39,12 +35,12 @@ export class AddressesController {
         this.doImport(task);
         break;
       }
-      case 'raw-account:remove': {
-        this.remove(task);
-        break;
-      }
       case 'raw-account:rename': {
         this.rename(task);
+        break;
+      }
+      case 'raw-account:update': {
+        this.update(task);
         break;
       }
     }
@@ -73,17 +69,16 @@ export class AddressesController {
   }
 
   /**
-   * @name add
-   * @summary Set the import flag of an address to `true`.
+   * @name update
+   * @summary Overwrite a persisted account with the received data.
    */
-  private static add(task: IpcTask) {
-    const { accountName, publicKeyHex, source } = task.data;
+  private static update(task: IpcTask) {
+    const account: ImportedGenericAccount = JSON.parse(task.data.serialized);
+    const { publicKeyHex, source } = account;
     const key = ConfigMain.getStorageKey(source);
     const ser = JSON.stringify(
       this.getStoredAddresses(key).map((a) =>
-        a.publicKeyHex === publicKeyHex
-          ? { ...a, accountName, isImported: true }
-          : a
+        a.publicKeyHex === publicKeyHex ? account : a
       )
     );
 
@@ -157,18 +152,13 @@ export class AddressesController {
   private static doImport(task: IpcTask) {
     const { serialized } = task.data;
     const genericAccount: ImportedGenericAccount = JSON.parse(serialized);
-    const { accountName, isImported, publicKeyHex, source } = genericAccount;
+    const { publicKeyHex } = genericAccount;
 
     if (this.isAlreadyPersisted(publicKeyHex)) {
-      isImported
-        ? this.add({
-            action: 'raw-account:add',
-            data: { accountName, publicKeyHex, source },
-          })
-        : this.remove({
-            action: 'raw-account:remove',
-            data: { accountName, publicKeyHex, source },
-          });
+      this.update({
+        action: 'raw-account:update',
+        data: { serialized: JSON.stringify(genericAccount) },
+      });
     } else {
       this.persist({
         action: 'raw-account:persist',
@@ -195,24 +185,6 @@ export class AddressesController {
     } catch (err) {
       console.log(err);
     }
-  }
-
-  /**
-   * @name remove
-   * @summary Set the import flag of an address to `false`.
-   */
-  private static remove(task: IpcTask) {
-    const { accountName, publicKeyHex, source } = task.data;
-    const key = ConfigMain.getStorageKey(source);
-    const serialised = JSON.stringify(
-      this.getStoredAddresses(key).map((a) =>
-        a.publicKeyHex === publicKeyHex
-          ? { ...a, accountName, isImported: false }
-          : a
-      )
-    );
-
-    this.setInStore(key, serialised);
   }
 
   /**

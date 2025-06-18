@@ -6,7 +6,10 @@ import { ConfigImport, getAddressChainId } from '@polkadot-live/core';
 import { createContext, useContext } from 'react';
 import { useAccountStatuses } from '../AccountStatuses';
 import { useAddresses } from '@ren/contexts/import';
-import type { AccountSource } from '@polkadot-live/types/accounts';
+import type {
+  AccountSource,
+  ImportedGenericAccount,
+} from '@polkadot-live/types/accounts';
 import type { DeleteHandlerContextInterface } from './types';
 import type { IpcTask } from '@polkadot-live/types/communication';
 
@@ -29,22 +32,23 @@ export const DeleteHandlerProvider = ({
    * Permanently delete a generic account.
    */
   const handleDeleteAddress = async (
-    publicKeyHex: string,
-    source: AccountSource,
-    address: string
+    genericAccount: ImportedGenericAccount
   ): Promise<boolean> => {
-    // Remove status entry from account statuses context.
-    deleteAccountStatus(publicKeyHex, source);
+    const { publicKeyHex, source } = genericAccount;
+    let goBack = false;
 
-    // Update addresses state and references.
-    const goBack = handleAddressDelete(source, publicKeyHex);
+    for (const { address } of Object.values(genericAccount.encodedAccounts)) {
+      deleteAccountStatus(address, source);
+      if (!goBack) {
+        goBack = handleAddressDelete(genericAccount);
+      }
 
-    // Update Electron store, delete address data
+      // Delete in main renderer.
+      postToMain(address);
+    }
+
+    // Delete all account data from store.
     await removeFromStore(source, publicKeyHex);
-
-    // Delete in main renderer.
-    postToMain(address);
-
     return goBack;
   };
 

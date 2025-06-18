@@ -1,34 +1,32 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Confirm } from '../Addresses/Confirm';
-import { Delete } from '../Addresses/Delete';
-import { postRenameAccount, renameAccountInStore } from '@polkadot-live/core';
+import { Confirm, Delete, Remove } from '../Actions';
 import { HardwareAddress } from '@polkadot-live/ui/components';
 import { renderToast } from '@polkadot-live/ui/utils';
-import { Remove } from '../Addresses/Remove';
+import { renameAccountInStore } from '@polkadot-live/core';
 import { useAccountStatuses, useAddresses } from '@ren/contexts/import';
 import { useConnections } from '@ren/contexts/common';
 import { useOverlay } from '@polkadot-live/ui/contexts';
-import type { AddressProps } from '../Addresses/types';
-import { encodeAddress, hexToU8a } from 'dedot/utils';
+import type { AddressProps } from './types';
+import type { EncodedAccount } from '@polkadot-live/types/accounts';
 
 export const Address = ({ genericAccount, setSection }: AddressProps) => {
-  const { accountName, isImported, publicKeyHex, source } = genericAccount;
+  const { publicKeyHex, source } = genericAccount;
   const { openOverlayWith } = useOverlay();
   const { handleAddressImport } = useAddresses();
-  const { getStatusForAccount } = useAccountStatuses();
+  const { getStatusForAccount, anyProcessing } = useAccountStatuses();
   const { getTheme, getOnlineMode } = useConnections();
   const theme = getTheme();
 
   // Handler to rename an account.
   const renameHandler = async (newName: string) => {
-    // Update name in store in main process.
     await renameAccountInStore(publicKeyHex, source, newName);
 
+    // TODO: Apply to encoded accounts.
     // Post message to main renderer to process the account rename.
-    const address = encodeAddress(publicKeyHex, 0); // TMP
-    postRenameAccount(address, newName);
+    //const address = encodeAddress(publicKeyHex, 0); // TMP
+    //postRenameAccount(address, newName);
 
     // Update import window address state
     genericAccount.accountName = newName;
@@ -39,33 +37,29 @@ export const Address = ({ genericAccount, setSection }: AddressProps) => {
     <HardwareAddress
       key={publicKeyHex}
       /* Data */
-      address={publicKeyHex}
-      accountName={accountName}
-      chainId={'Polkadot'}
+      genericAccount={genericAccount}
       isConnected={getOnlineMode()}
-      isImported={isImported}
-      processingStatus={getStatusForAccount(publicKeyHex, source)}
+      anyProcessing={anyProcessing(genericAccount)}
+      isProcessing={({ address }) =>
+        Boolean(getStatusForAccount(address, source))
+      }
       theme={theme}
       /* Handlers */
-      openConfirmHandler={() =>
+      onClipboardCopy={async (text: string) =>
+        await window.myAPI.copyToClipboard(text)
+      }
+      openConfirmHandler={(encodedAccount: EncodedAccount) =>
         openOverlayWith(
           <Confirm
-            address={encodeAddress(hexToU8a(publicKeyHex), 0)}
-            publicKeyHex={publicKeyHex}
-            name={accountName}
-            source="vault"
+            encodedAccount={encodedAccount}
+            genericAccount={genericAccount}
           />,
           'small'
         )
       }
       openDeleteHandler={() =>
         openOverlayWith(
-          <Delete
-            address={encodeAddress(hexToU8a(publicKeyHex), 0)}
-            publicKeyHex={publicKeyHex}
-            source="vault"
-            setSection={setSection}
-          />
+          <Delete genericAccount={genericAccount} setSection={setSection} />
         )
       }
       onRenameError={(message, toastId) =>
@@ -74,13 +68,11 @@ export const Address = ({ genericAccount, setSection }: AddressProps) => {
       onRenameSuccess={(message, toastId) =>
         renderToast(message, toastId, 'success')
       }
-      openRemoveHandler={() =>
+      openRemoveHandler={(encodedAccount) =>
         openOverlayWith(
           <Remove
-            address={encodeAddress(hexToU8a(publicKeyHex), 0)}
-            publicKeyHex={publicKeyHex}
-            source="vault"
-            accountName={accountName}
+            encodedAccount={encodedAccount}
+            genericAccount={genericAccount}
           />,
           'small'
         )

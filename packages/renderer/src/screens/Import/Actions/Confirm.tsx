@@ -5,38 +5,34 @@ import { useOverlay } from '@polkadot-live/ui/contexts';
 import { Identicon } from '@polkadot-live/ui/components';
 import { ConfirmWrapper } from './Wrappers';
 import { ButtonMonoInvert, ButtonMono } from '@polkadot-live/ui/kits/buttons';
-import { useRemoveHandler } from '@ren/contexts/import';
-import type { RemoveProps } from './types';
+import { useAddHandler } from '@ren/contexts/import';
+import type { ConfirmProps } from './types';
 
-export const Remove = ({
-  address,
-  publicKeyHex,
-  source,
-  accountName,
-}: RemoveProps) => {
+export const Confirm = ({ encodedAccount, genericAccount }: ConfirmProps) => {
+  const { address } = encodedAccount;
   const { setStatus } = useOverlay();
-  const { handleRemoveAddress } = useRemoveHandler();
+  const { handleAddAddress } = useAddHandler();
 
-  const handleClickRemove = async () => {
-    await handleRemoveAddress(publicKeyHex, source, accountName, address);
+  const handleClickConfirm = async () => {
+    await handleAddAddress(encodedAccount, genericAccount);
     setStatus(0);
   };
 
   return (
     <ConfirmWrapper>
       <Identicon value={address} fontSize={'4rem'} />
-      <h3>Remove Account</h3>
+      <h3>Add Account</h3>
       <h5>{address}</h5>
       <p>
-        This account will be removed from the main window. All active
-        subscriptions associated with this account will be turned off.
+        This account will be added to the <b>Subscriptions</b> tab in the main
+        window. Click on the account to manage its subscriptions.
       </p>
       <div className="footer">
         <ButtonMonoInvert text="Cancel" onClick={() => setStatus(0)} />
         <ButtonMono
           className="confirm-action"
-          text="Remove Account"
-          onClick={async () => await handleClickRemove()}
+          text="Add Account"
+          onClick={() => handleClickConfirm()}
         />
       </div>
     </ConfirmWrapper>

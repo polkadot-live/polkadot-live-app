@@ -8,27 +8,23 @@ import { useOverlay } from '@polkadot-live/ui/contexts';
 import { useDeleteHandler } from '@ren/contexts/import';
 import type { DeleteProps } from './types';
 
-export const Delete = ({
-  address,
-  publicKeyHex,
-  source,
-  setSection,
-}: DeleteProps) => {
+export const Delete = ({ genericAccount, setSection }: DeleteProps) => {
+  const { publicKeyHex } = genericAccount;
   const { setStatus } = useOverlay();
   const { handleDeleteAddress } = useDeleteHandler();
 
   // Click handler function.
   const handleDeleteClick = async () => {
-    const goBack = await handleDeleteAddress(publicKeyHex, source, address);
+    const goBack = await handleDeleteAddress(genericAccount);
     setStatus(0);
     goBack && setSection(0);
   };
 
   return (
     <ConfirmWrapper>
-      <Identicon value={address} fontSize={'4rem'} />
+      <Identicon value={publicKeyHex} fontSize={'4rem'} />
       <h3>Delete Account</h3>
-      <h5>{address}</h5>
+      <h5>{publicKeyHex}</h5>
       <p>
         Deleting this account will turn off all of its active subscriptions. It
         will need to be re-imported into the application after deletion.

@@ -8,7 +8,8 @@ import { Import } from './Import';
 import type { ImportLedgerProps } from '../types';
 
 export const ImportLedger = ({ setSection }: ImportLedgerProps) => {
-  const { ledgerAddresses: addresses } = useAddresses();
+  const { getAccounts } = useAddresses();
+  const addresses = getAccounts('ledger');
 
   const [showImportUi, setShowImportUi] = useState<boolean>(
     addresses.length === 0

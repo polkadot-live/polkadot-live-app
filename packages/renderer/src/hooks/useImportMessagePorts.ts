@@ -13,7 +13,11 @@ import {
 } from '@ren/contexts/import';
 import { useEffect } from 'react';
 import { renderToast } from '@polkadot-live/ui/utils';
-import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';
+import type {
+  AccountSource,
+  EncodedAccount,
+  ImportedGenericAccount,
+} from '@polkadot-live/types/accounts';
 import type { WcFetchedAddress } from '@polkadot-live/types/walletConnect';
 
 export const useImportMessagePorts = () => {
@@ -46,21 +50,23 @@ export const useImportMessagePorts = () => {
               break;
             }
             case 'import:account:processing': {
-              const { address, publicKeyHex, source, status, success } =
+              const { serEncodedAccount: en, serGenericAccount: ge } =
                 ev.data.data;
-              setStatusForAccount(publicKeyHex, source, status);
 
-              console.log(`> import:account:processing`);
-              console.log(ev.data);
+              const generic: ImportedGenericAccount = JSON.parse(ge);
+              const encoded: EncodedAccount = JSON.parse(en);
+              const { address } = encoded;
+
+              interface I {
+                source: AccountSource;
+                status: boolean;
+                success: boolean;
+              }
+              const { status, success }: I = ev.data.data;
+              setStatusForAccount(address, generic.source, status);
 
               if (!success) {
-                const { accountName } = ev.data.data;
-                await handleRemoveAddress(
-                  publicKeyHex,
-                  source,
-                  accountName,
-                  address
-                );
+                await handleRemoveAddress(encoded, generic);
                 renderToast('Account import error', 'import-error', 'error');
               }
               break;

@@ -13,11 +13,12 @@ interface ImportWalletConnectProps {
 export const ImportWalletConnect = ({
   setSection,
 }: ImportWalletConnectProps) => {
-  const { wcAddresses: addresses } = useAddresses();
+  const { getAccounts } = useAddresses();
+  const genericAccounts = getAccounts('wallet-connect');
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [showImportUi, setShowImportUi] = useState<boolean>(
-    addresses.length === 0
+    genericAccounts.length === 0
   );
 
   /**
@@ -25,8 +26,8 @@ export const ImportWalletConnect = ({
    * been imported.
    */
   useEffect(() => {
-    setShowImportUi(addresses.length === 0);
-  }, [addresses]);
+    setShowImportUi(genericAccounts.length === 0);
+  }, [genericAccounts]);
 
   if (!showImportUi) {
     return <Manage setSection={setSection} setShowImportUi={setShowImportUi} />;

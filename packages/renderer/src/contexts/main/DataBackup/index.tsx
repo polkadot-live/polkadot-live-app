@@ -5,7 +5,6 @@
 import * as Core from '@polkadot-live/core';
 import { createContext, useContext } from 'react';
 import { defaultDataBackupContext } from './default';
-import { encodeAddress, hexToU8a } from 'dedot/utils';
 import {
   AccountsController,
   IntervalsController,
@@ -29,7 +28,6 @@ import type {
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
 import type { EventCallback } from '@polkadot-live/types/reporter';
-import type { ChainID } from '@polkadot-live/types/chains';
 import type { ExportResult, ImportResult } from '@polkadot-live/types/backup';
 import type {
   IntervalSubscription,
@@ -183,59 +181,52 @@ export const DataBackupProvider = ({
       const genericAccounts: ImportedGenericAccount[] = JSON.parse(ser);
 
       // Process parsed addresses.
-      for (const a of genericAccounts) {
+      for (const genericAccount of genericAccounts) {
+        const { accountName, encodedAccounts, publicKeyHex } = genericAccount;
         const isOnline = cacheGet('mode:connected');
-        a.isImported && !isOnline && (a.isImported = false);
 
-        // Persist or update address in Electron store.
+        // Iterate encoded accounts and set `isImported` flag.
+        for (const en of Object.values(encodedAccounts)) {
+          if (en.isImported && !isOnline) {
+            en.isImported = false;
+          }
+        }
+
+        // Persist or update generic account in Electron store.
         await window.myAPI.rawAccountTask({
           action: 'raw-account:import',
-          data: { serialized: JSON.stringify(a) },
+          data: { serialized: JSON.stringify(genericAccount) },
         });
 
         // Add address and its status to import window's state.
         importWindowOpen &&
           Core.postToImport('import:account:add', {
-            json: JSON.stringify(a),
+            json: JSON.stringify(genericAccount),
             source,
           });
 
-        // Handle importing or removing account from main window and setting `isImported` flag state.
-        const { accountName, publicKeyHex } = a;
+        for (const enAccount of Object.values(encodedAccounts)) {
+          // Import or remove encoded accounts from main window.
+          const { alias: name, address, chainId, isImported } = enAccount;
+          if (isImported) {
+            const data = {
+              data: { address, chainId, name, publicKeyHex, source },
+            };
+            await handleImportAddress(new MessageEvent('message', data), true);
+          } else {
+            const data = { data: { address, chainId } };
+            await handleRemoveAddress(new MessageEvent('message', data));
+          }
 
-        if (a.isImported) {
-          const data = {
-            data: {
-              data: {
-                address: encodeAddress(hexToU8a(publicKeyHex), 0),
-                chainId: 'Polkadot' as ChainID,
-                name: accountName,
-                publicKeyHex,
-                source,
-              },
-            },
-          };
-          await handleImportAddress(new MessageEvent('message', data), true);
-          Core.postToImport('import:address:update', { genericAccount: a });
-        } else {
-          const data = {
-            data: {
-              data: {
-                address: encodeAddress(hexToU8a(publicKeyHex), 0),
-                chainId: 'Polkadot' as ChainID,
-              },
-            },
-          };
-          await handleRemoveAddress(new MessageEvent('message', data));
-          Core.postToImport('import:address:update', { genericAccount: a });
-        }
+          // Update state in import view.
+          Core.postToImport('import:address:update', { genericAccount });
 
-        // Update managed account names.
-        const chainId: ChainID = 'Polkadot'; // TMP: Placeholder
-        const account = AccountsController.get(chainId, publicKeyHex);
-        if (account) {
-          account.name = accountName;
-          await AccountsController.set(account);
+          // Update managed account names.
+          const account = AccountsController.get(chainId, publicKeyHex);
+          if (account) {
+            account.name = `${chainId}: ${accountName}`;
+            await AccountsController.set(account);
+          }
         }
       }
 
