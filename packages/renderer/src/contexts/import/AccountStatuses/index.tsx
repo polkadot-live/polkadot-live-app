@@ -100,7 +100,7 @@ export const AccountStatusesProvider = ({
 
   /// Set processing status of an account.
   const setStatusForAccount = (
-    publicKeyHex: string,
+    enAddress: string,
     source: AccountSource,
     status: boolean
   ) => {
@@ -108,7 +108,7 @@ export const AccountStatusesProvider = ({
       case 'ledger': {
         setLedgerAccountStatuses((prev) => {
           const cloned = new Map(prev);
-          cloned.set(publicKeyHex, status);
+          cloned.set(enAddress, status);
           return cloned;
         });
         break;
@@ -116,7 +116,7 @@ export const AccountStatusesProvider = ({
       case 'read-only': {
         setReadOnlyAccountStatuses((prev) => {
           const cloned = new Map(prev);
-          cloned.set(publicKeyHex, status);
+          cloned.set(enAddress, status);
           return cloned;
         });
         break;
@@ -124,7 +124,7 @@ export const AccountStatusesProvider = ({
       case 'vault': {
         setVaultAccountStatuses((prev) => {
           const cloned = new Map(prev);
-          cloned.set(publicKeyHex, status);
+          cloned.set(enAddress, status);
           return cloned;
         });
         break;
@@ -132,7 +132,7 @@ export const AccountStatusesProvider = ({
       case 'wallet-connect': {
         setWcAccountStatuses((prev) => {
           const cloned = new Map(prev);
-          cloned.set(publicKeyHex, status);
+          cloned.set(enAddress, status);
           return cloned;
         });
         break;
@@ -144,19 +144,19 @@ export const AccountStatusesProvider = ({
   };
 
   /// Get the processing status of an account.
-  const getStatusForAccount = (publicKeyHex: string, source: AccountSource) => {
+  const getStatusForAccount = (enAddress: string, source: AccountSource) => {
     switch (source) {
       case 'ledger': {
-        return ledgerAccountStatuses.get(publicKeyHex) || null;
+        return ledgerAccountStatuses.get(enAddress) || null;
       }
       case 'read-only': {
-        return readOnlyAccountStatuses.get(publicKeyHex) || null;
+        return readOnlyAccountStatuses.get(enAddress) || null;
       }
       case 'vault': {
-        return vaultAccountStatuses.get(publicKeyHex) || null;
+        return vaultAccountStatuses.get(enAddress) || null;
       }
       case 'wallet-connect': {
-        return wcAccountStatuses.get(publicKeyHex) || null;
+        return wcAccountStatuses.get(enAddress) || null;
       }
       default: {
         return null;
@@ -165,22 +165,22 @@ export const AccountStatusesProvider = ({
   };
 
   /// Insert an account status entry.
-  const insertAccountStatus = (publicKeyHex: string, source: AccountSource) => {
+  const insertAccountStatus = (enAddress: string, source: AccountSource) => {
     switch (source) {
       case 'ledger': {
-        ledgerAccountStatuses.set(publicKeyHex, false);
+        ledgerAccountStatuses.set(enAddress, false);
         break;
       }
       case 'read-only': {
-        readOnlyAccountStatuses.set(publicKeyHex, false);
+        readOnlyAccountStatuses.set(enAddress, false);
         break;
       }
       case 'vault': {
-        vaultAccountStatuses.set(publicKeyHex, false);
+        vaultAccountStatuses.set(enAddress, false);
         break;
       }
       case 'wallet-connect': {
-        wcAccountStatuses.set(publicKeyHex, false);
+        wcAccountStatuses.set(enAddress, false);
         break;
       }
       default: {
@@ -190,29 +190,29 @@ export const AccountStatusesProvider = ({
   };
 
   /// Delete an account status entry.
-  const deleteAccountStatus = (publicKeyHex: string, source: AccountSource) => {
+  const deleteAccountStatus = (enAddress: string, source: AccountSource) => {
     switch (source) {
       case 'ledger': {
-        if (ledgerAccountStatuses.has(publicKeyHex)) {
-          ledgerAccountStatuses.delete(publicKeyHex);
+        if (ledgerAccountStatuses.has(enAddress)) {
+          ledgerAccountStatuses.delete(enAddress);
         }
         break;
       }
       case 'read-only': {
-        if (readOnlyAccountStatuses.has(publicKeyHex)) {
-          readOnlyAccountStatuses.delete(publicKeyHex);
+        if (readOnlyAccountStatuses.has(enAddress)) {
+          readOnlyAccountStatuses.delete(enAddress);
         }
         break;
       }
       case 'vault': {
-        if (vaultAccountStatuses.has(publicKeyHex)) {
-          vaultAccountStatuses.delete(publicKeyHex);
+        if (vaultAccountStatuses.has(enAddress)) {
+          vaultAccountStatuses.delete(enAddress);
         }
         break;
       }
       case 'wallet-connect': {
-        if (wcAccountStatuses.has(publicKeyHex)) {
-          wcAccountStatuses.delete(publicKeyHex);
+        if (wcAccountStatuses.has(enAddress)) {
+          wcAccountStatuses.delete(enAddress);
         }
         break;
       }

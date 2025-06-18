@@ -17,14 +17,14 @@ export interface AccountStatusesContextInterface {
   setVaultAccountStatuses: (map: Map<string, boolean>) => void;
   setWcAccountStatuses: (map: Map<string, boolean>) => void;
   setStatusForAccount: (
-    publicKeyHex: string,
+    enAddress: string,
     source: AccountSource,
     status: boolean
   ) => void;
   getStatusForAccount: (
-    publicKeyHex: string,
+    enAddress: string,
     source: AccountSource
   ) => boolean | null;
-  insertAccountStatus: (publicKeyHex: string, source: AccountSource) => void;
-  deleteAccountStatus: (publicKeyHex: string, source: AccountSource) => void;
+  insertAccountStatus: (enAddress: string, source: AccountSource) => void;
+  deleteAccountStatus: (enAddress: string, source: AccountSource) => void;
 }
