@@ -31,8 +31,7 @@ export const AccountStatusesProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { ledgerAddresses, readOnlyAddresses, vaultAddresses, wcAddresses } =
-    useAddresses();
+  const { getAccounts } = useAddresses();
 
   /// Utility to determine if any encoded accounts are processing.
   const anyProcessing = (genericAccount: ImportedGenericAccount): boolean => {
@@ -49,25 +48,25 @@ export const AccountStatusesProvider = ({
     const map = new Map<string, boolean>();
     switch (source) {
       case 'ledger': {
-        for (const { publicKeyHex } of ledgerAddresses) {
+        for (const { publicKeyHex } of getAccounts(source)) {
           map.set(publicKeyHex, false);
         }
         return map;
       }
       case 'read-only': {
-        for (const { publicKeyHex } of readOnlyAddresses) {
+        for (const { publicKeyHex } of getAccounts(source)) {
           map.set(publicKeyHex, false);
         }
         return map;
       }
       case 'vault': {
-        for (const { publicKeyHex } of vaultAddresses) {
+        for (const { publicKeyHex } of getAccounts(source)) {
           map.set(publicKeyHex, false);
         }
         return map;
       }
       case 'wallet-connect': {
-        for (const { publicKeyHex } of wcAddresses) {
+        for (const { publicKeyHex } of getAccounts(source)) {
           map.set(publicKeyHex, false);
         }
         return map;

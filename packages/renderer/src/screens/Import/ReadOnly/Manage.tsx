@@ -7,6 +7,7 @@ import { Listing } from '../Addresses';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { renderToast } from '@polkadot-live/ui/utils';
 import { checkAddress } from '@polkadot/util-crypto';
+import { decodeAddress, u8aToHex } from 'dedot/utils';
 import { ellipsisFn, unescape } from '@w3ux/utils';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
@@ -58,12 +59,17 @@ export const Manage = ({ setSection }: ManageReadOnlyProps) => {
   /// Handle import button click.
   const onImport = async () => {
     const trimmed = editName.trim();
+    const isValid = validateAddress(trimmed);
 
-    if (isAlreadyImported(trimmed)) {
-      renderToast('Address is already imported.', `toast-${trimmed}`, 'error');
-      return;
-    } else if (!validateAddress(trimmed)) {
+    // Validate address.
+    if (!isValid) {
       renderToast('Invalid Address.', `toast-${trimmed}`, 'error');
+      return;
+    }
+
+    // Check if public key is already imported.
+    if (isAlreadyImported(u8aToHex(decodeAddress(trimmed)))) {
+      renderToast('Address is already imported.', `toast-${trimmed}`, 'error');
       return;
     }
 

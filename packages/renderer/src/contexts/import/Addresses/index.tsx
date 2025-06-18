@@ -3,6 +3,7 @@
 
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import * as defaults from './defaults';
+import { getSupportedSources } from '@polkadot-live/consts/chains';
 import { setStateWithRef } from '@w3ux/utils';
 import type { AddressesContextInterface } from './types';
 import type {
@@ -26,257 +27,93 @@ export const AddressesProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  type IGA = ImportedGenericAccount;
+  /**
+   * Generic accounts map and reference.
+   */
+  const [genericAccounts, setGenericAccounts] = useState(
+    new Map<AccountSource, ImportedGenericAccount[]>()
+  );
+  const genericAccountsRef = useRef(genericAccounts);
 
-  /// Addresses state.
-  const [ledgerAddresses, setLedgerAddresses] = useState<IGA[]>([]);
-  const [readOnlyAddresses, setReadOnlyAddresses] = useState<IGA[]>([]);
-  const [vaultAddresses, setVaultAddresses] = useState<IGA[]>([]);
-  const [wcAddresses, setWcAddresses] = useState<IGA[]>([]);
+  /**
+   * Get accounts according to import source.
+   */
+  const getAccounts = (source: AccountSource): ImportedGenericAccount[] =>
+    genericAccounts.get(source) || [];
 
-  /// References to addresses state.
-  const ledgerAddressesRef = useRef<IGA[]>([]);
-  const readOnlyAddressesRef = useRef<IGA[]>([]);
-  const vaultAddressesRef = useRef<IGA[]>([]);
-  const wcAddressesRef = useRef<IGA[]>([]);
-
-  /// Get accounts according to import source.
-  const getAccounts = (source: AccountSource): ImportedGenericAccount[] => {
-    switch (source) {
-      case 'ledger':
-        return ledgerAddresses;
-      case 'read-only':
-        return readOnlyAddresses;
-      case 'wallet-connect':
-        return wcAddresses;
-      case 'vault':
-        return vaultAddresses;
-      default:
-        return [];
-    }
-  };
-
-  /// Fetch address data from store when component loads.
+  /**
+   * Fetch stored accounts when component mounts.
+   */
   useEffect(() => {
     const fetchAccounts = async () => {
-      const sources: AccountSource[] = [
-        'ledger',
-        'read-only',
-        'vault',
-        'wallet-connect',
-      ];
-
-      const tasks: IpcTask[] = [];
-
-      for (const source of sources) {
-        tasks.push({
-          action: 'raw-account:get',
-          data: { source },
-        });
+      const map = new Map<AccountSource, ImportedGenericAccount[]>();
+      for (const source of getSupportedSources()) {
+        const task: IpcTask = { action: 'raw-account:get', data: { source } };
+        const result = (await window.myAPI.rawAccountTask(task)) as string;
+        map.set(source, JSON.parse(result));
       }
-
-      const results = await Promise.all([
-        window.myAPI.rawAccountTask(tasks[0]),
-        window.myAPI.rawAccountTask(tasks[1]),
-        window.myAPI.rawAccountTask(tasks[2]),
-        window.myAPI.rawAccountTask(tasks[3]),
-      ]);
-
-      setStateWithRef(
-        JSON.parse(results[0] as string),
-        setLedgerAddresses,
-        ledgerAddressesRef
-      );
-
-      setStateWithRef(
-        JSON.parse(results[1] as string),
-        setReadOnlyAddresses,
-        readOnlyAddressesRef
-      );
-
-      setStateWithRef(
-        JSON.parse(results[2] as string),
-        setVaultAddresses,
-        vaultAddressesRef
-      );
-
-      setStateWithRef(
-        JSON.parse(results[3] as string),
-        setWcAddresses,
-        wcAddressesRef
-      );
+      setStateWithRef(map, setGenericAccounts, genericAccountsRef);
     };
 
     fetchAccounts();
   }, []);
 
-  /// Check if an address has already been imported.
+  /**
+   * Check if an address has already been imported.
+   */
   const isAlreadyImported = (targetPubKeyHex: string): boolean => {
-    const checkAll = <T extends { publicKeyHex: string }>(
-      items: T[],
-      target: string
-    ): boolean =>
-      items.reduce(
-        (acc, { publicKeyHex }) =>
-          acc ? acc : publicKeyHex === target ? true : false,
-        false
-      );
-
-    return (
-      checkAll(ledgerAddressesRef.current, targetPubKeyHex) ||
-      checkAll(vaultAddressesRef.current, targetPubKeyHex) ||
-      checkAll(readOnlyAddressesRef.current, targetPubKeyHex) ||
-      checkAll(wcAddressesRef.current, targetPubKeyHex)
-    );
+    const all = Array.from(genericAccountsRef.current.values()).flat();
+    const pks = all.map(({ publicKeyHex }) => publicKeyHex);
+    return pks.includes(targetPubKeyHex);
   };
 
-  /// Update import window read-only addresses state and reference upon address import.
+  /**
+   * Update account state and reference upon address import.
+   */
   const handleAddressImport = (genericAccount: ImportedGenericAccount) => {
-    switch (genericAccount.source) {
-      case 'ledger': {
-        setLedgerAddresses((prev: ImportedGenericAccount[]) => {
-          const updated = prev
-            .filter((a) => a.publicKeyHex !== genericAccount.publicKeyHex)
-            .concat([{ ...genericAccount }]);
-          ledgerAddressesRef.current = updated;
-          return updated;
-        });
+    const { publicKeyHex, source } = genericAccount;
+    const updated = (genericAccountsRef.current.get(source) || [])
+      .filter(({ publicKeyHex: pk }) => pk !== publicKeyHex)
+      .concat([{ ...genericAccount }]);
 
-        break;
-      }
-      case 'read-only': {
-        setReadOnlyAddresses((prev: ImportedGenericAccount[]) => {
-          const updated = prev
-            .filter((a) => a.publicKeyHex !== genericAccount.publicKeyHex)
-            .concat([{ ...genericAccount }]);
-          readOnlyAddressesRef.current = updated;
-          return updated;
-        });
-
-        break;
-      }
-      case 'vault': {
-        setVaultAddresses((prev: ImportedGenericAccount[]) => {
-          const updated = prev
-            .filter((a) => a.publicKeyHex !== genericAccount.publicKeyHex)
-            .concat([{ ...genericAccount }]);
-          vaultAddressesRef.current = updated;
-          return updated;
-        });
-
-        break;
-      }
-      case 'wallet-connect': {
-        setWcAddresses((prev: ImportedGenericAccount[]) => {
-          const updated = prev
-            .filter((a) => a.publicKeyHex !== genericAccount.publicKeyHex)
-            .concat([{ ...genericAccount }]);
-          wcAddressesRef.current = updated;
-          return updated;
-        });
-
-        break;
-      }
-    }
+    const map = new Map(genericAccountsRef.current).set(source, updated);
+    setStateWithRef(map, setGenericAccounts, genericAccountsRef);
   };
 
-  /// Update import window read-only addresses state and reference upon address deletion.
+  /**
+   * Update account state and reference upon address deletion.
+   */
   const handleAddressDelete = (
-    source: AccountSource,
-    publicKeyHex: string
+    genericAccount: ImportedGenericAccount
   ): boolean => {
-    switch (source) {
-      case 'ledger': {
-        let goBack = false;
-        setLedgerAddresses((prev: ImportedGenericAccount[]) => {
-          const updated = prev.filter((a) => a.publicKeyHex !== publicKeyHex);
-          ledgerAddressesRef.current = updated;
-          updated.length === 0 && (goBack = true);
-          return updated;
-        });
+    const { publicKeyHex, source } = genericAccount;
+    const updated = (genericAccountsRef.current.get(source) || []).filter(
+      ({ publicKeyHex: pk }) => publicKeyHex !== pk
+    );
 
-        return goBack;
-      }
-      case 'read-only': {
-        setReadOnlyAddresses((prev: ImportedGenericAccount[]) => {
-          const updated = prev.filter((a) => a.publicKeyHex !== publicKeyHex);
-          readOnlyAddressesRef.current = updated;
-          return updated;
-        });
+    const map = new Map(genericAccountsRef.current).set(source, updated);
+    const goBack = source === 'read-only' ? false : updated.length === 0;
+    setStateWithRef(map, setGenericAccounts, genericAccountsRef);
 
-        return false;
-      }
-      case 'vault': {
-        let goBack = false;
-        setVaultAddresses((prev: ImportedGenericAccount[]) => {
-          const updated = prev.filter((a) => a.publicKeyHex !== publicKeyHex);
-          vaultAddressesRef.current = updated;
-          updated.length === 0 && (goBack = true);
-          return updated;
-        });
-
-        return goBack;
-      }
-      case 'wallet-connect': {
-        let goBack = false;
-        setWcAddresses((prev: ImportedGenericAccount[]) => {
-          const updated = prev.filter((a) => a.publicKeyHex !== publicKeyHex);
-          wcAddressesRef.current = updated;
-          updated.length === 0 && (goBack = true);
-          return updated;
-        });
-
-        return goBack;
-      }
-      default: {
-        return false;
-      }
-    }
+    return goBack;
   };
 
-  /// Update import window read-only addresses state and reference upon address addition.
+  /**
+   * Update account state and reference upon account add or remove.
+   */
   const handleAddressUpdate = (genericAccount: ImportedGenericAccount) => {
     const { publicKeyHex, source } = genericAccount;
-    const setters = getSetters(source);
-    if (!setters) {
-      return;
-    }
+    const updated = (genericAccountsRef.current.get(source) || []).map((a) =>
+      a.publicKeyHex === publicKeyHex ? genericAccount : a
+    );
 
-    const [setState, ref] = setters;
-    setState((prev: ImportedGenericAccount[]) => {
-      const updated = prev.map((a) =>
-        a.publicKeyHex === publicKeyHex ? genericAccount : a
-      );
-      ref.current = updated;
-      return updated;
-    });
-  };
-
-  /// Utility to get state and ref setters.
-  const getSetters = (source: AccountSource) => {
-    let setters:
-      | null
-      | [
-          React.Dispatch<React.SetStateAction<ImportedGenericAccount[]>>,
-          React.MutableRefObject<ImportedGenericAccount[]>,
-        ] = null;
-
-    source === 'ledger' && (setters = [setLedgerAddresses, ledgerAddressesRef]);
-    source === 'vault' && (setters = [setVaultAddresses, vaultAddressesRef]);
-    source === 'wallet-connect' && (setters = [setWcAddresses, wcAddressesRef]);
-    source === 'read-only' &&
-      (setters = [setReadOnlyAddresses, readOnlyAddressesRef]);
-
-    return setters;
+    const map = new Map(genericAccountsRef.current).set(source, updated);
+    setStateWithRef(map, setGenericAccounts, genericAccountsRef);
   };
 
   return (
     <AddressesContext.Provider
       value={{
-        ledgerAddresses,
-        readOnlyAddresses,
-        vaultAddresses,
-        wcAddresses,
         getAccounts,
         handleAddressImport,
         handleAddressDelete,

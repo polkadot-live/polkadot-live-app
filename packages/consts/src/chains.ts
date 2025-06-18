@@ -8,6 +8,7 @@ import {
   westend2,
   westend2_asset_hub,
 } from '@substrate/connect-known-chains';
+import type { AccountSource } from '@polkadot-live/types/accounts';
 import type { ChainID, SelectNetworkData } from '@polkadot-live/types/chains';
 import type { NodeEndpoint } from '@polkadot-live/types/apis';
 
@@ -152,6 +153,9 @@ export const getSelectNetworkData = (
   },
 ];
 
+/**
+ * Get an array of supported chains.
+ */
 export const getSupportedChains = (): Record<ChainID, Chain> => {
   const unsupported: ChainID[] = ['Westend'];
   const record = {} as Record<ChainID, Chain>;
@@ -164,3 +168,13 @@ export const getSupportedChains = (): Record<ChainID, Chain> => {
 
   return record;
 };
+
+/**
+ * Get an array of supported import methods.
+ */
+export const getSupportedSources = (): AccountSource[] => [
+  'ledger',
+  'read-only',
+  'vault',
+  'wallet-connect',
+];

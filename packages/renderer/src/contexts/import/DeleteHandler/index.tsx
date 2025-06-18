@@ -40,7 +40,7 @@ export const DeleteHandlerProvider = ({
     for (const { address } of Object.values(genericAccount.encodedAccounts)) {
       deleteAccountStatus(address, source);
       if (!goBack) {
-        goBack = handleAddressDelete(source, address);
+        goBack = handleAddressDelete(genericAccount);
       }
 
       // Delete in main renderer.

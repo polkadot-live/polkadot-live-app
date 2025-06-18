@@ -31,8 +31,9 @@ import { AddressListFooter, ImportAddressRow } from '../../Wrappers';
 import type { ImportProps } from './types';
 
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
-  const { isAlreadyImported, wcAddresses } = useAddresses();
+  const { isAlreadyImported, getAccounts } = useAddresses();
   const { getOnlineMode, cacheGet, getTheme } = useConnections();
+  const wcAddresses = getAccounts('wallet-connect');
 
   const theme = getTheme();
   const darkMode = cacheGet('mode:dark');
