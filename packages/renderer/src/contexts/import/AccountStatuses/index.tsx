@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { getSupportedSources } from '@polkadot-live/consts/chains';
+import { setStateWithRef } from '@w3ux/utils';
 import { useAddresses } from '../Addresses';
 import type {
   AccountSource,
@@ -40,11 +41,14 @@ export const AccountStatusesProvider = ({
   const [statusMap, setStatusMap] = useState(
     new Map<AccountSource, Map<string, boolean>>()
   );
+  const statusMapRef = useRef(statusMap);
 
   /**
    * Initialize status map on mount.
    */
   useEffect(() => {
+    const outer: typeof statusMap = new Map();
+
     for (const source of getSupportedSources()) {
       const map = new Map<string, boolean>();
       for (const { encodedAccounts } of getAccounts(source)) {
@@ -52,10 +56,10 @@ export const AccountStatusesProvider = ({
           map.set(address, false);
         }
       }
-
-      const updated = new Map(statusMap).set(source, map);
-      setStatusMap(updated);
+      outer.set(source, map);
     }
+
+    setStateWithRef(outer, setStatusMap, statusMapRef);
   }, []);
 
   /**
@@ -68,33 +72,36 @@ export const AccountStatusesProvider = ({
   ) => {
     const sourceMap = statusMap.get(source)!;
     const updated = new Map(sourceMap).set(enAddress, status);
-    setStatusMap((prev) => prev.set(source, updated));
+    const map = new Map(statusMap).set(source, updated);
+    setStateWithRef(map, setStatusMap, statusMapRef);
   };
 
   /**
    * Get the processing status of an account.
    */
   const getStatusForAccount = (enAddress: string, source: AccountSource) =>
-    statusMap.get(source)?.get(enAddress) || null;
+    statusMapRef.current.get(source)?.get(enAddress) || null;
 
   /**
    * Insert an account status entry.
    */
   const insertAccountStatus = (enAddress: string, source: AccountSource) => {
     const sourceMap = statusMap.get(source)!;
-    setStatusMap((prev) => prev.set(source, sourceMap.set(enAddress, false)));
+    const map = new Map(statusMap).set(source, sourceMap.set(enAddress, false));
+    setStateWithRef(map, setStatusMap, statusMapRef);
   };
 
   /**
    * Delete an account status entry.
    */
   const deleteAccountStatus = (enAddress: string, source: AccountSource) => {
-    const sourceMap = statusMap.get(source)!;
+    const sourceMap = statusMapRef.current.get(source)!;
     if (sourceMap.has(enAddress)) {
       sourceMap.delete(enAddress);
     }
 
-    setStatusMap((prev) => prev.set(source, sourceMap));
+    const map = new Map(statusMap).set(source, sourceMap);
+    setStateWithRef(map, setStatusMap, statusMapRef);
   };
 
   /**
