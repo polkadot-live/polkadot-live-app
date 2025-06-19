@@ -44,7 +44,7 @@ export const Manage = ({
             <Styles.FlexRow>
               <ButtonText
                 iconLeft={faCaretRight}
-                text={'Import Ledger Accounts'}
+                text={'Import'}
                 onClick={() => setShowImportUi(true)}
               />
             </Styles.FlexRow>

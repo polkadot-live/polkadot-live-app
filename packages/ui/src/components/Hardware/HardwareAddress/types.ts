@@ -9,31 +9,26 @@ import type {
 } from '@polkadot-live/types/accounts';
 
 export type HardwareAddressProps = ComponentBase & {
-  // The account to render.
-  genericAccount: ImportedGenericAccount;
   // If any encoded accounts are processing.
   anyProcessing: boolean;
-  // If a particular encoded account is processing.
-  isProcessing: (encodedAccount: EncodedAccount) => boolean;
+  // The account to render.
+  genericAccount: ImportedGenericAccount;
   // App's connection status.
   isConnected: boolean;
   // Theme object.
   theme: AnyData;
   // Handle rename.
-  renameHandler: (newName: string) => Promise<void>;
   DialogRename: (props: {
     genericAccount: ImportedGenericAccount;
   }) => JSX.Element;
-  // Handle remove UI.
-  openRemoveHandler: (encodedAccount: EncodedAccount) => void;
+  // If a particular encoded account is processing.
+  isProcessing: (encodedAccount: EncodedAccount) => boolean;
+  // Handle clipboard copy.
+  onClipboardCopy: (text: string) => Promise<void>;
   // Handle confirm import UI.
   openConfirmHandler: (encodedAccount: EncodedAccount) => void;
   // Handle confirm delete UI.
   openDeleteHandler: () => void;
-  // Handle rename success.
-  onRenameSuccess: (message: string, toastId: string) => void;
-  // Handle rename error.
-  onRenameError: (message: string, toastId: string) => void;
-  // Handle clipboard copy.
-  onClipboardCopy: (text: string) => Promise<void>;
+  // Handle remove UI.
+  openRemoveHandler: (encodedAccount: EncodedAccount) => void;
 };

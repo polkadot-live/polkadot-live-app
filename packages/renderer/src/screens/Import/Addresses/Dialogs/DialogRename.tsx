@@ -8,18 +8,18 @@ import {
   FlexColumn,
   FlexRow,
 } from '@polkadot-live/ui/styles';
+import { renameAccountInStore } from '@polkadot-live/core';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { useConnections } from '@ren/contexts/common';
 import { useAddresses } from '@ren/contexts/import';
 import { useState } from 'react';
 import { renderToast, validateAccountName } from '@polkadot-live/ui/utils';
+import { TooltipRx } from '@polkadot-live/ui/components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleRight, faCaretRight } from '@fortawesome/free-solid-svg-icons';
+import { faAngleRight, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { unescape } from '@w3ux/utils';
 import type { FormEvent } from 'react';
 import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';
-
-import { renameAccountInStore } from '@polkadot-live/core';
 
 interface DialogRenameProps {
   genericAccount: ImportedGenericAccount;
@@ -101,8 +101,9 @@ export const DialogRename = ({ genericAccount }: DialogRenameProps) => {
     <Dialog.Root open={dialogOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger $theme={theme}>
         <FlexRow $gap={'0.75rem'} className="btn-text">
-          <FontAwesomeIcon icon={faCaretRight} />
-          <span>Rename</span>
+          <TooltipRx theme={theme} text={'Rename Account'}>
+            <FontAwesomeIcon icon={faPenToSquare} transform={'shrink-2'} />
+          </TooltipRx>
         </FlexRow>
       </DialogTrigger>
       <Dialog.Portal>
