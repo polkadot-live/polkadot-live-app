@@ -10,6 +10,7 @@ import { useConnections } from '@ren/contexts/common';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import type { AddressProps } from './types';
 import type { EncodedAccount } from '@polkadot-live/types/accounts';
+import { DialogRename } from './Dialogs/DialogRename';
 
 export const Address = ({ genericAccount, setSection }: AddressProps) => {
   const { publicKeyHex, source } = genericAccount;
@@ -44,6 +45,8 @@ export const Address = ({ genericAccount, setSection }: AddressProps) => {
         Boolean(getStatusForAccount(address, source))
       }
       theme={theme}
+      /* Dialog */
+      DialogRename={DialogRename}
       /* Handlers */
       onClipboardCopy={async (text: string) =>
         await window.myAPI.copyToClipboard(text)

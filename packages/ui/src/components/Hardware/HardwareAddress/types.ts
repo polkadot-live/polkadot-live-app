@@ -13,6 +13,7 @@ export type HardwareAddressProps = ComponentBase & {
   genericAccount: ImportedGenericAccount;
   // If any encoded accounts are processing.
   anyProcessing: boolean;
+  // If a particular encoded account is processing.
   isProcessing: (encodedAccount: EncodedAccount) => boolean;
   // App's connection status.
   isConnected: boolean;
@@ -20,6 +21,9 @@ export type HardwareAddressProps = ComponentBase & {
   theme: AnyData;
   // Handle rename.
   renameHandler: (newName: string) => Promise<void>;
+  DialogRename: (props: {
+    genericAccount: ImportedGenericAccount;
+  }) => JSX.Element;
   // Handle remove UI.
   openRemoveHandler: (encodedAccount: EncodedAccount) => void;
   // Handle confirm import UI.

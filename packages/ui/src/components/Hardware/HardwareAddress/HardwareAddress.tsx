@@ -28,6 +28,7 @@ export const HardwareAddress = ({
   isConnected,
   anyProcessing,
   theme,
+  DialogRename,
   isProcessing,
   renameHandler,
   openConfirmHandler,
@@ -113,6 +114,8 @@ export const HardwareAddress = ({
               }
             }}
           />
+
+          <DialogRename genericAccount={genericAccount} />
 
           {editing && !anyProcessing && (
             <FlexRow className="edit">
