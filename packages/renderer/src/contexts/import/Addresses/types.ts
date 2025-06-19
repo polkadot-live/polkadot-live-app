@@ -12,4 +12,5 @@ export interface AddressesContextInterface {
   handleAddressDelete: (genericAccount: ImportedGenericAccount) => boolean;
   handleAddressUpdate: (genericAccount: ImportedGenericAccount) => void;
   isAlreadyImported: (targetPubKeyHex: string) => boolean;
+  isUniqueAccountName: (target: string) => boolean;
 }

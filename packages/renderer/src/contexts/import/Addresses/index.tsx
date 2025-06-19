@@ -111,6 +111,22 @@ export const AddressesProvider = ({
     setStateWithRef(map, setGenericAccounts, genericAccountsRef);
   };
 
+  /**
+   * Check for duplicate account name.
+   */
+  const isUniqueAccountName = (target: string): boolean => {
+    for (const s of getSupportedSources()) {
+      const found = getAccounts(s).find(
+        ({ accountName }) => accountName === target
+      );
+
+      if (found) {
+        return false;
+      }
+    }
+    return true;
+  };
+
   return (
     <AddressesContext.Provider
       value={{
@@ -119,6 +135,7 @@ export const AddressesProvider = ({
         handleAddressDelete,
         handleAddressUpdate,
         isAlreadyImported,
+        isUniqueAccountName,
       }}
     >
       {children}

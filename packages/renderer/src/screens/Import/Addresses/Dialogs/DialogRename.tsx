@@ -27,7 +27,7 @@ interface DialogRenameProps {
 
 export const DialogRename = ({ genericAccount }: DialogRenameProps) => {
   const { accountName, publicKeyHex, source } = genericAccount;
-  const { handleAddressImport } = useAddresses();
+  const { handleAddressImport, isUniqueAccountName } = useAddresses();
   const { getTheme } = useConnections();
 
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
@@ -65,7 +65,17 @@ export const DialogRename = ({ genericAccount }: DialogRenameProps) => {
     // Handle validation failure.
     if (!validateAccountName(trimmed)) {
       renderToast('Bad account name.', `toast-${trimmed}`, 'error');
-      setInputVal(accountName);
+      //setInputVal(accountName);
+      return;
+    }
+
+    // Handle duplicate account name.
+    if (!isUniqueAccountName(trimmed)) {
+      renderToast(
+        'Account name is already in use.',
+        `toast-${trimmed}`,
+        'error'
+      );
       return;
     }
 
