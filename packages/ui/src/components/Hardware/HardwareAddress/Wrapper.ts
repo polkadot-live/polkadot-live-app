@@ -83,6 +83,9 @@ export const HardwareAddressWrapper = styled.div`
     display: flex;
     flex: 1;
 
+    h2 {
+      font-size: 1.15rem;
+    }
     .fade {
       opacity: 0.5;
     }

@@ -10,4 +10,5 @@ export const defaultAddressesContext: AddressesContextInterface = {
   handleAddressDelete: () => false,
   handleAddressUpdate: () => {},
   isAlreadyImported: () => false,
+  isUniqueAccountName: () => false,
 };

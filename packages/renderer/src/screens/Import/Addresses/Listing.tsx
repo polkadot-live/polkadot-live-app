@@ -10,9 +10,7 @@ import { useState } from 'react';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { useAddresses } from '@ren/contexts/import';
-
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';
 import type { ManageAccountsProps } from './types';
 
 export const Listing = ({ source, setSection }: ManageAccountsProps) => {
@@ -49,39 +47,33 @@ export const Listing = ({ source, setSection }: ManageAccountsProps) => {
           onValueChange={(val) => setAccordionValue(val as ChainID)}
         >
           <Styles.FlexColumn>
-            {Array.from(
-              new Map<string, ImportedGenericAccount[]>([
-                [title, genericAccounts],
-              ]).entries()
-            ).map(([key, accounts]) => (
-              <Accordion.Item
-                key={`${key}_read_only_addresses`}
-                className="AccordionItem"
-                value={key}
-              >
-                <UI.AccordionTrigger narrow={true}>
-                  <ChevronDownIcon className="AccordionChevron" aria-hidden />
-                  <UI.TriggerHeader>{title}</UI.TriggerHeader>
-                </UI.AccordionTrigger>
-                <UI.AccordionContent transparent={true}>
-                  <ItemsColumn>
-                    {accounts.length ? (
-                      <>
-                        {accounts.map((genericAccount) => (
+            <Accordion.Item className="AccordionItem" value={title}>
+              <UI.AccordionTrigger narrow={true}>
+                <ChevronDownIcon className="AccordionChevron" aria-hidden />
+                <UI.TriggerHeader>{title}</UI.TriggerHeader>
+              </UI.AccordionTrigger>
+              <UI.AccordionContent transparent={true}>
+                <ItemsColumn>
+                  {genericAccounts.length ? (
+                    <>
+                      {genericAccounts
+                        .sort((a, b) =>
+                          a.accountName.localeCompare(b.accountName)
+                        )
+                        .map((genericAccount) => (
                           <Address
                             key={`address_${genericAccount.accountName}`}
                             genericAccount={genericAccount}
                             setSection={setSection}
                           />
                         ))}
-                      </>
-                    ) : (
-                      <p>No accounts imported.</p>
-                    )}
-                  </ItemsColumn>
-                </UI.AccordionContent>
-              </Accordion.Item>
-            ))}
+                    </>
+                  ) : (
+                    <p>No accounts imported.</p>
+                  )}
+                </ItemsColumn>
+              </UI.AccordionContent>
+            </Accordion.Item>
           </Styles.FlexColumn>
         </Accordion.Root>
       </UI.AccordionWrapper>

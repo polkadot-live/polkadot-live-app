@@ -49,7 +49,7 @@ export const Manage = ({
             <Styles.FlexRow>
               <ButtonText
                 iconLeft={faCaretRight}
-                text={'Import WalletConnect Accounts'}
+                text={'Import'}
                 onClick={() => setShowImportUi(true)}
               />
             </Styles.FlexRow>

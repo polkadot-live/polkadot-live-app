@@ -1,26 +1,16 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import {
-  faCheck,
-  faXmark,
-  faPlus,
-  faMinus,
-  faTrash,
-} from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
-import { ellipsisFn, unescape } from '@w3ux/utils';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus, faMinus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { ellipsisFn } from '@w3ux/utils';
 import { EllipsisSpinner } from '../../Spinners';
 import { ButtonMono } from '../../../kits/Buttons';
-import { validateAccountName } from '../../../utils';
 import { HardwareAddressWrapper } from './Wrapper';
 import { TooltipRx } from '../../TooltipRx';
 import { FlexColumn, FlexRow } from '../../../styles';
 import { ChainIcon } from '../../ChainIcon';
 import { CopyButton } from '../../CopyButton';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { FormEvent } from 'react';
 import type { HardwareAddressProps } from './types';
 
 export const HardwareAddress = ({
@@ -28,106 +18,26 @@ export const HardwareAddress = ({
   isConnected,
   anyProcessing,
   theme,
+  DialogRename,
   isProcessing,
-  renameHandler,
   openConfirmHandler,
   openRemoveHandler,
   openDeleteHandler,
-  onRenameError,
-  onRenameSuccess,
   onClipboardCopy,
 }: HardwareAddressProps) => {
   const { accountName, encodedAccounts } = genericAccount;
 
-  // Store whether this address is being edited.
-  const [editing, setEditing] = useState<boolean>(false);
-
-  // Store the currently edited name and validation errors flag.
-  const [editName, setEditName] = useState<string>(accountName);
-
-  // Cancel button clicked for edit input.
-  const cancelEditing = () => {
-    setEditing(false);
-    setEditName(accountName);
-  };
-
-  /**
-   * Validate input and rename account.
-   */
-  const commitEdit = () => {
-    const trimmed = editName.trim();
-
-    // Return if account name hasn't changed.
-    if (trimmed === accountName) {
-      setEditing(false);
-      return;
-    }
-
-    // Handle validation failure.
-    if (!validateAccountName(trimmed)) {
-      onRenameError('Bad account name.', `toast-${trimmed}`);
-      setEditName(accountName);
-      setEditing(false);
-      return;
-    }
-
-    // Render success alert.
-    onRenameSuccess('Account name updated.', `toast-${trimmed}`);
-
-    // Otherwise rename account.
-    renameHandler(trimmed).then(() => {
-      setEditName(trimmed);
-      setEditing(false);
-    });
-  };
-
-  /**
-   * Input change handler.
-   */
-  const handleChange = (e: FormEvent<HTMLInputElement>) => {
-    let val = e.currentTarget.value || '';
-    val = unescape(val);
-    setEditName(val);
-  };
-
   return (
     <HardwareAddressWrapper style={{ paddingBottom: '1.5rem' }}>
       {/* Account name */}
-      <FlexRow $gap={'0.75rem'} style={{ width: '100%' }}>
-        <div className="input-wrapper">
-          <input
-            style={{
-              borderColor: editing
-                ? 'var(--border-mid-color)'
-                : 'var(--background-primary)',
-            }}
-            type="text"
-            disabled={anyProcessing}
-            value={editing ? editName : accountName}
-            onChange={(e) => handleChange(e)}
-            onFocus={() => setEditing(true)}
-            onKeyUp={(e) => {
-              if (e.key === 'Enter') {
-                commitEdit();
-                e.currentTarget.blur();
-              }
-            }}
-          />
-
-          {editing && !anyProcessing && (
-            <FlexRow className="edit">
-              <button
-                id="commit-btn"
-                type="button"
-                onPointerDown={() => commitEdit()}
-              >
-                <FontAwesomeIcon icon={faCheck} />
-              </button>
-              <button type="button" onPointerDown={() => cancelEditing()}>
-                <FontAwesomeIcon icon={faXmark} />
-              </button>
-            </FlexRow>
-          )}
+      <FlexRow
+        $gap={'0.75rem'}
+        style={{ padding: '1rem 0 1rem 1rem', width: '100%' }}
+        className="input-wrapper"
+      >
+        <h2>{accountName}</h2>
+        <div style={{ flex: 1 }}>
+          <DialogRename genericAccount={genericAccount} />
         </div>
 
         {/* Account buttons */}
