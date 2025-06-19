@@ -33,7 +33,7 @@ export const Manage = ({ setSection }: ManageVaultProps) => {
             $padBottom={false}
             style={{ padding: '1rem 0 0 0', marginBottom: 0 }}
           >
-            <Styles.ResponsiveRow $smWidth="450px">
+            <Styles.ResponsiveRow $smWidth="360px">
               <Styles.FlexRow>
                 <ButtonPrimaryInvert
                   className="back-btn"
@@ -46,7 +46,7 @@ export const Manage = ({ setSection }: ManageVaultProps) => {
               <Styles.FlexRow>
                 <ButtonText
                   iconLeft={faQrcode}
-                  text={'Import Another Account'}
+                  text={'Import'}
                   onClick={() => {
                     openOverlayWith(
                       <ErrorBoundary
