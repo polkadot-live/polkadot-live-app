@@ -1,7 +1,12 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { faPlus, faMinus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import {
+  faPlus,
+  faMinus,
+  faTrash,
+  faPenSquare,
+} from '@fortawesome/free-solid-svg-icons';
 import { ellipsisFn } from '@w3ux/utils';
 import { EllipsisSpinner } from '../../Spinners';
 import { ButtonMono } from '../../../kits/Buttons';
@@ -12,18 +17,19 @@ import { ChainIcon } from '../../ChainIcon';
 import { CopyButton } from '../../CopyButton';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { HardwareAddressProps } from './types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export const HardwareAddress = ({
   genericAccount,
   isConnected,
   anyProcessing,
   theme,
-  DialogRename,
   isProcessing,
   openConfirmHandler,
   openRemoveHandler,
   openDeleteHandler,
   onClipboardCopy,
+  setIsDialogOpen,
 }: HardwareAddressProps) => {
   const { accountName, encodedAccounts } = genericAccount;
 
@@ -37,7 +43,15 @@ export const HardwareAddress = ({
       >
         <h2>{accountName}</h2>
         <div style={{ flex: 1 }}>
-          <DialogRename genericAccount={genericAccount} />
+          <TooltipRx text={'Rename Accounts'} theme={theme}>
+            <button type="button" aria-label="Rename Accounts">
+              <FontAwesomeIcon
+                icon={faPenSquare}
+                onClick={() => setIsDialogOpen(genericAccount, true)}
+                transform={'shrink-1'}
+              />
+            </button>
+          </TooltipRx>
         </div>
 
         {/* Account buttons */}

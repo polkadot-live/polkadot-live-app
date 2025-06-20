@@ -2,25 +2,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Dialog from '@radix-ui/react-dialog';
-import {
-  DialogContent,
-  DialogTrigger,
-  FlexColumn,
-  FlexRow,
-} from '@polkadot-live/ui/styles';
-import { postRenameAccount, renameAccountInStore } from '@polkadot-live/core';
+import { DialogContent, FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { useConnections } from '@ren/contexts/common';
-import { useAddresses } from '@ren/contexts/import';
+import { useRenameHandler } from '@ren/contexts/import';
 import { useState } from 'react';
-import { renderToast, validateAccountName } from '@polkadot-live/ui/utils';
+import { renderToast } from '@polkadot-live/ui/utils';
 import { TooltipRx } from '@polkadot-live/ui/components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faCheck,
-  faPenToSquare,
-  faXmark,
-} from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { unescape } from '@w3ux/utils';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -56,12 +46,13 @@ const FormLabel = ({
 
 export const DialogRename = ({ genericAccount }: DialogRenameProps) => {
   const { accountName, encodedAccounts } = genericAccount;
-  const { handleAddressImport, isUniqueAccountName } = useAddresses();
-  const { getTheme } = useConnections();
 
-  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
-  const [inputVal, setInputVal] = useState<string>(accountName);
+  const { getTheme } = useConnections();
+  const { isDialogOpen, renameHandler, setIsDialogOpen, validateNameInput } =
+    useRenameHandler();
+
   const theme = getTheme();
+  const [inputVal, setInputVal] = useState<string>(accountName);
 
   const nameData: [ChainID, string][] = Object.values(encodedAccounts).map(
     ({ alias, chainId }) => [chainId, alias]
@@ -73,48 +64,6 @@ export const DialogRename = ({ genericAccount }: DialogRenameProps) => {
    */
   const cancelEditing = () => {
     setInputVal(accountName);
-  };
-
-  /**
-   * Validate account name input.
-   */
-  const validateNameInput = (trimmed: string): boolean => {
-    // Handle validation failure.
-    if (!validateAccountName(trimmed)) {
-      renderToast('Bad account name.', `toast-${trimmed}`, 'error');
-      return false;
-    }
-
-    // Handle duplicate account name.
-    if (!isUniqueAccountName(trimmed)) {
-      renderToast(
-        'Account name is already in use.',
-        `toast-${trimmed}`,
-        'error'
-      );
-      return false;
-    }
-
-    return true;
-  };
-
-  /**
-   * Rename handler for generic and encoded accounts.
-   */
-  const renameHandler = async (updatedAccount: ImportedGenericAccount) => {
-    await renameAccountInStore(updatedAccount);
-
-    // Update encoded account names in main renderer.
-    const { encodedAccounts: updatedEncoded } = updatedAccount;
-    for (const encodedAccount of Object.values(updatedEncoded)) {
-      const { chainId, alias } = encodedAccount;
-      if (alias !== genericAccount.encodedAccounts[chainId].alias) {
-        postRenameAccount(encodedAccount);
-      }
-    }
-
-    // Update import window address state
-    handleAddressImport(updatedAccount);
   };
 
   /**
@@ -136,7 +85,7 @@ export const DialogRename = ({ genericAccount }: DialogRenameProps) => {
     const updatedAccount: ImportedGenericAccount = { ...genericAccount };
     updatedAccount.accountName = trimmed;
 
-    renameHandler(updatedAccount).then(() => {
+    renameHandler(updatedAccount, genericAccount).then(() => {
       setInputVal(trimmed);
     });
   };
@@ -165,7 +114,7 @@ export const DialogRename = ({ genericAccount }: DialogRenameProps) => {
     };
     updatedAccount.encodedAccounts[chainId].alias = trimmed;
 
-    renameHandler(updatedAccount).then(() => {
+    renameHandler(updatedAccount, genericAccount).then(() => {
       setEncodedNames((prev) => new Map(prev).set(chainId, trimmed));
     });
   };
@@ -183,12 +132,7 @@ export const DialogRename = ({ genericAccount }: DialogRenameProps) => {
    * Reset input when dialog closed.
    */
   const handleOpenChange = (open: boolean) => {
-    setDialogOpen(open);
-    if (!open) {
-      setInputVal('');
-    } else {
-      setInputVal(accountName);
-    }
+    setIsDialogOpen(genericAccount, open);
   };
 
   /**
@@ -213,25 +157,13 @@ export const DialogRename = ({ genericAccount }: DialogRenameProps) => {
   };
 
   return (
-    <Dialog.Root open={dialogOpen} onOpenChange={handleOpenChange}>
-      <DialogTrigger $theme={theme}>
-        <FlexRow $gap={'0.75rem'} className="btn-text">
-          <TooltipRx theme={theme} text={'Rename Accounts'}>
-            <FontAwesomeIcon icon={faPenToSquare} transform={'shrink-2'} />
-          </TooltipRx>
-        </FlexRow>
-      </DialogTrigger>
+    <Dialog.Root
+      open={isDialogOpen(genericAccount)}
+      onOpenChange={handleOpenChange}
+    >
       <Dialog.Portal>
         <Dialog.Overlay className="Dialog__Overlay" />
-
-        <DialogContent
-          $theme={theme}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-            }
-          }}
-        >
+        <DialogContent $theme={theme}>
           <Dialog.Close className="Dialog__IconButton">
             <Cross2Icon />
           </Dialog.Close>

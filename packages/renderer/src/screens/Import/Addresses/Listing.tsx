@@ -12,6 +12,7 @@ import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { useAddresses } from '@ren/contexts/import';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ManageAccountsProps } from './types';
+import { DialogRename } from '../Addresses/Dialogs/DialogRename';
 
 export const Listing = ({ source, setSection }: ManageAccountsProps) => {
   const { getAccounts } = useAddresses();
@@ -38,6 +39,11 @@ export const Listing = ({ source, setSection }: ManageAccountsProps) => {
 
   return (
     <section>
+      {/* Mount Rename Dialogs */}
+      {genericAccounts.map((a) => (
+        <DialogRename key={a.publicKeyHex} genericAccount={a} />
+      ))}
+
       {/* Address List */}
       <UI.AccordionWrapper $onePart={true}>
         <Accordion.Root

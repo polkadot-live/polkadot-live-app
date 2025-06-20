@@ -17,10 +17,6 @@ export type HardwareAddressProps = ComponentBase & {
   isConnected: boolean;
   // Theme object.
   theme: AnyData;
-  // Handle rename.
-  DialogRename: (props: {
-    genericAccount: ImportedGenericAccount;
-  }) => JSX.Element;
   // If a particular encoded account is processing.
   isProcessing: (encodedAccount: EncodedAccount) => boolean;
   // Handle clipboard copy.
@@ -31,4 +27,9 @@ export type HardwareAddressProps = ComponentBase & {
   openDeleteHandler: () => void;
   // Handle remove UI.
   openRemoveHandler: (encodedAccount: EncodedAccount) => void;
+  // Sets open flag for rename dialogs.
+  setIsDialogOpen: (
+    genericAccount: ImportedGenericAccount,
+    flag: boolean
+  ) => void;
 };
