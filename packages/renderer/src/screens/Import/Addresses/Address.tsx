@@ -2,9 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Confirm, Delete, Remove } from '../Actions';
-import { DialogRename } from './Dialogs/DialogRename';
 import { HardwareAddress } from '@polkadot-live/ui/components';
-import { useAccountStatuses } from '@ren/contexts/import';
+import { useAccountStatuses, useRenameHandler } from '@ren/contexts/import';
 import { useConnections } from '@ren/contexts/common';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import type { AddressProps } from './types';
@@ -15,6 +14,7 @@ export const Address = ({ genericAccount, setSection }: AddressProps) => {
   const { openOverlayWith } = useOverlay();
   const { getStatusForAccount, anyProcessing } = useAccountStatuses();
   const { getTheme, getOnlineMode } = useConnections();
+  const { setIsDialogOpen } = useRenameHandler();
   const theme = getTheme();
 
   return (
@@ -27,9 +27,8 @@ export const Address = ({ genericAccount, setSection }: AddressProps) => {
       isProcessing={({ address }) =>
         Boolean(getStatusForAccount(address, source))
       }
+      setIsDialogOpen={setIsDialogOpen}
       theme={theme}
-      /* Dialog */
-      DialogRename={DialogRename}
       /* Handlers */
       onClipboardCopy={async (text: string) =>
         await window.myAPI.copyToClipboard(text)
