@@ -3,7 +3,8 @@
 
 import { ConfigImport, ConfigRenderer } from '../config';
 import type {
-  AccountSource,
+  EncodedAccount,
+  ImportedGenericAccount,
   LedgerLocalAddress,
   LocalAddress,
 } from '@polkadot-live/types/accounts';
@@ -17,13 +18,11 @@ import type { IpcTask } from '@polkadot-live/types/communication';
  * @summary Updates a stored account's name in the main process.
  */
 export const renameAccountInStore = async (
-  publicKeyHex: string,
-  source: AccountSource,
-  newName: string
+  genericAccount: ImportedGenericAccount
 ) => {
   const ipcTask: IpcTask = {
-    action: 'raw-account:rename',
-    data: { newName, publicKeyHex, source },
+    action: 'raw-account:update',
+    data: { serialized: JSON.stringify(genericAccount) },
   };
 
   await window.myAPI.rawAccountTask(ipcTask);
@@ -33,14 +32,11 @@ export const renameAccountInStore = async (
  * @name postRenameAccount
  * @summary Post a message to main renderer to process an account rename.
  */
-export const postRenameAccount = (address: string, newName: string) => {
+export const postRenameAccount = (encodedAccount: EncodedAccount) => {
+  const { address, alias: newName, chainId } = encodedAccount;
   ConfigImport.portImport.postMessage({
     task: 'renderer:account:rename',
-    data: {
-      address,
-      chainId: getAddressChainId(address),
-      newName,
-    },
+    data: { address, chainId, newName },
   });
 };
 

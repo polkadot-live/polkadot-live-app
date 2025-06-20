@@ -8,7 +8,7 @@ import {
   FlexColumn,
   FlexRow,
 } from '@polkadot-live/ui/styles';
-import { renameAccountInStore } from '@polkadot-live/core';
+import { postRenameAccount, renameAccountInStore } from '@polkadot-live/core';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { useConnections } from '@ren/contexts/common';
 import { useAddresses } from '@ren/contexts/import';
@@ -55,7 +55,7 @@ const FormLabel = ({
 );
 
 export const DialogRename = ({ genericAccount }: DialogRenameProps) => {
-  const { accountName, encodedAccounts, publicKeyHex, source } = genericAccount;
+  const { accountName, encodedAccounts } = genericAccount;
   const { handleAddressImport, isUniqueAccountName } = useAddresses();
   const { getTheme } = useConnections();
 
@@ -75,17 +75,46 @@ export const DialogRename = ({ genericAccount }: DialogRenameProps) => {
     setInputVal(accountName);
   };
 
-  const renameHandler = async (newName: string) => {
-    await renameAccountInStore(publicKeyHex, source, newName);
+  /**
+   * Validate account name input.
+   */
+  const validateNameInput = (trimmed: string): boolean => {
+    // Handle validation failure.
+    if (!validateAccountName(trimmed)) {
+      renderToast('Bad account name.', `toast-${trimmed}`, 'error');
+      return false;
+    }
 
-    // TODO: Apply to encoded accounts.
-    // Post message to main renderer to process the account rename.
-    //const address = encodeAddress(publicKeyHex, 0); // TMP
-    //postRenameAccount(address, newName);
+    // Handle duplicate account name.
+    if (!isUniqueAccountName(trimmed)) {
+      renderToast(
+        'Account name is already in use.',
+        `toast-${trimmed}`,
+        'error'
+      );
+      return false;
+    }
+
+    return true;
+  };
+
+  /**
+   * Rename handler for generic and encoded accounts.
+   */
+  const renameHandler = async (updatedAccount: ImportedGenericAccount) => {
+    await renameAccountInStore(updatedAccount);
+
+    // Update encoded account names in main renderer.
+    const { encodedAccounts: updatedEncoded } = updatedAccount;
+    for (const encodedAccount of Object.values(updatedEncoded)) {
+      const { chainId, alias } = encodedAccount;
+      if (alias !== genericAccount.encodedAccounts[chainId].alias) {
+        postRenameAccount(encodedAccount);
+      }
+    }
 
     // Update import window address state
-    genericAccount.accountName = newName;
-    handleAddressImport(genericAccount);
+    handleAddressImport(updatedAccount);
   };
 
   /**
@@ -98,26 +127,46 @@ export const DialogRename = ({ genericAccount }: DialogRenameProps) => {
     }
 
     // Handle validation failure.
-    if (!validateAccountName(trimmed)) {
-      renderToast('Bad account name.', `toast-${trimmed}`, 'error');
-      //setInputVal(accountName);
-      return;
-    }
-
-    // Handle duplicate account name.
-    if (!isUniqueAccountName(trimmed)) {
-      renderToast(
-        'Account name is already in use.',
-        `toast-${trimmed}`,
-        'error'
-      );
+    if (!validateNameInput(trimmed)) {
       return;
     }
 
     // Success alert and rename account.
     renderToast('Account name updated.', `toast-${trimmed}`, 'success');
-    renameHandler(trimmed).then(() => {
+    const updatedAccount: ImportedGenericAccount = { ...genericAccount };
+    updatedAccount.accountName = trimmed;
+
+    renameHandler(updatedAccount).then(() => {
       setInputVal(trimmed);
+    });
+  };
+
+  /**
+   * Rename an encoded account.
+   */
+  const commitEncodedRename = (chainId: ChainID) => {
+    const trimmed = (encodedNames.get(chainId) || '').trim();
+    if (trimmed === genericAccount.encodedAccounts[chainId].alias) {
+      return;
+    }
+
+    // Handle validation failure.
+    if (!validateNameInput(trimmed)) {
+      return;
+    }
+
+    // Success alert and rename account.
+    renderToast('Account name updated.', `toast-${trimmed}`, 'success');
+
+    const clone = structuredClone(genericAccount.encodedAccounts);
+    const updatedAccount: ImportedGenericAccount = {
+      ...genericAccount,
+      encodedAccounts: clone,
+    };
+    updatedAccount.encodedAccounts[chainId].alias = trimmed;
+
+    renameHandler(updatedAccount).then(() => {
+      setEncodedNames((prev) => new Map(prev).set(chainId, trimmed));
     });
   };
 
@@ -140,13 +189,6 @@ export const DialogRename = ({ genericAccount }: DialogRenameProps) => {
     } else {
       setInputVal(accountName);
     }
-  };
-
-  /**
-   * Rename an encoded account.
-   */
-  const commitEncodedRename = (chainId: ChainID) => {
-    console.log(`>> TODO: ${chainId}`);
   };
 
   /**
@@ -182,7 +224,14 @@ export const DialogRename = ({ genericAccount }: DialogRenameProps) => {
       <Dialog.Portal>
         <Dialog.Overlay className="Dialog__Overlay" />
 
-        <DialogContent $theme={theme}>
+        <DialogContent
+          $theme={theme}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+            }
+          }}
+        >
           <Dialog.Close className="Dialog__IconButton">
             <Cross2Icon />
           </Dialog.Close>
