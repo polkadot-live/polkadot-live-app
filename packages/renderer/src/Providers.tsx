@@ -33,6 +33,7 @@ import {
   ImportHandlerProvider,
   LedgerHardwareProvider,
   RemoveHandlerProvider,
+  RenameHandlerProvider,
   WalletConnectImportProvider,
 } from '@ren/contexts/import';
 
@@ -106,6 +107,8 @@ const getProvidersForWindow = () => {
         RemoveHandlerProvider,
         // Requires useAccountStatuses + useAddresses
         DeleteHandlerProvider,
+        // Requires useAddresses
+        RenameHandlerProvider,
         // Requires useConnections
         LedgerHardwareProvider,
         // Requires useConnections

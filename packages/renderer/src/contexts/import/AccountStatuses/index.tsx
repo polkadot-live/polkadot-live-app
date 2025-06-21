@@ -2,9 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { getSupportedSources } from '@polkadot-live/consts/chains';
+import { setStateWithRef } from '@w3ux/utils';
 import { useAddresses } from '../Addresses';
-import type { AccountSource } from '@polkadot-live/types/accounts';
+import type {
+  AccountSource,
+  ImportedGenericAccount,
+} from '@polkadot-live/types/accounts';
 import type { AccountStatusesContextInterface } from './types';
 
 export const AccountStatusesContext =
@@ -28,200 +33,91 @@ export const AccountStatusesProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { ledgerAddresses, readOnlyAddresses, vaultAddresses, wcAddresses } =
-    useAddresses();
+  const { getAccounts } = useAddresses();
 
-  /// Utility to initialize account statuses to false.
-  const fetchAccountStatuses = (
-    source: AccountSource
-  ): Map<string, boolean> => {
-    const map = new Map<string, boolean>();
-    switch (source) {
-      case 'ledger': {
-        for (const { address } of ledgerAddresses) {
+  /**
+   * Processing status map.
+   */
+  const [statusMap, setStatusMap] = useState(
+    new Map<AccountSource, Map<string, boolean>>()
+  );
+  const statusMapRef = useRef(statusMap);
+
+  /**
+   * Initialize status map on mount.
+   */
+  useEffect(() => {
+    const outer: typeof statusMap = new Map();
+
+    for (const source of getSupportedSources()) {
+      const map = new Map<string, boolean>();
+      for (const { encodedAccounts } of getAccounts(source)) {
+        for (const { address } of Object.values(encodedAccounts)) {
           map.set(address, false);
         }
-        return map;
       }
-      case 'read-only': {
-        for (const { address } of readOnlyAddresses) {
-          map.set(address, false);
-        }
-        return map;
-      }
-      case 'vault': {
-        for (const { address } of vaultAddresses) {
-          map.set(address, false);
-        }
-        return map;
-      }
-      case 'wallet-connect': {
-        for (const { address } of wcAddresses) {
-          map.set(address, false);
-        }
-        return map;
-      }
-      default: {
-        throw new Error('unreachable');
-      }
+      outer.set(source, map);
     }
-  };
 
-  /// Status of vault accounts.
-  const [vaultAccountStatuses, setVaultAccountStatuses] = useState<
-    Map<string, boolean>
-  >(() => fetchAccountStatuses('vault'));
+    setStateWithRef(outer, setStatusMap, statusMapRef);
+  }, []);
 
-  /// Status of ledger accounts.
-  const [ledgerAccountStatuses, setLedgerAccountStatuses] = useState<
-    Map<string, boolean>
-  >(() => fetchAccountStatuses('ledger'));
-
-  /// Status of read-only accounts.
-  const [readOnlyAccountStatuses, setReadOnlyAccountStatuses] = useState<
-    Map<string, boolean>
-  >(() => fetchAccountStatuses('read-only'));
-
-  /// Status of wallet-connect accounts.
-  const [wcAccountStatuses, setWcAccountStatuses] = useState<
-    Map<string, boolean>
-  >(() => fetchAccountStatuses('wallet-connect'));
-
-  /// Set processing status of an account.
+  /**
+   * Set processing status of an account.
+   */
   const setStatusForAccount = (
-    address: string,
+    enAddress: string,
     source: AccountSource,
     status: boolean
   ) => {
-    switch (source) {
-      case 'ledger': {
-        setLedgerAccountStatuses((prev) => {
-          const cloned = new Map(prev);
-          cloned.set(address, status);
-          return cloned;
-        });
-        break;
-      }
-      case 'read-only': {
-        setReadOnlyAccountStatuses((prev) => {
-          const cloned = new Map(prev);
-          cloned.set(address, status);
-          return cloned;
-        });
-        break;
-      }
-      case 'vault': {
-        setVaultAccountStatuses((prev) => {
-          const cloned = new Map(prev);
-          cloned.set(address, status);
-          return cloned;
-        });
-        break;
-      }
-      case 'wallet-connect': {
-        setWcAccountStatuses((prev) => {
-          const cloned = new Map(prev);
-          cloned.set(address, status);
-          return cloned;
-        });
-        break;
-      }
-      default: {
-        break;
-      }
-    }
+    const sourceMap = statusMap.get(source)!;
+    const updated = new Map(sourceMap).set(enAddress, status);
+    const map = new Map(statusMap).set(source, updated);
+    setStateWithRef(map, setStatusMap, statusMapRef);
   };
 
-  /// Get the processing status of an account.
-  const getStatusForAccount = (address: string, source: AccountSource) => {
-    switch (source) {
-      case 'ledger': {
-        return ledgerAccountStatuses.get(address) || null;
-      }
-      case 'read-only': {
-        return readOnlyAccountStatuses.get(address) || null;
-      }
-      case 'vault': {
-        return vaultAccountStatuses.get(address) || null;
-      }
-      case 'wallet-connect': {
-        return wcAccountStatuses.get(address) || null;
-      }
-      default: {
-        return null;
-      }
-    }
+  /**
+   * Get the processing status of an account.
+   */
+  const getStatusForAccount = (enAddress: string, source: AccountSource) =>
+    statusMapRef.current.get(source)?.get(enAddress) || null;
+
+  /**
+   * Insert an account status entry.
+   */
+  const insertAccountStatus = (enAddress: string, source: AccountSource) => {
+    const sourceMap = statusMap.get(source)!;
+    const map = new Map(statusMap).set(source, sourceMap.set(enAddress, false));
+    setStateWithRef(map, setStatusMap, statusMapRef);
   };
 
-  /// Insert an account status entry.
-  const insertAccountStatus = (address: string, source: AccountSource) => {
-    switch (source) {
-      case 'ledger': {
-        ledgerAccountStatuses.set(address, false);
-        break;
-      }
-      case 'read-only': {
-        readOnlyAccountStatuses.set(address, false);
-        break;
-      }
-      case 'vault': {
-        vaultAccountStatuses.set(address, false);
-        break;
-      }
-      case 'wallet-connect': {
-        wcAccountStatuses.set(address, false);
-        break;
-      }
-      default: {
-        break;
-      }
+  /**
+   * Delete an account status entry.
+   */
+  const deleteAccountStatus = (enAddress: string, source: AccountSource) => {
+    const sourceMap = statusMapRef.current.get(source)!;
+    if (sourceMap.has(enAddress)) {
+      sourceMap.delete(enAddress);
     }
+
+    const map = new Map(statusMap).set(source, sourceMap);
+    setStateWithRef(map, setStatusMap, statusMapRef);
   };
 
-  /// Delete an account status entry.
-  const deleteAccountStatus = (address: string, source: AccountSource) => {
-    switch (source) {
-      case 'ledger': {
-        if (ledgerAccountStatuses.has(address)) {
-          ledgerAccountStatuses.delete(address);
-        }
-        break;
-      }
-      case 'read-only': {
-        if (readOnlyAccountStatuses.has(address)) {
-          readOnlyAccountStatuses.delete(address);
-        }
-        break;
-      }
-      case 'vault': {
-        if (vaultAccountStatuses.has(address)) {
-          vaultAccountStatuses.delete(address);
-        }
-        break;
-      }
-      case 'wallet-connect': {
-        if (wcAccountStatuses.has(address)) {
-          wcAccountStatuses.delete(address);
-        }
-        break;
-      }
-      default: {
-        break;
-      }
-    }
+  /**
+   * Utility to determine if any encoded accounts are processing.
+   */
+  const anyProcessing = (genericAccount: ImportedGenericAccount): boolean => {
+    const { encodedAccounts, source } = genericAccount;
+    return Object.values(encodedAccounts)
+      .map(({ address }) => Boolean(getStatusForAccount(address, source)))
+      .some(Boolean);
   };
 
   return (
     <AccountStatusesContext.Provider
       value={{
-        ledgerAccountStatuses,
-        readOnlyAccountStatuses,
-        vaultAccountStatuses,
-        wcAccountStatuses,
-        setLedgerAccountStatuses,
-        setReadOnlyAccountStatuses,
-        setVaultAccountStatuses,
-        setWcAccountStatuses,
+        anyProcessing,
         setStatusForAccount,
         getStatusForAccount,
         insertAccountStatus,

@@ -138,15 +138,15 @@ export const WalletConnectImportProvider = ({
 
     setIsImporting(true);
     for (const selected of selectedAddresses) {
-      const { encoded } = selected;
+      const { encoded, publicKeyHex } = selected;
 
-      if (isAlreadyImported(encoded)) {
+      if (isAlreadyImported(publicKeyHex)) {
         continue;
       }
 
       const accountName = ellipsisFn(encoded);
       await handleImportAddress(encoded, 'wallet-connect', accountName, false);
-      insertAccountStatus(encoded, 'wallet-connect');
+      insertAccountStatus(publicKeyHex, 'wallet-connect');
     }
 
     setIsImporting(false);

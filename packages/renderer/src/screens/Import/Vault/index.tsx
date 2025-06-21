@@ -7,9 +7,10 @@ import { useAddresses } from '@ren/contexts/import';
 import type { ImportVaultProps } from '../types';
 
 export const ImportVault = ({ section, setSection }: ImportVaultProps) => {
-  const { vaultAddresses } = useAddresses();
+  const { getAccounts } = useAddresses();
+  const genericAccounts = getAccounts('vault');
 
-  return !vaultAddresses.length ? (
+  return !genericAccounts.length ? (
     <Splash setSection={setSection} />
   ) : (
     <Manage section={section} setSection={setSection} />

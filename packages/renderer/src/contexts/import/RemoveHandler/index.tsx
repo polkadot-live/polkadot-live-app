@@ -5,8 +5,10 @@ import * as defaults from './defaults';
 import { ConfigImport, getAddressChainId } from '@polkadot-live/core';
 import { createContext, useContext } from 'react';
 import { useAddresses } from '@ren/contexts/import';
-import type { AccountSource } from '@polkadot-live/types/accounts';
-import type { IpcTask } from '@polkadot-live/types/communication';
+import type {
+  EncodedAccount,
+  ImportedGenericAccount,
+} from '@polkadot-live/types/accounts';
 import type { RemoveHandlerContextInterface } from './types';
 
 export const RemoveHandlerContext =
@@ -21,40 +23,40 @@ export const RemoveHandlerProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { handleAddressRemove } = useAddresses();
+  const { handleAddressUpdate } = useAddresses();
 
-  /// Exposed function to remove an address.
+  /**
+   * Removed generic account from main window.
+   */
   const handleRemoveAddress = async (
-    address: string,
-    source: AccountSource,
-    accountName: string
+    encodedAccount: EncodedAccount,
+    genericAccount: ImportedGenericAccount
   ) => {
-    // Update addresses state and references.
-    handleAddressRemove(source, address);
+    const { address, chainId } = encodedAccount;
+    genericAccount.encodedAccounts[chainId].isImported = false;
 
-    // Update address data in store in main process.
-    await updateAddressInStore(source, address, accountName);
+    // Update React state and store.
+    handleAddressUpdate(genericAccount);
+    await updateAddressInStore(genericAccount);
 
     // Process removed address in main renderer.
-    postAddressToMainWindow(address);
+    postToMain(address);
   };
 
-  /// Update address in store.
-  const updateAddressInStore = async (
-    source: AccountSource,
-    address: string,
-    accountName: string
-  ) => {
-    const ipcTask: IpcTask = {
-      action: 'raw-account:remove',
-      data: { source, address, name: accountName },
-    };
-
-    await window.myAPI.rawAccountTask(ipcTask);
+  /**
+   * Update address in store.
+   */
+  const updateAddressInStore = async (account: ImportedGenericAccount) => {
+    await window.myAPI.rawAccountTask({
+      action: 'raw-account:update',
+      data: { serialized: JSON.stringify(account) },
+    });
   };
 
-  /// Send address data to main window to process removal.
-  const postAddressToMainWindow = (address: string) => {
+  /**
+   * Send address data to main window to process removal.
+   */
+  const postToMain = (address: string) => {
     ConfigImport.portImport.postMessage({
       task: 'renderer:address:remove',
       data: {
