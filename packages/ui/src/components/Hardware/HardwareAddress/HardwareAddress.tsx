@@ -16,15 +16,16 @@ import { TooltipRx } from '../../TooltipRx';
 import { FlexColumn, FlexRow } from '../../../styles';
 import { ChainIcon } from '../../ChainIcon';
 import { CopyButton } from '../../CopyButton';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { HardwareAddressProps } from './types';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export const HardwareAddress = ({
   genericAccount,
   isConnected,
   anyProcessing,
   theme,
+  DialogShowAddress,
   isProcessing,
   openConfirmHandler,
   openRemoveHandler,
@@ -103,13 +104,14 @@ export const HardwareAddress = ({
                 className="EntryArrow"
               />
               <span className="overflow">{a.alias}</span>
-              <FlexRow $gap="0.75rem" className="AddressRow">
+              <FlexRow $gap="0.6rem" className="AddressRow">
                 <span className="overflow">{ellipsisFn(a.address, 6)}</span>
                 <CopyButton
                   iconFontSize="0.96rem"
                   theme={theme}
                   onCopyClick={async () => await onClipboardCopy(a.address)}
                 />
+                <DialogShowAddress address={a.address} />
               </FlexRow>
 
               <FlexRow className="NetworkRow">
