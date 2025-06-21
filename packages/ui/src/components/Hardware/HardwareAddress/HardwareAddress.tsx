@@ -6,24 +6,26 @@ import {
   faMinus,
   faTrash,
   faPenSquare,
+  faCaretRight,
 } from '@fortawesome/free-solid-svg-icons';
 import { ellipsisFn } from '@w3ux/utils';
 import { EllipsisSpinner } from '../../Spinners';
-import { ButtonMono } from '../../../kits/Buttons';
+import { ButtonMono, ButtonPrimaryInvert } from '../../../kits/Buttons';
 import { HardwareAddressWrapper } from './Wrapper';
 import { TooltipRx } from '../../TooltipRx';
 import { FlexColumn, FlexRow } from '../../../styles';
 import { ChainIcon } from '../../ChainIcon';
 import { CopyButton } from '../../CopyButton';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { HardwareAddressProps } from './types';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export const HardwareAddress = ({
   genericAccount,
   isConnected,
   anyProcessing,
   theme,
+  DialogShowAddress,
   isProcessing,
   openConfirmHandler,
   openRemoveHandler,
@@ -36,23 +38,32 @@ export const HardwareAddress = ({
   return (
     <HardwareAddressWrapper style={{ paddingBottom: '1.5rem' }}>
       {/* Account name */}
-      <FlexRow
-        $gap={'0.75rem'}
-        style={{ padding: '1rem 0 1rem 1rem', width: '100%' }}
-        className="input-wrapper"
-      >
-        <h2>{accountName}</h2>
+      <FlexRow $gap={'0.9rem'} className="PrimaryRow">
+        <h2 className="overflow">{accountName}</h2>
         <div style={{ flex: 1 }}>
           <TooltipRx text={'Rename Accounts'} theme={theme}>
-            <button type="button" aria-label="Rename Accounts">
+            <button
+              type="button"
+              className="RenameBtn"
+              aria-label="Rename Accounts"
+            >
               <FontAwesomeIcon
                 icon={faPenSquare}
                 onClick={() => setIsDialogOpen(genericAccount, true)}
-                transform={'shrink-1'}
+                transform={'grow-1'}
               />
             </button>
           </TooltipRx>
         </div>
+
+        <FlexRow $gap={'0.25rem'}>
+          <ButtonPrimaryInvert
+            disabled={true}
+            className="ManageBtn"
+            text="Manage Networks"
+            iconLeft={faCaretRight}
+          />
+        </FlexRow>
 
         {/* Account buttons */}
         <FlexRow $gap={'0.75rem'}>
@@ -73,31 +84,50 @@ export const HardwareAddress = ({
 
       {/* Encoded addresses */}
       <FlexColumn $rowGap={'1.25rem'}>
+        <span
+          style={{
+            borderTop: `1px solid ${theme.textDimmed}`,
+            opacity: '0.1',
+          }}
+        />
+
         {Array.from(Object.entries(encodedAccounts)).map(([cid, a]) => (
-          <FlexRow $gap={'1.25rem'} key={`${cid}-encoded`}>
-            {/* Chain icon */}
-            <ChainIcon
-              style={{
-                width: '14px',
-                height: '14px',
-                fill: cid === 'Polkadot' ? '#ac2461' : undefined,
-                marginLeft: '1rem',
-              }}
-              chainId={cid as ChainID}
-            />
-            <FlexRow $gap="0.6rem" style={{ flex: 1 }}>
-              <span>{ellipsisFn(a.address, 12)}</span>
-              <CopyButton
-                iconFontSize="0.96rem"
-                theme={theme}
-                onCopyClick={async () => await onClipboardCopy(a.address)}
+          <FlexRow
+            $gap={'1.25rem'}
+            key={`${cid}-encoded`}
+            className="EncodedRow"
+          >
+            <FlexRow $gap="1.25rem" className="NameAddressRow">
+              <FontAwesomeIcon
+                icon={faCaretRight}
+                transform={'grow-2'}
+                className="EntryArrow"
               />
+              <span className="overflow">{a.alias}</span>
+              <FlexRow $gap="0.6rem" className="AddressRow">
+                <span className="overflow">{ellipsisFn(a.address, 6)}</span>
+                <CopyButton
+                  iconFontSize="0.96rem"
+                  theme={theme}
+                  onCopyClick={async () => await onClipboardCopy(a.address)}
+                />
+                <DialogShowAddress address={a.address} />
+              </FlexRow>
+
+              <FlexRow className="NetworkRow">
+                <span className="overflow NetworkLabel">{a.chainId}</span>
+                <ChainIcon
+                  chainId={cid as ChainID}
+                  className="NetworkIcon"
+                  style={{ fill: cid === 'Polkadot' ? '#ac2461' : undefined }}
+                />
+              </FlexRow>
             </FlexRow>
 
             {/* Manage buttons */}
             <FlexRow $gap={'0.75rem'}>
               {a.isImported && !isProcessing(a) ? (
-                <TooltipRx text={'Remove From Main Window'} theme={theme}>
+                <TooltipRx text={'Remove Subscriptions'} theme={theme}>
                   <div style={{ position: 'relative' }}>
                     <ButtonMono
                       className="action-btn white-hover"
@@ -124,7 +154,7 @@ export const HardwareAddress = ({
                   ) : (
                     <TooltipRx
                       text={
-                        isConnected ? 'Add To Main Window' : 'Currently Offline'
+                        isConnected ? 'Add Subscriptions' : 'Currently Offline'
                       }
                       theme={theme}
                     >

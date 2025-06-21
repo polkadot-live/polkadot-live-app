@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Confirm, Delete, Remove } from '../Actions';
+import { DialogShowAddress } from './Dialogs/DialogShowAddress';
 import { HardwareAddress } from '@polkadot-live/ui/components';
 import { useAccountStatuses, useRenameHandler } from '@ren/contexts/import';
 import { useConnections } from '@ren/contexts/common';
@@ -29,6 +30,7 @@ export const Address = ({ genericAccount, setSection }: AddressProps) => {
       }
       setIsDialogOpen={setIsDialogOpen}
       theme={theme}
+      DialogShowAddress={DialogShowAddress}
       /* Handlers */
       onClipboardCopy={async (text: string) =>
         await window.myAPI.copyToClipboard(text)
