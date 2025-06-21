@@ -250,7 +250,7 @@ export const DialogRecipient = ({
                   <div className="Container">
                     {filteredAddresses.length > 0 ? (
                       filteredAddresses.map(
-                        ({ name: accountName, address }) => (
+                        ({ alias: accountName, address }) => (
                           <AddressItem
                             role="button"
                             selected={inputVal.address === address}

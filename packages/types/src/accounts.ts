@@ -124,6 +124,13 @@ export interface EncodedAccount {
   isImported: boolean;
 }
 
+/**
+ * Send screen account type.
+ */
+export interface SendAccount extends EncodedAccount {
+  source: AccountSource;
+}
+
 export interface ImportedGenericAccount {
   accountName: string;
   encodedAccounts: Record<ChainID, EncodedAccount>;

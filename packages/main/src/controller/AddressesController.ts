@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Config as ConfigMain } from '@/config/main';
+import { getSupportedSources } from '@polkadot-live/consts/chains';
 import { store } from '@/main';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { IpcTask } from '@polkadot-live/types/communication';
@@ -35,10 +36,6 @@ export class AddressesController {
         this.doImport(task);
         break;
       }
-      case 'raw-account:rename': {
-        this.rename(task);
-        break;
-      }
       case 'raw-account:update': {
         this.update(task);
         break;
@@ -51,15 +48,8 @@ export class AddressesController {
    * @summary Get all stored addresses and serialize as map.
    */
   static getAll(): string {
-    const sources: AccountSource[] = [
-      'vault',
-      'ledger',
-      'read-only',
-      'wallet-connect',
-    ];
-
     const map = new Map<AccountSource, string>();
-    for (const source of sources) {
+    for (const source of getSupportedSources()) {
       const key = ConfigMain.getStorageKey(source);
       const addresses = store.has(key) ? this.getFromStore(key) : '[]';
       map.set(source, addresses);
@@ -185,22 +175,6 @@ export class AddressesController {
     } catch (err) {
       console.log(err);
     }
-  }
-
-  /**
-   * @name rename
-   * @summary Update a stored address' name.
-   */
-  private static rename(task: IpcTask) {
-    const { newName, publicKeyHex, source } = task.data;
-    const key = ConfigMain.getStorageKey(source);
-    const serialized = JSON.stringify(
-      this.getStoredAddresses(key).map((a) =>
-        a.publicKeyHex === publicKeyHex ? { ...a, accountName: newName } : a
-      )
-    );
-
-    this.setInStore(key, serialized);
   }
 
   private static getFromStore(key: string) {
