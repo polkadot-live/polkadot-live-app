@@ -17,8 +17,8 @@ import type {
 } from '@polkadot-live/types/tx';
 import type {
   AccountSource,
-  LedgerLocalAddress,
-  LocalAddress,
+  ImportedGenericAccount,
+  SendAccount,
 } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { SendRecipient } from '@ren/screens/Home/Send/types';
@@ -36,8 +36,8 @@ interface SendNativeHook {
   spendable: bigint | null;
   summaryComplete: boolean;
   validAmount: boolean;
-  getReceiverAccounts: () => (LocalAddress | LedgerLocalAddress)[];
-  getSenderAccounts: () => LocalAddress[];
+  getReceiverAccounts: () => SendAccount[];
+  getSenderAccounts: () => SendAccount[];
   getSenderAccountName: () => string;
   handleProceedClick: () => Promise<void>;
   handleResetClick: () => void;
@@ -54,7 +54,7 @@ export const useSendNative = (): SendNativeHook => {
    * Addresses fetched from main process.
    */
   const [addressMap, setAddressMap] = useState(
-    new Map<AccountSource, (LocalAddress | LedgerLocalAddress)[]>()
+    new Map<AccountSource, SendAccount[]>()
   );
   const addressMapRef = useRef<typeof addressMap>(addressMap);
   const [updateCache, setUpdateCache] = useState(false);
@@ -113,7 +113,7 @@ export const useSendNative = (): SendNativeHook => {
 
     // Action meta.
     const actionMeta: ActionMeta = {
-      accountName: senderObj.name,
+      accountName: senderObj.alias,
       source: senderObj.source,
       action: 'balances_transferKeepAlive',
       from: sender,
@@ -282,31 +282,32 @@ export const useSendNative = (): SendNativeHook => {
   /**
    * Return all addresses capable of signing extrinsics.
    */
-  const getSenderAccounts = () => {
-    const targetSources: AccountSource[] = ['vault', 'wallet-connect'];
-    let result: LocalAddress[] = [];
+  const getSenderAccounts = (): SendAccount[] => {
+    let result: SendAccount[] = [];
 
-    for (const source of targetSources) {
-      const addresses = addressMap.get(source);
-      if (!addresses || addresses.length === 0) {
+    const sources: AccountSource[] = ['vault', 'wallet-connect'];
+    for (const source of sources) {
+      const accounts = addressMap.get(source);
+      if (!accounts || accounts.length === 0) {
         continue;
       }
 
       // NOTE: Disable Polkadot transfers in alpha releases.
-      const filtered = (addresses as LocalAddress[]).filter(
-        ({ address }) => getAddressChainId(address) !== 'Polkadot'
-      );
+      const filtered: SendAccount[] = accounts
+        .filter(({ chainId }) => chainId !== 'Polkadot')
+        .map((en) => ({ ...en, source }));
 
       result = result.concat(filtered);
     }
-    return result.sort((a, b) => a.name.localeCompare(b.name));
+
+    return result.sort((a, b) => a.alias.localeCompare(b.alias));
   };
 
   /**
    * Return all addresses for receiver address list.
    */
-  const getReceiverAccounts = () => {
-    let result: (LocalAddress | LedgerLocalAddress)[] = [];
+  const getReceiverAccounts = (): SendAccount[] => {
+    let result: SendAccount[] = [];
     for (const addresses of addressMap.values()) {
       result = result.concat(addresses);
     }
@@ -314,18 +315,18 @@ export const useSendNative = (): SendNativeHook => {
     // Filter accounts on sender address network.
     return (
       result
-        .filter(({ address }) => {
+        .filter(({ chainId }) => {
           if (!senderNetwork) {
             return true;
           } else {
-            return getAddressChainId(address) === senderNetwork;
+            return chainId === senderNetwork;
           }
         })
         // NOTE: Disable Polkadot transfers in alpha releases.
-        .filter(({ address }) => getAddressChainId(address) !== 'Polkadot')
+        .filter(({ chainId }) => chainId !== 'Polkadot')
         // Don't include sender in list.
         .filter(({ address }) => address !== sender)
-        .sort((a, b) => a.name.localeCompare(b.name))
+        .sort((a, b) => a.alias.localeCompare(b.alias))
     );
   };
 
@@ -347,10 +348,10 @@ export const useSendNative = (): SendNativeHook => {
   /**
    * Utility for getting sender and receiver account names.
    */
-  const getSenderAccountName = () =>
+  const getSenderAccountName = (): string =>
     !sender
       ? '-'
-      : getSenderAccounts().find(({ address }) => address === sender)?.name ||
+      : getSenderAccounts().find(({ address }) => address === sender)?.alias ||
         ellipsisFn(sender, 12);
 
   /**
@@ -366,25 +367,19 @@ export const useSendNative = (): SendNativeHook => {
       const parsedMap = new Map<AccountSource, string>(JSON.parse(serialized));
 
       for (const [source, ser] of parsedMap.entries()) {
-        switch (source) {
-          case 'vault':
-          case 'read-only':
-          case 'wallet-connect': {
-            const parsed: LocalAddress[] = JSON.parse(ser);
-            addressMapRef.current.set(source, parsed);
-            setUpdateCache(true);
-            break;
-          }
-          case 'ledger': {
-            const parsed: LedgerLocalAddress[] = JSON.parse(ser);
-            addressMapRef.current.set(source, parsed);
-            setUpdateCache(true);
-            break;
-          }
-          default: {
-            continue;
-          }
-        }
+        const parsed: ImportedGenericAccount[] = JSON.parse(ser);
+        const addresses = parsed
+          .map(({ encodedAccounts }) =>
+            Object.values(encodedAccounts).map((en) => en)
+          )
+          .flat();
+
+        addressMapRef.current.set(
+          source,
+          addresses.map((en) => ({ ...en, source }))
+        );
+
+        setUpdateCache(true);
       }
     };
 
