@@ -144,7 +144,7 @@ export const WalletConnectImportProvider = ({
         continue;
       }
 
-      const accountName = ellipsisFn(encoded);
+      const accountName = ellipsisFn(publicKeyHex, 5);
       await handleImportAddress(encoded, 'wallet-connect', accountName, false);
       insertAccountStatus(publicKeyHex, 'wallet-connect');
     }

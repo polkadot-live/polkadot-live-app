@@ -379,7 +379,7 @@ export const Send: React.FC = () => {
                           address={receiver.address}
                           accountName={
                             receiver.accountName ||
-                            ellipsisFn(receiver.address, 8)
+                            ellipsisFn(receiver.address, 5)
                           }
                         />
                       )}

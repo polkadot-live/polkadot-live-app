@@ -96,7 +96,7 @@ export const useSendNative = (): SendNativeHook => {
       accountName:
         receiver.managed && receiver.accountName
           ? receiver.accountName
-          : ellipsisFn(receiver.address, 8),
+          : ellipsisFn(receiver.address, 5),
     };
 
     const sendAmountPlanck: string = unitToPlanck(
@@ -352,7 +352,7 @@ export const useSendNative = (): SendNativeHook => {
     !sender
       ? '-'
       : getSenderAccounts().find(({ address }) => address === sender)?.alias ||
-        ellipsisFn(sender, 12);
+        ellipsisFn(sender, 5);
 
   /**
    * Fetch stored addresss from main when component loads.

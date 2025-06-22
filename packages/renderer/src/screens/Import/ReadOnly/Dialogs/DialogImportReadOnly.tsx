@@ -48,7 +48,8 @@ export const DialogImportReadOnly = () => {
     }
 
     // Check if public key is already imported.
-    if (isAlreadyImported(u8aToHex(decodeAddress(trimmed)))) {
+    const publicKeyHex = u8aToHex(decodeAddress(trimmed));
+    if (isAlreadyImported(publicKeyHex)) {
       renderToast('Address is already imported.', `toast-${trimmed}`, 'error');
       return;
     }
@@ -59,7 +60,7 @@ export const DialogImportReadOnly = () => {
     setDialogOpen(false);
 
     // Set processing flag to true if online and import via main renderer.
-    const accountName = ellipsisFn(trimmed);
+    const accountName = ellipsisFn(publicKeyHex, 5);
     await handleImportAddress(trimmed, 'read-only', accountName, true);
   };
 

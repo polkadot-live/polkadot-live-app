@@ -105,7 +105,7 @@ export const HardwareAddress = ({
               />
               <span className="overflow">{a.alias}</span>
               <FlexRow $gap="0.6rem" className="AddressRow">
-                <span className="overflow">{ellipsisFn(a.address, 6)}</span>
+                <span className="overflow">{ellipsisFn(a.address, 5)}</span>
                 <CopyButton
                   iconFontSize="0.96rem"
                   theme={theme}
