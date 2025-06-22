@@ -112,14 +112,6 @@ export const AddressesProvider = ({
       []
     );
 
-  /// Get all account sources.
-  const getAllAccountSources = (): AccountSource[] => [
-    'ledger',
-    'read-only',
-    'vault',
-    'wallet-connect',
-  ];
-
   /// Get readable account source for rendering.
   const getReadableAccountSource = (source: AccountSource): string => {
     switch (source) {
@@ -181,7 +173,6 @@ export const AddressesProvider = ({
         importAddress,
         removeAddress,
         getAddress,
-        getAllAccountSources,
         getReadableAccountSource,
         getAllAccounts,
         getSubscriptionCountForAccount,
