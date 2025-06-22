@@ -98,12 +98,7 @@ export class AddressesController {
   static getBackupData(): string {
     const map = new Map<AccountSource, string>();
 
-    for (const source of [
-      'ledger',
-      'read-only',
-      'vault',
-      'wallet-connect',
-    ] as AccountSource[]) {
+    for (const source of getSupportedSources()) {
       const key = ConfigMain.getStorageKey(source);
       const fetched = this.getStoredAddresses(key);
       if (fetched.length === 0) {

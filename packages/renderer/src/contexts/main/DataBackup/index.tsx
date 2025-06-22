@@ -188,7 +188,8 @@ export const DataBackupProvider = ({
         // Iterate encoded accounts and set `isImported` flag.
         for (const en of Object.values(encodedAccounts)) {
           if (en.isImported && !isOnline) {
-            en.isImported = false;
+            const chainId = en.chainId;
+            genericAccount.encodedAccounts[chainId].isImported = false;
           }
         }
 
@@ -207,14 +208,19 @@ export const DataBackupProvider = ({
 
         for (const enAccount of Object.values(encodedAccounts)) {
           // Import or remove encoded accounts from main window.
-          const { alias: name, address, chainId, isImported } = enAccount;
+          const { address, chainId, isImported } = enAccount;
           if (isImported) {
             const data = {
-              data: { address, chainId, name, publicKeyHex, source },
+              data: {
+                data: {
+                  serEncodedAccount: JSON.stringify(enAccount),
+                  serGenericAccount: JSON.stringify(genericAccount),
+                },
+              },
             };
             await handleImportAddress(new MessageEvent('message', data), true);
           } else {
-            const data = { data: { address, chainId } };
+            const data = { data: { data: { address, chainId } } };
             await handleRemoveAddress(new MessageEvent('message', data));
           }
 
