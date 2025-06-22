@@ -409,6 +409,7 @@ app.whenReady().then(async () => {
           WindowsController.setWindowsBackgroundColor(
             state ? ConfigMain.themeColorDark : ConfigMain.themeColorLight
           );
+          SharedState.set(syncId, state as boolean);
           break;
         }
         default: {

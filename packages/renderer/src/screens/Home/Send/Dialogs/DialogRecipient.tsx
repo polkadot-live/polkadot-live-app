@@ -190,7 +190,7 @@ export const DialogRecipient = ({
                   <h3>
                     {recipient.accountName !== null
                       ? recipient.accountName
-                      : ellipsisFn(recipient.address, 8)}
+                      : ellipsisFn(recipient.address, 5)}
                   </h3>
                 </Styles.FlexColumn>
               </Styles.FlexRow>
@@ -250,7 +250,7 @@ export const DialogRecipient = ({
                   <div className="Container">
                     {filteredAddresses.length > 0 ? (
                       filteredAddresses.map(
-                        ({ name: accountName, address }) => (
+                        ({ alias: accountName, address }) => (
                           <AddressItem
                             role="button"
                             selected={inputVal.address === address}

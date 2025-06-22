@@ -1,11 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import {
-  useAccountStatuses,
-  useAddresses,
-  useImportHandler,
-} from '@ren/contexts/import';
+import { useAddresses, useImportHandler } from '@ren/contexts/import';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
@@ -22,7 +18,6 @@ import { decodeAddress, u8aToHex } from 'dedot/utils';
 
 export const Reader = () => {
   const { setStatus: setOverlayStatus } = useOverlay();
-  const { insertAccountStatus } = useAccountStatuses();
   const { handleImportAddress } = useImportHandler();
   const { isAlreadyImported } = useAddresses();
 
@@ -60,22 +55,23 @@ export const Reader = () => {
 
     if (!isValid) {
       setFeedback('Invalid Address');
-    } else if (!isAlreadyImported(maybeAddress)) {
+      return;
+    }
+
+    const publicKeyHex = u8aToHex(decodeAddress(maybeAddress));
+    if (!isAlreadyImported(publicKeyHex)) {
       stopHtml5QrCode();
       setFeedback('Address Received');
-      await handleVaultImport(maybeAddress);
+      await handleVaultImport(publicKeyHex, maybeAddress);
     } else {
       setFeedback('Account Already Added');
     }
   };
 
   // Handle new vault address to local storage and close overlay.
-  const handleVaultImport = async (address: string) => {
-    const accountName = ellipsisFn(address);
-    const publicKeyHex: string = u8aToHex(decodeAddress(address));
-
-    insertAccountStatus(publicKeyHex, 'vault');
-    await handleImportAddress(address, 'vault', accountName, true);
+  const handleVaultImport = async (publicKeyHex: string, enAddress: string) => {
+    const accountName = ellipsisFn(publicKeyHex, 5);
+    await handleImportAddress(enAddress, 'vault', accountName, true);
     setImported(true);
   };
 

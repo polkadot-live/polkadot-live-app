@@ -106,7 +106,7 @@ export const ImportHandlerProvider = ({
         isImported: false,
         chainId,
         address: encoded,
-        alias: ellipsisFn(encoded, 12),
+        alias: ellipsisFn(encoded, 5),
       };
     }
 
