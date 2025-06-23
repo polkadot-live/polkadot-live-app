@@ -47,9 +47,15 @@ export const HardwareAddressWrapper = styled.div`
   }
 
   .RenameBtn {
+    cursor: pointer;
     opacity: 0.6;
     transition: opacity 0.2s ease-out;
-    &:hover {
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.25;
+    }
+    &:hover:not(:disabled) {
       opacity: 1;
     }
   }
