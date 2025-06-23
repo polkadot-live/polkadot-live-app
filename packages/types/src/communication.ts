@@ -58,7 +58,7 @@ export interface IpcTask {
     | 'raw-account:import'
     | 'raw-account:persist'
     | 'raw-account:remove'
-    | 'raw-account:rename'
+    | 'raw-account:update'
     // Accounts
     | 'account:import'
     | 'account:remove'

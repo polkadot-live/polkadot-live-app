@@ -7,7 +7,7 @@ import * as wc from '@polkadot-live/consts/walletConnect';
 import { ConfigRenderer, ExtrinsicsController } from '@polkadot-live/core';
 import UniversalProvider from '@walletconnect/universal-provider';
 import { createContext, useContext, useEffect, useRef } from 'react';
-import { encodeAddress } from 'dedot/utils';
+import { decodeAddress, encodeAddress, u8aToHex } from 'dedot/utils';
 import { useConnections } from '@ren/contexts/common';
 import { getSdkError } from '@walletconnect/utils';
 import type { AnyData } from '@polkadot-live/types/misc';
@@ -142,6 +142,7 @@ export const WalletConnectProvider = ({
         return {
           chainId,
           encoded: encodeAddress(address, pref),
+          publicKeyHex: u8aToHex(decodeAddress(address)),
           substrate: address,
           selected: false,
         };

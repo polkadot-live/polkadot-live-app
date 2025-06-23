@@ -49,9 +49,10 @@ import type { ChainID } from '@polkadot-live/types/chains';
 
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   const { cacheGet, getTheme } = useConnections();
-  const { isAlreadyImported, ledgerAddresses } = useAddresses();
   const { insertAccountStatus } = useAccountStatuses();
   const { handleImportAddress } = useImportHandler();
+  const { isAlreadyImported, getAccounts } = useAddresses();
+  const genericAccounts = getAccounts('ledger');
 
   const ledger = useLedgerHardware();
   const { connectedNetwork, selectedAddresses, receivedAddresses } =
@@ -121,12 +122,12 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
     for (const selected of selectedAddresses) {
       const { address: add, pubKey: pk, device, accountName } = selected;
 
-      if (isAlreadyImported(add)) {
+      if (isAlreadyImported(pk)) {
         continue;
       }
 
       await handleImportAddress(add, 'ledger', accountName, false, pk, device);
-      insertAccountStatus(add, 'ledger');
+      insertAccountStatus(pk, 'ledger');
     }
 
     ledger.resetAll();
@@ -185,7 +186,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                     iconLeft={faCaretLeft}
                     onClick={() => {
                       ledger.clearCaches(false, false, true);
-                      setShowImportUi(ledgerAddresses.length === 0);
+                      setShowImportUi(genericAccounts.length === 0);
                       setSection(0);
                     }}
                   />
@@ -195,7 +196,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                   <ButtonText
                     iconLeft={faCaretRight}
                     text={'Ledger Accounts'}
-                    disabled={ledgerAddresses.length === 0}
+                    disabled={genericAccounts.length === 0}
                     onClick={() => {
                       ledger.clearCaches(false, false, true);
                       setShowImportUi(false);
@@ -410,7 +411,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                   </Styles.FlexRow>
                                 </div>
                                 <div className="right">
-                                  {isAlreadyImported(address) ? (
+                                  {isAlreadyImported(pubKey) ? (
                                     <span className="imported">Imported</span>
                                   ) : (
                                     <Styles.CheckboxRoot

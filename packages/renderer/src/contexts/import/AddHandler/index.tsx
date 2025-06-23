@@ -2,13 +2,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { ConfigImport, getAddressChainId } from '@polkadot-live/core';
+import { ConfigImport } from '@polkadot-live/core';
 import { createContext, useContext } from 'react';
 import { useAccountStatuses, useAddresses } from '@ren/contexts/import';
 import { useConnections } from '@ren/contexts/common';
 import type { AddHandlerContextInterface } from './types';
-import type { IpcTask } from '@polkadot-live/types/communication';
-import type { AccountSource } from '@polkadot-live/types/accounts';
+import type {
+  EncodedAccount,
+  ImportedGenericAccount,
+} from '@polkadot-live/types/accounts';
 
 export const AddHandlerContext = createContext<AddHandlerContextInterface>(
   defaults.defaultAddHandlerContext
@@ -23,56 +25,54 @@ export const AddHandlerProvider = ({
 }) => {
   const { getOnlineMode } = useConnections();
   const { setStatusForAccount } = useAccountStatuses();
-  const { handleAddressAdd } = useAddresses();
+  const { handleAddressUpdate } = useAddresses();
 
-  /// Exposed function to add an address.
+  /**
+   * Update generic account imported to main window.
+   */
   const handleAddAddress = async (
-    address: string,
-    source: AccountSource,
-    accountName: string
+    encodedAccount: EncodedAccount,
+    genericAccount: ImportedGenericAccount
   ) => {
+    const { address, chainId } = encodedAccount;
+    const { encodedAccounts, source } = genericAccount;
+    encodedAccounts[chainId].isImported = true;
+
     // Set processing flag for account.
     setStatusForAccount(address, source, true);
 
-    // Update addresses state and references.
-    handleAddressAdd(source, address);
-
-    // Update address data in store in main process.
-    await updateAddressInStore(source, address, accountName);
+    // Update React state and store.
+    handleAddressUpdate(genericAccount);
+    await updateAddressInStore(genericAccount);
 
     // Process added address in main renderer.
     if (getOnlineMode()) {
-      postAddressToMainWindow(address, source, accountName);
+      postToMain(encodedAccount, genericAccount);
     }
   };
 
-  /// Update address in store.
-  const updateAddressInStore = async (
-    source: AccountSource,
-    address: string,
-    accountName: string
-  ) => {
-    const ipcTask: IpcTask = {
-      action: 'raw-account:add',
-      data: { source, address, name: accountName },
-    };
-
-    await window.myAPI.rawAccountTask(ipcTask);
+  /**
+   * Update address in store.
+   */
+  const updateAddressInStore = async (account: ImportedGenericAccount) => {
+    await window.myAPI.rawAccountTask({
+      action: 'raw-account:update',
+      data: { serialized: JSON.stringify(account) },
+    });
   };
 
-  /// Send address data to main renderer to process.
-  const postAddressToMainWindow = (
-    address: string,
-    source: AccountSource,
-    accountName: string
+  /**
+   * Send address data to main renderer to process.
+   */
+  const postToMain = (
+    encodedAccount: EncodedAccount,
+    genericAccount: ImportedGenericAccount
   ) => {
     ConfigImport.portImport.postMessage({
       task: 'renderer:address:import',
       data: {
-        address,
-        chainId: getAddressChainId(address),
-        name: accountName,
-        source,
+        serEncodedAccount: JSON.stringify(encodedAccount),
+        serGenericAccount: JSON.stringify(genericAccount),
       },
     });
   };

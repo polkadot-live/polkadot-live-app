@@ -162,7 +162,7 @@ export const Send: React.FC = () => {
                       }
                     >
                       {getSenderAccounts().map(
-                        ({ name: accountName, address }) => (
+                        ({ alias: accountName, address }) => (
                           <UI.SelectItem
                             key={`sender-${address}`}
                             value={address}
@@ -379,7 +379,7 @@ export const Send: React.FC = () => {
                           address={receiver.address}
                           accountName={
                             receiver.accountName ||
-                            ellipsisFn(receiver.address, 8)
+                            ellipsisFn(receiver.address, 5)
                           }
                         />
                       )}

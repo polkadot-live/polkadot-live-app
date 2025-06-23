@@ -2,16 +2,22 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type {
-  AccountSource,
+  EncodedAccount,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
 import type { AnyFunction } from '@polkadot-live/types/misc';
 
-export interface AddressProps {
+export interface ConfirmProps {
+  encodedAccount: EncodedAccount;
   genericAccount: ImportedGenericAccount;
-  setSection: AnyFunction;
 }
-export interface ManageAccountsProps {
-  source: AccountSource;
-  setSection: React.Dispatch<React.SetStateAction<number>>;
+
+export interface RemoveProps {
+  encodedAccount: EncodedAccount;
+  genericAccount: ImportedGenericAccount;
+}
+
+export interface DeleteProps {
+  genericAccount: ImportedGenericAccount;
+  setSection: AnyFunction | null;
 }

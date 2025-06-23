@@ -2,191 +2,78 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import {
-  faCheck,
-  faXmark,
   faPlus,
   faMinus,
   faTrash,
+  faPenSquare,
+  faCaretRight,
 } from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
-import { ellipsisFn, unescape } from '@w3ux/utils';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Identicon } from '../../Identicon';
+import { ellipsisFn } from '@w3ux/utils';
 import { EllipsisSpinner } from '../../Spinners';
-import { ButtonMono } from '../../../kits/Buttons';
-import { validateAccountName } from '../../../utils';
+import { ButtonMono, ButtonPrimaryInvert } from '../../../kits/Buttons';
 import { HardwareAddressWrapper } from './Wrapper';
 import { TooltipRx } from '../../TooltipRx';
-import { FlexRow } from '../../../styles';
+import { FlexColumn, FlexRow } from '../../../styles';
 import { ChainIcon } from '../../ChainIcon';
-import type { FormEvent } from 'react';
+import { CopyButton } from '../../CopyButton';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { HardwareAddressProps } from './types';
 
 export const HardwareAddress = ({
-  address,
-  accountName,
-  chainId,
+  genericAccount,
   isConnected,
-  isImported,
-  processingStatus,
+  anyProcessing,
   theme,
-  renameHandler,
+  DialogShowAddress,
+  isProcessing,
   openConfirmHandler,
   openRemoveHandler,
   openDeleteHandler,
-  onRenameError,
-  onRenameSuccess,
+  onClipboardCopy,
+  setIsDialogOpen,
 }: HardwareAddressProps) => {
-  // Store whether this address is being edited.
-  const [editing, setEditing] = useState<boolean>(false);
-
-  // Store the currently edited name and validation errors flag.
-  const [editName, setEditName] = useState<string>(accountName);
-
-  // Cancel button clicked for edit input.
-  const cancelEditing = () => {
-    setEditing(false);
-    setEditName(accountName);
-  };
-
-  // Validate input and rename account.
-  const commitEdit = () => {
-    const trimmed = editName.trim();
-
-    // Return if account name hasn't changed.
-    if (trimmed === accountName) {
-      setEditing(false);
-      return;
-    }
-
-    // Handle validation failure.
-    if (!validateAccountName(trimmed)) {
-      onRenameError('Bad account name.', `toast-${trimmed}`);
-      setEditName(accountName);
-      setEditing(false);
-      return;
-    }
-
-    // Render success alert.
-    onRenameSuccess('Account name updated.', `toast-${trimmed}`);
-
-    // Otherwise rename account.
-    renameHandler(address, trimmed).then(() => {
-      setEditName(trimmed);
-      setEditing(false);
-    });
-  };
-
-  // Input change handler.
-  const handleChange = (e: FormEvent<HTMLInputElement>) => {
-    let val = e.currentTarget.value || '';
-    val = unescape(val);
-    setEditName(val);
-  };
-
-  // Utility to get processing status.
-  const isProcessing = () => processingStatus || false;
+  const { accountName, encodedAccounts } = genericAccount;
 
   return (
-    <HardwareAddressWrapper>
-      <FlexRow $gap={'0.75rem'} style={{ width: '100%' }}>
-        <TooltipRx text={ellipsisFn(address, 12)} side="right" theme={theme}>
-          <div className="identicon">
-            <Identicon value={address} />
-          </div>
-        </TooltipRx>
-        <div className="input-wrapper">
-          <ChainIcon
-            chainId={chainId}
-            className={editing ? 'chain-icon' : 'chain-icon fade'}
-          />
-          <input
-            style={{
-              borderColor: editing
-                ? 'var(--border-mid-color)'
-                : 'var(--background-primary)',
-            }}
-            type="text"
-            disabled={isProcessing()}
-            value={editing ? editName : accountName}
-            onChange={(e) => handleChange(e)}
-            onFocus={() => setEditing(true)}
-            onKeyUp={(e) => {
-              if (e.key === 'Enter') {
-                commitEdit();
-                e.currentTarget.blur();
-              }
-            }}
-          />
-
-          {editing && !isProcessing() && (
-            <FlexRow className="edit">
-              <button
-                id="commit-btn"
-                type="button"
-                onPointerDown={() => commitEdit()}
-              >
-                <FontAwesomeIcon icon={faCheck} />
-              </button>
-              <button type="button" onPointerDown={() => cancelEditing()}>
-                <FontAwesomeIcon icon={faXmark} />
-              </button>
-            </FlexRow>
-          )}
+    <HardwareAddressWrapper style={{ paddingBottom: '1.5rem' }}>
+      {/* Account name */}
+      <FlexRow $gap={'0.9rem'} className="PrimaryRow">
+        <h2 className="overflow">{accountName}</h2>
+        <div style={{ flex: 1 }}>
+          <TooltipRx text={'Rename Accounts'} theme={theme}>
+            <button
+              type="button"
+              className="RenameBtn"
+              disabled={anyProcessing}
+              aria-label="Rename Accounts"
+            >
+              <FontAwesomeIcon
+                icon={faPenSquare}
+                onClick={() =>
+                  !anyProcessing && setIsDialogOpen(genericAccount, true)
+                }
+                transform={'grow-1'}
+              />
+            </button>
+          </TooltipRx>
         </div>
+
+        <FlexRow $gap={'0.25rem'}>
+          <ButtonPrimaryInvert
+            disabled={true}
+            className="ManageBtn"
+            text="Manage Networks"
+            iconLeft={faCaretRight}
+          />
+        </FlexRow>
 
         {/* Account buttons */}
         <FlexRow $gap={'0.75rem'}>
-          {isImported && !isProcessing() ? (
-            <TooltipRx text={'Remove From Main Window'} theme={theme}>
-              <div style={{ position: 'relative' }}>
-                <ButtonMono
-                  className="action-btn white-hover"
-                  iconLeft={faMinus}
-                  iconTransform={'grow-0'}
-                  text={''}
-                  onClick={() => openRemoveHandler()}
-                />
-              </div>
-            </TooltipRx>
-          ) : (
-            <div>
-              {isProcessing() ? (
-                <div style={{ position: 'relative' }}>
-                  <ButtonMono
-                    disabled={!isConnected}
-                    iconLeft={faPlus}
-                    iconTransform="grow-0"
-                    text={''}
-                    className={'action-btn processing'}
-                  />
-                  <EllipsisSpinner style={{ top: '8px' }} />
-                </div>
-              ) : (
-                <TooltipRx
-                  text={
-                    isConnected ? 'Add To Main Window' : 'Currently Offline'
-                  }
-                  theme={theme}
-                >
-                  <div style={{ position: 'relative' }}>
-                    <ButtonMono
-                      disabled={!isConnected}
-                      iconLeft={faPlus}
-                      iconTransform="grow-0"
-                      text={''}
-                      onClick={() => openConfirmHandler()}
-                      className={'action-btn white-hover'}
-                    />
-                  </div>
-                </TooltipRx>
-              )}
-            </div>
-          )}
           <TooltipRx text={'Delete'} theme={theme}>
             <div style={{ position: 'relative' }}>
               <ButtonMono
-                disabled={isProcessing()}
+                disabled={anyProcessing}
                 className="action-btn white-hover"
                 iconLeft={faTrash}
                 iconTransform="shrink-2"
@@ -197,6 +84,101 @@ export const HardwareAddress = ({
           </TooltipRx>
         </FlexRow>
       </FlexRow>
+
+      {/* Encoded addresses */}
+      <FlexColumn $rowGap={'1.25rem'}>
+        <span
+          style={{
+            borderTop: `1px solid ${theme.textDimmed}`,
+            opacity: '0.1',
+          }}
+        />
+
+        {Array.from(Object.entries(encodedAccounts)).map(([cid, a]) => (
+          <FlexRow
+            $gap={'1.25rem'}
+            key={`${cid}-encoded`}
+            className="EncodedRow"
+          >
+            <FlexRow $gap="1.25rem" className="NameAddressRow">
+              <FontAwesomeIcon
+                icon={faCaretRight}
+                transform={'grow-2'}
+                className="EntryArrow"
+              />
+              <span className="overflow">{a.alias}</span>
+              <FlexRow $gap="0.6rem" className="AddressRow">
+                <span className="overflow">{ellipsisFn(a.address, 5)}</span>
+                <CopyButton
+                  iconFontSize="0.96rem"
+                  theme={theme}
+                  onCopyClick={async () => await onClipboardCopy(a.address)}
+                />
+                <DialogShowAddress address={a.address} />
+              </FlexRow>
+
+              <FlexRow className="NetworkRow">
+                <span className="overflow NetworkLabel">{a.chainId}</span>
+                <ChainIcon
+                  chainId={cid as ChainID}
+                  className="NetworkIcon"
+                  style={{ fill: cid === 'Polkadot' ? '#ac2461' : undefined }}
+                />
+              </FlexRow>
+            </FlexRow>
+
+            {/* Manage buttons */}
+            <FlexRow $gap={'0.75rem'}>
+              {a.isImported && !isProcessing(a) ? (
+                <TooltipRx text={'Remove Subscriptions'} theme={theme}>
+                  <div style={{ position: 'relative' }}>
+                    <ButtonMono
+                      className="action-btn white-hover"
+                      iconLeft={faMinus}
+                      iconTransform={'grow-0'}
+                      text={''}
+                      onClick={() => openRemoveHandler(a)}
+                    />
+                  </div>
+                </TooltipRx>
+              ) : (
+                <div>
+                  {isProcessing(a) ? (
+                    <div style={{ position: 'relative' }}>
+                      <ButtonMono
+                        disabled={!isConnected}
+                        iconLeft={faPlus}
+                        iconTransform="grow-0"
+                        text={''}
+                        className={'action-btn processing'}
+                      />
+                      <EllipsisSpinner style={{ top: '8px' }} />
+                    </div>
+                  ) : (
+                    <TooltipRx
+                      text={
+                        isConnected ? 'Add Subscriptions' : 'Currently Offline'
+                      }
+                      theme={theme}
+                    >
+                      <div style={{ position: 'relative' }}>
+                        <ButtonMono
+                          disabled={!isConnected}
+                          iconLeft={faPlus}
+                          iconTransform="grow-0"
+                          text={''}
+                          onClick={() => openConfirmHandler(a)}
+                          className={'action-btn white-hover'}
+                        />
+                      </div>
+                    </TooltipRx>
+                  )}
+                </div>
+              )}
+            </FlexRow>
+          </FlexRow>
+        ))}
+      </FlexColumn>
     </HardwareAddressWrapper>
   );
 };

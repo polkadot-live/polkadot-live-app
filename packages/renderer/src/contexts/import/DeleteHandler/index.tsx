@@ -6,7 +6,10 @@ import { ConfigImport, getAddressChainId } from '@polkadot-live/core';
 import { createContext, useContext } from 'react';
 import { useAccountStatuses } from '../AccountStatuses';
 import { useAddresses } from '@ren/contexts/import';
-import type { AccountSource } from '@polkadot-live/types/accounts';
+import type {
+  AccountSource,
+  ImportedGenericAccount,
+} from '@polkadot-live/types/accounts';
 import type { DeleteHandlerContextInterface } from './types';
 import type { IpcTask } from '@polkadot-live/types/communication';
 
@@ -25,41 +28,49 @@ export const DeleteHandlerProvider = ({
   const { deleteAccountStatus } = useAccountStatuses();
   const { handleAddressDelete } = useAddresses();
 
-  /// Exposed function to delete an address.
+  /**
+   * Permanently delete a generic account.
+   */
   const handleDeleteAddress = async (
-    address: string,
-    source: AccountSource
+    genericAccount: ImportedGenericAccount
   ): Promise<boolean> => {
-    // Remove status entry from account statuses context.
-    deleteAccountStatus(address, source);
+    const { publicKeyHex, source } = genericAccount;
+    let goBack = false;
 
-    // Update addresses state and references.
-    const goBack = handleAddressDelete(source, address);
+    for (const { address } of Object.values(genericAccount.encodedAccounts)) {
+      deleteAccountStatus(address, source);
+      if (!goBack) {
+        goBack = handleAddressDelete(genericAccount);
+      }
 
-    // Update Electron store, delete address data
-    await removeAddressFromStore(source, address);
+      // Delete in main renderer.
+      postToMain(address);
+    }
 
-    // Delete in main renderer.
-    postAddressDeleteMessage(address);
-
+    // Delete all account data from store.
+    await removeFromStore(source, publicKeyHex);
     return goBack;
   };
 
-  /// Remove address entry from store.
-  const removeAddressFromStore = async (
+  /**
+   * Remove generic account from store.
+   */
+  const removeFromStore = async (
     source: AccountSource,
-    address: string
+    publicKeyHex: string
   ) => {
     const ipcTask: IpcTask = {
       action: 'raw-account:delete',
-      data: { source, address },
+      data: { publicKeyHex, source },
     };
 
     await window.myAPI.rawAccountTask(ipcTask);
   };
 
-  /// Send address data to main window to process removal.
-  const postAddressDeleteMessage = (address: string) => {
+  /**
+   * Send address data to main window to process removal.
+   */
+  const postToMain = (address: string) => {
     ConfigImport.portImport.postMessage({
       task: 'renderer:address:delete',
       data: {

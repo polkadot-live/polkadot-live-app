@@ -1,8 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AnyJson, AnyFunction } from './misc';
-import type BigNumber from 'bignumber.js';
 import type { ChainID } from './chains';
 
 export type AccountSource =
@@ -97,7 +95,7 @@ export interface AccountJson {
   _source: AccountSource;
 }
 
-/*
+/**
  * Type storing essential data for an account.
  */
 export interface FlattenedAccountData {
@@ -110,43 +108,31 @@ export interface FlattenedAccountData {
 }
 
 /**
- * Vault address type for import window.
+ * Address type for import window.
  */
-export interface LocalAddress {
+export interface LedgerMetadata {
+  device: { id: string; productName: string };
+  accountIndex?: number;
+}
+
+export interface EncodedAccount {
   address: string;
+  alias: string;
+  chainId: ChainID;
   isImported: boolean;
-  name: string;
+}
+
+/**
+ * Send screen account type.
+ */
+export interface SendAccount extends EncodedAccount {
   source: AccountSource;
 }
 
-/**
- * Ledger address type for import window.
- */
-
-export interface LedgerLocalAddress {
-  address: string;
-  device: { id: string; productName: string };
-  index?: number;
-  isImported: boolean;
-  name: string;
-  pubKey: string;
-}
-
-// Type for `Account.state` property
-// Currently only supports Polkadot chain instance's state
-
-/**
- * @deprecated The type should not be used
- */
-export interface AccountChainInstanceState {
-  _account: AnyJson; // TODO: fix type
-  _address: string;
-  _chain: string;
-  _existentialDeposit: BigNumber;
-  _locks: AnyJson; // TODO: fix type
-  _subscribed: boolean;
-  activeSubscriptions: { id: string; unsub: AnyFunction }[];
-
-  subscribe: () => void;
-  getAllState: () => { account: AnyJson; locks: AnyJson };
+export interface ImportedGenericAccount {
+  accountName: string;
+  encodedAccounts: Record<ChainID, EncodedAccount>;
+  publicKeyHex: string;
+  source: AccountSource;
+  ledger?: LedgerMetadata;
 }

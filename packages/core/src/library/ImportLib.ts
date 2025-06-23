@@ -3,13 +3,10 @@
 
 import { ConfigImport, ConfigRenderer } from '../config';
 import type {
-  AccountSource,
-  LedgerLocalAddress,
-  LocalAddress,
+  EncodedAccount,
+  ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
-import { getAddressChainId } from '../library/AccountsLib';
 import type { AnyData } from '@polkadot-live/types/misc';
-import type { ChainID } from '@polkadot-live/types/chains';
 import type { IpcTask } from '@polkadot-live/types/communication';
 
 /**
@@ -17,13 +14,11 @@ import type { IpcTask } from '@polkadot-live/types/communication';
  * @summary Updates a stored account's name in the main process.
  */
 export const renameAccountInStore = async (
-  address: string,
-  source: AccountSource,
-  newName: string
+  genericAccount: ImportedGenericAccount
 ) => {
   const ipcTask: IpcTask = {
-    action: 'raw-account:rename',
-    data: { source, address, newName },
+    action: 'raw-account:update',
+    data: { serialized: JSON.stringify(genericAccount) },
   };
 
   await window.myAPI.rawAccountTask(ipcTask);
@@ -33,63 +28,12 @@ export const renameAccountInStore = async (
  * @name postRenameAccount
  * @summary Post a message to main renderer to process an account rename.
  */
-export const postRenameAccount = (address: string, newName: string) => {
+export const postRenameAccount = (encodedAccount: EncodedAccount) => {
+  const { address, alias: newName, chainId } = encodedAccount;
   ConfigImport.portImport.postMessage({
     task: 'renderer:account:rename',
-    data: {
-      address,
-      chainId: getAddressChainId(address),
-      newName,
-    },
+    data: { address, chainId, newName },
   });
-};
-
-/**
- * @name getSortedLocalAddresses
- * @summary Function to get addresses categorized by chain ID and sorted by name.
- */
-export const getSortedLocalAddresses = (addresses: LocalAddress[]) => {
-  const sorted = new Map<ChainID, LocalAddress[]>();
-
-  // Insert keys in a preferred order.
-  for (const chainId of [
-    'Polkadot',
-    'Kusama',
-    'Westend Asset Hub',
-  ] as ChainID[]) {
-    const filtered = addresses
-      .filter((a) => getAddressChainId(a.address) === chainId)
-      .sort((a, b) => a.name.localeCompare(b.name));
-
-    if (filtered.length !== 0) {
-      sorted.set(chainId, filtered);
-    }
-  }
-
-  return sorted;
-};
-
-/**
- * @name getSortedLocalLedgerAddresses
- * @summary Same as `getSortedLocalAddresses` but for the local Ledger address type.
- */
-export const getSortedLocalLedgerAddresses = (
-  addresses: LedgerLocalAddress[]
-) => {
-  const sorted = new Map<ChainID, LedgerLocalAddress[]>();
-
-  // Insert keys in preferred order.
-  for (const chainId of ['Polkadot', 'Kusama'] as ChainID[]) {
-    const filtered = addresses
-      .filter((a) => getAddressChainId(a.address) === chainId)
-      .sort((a, b) => a.name.localeCompare(b.name));
-
-    if (filtered.length !== 0) {
-      sorted.set(chainId, filtered);
-    }
-  }
-
-  return sorted;
 };
 
 /**

@@ -5,13 +5,10 @@
 import type { AddressesContextInterface } from './types';
 
 export const defaultAddressesContext: AddressesContextInterface = {
-  ledgerAddresses: [],
-  readOnlyAddresses: [],
-  vaultAddresses: [],
-  wcAddresses: [],
+  getAccounts: () => [],
   handleAddressImport: () => {},
   handleAddressDelete: () => false,
-  handleAddressRemove: () => {},
-  handleAddressAdd: () => {},
+  handleAddressUpdate: () => {},
   isAlreadyImported: () => false,
+  isUniqueAccountName: () => false,
 };

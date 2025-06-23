@@ -5,6 +5,7 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 
+import { getSupportedSources } from '@polkadot-live/consts/chains';
 import { useEffect, useRef, useState } from 'react';
 import { useSideNav } from '@polkadot-live/ui/contexts';
 import {
@@ -21,8 +22,7 @@ import { StatItemRow } from './StatItemRow';
 
 import type {
   AccountSource,
-  LedgerLocalAddress,
-  LocalAddress,
+  ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
 import type { SummaryAccordionValue } from './types';
 import type { TxStatus } from '@polkadot-live/types/tx';
@@ -35,7 +35,6 @@ export const Summary: React.FC = () => {
 
   const {
     getReadableAccountSource,
-    getAllAccountSources,
     getAllAccounts,
     getSubscriptionCountForAccount,
     getTotalSubscriptionCount,
@@ -45,7 +44,7 @@ export const Summary: React.FC = () => {
    * Addresses fetched from main process.
    */
   const [addressMap, setAddressMap] = useState(
-    new Map<AccountSource, (LocalAddress | LedgerLocalAddress)[]>()
+    new Map<AccountSource, ImportedGenericAccount[]>()
   );
   const addressMapRef = useRef<typeof addressMap>(addressMap);
   const [trigger, setTrigger] = useState<boolean>(false);
@@ -77,23 +76,8 @@ export const Summary: React.FC = () => {
 
       const parsedMap = new Map<AccountSource, string>(JSON.parse(serialized));
       for (const [source, ser] of parsedMap.entries()) {
-        switch (source) {
-          case 'vault':
-          case 'read-only':
-          case 'wallet-connect': {
-            const parsed: LocalAddress[] = JSON.parse(ser);
-            addressMapRef.current.set(source, parsed);
-            break;
-          }
-          case 'ledger': {
-            const parsed: LedgerLocalAddress[] = JSON.parse(ser);
-            addressMapRef.current.set(source, parsed);
-            break;
-          }
-          default: {
-            continue;
-          }
-        }
+        const parsed: ImportedGenericAccount[] = JSON.parse(ser);
+        addressMapRef.current.set(source, parsed);
       }
 
       // Extrinsics.
@@ -225,7 +209,7 @@ export const Summary: React.FC = () => {
                       meterValue={getTotalAccounts()}
                     />
 
-                    {getAllAccountSources().map((source) => {
+                    {getSupportedSources().map((source) => {
                       if ((addressMap.get(source) || []).length > 0) {
                         return (
                           <StatItemRow

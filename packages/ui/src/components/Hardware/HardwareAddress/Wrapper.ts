@@ -8,7 +8,6 @@ const mixinAddressInput = css`
   color: var(--text-color-primary);
 
   width: 100%;
-  max-width: 380px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -40,6 +39,81 @@ export const HardwareAddressWrapper = styled.div`
     flex-grow: 0;
     position: relative;
   }
+  .overflow {
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .RenameBtn {
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s ease-out;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.25;
+    }
+    &:hover:not(:disabled) {
+      opacity: 1;
+    }
+  }
+  .ManageBtn {
+    border: none;
+    color: var(--accent-secondary);
+    cursor: not-allowed;
+  }
+  .ChainIcon {
+    position: absolute;
+    top: 7px;
+    left: 10px;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-top: 4px;
+    transition: opacity 0.1s ease-out;
+  }
+  .NetworkIcon {
+    min-width: 15px;
+    width: 15px;
+    height: 15px;
+  }
+  .EncodedRow {
+    padding-left: 0.5rem;
+
+    .NameAddressRow {
+      flex: 1;
+      min-width: 0;
+
+      > .EntryArrow {
+        color: var(--text-color-secondary);
+        opacity: 0.35;
+      }
+      > span:first-of-type {
+        font-size: 1.1rem;
+      }
+      > .AddressRow {
+        color: var(--text-color-secondary);
+        font-size: 0.98rem;
+        opacity: 0.6;
+        min-width: 0;
+      }
+      > .NetworkRow {
+        flex: 1;
+        justify-content: flex-end;
+
+        .NetworkLabel {
+          color: var(--text-color-secondary);
+          display: inline-block;
+          font-size: 0.98rem;
+          opacity: 0.8;
+          @media (max-width: 590px) {
+            display: none;
+          }
+        }
+      }
+    }
+  }
 
   /**
    * Action buttons.
@@ -49,6 +123,7 @@ export const HardwareAddressWrapper = styled.div`
     background-color: var(--button-background-primary);
     border-color: var(--button-background-primary);
     min-width: 4.5rem;
+    max-height: 22px;
     padding: 0.45rem 0.5rem;
     font-size: 0.85rem;
     transition: all 150ms ease-out;
@@ -73,32 +148,24 @@ export const HardwareAddressWrapper = styled.div`
     border: 1px dashed #1c1c1c;
     padding: 0.85rem 0.75rem;
     transition: border-color 150ms ease-out;
-    padding-left: 38px;
+    margin-bottom: 0.75rem;
 
     &:focus {
       background-color: var(--background-surface);
     }
   }
-  .input-wrapper {
+  .PrimaryRow {
     position: relative;
+    padding: 0.5rem 0 0.95rem 0.25rem;
+    width: 100%;
     display: flex;
     flex: 1;
 
+    h2 {
+      font-size: 1.15rem;
+    }
     .fade {
       opacity: 0.5;
-    }
-    .chain-icon {
-      position: absolute;
-      top: 7px;
-      left: 10px;
-      width: 1.5rem;
-      height: 1.5rem;
-      margin-top: 4px;
-      transition: opacity 0.1s ease-out;
-
-      ellipse {
-        fill: var(--polkadot-pink);
-      }
     }
   }
 

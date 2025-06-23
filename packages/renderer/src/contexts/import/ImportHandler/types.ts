@@ -3,8 +3,7 @@
 
 import type {
   AccountSource,
-  LedgerLocalAddress,
-  LocalAddress,
+  ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
 import type { AnyData } from '@polkadot-live/types/misc';
 
@@ -18,7 +17,6 @@ export interface ImportHandlerContextInterface {
     device?: AnyData
   ) => Promise<void>;
   handleImportAddressFromBackup: (
-    imported: LedgerLocalAddress | LocalAddress,
-    source: AccountSource
+    genericAccount: ImportedGenericAccount
   ) => Promise<void>;
 }

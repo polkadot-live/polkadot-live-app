@@ -2,11 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 /// Dependencies.
+import * as Core from '@polkadot-live/core';
 import { createContext, useContext } from 'react';
 import { defaultDataBackupContext } from './default';
-import * as Core from '@polkadot-live/core';
 import {
-  getAddressChainId,
   AccountsController,
   IntervalsController,
   SubscriptionsController,
@@ -26,15 +25,14 @@ import type {
 } from './types';
 import type {
   AccountSource,
-  LedgerLocalAddress,
-  LocalAddress,
+  ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
 import type { EventCallback } from '@polkadot-live/types/reporter';
+import type { ExportResult, ImportResult } from '@polkadot-live/types/backup';
 import type {
   IntervalSubscription,
   SubscriptionTask,
 } from '@polkadot-live/types/subscriptions';
-import type { ExportResult, ImportResult } from '@polkadot-live/types/backup';
 
 export const DataBackupContext = createContext<DataBackupContextInterface>(
   defaultDataBackupContext
@@ -56,7 +54,9 @@ export const DataBackupProvider = ({
   const { addIntervalSubscription, updateIntervalSubscription } =
     useIntervalSubscriptions();
 
-  /// Write Polkadot Live data to a file.
+  /**
+   * Write Polkadot Live data to a file.
+   */
   const exportDataToBackup = async () => {
     const { result, msg }: ExportResult = await window.myAPI.exportAppData();
 
@@ -97,7 +97,9 @@ export const DataBackupProvider = ({
     }
   };
 
-  /// Exported function for importing data from a backup file.
+  /**
+   * Exported function for importing data from a backup file.
+   */
   const importDataFromBackup = async (
     handleImportAddress: ImportFunc,
     handleRemoveAddress: RemoveFunc
@@ -158,7 +160,9 @@ export const DataBackupProvider = ({
     }
   };
 
-  /// Extract address data from an imported text file and send to application.
+  /**
+   * Import account data from backup file.
+   */
   const importAddressData = async (
     serialized: string,
     handleImportAddress: ImportFunc,
@@ -174,48 +178,61 @@ export const DataBackupProvider = ({
     const importWindowOpen = await window.myAPI.isViewOpen('import');
 
     for (const [source, ser] of p_map.entries()) {
-      const parsed =
-        source === 'ledger'
-          ? (JSON.parse(ser) as LedgerLocalAddress[])
-          : (JSON.parse(ser) as LocalAddress[]);
+      const genericAccounts: ImportedGenericAccount[] = JSON.parse(ser);
 
       // Process parsed addresses.
-      for (const a of parsed) {
+      for (const genericAccount of genericAccounts) {
+        const { accountName, encodedAccounts, publicKeyHex } = genericAccount;
         const isOnline = cacheGet('mode:connected');
-        a.isImported && !isOnline && (a.isImported = false);
 
-        // Persist or update address in Electron store.
+        // Iterate encoded accounts and set `isImported` flag.
+        for (const en of Object.values(encodedAccounts)) {
+          if (en.isImported && !isOnline) {
+            const chainId = en.chainId;
+            genericAccount.encodedAccounts[chainId].isImported = false;
+          }
+        }
+
+        // Persist or update generic account in Electron store.
         await window.myAPI.rawAccountTask({
           action: 'raw-account:import',
-          data: { source, serialized: JSON.stringify(a) },
+          data: { serialized: JSON.stringify(genericAccount) },
         });
 
         // Add address and its status to import window's state.
         importWindowOpen &&
           Core.postToImport('import:account:add', {
-            json: JSON.stringify(a),
+            json: JSON.stringify(genericAccount),
             source,
           });
 
-        // Handle importing or removing account from main window and setting `isImported` flag state.
-        const { address, name } = a;
-        const chainId = getAddressChainId(address);
+        for (const enAccount of Object.values(encodedAccounts)) {
+          // Import or remove encoded accounts from main window.
+          const { address, chainId, isImported } = enAccount;
+          if (isImported) {
+            const data = {
+              data: {
+                data: {
+                  serEncodedAccount: JSON.stringify(enAccount),
+                  serGenericAccount: JSON.stringify(genericAccount),
+                },
+              },
+            };
+            await handleImportAddress(new MessageEvent('message', data), true);
+          } else {
+            const data = { data: { data: { address, chainId } } };
+            await handleRemoveAddress(new MessageEvent('message', data));
+          }
 
-        if (a.isImported) {
-          const data = { data: { data: { address, chainId, name, source } } };
-          await handleImportAddress(new MessageEvent('message', data), true);
-          Core.postToImport('import:address:update', { address: a, source });
-        } else {
-          const data = { data: { data: { address, chainId } } };
-          await handleRemoveAddress(new MessageEvent('message', data));
-          Core.postToImport('import:address:update', { address: a, source });
-        }
+          // Update state in import view.
+          Core.postToImport('import:address:update', { genericAccount });
 
-        // Update managed account names.
-        const account = AccountsController.get(chainId, address);
-        if (account) {
-          account.name = name;
-          await AccountsController.set(account);
+          // Update managed account names.
+          const account = AccountsController.get(chainId, publicKeyHex);
+          if (account) {
+            account.name = `${chainId}: ${accountName}`;
+            await AccountsController.set(account);
+          }
         }
       }
 
@@ -224,7 +241,9 @@ export const DataBackupProvider = ({
     }
   };
 
-  /// Extract extrinsics data from an imported text file and send to application.
+  /**
+   * Import extrinsics data from backup file.
+   */
   const importExtrinsicsData = async (serialized: string): Promise<void> => {
     const s_extrinsics = Core.getFromBackupFile('extrinsics', serialized);
     if (!s_extrinsics) {
@@ -258,7 +277,9 @@ export const DataBackupProvider = ({
     setEvents(parsed);
   };
 
-  /// Extract interval task data from an imported text file and send to application.
+  /**
+   * Import interval task data from backup file.
+   */
   const importIntervalData = async (serialized: string): Promise<void> => {
     const s_tasks = Core.getFromBackupFile('intervals', serialized);
     if (!s_tasks) {
@@ -316,7 +337,9 @@ export const DataBackupProvider = ({
     }
   };
 
-  /// Extract account subscription data from an imported text file and send to application.
+  /**
+   * Import subscription data from backup file.
+   */
   const importAccountTaskData = async (serialized: string) => {
     const s_tasks = Core.getFromBackupFile('accountTasks', serialized);
     if (!s_tasks) {
