@@ -6,10 +6,14 @@ import { ConfirmWrapper } from './Wrappers';
 import { Identicon } from '@polkadot-live/ui/components';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { useDeleteHandler } from '@ren/contexts/import';
+import { ellipsisFn } from '@w3ux/utils';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faKey } from '@fortawesome/free-solid-svg-icons';
+import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 import type { DeleteProps } from './types';
 
 export const Delete = ({ genericAccount, setSection }: DeleteProps) => {
-  const { publicKeyHex } = genericAccount;
+  const { accountName, publicKeyHex } = genericAccount;
   const { setStatus } = useOverlay();
   const { handleDeleteAddress } = useDeleteHandler();
 
@@ -23,8 +27,14 @@ export const Delete = ({ genericAccount, setSection }: DeleteProps) => {
   return (
     <ConfirmWrapper>
       <Identicon value={publicKeyHex} fontSize={'4rem'} />
-      <h3>Delete Account</h3>
-      <h5>{publicKeyHex}</h5>
+      <FlexColumn $rowGap={'0.5rem'} style={{ alignItems: 'center' }}>
+        <h3>Delete Account</h3>
+        <h4>{accountName}</h4>
+        <FlexRow $gap={'0.4rem'}>
+          <FontAwesomeIcon icon={faKey} transform={'shrink-5'} />
+          <h5>{ellipsisFn(publicKeyHex, 12)}</h5>
+        </FlexRow>
+      </FlexColumn>
       <p>
         Deleting this account will turn off all of its active subscriptions. It
         will need to be re-imported into the application after deletion.
