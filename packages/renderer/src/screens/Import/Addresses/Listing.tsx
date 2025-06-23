@@ -5,14 +5,14 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/ui/styles';
 
-import { Address } from './Address';
+import { useAddresses } from '@ren/contexts/import';
 import { useState } from 'react';
+import { Address } from './Address';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { useAddresses } from '@ren/contexts/import';
+import { DialogRename } from '../Addresses/Dialogs/DialogRename';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ManageAccountsProps } from './types';
-import { DialogRename } from '../Addresses/Dialogs/DialogRename';
 
 export const Listing = ({ source, setSection }: ManageAccountsProps) => {
   const { getAccounts } = useAddresses();

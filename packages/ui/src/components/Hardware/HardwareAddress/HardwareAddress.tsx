@@ -45,11 +45,14 @@ export const HardwareAddress = ({
             <button
               type="button"
               className="RenameBtn"
+              disabled={anyProcessing}
               aria-label="Rename Accounts"
             >
               <FontAwesomeIcon
                 icon={faPenSquare}
-                onClick={() => setIsDialogOpen(genericAccount, true)}
+                onClick={() =>
+                  !anyProcessing && setIsDialogOpen(genericAccount, true)
+                }
                 transform={'grow-1'}
               />
             </button>
