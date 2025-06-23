@@ -4,8 +4,7 @@
 import { AddressesController } from '@/controller/AddressesController';
 import type {
   AccountSource,
-  LedgerLocalAddress,
-  LocalAddress,
+  ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
 import type { ExtrinsicInfo, TxActionUid } from '@polkadot-live/types/tx';
 
@@ -15,29 +14,14 @@ import type { ExtrinsicInfo, TxActionUid } from '@polkadot-live/types/tx';
  */
 export const getAddressNameMap = () => {
   const addressNameMap = new Map<string, string>();
-  const s_addresses = AddressesController.getAll();
-  const p_addresses = new Map<AccountSource, string>(JSON.parse(s_addresses));
+  const serialized = AddressesController.getAll();
+  const parsedMap = new Map<AccountSource, string>(JSON.parse(serialized));
 
-  for (const [source, ser] of p_addresses.entries()) {
-    switch (source) {
-      case 'vault':
-      case 'read-only':
-      case 'wallet-connect': {
-        const parsed: LocalAddress[] = JSON.parse(ser);
-        for (const { address, name } of parsed) {
-          addressNameMap.set(address, name);
-        }
-        continue;
-      }
-      case 'ledger': {
-        const parsed: LedgerLocalAddress[] = JSON.parse(ser);
-        for (const { address, name } of parsed) {
-          addressNameMap.set(address, name);
-        }
-        continue;
-      }
-      default: {
-        continue;
+  for (const ser of parsedMap.values()) {
+    const genericAccounts: ImportedGenericAccount[] = JSON.parse(ser);
+    for (const { encodedAccounts } of genericAccounts) {
+      for (const { address, alias } of Object.values(encodedAccounts)) {
+        addressNameMap.set(address, alias);
       }
     }
   }

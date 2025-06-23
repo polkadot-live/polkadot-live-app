@@ -140,33 +140,10 @@ export interface ImportedGenericAccount {
 }
 
 /**
- * @deprecated
- */
-export interface LocalAddress {
-  address: string;
-  isImported: boolean;
-  name: string;
-  source: AccountSource;
-}
-
-/**
- * @deprecated Ledger address type for import window.
- */
-export interface LedgerLocalAddress {
-  address: string;
-  device: { id: string; productName: string };
-  index?: number;
-  isImported: boolean;
-  name: string;
-  pubKey: string;
-}
-
-/**
  * @deprecated The type should not be used
  * Type for `Account.state` property
  * Currently only supports Polkadot chain instance's state
  */
-
 export interface AccountChainInstanceState {
   _account: AnyJson; // TODO: fix type
   _address: string;
