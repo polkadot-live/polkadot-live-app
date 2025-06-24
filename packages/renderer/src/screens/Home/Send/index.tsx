@@ -164,7 +164,7 @@ export const Send: React.FC = () => {
                     >
                       {getSenderAccounts().map((enAccount) => (
                         <UI.SelectItem
-                          key={`sender-${enAccount.address}`}
+                          key={`sender-${enAccount.chainId}-${enAccount.address}`}
                           value={`${enAccount.chainId}:${enAccount.address}`}
                         >
                           <div className="innerRow">
