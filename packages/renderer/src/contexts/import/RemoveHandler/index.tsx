@@ -2,13 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { ConfigImport, getAddressChainId } from '@polkadot-live/core';
+import { ConfigImport } from '@polkadot-live/core';
 import { createContext, useContext } from 'react';
 import { useAddresses } from '@ren/contexts/import';
 import type {
   EncodedAccount,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { RemoveHandlerContextInterface } from './types';
 
 export const RemoveHandlerContext =
@@ -40,7 +41,7 @@ export const RemoveHandlerProvider = ({
     await updateAddressInStore(genericAccount);
 
     // Process removed address in main renderer.
-    postToMain(address);
+    postToMain(address, chainId);
   };
 
   /**
@@ -56,13 +57,10 @@ export const RemoveHandlerProvider = ({
   /**
    * Send address data to main window to process removal.
    */
-  const postToMain = (address: string) => {
+  const postToMain = (address: string, chainId: ChainID) => {
     ConfigImport.portImport.postMessage({
       task: 'renderer:address:remove',
-      data: {
-        address,
-        chainId: getAddressChainId(address),
-      },
+      data: { address, chainId },
     });
   };
 

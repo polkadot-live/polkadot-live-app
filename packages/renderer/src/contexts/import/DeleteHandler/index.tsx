@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { ConfigImport, getAddressChainId } from '@polkadot-live/core';
+import { ConfigImport } from '@polkadot-live/core';
 import { createContext, useContext } from 'react';
 import { useAccountStatuses } from '../AccountStatuses';
 import { useAddresses } from '@ren/contexts/import';
@@ -12,6 +12,7 @@ import type {
 } from '@polkadot-live/types/accounts';
 import type { DeleteHandlerContextInterface } from './types';
 import type { IpcTask } from '@polkadot-live/types/communication';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 export const DeleteHandlerContext =
   createContext<DeleteHandlerContextInterface>(
@@ -37,14 +38,16 @@ export const DeleteHandlerProvider = ({
     const { publicKeyHex, source } = genericAccount;
     let goBack = false;
 
-    for (const { address } of Object.values(genericAccount.encodedAccounts)) {
-      deleteAccountStatus(address, source);
+    for (const { address, chainId } of Object.values(
+      genericAccount.encodedAccounts
+    )) {
+      deleteAccountStatus(`${chainId}:${address}`, source);
       if (!goBack) {
         goBack = handleAddressDelete(genericAccount);
       }
 
       // Delete in main renderer.
-      postToMain(address);
+      postToMain(address, chainId);
     }
 
     // Delete all account data from store.
@@ -70,13 +73,10 @@ export const DeleteHandlerProvider = ({
   /**
    * Send address data to main window to process removal.
    */
-  const postToMain = (address: string) => {
+  const postToMain = (address: string, chainId: ChainID) => {
     ConfigImport.portImport.postMessage({
       task: 'renderer:address:delete',
-      data: {
-        address,
-        chainId: getAddressChainId(address),
-      },
+      data: { address, chainId },
     });
   };
 

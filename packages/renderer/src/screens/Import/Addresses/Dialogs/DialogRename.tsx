@@ -239,9 +239,9 @@ export const DialogRename = ({ genericAccount }: DialogRenameProps) => {
 
             {/* Encoded Accounts */}
             {Array.from(Object.values(encodedAccounts)).map(
-              ({ address, alias, chainId }) => (
+              ({ address, alias, chainId }, i) => (
                 <form
-                  key={address}
+                  key={`${chainId}-${address}-${i}`}
                   onSubmit={(e) => {
                     e.preventDefault();
                     commitEncodedRename(chainId);

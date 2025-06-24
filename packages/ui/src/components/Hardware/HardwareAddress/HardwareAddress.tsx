@@ -94,10 +94,10 @@ export const HardwareAddress = ({
           }}
         />
 
-        {Array.from(Object.entries(encodedAccounts)).map(([cid, a]) => (
+        {Array.from(Object.entries(encodedAccounts)).map(([cid, a], i) => (
           <FlexRow
             $gap={'1.25rem'}
-            key={`${cid}-encoded`}
+            key={`${cid}-encoded-${i}`}
             className="EncodedRow"
           >
             <FlexRow $gap="1.25rem" className="NameAddressRow">
@@ -122,7 +122,12 @@ export const HardwareAddress = ({
                 <ChainIcon
                   chainId={cid as ChainID}
                   className="NetworkIcon"
-                  style={{ fill: cid === 'Polkadot' ? '#ac2461' : undefined }}
+                  style={{
+                    fill:
+                      cid === 'Polkadot' || cid === 'Polkadot Asset Hub'
+                        ? '#ac2461'
+                        : undefined,
+                  }}
                 />
               </FlexRow>
             </FlexRow>

@@ -71,6 +71,7 @@ export class TaskOrchestrator {
     switch (task.chainId) {
       // Identify chain ID
       case 'Polkadot':
+      case 'Polkadot Asset Hub':
       case 'Kusama':
       case 'Westend':
       case 'Westend Asset Hub': {

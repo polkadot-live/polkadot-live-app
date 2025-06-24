@@ -3,17 +3,22 @@
 
 import { Account } from '../model';
 import { getAccountNominatingData, getNominationPoolData } from '../library';
+import { getStakingChains } from '@polkadot-live/consts/chains';
 import { TaskOrchestrator } from '../orchestrators';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   AccountBalance,
   AccountSource,
+  EncodedAccount,
   FlattenedAccounts,
   StoredAccount,
 } from '@polkadot-live/types/accounts';
-import type { DedotClientSet } from '@polkadot-live/types/apis';
-import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
+import type {
+  DedotClientSet,
+  DedotStakingClient,
+} from '@polkadot-live/types/apis';
 import type { ImportedAccounts } from '../model';
+import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 
 /**
  * A static class to provide an interface for managing imported accounts.
@@ -78,22 +83,32 @@ export class AccountsController {
    * Sync live data for all managed accounts.
    */
   static syncAllAccounts = async (api: DedotClientSet, chainId: ChainID) => {
-    await Promise.all([
-      this.syncAllBalances(api, chainId),
-      this.syncAllNominatingData(api, chainId),
-      this.syncAllNominationPoolData(api, chainId),
-    ]);
+    const promises = [this.syncAllBalances(api, chainId)];
+
+    if (getStakingChains().includes(chainId)) {
+      promises.concat([
+        this.syncAllNominatingData(api as DedotStakingClient, chainId),
+        this.syncAllNominationPoolData(api as DedotStakingClient, chainId),
+      ]);
+    }
+
+    await Promise.all(promises);
   };
 
   /**
    * Sync live data for a single managed account.
    */
   static syncAccount = async (account: Account, api: DedotClientSet) => {
-    await Promise.all([
-      this.syncBalance(account, api),
-      this.syncNominationPoolData(account, api),
-      this.syncNominatingData(account, api),
-    ]);
+    const promises = [this.syncBalance(account, api)];
+
+    if (getStakingChains().includes(account.chain)) {
+      promises.concat([
+        this.syncNominationPoolData(account, api as DedotStakingClient),
+        this.syncNominatingData(account, api as DedotStakingClient),
+      ]);
+    }
+
+    await Promise.all(promises);
   };
 
   /**
@@ -127,7 +142,7 @@ export class AccountsController {
    * Set up-to-date nominating data for all managed accounts.
    */
   static syncAllNominatingData = async (
-    api: DedotClientSet,
+    api: DedotStakingClient,
     chainId: ChainID
   ) => {
     console.log(`fetching nominating data for chain: ${chainId}`);
@@ -140,9 +155,13 @@ export class AccountsController {
   /**
    * Set up-to-date nominating data for a single managed accounts.
    */
-  static syncNominatingData = async (account: Account, api: DedotClientSet) => {
+  static syncNominatingData = async (
+    account: Account,
+    api: DedotStakingClient
+  ) => {
     try {
       const maybeNominatingData = await getAccountNominatingData(api, account);
+
       account.nominatingData = maybeNominatingData
         ? { ...maybeNominatingData }
         : null;
@@ -157,7 +176,7 @@ export class AccountsController {
    * Set up-to-date nomination pool data for all managed accounts.
    */
   static syncAllNominationPoolData = async (
-    api: DedotClientSet,
+    api: DedotStakingClient,
     chainId: ChainID
   ) => {
     console.log(`fetching nomination pool data for chain: ${chainId}`);
@@ -174,7 +193,7 @@ export class AccountsController {
    */
   static syncNominationPoolData = async (
     account: Account,
-    api: DedotClientSet
+    api: DedotStakingClient
   ) => {
     const result = await getNominationPoolData(account, api);
     if (result) {
@@ -340,17 +359,16 @@ export class AccountsController {
    * Adds a managed account. Fails if the account already exists.
    */
   static add = (
-    chainId: ChainID,
-    source: AccountSource,
-    address: string,
-    name: string
+    enAccount: EncodedAccount,
+    source: AccountSource
   ): Account | false => {
+    const { address, alias, chainId } = enAccount;
     if (this.accountExists(chainId, address)) {
       return false;
     }
 
     // Create account and add to the managed accounts map.
-    const account = new Account(chainId, source, address, name);
+    const account = new Account(chainId, source, address, alias);
     this.accounts.get(chainId)?.push(account) ||
       this.accounts.set(chainId, [account]);
 
@@ -391,7 +409,7 @@ export class AccountsController {
    */
   private static accountExists = (chain: ChainID, address: string): boolean => {
     for (const accounts of this.accounts.values()) {
-      if (accounts.find((a) => a.address === address)) {
+      if (accounts.find((a) => a.address === address && a.chain === chain)) {
         return true;
       }
     }

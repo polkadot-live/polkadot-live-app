@@ -39,7 +39,7 @@ export const AddHandlerProvider = ({
     encodedAccounts[chainId].isImported = true;
 
     // Set processing flag for account.
-    setStatusForAccount(address, source, true);
+    setStatusForAccount(`${chainId}:${address}`, source, true);
 
     // Update React state and store.
     handleAddressUpdate(genericAccount);

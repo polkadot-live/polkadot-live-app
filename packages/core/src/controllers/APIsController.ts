@@ -15,11 +15,13 @@ import type {
 
 type ChainToKey<T extends ChainID> = T extends 'Polkadot'
   ? 'polkadot'
-  : T extends 'Kusama'
-    ? 'kusama'
-    : T extends 'Westend'
-      ? 'westend'
-      : 'westmint';
+  : T extends 'Polkadot Asset Hub'
+    ? 'statemint'
+    : T extends 'Kusama'
+      ? 'kusama'
+      : T extends 'Westend'
+        ? 'westend'
+        : 'westmint';
 
 export class APIsController {
   static clients: Api<keyof ClientTypes>[] = [];
@@ -153,6 +155,8 @@ export class APIsController {
     switch (chainId) {
       case 'Polkadot':
         return client as Api<'polkadot'>;
+      case 'Polkadot Asset Hub':
+        return client as Api<'statemint'>;
       case 'Kusama':
         return client as Api<'kusama'>;
       case 'Westend':

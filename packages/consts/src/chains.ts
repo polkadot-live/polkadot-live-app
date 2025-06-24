@@ -4,6 +4,7 @@
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import {
   polkadot,
+  polkadot_asset_hub,
   ksmcc3,
   westend2,
   westend2_asset_hub,
@@ -50,6 +51,30 @@ export const ChainList = new Map<ChainID, Chain>([
           'wss://dot-rpc.stakeworld.io',
         ],
         lightClient: polkadot,
+      },
+      units: 10,
+      unit: 'DOT',
+      prefix: 0,
+    },
+  ],
+  [
+    'Polkadot Asset Hub',
+    {
+      endpoints: {
+        rpcs: [
+          'wss://sys.ibp.network/statemint',
+          'wss://sys.dotters.network/statemint',
+          'wss://sys.ibp.network/asset-hub-polkadot',
+          'wss://asset-hub-polkadot-rpc.dwellir.com',
+          'wss://statemint-rpc-tn.dwellir.com',
+          'wss://polkadot-assethub-rpc.blockops.network/ws',
+          'wss://asset-hub-polkadot.dotters.network',
+          'wss://rpc-asset-hub-polkadot.luckyfriday.io',
+          'wss://polkadot-asset-hub-rpc.polkadot.io',
+          'wss://dot-rpc.stakeworld.io/assethub',
+          'wss://statemint.public.curie.radiumblock.co/ws',
+        ],
+        lightClient: polkadot_asset_hub,
       },
       units: 10,
       unit: 'DOT',
@@ -168,6 +193,15 @@ export const getSupportedChains = (): Record<ChainID, Chain> => {
 
   return record;
 };
+
+/**
+ * Get chain IDs that support staking APIs.
+ */
+export const getStakingChains = (): ChainID[] => [
+  'Polkadot',
+  'Kusama',
+  'Westend Asset Hub',
+];
 
 /**
  * Get an array of supported import methods.

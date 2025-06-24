@@ -32,6 +32,8 @@ import type {
   PalletNominationPoolsBondedPoolInner,
   PalletStakingActiveEraInfo,
 } from '@dedot/chaintypes/substrate';
+import type { ClientTypes, DedotClientSet } from '@polkadot-live/types/apis';
+import type { DedotClient } from 'dedot';
 
 /**
  * @name callback_query_timestamp_now
@@ -392,7 +394,8 @@ export const callback_nomination_pool_rewards = async (
 ): Promise<boolean> => {
   try {
     const account = checkAccountWithProperties(entry, ['nominationPoolData']);
-    const api = await getApiOrThrow(account.chain);
+    const { chain: chainId } = account;
+    const api = getStakingApi(chainId, await getApiOrThrow(chainId));
 
     // Fetch pending rewards for the account.
     const pending = await api.call.nominationPoolsApi.pendingRewards(
@@ -699,9 +702,9 @@ export const callback_nominating_era_rewards = async (
   try {
     // Check if account has nominating rewards from the previous era.
     const account = checkAccountWithProperties(entry, ['nominatingData']);
+    const { chain: chainId } = account;
+    const api = getStakingApi(chainId, await getApiOrThrow(chainId));
 
-    // Calculate rewards.
-    const api = await getApiOrThrow(account.chain);
     const eraResult = await api.query.staking.activeEra();
     const lastEra = eraResult!.index - 1;
     const eraRewards = await getEraRewards(account.address, api, lastEra);
@@ -761,7 +764,8 @@ export const callback_nominating_exposure = async (
 
     // Cache previous exposure.
     const { exposed: prevExposed } = account.nominatingData!;
-    const api = await getApiOrThrow(account.chain);
+    const { chain: chainId } = account;
+    const api = getStakingApi(chainId, await getApiOrThrow(chainId));
 
     // Update account nominating data.
     const maybeNominatingData = await getAccountNominatingData(api, account);
@@ -827,7 +831,8 @@ export const callback_nominating_commission = async (
     }
 
     // Get live nominator data and check to see if it has changed.
-    const api = await getApiOrThrow(account.chain);
+    const { chain: chainId } = account;
+    const api = getStakingApi(chainId, await getApiOrThrow(chainId));
 
     // Cache previous commissions.
     const prev = account.nominatingData!.validators.map((v) => v.commission);
@@ -901,7 +906,8 @@ export const callback_nominating_nominations = async (
     }
 
     // Get live nominator data and check to see if it has changed.
-    const api = await getApiOrThrow(account.chain);
+    const { chain: chainId } = account;
+    const api = getStakingApi(chainId, await getApiOrThrow(chainId));
 
     // Cache previous nominations.
     const prev = account.nominatingData!.validators.map((v) => v.validatorId);
@@ -956,6 +962,23 @@ export const callback_nominating_nominations = async (
  */
 const getApiOrThrow = async (chainId: ChainID) =>
   (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
+
+/**
+ * @name getStakingApi
+ * @summary Get an API instance that supports staking and nominating.
+ */
+const getStakingApi = (chainId: ChainID, api: DedotClientSet) => {
+  switch (chainId) {
+    case 'Polkadot':
+      return api as DedotClient<ClientTypes['polkadot']>;
+    case 'Kusama':
+      return api as DedotClient<ClientTypes['kusama']>;
+    case 'Westend Asset Hub':
+      return api as DedotClient<ClientTypes['westmint']>;
+    default:
+      throw new Error(`Error: Staking API not supported on ${chainId}.`);
+  }
+};
 
 /**
  * @name showNotificationFlag
