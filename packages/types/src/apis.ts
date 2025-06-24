@@ -28,6 +28,10 @@ export type DedotStakingClient =
   | DedotClient<KusamaApi>
   | DedotClient<WestendAssetHubApi>;
 
+export type DedotOpenGovClient =
+  | DedotClient<PolkadotApi>
+  | DedotClient<KusamaApi>;
+
 /**
  * Mapping from ID to type
  */

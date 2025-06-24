@@ -45,13 +45,15 @@ import type {
   EncodedAccount,
   ImportedGenericAccount,
 } from 'packages/types/src';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { DedotClient } from 'dedot';
 import type { PalletReferendaTrackDetails } from '@dedot/chaintypes/substrate';
 import type { SettingItem } from '@polkadot-live/types/settings';
 import type { WcSelectNetwork } from '@polkadot-live/types/walletConnect';
-import type { DedotClient } from 'dedot';
-import type { ClientTypes } from '@polkadot-live/types/apis';
-import type { ChainID } from '@polkadot-live/types/chains';
-import type { KusamaApi, PolkadotApi } from '@dedot/chaintypes';
+import type {
+  ClientTypes,
+  DedotOpenGovClient,
+} from '@polkadot-live/types/apis';
 
 // TODO: Move to WalletConnect file.
 const WC_EVENT_ORIGIN = 'https://verify.walletconnect.org';
@@ -389,9 +391,7 @@ export const useMainMessagePorts = () => {
    * @name fetchProcessReferenda
    * @summary Use API to fetch and parse a network's OpenGov referenda.
    */
-  const fetchProcessReferenda = async (
-    api: DedotClient<PolkadotApi> | DedotClient<KusamaApi>
-  ) => {
+  const fetchProcessReferenda = async (api: DedotOpenGovClient) => {
     // Populate referenda map.
     const results = await api.query.referenda.referendumInfoFor.entries();
     const allReferenda: OG.ReferendaInfo[] = [];
@@ -515,7 +515,7 @@ export const useMainMessagePorts = () => {
    * @summary Use API to get treasury data for OpenGov window.
    */
   const processInitTreasury = async (
-    api: DedotClient<PolkadotApi> | DedotClient<KusamaApi>,
+    api: DedotOpenGovClient,
     chainId: ChainID
   ) => {
     const EMPTY_U8A_32 = new Uint8Array(32);
