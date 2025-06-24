@@ -15,7 +15,10 @@ import type { AnyData, AnyFunction } from '@polkadot-live/types/misc';
 import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { QueryWithParams } from 'dedot/types';
-import type { DedotClientSet } from '@polkadot-live/types/apis';
+import type {
+  DedotClientSet,
+  DedotStakingClient,
+} from '@polkadot-live/types/apis';
 import type {
   SubscriptionTask,
   QueryMultiEntry,
@@ -273,13 +276,19 @@ export class QueryMultiWrapper {
 
       // Sync account nominating data.
       if (this.postCallbackSyncFlags.syncAccountNominating) {
-        const result = await getAccountNominatingData(api, account);
+        const result = await getAccountNominatingData(
+          api as DedotStakingClient,
+          account
+        );
         result && (account.nominatingData = result);
       }
 
       // Sync account nomination pool data.
       if (this.postCallbackSyncFlags.syncAccountNominationPool) {
-        const result = await getNominationPoolData(account, api);
+        const result = await getNominationPoolData(
+          account,
+          api as DedotStakingClient
+        );
         result && (account.nominationPoolData = result);
       }
 

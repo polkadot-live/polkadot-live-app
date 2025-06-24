@@ -7,33 +7,7 @@ import { checkAddress } from '@polkadot/util-crypto';
 import type { Account } from '../../model';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ApiCallEntry } from '@polkadot-live/types/subscriptions';
-import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
-
-/**
- * @name getAddressChainId
- * @summary Return an address' chain ID.
- */
-export const getAddressChainId = (address: string): ChainID => {
-  for (const [chainId, { prefix }] of ChainList.entries()) {
-    // TODO: Refactor. Generic substrate addresses imported as Westend Asset Hub accounts.
-    if (chainId === 'Westend') {
-      continue;
-    }
-
-    const result = checkAddress(address, prefix);
-
-    if (result !== null) {
-      const [isValid] = result;
-
-      if (isValid) {
-        return chainId;
-      }
-    }
-  }
-
-  throw new Error(`Imported address not recognized: ${address}`);
-};
 
 /**
  * @name checkValidAddress

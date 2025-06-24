@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { APIsController } from '../../controllers/APIsController';
-import { ChainList } from '@polkadot-live/consts/chains';
+import { ChainList, getStakingChains } from '@polkadot-live/consts/chains';
 import {
   toU8a,
   concatU8a,
@@ -18,7 +18,7 @@ import type {
 } from '@polkadot-live/types/accounts';
 import type { Account } from '../../model';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { DedotClientSet } from '@polkadot-live/types/apis';
+import type { DedotStakingClient } from '@polkadot-live/types/apis';
 
 /**
  * @name getNominationPoolRewards
@@ -30,7 +30,14 @@ export const getNominationPoolRewards = async (
   address: string,
   chainId: ChainID
 ): Promise<bigint> => {
-  const api = (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
+  if (!getStakingChains().includes(chainId)) {
+    return 0n;
+  }
+
+  const api = (
+    await APIsController.getConnectedApiOrThrow(chainId)
+  ).getApi() as DedotStakingClient;
+
   const result = await api.call.nominationPoolsApi.pendingRewards(address);
   return result;
 };
@@ -40,7 +47,7 @@ export const getNominationPoolRewards = async (
  * @summary Generates pool stash and reward address for a pool id.
  * @param {number} poolId - id of the pool.
  */
-const getPoolAccounts = (poolId: number, api: DedotClientSet) => {
+const getPoolAccounts = (poolId: number, api: DedotStakingClient) => {
   const createAccount = (pId: bigint, index: number): string => {
     const poolsPalletId = api.consts.nominationPools.palletId;
 
@@ -70,7 +77,7 @@ const getPoolAccounts = (poolId: number, api: DedotClientSet) => {
  */
 export const getNominationPoolData = async (
   account: Account,
-  api: DedotClientSet
+  api: DedotStakingClient
 ): Promise<AccountNominationPoolData | null> => {
   if (!Array.from(ChainList.keys()).includes(account.chain)) {
     return null;

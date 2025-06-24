@@ -4,7 +4,6 @@
 import {
   ConfigRenderer,
   formatDecimal,
-  getAddressChainId,
   getSpendableBalance,
 } from '@polkadot-live/core';
 import { chainUnits } from '@polkadot-live/consts/chains';
@@ -44,7 +43,10 @@ interface SendNativeHook {
   handleSendAmountBlur: () => void;
   handleSendAmountChange: (event: ChangeEvent<HTMLInputElement>) => void;
   handleSendAmountFocus: () => void;
-  handleSenderChange: (senderAddress: string) => Promise<void>;
+  handleSenderChange: (
+    senderAddress: string,
+    chainId: ChainID
+  ) => Promise<void>;
   proceedDisabled: () => boolean;
   setReceiver: React.Dispatch<React.SetStateAction<SendRecipient | null>>;
 }
@@ -166,12 +168,13 @@ export const useSendNative = (): SendNativeHook => {
   /**
    * Sender value changed callback.
    */
-  const handleSenderChange = async (senderAddress: string) => {
+  const handleSenderChange = async (
+    senderAddress: string,
+    chainId: ChainID
+  ) => {
     setFetchingSpendable(true);
-
-    const chainId = getAddressChainId(senderAddress);
-    setSender(senderAddress);
     setSenderNetwork(chainId);
+    setSender(senderAddress);
 
     const result = await getSpendableBalance(senderAddress, chainId);
     setSpendable(result);

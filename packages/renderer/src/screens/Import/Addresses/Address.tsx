@@ -25,8 +25,8 @@ export const Address = ({ genericAccount, setSection }: AddressProps) => {
       anyProcessing={anyProcessing(genericAccount)}
       genericAccount={genericAccount}
       isConnected={getOnlineMode()}
-      isProcessing={({ address }) =>
-        Boolean(getStatusForAccount(address, source))
+      isProcessing={({ address, chainId }) =>
+        Boolean(getStatusForAccount(`${chainId}:${address}`, source))
       }
       setIsDialogOpen={setIsDialogOpen}
       theme={theme}

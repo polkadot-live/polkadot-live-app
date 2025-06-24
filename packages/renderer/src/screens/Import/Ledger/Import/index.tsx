@@ -10,7 +10,6 @@ import * as Select from '@radix-ui/react-select';
 import { useEffect, useState } from 'react';
 import { useConnections } from '@ren/contexts/common';
 import {
-  useAccountStatuses,
   useAddresses,
   useImportHandler,
   useLedgerHardware,
@@ -49,7 +48,6 @@ import type { ChainID } from '@polkadot-live/types/chains';
 
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   const { cacheGet, getTheme } = useConnections();
-  const { insertAccountStatus } = useAccountStatuses();
   const { handleImportAddress } = useImportHandler();
   const { isAlreadyImported, getAccounts } = useAddresses();
   const genericAccounts = getAccounts('ledger');
@@ -127,7 +125,6 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
       }
 
       await handleImportAddress(add, 'ledger', accountName, false, pk, device);
-      insertAccountStatus(pk, 'ledger');
     }
 
     ledger.resetAll();

@@ -48,9 +48,9 @@ export const ImportHandlerProvider = ({
     const { encodedAccounts } = genericAccount;
 
     for (const enAccount of Object.values(encodedAccounts)) {
-      const { address, isImported } = enAccount;
+      const { address, chainId, isImported } = enAccount;
       const status = isImported && getOnlineMode();
-      setStatusForAccount(address, source, status);
+      setStatusForAccount(`${chainId}:${address}`, source, status);
 
       // Send data to main renderer for processing.
       if ((isImported && !getOnlineMode()) || !mainImport) {
@@ -74,13 +74,15 @@ export const ImportHandlerProvider = ({
   const handleImportAddressFromBackup = async (
     genericAccount: ImportedGenericAccount
   ) => {
-    const { publicKeyHex, encodedAccounts, source } = genericAccount;
+    const { encodedAccounts, source } = genericAccount;
 
     // Set processing flag for account if it needs importing.
-    for (const { isImported } of Object.values(encodedAccounts)) {
+    for (const { address, chainId, isImported } of Object.values(
+      encodedAccounts
+    )) {
       isImported
-        ? setStatusForAccount(publicKeyHex, source, true)
-        : insertAccountStatus(publicKeyHex, source);
+        ? setStatusForAccount(`${chainId}:${address}`, source, true)
+        : insertAccountStatus(`${chainId}:${address}`, source);
     }
 
     // Update addresses state and references.

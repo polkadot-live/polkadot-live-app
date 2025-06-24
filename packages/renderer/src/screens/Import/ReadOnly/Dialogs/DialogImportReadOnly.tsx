@@ -3,11 +3,7 @@
 
 import * as Dialog from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
-import {
-  useAccountStatuses,
-  useAddresses,
-  useImportHandler,
-} from '@ren/contexts/import';
+import { useAddresses, useImportHandler } from '@ren/contexts/import';
 import { useConnections } from '@ren/contexts/common';
 import { useState } from 'react';
 import { checkAddress } from '@polkadot/util-crypto';
@@ -26,7 +22,6 @@ import { ellipsisFn, unescape } from '@w3ux/utils';
 
 export const DialogImportReadOnly = () => {
   const { isAlreadyImported } = useAddresses();
-  const { insertAccountStatus } = useAccountStatuses();
   const { getTheme } = useConnections();
   const { handleImportAddress } = useImportHandler();
 
@@ -56,7 +51,6 @@ export const DialogImportReadOnly = () => {
 
     // Handle valid address input.
     setInputVal('');
-    insertAccountStatus(trimmed, 'read-only');
     setDialogOpen(false);
 
     // Set processing flag to true if online and import via main renderer.
