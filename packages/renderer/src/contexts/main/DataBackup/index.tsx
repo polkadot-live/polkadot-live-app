@@ -27,6 +27,7 @@ import type {
   AccountSource,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { EventCallback } from '@polkadot-live/types/reporter';
 import type { ExportResult, ImportResult } from '@polkadot-live/types/backup';
 import type {
@@ -182,7 +183,7 @@ export const DataBackupProvider = ({
 
       // Process parsed addresses.
       for (const genericAccount of genericAccounts) {
-        const { accountName, encodedAccounts, publicKeyHex } = genericAccount;
+        const { encodedAccounts, publicKeyHex } = genericAccount;
         const isOnline = cacheGet('mode:connected');
 
         // Iterate encoded accounts and set `isImported` flag.
@@ -230,7 +231,6 @@ export const DataBackupProvider = ({
           // Update managed account names.
           const account = AccountsController.get(chainId, publicKeyHex);
           if (account) {
-            account.name = `${chainId}: ${accountName}`;
             await AccountsController.set(account);
           }
         }
@@ -353,13 +353,14 @@ export const DataBackupProvider = ({
     const s_persistMap = new Map<string, string>();
 
     // Iterate map of serialized tasks keyed by an account address.
-    for (const [address, serTasks] of s_map.entries()) {
+    for (const [key, serTasks] of s_map.entries()) {
       const parsed: SubscriptionTask[] = JSON.parse(serTasks);
       if (parsed.length === 0) {
         continue;
       }
 
-      const account = AccountsController.get(parsed[0].chainId, address);
+      const [chainId, address] = key.split(':', 2);
+      const account = AccountsController.get(chainId as ChainID, address);
       const valid: SubscriptionTask[] = [];
 
       if (account) {
@@ -381,7 +382,7 @@ export const DataBackupProvider = ({
       }
 
       // Serialize the account's subscribed tasks.
-      valid.length > 0 && s_persistMap.set(address, JSON.stringify(valid));
+      valid.length > 0 && s_persistMap.set(key, JSON.stringify(valid));
     }
 
     // Set subscriptions React state.

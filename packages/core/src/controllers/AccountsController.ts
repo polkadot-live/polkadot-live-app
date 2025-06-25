@@ -83,13 +83,14 @@ export class AccountsController {
    * Sync live data for all managed accounts.
    */
   static syncAllAccounts = async (api: DedotClientSet, chainId: ChainID) => {
-    const promises = [this.syncAllBalances(api, chainId)];
+    let promises = [this.syncAllBalances(api, chainId)];
 
     if (getStakingChains().includes(chainId)) {
-      promises.concat([
+      promises = [
+        ...promises,
         this.syncAllNominatingData(api as DedotStakingClient, chainId),
         this.syncAllNominationPoolData(api as DedotStakingClient, chainId),
-      ]);
+      ];
     }
 
     await Promise.all(promises);
@@ -99,13 +100,14 @@ export class AccountsController {
    * Sync live data for a single managed account.
    */
   static syncAccount = async (account: Account, api: DedotClientSet) => {
-    const promises = [this.syncBalance(account, api)];
+    let promises = [this.syncBalance(account, api)];
 
     if (getStakingChains().includes(account.chain)) {
-      promises.concat([
+      promises = [
+        ...promises,
         this.syncNominationPoolData(account, api as DedotStakingClient),
         this.syncNominatingData(account, api as DedotStakingClient),
-      ]);
+      ];
     }
 
     await Promise.all(promises);
@@ -215,7 +217,9 @@ export class AccountsController {
         const stored =
           (await window.myAPI.sendSubscriptionTask({
             action: 'subscriptions:account:getAll',
-            data: { address: account.address },
+            data: {
+              data: { address: account.address, chainId: account.chain },
+            },
           })) || '[]';
 
         if (account.queryMulti !== null) {

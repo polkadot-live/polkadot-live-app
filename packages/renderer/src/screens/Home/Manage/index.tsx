@@ -68,9 +68,9 @@ export const Manage = ({ addresses }: ManageProps) => {
           {/* List of accounts and chains */}
           <Wrapper>
             <Accounts
+              addresses={addresses}
               setSection={setSection}
               setBreadcrumb={setBreadcrumb}
-              addresses={addresses}
               setTypeClicked={setTypeClicked}
               setSelectedAccount={setSelectedAccount}
             />

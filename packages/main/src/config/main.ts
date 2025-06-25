@@ -3,6 +3,7 @@
 
 import { MessageChannelMain } from 'electron';
 import type { AccountSource } from '@polkadot-live/types/accounts';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { PortPair, PortPairID } from '@polkadot-live/types/communication';
 import type { Rectangle, Tray } from 'electron';
 
@@ -88,8 +89,11 @@ export class Config {
   }
 
   // Get local storage key for subscription tasks of a particular address.
-  static getSubscriptionsStorageKeyFor(address: string): string {
-    return `${address}_subscriptions`;
+  static getSubscriptionsStorageKeyFor(
+    address: string,
+    chainId: ChainID
+  ): string {
+    return `${chainId}_${address}_subscriptions`;
   }
 
   // Initialize ports to facilitate communication between the main and other renderers.

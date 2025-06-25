@@ -27,6 +27,7 @@ import type {
 import { ellipsisFn } from '@w3ux/utils';
 import { FlexColumn } from '@polkadot-live/ui/styles';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
+import { getSupportedChains } from '@polkadot-live/consts/chains';
 
 export const Accounts = ({
   addresses,
@@ -54,12 +55,8 @@ export const Accounts = ({
     const sorted = new Map<ChainID | 'Empty', FlattenedAccountData[]>();
 
     // Insert map keys in a certain order.
-    for (const chainId of [
-      'Polkadot',
-      'Kusama',
-      'Westend Asset Hub',
-    ] as ChainID[]) {
-      sorted.set(chainId, []);
+    for (const chainId of Object.keys(getSupportedChains())) {
+      sorted.set(chainId as ChainID, []);
     }
 
     // Map addresses to their chain ID.
@@ -139,8 +136,12 @@ export const Accounts = ({
   };
 
   /// Set account subscription tasks state when an account is clicked.
-  const handleClickAccount = (accountName: string, address: string) => {
-    const tasks = getAccountSubscriptions(address);
+  const handleClickAccount = (
+    address: string,
+    chainId: ChainID,
+    accountName: string
+  ) => {
+    const tasks = getAccountSubscriptions(`${chainId}:${address}`);
     const copy = copyTasks(tasks);
 
     setRenderedSubscriptions({
@@ -198,14 +199,16 @@ export const Accounts = ({
                       <ItemsColumn>
                         {chainAddresses.map(
                           (
-                            { address, name }: FlattenedAccountData,
+                            { address, chain, name }: FlattenedAccountData,
                             j: number
                           ) => (
                             <ItemEntryWrapper
                               whileHover={{ scale: 1.01 }}
                               whileTap={{ scale: 0.99 }}
                               key={`manage_account_${j}`}
-                              onClick={() => handleClickAccount(name, address)}
+                              onClick={() =>
+                                handleClickAccount(address, chain, name)
+                              }
                             >
                               <div className="inner">
                                 <div>

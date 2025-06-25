@@ -10,8 +10,13 @@ import type { ChainID } from '@polkadot-live/types/chains';
 
 export interface AddressesContextInterface {
   addresses: FlattenedAccounts;
+  addressExists: (address: string, chainId: ChainID) => boolean;
+  getAddress: (
+    address: string,
+    chainId: ChainID
+  ) => FlattenedAccountData | null;
   getAddresses: () => FlattenedAccountData[];
-  addressExists: (a: string) => boolean;
+  getAllAccounts: () => FlattenedAccountData[];
   importAddress: (
     n: ChainID,
     s: AccountSource,
@@ -19,10 +24,8 @@ export interface AddressesContextInterface {
     b: string,
     fromBackup: boolean
   ) => Promise<void>;
-  removeAddress: (n: ChainID, a: string) => Promise<void>;
-  getAddress: (a: string) => FlattenedAccountData | null;
+  removeAddress: (chainId: ChainID, address: string) => Promise<void>;
   getReadableAccountSource: (source: AccountSource) => string;
-  getAllAccounts: () => FlattenedAccountData[];
   getSubscriptionCountForAccount: (flattened: FlattenedAccountData) => number;
   getTotalSubscriptionCount: () => number;
 }

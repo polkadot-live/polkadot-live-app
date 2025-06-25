@@ -257,7 +257,12 @@ export const useMainMessagePorts = () => {
    * @summary Rename an account managed by the accounts controller and update state.
    */
   const handleRenameAccount = async (ev: MessageEvent) => {
-    const { address, chainId, newName } = ev.data.data;
+    const {
+      address,
+      chainId,
+      newName,
+    }: { address: string; chainId: ChainID; newName: string } = ev.data.data;
+
     const account = AccountsController.get(chainId, address);
 
     if (account) {
@@ -269,13 +274,13 @@ export const useMainMessagePorts = () => {
       AccountsController.syncState();
 
       // Update subscription task react state.
-      updateAccountNameInTasks(address, newName);
+      updateAccountNameInTasks(`${chainId}:${address}`, newName);
     }
 
     // The updated events will be sent back to the renderer for updating React state.
     const serialized = (await window.myAPI.sendEventTaskAsync({
       action: 'events:update:accountName',
-      data: { address, newName },
+      data: { address, chainId, newName },
     })) as string;
 
     // Update events state.

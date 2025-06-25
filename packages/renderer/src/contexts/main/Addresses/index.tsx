@@ -28,9 +28,9 @@ export const AddressesProvider = ({
   const addressesRef = useRef(addresses);
 
   // Check if an address exists in imported addresses.
-  const addressExists = (address: string) => {
+  const addressExists = (address: string, chainId: ChainID) => {
     for (const accounts of addressesRef.current.values()) {
-      if (accounts.find((a) => a.address === address)) {
+      if (accounts.find((a) => a.address === address && a.chain === chainId)) {
         return true;
       }
     }
@@ -69,7 +69,7 @@ export const AddressesProvider = ({
     // Remove persisted account from store.
     await window.myAPI.sendAccountTask({
       action: 'account:remove',
-      data: { address },
+      data: { address, chainId: chain },
     });
   };
 
@@ -79,7 +79,7 @@ export const AddressesProvider = ({
 
     for (const accounts of addressesRef.current.values()) {
       const newItems = accounts
-        .map((a) => getAddress(a.address))
+        .map((a) => getAddress(a.address, a.chain))
         .filter((a) => a !== null) as FlattenedAccountData[];
 
       listAddresses = listAddresses.concat(newItems);
@@ -89,11 +89,11 @@ export const AddressesProvider = ({
   };
 
   // Gets an imported address along with its Ledger metadata.
-  const getAddress = (address: string) => {
+  const getAddress = (address: string, chainId: ChainID) => {
     if (!addresses) {
       return null;
     }
-    if (!addressExists(address)) {
+    if (!addressExists(address, chainId)) {
       return null;
     }
 
@@ -102,7 +102,11 @@ export const AddressesProvider = ({
       result.push(...accounts);
     }
 
-    return result.find((account) => account.address === address) ?? null;
+    return (
+      result.find(
+        (account) => account.address === address && account.chain === chainId
+      ) ?? null
+    );
   };
 
   /// Get all imported account names.

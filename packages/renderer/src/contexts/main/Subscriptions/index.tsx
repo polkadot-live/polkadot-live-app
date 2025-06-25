@@ -66,8 +66,8 @@ export const SubscriptionsProvider = ({
   };
 
   /// Update cached account name for an account's subscription tasks.
-  const updateAccountNameInTasks = (address: string, newName: string) => {
-    const tasks = accountSubscriptionsState.get(address);
+  const updateAccountNameInTasks = (key: string, newName: string) => {
+    const tasks = accountSubscriptionsState.get(key);
 
     if (!tasks) {
       return;
@@ -75,7 +75,7 @@ export const SubscriptionsProvider = ({
 
     setAccountSubscriptionsState((prev) => {
       prev.set(
-        address,
+        key,
         tasks.map((t) => ({ ...t, account: { ...t.account!, name: newName } }))
       );
       return prev;
@@ -89,8 +89,8 @@ export const SubscriptionsProvider = ({
   };
 
   /// Get subscription tasks for a specific account.
-  const getAccountSubscriptions = (address: string) => {
-    const subscriptions = accountSubscriptionsState.get(address);
+  const getAccountSubscriptions = (key: string) => {
+    const subscriptions = accountSubscriptionsState.get(key);
     return subscriptions ? subscriptions : [];
   };
 

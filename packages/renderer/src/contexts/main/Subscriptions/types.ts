@@ -14,8 +14,8 @@ export interface SubscriptionsContextInterface {
   accountSubscriptions: Map<string, SubscriptionTask[]>;
   chainHasSubscriptions: (chainId: ChainID) => boolean;
   getChainSubscriptions: (a: ChainID) => SubscriptionTask[];
-  getAccountSubscriptions: (a: string) => SubscriptionTask[];
-  updateAccountNameInTasks: (address: string, newName: string) => void;
+  getAccountSubscriptions: (key: string) => SubscriptionTask[];
+  updateAccountNameInTasks: (key: string, newName: string) => void;
   handleQueuedToggle: (task: SubscriptionTask) => Promise<void>;
   toggleCategoryTasks: (
     c: TaskCategory,

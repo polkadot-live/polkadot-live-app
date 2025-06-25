@@ -18,7 +18,7 @@ export interface ImportNewAddressArg {
 }
 
 export interface RemoveImportedAccountArg {
-  chain: ChainID;
+  chainId: ChainID;
   address: string;
 }
 

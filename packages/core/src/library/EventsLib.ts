@@ -162,7 +162,7 @@ export const pushUniqueEvent = (
 /**
  * @name filter_query_system_account
  * @summary The new event is considered a duplicate if another event has
- * matching address and balance data.
+ * matching address, chainId and balance data.
  */
 const filter_account_balance_free = (
   events: EventCallback[],
@@ -177,7 +177,11 @@ const filter_account_balance_free = (
       const bWho = e.who.data as EventAccountData;
       const bData: { free: string } = e.data;
 
-      if (aWho.address === bWho.address && aData.free === bData.free) {
+      if (
+        aWho.address === bWho.address &&
+        aWho.chainId === bWho.chainId &&
+        aData.free === bData.free
+      ) {
         isUnique = false;
         break;
       }
@@ -189,7 +193,7 @@ const filter_account_balance_free = (
 
 /**
  * @name filter_account_balance_frozen
- * @summary Event is duplicate if it matches on address, chain and frozen balance.
+ * @summary Event is duplicate if it matches on address, chainId and frozen balance.
  */
 const filter_account_balance_frozen = (
   events: EventCallback[],
@@ -204,7 +208,11 @@ const filter_account_balance_frozen = (
       const bWho = e.who.data as EventAccountData;
       const bData: { frozen: string } = e.data.frozen;
 
-      if (aWho.address === bWho.address && aData.frozen === bData.frozen) {
+      if (
+        aWho.address === bWho.address &&
+        aWho.chainId === bWho.chainId &&
+        aData.frozen === bData.frozen
+      ) {
         isUnique = false;
         break;
       }
@@ -216,7 +224,7 @@ const filter_account_balance_frozen = (
 
 /**
  * @name filter_account_balance_reserved
- * @summary Event is duplicate if it matches on address, chain and frozen balance.
+ * @summary Event is duplicate if it matches on address, chainId and frozen balance.
  */
 const filter_account_balance_reserved = (
   events: EventCallback[],
@@ -231,7 +239,11 @@ const filter_account_balance_reserved = (
       const bWho = e.who.data as EventAccountData;
       const bData: { reserved: string } = e.data;
 
-      if (aWho.address === bWho.address && aData.reserved === bData.reserved) {
+      if (
+        aWho.address === bWho.address &&
+        aWho.chainId === bWho.chainId &&
+        aData.reserved === bData.reserved
+      ) {
         isUnique = false;
         break;
       }
@@ -243,7 +255,7 @@ const filter_account_balance_reserved = (
 
 /**
  * @name filter_account_balance_spendable
- * @summary Event is duplicate if it matches on address, chain and spendable balance.
+ * @summary Event is duplicate if it matches on address, chainId and spendable balance.
  */
 const filter_account_balance_spendable = (
   events: EventCallback[],
@@ -260,6 +272,7 @@ const filter_account_balance_spendable = (
 
       if (
         aWho.address === bWho.address &&
+        aWho.chainId === bWho.chainId &&
         aData.spendable === bData.spendable
       ) {
         isUnique = false;
@@ -274,7 +287,7 @@ const filter_account_balance_spendable = (
 /**
  * @name filter_nomination_pool_rewards
  * @summary The new event is considered a duplicate if another event has
- * a matching address and pending rewards balance.
+ * a matching address, chainId and pending rewards balance.
  */
 const filter_nomination_pool_rewards = (
   events: EventCallback[],
@@ -291,6 +304,7 @@ const filter_nomination_pool_rewards = (
 
       if (
         aWho.address === bWho.address &&
+        aWho.chainId === bWho.chainId &&
         aData.pendingRewards === bData.pendingRewards
       ) {
         isUnique = false;
@@ -305,7 +319,9 @@ const filter_nomination_pool_rewards = (
     events = events.map((e) => {
       if (e.taskAction === event.taskAction && e.data) {
         const bWho = e.who.data as EventAccountData;
-        aWho.address === bWho.address && (e.stale = true);
+        if (aWho.address === bWho.address && aWho.chainId === bWho.chainId) {
+          e.stale = true;
+        }
       }
       return e;
     });
@@ -317,7 +333,7 @@ const filter_nomination_pool_rewards = (
 /**
  * @name filter_nomination_pool_state
  * @summary The new event is considered a duplicate if another event has
- * a matching address and nomination pool state.
+ * a matching address, chainId and nomination pool state.
  */
 const filter_nomination_pool_state = (
   events: EventCallback[],
@@ -334,6 +350,7 @@ const filter_nomination_pool_state = (
 
       if (
         aWho.address === bWho.address &&
+        aWho.chainId === bWho.chainId &&
         aData.poolState === bData.poolState
       ) {
         isUnique = false;
@@ -348,7 +365,7 @@ const filter_nomination_pool_state = (
 /**
  * @name filter_nomination_pool_renamed
  * @summary The new event is considered a duplicate if another event has
- * a matching address and nomination pool name.
+ * a matching address, chainId and nomination pool name.
  */
 const filter_nomination_pool_renamed = (
   events: EventCallback[],
@@ -363,7 +380,11 @@ const filter_nomination_pool_renamed = (
       const bWho = e.who.data as EventAccountData;
       const bData: { poolName: string } = e.data;
 
-      if (aWho.address === bWho.address && aData.poolName === bData.poolName) {
+      if (
+        aWho.address === bWho.address &&
+        aWho.chainId === bWho.chainId &&
+        aData.poolName === bData.poolName
+      ) {
         isUnique = false;
         break;
       }
@@ -376,7 +397,7 @@ const filter_nomination_pool_renamed = (
 /**
  * @name filter_nomination_pool_roles
  * @summary The new event is considered a duplicate if another event has
- * a matching address and roles.
+ * a matching address, chainId and roles.
  */
 const filter_nomination_pool_roles = (
   events: EventCallback[],
@@ -393,6 +414,7 @@ const filter_nomination_pool_roles = (
 
       if (
         aWho.address === bWho.address &&
+        aWho.chainId === bWho.chainId &&
         aData.depositor === bData.depositor &&
         aData.root === bData.root &&
         aData.nominator === bData.nominator &&
@@ -410,7 +432,7 @@ const filter_nomination_pool_roles = (
 /**
  * @name filter_nomination_pool_commission
  * @summary The new event is considered a duplicate if another event has
- * a matching address and commission data.
+ * a matching address, chainId and commission data.
  */
 const filter_nomination_pool_commission = (
   events: EventCallback[],
@@ -427,6 +449,7 @@ const filter_nomination_pool_commission = (
 
       if (
         aWho.address === bWho.address &&
+        aWho.chainId === bWho.chainId &&
         aData.throttleFrom === bData.throttleFrom &&
         aData.max === bData.max &&
         JSON.stringify(aData.changeRate) === JSON.stringify(bData.changeRate) &&
@@ -444,7 +467,7 @@ const filter_nomination_pool_commission = (
 /**
  * @name filter_nominating_era_rewards
  * @summary The new event is considered a duplicate if another event has
- * a matching address, pending payout and era number.
+ * a matching address, chainId, pending payout and era number.
  */
 const filter_nominating_era_rewards = (
   events: EventCallback[],
@@ -461,6 +484,7 @@ const filter_nominating_era_rewards = (
 
       if (
         aWho.address === bWho.address &&
+        aWho.chainId === bWho.chainId &&
         aData.era === bData.era &&
         aData.eraRewards === bData.eraRewards
       ) {
@@ -476,7 +500,7 @@ const filter_nominating_era_rewards = (
 /**
  * @name filter_nominating_exposure
  * @summary The new event is considered a duplicate if another event has
- * a matching address, era number, and exposed flag.
+ * a matching address, chainId, era number, and exposed flag.
  */
 const filter_nominating_exposure = (
   events: EventCallback[],
@@ -493,6 +517,7 @@ const filter_nominating_exposure = (
 
       if (
         aWho.address === bWho.address &&
+        aWho.chainId === bWho.chainId &&
         aData.era === bData.era &&
         aData.exposed === bData.exposed
       ) {
@@ -508,7 +533,7 @@ const filter_nominating_exposure = (
 /**
  * @name filter_nominating_commission
  * @summary The new event is considered a duplicate if another event has
- * a matching address and commission data.
+ * a matching address, chainId, and commission data.
  */
 const filter_nominating_commission = (
   events: EventCallback[],
@@ -525,6 +550,7 @@ const filter_nominating_commission = (
 
       if (
         aWho.address === bWho.address &&
+        aWho.chainId === bWho.chainId &&
         aData.era === bData.era &&
         aData.hasChanged === bData.hasChanged
       ) {
@@ -540,7 +566,7 @@ const filter_nominating_commission = (
 /**
  * @name filter_nominating_nominations
  * @summary The new event is considered a duplicate if another event has
- * a matching address and validator data.
+ * a matching address, chainId and validator data.
  */
 const filter_nominating_nominations = (
   events: EventCallback[],
@@ -557,6 +583,7 @@ const filter_nominating_nominations = (
 
       if (
         aWho.address === bWho.address &&
+        aWho.chainId === bWho.chainId &&
         aData.era === bData.era &&
         aData.hasChanged === bData.hasChanged
       ) {
@@ -572,7 +599,7 @@ const filter_nominating_nominations = (
 /**
  * @name filter_openGov_referendumVotes
  * @summary The new event is considered a duplicate if another event has
- * a matching action, chain id and referendum id.
+ * a matching action, chainId and referendum id.
  */
 const filter_openGov_referendumVotes = (
   events: EventCallback[],
@@ -611,7 +638,7 @@ const filter_openGov_referendumVotes = (
 /**
  * @name filter_openGov_decisionPeriod
  * @summary The new event is considered a duplicate if another event has
- * a matching action, chain id and referendum id.
+ * a matching action, chainId and referendum id.
  */
 const filter_openGov_decisionPeriod = (
   events: EventCallback[],
@@ -643,7 +670,7 @@ const filter_openGov_decisionPeriod = (
 /**
  * @name filter_openGov_referendumThresholds
  * @summary The new event is considered a duplicate if another event has
- * a matching action, chain id and referendum id.
+ * a matching action, chainId and referendum id.
  */
 const filter_openGov_referendumThresholds = (
   events: EventCallback[],

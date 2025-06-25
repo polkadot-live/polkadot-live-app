@@ -19,7 +19,7 @@ import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
  * 'chain_subscriptions'
  *   Key that stores global chain subscription tasks.
  *
- * '<account_address>_subscriptions'
+ * '<chainId_account_address>_subscriptions'
  *   Key that stores an account's subscription tasks.
  *
  * Ex: const serialized = store.get('chain_subscriptions');
@@ -38,7 +38,9 @@ export class SubscriptionsController {
     switch (task.action) {
       // Get an account's persisted tasks in serialized form.
       case 'subscriptions:account:getAll': {
-        return this.get(task.data.address);
+        const { address, chainId }: { address: string; chainId: ChainID } =
+          task.data.data;
+        return this.get(address, chainId);
       }
       // Get persisted chain subscription tasks.
       case 'subscriptions:chain:getAll': {
@@ -49,7 +51,8 @@ export class SubscriptionsController {
       case 'subscriptions:account:update': {
         const account: FlattenedAccountData = JSON.parse(task.data.serAccount);
         const subTask: SubscriptionTask = JSON.parse(task.data.serTask);
-        this.update(subTask, account.address);
+        const { address, chain: chainId } = account;
+        this.update(subTask, address, chainId);
         return;
       }
       // Import tasks from a backup text file.
@@ -69,8 +72,8 @@ export class SubscriptionsController {
    * @name get
    * @summary Get serialized subscriptions from store for an address.
    */
-  private static get(address: string): string {
-    const key = ConfigMain.getSubscriptionsStorageKeyFor(address);
+  private static get(address: string, chainId: ChainID): string {
+    const key = ConfigMain.getSubscriptionsStorageKeyFor(address, chainId);
     const stored = (store as Record<string, AnyData>).get(key) as string;
     return stored ? stored : '';
   }
@@ -96,14 +99,15 @@ export class SubscriptionsController {
     const s_map = new Map<string, string>(s_array);
 
     // Iterate map of serialized tasks keyed by an account address.
-    for (const [address, serTasks] of s_map.entries()) {
+    for (const [key, serTasks] of s_map.entries()) {
       // Clear persisted tasks for an account.
-      this.clearAccountTasksInStore(address);
+      const [chainId, address] = key.split(':', 2);
+      this.clearAccountTasksInStore(address, chainId as ChainID);
 
       // Persist backed up tasks to store if online.
       if (OnlineStatusController.getStatus()) {
         const received: SubscriptionTask[] = JSON.parse(serTasks);
-        received.forEach((t) => this.update(t, address));
+        received.forEach((t) => this.update(t, address, t.chainId));
       }
     }
   }
@@ -119,16 +123,16 @@ export class SubscriptionsController {
     const ser_array: [ChainID, StoredAccount[]][] = JSON.parse(ser);
     const map_accounts = new Map<ChainID, StoredAccount[]>(ser_array);
 
-    // Address as key and its serialized subscription tasks as value.
+    // ChainID:Address as key and its serialized subscription tasks as value.
     const map = new Map<string, string>();
 
     // Copy stored account's serialized tasks into map.
     for (const accounts of map_accounts.values()) {
-      for (const { _address } of accounts) {
-        const key = ConfigMain.getSubscriptionsStorageKeyFor(_address);
+      for (const { _address, _chain } of accounts) {
+        const key = ConfigMain.getSubscriptionsStorageKeyFor(_address, _chain);
         const ser_tasks: string =
           (store as Record<string, AnyData>).get(key) || '[]';
-        map.set(_address, ser_tasks);
+        map.set(`${_chain}:${_address}`, ser_tasks);
       }
     }
 
@@ -139,10 +143,14 @@ export class SubscriptionsController {
    * @name update
    * @summary Update a persisted account task with the received data.
    */
-  private static update(task: SubscriptionTask, address: string) {
-    const ser = this.get(address);
+  private static update(
+    task: SubscriptionTask,
+    address: string,
+    chainId: ChainID
+  ) {
+    const ser = this.get(address, task.chainId);
     const tasks: SubscriptionTask[] = ser === '' ? [] : JSON.parse(ser);
-    const key = ConfigMain.getSubscriptionsStorageKeyFor(address);
+    const key = ConfigMain.getSubscriptionsStorageKeyFor(address, chainId);
     this.updateTask(tasks, task, key);
   }
 
@@ -160,9 +168,9 @@ export class SubscriptionsController {
    * @name clearAccountTasksInStore
    * @summary Clears an account's persisted subscriptions in the store. Invoked when an account is removed.
    */
-  static clearAccountTasksInStore(address: string) {
+  static clearAccountTasksInStore(address: string, chainId: ChainID) {
     (store as Record<string, AnyJson>).delete(
-      ConfigMain.getSubscriptionsStorageKeyFor(address)
+      ConfigMain.getSubscriptionsStorageKeyFor(address, chainId)
     );
   }
 
@@ -170,8 +178,12 @@ export class SubscriptionsController {
    * @name updateCachedAccountNameForTasks
    * @summary Called when an account is renamed.
    */
-  static updateCachedAccountNameForTasks(address: string, newName: string) {
-    const ser = this.get(address);
+  static updateCachedAccountNameForTasks(
+    address: string,
+    chainId: ChainID,
+    newName: string
+  ) {
+    const ser = this.get(address, chainId);
     const parsed: SubscriptionTask[] = ser === '' ? [] : JSON.parse(ser);
 
     if (parsed.length === 0) {
@@ -183,7 +195,7 @@ export class SubscriptionsController {
       account: { ...task.account, name: newName },
     }));
 
-    const key = ConfigMain.getSubscriptionsStorageKeyFor(address);
+    const key = ConfigMain.getSubscriptionsStorageKeyFor(address, chainId);
     (store as Record<string, AnyJson>).set(key, JSON.stringify(updated));
   }
 
