@@ -8,6 +8,5 @@ export const defaultAccountStatusesContext: AccountStatusesContextInterface = {
   anyProcessing: () => false,
   setStatusForAccount: () => {},
   getStatusForAccount: () => null,
-  insertAccountStatus: () => {},
   deleteAccountStatus: () => {},
 };

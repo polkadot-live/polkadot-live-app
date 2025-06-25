@@ -194,19 +194,16 @@ export class EventsController {
     const parsed: EventCallback[] = JSON.parse(serialized);
 
     // Update persisted event account names.
-    const addressesChecked: [ChainID, string][] = [];
+    const addressesChecked: string[] = [];
     for (const event of parsed) {
       if (event.who.origin !== 'account') {
         continue;
       }
 
-      const who = event.who.data as EventAccountData;
-      if (
-        !addressesChecked.find(
-          ([cid, a]) => a === who.address && cid === who.chainId
-        )
-      ) {
-        addressesChecked.push([who.chainId, who.address]);
+      const { address, chainId } = event.who.data as EventAccountData;
+      const key = `${chainId}:${address}`;
+      if (!addressesChecked.includes(key)) {
+        addressesChecked.push(key);
         this.syncAccountName(event);
       }
     }
@@ -252,7 +249,7 @@ export class EventsController {
       }
       const who = e.who.data as EventAccountData;
       if (who.address === address && who.chainId === chainId) {
-        who.accountName = accountName;
+        (e.who.data as EventAccountData).accountName = accountName;
       }
       return e;
     });
@@ -340,7 +337,9 @@ export class EventsController {
    * @summary Get all stored events in serialized form.
    */
   static getBackupData(): string {
-    return (store as Record<string, AnyJson>).get(this.storeKey) as string;
+    const stored = this.getEventsFromStore();
+    const filtered = stored.filter(({ category }) => category !== 'debugging');
+    return JSON.stringify(filtered);
   }
 
   /**

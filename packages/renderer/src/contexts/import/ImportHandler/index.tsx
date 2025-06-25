@@ -32,7 +32,7 @@ export const ImportHandlerProvider = ({
   children: React.ReactNode;
 }) => {
   const { getOnlineMode } = useConnections();
-  const { setStatusForAccount, insertAccountStatus } = useAccountStatuses();
+  const { setStatusForAccount } = useAccountStatuses();
   const { handleAddressImport } = useAddresses();
 
   /// Exposed function to import an address.
@@ -80,9 +80,7 @@ export const ImportHandlerProvider = ({
     for (const { address, chainId, isImported } of Object.values(
       encodedAccounts
     )) {
-      isImported
-        ? setStatusForAccount(`${chainId}:${address}`, source, true)
-        : insertAccountStatus(`${chainId}:${address}`, source);
+      setStatusForAccount(`${chainId}:${address}`, source, isImported);
     }
 
     // Update addresses state and references.

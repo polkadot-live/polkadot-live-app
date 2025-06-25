@@ -109,6 +109,12 @@ export const useMainMessagePorts = () => {
         account = AccountsController.get(chainId, address);
 
         if (account) {
+          // Update account name with one in backup file.
+          if (alias !== account.name) {
+            account.name = alias;
+            await AccountsController.set(account);
+          }
+
           await AccountsController.removeAllSubscriptions(account);
           const allTasks =
             SubscriptionsController.getAllSubscriptionsForAccount(
@@ -175,7 +181,9 @@ export const useMainMessagePorts = () => {
       }
 
       // Add account to address context state.
-      await importAddress(chainId, source, address, alias, fromBackup);
+      if (!fromBackup) {
+        await importAddress(chainId, source, address, alias, fromBackup);
+      }
 
       // Send message back to import window to reset account's processing flag.
       ConfigRenderer.portToImport?.postMessage({
