@@ -190,6 +190,11 @@ export const getSupportedChains = (): Record<ChainID, Chain> => {
 };
 
 /**
+ * Get chain IDs that support send screen transfers.
+ */
+export const getSendChains = (): ChainID[] => ['Kusama', 'Westend Asset Hub'];
+
+/**
  * Get chain IDs that support staking APIs.
  */
 export const getStakingChains = (): ChainID[] => [
