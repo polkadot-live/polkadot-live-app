@@ -75,6 +75,7 @@ export class TaskOrchestrator {
       case 'Polkadot People':
       case 'Kusama':
       case 'Kusama Asset Hub':
+      case 'Kusama People':
       case 'Westend':
       case 'Westend Asset Hub': {
         // Return if data is missing for certain tasks.
