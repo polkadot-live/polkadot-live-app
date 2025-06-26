@@ -25,6 +25,7 @@ export const ChainIcon = ({
         />
       );
     case 'Kusama':
+    case 'Kusama Asset Hub':
       return (
         <KusamaIcon
           className={className}

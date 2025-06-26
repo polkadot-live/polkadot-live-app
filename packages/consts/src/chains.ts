@@ -6,6 +6,7 @@ import {
   polkadot,
   polkadot_asset_hub,
   ksmcc3,
+  ksmcc3_asset_hub,
   westend2,
   westend2_asset_hub,
 } from '@substrate/connect-known-chains';
@@ -92,9 +93,29 @@ export const ChainList = new Map<ChainID, Chain>([
           'wss://1rpc.io/ksm',
           'wss://rpc-kusama.luckyfriday.io',
           'wss://kusama.public.curie.radiumblock.co/ws',
-          'wss://ksm-rpc.stakeworld.io',
         ],
         lightClient: ksmcc3,
+      },
+      units: 12,
+      unit: 'KSM',
+      prefix: 2,
+    },
+  ],
+  [
+    'Kusama Asset Hub',
+    {
+      endpoints: {
+        rpcs: [
+          'wss://sys.ibp.network/asset-hub-kusama',
+          'wss://asset-hub-kusama-rpc.dwellir.com',
+          'wss://statemine-rpc-tn.dwellir.com',
+          'wss://asset-hub-kusama.dotters.network',
+          'wss://rpc-asset-hub-kusama.luckyfriday.io',
+          'wss://kusama-asset-hub-rpc.polkadot.io',
+          'wss://statemine.public.curie.radiumblock.co/ws',
+          'wss://ksm-rpc.stakeworld.io/assethub',
+        ],
+        lightClient: ksmcc3_asset_hub,
       },
       units: 12,
       unit: 'KSM',
