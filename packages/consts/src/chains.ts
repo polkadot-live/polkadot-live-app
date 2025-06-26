@@ -5,6 +5,7 @@ import { faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import {
   polkadot,
   polkadot_asset_hub,
+  polkadot_people,
   ksmcc3,
   ksmcc3_asset_hub,
   westend2,
@@ -74,6 +75,23 @@ export const ChainList = new Map<ChainID, Chain>([
           'wss://dot-rpc.stakeworld.io/assethub',
         ],
         lightClient: polkadot_asset_hub,
+      },
+      units: 10,
+      unit: 'DOT',
+      prefix: 0,
+    },
+  ],
+  [
+    'Polkadot People',
+    {
+      endpoints: {
+        rpcs: [
+          'wss://sys.ibp.network/people-polkadot',
+          'wss://people-polkadot.dotters.network',
+          'wss://rpc-people-polkadot.luckyfriday.io',
+          'wss://polkadot-people-rpc.polkadot.io',
+        ],
+        lightClient: polkadot_people,
       },
       units: 10,
       unit: 'DOT',

@@ -72,6 +72,7 @@ export class TaskOrchestrator {
       // Identify chain ID
       case 'Polkadot':
       case 'Polkadot Asset Hub':
+      case 'Polkadot People':
       case 'Kusama':
       case 'Kusama Asset Hub':
       case 'Westend':

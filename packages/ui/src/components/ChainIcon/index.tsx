@@ -16,6 +16,7 @@ export const ChainIcon = ({
   switch (chainId) {
     case 'Polkadot':
     case 'Polkadot Asset Hub':
+    case 'Polkadot People':
       return (
         <PolkadotIcon
           className={className}
