@@ -52,6 +52,7 @@ export class Api<T extends keyof ClientTypes> {
   ) => {
     switch (chainId) {
       case 'Polkadot Asset Hub':
+      case 'Polkadot People':
         return [
           await client.addChain({
             chainSpec: ChainList.get('Polkadot')!.endpoints.lightClient,

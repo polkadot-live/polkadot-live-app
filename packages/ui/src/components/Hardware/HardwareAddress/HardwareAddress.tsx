@@ -124,7 +124,9 @@ export const HardwareAddress = ({
                   className="NetworkIcon"
                   style={{
                     fill:
-                      cid === 'Polkadot' || cid === 'Polkadot Asset Hub'
+                      cid === 'Polkadot' ||
+                      cid === 'Polkadot Asset Hub' ||
+                      cid === 'Polkadot People'
                         ? '#ac2461'
                         : undefined,
                   }}

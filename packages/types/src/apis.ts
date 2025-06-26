@@ -8,6 +8,7 @@ import type {
   KusamaAssetHubApi,
   PolkadotApi,
   PolkadotAssetHubApi,
+  PolkadotPeopleApi,
   WestendApi,
   WestendAssetHubApi,
 } from '@dedot/chaintypes';
@@ -20,6 +21,7 @@ export type NodeEndpoint = `wss://${string}` | 'smoldot';
 export type DedotClientSet =
   | DedotClient<PolkadotApi>
   | DedotClient<PolkadotAssetHubApi>
+  | DedotClient<PolkadotPeopleApi>
   | DedotClient<KusamaApi>
   | DedotClient<KusamaAssetHubApi>
   | DedotClient<WestendApi>
@@ -40,6 +42,7 @@ export type DedotOpenGovClient =
 export interface ClientTypes {
   polkadot: PolkadotApi;
   statemint: PolkadotAssetHubApi;
+  'people-polkadot': PolkadotPeopleApi;
   kusama: KusamaApi;
   statemine: KusamaAssetHubApi;
   westend: WestendApi;
@@ -58,6 +61,7 @@ export interface ChainIdToClientKeyMap {
   'Polkadot Asset Hub': 'statemint';
   'Kusama Asset Hub': 'statemine';
   'Westend Asset Hub': 'westmint';
+  'Polkadot People': 'people-polkadot';
 }
 
 /*
