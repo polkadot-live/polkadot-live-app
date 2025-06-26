@@ -24,7 +24,6 @@ export interface SelectBoxProps {
   children: React.ReactNode;
   ariaLabel: string;
   placeholder: string;
-  value: string;
   disabled?: boolean;
   onValueChange: (val: string) => void;
 }

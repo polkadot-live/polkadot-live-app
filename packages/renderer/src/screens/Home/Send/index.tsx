@@ -28,6 +28,7 @@ import {
 import { useSendNative } from '@ren/hooks/useSendNative';
 import { DialogRecipient } from './Dialogs';
 import type { SendAccordionValue } from './types';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 export const Send: React.FC = () => {
   const { getOnlineMode } = useConnections();
@@ -154,31 +155,29 @@ export const Send: React.FC = () => {
                   <FlexColumn $rowGap={'2px'}>
                     <SelectBox
                       disabled={emptySenders || !getOnlineMode()}
-                      value={sender || ''}
                       ariaLabel="Sender"
                       placeholder="Select Sender"
-                      onValueChange={async (val) =>
-                        await handleSenderChange(val)
-                      }
+                      onValueChange={async (val) => {
+                        const [chainId, address] = val.split(':', 2);
+                        await handleSenderChange(address, chainId as ChainID);
+                      }}
                     >
-                      {getSenderAccounts().map(
-                        ({ alias: accountName, address }) => (
-                          <UI.SelectItem
-                            key={`sender-${address}`}
-                            value={address}
-                          >
-                            <div className="innerRow">
-                              <div>
-                                <Identicon
-                                  value={address}
-                                  fontSize={'2.1rem'}
-                                />
-                              </div>
-                              <div>{accountName}</div>
+                      {getSenderAccounts().map((enAccount) => (
+                        <UI.SelectItem
+                          key={`sender-${enAccount.chainId}-${enAccount.address}`}
+                          value={`${enAccount.chainId}:${enAccount.address}`}
+                        >
+                          <div className="innerRow">
+                            <div>
+                              <Identicon
+                                value={enAccount.address}
+                                fontSize={'2.1rem'}
+                              />
                             </div>
-                          </UI.SelectItem>
-                        )
-                      )}
+                            <div>{enAccount.alias}</div>
+                          </div>
+                        </UI.SelectItem>
+                      ))}
                     </SelectBox>
 
                     {emptySenders ? (

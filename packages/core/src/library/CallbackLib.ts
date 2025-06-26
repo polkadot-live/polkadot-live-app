@@ -12,7 +12,10 @@ import type {
   PostCallbackFlags,
   SubscriptionTask,
 } from '@polkadot-live/types/subscriptions';
-import type { DedotClientSet } from '@polkadot-live/types/apis';
+import type {
+  DedotClientSet,
+  DedotStakingClient,
+} from '@polkadot-live/types/apis';
 
 /**
  * @name compareTasks
@@ -72,13 +75,19 @@ export const processOneShotPostCallback = async (
 
   // Sync account nominating data.
   if (syncFlags.syncAccountNominating) {
-    const result = await getAccountNominatingData(api, account);
+    const result = await getAccountNominatingData(
+      api as DedotStakingClient,
+      account
+    );
     result && (account.nominatingData = result);
   }
 
   // Sync account nomination pool data.
   if (syncFlags.syncAccountNominationPool) {
-    const result = await getNominationPoolData(account, api);
+    const result = await getNominationPoolData(
+      account,
+      api as DedotStakingClient
+    );
     result && (account.nominationPoolData = result);
   }
 

@@ -4,6 +4,7 @@
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import {
   polkadot,
+  polkadot_asset_hub,
   ksmcc3,
   westend2,
   westend2_asset_hub,
@@ -45,11 +46,33 @@ export const ChainList = new Map<ChainID, Chain>([
           'wss://1rpc.io/dot',
           'wss://polkadot-public-rpc.blockops.network/ws',
           'wss://rpc-polkadot.luckyfriday.io',
-          'wss://polkadot.public.curie.radiumblock.co/ws',
           'wss://rockx-dot.w3node.com/polka-public-dot/ws',
           'wss://dot-rpc.stakeworld.io',
         ],
         lightClient: polkadot,
+      },
+      units: 10,
+      unit: 'DOT',
+      prefix: 0,
+    },
+  ],
+  [
+    'Polkadot Asset Hub',
+    {
+      endpoints: {
+        rpcs: [
+          'wss://sys.ibp.network/statemint',
+          'wss://sys.dotters.network/statemint',
+          'wss://sys.ibp.network/asset-hub-polkadot',
+          'wss://asset-hub-polkadot-rpc.dwellir.com',
+          'wss://statemint-rpc-tn.dwellir.com',
+          'wss://polkadot-assethub-rpc.blockops.network/ws',
+          'wss://asset-hub-polkadot.dotters.network',
+          'wss://rpc-asset-hub-polkadot.luckyfriday.io',
+          'wss://polkadot-asset-hub-rpc.polkadot.io',
+          'wss://dot-rpc.stakeworld.io/assethub',
+        ],
+        lightClient: polkadot_asset_hub,
       },
       units: 10,
       unit: 'DOT',
@@ -67,10 +90,8 @@ export const ChainList = new Map<ChainID, Chain>([
           'wss://rpc.ibp.network/kusama',
           'wss://rpc.dotters.network/kusama',
           'wss://1rpc.io/ksm',
-          'wss://kusama-public-rpc.blockops.network/ws',
           'wss://rpc-kusama.luckyfriday.io',
           'wss://kusama.public.curie.radiumblock.co/ws',
-          'wss://rockx-ksm.w3node.com/polka-public-ksm/ws',
           'wss://ksm-rpc.stakeworld.io',
         ],
         lightClient: ksmcc3,
@@ -90,7 +111,6 @@ export const ChainList = new Map<ChainID, Chain>([
           'wss://westend-rpc.dwellir.com',
           'wss://westend-rpc-tn.dwellir.com',
           'wss://rpc.dotters.network/westend',
-          'wss://westend-rpc.blockops.network/ws',
           'wss://westend.public.curie.radiumblock.co/ws',
           'wss://rpc-westend.luckyfriday.io',
         ],
@@ -168,6 +188,20 @@ export const getSupportedChains = (): Record<ChainID, Chain> => {
 
   return record;
 };
+
+/**
+ * Get chain IDs that support send screen transfers.
+ */
+export const getSendChains = (): ChainID[] => ['Kusama', 'Westend Asset Hub'];
+
+/**
+ * Get chain IDs that support staking APIs.
+ */
+export const getStakingChains = (): ChainID[] => [
+  'Polkadot',
+  'Kusama',
+  'Westend Asset Hub',
+];
 
 /**
  * Get an array of supported import methods.

@@ -6,6 +6,7 @@ import type { DedotClient } from 'dedot';
 import type {
   KusamaApi,
   PolkadotApi,
+  PolkadotAssetHubApi,
   WestendApi,
   WestendAssetHubApi,
 } from '@dedot/chaintypes';
@@ -17,18 +18,42 @@ export type NodeEndpoint = `wss://${string}` | 'smoldot';
  */
 export type DedotClientSet =
   | DedotClient<PolkadotApi>
+  | DedotClient<PolkadotAssetHubApi>
   | DedotClient<KusamaApi>
   | DedotClient<WestendApi>
   | DedotClient<WestendAssetHubApi>;
+
+export type DedotStakingClient =
+  | DedotClient<PolkadotApi>
+  | DedotClient<KusamaApi>
+  | DedotClient<WestendAssetHubApi>;
+
+export type DedotOpenGovClient =
+  | DedotClient<PolkadotApi>
+  | DedotClient<KusamaApi>;
 
 /**
  * Mapping from ID to type
  */
 export interface ClientTypes {
   polkadot: PolkadotApi;
+  statemint: PolkadotAssetHubApi;
   kusama: KusamaApi;
   westend: WestendApi;
   westmint: WestendAssetHubApi;
+}
+
+/**
+ * Mapping from ChainID to client key.
+ */
+export type GetClientKey<T extends ChainID> = ChainIdToClientKeyMap[T];
+
+export interface ChainIdToClientKeyMap {
+  Polkadot: 'polkadot';
+  Kusama: 'kusama';
+  Westend: 'westend';
+  'Polkadot Asset Hub': 'statemint';
+  'Westend Asset Hub': 'westmint';
 }
 
 /*

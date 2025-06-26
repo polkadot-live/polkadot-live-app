@@ -2,7 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 // Supported chains as string literals.
-export type ChainID = 'Polkadot' | 'Kusama' | 'Westend' | 'Westend Asset Hub';
+export type ChainID =
+  | 'Polkadot'
+  | 'Polkadot Asset Hub'
+  | 'Kusama'
+  | 'Westend'
+  | 'Westend Asset Hub';
 
 // Connection status of a chain.
 export type ChainStatus =

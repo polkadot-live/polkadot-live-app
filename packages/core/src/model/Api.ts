@@ -44,6 +44,31 @@ export class Api<T extends keyof ClientTypes> {
   };
 
   /**
+   * Utility to get `potentialRelayChains` smoldot argument.
+   */
+  getPotentialRelayChains = async (
+    chainId: ChainID,
+    client: smoldot.Client
+  ) => {
+    switch (chainId) {
+      case 'Polkadot Asset Hub':
+        return [
+          await client.addChain({
+            chainSpec: ChainList.get('Polkadot')!.endpoints.lightClient,
+          }),
+        ];
+      case 'Westend Asset Hub':
+        return [
+          await client.addChain({
+            chainSpec: ChainList.get('Westend')!.endpoints.lightClient,
+          }),
+        ];
+      default:
+        return undefined;
+    }
+  };
+
+  /**
    * Connect to an endpoint.
    */
   connect = async (smoldotClient: smoldot.Client | null) => {
@@ -57,19 +82,17 @@ export class Api<T extends keyof ClientTypes> {
         if (!smoldotClient) {
           throw new Error('Error - smoldot client is null.');
         }
-        const chainSpec = ChainList.get(this.chain)!.endpoints.lightClient;
 
-        // TODO: Refactor getting `potentialRelayChains`.
+        // Smoldot chain arguments.
+        const chainSpec = ChainList.get(this.chain)!.endpoints.lightClient;
+        const potentialRelayChains = await this.getPotentialRelayChains(
+          this.chain,
+          smoldotClient
+        );
+
         const chain = await smoldotClient.addChain({
           chainSpec,
-          potentialRelayChains:
-            this.chain === 'Westend Asset Hub'
-              ? [
-                  await smoldotClient.addChain({
-                    chainSpec: ChainList.get('Westend')!.endpoints.lightClient,
-                  }),
-                ]
-              : undefined,
+          potentialRelayChains,
         });
 
         provider = new SmoldotProvider(chain);

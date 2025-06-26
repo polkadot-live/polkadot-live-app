@@ -123,15 +123,19 @@ export class EventsController {
   static processAsync(task: IpcTask): string | boolean {
     switch (task.action) {
       case 'events:update:accountName': {
-        const { address, newName }: { address: string; newName: string } =
-          task.data;
+        const {
+          address,
+          chainId,
+          newName,
+        }: { address: string; chainId: ChainID; newName: string } = task.data;
 
         // Update events in storage.
-        const updated = this.updateEventAccountName(address, newName);
+        const updated = this.updateEventAccountName(address, chainId, newName);
 
         // Update account's subscription tasks in storage.
         SubscriptionsController.updateCachedAccountNameForTasks(
           address,
+          chainId,
           newName
         );
 
@@ -196,9 +200,10 @@ export class EventsController {
         continue;
       }
 
-      const who = event.who.data as EventAccountData;
-      if (!addressesChecked.find((a) => a === who.address)) {
-        addressesChecked.push(who.address);
+      const { address, chainId } = event.who.data as EventAccountData;
+      const key = `${chainId}:${address}`;
+      if (!addressesChecked.includes(key)) {
+        addressesChecked.push(key);
         this.syncAccountName(event);
       }
     }
@@ -234,14 +239,18 @@ export class EventsController {
       return event;
     }
 
-    // Find any imported accounts with the same address and sync the event's account name.
-    const { address, accountName } = event.who.data as EventAccountData;
+    // Find any imported accounts with the same chainId:address and sync the event's account name.
+    const { address, accountName, chainId } = event.who
+      .data as EventAccountData;
+
     const updated = this.getEventsFromStore().map((e: EventCallback) => {
       if (e.who.origin !== 'account') {
         return e;
       }
       const who = e.who.data as EventAccountData;
-      who.address === address && (who.accountName = accountName);
+      if (who.address === address && who.chainId === chainId) {
+        (e.who.data as EventAccountData).accountName = accountName;
+      }
       return e;
     });
 
@@ -255,6 +264,7 @@ export class EventsController {
    */
   private static updateEventAccountName(
     address: string,
+    chainId: ChainID,
     newName: string
   ): EventCallback[] {
     const all = this.getEventsFromStore();
@@ -265,11 +275,18 @@ export class EventsController {
       }
 
       // Extract address and account name from iterated event.
-      const { address: nextAddress, accountName } = e.who
-        .data as EventAccountData;
+      const {
+        accountName,
+        address: nextAddress,
+        chainId: nextChainId,
+      } = e.who.data as EventAccountData;
 
       // Handle name change.
-      if (address === nextAddress && newName !== accountName) {
+      if (
+        address === nextAddress &&
+        chainId === nextChainId &&
+        newName !== accountName
+      ) {
         return {
           ...e,
           who: { ...e.who, data: { ...e.who.data, accountName: newName } },
@@ -288,8 +305,10 @@ export class EventsController {
         return false;
       }
 
-      const { address: nextAddress } = e.who.data as EventAccountData;
-      return nextAddress === address ? true : false;
+      const { address: nextAddress, chainId: nextChainId } = e.who
+        .data as EventAccountData;
+
+      return nextAddress === address && chainId === nextChainId ? true : false;
     });
 
     return filtered;
@@ -318,7 +337,9 @@ export class EventsController {
    * @summary Get all stored events in serialized form.
    */
   static getBackupData(): string {
-    return (store as Record<string, AnyJson>).get(this.storeKey) as string;
+    const stored = this.getEventsFromStore();
+    const filtered = stored.filter(({ category }) => category !== 'debugging');
+    return JSON.stringify(filtered);
   }
 
   /**

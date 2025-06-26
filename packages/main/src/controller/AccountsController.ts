@@ -61,11 +61,12 @@ export class AccountsController {
    * @summary Remove a managed account.
    */
   private static async remove(task: IpcTask) {
-    const { address }: { address: string } = task.data;
+    const { address, chainId }: { address: string; chainId: ChainID } =
+      task.data;
 
     await AppOrchestrator.next({
       task: 'app:account:remove',
-      data: { address },
+      data: { address, chainId },
     });
   }
 

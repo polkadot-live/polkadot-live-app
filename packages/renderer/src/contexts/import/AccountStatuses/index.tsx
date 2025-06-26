@@ -66,12 +66,12 @@ export const AccountStatusesProvider = ({
    * Set processing status of an account.
    */
   const setStatusForAccount = (
-    enAddress: string,
+    key: string,
     source: AccountSource,
     status: boolean
   ) => {
-    const sourceMap = statusMap.get(source)!;
-    const updated = new Map(sourceMap).set(enAddress, status);
+    const sourceMap = statusMap.get(source) || new Map<string, boolean>();
+    const updated = new Map(sourceMap).set(key, status);
     const map = new Map(statusMap).set(source, updated);
     setStateWithRef(map, setStatusMap, statusMapRef);
   };
@@ -79,27 +79,19 @@ export const AccountStatusesProvider = ({
   /**
    * Get the processing status of an account.
    */
-  const getStatusForAccount = (enAddress: string, source: AccountSource) =>
-    statusMapRef.current.get(source)?.get(enAddress) || null;
-
-  /**
-   * Insert an account status entry.
-   */
-  const insertAccountStatus = (enAddress: string, source: AccountSource) => {
-    const sourceMap = statusMap.get(source)!;
-    const map = new Map(statusMap).set(source, sourceMap.set(enAddress, false));
-    setStateWithRef(map, setStatusMap, statusMapRef);
-  };
+  const getStatusForAccount = (key: string, source: AccountSource) =>
+    statusMapRef.current.get(source)?.get(key) || null;
 
   /**
    * Delete an account status entry.
    */
-  const deleteAccountStatus = (enAddress: string, source: AccountSource) => {
-    const sourceMap = statusMapRef.current.get(source)!;
-    if (sourceMap.has(enAddress)) {
-      sourceMap.delete(enAddress);
+  const deleteAccountStatus = (key: string, source: AccountSource) => {
+    const sourceMap = statusMapRef.current.get(source);
+    if (!sourceMap) {
+      return;
     }
 
+    sourceMap.delete(key);
     const map = new Map(statusMap).set(source, sourceMap);
     setStateWithRef(map, setStatusMap, statusMapRef);
   };
@@ -120,7 +112,6 @@ export const AccountStatusesProvider = ({
         anyProcessing,
         setStatusForAccount,
         getStatusForAccount,
-        insertAccountStatus,
         deleteAccountStatus,
       }}
     >

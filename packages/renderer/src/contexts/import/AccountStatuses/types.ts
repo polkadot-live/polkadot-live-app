@@ -9,14 +9,10 @@ import type {
 export interface AccountStatusesContextInterface {
   anyProcessing: (genericAccount: ImportedGenericAccount) => boolean;
   setStatusForAccount: (
-    enAddress: string,
+    key: string,
     source: AccountSource,
     status: boolean
   ) => void;
-  getStatusForAccount: (
-    enAddress: string,
-    source: AccountSource
-  ) => boolean | null;
-  insertAccountStatus: (enAddress: string, source: AccountSource) => void;
-  deleteAccountStatus: (enAddress: string, source: AccountSource) => void;
+  getStatusForAccount: (key: string, source: AccountSource) => boolean | null;
+  deleteAccountStatus: (key: string, source: AccountSource) => void;
 }

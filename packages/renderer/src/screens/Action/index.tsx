@@ -23,7 +23,7 @@ import { BarLoader } from 'react-spinners';
 import { DialogExtrinsicSummary } from './Dialogs';
 import { useEffect, useState } from 'react';
 import { PaginationRow } from '../OpenGov/Referenda/Wrappers';
-import { FadeInWrapper } from '@polkadot-live/ui/utils';
+import { FadeInWrapper, renderToast } from '@polkadot-live/ui/utils';
 import type { ExtrinsicInfo, TxStatus } from '@polkadot-live/types/tx';
 import type { TriggerRightIconProps } from './types';
 
@@ -365,7 +365,17 @@ export const Action = () => {
                         isBuilt={info.estimatedFee !== undefined}
                         txStatus={info.txStatus}
                         onDelete={async () => await removeExtrinsic(info)}
-                        onSign={() => initTxDynamicInfo(info.txId)}
+                        onSign={() => {
+                          if (info.actionMeta.source === 'wallet-connect') {
+                            renderToast(
+                              'WalletConnect Currently Disabled',
+                              'wc-disabled',
+                              'error'
+                            );
+                          } else {
+                            initTxDynamicInfo(info.txId);
+                          }
+                        }}
                         onMockSign={() => submitMockTx(info.txId)}
                       />
                     </div>

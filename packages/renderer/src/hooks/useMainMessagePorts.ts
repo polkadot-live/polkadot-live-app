@@ -45,9 +45,15 @@ import type {
   EncodedAccount,
   ImportedGenericAccount,
 } from 'packages/types/src';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { DedotClient } from 'dedot';
 import type { PalletReferendaTrackDetails } from '@dedot/chaintypes/substrate';
 import type { SettingItem } from '@polkadot-live/types/settings';
 import type { WcSelectNetwork } from '@polkadot-live/types/walletConnect';
+import type {
+  ClientTypes,
+  DedotOpenGovClient,
+} from '@polkadot-live/types/apis';
 
 // TODO: Move to WalletConnect file.
 const WC_EVENT_ORIGIN = 'https://verify.walletconnect.org';
@@ -96,14 +102,19 @@ export const useMainMessagePorts = () => {
       const { source } = generic;
 
       // Add address to accounts controller.
-      let account =
-        AccountsController.add(chainId, source, address, alias) || undefined;
+      let account = AccountsController.add(encoded, source) || undefined;
 
       // Unsubscribe all tasks if the account exists and is being re-imported.
       if (fromBackup && !account) {
         account = AccountsController.get(chainId, address);
 
         if (account) {
+          // Update account name with one in backup file.
+          if (alias !== account.name) {
+            account.name = alias;
+            await AccountsController.set(account);
+          }
+
           await AccountsController.removeAllSubscriptions(account);
           const allTasks =
             SubscriptionsController.getAllSubscriptionsForAccount(
@@ -170,7 +181,9 @@ export const useMainMessagePorts = () => {
       }
 
       // Add account to address context state.
-      await importAddress(chainId, source, address, alias, fromBackup);
+      if (!fromBackup) {
+        await importAddress(chainId, source, address, alias, fromBackup);
+      }
 
       // Send message back to import window to reset account's processing flag.
       ConfigRenderer.portToImport?.postMessage({
@@ -252,7 +265,12 @@ export const useMainMessagePorts = () => {
    * @summary Rename an account managed by the accounts controller and update state.
    */
   const handleRenameAccount = async (ev: MessageEvent) => {
-    const { address, chainId, newName } = ev.data.data;
+    const {
+      address,
+      chainId,
+      newName,
+    }: { address: string; chainId: ChainID; newName: string } = ev.data.data;
+
     const account = AccountsController.get(chainId, address);
 
     if (account) {
@@ -264,13 +282,13 @@ export const useMainMessagePorts = () => {
       AccountsController.syncState();
 
       // Update subscription task react state.
-      updateAccountNameInTasks(address, newName);
+      updateAccountNameInTasks(`${chainId}:${address}`, newName);
     }
 
     // The updated events will be sent back to the renderer for updating React state.
     const serialized = (await window.myAPI.sendEventTaskAsync({
       action: 'events:update:accountName',
-      data: { address, newName },
+      data: { address, chainId, newName },
     })) as string;
 
     // Update events state.
@@ -280,11 +298,7 @@ export const useMainMessagePorts = () => {
     // Update account name in extrinsics window.
     ConfigRenderer.portToAction?.postMessage({
       task: 'action:account:rename',
-      data: {
-        address,
-        chainId: Core.getAddressChainId(address),
-        newName,
-      },
+      data: { address, chainId, newName },
     });
   };
 
@@ -387,99 +401,119 @@ export const useMainMessagePorts = () => {
   };
 
   /**
+   * @name fetchProcessReferenda
+   * @summary Use API to fetch and parse a network's OpenGov referenda.
+   */
+  const fetchProcessReferenda = async (api: DedotOpenGovClient) => {
+    // Populate referenda map.
+    const results = await api.query.referenda.referendumInfoFor.entries();
+    const allReferenda: OG.ReferendaInfo[] = [];
+
+    for (const [refId, storage] of results) {
+      if (storage !== undefined) {
+        if (storage.type === 'Approved') {
+          const info: OG.RefApproved = {
+            block: storage.value[0].toString(),
+            who: storage.value[1] ? String(storage.value[1].who.raw) : null,
+            amount: storage.value[1]
+              ? storage.value[1].amount.toString()
+              : null,
+          };
+
+          allReferenda.push({ refId, refStatus: 'Approved', info });
+        } else if (storage.type === 'Cancelled') {
+          const info: OG.RefCancelled = {
+            block: storage.value[0].toString(),
+            who: storage.value[1] ? String(storage.value[1].who.raw) : null,
+            amount: storage.value[1]
+              ? storage.value[1].amount.toString()
+              : null,
+          };
+
+          allReferenda.push({ refId, refStatus: 'Cancelled', info });
+        } else if (storage.type === 'Rejected') {
+          const info: OG.RefRejected = {
+            block: storage.value[0].toString(),
+            who: storage.value[1] ? String(storage.value[1].who.raw) : null,
+            amount: storage.value[1]
+              ? storage.value[1].amount.toString()
+              : null,
+          };
+
+          allReferenda.push({ refId, refStatus: 'Rejected', info });
+        } else if (storage.type === 'TimedOut') {
+          const info: OG.RefTimedOut = {
+            block: storage.value[0].toString(),
+            who: storage.value[1] ? String(storage.value[1].who.raw) : null,
+            amount: storage.value[1]
+              ? storage.value[1].amount.toString()
+              : null,
+          };
+
+          allReferenda.push({ refId, refStatus: 'TimedOut', info });
+        } else if (storage.type === 'Ongoing') {
+          const serRef = Core.serializeReferendumInfo(storage.value);
+
+          // In Queue
+          if (serRef.inQueue) {
+            const info = serRef as OG.RefOngoing;
+            allReferenda.push({ refId, refStatus: 'Queueing', info });
+          }
+          // Preparing
+          else if (serRef.deciding === null) {
+            const info = serRef as OG.RefPreparing;
+            allReferenda.push({ refId, refStatus: 'Preparing', info });
+          }
+          // Deciding
+          else if (serRef.deciding.confirming === null) {
+            const info = serRef as OG.RefDeciding;
+            allReferenda.push({ refId, refStatus: 'Deciding', info });
+          }
+          // Confirming
+          else if (serRef.deciding.confirming !== null) {
+            const info = serRef as OG.RefConfirming;
+            allReferenda.push({ refId, refStatus: 'Confirming', info });
+          }
+        } else if (storage.type === 'Killed') {
+          const info: OG.RefKilled = { block: storage.value.toString() };
+          allReferenda.push({ refId, refStatus: 'Killed', info });
+        }
+      }
+    }
+
+    // Serialize data before sending to open gov window.
+    ConfigRenderer.portToOpenGov?.postMessage({
+      task: 'openGov:referenda:receive',
+      data: { json: JSON.stringify(allReferenda) },
+    });
+  };
+
+  /**
    * @name handleGetReferenda
-   * @summary Use API to get a network's OpenGov referenda.
+   * @summary Cast an API to get a network's OpenGov referenda.
    */
   const handleGetReferenda = async (ev: MessageEvent) => {
     try {
       // Make API call to fetch referenda entries.
-      const { chainId } = ev.data.data;
-      const { api } = await APIsController.getConnectedApiOrThrow(chainId);
-      if (!api) {
+      const { chainId }: { chainId: ChainID } = ev.data.data;
+      const client = await APIsController.getConnectedApiOrThrow(chainId);
+
+      if (!client.api) {
         return;
       }
 
-      // Populate referenda map.
-      const results = await api.query.referenda.referendumInfoFor.entries();
-      const allReferenda: OG.ReferendaInfo[] = [];
-
-      for (const [refId, storage] of results) {
-        if (storage !== undefined) {
-          if (storage.type === 'Approved') {
-            const info: OG.RefApproved = {
-              block: storage.value[0].toString(),
-              who: storage.value[1] ? String(storage.value[1].who.raw) : null,
-              amount: storage.value[1]
-                ? storage.value[1].amount.toString()
-                : null,
-            };
-
-            allReferenda.push({ refId, refStatus: 'Approved', info });
-          } else if (storage.type === 'Cancelled') {
-            const info: OG.RefCancelled = {
-              block: storage.value[0].toString(),
-              who: storage.value[1] ? String(storage.value[1].who.raw) : null,
-              amount: storage.value[1]
-                ? storage.value[1].amount.toString()
-                : null,
-            };
-
-            allReferenda.push({ refId, refStatus: 'Cancelled', info });
-          } else if (storage.type === 'Rejected') {
-            const info: OG.RefRejected = {
-              block: storage.value[0].toString(),
-              who: storage.value[1] ? String(storage.value[1].who.raw) : null,
-              amount: storage.value[1]
-                ? storage.value[1].amount.toString()
-                : null,
-            };
-
-            allReferenda.push({ refId, refStatus: 'Rejected', info });
-          } else if (storage.type === 'TimedOut') {
-            const info: OG.RefTimedOut = {
-              block: storage.value[0].toString(),
-              who: storage.value[1] ? String(storage.value[1].who.raw) : null,
-              amount: storage.value[1]
-                ? storage.value[1].amount.toString()
-                : null,
-            };
-
-            allReferenda.push({ refId, refStatus: 'TimedOut', info });
-          } else if (storage.type === 'Ongoing') {
-            const serRef = Core.serializeReferendumInfo(storage.value);
-
-            // In Queue
-            if (serRef.inQueue) {
-              const info = serRef as OG.RefOngoing;
-              allReferenda.push({ refId, refStatus: 'Queueing', info });
-            }
-            // Preparing
-            else if (serRef.deciding === null) {
-              const info = serRef as OG.RefPreparing;
-              allReferenda.push({ refId, refStatus: 'Preparing', info });
-            }
-            // Deciding
-            else if (serRef.deciding.confirming === null) {
-              const info = serRef as OG.RefDeciding;
-              allReferenda.push({ refId, refStatus: 'Deciding', info });
-            }
-            // Confirming
-            else if (serRef.deciding.confirming !== null) {
-              const info = serRef as OG.RefConfirming;
-              allReferenda.push({ refId, refStatus: 'Confirming', info });
-            }
-          } else if (storage.type === 'Killed') {
-            const info: OG.RefKilled = { block: storage.value.toString() };
-            allReferenda.push({ refId, refStatus: 'Killed', info });
-          }
+      switch (chainId) {
+        case 'Polkadot': {
+          const api = client.api as DedotClient<ClientTypes['polkadot']>;
+          await fetchProcessReferenda(api);
+          break;
+        }
+        case 'Kusama': {
+          const api = client.api as DedotClient<ClientTypes['kusama']>;
+          await fetchProcessReferenda(api);
+          break;
         }
       }
-
-      // Serialize data before sending to open gov window.
-      ConfigRenderer.portToOpenGov?.postMessage({
-        task: 'openGov:referenda:receive',
-        data: { json: JSON.stringify(allReferenda) },
-      });
     } catch (e) {
       console.error(e);
       ConfigRenderer.portToOpenGov?.postMessage({
@@ -490,85 +524,111 @@ export const useMainMessagePorts = () => {
   };
 
   /**
-   * @name handleInitTreasury
+   * @name processInitTreasury
    * @summary Use API to get treasury data for OpenGov window.
+   */
+  const processInitTreasury = async (
+    api: DedotOpenGovClient,
+    chainId: ChainID
+  ) => {
+    const EMPTY_U8A_32 = new Uint8Array(32);
+    const hexPalletId = api.consts.treasury.palletId;
+    const u8aPalleId = hexPalletId
+      ? hexToU8a(hexPalletId)
+      : stringToU8a('py/trsry');
+
+    const publicKey = concatU8a(
+      stringToU8a('modl'),
+      u8aPalleId,
+      EMPTY_U8A_32
+    ).subarray(0, 32);
+
+    // Get free balance.
+    const prefix: number = api.consts.system.ss58Prefix;
+    const encoded = encodeAddress(publicKey, prefix);
+    const result = await api.query.system.account(encoded);
+
+    const { free } = result.data;
+    const freeBalance: string = planckToUnit(free, chainUnits(chainId));
+
+    // Get next burn.
+    const burn = api.consts.treasury.burn;
+    const toBurn = new BigNumber(burn)
+      .dividedBy(Math.pow(10, 6))
+      .multipliedBy(new BigNumber(free.toString()));
+
+    const nextBurn = planckToUnit(
+      toBurn.toString(),
+      chainUnits(chainId)
+    ).toString();
+
+    // Get to be awarded.
+    const [approvals, proposals] = await Promise.all([
+      api.query.treasury.approvals(),
+      api.query.treasury.proposals.entries(),
+    ]);
+
+    let toBeAwarded = 0n;
+    for (const [proposalId, proposalData] of proposals) {
+      if (approvals.includes(proposalId)) {
+        toBeAwarded += proposalData.value;
+      }
+    }
+
+    const strToBeAwarded = planckToUnit(toBeAwarded, chainUnits(chainId));
+
+    // Spend period + elapsed spend period.
+    const spendPeriod = api.consts.treasury.spendPeriod;
+    const lastHeader = await api.rpc.chain_getHeader();
+    const dedotBlockHeight = lastHeader?.number;
+
+    let spendPeriodElapsedBlocksAsStr = '0';
+    if (dedotBlockHeight) {
+      spendPeriodElapsedBlocksAsStr = new BigNumber(dedotBlockHeight)
+        .mod(new BigNumber(spendPeriod))
+        .toString();
+    }
+
+    ConfigRenderer.portToOpenGov?.postMessage({
+      task: 'openGov:treasury:set',
+      data: {
+        publicKey,
+        freeBalance,
+        nextBurn,
+        toBeAwardedAsStr: strToBeAwarded,
+        spendPeriodAsStr: spendPeriod.toString(),
+        spendPeriodElapsedBlocksAsStr,
+      },
+    });
+  };
+
+  /**
+   * @name handleInitTreasury
+   * @summary Cast API to get treasury data for OpenGov window.
    */
   const handleInitTreasury = async (ev: MessageEvent) => {
     try {
-      const { chainId } = ev.data.data;
+      const { chainId }: { chainId: ChainID } = ev.data.data;
       const api = (
         await APIsController.getConnectedApiOrThrow(chainId)
       ).getApi();
 
-      const EMPTY_U8A_32 = new Uint8Array(32);
-      const hexPalletId = api.consts.treasury.palletId;
-      const u8aPalleId = hexPalletId
-        ? hexToU8a(hexPalletId)
-        : stringToU8a('py/trsry');
-
-      const publicKey = concatU8a(
-        stringToU8a('modl'),
-        u8aPalleId,
-        EMPTY_U8A_32
-      ).subarray(0, 32);
-
-      // Get free balance.
-      const prefix: number = api.consts.system.ss58Prefix;
-      const encoded = encodeAddress(publicKey, prefix);
-      const result = await api.query.system.account(encoded);
-
-      const { free } = result.data;
-      const freeBalance: string = planckToUnit(free, chainUnits(chainId));
-
-      // Get next burn.
-      const burn = api.consts.treasury.burn;
-      const toBurn = new BigNumber(burn)
-        .dividedBy(Math.pow(10, 6))
-        .multipliedBy(new BigNumber(free.toString()));
-
-      const nextBurn = planckToUnit(
-        toBurn.toString(),
-        chainUnits(chainId)
-      ).toString();
-
-      // Get to be awarded.
-      const [approvals, proposals] = await Promise.all([
-        api.query.treasury.approvals(),
-        api.query.treasury.proposals.entries(),
-      ]);
-
-      let toBeAwarded = 0n;
-      for (const [proposalId, proposalData] of proposals) {
-        if (approvals.includes(proposalId)) {
-          toBeAwarded += proposalData.value;
+      switch (chainId) {
+        case 'Polkadot': {
+          await processInitTreasury(
+            api as DedotClient<ClientTypes['polkadot']>,
+            chainId
+          );
+          break;
+        }
+        case 'Kusama': {
+          await processInitTreasury(
+            api as DedotClient<ClientTypes['kusama']>,
+            chainId
+          );
+          break;
         }
       }
-
-      const strToBeAwarded = planckToUnit(toBeAwarded, chainUnits(chainId));
-
-      // Spend period + elapsed spend period.
-      const spendPeriod = api.consts.treasury.spendPeriod;
-      const lastHeader = await api.rpc.chain_getHeader();
-      const dedotBlockHeight = lastHeader?.number;
-
-      let spendPeriodElapsedBlocksAsStr = '0';
-      if (dedotBlockHeight) {
-        spendPeriodElapsedBlocksAsStr = new BigNumber(dedotBlockHeight)
-          .mod(new BigNumber(spendPeriod))
-          .toString();
-      }
-
-      ConfigRenderer.portToOpenGov?.postMessage({
-        task: 'openGov:treasury:set',
-        data: {
-          publicKey,
-          freeBalance,
-          nextBurn,
-          toBeAwardedAsStr: strToBeAwarded,
-          spendPeriodAsStr: spendPeriod.toString(),
-          spendPeriodElapsedBlocksAsStr,
-        },
-      });
     } catch (e) {
       ConfigRenderer.portToOpenGov?.postMessage({
         task: 'openGov:treasury:set',

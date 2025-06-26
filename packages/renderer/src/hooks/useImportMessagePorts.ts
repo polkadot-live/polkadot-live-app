@@ -55,7 +55,7 @@ export const useImportMessagePorts = () => {
 
               const generic: ImportedGenericAccount = JSON.parse(ge);
               const encoded: EncodedAccount = JSON.parse(en);
-              const { address } = encoded;
+              const { address, chainId } = encoded;
 
               interface I {
                 source: AccountSource;
@@ -63,7 +63,11 @@ export const useImportMessagePorts = () => {
                 success: boolean;
               }
               const { status, success }: I = ev.data.data;
-              setStatusForAccount(address, generic.source, status);
+              setStatusForAccount(
+                `${chainId}:${address}`,
+                generic.source,
+                status
+              );
 
               if (!success) {
                 await handleRemoveAddress(encoded, generic);

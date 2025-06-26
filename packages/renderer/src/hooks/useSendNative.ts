@@ -4,10 +4,9 @@
 import {
   ConfigRenderer,
   formatDecimal,
-  getAddressChainId,
   getSpendableBalance,
 } from '@polkadot-live/core';
-import { chainUnits } from '@polkadot-live/consts/chains';
+import { chainUnits, getSendChains } from '@polkadot-live/consts/chains';
 import { ellipsisFn, unitToPlanck } from '@w3ux/utils';
 import { useEffect, useRef, useState } from 'react';
 
@@ -44,7 +43,10 @@ interface SendNativeHook {
   handleSendAmountBlur: () => void;
   handleSendAmountChange: (event: ChangeEvent<HTMLInputElement>) => void;
   handleSendAmountFocus: () => void;
-  handleSenderChange: (senderAddress: string) => Promise<void>;
+  handleSenderChange: (
+    senderAddress: string,
+    chainId: ChainID
+  ) => Promise<void>;
   proceedDisabled: () => boolean;
   setReceiver: React.Dispatch<React.SetStateAction<SendRecipient | null>>;
 }
@@ -80,7 +82,7 @@ export const useSendNative = (): SendNativeHook => {
     }
 
     // NOTE: Disable Polkadot transfers in alpha releases.
-    if (senderNetwork === 'Polkadot') {
+    if (!getSendChains().includes(senderNetwork)) {
       return;
     }
 
@@ -166,12 +168,13 @@ export const useSendNative = (): SendNativeHook => {
   /**
    * Sender value changed callback.
    */
-  const handleSenderChange = async (senderAddress: string) => {
+  const handleSenderChange = async (
+    senderAddress: string,
+    chainId: ChainID
+  ) => {
     setFetchingSpendable(true);
-
-    const chainId = getAddressChainId(senderAddress);
-    setSender(senderAddress);
     setSenderNetwork(chainId);
+    setSender(senderAddress);
 
     const result = await getSpendableBalance(senderAddress, chainId);
     setSpendable(result);
@@ -293,8 +296,9 @@ export const useSendNative = (): SendNativeHook => {
       }
 
       // NOTE: Disable Polkadot transfers in alpha releases.
+      const supportedChains = getSendChains();
       const filtered: SendAccount[] = accounts
-        .filter(({ chainId }) => chainId !== 'Polkadot')
+        .filter(({ chainId }) => supportedChains.includes(chainId))
         .map((en) => ({ ...en, source }));
 
       result = result.concat(filtered);
@@ -317,7 +321,7 @@ export const useSendNative = (): SendNativeHook => {
       result
         .filter(({ chainId }) => {
           if (!senderNetwork) {
-            return true;
+            return getSendChains().includes(chainId);
           } else {
             return chainId === senderNetwork;
           }
@@ -341,7 +345,8 @@ export const useSendNative = (): SendNativeHook => {
     // NOTE: Limit token transfers to 100 tokens in alpha releases.
     (!isNaN(Number(sendAmount)) && Number(sendAmount) > TOKEN_TRANSFER_LIMIT) ||
     // NOTE: Disable Polkadot transfers in alpha releases.
-    senderNetwork === 'Polkadot' ||
+    senderNetwork === null ||
+    !getSendChains().includes(senderNetwork) ||
     !validAmount ||
     summaryComplete;
 

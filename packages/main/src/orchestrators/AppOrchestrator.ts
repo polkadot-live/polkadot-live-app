@@ -70,8 +70,9 @@ export class AppOrchestrator {
    */
   private static async removeImportedAccount({
     address,
+    chainId,
   }: RemoveImportedAccountArg) {
     // Clear account's persisted tasks in store.
-    SubscriptionsController.clearAccountTasksInStore(address);
+    SubscriptionsController.clearAccountTasksInStore(address, chainId);
   }
 }

@@ -101,15 +101,14 @@ export const WalletConnectProvider = ({
    */
   const getAddressPrefix = (chainId: ChainID) => {
     switch (chainId) {
-      case 'Polkadot': {
+      case 'Polkadot':
+      case 'Polkadot Asset Hub': {
         return 0;
       }
       case 'Kusama': {
         return 2;
       }
-      case 'Westend': {
-        return 42;
-      }
+      case 'Westend':
       case 'Westend Asset Hub': {
         return 42;
       }

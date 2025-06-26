@@ -6,7 +6,7 @@ import { DialogContent, FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { useConnections } from '@ren/contexts/common';
 import { useRenameHandler } from '@ren/contexts/import';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { renderToast } from '@polkadot-live/ui/utils';
 import { TooltipRx } from '@polkadot-live/ui/components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -54,10 +54,20 @@ export const DialogRename = ({ genericAccount }: DialogRenameProps) => {
   const theme = getTheme();
   const [inputVal, setInputVal] = useState<string>(accountName);
 
-  const nameData: [ChainID, string][] = Object.values(encodedAccounts).map(
-    ({ alias, chainId }) => [chainId, alias]
-  );
-  const [encodedNames, setEncodedNames] = useState(new Map([...nameData]));
+  const getNameData = (): [ChainID, string][] =>
+    Object.values(encodedAccounts).map(({ alias, chainId }) => [
+      chainId,
+      alias,
+    ]);
+
+  const [encodedNames, setEncodedNames] = useState(new Map([...getNameData()]));
+
+  /**
+   * Sync names after data import or encoded accounts change.
+   */
+  useEffect(() => {
+    setEncodedNames(new Map([...getNameData()]));
+  }, [genericAccount.encodedAccounts]);
 
   /**
    * Cancel button clicked for edit input.
@@ -239,9 +249,9 @@ export const DialogRename = ({ genericAccount }: DialogRenameProps) => {
 
             {/* Encoded Accounts */}
             {Array.from(Object.values(encodedAccounts)).map(
-              ({ address, alias, chainId }) => (
+              ({ address, alias, chainId }, i) => (
                 <form
-                  key={address}
+                  key={`${chainId}-${address}-${i}`}
                   onSubmit={(e) => {
                     e.preventDefault();
                     commitEncodedRename(chainId);

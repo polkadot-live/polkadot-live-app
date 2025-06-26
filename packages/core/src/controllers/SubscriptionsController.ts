@@ -76,7 +76,9 @@ export class SubscriptionsController {
   };
 
   private static updateAccountTaskState = (task: SubscriptionTask) => {
-    const { address: key } = task.account!;
+    const { address, chain } = task.account!;
+    const key = `${chain}:${address}`;
+
     this.setAccountSubscriptions((prev) => {
       const tasks = prev.get(key);
       const val = !tasks
@@ -245,7 +247,7 @@ export class SubscriptionsController {
               ) || t
           );
 
-        result.set(a.address, tasks);
+        result.set(`${a.chain}:${a.address}`, tasks);
       }
     }
 

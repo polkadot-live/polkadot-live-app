@@ -167,7 +167,6 @@ export const SelectBox = ({
   children,
   ariaLabel,
   placeholder,
-  value,
   disabled = false,
   onValueChange,
 }: SelectBoxProps) => {
@@ -175,11 +174,7 @@ export const SelectBox = ({
   const theme = getTheme();
 
   return (
-    <Select.Root
-      value={value}
-      disabled={disabled}
-      onValueChange={onValueChange}
-    >
+    <Select.Root disabled={disabled} onValueChange={onValueChange}>
       <UI.SelectTrigger $theme={theme} aria-label={ariaLabel}>
         <Select.Value placeholder={placeholder} />
         <Select.Icon className="SelectIcon">
