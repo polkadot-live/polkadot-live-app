@@ -6,6 +6,7 @@ export type ChainID =
   | 'Polkadot'
   | 'Polkadot Asset Hub'
   | 'Kusama'
+  | 'Kusama Asset Hub'
   | 'Westend'
   | 'Westend Asset Hub';
 

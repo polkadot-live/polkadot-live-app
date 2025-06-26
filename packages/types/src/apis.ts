@@ -5,6 +5,7 @@ import type { ChainID, ChainStatus } from './chains';
 import type { DedotClient } from 'dedot';
 import type {
   KusamaApi,
+  KusamaAssetHubApi,
   PolkadotApi,
   PolkadotAssetHubApi,
   WestendApi,
@@ -20,6 +21,7 @@ export type DedotClientSet =
   | DedotClient<PolkadotApi>
   | DedotClient<PolkadotAssetHubApi>
   | DedotClient<KusamaApi>
+  | DedotClient<KusamaAssetHubApi>
   | DedotClient<WestendApi>
   | DedotClient<WestendAssetHubApi>;
 
@@ -39,6 +41,7 @@ export interface ClientTypes {
   polkadot: PolkadotApi;
   statemint: PolkadotAssetHubApi;
   kusama: KusamaApi;
+  statemine: KusamaAssetHubApi;
   westend: WestendApi;
   westmint: WestendAssetHubApi;
 }
@@ -53,6 +56,7 @@ export interface ChainIdToClientKeyMap {
   Kusama: 'kusama';
   Westend: 'westend';
   'Polkadot Asset Hub': 'statemint';
+  'Kusama Asset Hub': 'statemine';
   'Westend Asset Hub': 'westmint';
 }
 

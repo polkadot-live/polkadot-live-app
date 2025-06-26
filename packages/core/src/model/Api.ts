@@ -57,6 +57,12 @@ export class Api<T extends keyof ClientTypes> {
             chainSpec: ChainList.get('Polkadot')!.endpoints.lightClient,
           }),
         ];
+      case 'Kusama Asset Hub':
+        return [
+          await client.addChain({
+            chainSpec: ChainList.get('Kusama')!.endpoints.lightClient,
+          }),
+        ];
       case 'Westend Asset Hub':
         return [
           await client.addChain({
