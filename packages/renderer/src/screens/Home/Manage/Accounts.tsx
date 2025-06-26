@@ -188,7 +188,7 @@ export const Accounts = ({
                   <UI.AccordionTrigger narrow={true}>
                     <ChevronDownIcon className="AccordionChevron" aria-hidden />
                     <UI.TriggerHeader>
-                      {chainId === 'Empty' ? 'Accounts' : `${chainId} Accounts`}
+                      {chainId === 'Empty' ? 'Accounts' : `${chainId}`}
                     </UI.TriggerHeader>
                   </UI.AccordionTrigger>
 
