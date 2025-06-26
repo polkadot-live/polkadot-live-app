@@ -6,6 +6,7 @@ import type { DedotClient } from 'dedot';
 import type {
   KusamaApi,
   KusamaAssetHubApi,
+  KusamaPeopleApi,
   PolkadotApi,
   PolkadotAssetHubApi,
   PolkadotPeopleApi,
@@ -24,6 +25,7 @@ export type DedotClientSet =
   | DedotClient<PolkadotPeopleApi>
   | DedotClient<KusamaApi>
   | DedotClient<KusamaAssetHubApi>
+  | DedotClient<KusamaPeopleApi>
   | DedotClient<WestendApi>
   | DedotClient<WestendAssetHubApi>;
 
@@ -45,6 +47,7 @@ export interface ClientTypes {
   'people-polkadot': PolkadotPeopleApi;
   kusama: KusamaApi;
   statemine: KusamaAssetHubApi;
+  'people-kusama': KusamaPeopleApi;
   westend: WestendApi;
   westmint: WestendAssetHubApi;
 }
@@ -62,6 +65,7 @@ export interface ChainIdToClientKeyMap {
   'Kusama Asset Hub': 'statemine';
   'Westend Asset Hub': 'westmint';
   'Polkadot People': 'people-polkadot';
+  'Kusama People': 'people-kusama';
 }
 
 /*
