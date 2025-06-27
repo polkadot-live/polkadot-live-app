@@ -58,6 +58,8 @@ export interface ClientTypes {
 /**
  * Mapping from ChainID to client key.
  */
+export type ChainToKey<T extends ChainID> = ChainIdToClientKeyMap[T];
+
 export type GetClientKey<T extends ChainID> = ChainIdToClientKeyMap[T];
 
 export interface ChainIdToClientKeyMap {
