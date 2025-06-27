@@ -60,9 +60,13 @@ export const HardwareAddressWrapper = styled.div`
     }
   }
   .ManageBtn {
-    border: none;
+    font-size: 1rem;
+    opacity: 0.85;
     color: var(--accent-secondary);
-    cursor: not-allowed;
+    cursor: pointer;
+    &:hover:not(:disabled) {
+      opacity: 1;
+    }
   }
   .ChainIcon {
     position: absolute;

@@ -10,7 +10,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { ellipsisFn } from '@w3ux/utils';
 import { EllipsisSpinner } from '../../Spinners';
-import { ButtonMono, ButtonPrimaryInvert } from '../../../kits/Buttons';
+import { ButtonMono } from '../../../kits/Buttons';
 import { HardwareAddressWrapper } from './Wrapper';
 import { TooltipRx } from '../../TooltipRx';
 import { FlexColumn, FlexRow } from '../../../styles';
@@ -26,6 +26,7 @@ export const HardwareAddress = ({
   anyProcessing,
   theme,
   DialogShowAddress,
+  DialogManageAccounts,
   isProcessing,
   openConfirmHandler,
   openRemoveHandler,
@@ -60,12 +61,7 @@ export const HardwareAddress = ({
         </div>
 
         <FlexRow $gap={'0.25rem'}>
-          <ButtonPrimaryInvert
-            disabled={true}
-            className="ManageBtn"
-            text="Manage Networks"
-            iconLeft={faCaretRight}
-          />
+          <DialogManageAccounts genericAccount={genericAccount} />
         </FlexRow>
 
         {/* Account buttons */}

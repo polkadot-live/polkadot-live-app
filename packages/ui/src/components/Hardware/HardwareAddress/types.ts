@@ -34,4 +34,8 @@ export type HardwareAddressProps = ComponentBase & {
   ) => void;
   // Show address dialog component.
   DialogShowAddress: React.ComponentType<{ address: string }>;
+  // Manage networks dialog component.
+  DialogManageAccounts: React.ComponentType<{
+    genericAccount: ImportedGenericAccount;
+  }>;
 };
