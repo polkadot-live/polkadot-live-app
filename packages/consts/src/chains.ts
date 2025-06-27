@@ -11,6 +11,7 @@ import {
   ksmcc3_people,
   westend2,
   westend2_asset_hub,
+  westend_people,
 } from '@substrate/connect-known-chains';
 import type { AccountSource } from '@polkadot-live/types/accounts';
 import type { ChainID, SelectNetworkData } from '@polkadot-live/types/chains';
@@ -193,6 +194,23 @@ export const ChainList = new Map<ChainID, Chain>([
           'wss://asset-hub-westend.rpc.permanence.io',
         ],
         lightClient: westend2_asset_hub,
+      },
+      units: 12,
+      unit: 'WND',
+      prefix: 42,
+    },
+  ],
+  [
+    'Westend People',
+    {
+      endpoints: {
+        rpcs: [
+          'wss://sys.ibp.network/people-westend',
+          'wss://people-westend-rpc.dwellir.com',
+          'wss://people-westend.dotters.network',
+          'wss://westend-people-rpc.polkadot.io',
+        ],
+        lightClient: westend_people,
       },
       units: 12,
       unit: 'WND',

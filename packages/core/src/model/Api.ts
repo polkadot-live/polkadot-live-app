@@ -66,6 +66,7 @@ export class Api<T extends keyof ClientTypes> {
           }),
         ];
       case 'Westend Asset Hub':
+      case 'Westend People':
         return [
           await client.addChain({
             chainSpec: ChainList.get('Westend')!.endpoints.lightClient,

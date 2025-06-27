@@ -27,7 +27,9 @@ type ChainToKey<T extends ChainID> = T extends 'Polkadot'
             ? 'people-kusama'
             : T extends 'Westend'
               ? 'westend'
-              : 'westmint';
+              : T extends 'Westend Asset Hub'
+                ? 'westmint'
+                : 'people-westend';
 
 export class APIsController {
   static clients: Api<keyof ClientTypes>[] = [];
@@ -175,6 +177,8 @@ export class APIsController {
         return client as Api<'westend'>;
       case 'Westend Asset Hub':
         return client as Api<'westmint'>;
+      case 'Westend People':
+        return client as Api<'people-westend'>;
     }
   };
 
