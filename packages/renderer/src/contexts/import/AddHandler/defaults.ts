@@ -6,4 +6,5 @@ import type { AddHandlerContextInterface } from './types';
 
 export const defaultAddHandlerContext: AddHandlerContextInterface = {
   handleAddAddress: () => new Promise(() => {}),
+  handleBookmarkToggle: () => new Promise(() => {}),
 };

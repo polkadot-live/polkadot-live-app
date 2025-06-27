@@ -103,10 +103,11 @@ export const ImportHandlerProvider = ({
       const chainId = cid as ChainID;
       const encoded = encodeAddress(publicKeyHex, prefix);
       encodedAccounts[chainId] = {
-        isImported: false,
-        chainId,
         address: encoded,
         alias: ellipsisFn(encoded, 5),
+        chainId,
+        isBookmarked: false,
+        isImported: false,
       };
     }
 

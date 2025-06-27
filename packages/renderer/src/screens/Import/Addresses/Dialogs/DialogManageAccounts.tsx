@@ -36,7 +36,7 @@ export const DialogManageAccounts = ({
   const { encodedAccounts, source } = genericAccount;
 
   const { getStatusForAccount } = useAccountStatuses();
-  const { handleAddAddress } = useAddHandler();
+  const { handleAddAddress, handleBookmarkToggle } = useAddHandler();
   const { handleRemoveAddress } = useRemoveHandler();
   const { getTheme, getOnlineMode } = useConnections();
   const theme = getTheme();
@@ -57,6 +57,10 @@ export const DialogManageAccounts = ({
 
   const handleRemoveSubscriptions = async (encodedAccount: EncodedAccount) => {
     await handleRemoveAddress(encodedAccount, genericAccount);
+  };
+
+  const handleBookmarkClick = async (encodedAccount: EncodedAccount) => {
+    await handleBookmarkToggle(encodedAccount, genericAccount);
   };
 
   return (
@@ -82,8 +86,7 @@ export const DialogManageAccounts = ({
                 Manage Accounts
               </Dialog.Title>
               <Dialog.Description className="Dialog__Description">
-                Subscribe to your networks and bookmark accounts for quick
-                access.
+                Subscribe to networks and bookmark accounts for quick access.
               </Dialog.Description>
             </Style.FlexColumn>
 
@@ -209,9 +212,12 @@ export const DialogManageAccounts = ({
                       </Style.FlexRow>
 
                       <UI.TooltipRx text={'Bookmark'} theme={theme}>
-                        <ActionBtn $theme={theme}>
+                        <ActionBtn
+                          $theme={theme}
+                          onClick={async () => await handleBookmarkClick(a)}
+                        >
                           <FontAwesomeIcon
-                            icon={faBookmark}
+                            icon={a.isBookmarked ? FA.faBookmark : faBookmark}
                             transform={'shrink-2'}
                           />
                         </ActionBtn>

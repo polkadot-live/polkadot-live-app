@@ -52,6 +52,22 @@ export const AddHandlerProvider = ({
   };
 
   /**
+   * Update account when bookmark flag toggled.
+   */
+  const handleBookmarkToggle = async (
+    encodedAccount: EncodedAccount,
+    genericAccount: ImportedGenericAccount
+  ) => {
+    const { chainId, isBookmarked } = encodedAccount;
+    encodedAccount.isBookmarked = !isBookmarked;
+    genericAccount.encodedAccounts[chainId] = encodedAccount;
+
+    // Update React state and store.
+    handleAddressUpdate(genericAccount);
+    await updateAddressInStore(genericAccount);
+  };
+
+  /**
    * Update address in store.
    */
   const updateAddressInStore = async (account: ImportedGenericAccount) => {
@@ -81,6 +97,7 @@ export const AddHandlerProvider = ({
     <AddHandlerContext.Provider
       value={{
         handleAddAddress,
+        handleBookmarkToggle,
       }}
     >
       {children}

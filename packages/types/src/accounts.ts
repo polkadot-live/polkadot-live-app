@@ -119,6 +119,7 @@ export interface EncodedAccount {
   address: string;
   alias: string;
   chainId: ChainID;
+  isBookmarked: boolean;
   isImported: boolean;
 }
 

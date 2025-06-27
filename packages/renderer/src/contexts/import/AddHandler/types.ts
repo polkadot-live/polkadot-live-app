@@ -11,4 +11,8 @@ export interface AddHandlerContextInterface {
     encodedAccount: EncodedAccount,
     genericAccount: ImportedGenericAccount
   ) => Promise<void>;
+  handleBookmarkToggle: (
+    encodedAccount: EncodedAccount,
+    genericAccount: ImportedGenericAccount
+  ) => Promise<void>;
 }
