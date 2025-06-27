@@ -60,8 +60,6 @@ export interface ClientTypes {
  */
 export type ChainToKey<T extends ChainID> = ChainIdToClientKeyMap[T];
 
-export type GetClientKey<T extends ChainID> = ChainIdToClientKeyMap[T];
-
 export interface ChainIdToClientKeyMap {
   Polkadot: 'polkadot';
   Kusama: 'kusama';
