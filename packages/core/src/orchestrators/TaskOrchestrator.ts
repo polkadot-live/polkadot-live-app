@@ -77,7 +77,8 @@ export class TaskOrchestrator {
       case 'Kusama Asset Hub':
       case 'Kusama People':
       case 'Westend':
-      case 'Westend Asset Hub': {
+      case 'Westend Asset Hub':
+      case 'Westend People': {
         // Return if data is missing for certain tasks.
         switch (task.action) {
           case 'subscribe:account:nominationPools:rewards':

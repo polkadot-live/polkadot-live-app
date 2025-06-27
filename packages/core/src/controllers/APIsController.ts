@@ -8,26 +8,11 @@ import { Api } from '../model';
 import { ChainList } from '@polkadot-live/consts/chains';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
+  ChainToKey,
   ClientTypes,
   FlattenedAPIData,
   NodeEndpoint,
 } from '@polkadot-live/types/apis';
-
-type ChainToKey<T extends ChainID> = T extends 'Polkadot'
-  ? 'polkadot'
-  : T extends 'Polkadot Asset Hub'
-    ? 'statemint'
-    : T extends 'Polkadot People'
-      ? 'people-polkadot'
-      : T extends 'Kusama'
-        ? 'kusama'
-        : T extends 'Kusama Asset Hub'
-          ? 'statemine'
-          : T extends 'Kusama People'
-            ? 'people-kusama'
-            : T extends 'Westend'
-              ? 'westend'
-              : 'westmint';
 
 export class APIsController {
   static clients: Api<keyof ClientTypes>[] = [];
@@ -175,6 +160,8 @@ export class APIsController {
         return client as Api<'westend'>;
       case 'Westend Asset Hub':
         return client as Api<'westmint'>;
+      case 'Westend People':
+        return client as Api<'people-westend'>;
     }
   };
 
