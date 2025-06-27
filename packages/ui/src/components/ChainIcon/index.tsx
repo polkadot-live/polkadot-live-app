@@ -16,6 +16,7 @@ export const ChainIcon = ({
   switch (chainId) {
     case 'Polkadot':
     case 'Polkadot Asset Hub':
+    case 'Polkadot People':
       return (
         <PolkadotIcon
           className={className}
@@ -25,6 +26,8 @@ export const ChainIcon = ({
         />
       );
     case 'Kusama':
+    case 'Kusama Asset Hub':
+    case 'Kusama People':
       return (
         <KusamaIcon
           className={className}
@@ -35,6 +38,7 @@ export const ChainIcon = ({
       );
     case 'Westend':
     case 'Westend Asset Hub':
+    case 'Westend People':
       return (
         <WestendIcon
           className={className}

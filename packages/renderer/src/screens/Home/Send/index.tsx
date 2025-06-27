@@ -118,7 +118,7 @@ export const Send: React.FC = () => {
                 style={{ lineHeight: '1.5rem', color: 'var(--accent-warning)' }}
               >
                 This alpha release supports native transfers of up to <b>100</b>{' '}
-                tokens on <b>Kusama</b> and <b>Westend</b> networks.
+                tokens on <b>Kusama</b> and <b>Westend Asset Hub</b> networks.
               </div>
             </FlexColumn>
           </UI.InfoCard>

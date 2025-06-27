@@ -52,12 +52,21 @@ export class Api<T extends keyof ClientTypes> {
   ) => {
     switch (chainId) {
       case 'Polkadot Asset Hub':
+      case 'Polkadot People':
         return [
           await client.addChain({
             chainSpec: ChainList.get('Polkadot')!.endpoints.lightClient,
           }),
         ];
+      case 'Kusama Asset Hub':
+      case 'Kusama People':
+        return [
+          await client.addChain({
+            chainSpec: ChainList.get('Kusama')!.endpoints.lightClient,
+          }),
+        ];
       case 'Westend Asset Hub':
+      case 'Westend People':
         return [
           await client.addChain({
             chainSpec: ChainList.get('Westend')!.endpoints.lightClient,

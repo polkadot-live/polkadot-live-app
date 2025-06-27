@@ -5,9 +5,13 @@
 export type ChainID =
   | 'Polkadot'
   | 'Polkadot Asset Hub'
+  | 'Polkadot People'
   | 'Kusama'
+  | 'Kusama Asset Hub'
+  | 'Kusama People'
   | 'Westend'
-  | 'Westend Asset Hub';
+  | 'Westend Asset Hub'
+  | 'Westend People';
 
 // Connection status of a chain.
 export type ChainStatus =

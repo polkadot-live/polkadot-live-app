@@ -5,9 +5,13 @@ import { faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import {
   polkadot,
   polkadot_asset_hub,
+  polkadot_people,
   ksmcc3,
+  ksmcc3_asset_hub,
+  ksmcc3_people,
   westend2,
   westend2_asset_hub,
+  westend_people,
 } from '@substrate/connect-known-chains';
 import type { AccountSource } from '@polkadot-live/types/accounts';
 import type { ChainID, SelectNetworkData } from '@polkadot-live/types/chains';
@@ -80,6 +84,23 @@ export const ChainList = new Map<ChainID, Chain>([
     },
   ],
   [
+    'Polkadot People',
+    {
+      endpoints: {
+        rpcs: [
+          'wss://sys.ibp.network/people-polkadot',
+          'wss://people-polkadot.dotters.network',
+          'wss://rpc-people-polkadot.luckyfriday.io',
+          'wss://polkadot-people-rpc.polkadot.io',
+        ],
+        lightClient: polkadot_people,
+      },
+      units: 10,
+      unit: 'DOT',
+      prefix: 0,
+    },
+  ],
+  [
     'Kusama',
     {
       endpoints: {
@@ -92,9 +113,48 @@ export const ChainList = new Map<ChainID, Chain>([
           'wss://1rpc.io/ksm',
           'wss://rpc-kusama.luckyfriday.io',
           'wss://kusama.public.curie.radiumblock.co/ws',
-          'wss://ksm-rpc.stakeworld.io',
         ],
         lightClient: ksmcc3,
+      },
+      units: 12,
+      unit: 'KSM',
+      prefix: 2,
+    },
+  ],
+  [
+    'Kusama Asset Hub',
+    {
+      endpoints: {
+        rpcs: [
+          'wss://sys.ibp.network/asset-hub-kusama',
+          'wss://asset-hub-kusama-rpc.dwellir.com',
+          'wss://statemine-rpc-tn.dwellir.com',
+          'wss://asset-hub-kusama.dotters.network',
+          'wss://rpc-asset-hub-kusama.luckyfriday.io',
+          'wss://kusama-asset-hub-rpc.polkadot.io',
+          'wss://statemine.public.curie.radiumblock.co/ws',
+          'wss://ksm-rpc.stakeworld.io/assethub',
+        ],
+        lightClient: ksmcc3_asset_hub,
+      },
+      units: 12,
+      unit: 'KSM',
+      prefix: 2,
+    },
+  ],
+  [
+    'Kusama People',
+    {
+      endpoints: {
+        rpcs: [
+          'wss://sys.ibp.network/people-kusama',
+          'wss://people-kusama-rpc.dwellir.com',
+          'wss://people-kusama.dotters.network',
+          'wss://rpc-people-kusama.luckyfriday.io',
+          'wss://kusama-people-rpc.polkadot.io',
+          'wss://ksm-rpc.stakeworld.io/people',
+        ],
+        lightClient: ksmcc3_people,
       },
       units: 12,
       unit: 'KSM',
@@ -134,6 +194,23 @@ export const ChainList = new Map<ChainID, Chain>([
           'wss://asset-hub-westend.rpc.permanence.io',
         ],
         lightClient: westend2_asset_hub,
+      },
+      units: 12,
+      unit: 'WND',
+      prefix: 42,
+    },
+  ],
+  [
+    'Westend People',
+    {
+      endpoints: {
+        rpcs: [
+          'wss://sys.ibp.network/people-westend',
+          'wss://people-westend-rpc.dwellir.com',
+          'wss://people-westend.dotters.network',
+          'wss://westend-people-rpc.polkadot.io',
+        ],
+        lightClient: westend_people,
       },
       units: 12,
       unit: 'WND',
