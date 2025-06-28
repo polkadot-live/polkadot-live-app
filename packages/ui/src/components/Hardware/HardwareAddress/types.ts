@@ -21,12 +21,12 @@ export type HardwareAddressProps = ComponentBase & {
   isProcessing: (encodedAccount: EncodedAccount) => boolean;
   // Handle clipboard copy.
   onClipboardCopy: (text: string) => Promise<void>;
-  // Handle confirm import UI.
-  openConfirmHandler: (encodedAccount: EncodedAccount) => void;
+  // Handle adding subscriptions to main window.
+  handleAddSubscriptions: (encodedAccount: EncodedAccount) => Promise<void>;
+  // Handle removing subscriptions from main window.
+  handleRemoveSubscriptions: (encodedAccount: EncodedAccount) => Promise<void>;
   // Handle confirm delete UI.
   openDeleteHandler: () => void;
-  // Handle remove UI.
-  openRemoveHandler: (encodedAccount: EncodedAccount) => void;
   // Sets open flag for rename dialogs.
   setIsDialogOpen: (
     genericAccount: ImportedGenericAccount,

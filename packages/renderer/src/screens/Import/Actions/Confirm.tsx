@@ -10,6 +10,10 @@ import { ellipsisFn } from '@w3ux/utils';
 import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 import type { ConfirmProps } from './types';
 
+/**
+ * @name Confirm
+ * @deprecated
+ */
 export const Confirm = ({ encodedAccount, genericAccount }: ConfirmProps) => {
   const { address, alias } = encodedAccount;
   const { setStatus } = useOverlay();

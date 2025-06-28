@@ -10,6 +10,10 @@ import { ellipsisFn } from '@w3ux/utils';
 import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 import type { RemoveProps } from './types';
 
+/**
+ * @name Remove
+ * @deprecated
+ */
 export const Remove = ({ encodedAccount, genericAccount }: RemoveProps) => {
   const { address, alias } = encodedAccount;
   const { setStatus } = useOverlay();

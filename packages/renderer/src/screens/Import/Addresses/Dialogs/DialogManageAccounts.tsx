@@ -113,7 +113,7 @@ export const DialogManageAccounts = ({
                           className="EntryArrow"
                         />
                         <span className="Overflow">{a.alias}</span>
-                        <Style.FlexRow $gap="0.5rem" className="AddressRow">
+                        <Style.FlexRow $gap="0.45rem" className="AddressRow">
                           <span className="Overflow">
                             {ellipsisFn(a.address, 5, 'end')}
                           </span>

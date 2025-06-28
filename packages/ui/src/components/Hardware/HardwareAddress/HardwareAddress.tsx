@@ -21,8 +21,8 @@ export const HardwareAddress = ({
   DialogShowAddress,
   DialogManageAccounts,
   isProcessing,
-  openConfirmHandler,
-  openRemoveHandler,
+  handleAddSubscriptions,
+  handleRemoveSubscriptions,
   openDeleteHandler,
   onClipboardCopy,
   setIsDialogOpen,
@@ -111,8 +111,10 @@ export const HardwareAddress = ({
                   className="EntryArrow"
                 />
                 <span className="overflow">{a.alias}</span>
-                <FlexRow $gap="0.6rem" className="AddressRow">
-                  <span className="overflow">{ellipsisFn(a.address, 5)}</span>
+                <FlexRow $gap="0.45rem" className="AddressRow">
+                  <span className="overflow">
+                    {ellipsisFn(a.address, 5, 'end')}
+                  </span>
                   <CopyButton
                     iconFontSize="0.96rem"
                     theme={theme}
@@ -143,7 +145,9 @@ export const HardwareAddress = ({
                 {a.isImported && !isProcessing(a) ? (
                   <TooltipRx text={'Remove Subscriptions'} theme={theme}>
                     <div style={{ position: 'relative' }}>
-                      <ActionBtn onClick={() => openRemoveHandler(a)}>
+                      <ActionBtn
+                        onClick={async () => await handleRemoveSubscriptions(a)}
+                      >
                         <FontAwesomeIcon icon={FA.faMinus} />
                       </ActionBtn>
                     </div>
@@ -168,7 +172,9 @@ export const HardwareAddress = ({
                         <div style={{ position: 'relative' }}>
                           <ActionBtn
                             disabled={!isConnected}
-                            onClick={() => openConfirmHandler(a)}
+                            onClick={async () =>
+                              await handleAddSubscriptions(a)
+                            }
                           >
                             <FontAwesomeIcon icon={FA.faPlus} />
                           </ActionBtn>

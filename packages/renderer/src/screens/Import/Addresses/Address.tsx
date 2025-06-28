@@ -1,11 +1,16 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Confirm, Delete, Remove } from '../Actions';
+import { Delete } from '../Actions';
 import { DialogShowAddress } from './Dialogs/DialogShowAddress';
 import { DialogManageAccounts } from './Dialogs/DialogManageAccounts';
 import { HardwareAddress } from '@polkadot-live/ui/components';
-import { useAccountStatuses, useRenameHandler } from '@ren/contexts/import';
+import {
+  useAccountStatuses,
+  useAddHandler,
+  useRemoveHandler,
+  useRenameHandler,
+} from '@ren/contexts/import';
 import { useConnections } from '@ren/contexts/common';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import type { AddressProps } from './types';
@@ -15,6 +20,8 @@ export const Address = ({ genericAccount, setSection }: AddressProps) => {
   const { publicKeyHex, source } = genericAccount;
   const { openOverlayWith } = useOverlay();
   const { getStatusForAccount, anyProcessing } = useAccountStatuses();
+  const { handleAddAddress } = useAddHandler();
+  const { handleRemoveAddress } = useRemoveHandler();
   const { getTheme, getOnlineMode } = useConnections();
   const { setIsDialogOpen } = useRenameHandler();
   const theme = getTheme();
@@ -34,30 +41,18 @@ export const Address = ({ genericAccount, setSection }: AddressProps) => {
       DialogShowAddress={DialogShowAddress}
       DialogManageAccounts={DialogManageAccounts}
       /* Handlers */
+      handleAddSubscriptions={async (encodedAccount: EncodedAccount) =>
+        await handleAddAddress(encodedAccount, genericAccount)
+      }
+      handleRemoveSubscriptions={async (encodedAccount: EncodedAccount) =>
+        await handleRemoveAddress(encodedAccount, genericAccount)
+      }
       onClipboardCopy={async (text: string) =>
         await window.myAPI.copyToClipboard(text)
-      }
-      openConfirmHandler={(encodedAccount: EncodedAccount) =>
-        openOverlayWith(
-          <Confirm
-            encodedAccount={encodedAccount}
-            genericAccount={genericAccount}
-          />,
-          'small'
-        )
       }
       openDeleteHandler={() =>
         openOverlayWith(
           <Delete genericAccount={genericAccount} setSection={setSection} />
-        )
-      }
-      openRemoveHandler={(encodedAccount) =>
-        openOverlayWith(
-          <Remove
-            encodedAccount={encodedAccount}
-            genericAccount={genericAccount}
-          />,
-          'small'
         )
       }
     />
