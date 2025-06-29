@@ -13,16 +13,27 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { HardwareAddressProps } from './types';
 
+//TMP
+import styled from 'styled-components';
+const ViewIconWrapper = styled.div`
+  .ViewIcon {
+    cursor: pointer;
+    &:hover {
+      color: var(--text-color-primary);
+    }
+  }
+`;
+
 export const HardwareAddress = ({
   genericAccount,
   isConnected,
   anyProcessing,
   theme,
-  DialogShowAddress,
   DialogManageAccounts,
   isProcessing,
   handleAddSubscriptions,
   handleRemoveSubscriptions,
+  handleShowAddressClick,
   openDeleteHandler,
   onClipboardCopy,
   setIsDialogOpen,
@@ -120,7 +131,19 @@ export const HardwareAddress = ({
                     theme={theme}
                     onCopyClick={async () => await onClipboardCopy(a.address)}
                   />
-                  <DialogShowAddress address={a.address} />
+                  <TooltipRx text={'Show Address'} theme={theme}>
+                    <ViewIconWrapper
+                      onClick={() =>
+                        handleShowAddressClick(`${a.chainId}:${a.address}`)
+                      }
+                    >
+                      <FontAwesomeIcon
+                        className="ViewIcon"
+                        icon={FA.faEye}
+                        transform={'shrink-4'}
+                      />
+                    </ViewIconWrapper>
+                  </TooltipRx>
                 </FlexRow>
 
                 <FlexRow className="NetworkRow">

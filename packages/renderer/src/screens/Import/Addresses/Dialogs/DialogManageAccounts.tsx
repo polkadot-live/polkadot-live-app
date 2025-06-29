@@ -6,8 +6,12 @@ import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as Style from '@polkadot-live/ui/styles';
 import * as UI from '@polkadot-live/ui/components';
 
-import { ActionBtn, EncodedAddressesWrapper } from './Wrappers';
-import { DialogShowAddress } from './DialogShowAddress';
+import {
+  ActionBtn,
+  ControlsRow,
+  EncodedAddressesWrapper,
+  ToggleRx,
+} from './Wrappers';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBookmark } from '@fortawesome/free-regular-svg-icons';
@@ -18,6 +22,7 @@ import {
   useAccountStatuses,
   useAddHandler,
   useRemoveHandler,
+  useRenameHandler,
 } from '@ren/contexts/import';
 
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -25,6 +30,18 @@ import type {
   EncodedAccount,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
+import { DropdownAccount } from '../Dropdowns';
+
+//TMP
+import styled from 'styled-components';
+const ViewIconWrapper = styled.div`
+  .ViewIcon {
+    cursor: pointer;
+    &:hover {
+      color: var(--text-color-primary);
+    }
+  }
+`;
 
 interface DialogManageAccountsProps {
   genericAccount: ImportedGenericAccount;
@@ -33,14 +50,17 @@ interface DialogManageAccountsProps {
 export const DialogManageAccounts = ({
   genericAccount,
 }: DialogManageAccountsProps) => {
-  const { encodedAccounts, source } = genericAccount;
+  const { encodedAccounts, publicKeyHex, source } = genericAccount;
 
   const { getStatusForAccount } = useAccountStatuses();
   const { handleAddAddress, handleBookmarkToggle } = useAddHandler();
   const { handleRemoveAddress } = useRemoveHandler();
+  const { setIsShowAddressDialogOpen } = useRenameHandler();
   const { getTheme, getOnlineMode } = useConnections();
   const theme = getTheme();
+
   const [isOpen, setIsOpen] = useState(false);
+  const [showBookmarks, setShowBookmarks] = useState(false);
 
   const isConnected = getOnlineMode();
 
@@ -97,6 +117,31 @@ export const DialogManageAccounts = ({
               }}
             />
 
+            {/*  Controls */}
+            <ControlsRow $theme={theme}>
+              <UI.TooltipRx text="Manage Bookmarks" theme={theme}>
+                <span>
+                  <ToggleRx
+                    $theme={theme}
+                    aria-label="Toggle bookmarks"
+                    pressed={showBookmarks}
+                    onPressedChange={(pressed) => setShowBookmarks(pressed)}
+                  >
+                    <FontAwesomeIcon
+                      icon={showBookmarks ? FA.faBookmark : faBookmark}
+                      transform={'shrink-5'}
+                    />
+                  </ToggleRx>
+                </span>
+              </UI.TooltipRx>
+              <UI.TooltipRx theme={theme} text={'Public Key'}>
+                <Style.FlexRow $gap={'0.75rem'}>
+                  <FontAwesomeIcon icon={FA.faKey} transform={'shrink-4'} />
+                  <span>{ellipsisFn(publicKeyHex, 5)}</span>
+                </Style.FlexRow>
+              </UI.TooltipRx>
+            </ControlsRow>
+
             {/*  Encoded addresses */}
             <EncodedAddressesWrapper $theme={theme}>
               <Style.FlexColumn $rowGap={'2px'}>
@@ -106,6 +151,21 @@ export const DialogManageAccounts = ({
                       key={`${cid}-encoded-${i}`}
                       className="EncodedRow"
                     >
+                      {/** Bookmark */}
+                      {showBookmarks && (
+                        <UI.TooltipRx text={'Bookmark'} theme={theme}>
+                          <ActionBtn
+                            $theme={theme}
+                            onClick={async () => await handleBookmarkClick(a)}
+                          >
+                            <FontAwesomeIcon
+                              icon={a.isBookmarked ? FA.faBookmark : faBookmark}
+                              transform={'shrink-2'}
+                            />
+                          </ActionBtn>
+                        </UI.TooltipRx>
+                      )}
+
                       <Style.FlexRow $gap="1.25rem" className="NameAddressRow">
                         <FontAwesomeIcon
                           icon={FA.faCaretRight}
@@ -124,7 +184,22 @@ export const DialogManageAccounts = ({
                               await window.myAPI.copyToClipboard(a.address)
                             }
                           />
-                          <DialogShowAddress address={a.address} />
+                          <UI.TooltipRx text={'Show Address'} theme={theme}>
+                            <ViewIconWrapper
+                              onClick={() =>
+                                setIsShowAddressDialogOpen(
+                                  `${a.chainId}:${a.address}`,
+                                  true
+                                )
+                              }
+                            >
+                              <FontAwesomeIcon
+                                className="ViewIcon"
+                                icon={FA.faEye}
+                                transform={'shrink-4'}
+                              />
+                            </ViewIconWrapper>
+                          </UI.TooltipRx>
                         </Style.FlexRow>
 
                         <Style.FlexRow className="NetworkRow">
@@ -210,18 +285,13 @@ export const DialogManageAccounts = ({
                           </div>
                         )}
                       </Style.FlexRow>
-
-                      <UI.TooltipRx text={'Bookmark'} theme={theme}>
-                        <ActionBtn
-                          $theme={theme}
-                          onClick={async () => await handleBookmarkClick(a)}
-                        >
-                          <FontAwesomeIcon
-                            icon={a.isBookmarked ? FA.faBookmark : faBookmark}
-                            transform={'shrink-2'}
-                          />
-                        </ActionBtn>
-                      </UI.TooltipRx>
+                      {/** Dropdown Menu */}
+                      <DropdownAccount
+                        encodedAccount={a}
+                        onBookmarkToggle={async (en) =>
+                          await handleBookmarkToggle(en, genericAccount)
+                        }
+                      />
                     </Style.FlexRow>
                   )
                 )}

@@ -25,6 +25,8 @@ export type HardwareAddressProps = ComponentBase & {
   handleAddSubscriptions: (encodedAccount: EncodedAccount) => Promise<void>;
   // Handle removing subscriptions from main window.
   handleRemoveSubscriptions: (encodedAccount: EncodedAccount) => Promise<void>;
+  // Handle show address click for an encoded account.
+  handleShowAddressClick: (key: string) => void;
   // Handle confirm delete UI.
   openDeleteHandler: () => void;
   // Sets open flag for rename dialogs.
@@ -32,8 +34,6 @@ export type HardwareAddressProps = ComponentBase & {
     genericAccount: ImportedGenericAccount,
     flag: boolean
   ) => void;
-  // Show address dialog component.
-  DialogShowAddress: React.ComponentType<{ address: string }>;
   // Manage networks dialog component.
   DialogManageAccounts: React.ComponentType<{
     genericAccount: ImportedGenericAccount;

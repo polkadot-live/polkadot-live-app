@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Delete } from '../Actions';
-import { DialogShowAddress } from './Dialogs/DialogShowAddress';
 import { DialogManageAccounts } from './Dialogs/DialogManageAccounts';
 import { HardwareAddress } from '@polkadot-live/ui/components';
 import {
@@ -22,6 +21,7 @@ export const Address = ({ genericAccount, setSection }: AddressProps) => {
   const { getStatusForAccount, anyProcessing } = useAccountStatuses();
   const { handleAddAddress } = useAddHandler();
   const { handleRemoveAddress } = useRemoveHandler();
+  const { setIsShowAddressDialogOpen } = useRenameHandler();
   const { getTheme, getOnlineMode } = useConnections();
   const { setIsDialogOpen } = useRenameHandler();
   const theme = getTheme();
@@ -38,9 +38,11 @@ export const Address = ({ genericAccount, setSection }: AddressProps) => {
       }
       setIsDialogOpen={setIsDialogOpen}
       theme={theme}
-      DialogShowAddress={DialogShowAddress}
       DialogManageAccounts={DialogManageAccounts}
       /* Handlers */
+      handleShowAddressClick={(key: string) =>
+        setIsShowAddressDialogOpen(key, true)
+      }
       handleAddSubscriptions={async (encodedAccount: EncodedAccount) =>
         await handleAddAddress(encodedAccount, genericAccount)
       }

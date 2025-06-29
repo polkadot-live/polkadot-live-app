@@ -1,6 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as Style from '@polkadot-live/ui/styles';
+import * as Toggle from '@radix-ui/react-toggle';
 import styled from 'styled-components';
 import type { darkTheme } from '@ren/theme/variables';
 
@@ -90,5 +92,41 @@ export const EncodedAddressesWrapper = styled.div.attrs<{
         }
       }
     }
+  }
+`;
+
+/**
+ * Controls Row.
+ */
+export const ControlsRow = styled(Style.FlexRow).attrs<{
+  $theme: typeof darkTheme;
+}>((props) => ({ $theme: props.$theme }))`
+  color: ${({ $theme }) => $theme.textColorPrimary};
+`;
+
+/**
+ * Radix-UI toggle button.
+ */
+export const ToggleRx = styled(Toggle.Root).attrs<{ $theme: typeof darkTheme }>(
+  (props) => ({ $theme: props.$theme })
+)`
+  background-color: ${({ $theme }) => $theme.buttonBackgroundSecondary};
+  color: ${({ $theme }) => $theme.textColorPrimary};
+  height: 30px;
+  width: 30px;
+  border-radius: 0.375rem;
+  display: flex;
+  line-height: 1;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background-color: ${({ $theme }) => $theme.buttonBackgroundPrimaryHover};
+  }
+  &[data-state='on'] {
+    //Empty
+  }
+  &:focus {
+    //Empty
   }
 `;

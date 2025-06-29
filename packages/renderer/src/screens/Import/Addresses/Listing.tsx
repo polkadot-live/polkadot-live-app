@@ -11,6 +11,7 @@ import { Address } from './Address';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { DialogRename } from '../Addresses/Dialogs/DialogRename';
+import { DialogShowAddress } from './Dialogs/DialogShowAddress';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ManageAccountsProps } from './types';
 
@@ -43,6 +44,17 @@ export const Listing = ({ source, setSection }: ManageAccountsProps) => {
       {genericAccounts.map((a) => (
         <DialogRename key={a.publicKeyHex} genericAccount={a} />
       ))}
+
+      {/* Mount Show Address Dialogs */}
+      {genericAccounts
+        .map(({ encodedAccounts }) => Object.values(encodedAccounts))
+        .flat()
+        .map((en) => (
+          <DialogShowAddress
+            key={`${en.chainId}:${en.address}`}
+            encodedAccount={en}
+          />
+        ))}
 
       {/* Address List */}
       <UI.AccordionWrapper $onePart={true}>
