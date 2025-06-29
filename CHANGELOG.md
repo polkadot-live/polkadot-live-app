@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.9.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.8.0-alpha...v0.9.0-alpha) (2025-06-29)
+
+
+### Features
+
+* encoded accounts renaming ([#1001](https://github.com/polkadot-live/polkadot-live-app/issues/1001)) ([77ba30a](https://github.com/polkadot-live/polkadot-live-app/commit/77ba30a251bc2732a3ac5a791d3f53d0ade1bbf1))
+* generic accounts ([#997](https://github.com/polkadot-live/polkadot-live-app/issues/997)) ([10fd25a](https://github.com/polkadot-live/polkadot-live-app/commit/10fd25a66b5cf91f3733a42d23263ccb8a79cab8))
+* import view account rename dialog ([#1000](https://github.com/polkadot-live/polkadot-live-app/issues/1000)) ([3d7d94c](https://github.com/polkadot-live/polkadot-live-app/commit/3d7d94cb9bdb34bc1b5d14117c4e71b533a5a0d3))
+* initial generic account listings ([#998](https://github.com/polkadot-live/polkadot-live-app/issues/998)) ([62b2673](https://github.com/polkadot-live/polkadot-live-app/commit/62b2673705c2f59b0d7d377279f2d6976cc465a4))
+* initial kusama asset hub integration ([#1008](https://github.com/polkadot-live/polkadot-live-app/issues/1008)) ([e440652](https://github.com/polkadot-live/polkadot-live-app/commit/e440652f25adc0161a80af5e8f10f2c8c7f9543d))
+* initial kusama people integration ([#1011](https://github.com/polkadot-live/polkadot-live-app/issues/1011)) ([4e78fe3](https://github.com/polkadot-live/polkadot-live-app/commit/4e78fe32b6d9411e6ad11c59a2a409959c908262))
+* initial polkadot people integration ([#1010](https://github.com/polkadot-live/polkadot-live-app/issues/1010)) ([97d9456](https://github.com/polkadot-live/polkadot-live-app/commit/97d94567a9b50ad525cc69f02cbd6a6d8956bf00))
+* initial westend people integration ([#1012](https://github.com/polkadot-live/polkadot-live-app/issues/1012)) ([b6f8d72](https://github.com/polkadot-live/polkadot-live-app/commit/b6f8d7204555bb315cb95cf40e081c580e79712d))
+* manage accounts dialog ([#1013](https://github.com/polkadot-live/polkadot-live-app/issues/1013)) ([456d720](https://github.com/polkadot-live/polkadot-live-app/commit/456d7201888ce41b7d40f42dc0e260fc19fef393))
+* read only accounts import dialog ([#999](https://github.com/polkadot-live/polkadot-live-app/issues/999)) ([a99cbba](https://github.com/polkadot-live/polkadot-live-app/commit/a99cbbac09e6fc91e1110981aea8ae1e6ae1928c))
+* system chain additions ([#1009](https://github.com/polkadot-live/polkadot-live-app/issues/1009)) ([71969be](https://github.com/polkadot-live/polkadot-live-app/commit/71969bef3bcb8cc3ad0d7fa3c03cdac7c2822a9e))
+* system chain integration foundation ([#1007](https://github.com/polkadot-live/polkadot-live-app/issues/1007)) ([5c6bbcd](https://github.com/polkadot-live/polkadot-live-app/commit/5c6bbcd7e5c159395820f9bda78c424db44a33d6))
+* westend asset hub integration ([#982](https://github.com/polkadot-live/polkadot-live-app/issues/982)) ([3c6332c](https://github.com/polkadot-live/polkadot-live-app/commit/3c6332cd4b2c4eeb31878781e11bb54022410e1d))
+
+
+### Bug Fixes
+
+* send screen ([#1003](https://github.com/polkadot-live/polkadot-live-app/issues/1003)) ([9e87d38](https://github.com/polkadot-live/polkadot-live-app/commit/9e87d38d003cf5c59b0e1ccaad54065a9f66b8c2))
+* subscriptions carousel scroll ([#975](https://github.com/polkadot-live/polkadot-live-app/issues/975)) ([efef62a](https://github.com/polkadot-live/polkadot-live-app/commit/efef62a9144a9e81d0fc00c9e350c04c219edc81))
+* summary screen ([#1004](https://github.com/polkadot-live/polkadot-live-app/issues/1004)) ([2066df8](https://github.com/polkadot-live/polkadot-live-app/commit/2066df8d51ac5dcf2250ecd7d7eaa8a4c18f4cdc))
+* westend spendable balance ([#981](https://github.com/polkadot-live/polkadot-live-app/issues/981)) ([a8fcad5](https://github.com/polkadot-live/polkadot-live-app/commit/a8fcad56e29734dae8b35e37ea7914f133335618))
+
 ## [0.8.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.7.0-alpha...v0.8.0-alpha) (2025-04-28)
 
 
