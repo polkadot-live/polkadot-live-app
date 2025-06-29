@@ -102,6 +102,9 @@ export const ControlsRow = styled(Style.FlexRow).attrs<{
   $theme: typeof darkTheme;
 }>((props) => ({ $theme: props.$theme }))`
   color: ${({ $theme }) => $theme.textColorPrimary};
+  h2 {
+    font-size: 1.1rem;
+  }
 `;
 
 /**

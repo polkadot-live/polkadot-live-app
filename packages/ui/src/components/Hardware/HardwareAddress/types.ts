@@ -23,6 +23,8 @@ export type HardwareAddressProps = ComponentBase & {
   onClipboardCopy: (text: string) => Promise<void>;
   // Handle adding subscriptions to main window.
   handleAddSubscriptions: (encodedAccount: EncodedAccount) => Promise<void>;
+  // Handle bookmark toggle.
+  handleBookmarkToggle: (encodedAccount: EncodedAccount) => Promise<void>;
   // Handle removing subscriptions from main window.
   handleRemoveSubscriptions: (encodedAccount: EncodedAccount) => Promise<void>;
   // Handle show address click for an encoded account.
@@ -37,5 +39,10 @@ export type HardwareAddressProps = ComponentBase & {
   // Manage networks dialog component.
   DialogManageAccounts: React.ComponentType<{
     genericAccount: ImportedGenericAccount;
+  }>;
+  // Account options menu.
+  DropdownAccount: React.FC<{
+    encodedAccount: EncodedAccount;
+    onBookmarkToggle: (encodedAccount: EncodedAccount) => Promise<void>;
   }>;
 };

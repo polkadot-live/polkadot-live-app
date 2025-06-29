@@ -30,8 +30,10 @@ export const HardwareAddress = ({
   anyProcessing,
   theme,
   DialogManageAccounts,
+  DropdownAccount,
   isProcessing,
   handleAddSubscriptions,
+  handleBookmarkToggle,
   handleRemoveSubscriptions,
   handleShowAddressClick,
   openDeleteHandler,
@@ -49,27 +51,24 @@ export const HardwareAddress = ({
     <HardwareAddressWrapper style={{ paddingBottom: '1.5rem' }}>
       {/* Account name */}
       <FlexRow $gap={'0.9rem'} className="PrimaryRow">
+        <TooltipRx text={'Rename Accounts'} theme={theme}>
+          <button
+            type="button"
+            className="RenameBtn"
+            disabled={anyProcessing}
+            aria-label="Rename Accounts"
+          >
+            <FontAwesomeIcon
+              icon={FA.faPenSquare}
+              onClick={() =>
+                !anyProcessing && setIsDialogOpen(genericAccount, true)
+              }
+              transform={'grow-1'}
+            />
+          </button>
+        </TooltipRx>
         <h2 className="overflow">{accountName}</h2>
-        <div style={{ flex: 1 }}>
-          <TooltipRx text={'Rename Accounts'} theme={theme}>
-            <button
-              type="button"
-              className="RenameBtn"
-              disabled={anyProcessing}
-              aria-label="Rename Accounts"
-            >
-              <FontAwesomeIcon
-                icon={FA.faPenSquare}
-                onClick={() =>
-                  !anyProcessing && setIsDialogOpen(genericAccount, true)
-                }
-                transform={'grow-1'}
-              />
-            </button>
-          </TooltipRx>
-        </div>
-
-        <FlexRow $gap={'0.25rem'}>
+        <FlexRow $gap={'0.25rem'} style={{ flex: 1, paddingLeft: '0.5rem' }}>
           <DialogManageAccounts genericAccount={genericAccount} />
         </FlexRow>
 
@@ -206,6 +205,12 @@ export const HardwareAddress = ({
                     )}
                   </div>
                 )}
+                <DropdownAccount
+                  encodedAccount={a}
+                  onBookmarkToggle={async (en) =>
+                    await handleBookmarkToggle(en)
+                  }
+                />
               </FlexRow>
             </FlexRow>
           ))}

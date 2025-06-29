@@ -3,6 +3,7 @@
 
 import { Delete } from '../Actions';
 import { DialogManageAccounts } from './Dialogs/DialogManageAccounts';
+import { DropdownAccount } from './Dropdowns';
 import { HardwareAddress } from '@polkadot-live/ui/components';
 import {
   useAccountStatuses,
@@ -19,7 +20,7 @@ export const Address = ({ genericAccount, setSection }: AddressProps) => {
   const { publicKeyHex, source } = genericAccount;
   const { openOverlayWith } = useOverlay();
   const { getStatusForAccount, anyProcessing } = useAccountStatuses();
-  const { handleAddAddress } = useAddHandler();
+  const { handleAddAddress, handleBookmarkToggle } = useAddHandler();
   const { handleRemoveAddress } = useRemoveHandler();
   const { setIsShowAddressDialogOpen } = useRenameHandler();
   const { getTheme, getOnlineMode } = useConnections();
@@ -29,6 +30,8 @@ export const Address = ({ genericAccount, setSection }: AddressProps) => {
   return (
     <HardwareAddress
       key={publicKeyHex}
+      /* Components */
+      DropdownAccount={DropdownAccount}
       /* Data */
       anyProcessing={anyProcessing(genericAccount)}
       genericAccount={genericAccount}
@@ -40,6 +43,9 @@ export const Address = ({ genericAccount, setSection }: AddressProps) => {
       theme={theme}
       DialogManageAccounts={DialogManageAccounts}
       /* Handlers */
+      handleBookmarkToggle={async (encodedAccount) => {
+        await handleBookmarkToggle(encodedAccount, genericAccount);
+      }}
       handleShowAddressClick={(key: string) =>
         setIsShowAddressDialogOpen(key, true)
       }

@@ -13,6 +13,7 @@ import {
   ToggleRx,
 } from './Wrappers';
 import { Cross2Icon } from '@radix-ui/react-icons';
+import { DropdownAccount } from '../Dropdowns';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBookmark } from '@fortawesome/free-regular-svg-icons';
 import { ellipsisFn } from '@w3ux/utils';
@@ -30,7 +31,6 @@ import type {
   EncodedAccount,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
-import { DropdownAccount } from '../Dropdowns';
 
 //TMP
 import styled from 'styled-components';
@@ -50,7 +50,7 @@ interface DialogManageAccountsProps {
 export const DialogManageAccounts = ({
   genericAccount,
 }: DialogManageAccountsProps) => {
-  const { encodedAccounts, publicKeyHex, source } = genericAccount;
+  const { accountName, encodedAccounts, publicKeyHex, source } = genericAccount;
 
   const { getStatusForAccount } = useAccountStatuses();
   const { handleAddAddress, handleBookmarkToggle } = useAddHandler();
@@ -89,7 +89,7 @@ export const DialogManageAccounts = ({
         <div className="ManageBtn">
           <Style.FlexRow $gap={'0.5rem'}>
             <FontAwesomeIcon icon={FA.faCaretRight} />
-            <span>Manage Accounts</span>
+            <span>Manage</span>
           </Style.FlexRow>
         </div>
       </Style.DialogTrigger>
@@ -134,8 +134,9 @@ export const DialogManageAccounts = ({
                   </ToggleRx>
                 </span>
               </UI.TooltipRx>
+              <h2>{accountName}</h2>
               <UI.TooltipRx theme={theme} text={'Public Key'}>
-                <Style.FlexRow $gap={'0.75rem'}>
+                <Style.FlexRow $gap={'0.5rem'}>
                   <FontAwesomeIcon icon={FA.faKey} transform={'shrink-4'} />
                   <span>{ellipsisFn(publicKeyHex, 5)}</span>
                 </Style.FlexRow>

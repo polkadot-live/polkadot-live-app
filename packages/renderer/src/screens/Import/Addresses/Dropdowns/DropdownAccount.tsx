@@ -17,7 +17,7 @@ import type { EncodedAccount } from '@polkadot-live/types/accounts';
 
 interface DropdownAccountProps {
   encodedAccount: EncodedAccount;
-  onBookmarkToggle: (EncodedAccount: EncodedAccount) => Promise<void>;
+  onBookmarkToggle: (encodedAccount: EncodedAccount) => Promise<void>;
 }
 
 const SubscanChainIdMap = new Map<ChainID, string>([
