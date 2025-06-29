@@ -9,4 +9,6 @@ export const defaultRenameHandlerContext: RenameHandlerContextInterface = {
   setIsDialogOpen: () => {},
   renameHandler: () => new Promise(() => {}),
   validateNameInput: () => false,
+  isShowAddressDialogOpen: () => false,
+  setIsShowAddressDialogOpen: () => {},
 };

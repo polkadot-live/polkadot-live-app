@@ -25,6 +25,9 @@ export const RenameHandlerProvider = ({
   const { handleAddressImport, isUniqueAccountName, getAccounts } =
     useAddresses();
 
+  /**
+   * Rename dialog.
+   */
   const openData: [string, boolean][] = getSupportedSources()
     .map((source) => getAccounts(source))
     .flat()
@@ -32,6 +35,20 @@ export const RenameHandlerProvider = ({
 
   const [dialogOpen, setDialogOpen] = useState(
     new Map<string, boolean>([...openData])
+  );
+
+  /**
+   * Show address dialog.
+   */
+  const showAddressDialogData: [string, boolean][] = getSupportedSources()
+    .map((source) => getAccounts(source))
+    .flat()
+    .map(({ encodedAccounts }) => Object.values(encodedAccounts))
+    .flat()
+    .map(({ address, chainId }) => [`${chainId}:${address}`, false]);
+
+  const [showAddressDialogOpen, setShowAddressDialogOpen] = useState(
+    new Map<string, boolean>([...showAddressDialogData])
   );
 
   /**
@@ -47,6 +64,12 @@ export const RenameHandlerProvider = ({
     setDialogOpen((prev) =>
       new Map(prev).set(genericAccount.publicKeyHex, flag)
     );
+
+  const isShowAddressDialogOpen = (key: string) =>
+    Boolean(showAddressDialogOpen.get(key));
+
+  const setIsShowAddressDialogOpen = (key: string, flag: boolean) =>
+    setShowAddressDialogOpen((prev) => new Map(prev).set(key, flag));
 
   /**
    * Rename handler for generic and encoded accounts.
@@ -97,7 +120,9 @@ export const RenameHandlerProvider = ({
     <RenameHandlerContext.Provider
       value={{
         isDialogOpen,
+        isShowAddressDialogOpen,
         setIsDialogOpen,
+        setIsShowAddressDialogOpen,
         renameHandler,
         validateNameInput,
       }}

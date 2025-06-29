@@ -4,26 +4,11 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { useConnections } from '@ren/contexts/common';
-import { useState } from 'react';
-import {
-  DialogContent,
-  DialogTrigger,
-  FlexColumn,
-  FlexRow,
-} from '@polkadot-live/ui/styles';
-import { faEye } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { CopyButton, TooltipRx } from '@polkadot-live/ui/components';
+import { useRenameHandler } from '@ren/contexts/import';
+import { DialogContent, FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
+import { CopyButton } from '@polkadot-live/ui/components';
 import styled from 'styled-components';
-
-const ViewIconWrapper = styled.div`
-  .ViewIcon {
-    cursor: pointer;
-    &:hover {
-      color: var(--text-color-primary);
-    }
-  }
-`;
+import type { EncodedAccount } from '@polkadot-live/types/accounts';
 
 const AddressText = styled.p`
   line-height: 2rem;
@@ -38,28 +23,29 @@ const AddressText = styled.p`
   }
 `;
 
-export const DialogShowAddress = ({ address }: { address: string }) => {
+export const DialogShowAddress = ({
+  encodedAccount,
+}: {
+  encodedAccount: EncodedAccount;
+}) => {
+  const { address, chainId } = encodedAccount;
+  const key = `${chainId}:${address}`;
+
   const { getTheme } = useConnections();
-  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const theme = getTheme();
 
+  const { isShowAddressDialogOpen, setIsShowAddressDialogOpen } =
+    useRenameHandler();
+
   const handleOpenChange = (open: boolean) => {
-    setDialogOpen(open);
+    setIsShowAddressDialogOpen(key, open);
   };
 
   return (
-    <Dialog.Root open={dialogOpen} onOpenChange={handleOpenChange}>
-      <DialogTrigger $theme={theme}>
-        <TooltipRx text={'Show Address'} theme={theme}>
-          <ViewIconWrapper>
-            <FontAwesomeIcon
-              className="ViewIcon"
-              icon={faEye}
-              transform={'shrink-4'}
-            />
-          </ViewIconWrapper>
-        </TooltipRx>
-      </DialogTrigger>
+    <Dialog.Root
+      open={isShowAddressDialogOpen(key)}
+      onOpenChange={handleOpenChange}
+    >
       <Dialog.Portal>
         <Dialog.Overlay className="Dialog__Overlay" />
 

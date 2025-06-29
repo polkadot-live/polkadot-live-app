@@ -43,10 +43,15 @@ export const DialogTrigger = styled(Dialog.Trigger).attrs<{
 
 export const DialogContent = styled(Dialog.Content).attrs<{
   $theme: AnyData;
+  $size?: 'sm' | 'lg';
 }>((props) => ({
   $theme: props.$theme,
+  $size: props.$size,
 }))`
   background-color: ${(props) => props.$theme.dialogContentBackground};
+  max-width: ${(props) =>
+    props.$size === undefined || props.$size === 'sm' ? '500px' : '800px'};
+
   position: relative;
   border-radius: 4px;
   position: fixed;
@@ -54,7 +59,6 @@ export const DialogContent = styled(Dialog.Content).attrs<{
   left: 50%;
   transform: translate(-50%, -40%);
   width: 90vw;
-  max-width: 400px;
   max-height: 85vh;
   padding: 2.25rem 2rem;
   animation: dialog_contentShow 400ms cubic-bezier(0.16, 1, 0.3, 1);

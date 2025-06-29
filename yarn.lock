@@ -2837,6 +2837,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@radix-ui/react-primitive@npm:2.1.3":
+  version: 2.1.3
+  resolution: "@radix-ui/react-primitive@npm:2.1.3"
+  dependencies:
+    "@radix-ui/react-slot": "npm:1.2.3"
+  peerDependencies:
+    "@types/react": "*"
+    "@types/react-dom": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-dom":
+      optional: true
+  checksum: fdff9b84913bb4172ef6d3af7442fca5f9bba5f2709cba08950071f819d7057aec3a4a2d9ef44cf9cbfb8014d02573c6884a04cff175895823aaef809ebdb034
+  languageName: node
+  linkType: hard
+
 "@radix-ui/react-roving-focus@npm:1.1.9":
   version: 1.1.9
   resolution: "@radix-ui/react-roving-focus@npm:1.1.9"
@@ -2918,6 +2937,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@radix-ui/react-slot@npm:1.2.3":
+  version: 1.2.3
+  resolution: "@radix-ui/react-slot@npm:1.2.3"
+  dependencies:
+    "@radix-ui/react-compose-refs": "npm:1.1.2"
+  peerDependencies:
+    "@types/react": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 5913aa0d760f505905779515e4b1f0f71a422350f077cc8d26d1aafe53c97f177fec0e6d7fbbb50d8b5e498aa9df9f707ca75ae3801540c283b26b0136138eef
+  languageName: node
+  linkType: hard
+
 "@radix-ui/react-tabs@npm:^1.1.3":
   version: 1.1.11
   resolution: "@radix-ui/react-tabs@npm:1.1.11"
@@ -2987,6 +3021,27 @@ __metadata:
     "@types/react-dom":
       optional: true
   checksum: c00c619cc55707638ad88f167258d509c23c8325fdec7ac982d68f469d0395d24175782405c2ce70f4a78ade79d1de4f0eabbec0e86af1c0fbc4290b59c70e9d
+  languageName: node
+  linkType: hard
+
+"@radix-ui/react-toggle@npm:^1.1.9":
+  version: 1.1.9
+  resolution: "@radix-ui/react-toggle@npm:1.1.9"
+  dependencies:
+    "@radix-ui/primitive": "npm:1.1.2"
+    "@radix-ui/react-primitive": "npm:2.1.3"
+    "@radix-ui/react-use-controllable-state": "npm:1.2.2"
+  peerDependencies:
+    "@types/react": "*"
+    "@types/react-dom": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-dom":
+      optional: true
+  checksum: af60c49bec8bb2b7984d95bb92458b83a2c55ce1e9933eaf3d90d04029a1117345666a624ea9866badaedb6d131c14d8042327ae66e186cbc06a334f2c07e1b7
   languageName: node
   linkType: hard
 
@@ -11114,6 +11169,7 @@ __metadata:
     "@radix-ui/react-icons": "npm:^1.3.2"
     "@radix-ui/react-select": "npm:^2.1.2"
     "@radix-ui/react-tabs": "npm:^1.1.3"
+    "@radix-ui/react-toggle": "npm:^1.1.9"
     "@radix-ui/react-toggle-group": "npm:^1.1.2"
     "@radix-ui/react-tooltip": "npm:^1.1.7"
     "@substrate/connect-known-chains": "npm:^1.10.2"

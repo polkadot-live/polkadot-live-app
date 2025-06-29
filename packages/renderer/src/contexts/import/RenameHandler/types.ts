@@ -5,6 +5,7 @@ import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';
 
 export interface RenameHandlerContextInterface {
   isDialogOpen: (genericAccount: ImportedGenericAccount) => boolean;
+  isShowAddressDialogOpen: (key: string) => boolean;
   renameHandler: (
     updatedAccount: ImportedGenericAccount,
     originalAccount: ImportedGenericAccount
@@ -13,5 +14,6 @@ export interface RenameHandlerContextInterface {
     genericAccount: ImportedGenericAccount,
     flag: boolean
   ) => void;
+  setIsShowAddressDialogOpen: (key: string, flag: boolean) => void;
   validateNameInput: (trimmed: string) => boolean;
 }

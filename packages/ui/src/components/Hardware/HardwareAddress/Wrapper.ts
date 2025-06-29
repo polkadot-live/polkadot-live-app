@@ -30,6 +30,23 @@ const mixinAddressInput = css`
   }
 `;
 
+export const ActionBtn = styled.button`
+  color: var(--text-color-secondary);
+  background-color: var(--button-background-primary);
+  border-color: var(--button-background-primary);
+  border-radius: 0.15rem;
+  min-width: 4.5rem;
+  min-height: 22.52px;
+  width: 4.5rem;
+  padding: 0.45rem 0.2rem;
+  font-size: 0.85rem;
+  transition: all 150ms ease-out;
+
+  &:hover:not(:disabled) {
+    background-color: var(--button-background-primary-hover);
+  }
+`;
+
 export const HardwareAddressWrapper = styled.div`
   padding: 0.5rem 1rem;
   cursor: default;
@@ -60,9 +77,18 @@ export const HardwareAddressWrapper = styled.div`
     }
   }
   .ManageBtn {
-    border: none;
+    font-size: 1rem;
+    opacity: 0.85;
     color: var(--accent-secondary);
-    cursor: not-allowed;
+    cursor: pointer;
+    &:hover:not(:disabled) {
+      opacity: 1;
+    }
+  }
+  .NoBookmarks {
+    color: var(--text-color-secondary);
+    opacity: 0.6;
+    padding-left: 0.5rem;
   }
   .ChainIcon {
     position: absolute;
