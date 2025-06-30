@@ -18,7 +18,7 @@ import type { FormEvent } from 'react';
 import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';
 import styled from 'styled-components';
 
-interface DialogRenameProps {
+interface DialogBulkRenameProps {
   genericAccount: ImportedGenericAccount;
 }
 
@@ -85,7 +85,7 @@ const FormLabel = ({
   </NetworkLabelWrapper>
 );
 
-export const DialogRename = ({ genericAccount }: DialogRenameProps) => {
+export const DialogBulkRename = ({ genericAccount }: DialogBulkRenameProps) => {
   const { accountName, encodedAccounts } = genericAccount;
 
   const { getTheme } = useConnections();

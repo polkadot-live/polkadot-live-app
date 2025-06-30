@@ -10,7 +10,7 @@ import { useState } from 'react';
 import { Address } from './Address';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { DialogRename } from '../Addresses/Dialogs/DialogRename';
+import { DialogBulkRename } from '../Addresses/Dialogs/DialogBulkRename';
 import { DialogShowAddress } from './Dialogs/DialogShowAddress';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ManageAccountsProps } from './types';
@@ -42,7 +42,7 @@ export const Listing = ({ source, setSection }: ManageAccountsProps) => {
     <section>
       {/* Mount Rename Dialogs */}
       {genericAccounts.map((a) => (
-        <DialogRename key={a.publicKeyHex} genericAccount={a} />
+        <DialogBulkRename key={a.publicKeyHex} genericAccount={a} />
       ))}
 
       {/* Mount Show Address Dialogs */}
