@@ -132,11 +132,7 @@ export const HardwareAddress = ({
                     onCopyClick={async () => await onClipboardCopy(a.address)}
                   />
                   <TooltipRx text={'Show Address'} theme={theme}>
-                    <ViewIconWrapper
-                      onClick={() =>
-                        handleShowAddressClick(`${a.chainId}:${a.address}`)
-                      }
-                    >
+                    <ViewIconWrapper onClick={() => handleShowAddressClick(a)}>
                       <FontAwesomeIcon
                         className="ViewIcon"
                         icon={FA.faEye}

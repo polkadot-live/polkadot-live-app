@@ -10,15 +10,18 @@ import { useState } from 'react';
 import { Address } from './Address';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { DialogBulkRename } from '../Addresses/Dialogs/DialogBulkRename';
-import { DialogRename } from './Dialogs/DialogRename';
-import { DialogShowAddress } from './Dialogs/DialogShowAddress';
+import {
+  DialogBulkRename,
+  DialogRename,
+  DialogShowAddress,
+} from '../Addresses/Dialogs';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ManageAccountsProps } from './types';
 
 export const Listing = ({ source, setSection }: ManageAccountsProps) => {
   const { getAccounts } = useAddresses();
-  const { getBulkRenameDialogData } = useRenameHandler();
+  const { getBulkRenameDialogData, getShowAddressDialogData } =
+    useRenameHandler();
   const genericAccounts = getAccounts(source);
 
   const getAccordionTitle = (): string => {
@@ -36,32 +39,25 @@ export const Listing = ({ source, setSection }: ManageAccountsProps) => {
     }
   };
 
-  /// Accordion state.
   const title = getAccordionTitle();
   const [accordionValue, setAccordionValue] = useState(title);
 
   return (
     <section>
-      {/* Mount Rename Dialog */}
+      {/* Mount Dialogs */}
       <DialogRename />
 
-      {/* Mount Bulk Rename Dialogs */}
       {getBulkRenameDialogData().genericAccount && (
         <DialogBulkRename
           genericAccount={getBulkRenameDialogData().genericAccount!}
         />
       )}
 
-      {/* Mount Show Address Dialogs */}
-      {genericAccounts
-        .map(({ encodedAccounts }) => Object.values(encodedAccounts))
-        .flat()
-        .map((en) => (
-          <DialogShowAddress
-            key={`${en.chainId}:${en.address}`}
-            encodedAccount={en}
-          />
-        ))}
+      {getShowAddressDialogData().encodedAccount && (
+        <DialogShowAddress
+          encodedAccount={getShowAddressDialogData().encodedAccount!}
+        />
+      )}
 
       {/* Address List */}
       <UI.AccordionWrapper $onePart={true}>

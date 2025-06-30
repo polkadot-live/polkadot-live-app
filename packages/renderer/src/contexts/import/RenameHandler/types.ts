@@ -17,16 +17,21 @@ export interface DialogBulkRenameData {
   genericAccount: ImportedGenericAccount | null;
 }
 
+export interface DialogShowAddressData {
+  isOpen: boolean;
+  encodedAccount: EncodedAccount | null;
+}
+
 export interface RenameHandlerContextInterface {
-  isShowAddressDialogOpen: (key: string) => boolean;
   renameHandler: (
     updatedAccount: ImportedGenericAccount,
     originalAccount: ImportedGenericAccount
   ) => Promise<void>;
+  validateNameInput: (trimmed: string) => boolean;
+  getShowAddressDialogData: () => DialogShowAddressData;
+  setShowAddressDialogData: (data: DialogShowAddressData) => void;
   setBulkRenameDialogData: (data: DialogBulkRenameData) => void;
   getBulkRenameDialogData: () => DialogBulkRenameData;
-  setIsShowAddressDialogOpen: (key: string, flag: boolean) => void;
-  validateNameInput: (trimmed: string) => boolean;
   setRenameDialogData: (data: DialogRenameData) => void;
   getRenameDialogData: () => DialogRenameData;
 }

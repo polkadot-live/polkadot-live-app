@@ -28,7 +28,7 @@ export type HardwareAddressProps = ComponentBase & {
   // Handle removing subscriptions from main window.
   handleRemoveSubscriptions: (encodedAccount: EncodedAccount) => Promise<void>;
   // Handle show address click for an encoded account.
-  handleShowAddressClick: (key: string) => void;
+  handleShowAddressClick: (encodedAccount: EncodedAccount) => void;
   // Handle confirm delete UI.
   openDeleteHandler: () => void;
   // Sets open flag for rename dialogs.

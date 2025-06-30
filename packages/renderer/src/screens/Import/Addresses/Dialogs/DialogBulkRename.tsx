@@ -124,11 +124,10 @@ export const DialogBulkRename = ({ genericAccount }: DialogBulkRenameProps) => {
   /**
    * Reset input when dialog closed.
    */
-  const handleOpenChange = (open: boolean) => {
+  const handleOpenChange = (open: boolean) =>
     open
       ? setBulkRenameDialogData({ genericAccount, isOpen: open })
       : setBulkRenameDialogData({ genericAccount: null, isOpen: open });
-  };
 
   /**
    * Handle encoded change.

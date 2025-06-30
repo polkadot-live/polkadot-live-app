@@ -22,9 +22,10 @@ export const Address = ({ genericAccount, setSection }: AddressProps) => {
   const { getStatusForAccount, anyProcessing } = useAccountStatuses();
   const { handleAddAddress, handleBookmarkToggle } = useAddHandler();
   const { handleRemoveAddress } = useRemoveHandler();
-  const { setIsShowAddressDialogOpen } = useRenameHandler();
   const { getTheme, getOnlineMode } = useConnections();
-  const { setBulkRenameDialogData } = useRenameHandler();
+  const { setBulkRenameDialogData, setShowAddressDialogData } =
+    useRenameHandler();
+
   const theme = getTheme();
 
   return (
@@ -46,8 +47,8 @@ export const Address = ({ genericAccount, setSection }: AddressProps) => {
       handleBookmarkToggle={async (encodedAccount) => {
         await handleBookmarkToggle(encodedAccount, genericAccount);
       }}
-      handleShowAddressClick={(key: string) =>
-        setIsShowAddressDialogOpen(key, true)
+      handleShowAddressClick={(encodedAccount) =>
+        setShowAddressDialogData({ encodedAccount, isOpen: true })
       }
       handleAddSubscriptions={async (encodedAccount: EncodedAccount) =>
         await handleAddAddress(encodedAccount, genericAccount)

@@ -50,7 +50,7 @@ export const DialogManageAccounts = ({
   const { getStatusForAccount } = useAccountStatuses();
   const { handleAddAddress, handleBookmarkToggle } = useAddHandler();
   const { handleRemoveAddress } = useRemoveHandler();
-  const { setIsShowAddressDialogOpen } = useRenameHandler();
+  const { setShowAddressDialogData } = useRenameHandler();
   const { getTheme, getOnlineMode } = useConnections();
   const theme = getTheme();
 
@@ -204,10 +204,10 @@ export const DialogManageAccounts = ({
                             <UI.TooltipRx text={'Show Address'} theme={theme}>
                               <ViewIconWrapper
                                 onClick={() =>
-                                  setIsShowAddressDialogOpen(
-                                    `${a.chainId}:${a.address}`,
-                                    true
-                                  )
+                                  setShowAddressDialogData({
+                                    encodedAccount: a,
+                                    isOpen: true,
+                                  })
                                 }
                               >
                                 <FontAwesomeIcon

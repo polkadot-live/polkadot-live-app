@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { getSupportedSources } from '@polkadot-live/consts/chains';
 import { postRenameAccount, renameAccountInStore } from '@polkadot-live/core';
 import { createContext, useContext, useState } from 'react';
 import { useAddresses } from '@ren/contexts/import/Addresses';
@@ -11,6 +10,7 @@ import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';
 import type {
   DialogBulkRenameData,
   DialogRenameData,
+  DialogShowAddressData,
   RenameHandlerContextInterface,
 } from './types';
 
@@ -26,8 +26,7 @@ export const RenameHandlerProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { handleAddressImport, isUniqueAccountName, getAccounts } =
-    useAddresses();
+  const { handleAddressImport, isUniqueAccountName } = useAddresses();
 
   /**
    * Rename dialog.
@@ -38,11 +37,10 @@ export const RenameHandlerProvider = ({
     genericAccount: null,
   });
 
+  const getRenameDialogData = () => renameDialogState;
   const setRenameDialogData = (data: DialogRenameData) => {
     setRenameDialogState({ ...data });
   };
-
-  const getRenameDialogData = () => renameDialogState;
 
   /**
    * Bulk rename dialog.
@@ -54,32 +52,21 @@ export const RenameHandlerProvider = ({
     });
 
   const getBulkRenameDialogData = () => bulkRenameDialogState;
-
   const setBulkRenameDialogData = (data: DialogBulkRenameData) =>
     setBulkRenameDialogState({ ...data });
 
   /**
    * Show address dialog.
    */
-  const showAddressDialogData: [string, boolean][] = getSupportedSources()
-    .map((source) => getAccounts(source))
-    .flat()
-    .map(({ encodedAccounts }) => Object.values(encodedAccounts))
-    .flat()
-    .map(({ address, chainId }) => [`${chainId}:${address}`, false]);
+  const [showAddressDialogState, setShowAddressDialogState] =
+    useState<DialogShowAddressData>({
+      isOpen: false,
+      encodedAccount: null,
+    });
 
-  const [showAddressDialogOpen, setShowAddressDialogOpen] = useState(
-    new Map<string, boolean>([...showAddressDialogData])
-  );
-
-  /**
-   * Show address dialog.
-   */
-  const isShowAddressDialogOpen = (key: string) =>
-    Boolean(showAddressDialogOpen.get(key));
-
-  const setIsShowAddressDialogOpen = (key: string, flag: boolean) =>
-    setShowAddressDialogOpen((prev) => new Map(prev).set(key, flag));
+  const getShowAddressDialogData = () => showAddressDialogState;
+  const setShowAddressDialogData = (data: DialogShowAddressData) =>
+    setShowAddressDialogState({ ...data });
 
   /**
    * Rename handler for generic and encoded accounts.
@@ -129,8 +116,8 @@ export const RenameHandlerProvider = ({
   return (
     <RenameHandlerContext.Provider
       value={{
-        isShowAddressDialogOpen,
-        setIsShowAddressDialogOpen,
+        getShowAddressDialogData,
+        setShowAddressDialogData,
         getBulkRenameDialogData,
         setBulkRenameDialogData,
         renameHandler,

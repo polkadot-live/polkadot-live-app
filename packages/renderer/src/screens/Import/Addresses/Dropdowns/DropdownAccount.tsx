@@ -48,11 +48,8 @@ export const DropdownAccount = ({
 }: DropdownAccountProps) => {
   const { address, chainId, isBookmarked } = encodedAccount;
 
-  const { isShowAddressDialogOpen, setIsShowAddressDialogOpen } =
-    useRenameHandler();
-
   const { getTheme } = useConnections();
-  const { setRenameDialogData } = useRenameHandler();
+  const { setShowAddressDialogData, setRenameDialogData } = useRenameHandler();
   const theme = getTheme();
 
   const onBlockExplorerClick = () => {
@@ -63,9 +60,7 @@ export const DropdownAccount = ({
   };
 
   const onShowAddressClick = () => {
-    const key = `${chainId}:${address}`;
-    const flag = isShowAddressDialogOpen(key);
-    setIsShowAddressDialogOpen(key, !flag);
+    setShowAddressDialogData({ encodedAccount, isOpen: true });
   };
 
   const onRenameClick = () => {
