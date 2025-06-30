@@ -7,7 +7,10 @@ import { postRenameAccount, renameAccountInStore } from '@polkadot-live/core';
 import { createContext, useContext, useState } from 'react';
 import { useAddresses } from '@ren/contexts/import/Addresses';
 import { renderToast, validateAccountName } from '@polkadot-live/ui/utils';
-import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';
+import type {
+  EncodedAccount,
+  ImportedGenericAccount,
+} from '@polkadot-live/types/accounts';
 import type { RenameHandlerContextInterface } from './types';
 
 export const RenameHandlerContext =
@@ -27,6 +30,29 @@ export const RenameHandlerProvider = ({
 
   /**
    * Rename dialog.
+   */
+  const [renameDialogState, setRenameDialogState] = useState<{
+    isOpen: boolean;
+    encodedAccount: EncodedAccount | null;
+    genericAccount: ImportedGenericAccount | null;
+  }>({
+    isOpen: false,
+    encodedAccount: null,
+    genericAccount: null,
+  });
+
+  const setRenameDialogData = (
+    encodedAccount: EncodedAccount | null,
+    genericAccount: ImportedGenericAccount | null,
+    isOpen: boolean
+  ) => {
+    setRenameDialogState({ encodedAccount, genericAccount, isOpen });
+  };
+
+  const getRenameDialogData = () => renameDialogState;
+
+  /**
+   * Bulk rename dialog.
    */
   const openData: [string, boolean][] = getSupportedSources()
     .map((source) => getAccounts(source))
@@ -125,6 +151,8 @@ export const RenameHandlerProvider = ({
         setIsShowAddressDialogOpen,
         renameHandler,
         validateNameInput,
+        setRenameDialogData,
+        getRenameDialogData,
       }}
     >
       {children}

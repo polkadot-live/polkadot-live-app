@@ -298,6 +298,7 @@ export const DialogManageAccounts = ({
                         <DropdownAccount
                           triggerSize={'lg'}
                           encodedAccount={a}
+                          genericAccount={genericAccount}
                           onBookmarkToggle={async (en) =>
                             await handleBookmarkToggle(en, genericAccount)
                           }

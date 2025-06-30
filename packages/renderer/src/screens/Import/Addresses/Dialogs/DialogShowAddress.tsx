@@ -60,6 +60,13 @@ export const DialogShowAddress = ({
               </Dialog.Title>
             </FlexColumn>
 
+            <span
+              style={{
+                borderBottom: `1px solid ${theme.textDimmed}`,
+                opacity: '0.25',
+              }}
+            />
+
             <FlexRow $gap={'1rem'}>
               <AddressText style={{ color: theme.textColorSecondary }}>
                 <span>{address}</span>
