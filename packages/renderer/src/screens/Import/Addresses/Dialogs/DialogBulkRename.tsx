@@ -25,8 +25,12 @@ export const DialogBulkRename = ({ genericAccount }: DialogBulkRenameProps) => {
   const { accountName, encodedAccounts } = genericAccount;
 
   const { getTheme } = useConnections();
-  const { isDialogOpen, renameHandler, setIsDialogOpen, validateNameInput } =
-    useRenameHandler();
+  const {
+    getBulkRenameDialogData,
+    renameHandler,
+    setBulkRenameDialogData,
+    validateNameInput,
+  } = useRenameHandler();
 
   const theme = getTheme();
   const [inputVal, setInputVal] = useState<string>(accountName);
@@ -74,6 +78,7 @@ export const DialogBulkRename = ({ genericAccount }: DialogBulkRenameProps) => {
 
     renameHandler(updatedAccount, genericAccount).then(() => {
       setInputVal(trimmed);
+      setBulkRenameDialogData({ genericAccount: updatedAccount, isOpen: true });
     });
   };
 
@@ -103,6 +108,7 @@ export const DialogBulkRename = ({ genericAccount }: DialogBulkRenameProps) => {
 
     renameHandler(updatedAccount, genericAccount).then(() => {
       setEncodedNames((prev) => new Map(prev).set(chainId, trimmed));
+      setBulkRenameDialogData({ genericAccount: updatedAccount, isOpen: true });
     });
   };
 
@@ -119,7 +125,9 @@ export const DialogBulkRename = ({ genericAccount }: DialogBulkRenameProps) => {
    * Reset input when dialog closed.
    */
   const handleOpenChange = (open: boolean) => {
-    setIsDialogOpen(genericAccount, open);
+    open
+      ? setBulkRenameDialogData({ genericAccount, isOpen: open })
+      : setBulkRenameDialogData({ genericAccount: null, isOpen: open });
   };
 
   /**
@@ -145,7 +153,7 @@ export const DialogBulkRename = ({ genericAccount }: DialogBulkRenameProps) => {
 
   return (
     <Dialog.Root
-      open={isDialogOpen(genericAccount)}
+      open={getBulkRenameDialogData().isOpen}
       onOpenChange={handleOpenChange}
     >
       <Dialog.Portal>

@@ -8,7 +8,11 @@ import { createContext, useContext, useState } from 'react';
 import { useAddresses } from '@ren/contexts/import/Addresses';
 import { renderToast, validateAccountName } from '@polkadot-live/ui/utils';
 import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';
-import type { RenameDialogData, RenameHandlerContextInterface } from './types';
+import type {
+  DialogBulkRenameData,
+  DialogRenameData,
+  RenameHandlerContextInterface,
+} from './types';
 
 export const RenameHandlerContext =
   createContext<RenameHandlerContextInterface>(
@@ -28,13 +32,13 @@ export const RenameHandlerProvider = ({
   /**
    * Rename dialog.
    */
-  const [renameDialogState, setRenameDialogState] = useState<RenameDialogData>({
+  const [renameDialogState, setRenameDialogState] = useState<DialogRenameData>({
     isOpen: false,
     encodedAccount: null,
     genericAccount: null,
   });
 
-  const setRenameDialogData = (data: RenameDialogData) => {
+  const setRenameDialogData = (data: DialogRenameData) => {
     setRenameDialogState({ ...data });
   };
 
@@ -43,14 +47,16 @@ export const RenameHandlerProvider = ({
   /**
    * Bulk rename dialog.
    */
-  const openData: [string, boolean][] = getSupportedSources()
-    .map((source) => getAccounts(source))
-    .flat()
-    .map(({ publicKeyHex }) => [publicKeyHex, false]);
+  const [bulkRenameDialogState, setBulkRenameDialogState] =
+    useState<DialogBulkRenameData>({
+      isOpen: false,
+      genericAccount: null,
+    });
 
-  const [dialogOpen, setDialogOpen] = useState(
-    new Map<string, boolean>([...openData])
-  );
+  const getBulkRenameDialogData = () => bulkRenameDialogState;
+
+  const setBulkRenameDialogData = (data: DialogBulkRenameData) =>
+    setBulkRenameDialogState({ ...data });
 
   /**
    * Show address dialog.
@@ -67,19 +73,8 @@ export const RenameHandlerProvider = ({
   );
 
   /**
-   * Utility to get dialog open flag.
+   * Show address dialog.
    */
-  const isDialogOpen = (genericAccount: ImportedGenericAccount) =>
-    Boolean(dialogOpen.get(genericAccount.publicKeyHex));
-
-  const setIsDialogOpen = (
-    genericAccount: ImportedGenericAccount,
-    flag: boolean
-  ) =>
-    setDialogOpen((prev) =>
-      new Map(prev).set(genericAccount.publicKeyHex, flag)
-    );
-
   const isShowAddressDialogOpen = (key: string) =>
     Boolean(showAddressDialogOpen.get(key));
 
@@ -134,10 +129,10 @@ export const RenameHandlerProvider = ({
   return (
     <RenameHandlerContext.Provider
       value={{
-        isDialogOpen,
         isShowAddressDialogOpen,
-        setIsDialogOpen,
         setIsShowAddressDialogOpen,
+        getBulkRenameDialogData,
+        setBulkRenameDialogData,
         renameHandler,
         validateNameInput,
         setRenameDialogData,

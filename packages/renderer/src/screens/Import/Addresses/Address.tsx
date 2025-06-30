@@ -24,7 +24,7 @@ export const Address = ({ genericAccount, setSection }: AddressProps) => {
   const { handleRemoveAddress } = useRemoveHandler();
   const { setIsShowAddressDialogOpen } = useRenameHandler();
   const { getTheme, getOnlineMode } = useConnections();
-  const { setIsDialogOpen } = useRenameHandler();
+  const { setBulkRenameDialogData } = useRenameHandler();
   const theme = getTheme();
 
   return (
@@ -39,7 +39,7 @@ export const Address = ({ genericAccount, setSection }: AddressProps) => {
       isProcessing={({ address, chainId }) =>
         Boolean(getStatusForAccount(`${chainId}:${address}`, source))
       }
-      setIsDialogOpen={setIsDialogOpen}
+      setBulkRenameDialogData={setBulkRenameDialogData}
       theme={theme}
       DialogManageAccounts={DialogManageAccounts}
       /* Handlers */

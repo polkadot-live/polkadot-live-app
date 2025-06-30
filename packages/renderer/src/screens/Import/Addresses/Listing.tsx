@@ -5,7 +5,7 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/ui/styles';
 
-import { useAddresses } from '@ren/contexts/import';
+import { useAddresses, useRenameHandler } from '@ren/contexts/import';
 import { useState } from 'react';
 import { Address } from './Address';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
@@ -18,6 +18,7 @@ import type { ManageAccountsProps } from './types';
 
 export const Listing = ({ source, setSection }: ManageAccountsProps) => {
   const { getAccounts } = useAddresses();
+  const { getBulkRenameDialogData } = useRenameHandler();
   const genericAccounts = getAccounts(source);
 
   const getAccordionTitle = (): string => {
@@ -45,9 +46,11 @@ export const Listing = ({ source, setSection }: ManageAccountsProps) => {
       <DialogRename />
 
       {/* Mount Bulk Rename Dialogs */}
-      {genericAccounts.map((a) => (
-        <DialogBulkRename key={a.publicKeyHex} genericAccount={a} />
-      ))}
+      {getBulkRenameDialogData().genericAccount && (
+        <DialogBulkRename
+          genericAccount={getBulkRenameDialogData().genericAccount!}
+        />
+      )}
 
       {/* Mount Show Address Dialogs */}
       {genericAccounts

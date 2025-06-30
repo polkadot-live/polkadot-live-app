@@ -32,10 +32,13 @@ export type HardwareAddressProps = ComponentBase & {
   // Handle confirm delete UI.
   openDeleteHandler: () => void;
   // Sets open flag for rename dialogs.
-  setIsDialogOpen: (
-    genericAccount: ImportedGenericAccount,
-    flag: boolean
-  ) => void;
+  setBulkRenameDialogData: ({
+    genericAccount,
+    isOpen,
+  }: {
+    genericAccount: ImportedGenericAccount | null;
+    isOpen: boolean;
+  }) => void;
   // Manage networks dialog component.
   DialogManageAccounts: React.ComponentType<{
     genericAccount: ImportedGenericAccount;

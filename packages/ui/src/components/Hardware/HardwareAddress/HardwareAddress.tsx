@@ -38,7 +38,7 @@ export const HardwareAddress = ({
   handleShowAddressClick,
   openDeleteHandler,
   onClipboardCopy,
-  setIsDialogOpen,
+  setBulkRenameDialogData,
 }: HardwareAddressProps) => {
   const { accountName, encodedAccounts } = genericAccount;
 
@@ -61,7 +61,8 @@ export const HardwareAddress = ({
             <FontAwesomeIcon
               icon={FA.faPenSquare}
               onClick={() =>
-                !anyProcessing && setIsDialogOpen(genericAccount, true)
+                !anyProcessing &&
+                setBulkRenameDialogData({ genericAccount, isOpen: true })
               }
               transform={'grow-1'}
             />
