@@ -44,5 +44,6 @@ export type HardwareAddressProps = ComponentBase & {
   DropdownAccount: React.FC<{
     encodedAccount: EncodedAccount;
     onBookmarkToggle: (encodedAccount: EncodedAccount) => Promise<void>;
+    triggerSize?: 'sm' | 'lg';
   }>;
 };

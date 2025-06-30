@@ -209,6 +209,7 @@ export const HardwareAddress = ({
                 )}
                 <DropdownAccount
                   encodedAccount={a}
+                  triggerSize={'sm'}
                   onBookmarkToggle={async (en) =>
                     await handleBookmarkToggle(en)
                   }
