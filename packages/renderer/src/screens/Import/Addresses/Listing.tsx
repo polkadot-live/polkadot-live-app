@@ -11,10 +11,10 @@ import { Address } from './Address';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { DialogBulkRename } from '../Addresses/Dialogs/DialogBulkRename';
+import { DialogRename } from './Dialogs/DialogRename';
 import { DialogShowAddress } from './Dialogs/DialogShowAddress';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ManageAccountsProps } from './types';
-import { DialogRename } from './Dialogs/DialogRename';
 
 export const Listing = ({ source, setSection }: ManageAccountsProps) => {
   const { getAccounts } = useAddresses();
