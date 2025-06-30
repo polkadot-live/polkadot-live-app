@@ -6,6 +6,12 @@ import type {
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
 
+export interface RenameDialogData {
+  isOpen: boolean;
+  encodedAccount: EncodedAccount | null;
+  genericAccount: ImportedGenericAccount | null;
+}
+
 export interface RenameHandlerContextInterface {
   isDialogOpen: (genericAccount: ImportedGenericAccount) => boolean;
   isShowAddressDialogOpen: (key: string) => boolean;
@@ -19,14 +25,6 @@ export interface RenameHandlerContextInterface {
   ) => void;
   setIsShowAddressDialogOpen: (key: string, flag: boolean) => void;
   validateNameInput: (trimmed: string) => boolean;
-  setRenameDialogData: (
-    encodedAccount: EncodedAccount | null,
-    genericAccount: ImportedGenericAccount | null,
-    isOpen: boolean
-  ) => void;
-  getRenameDialogData: () => {
-    encodedAccount: EncodedAccount | null;
-    genericAccount: ImportedGenericAccount | null;
-    isOpen: boolean;
-  };
+  setRenameDialogData: (data: RenameDialogData) => void;
+  getRenameDialogData: () => RenameDialogData;
 }

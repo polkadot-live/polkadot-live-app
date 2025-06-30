@@ -69,7 +69,7 @@ export const DropdownAccount = ({
   };
 
   const onRenameClick = () => {
-    setRenameDialogData(encodedAccount, genericAccount, true);
+    setRenameDialogData({ encodedAccount, genericAccount, isOpen: true });
   };
 
   return (

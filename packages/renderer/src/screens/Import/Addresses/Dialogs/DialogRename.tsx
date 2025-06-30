@@ -32,7 +32,7 @@ export const DialogRename = () => {
   const [inputVal, setInputVal] = useState(encodedAccount?.alias || '');
 
   const handleOpenChange = (open: boolean) => {
-    setRenameDialogData(encodedAccount, genericAccount, open);
+    setRenameDialogData({ encodedAccount, genericAccount, isOpen: open });
   };
 
   useEffect(() => {
@@ -88,11 +88,11 @@ export const DialogRename = () => {
 
     renameHandler(updatedAccount, genericAccount).then(() => {
       setInputVal(trimmed);
-      setRenameDialogData(
-        updatedAccount.encodedAccounts[chainId],
+      setRenameDialogData({
+        encodedAccount: updatedAccount.encodedAccounts[chainId],
         genericAccount,
-        true
-      );
+        isOpen: true,
+      });
     });
   };
 
