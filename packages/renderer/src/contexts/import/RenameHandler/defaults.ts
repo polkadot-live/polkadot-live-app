@@ -11,4 +11,10 @@ export const defaultRenameHandlerContext: RenameHandlerContextInterface = {
   validateNameInput: () => false,
   isShowAddressDialogOpen: () => false,
   setIsShowAddressDialogOpen: () => {},
+  setRenameDialogData: () => {},
+  getRenameDialogData: () => ({
+    encodedAccount: null,
+    genericAccount: null,
+    isOpen: false,
+  }),
 };

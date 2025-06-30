@@ -4,86 +4,22 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import { DialogContent, FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 import { Cross2Icon } from '@radix-ui/react-icons';
+import { NetworkLabel } from './NetworkLabel';
 import { useConnections } from '@ren/contexts/common';
 import { useRenameHandler } from '@ren/contexts/import';
 import { useEffect, useState } from 'react';
 import { renderToast } from '@polkadot-live/ui/utils';
-import { ChainIcon, TooltipRx } from '@polkadot-live/ui/components';
+import { TooltipRx } from '@polkadot-live/ui/components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { unescape } from '@w3ux/utils';
-import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { FormEvent } from 'react';
 import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';
-import styled from 'styled-components';
 
 interface DialogBulkRenameProps {
   genericAccount: ImportedGenericAccount;
 }
-
-const NetworkLabelWrapper = styled(FlexRow)`
-  min-width: 140px;
-  .Label {
-    font-size: 1rem;
-    text-align: left;
-  }
-  .IconWrapper {
-    min-width: 15px;
-    width: 15px;
-    height: 15px;
-  }
-  @media (max-width: 500px) {
-    min-width: 15px !important;
-    .Label {
-      display: none;
-    }
-  }
-`;
-
-const FormLabel = ({
-  htmlFor,
-  text,
-  theme,
-  chainId,
-  style,
-}: {
-  htmlFor: string;
-  text: string;
-  theme: AnyData;
-  chainId?: ChainID;
-  style?: React.CSSProperties;
-}) => (
-  <NetworkLabelWrapper $gap={'0.75rem'} style={{ minWidth: '140px' }}>
-    {chainId && (
-      <div className="IconWrapper">
-        <ChainIcon
-          chainId={chainId as ChainID}
-          style={{
-            fill: [
-              'Polkadot',
-              'Polkadot Asset Hub',
-              'Polkadot People',
-            ].includes(chainId)
-              ? '#ac2461'
-              : ['Kusama', 'Kusama Asset Hub', 'Kusama People'].includes(
-                    chainId
-                  )
-                ? 'rgb(133, 113, 177)'
-                : undefined,
-          }}
-        />
-      </div>
-    )}
-    <label
-      className="Label"
-      htmlFor={htmlFor}
-      style={{ color: theme.textColorSecondary, ...style }}
-    >
-      {text}
-    </label>
-  </NetworkLabelWrapper>
-);
 
 export const DialogBulkRename = ({ genericAccount }: DialogBulkRenameProps) => {
   const { accountName, encodedAccounts } = genericAccount;
@@ -235,7 +171,7 @@ export const DialogBulkRename = ({ genericAccount }: DialogBulkRenameProps) => {
                 borderBottom: `1px solid ${theme.textDimmed}`,
                 opacity: '0.25',
               }}
-            ></span>
+            />
 
             <FlexColumn $rowGap={'0.75rem'}>
               <form
@@ -245,11 +181,13 @@ export const DialogBulkRename = ({ genericAccount }: DialogBulkRenameProps) => {
                 }}
               >
                 <FlexRow style={{ marginTop: '0.75rem' }}>
-                  <FormLabel
-                    style={{ fontSize: '1.1rem', fontWeight: '600' }}
+                  <NetworkLabel
+                    hideIcon={true}
                     htmlFor="refId"
                     text="Primary Name"
                     theme={theme}
+                    labelStyle={{ fontSize: '1.1rem', fontWeight: '600' }}
+                    wrapperStyle={{ minWidth: '140px' }}
                   />
                   <FlexRow
                     className="Dialog__FieldSet"
@@ -298,11 +236,13 @@ export const DialogBulkRename = ({ genericAccount }: DialogBulkRenameProps) => {
                     }}
                   >
                     <FlexRow>
-                      <FormLabel
+                      <NetworkLabel
+                        hideIcon={true}
                         chainId={chainId}
                         htmlFor={`input-${chainId}`}
                         text={chainId}
                         theme={theme}
+                        wrapperStyle={{ minWidth: '140px' }}
                       />
                       <FlexRow
                         className="Dialog__FieldSet"

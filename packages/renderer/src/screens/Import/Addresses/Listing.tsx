@@ -14,6 +14,7 @@ import { DialogBulkRename } from '../Addresses/Dialogs/DialogBulkRename';
 import { DialogShowAddress } from './Dialogs/DialogShowAddress';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ManageAccountsProps } from './types';
+import { DialogRename } from './Dialogs/DialogRename';
 
 export const Listing = ({ source, setSection }: ManageAccountsProps) => {
   const { getAccounts } = useAddresses();
@@ -40,7 +41,10 @@ export const Listing = ({ source, setSection }: ManageAccountsProps) => {
 
   return (
     <section>
-      {/* Mount Rename Dialogs */}
+      {/* Mount Rename Dialog */}
+      <DialogRename />
+
+      {/* Mount Bulk Rename Dialogs */}
       {genericAccounts.map((a) => (
         <DialogBulkRename key={a.publicKeyHex} genericAccount={a} />
       ))}

@@ -13,10 +13,14 @@ import {
   faUpRightFromSquare,
 } from '@fortawesome/free-solid-svg-icons';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { EncodedAccount } from '@polkadot-live/types/accounts';
+import type {
+  EncodedAccount,
+  ImportedGenericAccount,
+} from '@polkadot-live/types/accounts';
 
 interface DropdownAccountProps {
   encodedAccount: EncodedAccount;
+  genericAccount: ImportedGenericAccount;
   onBookmarkToggle: (encodedAccount: EncodedAccount) => Promise<void>;
   triggerSize?: 'sm' | 'lg';
 }
@@ -39,6 +43,7 @@ const SubscanChainIdMap = new Map<ChainID, string>([
 export const DropdownAccount = ({
   triggerSize = 'sm',
   encodedAccount,
+  genericAccount,
   onBookmarkToggle,
 }: DropdownAccountProps) => {
   const { address, chainId, isBookmarked } = encodedAccount;
@@ -47,6 +52,7 @@ export const DropdownAccount = ({
     useRenameHandler();
 
   const { getTheme } = useConnections();
+  const { setRenameDialogData } = useRenameHandler();
   const theme = getTheme();
 
   const onBlockExplorerClick = () => {
@@ -60,6 +66,10 @@ export const DropdownAccount = ({
     const key = `${chainId}:${address}`;
     const flag = isShowAddressDialogOpen(key);
     setIsShowAddressDialogOpen(key, !flag);
+  };
+
+  const onRenameClick = () => {
+    setRenameDialogData(encodedAccount, genericAccount, true);
   };
 
   return (
@@ -97,6 +107,18 @@ export const DropdownAccount = ({
             </div>
             <span>{isBookmarked ? 'Remove Bookmark' : 'Bookmark'}</span>
           </DropdownMenu.Item>
+
+          {/** Rename Account */}
+          <DropdownMenu.Item
+            className="DropdownMenuItem"
+            onClick={() => onRenameClick()}
+          >
+            <div className="LeftSlot">
+              <FontAwesomeIcon icon={faCaretRight} transform={'shrink-3'} />
+            </div>
+            <span>Rename</span>
+          </DropdownMenu.Item>
+
           {/** Show Address*/}
           <DropdownMenu.Item
             className="DropdownMenuItem"
@@ -108,6 +130,7 @@ export const DropdownAccount = ({
             <span>Show Address</span>
           </DropdownMenu.Item>
           <DropdownMenu.Separator className="DropdownMenuSeparator" />
+
           {/** Explorer*/}
           <DropdownMenu.Item
             className="DropdownMenuItem"
