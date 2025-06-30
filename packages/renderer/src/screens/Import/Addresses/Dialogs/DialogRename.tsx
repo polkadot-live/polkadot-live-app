@@ -16,10 +16,30 @@ import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { FormEvent } from 'react';
 import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';
+import styled from 'styled-components';
 
 interface DialogRenameProps {
   genericAccount: ImportedGenericAccount;
 }
+
+const NetworkLabelWrapper = styled(FlexRow)`
+  min-width: 140px;
+  .Label {
+    font-size: 1rem;
+    text-align: left;
+  }
+  .IconWrapper {
+    min-width: 15px;
+    width: 15px;
+    height: 15px;
+  }
+  @media (max-width: 500px) {
+    min-width: 15px !important;
+    .Label {
+      display: none;
+    }
+  }
+`;
 
 const FormLabel = ({
   htmlFor,
@@ -34,12 +54,11 @@ const FormLabel = ({
   chainId?: ChainID;
   style?: React.CSSProperties;
 }) => (
-  <FlexRow $gap={'0.75rem'} style={{ minWidth: '140px' }}>
+  <NetworkLabelWrapper $gap={'0.75rem'} style={{ minWidth: '140px' }}>
     {chainId && (
-      <div style={{ minWidth: '15px', width: '15px', height: '15px' }}>
+      <div className="IconWrapper">
         <ChainIcon
           chainId={chainId as ChainID}
-          className="NetworkIcon"
           style={{
             fill: [
               'Polkadot',
@@ -57,18 +76,13 @@ const FormLabel = ({
       </div>
     )}
     <label
-      className="Dialog__Label"
-      style={{
-        color: theme.textColorSecondary,
-        fontSize: '1rem',
-        textAlign: 'left',
-        ...style,
-      }}
+      className="Label"
       htmlFor={htmlFor}
+      style={{ color: theme.textColorSecondary, ...style }}
     >
       {text}
     </label>
-  </FlexRow>
+  </NetworkLabelWrapper>
 );
 
 export const DialogRename = ({ genericAccount }: DialogRenameProps) => {
@@ -223,109 +237,112 @@ export const DialogRename = ({ genericAccount }: DialogRenameProps) => {
               }}
             ></span>
 
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                commitEdit();
-              }}
-            >
-              <FlexRow style={{ marginTop: '0.75rem' }}>
-                <FormLabel
-                  style={{ fontSize: '1.1rem', fontWeight: '600' }}
-                  htmlFor="refId"
-                  text="Primary Name"
-                  theme={theme}
-                />
-                <FlexRow
-                  className="Dialog__FieldSet"
-                  style={{ padding: '0.25rem 1.25rem' }}
-                >
-                  <input
-                    value={inputVal}
-                    onChange={handleChange}
-                    className="Dialog__Input"
-                    id="refId"
-                    placeholder="Account Name"
+            <FlexColumn $rowGap={'0.75rem'}>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  commitEdit();
+                }}
+              >
+                <FlexRow style={{ marginTop: '0.75rem' }}>
+                  <FormLabel
+                    style={{ fontSize: '1.1rem', fontWeight: '600' }}
+                    htmlFor="refId"
+                    text="Primary Name"
+                    theme={theme}
                   />
-                </FlexRow>
-                <FlexRow style={{ justifyContent: 'flex-end' }}>
-                  <TooltipRx text={'Reset'} theme={theme}>
-                    <button
-                      type="button"
-                      className="Dialog__Button"
-                      disabled={accountName === inputVal}
-                      onClick={() => cancelEditing()}
-                    >
-                      <FontAwesomeIcon icon={faXmark} />
-                    </button>
-                  </TooltipRx>
-                  <TooltipRx text={'Apply'} theme={theme}>
-                    <button
-                      type="submit"
-                      className="Dialog__Button"
-                      disabled={accountName === inputVal}
-                    >
-                      <FontAwesomeIcon icon={faCheck} />
-                    </button>
-                  </TooltipRx>
-                </FlexRow>
-              </FlexRow>
-            </form>
-
-            {/* Encoded Accounts */}
-            {Array.from(Object.values(encodedAccounts)).map(
-              ({ address, alias, chainId }, i) => (
-                <form
-                  key={`${chainId}-${address}-${i}`}
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    commitEncodedRename(chainId);
-                  }}
-                >
-                  <FlexRow>
-                    <FormLabel
-                      chainId={chainId}
-                      htmlFor={`input-${chainId}`}
-                      text={chainId}
-                      theme={theme}
+                  <FlexRow
+                    className="Dialog__FieldSet"
+                    style={{ padding: '0.25rem 1.25rem' }}
+                  >
+                    <input
+                      value={inputVal}
+                      onChange={handleChange}
+                      className="Dialog__Input"
+                      id="refId"
+                      placeholder="Account Name"
                     />
-                    <FlexRow
-                      className="Dialog__FieldSet"
-                      style={{ padding: '0.25rem 1.25rem' }}
-                    >
-                      <input
-                        value={encodedNames.get(chainId) || ''}
-                        onChange={(e) => handleEncodedChange(e, chainId)}
-                        className="Dialog__Input"
-                        id={`input-${chainId}`}
-                        placeholder="Account Name"
-                      />
-                    </FlexRow>
-                    <FlexRow style={{ justifyContent: 'flex-end' }}>
-                      <TooltipRx text={'Reset'} theme={theme}>
-                        <button
-                          type="button"
-                          className="Dialog__Button"
-                          disabled={encodedNames.get(chainId) === alias}
-                          onClick={() => resetEncodedEditing(chainId)}
-                        >
-                          <FontAwesomeIcon icon={faXmark} />
-                        </button>
-                      </TooltipRx>
-                      <TooltipRx text={'Apply'} theme={theme}>
-                        <button
-                          type="submit"
-                          className="Dialog__Button"
-                          disabled={encodedNames.get(chainId) === alias}
-                        >
-                          <FontAwesomeIcon icon={faCheck} />
-                        </button>
-                      </TooltipRx>
-                    </FlexRow>
                   </FlexRow>
-                </form>
-              )
-            )}
+                  <FlexRow style={{ justifyContent: 'flex-end' }}>
+                    <TooltipRx text={'Reset'} theme={theme}>
+                      <button
+                        type="button"
+                        className="Dialog__Button"
+                        disabled={accountName === inputVal}
+                        onClick={() => cancelEditing()}
+                      >
+                        <FontAwesomeIcon icon={faXmark} />
+                      </button>
+                    </TooltipRx>
+                    <TooltipRx text={'Apply'} theme={theme}>
+                      <button
+                        type="submit"
+                        className="Dialog__Button"
+                        disabled={accountName === inputVal}
+                      >
+                        <FontAwesomeIcon icon={faCheck} />
+                      </button>
+                    </TooltipRx>
+                  </FlexRow>
+                </FlexRow>
+              </form>
+
+              {/* Encoded Accounts */}
+              {Array.from(Object.values(encodedAccounts)).map(
+                ({ address, alias, chainId }, i) => (
+                  <form
+                    key={`${chainId}-${address}-${i}`}
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      commitEncodedRename(chainId);
+                    }}
+                  >
+                    <FlexRow>
+                      <FormLabel
+                        chainId={chainId}
+                        htmlFor={`input-${chainId}`}
+                        text={chainId}
+                        theme={theme}
+                      />
+                      <FlexRow
+                        className="Dialog__FieldSet"
+                        style={{ padding: '0.25rem 1.25rem' }}
+                      >
+                        <input
+                          value={encodedNames.get(chainId) || ''}
+                          onChange={(e) => handleEncodedChange(e, chainId)}
+                          className="Dialog__Input"
+                          id={`input-${chainId}`}
+                          placeholder="Account Name"
+                        />
+                      </FlexRow>
+                      <FlexRow style={{ justifyContent: 'flex-end' }}>
+                        <TooltipRx text={'Reset'} theme={theme}>
+                          <button
+                            type="button"
+                            className="Dialog__Button"
+                            disabled={encodedNames.get(chainId) === alias}
+                            onClick={() => resetEncodedEditing(chainId)}
+                          >
+                            <FontAwesomeIcon icon={faXmark} />
+                          </button>
+                        </TooltipRx>
+                        <TooltipRx text={'Apply'} theme={theme}>
+                          <button
+                            type="submit"
+                            className="Dialog__Button"
+                            disabled={encodedNames.get(chainId) === alias}
+                          >
+                            <FontAwesomeIcon icon={faCheck} />
+                          </button>
+                        </TooltipRx>
+                      </FlexRow>
+                    </FlexRow>
+                  </form>
+                )
+              )}
+            </FlexColumn>
+
             <FlexRow style={{ justifyContent: 'end' }}>
               <Dialog.Close
                 className="Dialog__Button"

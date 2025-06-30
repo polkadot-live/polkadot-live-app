@@ -18,6 +18,7 @@ import type { EncodedAccount } from '@polkadot-live/types/accounts';
 interface DropdownAccountProps {
   encodedAccount: EncodedAccount;
   onBookmarkToggle: (encodedAccount: EncodedAccount) => Promise<void>;
+  triggerSize?: 'sm' | 'lg';
 }
 
 const SubscanChainIdMap = new Map<ChainID, string>([
@@ -36,6 +37,7 @@ const SubscanChainIdMap = new Map<ChainID, string>([
  * Dropdown menu component for import window encoded account listings.
  */
 export const DropdownAccount = ({
+  triggerSize = 'sm',
   encodedAccount,
   onBookmarkToggle,
 }: DropdownAccountProps) => {
@@ -63,9 +65,18 @@ export const DropdownAccount = ({
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <ActionBtn $theme={theme}>
-          <FontAwesomeIcon icon={faEllipsis} transform={'grow-2'} />
-        </ActionBtn>
+        <span>
+          {triggerSize === 'sm' && (
+            <ActionBtn $theme={theme}>
+              <FontAwesomeIcon icon={faEllipsis} transform={'grow-2'} />
+            </ActionBtn>
+          )}
+          {triggerSize === 'lg' && (
+            <button className="Dialog__Button">
+              <FontAwesomeIcon icon={faEllipsis} transform={'grow-2'} />
+            </button>
+          )}
+        </span>
       </DropdownMenu.Trigger>
 
       <DropdownMenu.Portal>

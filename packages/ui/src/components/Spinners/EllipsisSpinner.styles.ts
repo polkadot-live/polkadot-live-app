@@ -15,27 +15,27 @@ export const EllipsisSpinnerWrapper = styled.div`
   div {
     box-sizing: border-box;
     position: absolute;
-    width: 7px;
-    height: 7px;
+    width: 5px;
+    height: 5px;
     border-radius: 50%;
     background: currentColor;
     animation-timing-function: cubic-bezier(0, 1, 1, 0);
   }
 
   div:nth-child(1) {
-    left: 4px;
+    left: 0px;
     animation: lds-ellipsis1 0.6s infinite;
   }
   div:nth-child(2) {
-    left: 4px;
+    left: 0px;
     animation: lds-ellipsis2 0.6s infinite;
   }
   div:nth-child(3) {
-    left: 16px;
+    left: 10px;
     animation: lds-ellipsis2 0.6s infinite;
   }
   div:nth-child(4) {
-    left: 28px;
+    left: 20px;
     animation: lds-ellipsis3 0.6s infinite;
   }
   @keyframes lds-ellipsis1 {
@@ -59,7 +59,7 @@ export const EllipsisSpinnerWrapper = styled.div`
       transform: translate(0, 0);
     }
     100% {
-      transform: translate(12px, 0);
+      transform: translate(10px, 0);
     }
   }
 `;
