@@ -6,12 +6,7 @@ import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as Style from '@polkadot-live/ui/styles';
 import * as UI from '@polkadot-live/ui/components';
 
-import {
-  ActionBtn,
-  ControlsRow,
-  EncodedAddressesWrapper,
-  ToggleRx,
-} from './Wrappers';
+import { ControlsRow, EncodedAddressesWrapper, ToggleRx } from './Wrappers';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { DropdownAccount } from '../Dropdowns';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -145,120 +140,131 @@ export const DialogManageAccounts = ({
 
             {/*  Encoded addresses */}
             <EncodedAddressesWrapper $theme={theme}>
-              <Style.FlexColumn $rowGap={'2px'}>
+              <Style.FlexColumn $rowGap={'0.75rem'}>
                 {Array.from(Object.entries(encodedAccounts)).map(
                   ([cid, a], i) => (
-                    <Style.FlexRow
-                      key={`${cid}-encoded-${i}`}
-                      className="EncodedRow"
-                    >
+                    <Style.FlexRow key={`${cid}-encoded-${i}`}>
                       {/** Bookmark */}
                       {showBookmarks && (
                         <UI.TooltipRx text={'Bookmark'} theme={theme}>
-                          <ActionBtn
-                            $theme={theme}
+                          <button
+                            className="Dialog__Button"
                             onClick={async () => await handleBookmarkClick(a)}
                           >
                             <FontAwesomeIcon
                               icon={a.isBookmarked ? FA.faBookmark : faBookmark}
-                              transform={'shrink-2'}
+                              transform={'shrink-5'}
                             />
-                          </ActionBtn>
+                          </button>
                         </UI.TooltipRx>
                       )}
 
-                      <Style.FlexRow $gap="1.25rem" className="NameAddressRow">
-                        <FontAwesomeIcon
-                          icon={FA.faCaretRight}
-                          transform={'grow-2'}
-                          className="EntryArrow"
+                      <Style.FlexRow className="NetworkRow">
+                        <UI.ChainIcon
+                          chainId={cid as ChainID}
+                          className="NetworkIcon"
+                          style={{
+                            fill: [
+                              'Polkadot',
+                              'Polkadot Asset Hub',
+                              'Polkadot People',
+                            ].includes(cid)
+                              ? '#ac2461'
+                              : [
+                                    'Kusama',
+                                    'Kusama Asset Hub',
+                                    'Kusama People',
+                                  ].includes(cid)
+                                ? 'rgb(133, 113, 177)'
+                                : undefined,
+                          }}
                         />
-                        <span className="Overflow">{a.alias}</span>
-                        <Style.FlexRow $gap="0.45rem" className="AddressRow">
-                          <span className="Overflow">
-                            {ellipsisFn(a.address, 5, 'end')}
-                          </span>
-                          <UI.CopyButton
-                            iconFontSize="0.96rem"
-                            theme={theme}
-                            onCopyClick={async () =>
-                              await window.myAPI.copyToClipboard(a.address)
-                            }
-                          />
-                          <UI.TooltipRx text={'Show Address'} theme={theme}>
-                            <ViewIconWrapper
-                              onClick={() =>
-                                setIsShowAddressDialogOpen(
-                                  `${a.chainId}:${a.address}`,
-                                  true
-                                )
-                              }
-                            >
-                              <FontAwesomeIcon
-                                className="ViewIcon"
-                                icon={FA.faEye}
-                                transform={'shrink-4'}
-                              />
-                            </ViewIconWrapper>
-                          </UI.TooltipRx>
-                        </Style.FlexRow>
+                        <span className="Overflow NetworkLabel">
+                          {a.chainId}
+                        </span>
+                      </Style.FlexRow>
 
-                        <Style.FlexRow className="NetworkRow">
-                          <span className="Overflow NetworkLabel">
-                            {a.chainId}
-                          </span>
-                          <UI.ChainIcon
-                            chainId={cid as ChainID}
-                            className="NetworkIcon"
-                            style={{
-                              fill: [
-                                'Polkadot',
-                                'Polkadot Asset Hub',
-                                'Polkadot People',
-                              ].includes(cid)
-                                ? '#ac2461'
-                                : [
-                                      'Kusama',
-                                      'Kusama Asset Hub',
-                                      'Kusama People',
-                                    ].includes(cid)
-                                  ? 'rgb(133, 113, 177)'
-                                  : undefined,
-                            }}
-                          />
+                      <Style.FlexRow className="EncodedRow" style={{ flex: 1 }}>
+                        <Style.FlexRow
+                          $gap="1.25rem"
+                          className="NameAddressRow"
+                        >
+                          <span className="Overflow">{a.alias}</span>
+                          <Style.FlexRow $gap="0.45rem" className="AddressRow">
+                            <span className="Overflow">
+                              {ellipsisFn(a.address, 5, 'end')}
+                            </span>
+                            <UI.CopyButton
+                              iconFontSize="0.96rem"
+                              theme={theme}
+                              onCopyClick={async () =>
+                                await window.myAPI.copyToClipboard(a.address)
+                              }
+                            />
+                            <UI.TooltipRx text={'Show Address'} theme={theme}>
+                              <ViewIconWrapper
+                                onClick={() =>
+                                  setIsShowAddressDialogOpen(
+                                    `${a.chainId}:${a.address}`,
+                                    true
+                                  )
+                                }
+                              >
+                                <FontAwesomeIcon
+                                  className="ViewIcon"
+                                  icon={FA.faEye}
+                                  transform={'shrink-4'}
+                                />
+                              </ViewIconWrapper>
+                            </UI.TooltipRx>
+                          </Style.FlexRow>
                         </Style.FlexRow>
                       </Style.FlexRow>
 
-                      {/* Manage buttons */}
-                      <Style.FlexRow $gap={'0.75rem'}>
+                      <Style.FlexRow style={{ justifyContent: 'flex-end' }}>
+                        {/* Subscriptions buttons */}
                         {a.isImported && !isProcessing(a) ? (
                           <UI.TooltipRx
                             text={'Remove Subscriptions'}
                             theme={theme}
                           >
                             <div style={{ position: 'relative' }}>
-                              <ActionBtn
-                                $theme={theme}
+                              <button
+                                className="Dialog__Button"
                                 onClick={async () =>
                                   await handleRemoveSubscriptions(a)
                                 }
                               >
-                                <FontAwesomeIcon icon={FA.faMinus} />
-                              </ActionBtn>
+                                <FontAwesomeIcon
+                                  icon={FA.faMinus}
+                                  transform={'shrink-4'}
+                                />
+                              </button>
                             </div>
                           </UI.TooltipRx>
                         ) : (
                           <div>
                             {isProcessing(a) ? (
-                              <div style={{ position: 'relative' }}>
-                                <ActionBtn
+                              <div
+                                style={{
+                                  position: 'relative',
+                                  color: theme.textColorPrimary,
+                                }}
+                              >
+                                <button
+                                  className="Dialog__Button"
                                   disabled={!isConnected}
-                                  $theme={theme}
                                 >
-                                  <UI.EllipsisSpinner
-                                    style={{ top: '8px', left: 0 }}
+                                  <FontAwesomeIcon
+                                    style={{ opacity: 0 }}
+                                    icon={FA.faMinus}
+                                    transform={'shrink-4'}
                                   />
-                                </ActionBtn>
+                                </button>
+
+                                <UI.EllipsisSpinner
+                                  style={{ top: '16px', left: 0 }}
+                                />
                               </div>
                             ) : (
                               <Style.FlexRow $gap={'0.5rem'}>
@@ -271,28 +277,32 @@ export const DialogManageAccounts = ({
                                   theme={theme}
                                 >
                                   <div style={{ position: 'relative' }}>
-                                    <ActionBtn
+                                    <button
+                                      className="Dialog__Button"
                                       onClick={async () =>
                                         await handleAddSubscriptions(a)
                                       }
-                                      $theme={theme}
                                     >
-                                      <FontAwesomeIcon icon={FA.faPlus} />
-                                    </ActionBtn>
+                                      <FontAwesomeIcon
+                                        icon={FA.faPlus}
+                                        transform={'shrink-4'}
+                                      />
+                                    </button>
                                   </div>
                                 </UI.TooltipRx>
                               </Style.FlexRow>
                             )}
                           </div>
                         )}
+                        {/** Dropdown Menu */}
+                        <DropdownAccount
+                          triggerSize={'lg'}
+                          encodedAccount={a}
+                          onBookmarkToggle={async (en) =>
+                            await handleBookmarkToggle(en, genericAccount)
+                          }
+                        />
                       </Style.FlexRow>
-                      {/** Dropdown Menu */}
-                      <DropdownAccount
-                        encodedAccount={a}
-                        onBookmarkToggle={async (en) =>
-                          await handleBookmarkToggle(en, genericAccount)
-                        }
-                      />
                     </Style.FlexRow>
                   )
                 )}

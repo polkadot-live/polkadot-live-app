@@ -32,6 +32,21 @@ export const EncodedAddressesWrapper = styled.div.attrs<{
 }>((props) => ({
   $theme: props.$theme,
 }))`
+  .NetworkRow {
+    min-width: 140px;
+    .NetworkLabel {
+      color: ${({ $theme }) => $theme.textColorSecondary};
+      display: inline-block;
+      font-size: 1rem;
+      opacity: 0.8;
+    }
+    @media (max-width: 590px) {
+      min-width: 0;
+      .NetworkLabel {
+        display: none;
+      }
+    }
+  }
   /** General */
   .Overflow {
     display: inline-block;
@@ -55,9 +70,11 @@ export const EncodedAddressesWrapper = styled.div.attrs<{
   }
   /** Encoded Address Row */
   .EncodedRow {
-    padding: 1.15rem 1.25rem;
+    padding: 1rem 1.25rem;
     padding-right: 1rem;
+    border-radius: 0.375rem;
     background-color: ${({ $theme }) => $theme.backgroundPrimary};
+    min-width: 0;
 
     .NameAddressRow {
       flex: 1;
@@ -77,20 +94,6 @@ export const EncodedAddressesWrapper = styled.div.attrs<{
         opacity: 0.6;
         min-width: 0;
       }
-      > .NetworkRow {
-        flex: 1;
-        justify-content: flex-end;
-
-        .NetworkLabel {
-          color: ${({ $theme }) => $theme.textColorSecondary};
-          display: inline-block;
-          font-size: 1rem;
-          opacity: 0.8;
-          @media (max-width: 590px) {
-            display: none;
-          }
-        }
-      }
     }
   }
 `;
@@ -102,6 +105,7 @@ export const ControlsRow = styled(Style.FlexRow).attrs<{
   $theme: typeof darkTheme;
 }>((props) => ({ $theme: props.$theme }))`
   color: ${({ $theme }) => $theme.textColorPrimary};
+  padding-bottom: 0.25rem;
   h2 {
     font-size: 1.1rem;
   }
