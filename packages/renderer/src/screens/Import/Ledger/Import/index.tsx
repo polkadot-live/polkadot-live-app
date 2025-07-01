@@ -118,13 +118,13 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
     ledger.setIsImporting(true);
 
     for (const selected of selectedAddresses) {
-      const { address: add, pubKey: pk, device, accountName } = selected;
+      const { address: add, pubKey: pk, device } = selected;
 
       if (isAlreadyImported(pk)) {
         continue;
       }
 
-      await handleImportAddress(add, 'ledger', accountName, false, pk, device);
+      await handleImportAddress(add, 'ledger', false, pk, device);
     }
 
     ledger.resetAll();

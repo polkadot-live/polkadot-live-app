@@ -127,10 +127,44 @@ export const AddressesProvider = ({
     return true;
   };
 
+  /**
+   * Get a default account name.
+   */
+  const getDefaultName = (): string => {
+    let total = getSupportedSources()
+      .map((s) => getAccounts(s).length)
+      .reduce((acc, cur) => acc + cur, 1);
+
+    let nextName = `Account ${total}`;
+    while (!isUniqueAccountName(nextName) || !isUniqueNamePrefix(nextName)) {
+      total += 1;
+      nextName = `Account ${total}`;
+    }
+
+    return nextName;
+  };
+
+  /**
+   * Check if the `Account {n}` prefix is unique.
+   */
+  const isUniqueNamePrefix = (nextName: string) => {
+    for (const source of getSupportedSources()) {
+      for (const { encodedAccounts } of getAccounts(source)) {
+        for (const { alias } of Object.values(encodedAccounts)) {
+          if (alias.startsWith(nextName)) {
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+  };
+
   return (
     <AddressesContext.Provider
       value={{
         getAccounts,
+        getDefaultName,
         handleAddressImport,
         handleAddressDelete,
         handleAddressUpdate,

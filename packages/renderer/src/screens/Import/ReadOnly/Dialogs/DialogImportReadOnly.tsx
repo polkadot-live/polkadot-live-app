@@ -18,7 +18,7 @@ import { faAngleRight, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getSupportedChains } from '@polkadot-live/consts/chains';
 import { renderToast } from '@polkadot-live/ui/utils';
-import { ellipsisFn, unescape } from '@w3ux/utils';
+import { unescape } from '@w3ux/utils';
 
 export const DialogImportReadOnly = () => {
   const { isAlreadyImported } = useAddresses();
@@ -45,7 +45,7 @@ export const DialogImportReadOnly = () => {
     // Check if public key is already imported.
     const publicKeyHex = u8aToHex(decodeAddress(trimmed));
     if (isAlreadyImported(publicKeyHex)) {
-      renderToast('Address is already imported.', `toast-${trimmed}`, 'error');
+      renderToast('Account is already imported.', `toast-${trimmed}`, 'error');
       return;
     }
 
@@ -54,8 +54,7 @@ export const DialogImportReadOnly = () => {
     setDialogOpen(false);
 
     // Set processing flag to true if online and import via main renderer.
-    const accountName = ellipsisFn(publicKeyHex, 5);
-    await handleImportAddress(trimmed, 'read-only', accountName, true);
+    await handleImportAddress(trimmed, 'read-only', true);
   };
 
   /**

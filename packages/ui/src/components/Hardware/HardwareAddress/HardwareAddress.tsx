@@ -185,7 +185,7 @@ export const HardwareAddress = ({
                       <div style={{ position: 'relative' }}>
                         <ActionBtn disabled={!isConnected}>
                           <EllipsisSpinner
-                            style={{ top: '8px', left: '6px' }}
+                            style={{ top: '9px', left: '6px' }}
                           />
                         </ActionBtn>
                       </div>

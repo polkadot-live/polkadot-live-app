@@ -6,7 +6,6 @@ import * as wc from '@polkadot-live/consts/walletConnect';
 
 import { ConfigImport } from '@polkadot-live/core';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
-import { ellipsisFn } from '@w3ux/utils';
 import { useAddresses, useImportHandler } from '@ren/contexts/import';
 import { WalletConnectModal } from '@walletconnect/modal';
 import type { WalletConnectImportContextInterface } from './types';
@@ -139,8 +138,7 @@ export const WalletConnectImportProvider = ({
         continue;
       }
 
-      const accountName = ellipsisFn(publicKeyHex, 5);
-      await handleImportAddress(encoded, 'wallet-connect', accountName, false);
+      await handleImportAddress(encoded, 'wallet-connect', false);
     }
 
     setIsImporting(false);
