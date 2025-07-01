@@ -122,6 +122,13 @@ export const DialogImportReadOnly = () => {
               </Dialog.Description>
             </FlexColumn>
 
+            <span
+              style={{
+                borderTop: `1px solid ${theme.textColorSecondary}`,
+                opacity: '0.1',
+              }}
+            />
+
             <form
               onSubmit={(e) => {
                 e.preventDefault();
