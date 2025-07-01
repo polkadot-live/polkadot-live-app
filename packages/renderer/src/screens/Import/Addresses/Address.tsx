@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Delete } from '../Actions';
-import { DialogManageAccounts } from './Dialogs/DialogManageAccounts';
 import { DropdownAccount } from './Dropdowns';
 import { HardwareAddress } from '@polkadot-live/ui/components';
 import {
@@ -22,6 +21,7 @@ export const Address = ({ genericAccount, setSection }: AddressProps) => {
   const { getStatusForAccount, anyProcessing } = useAccountStatuses();
   const { handleAddAddress, handleBookmarkToggle } = useAddHandler();
   const { handleRemoveAddress } = useRemoveHandler();
+  const { setManageAccountDialogData } = useRenameHandler();
   const { getTheme, getOnlineMode } = useConnections();
   const { setBulkRenameDialogData, setShowAddressDialogData } =
     useRenameHandler();
@@ -42,11 +42,13 @@ export const Address = ({ genericAccount, setSection }: AddressProps) => {
       }
       setBulkRenameDialogData={setBulkRenameDialogData}
       theme={theme}
-      DialogManageAccounts={DialogManageAccounts}
       /* Handlers */
       handleBookmarkToggle={async (encodedAccount) => {
         await handleBookmarkToggle(encodedAccount, genericAccount);
       }}
+      handleManageAccountClick={() =>
+        setManageAccountDialogData({ genericAccount, isOpen: true })
+      }
       handleShowAddressClick={(encodedAccount) =>
         setShowAddressDialogData({ encodedAccount, isOpen: true })
       }

@@ -29,11 +29,11 @@ export const HardwareAddress = ({
   isConnected,
   anyProcessing,
   theme,
-  DialogManageAccounts,
   DropdownAccount,
   isProcessing,
   handleAddSubscriptions,
   handleBookmarkToggle,
+  handleManageAccountClick,
   handleRemoveSubscriptions,
   handleShowAddressClick,
   openDeleteHandler,
@@ -70,7 +70,16 @@ export const HardwareAddress = ({
         </TooltipRx>
         <h2 className="overflow">{accountName}</h2>
         <FlexRow $gap={'0.25rem'} style={{ flex: 1, paddingLeft: '0.5rem' }}>
-          <DialogManageAccounts genericAccount={genericAccount} />
+          <div
+            role="button"
+            onClick={() => handleManageAccountClick()}
+            className="ManageBtn"
+          >
+            <FlexRow $gap={'0.5rem'}>
+              <FontAwesomeIcon icon={FA.faCaretRight} />
+              <span>Manage</span>
+            </FlexRow>
+          </div>
         </FlexRow>
 
         {/* Account buttons */}

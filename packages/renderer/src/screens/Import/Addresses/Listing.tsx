@@ -12,6 +12,7 @@ import { ItemsColumn } from '../../Home/Manage/Wrappers';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import {
   DialogBulkRename,
+  DialogManageAccounts,
   DialogRename,
   DialogShowAddress,
 } from '../Addresses/Dialogs';
@@ -20,8 +21,11 @@ import type { ManageAccountsProps } from './types';
 
 export const Listing = ({ source, setSection }: ManageAccountsProps) => {
   const { getAccounts } = useAddresses();
-  const { getBulkRenameDialogData, getShowAddressDialogData } =
-    useRenameHandler();
+  const {
+    getBulkRenameDialogData,
+    getManageAccountDialogData,
+    getShowAddressDialogData,
+  } = useRenameHandler();
   const genericAccounts = getAccounts(source);
 
   const getAccordionTitle = (): string => {
@@ -50,6 +54,12 @@ export const Listing = ({ source, setSection }: ManageAccountsProps) => {
       {getBulkRenameDialogData().genericAccount && (
         <DialogBulkRename
           genericAccount={getBulkRenameDialogData().genericAccount!}
+        />
+      )}
+
+      {getManageAccountDialogData().genericAccount && (
+        <DialogManageAccounts
+          genericAccount={getManageAccountDialogData().genericAccount!}
         />
       )}
 

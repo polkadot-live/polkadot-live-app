@@ -21,6 +21,8 @@ export const DialogRename = () => {
     getRenameDialogData,
     renameHandler,
     setRenameDialogData,
+    getManageAccountDialogData,
+    setManageAccountDialogData,
     validateNameInput,
   } = useRenameHandler();
 
@@ -92,6 +94,10 @@ export const DialogRename = () => {
         encodedAccount: updatedAccount.encodedAccounts[chainId],
         genericAccount,
         isOpen: true,
+      });
+      setManageAccountDialogData({
+        genericAccount: updatedAccount,
+        isOpen: getManageAccountDialogData().isOpen,
       });
     });
   };

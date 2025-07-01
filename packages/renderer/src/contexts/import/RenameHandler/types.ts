@@ -6,14 +6,19 @@ import type {
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
 
-export interface DialogRenameData {
+export interface DialogBulkRenameData {
   isOpen: boolean;
-  encodedAccount: EncodedAccount | null;
   genericAccount: ImportedGenericAccount | null;
 }
 
-export interface DialogBulkRenameData {
+export interface DialogManageAccountData {
   isOpen: boolean;
+  genericAccount: ImportedGenericAccount | null;
+}
+
+export interface DialogRenameData {
+  isOpen: boolean;
+  encodedAccount: EncodedAccount | null;
   genericAccount: ImportedGenericAccount | null;
 }
 
@@ -23,15 +28,17 @@ export interface DialogShowAddressData {
 }
 
 export interface RenameHandlerContextInterface {
+  getBulkRenameDialogData: () => DialogBulkRenameData;
+  getManageAccountDialogData: () => DialogManageAccountData;
+  getRenameDialogData: () => DialogRenameData;
+  getShowAddressDialogData: () => DialogShowAddressData;
   renameHandler: (
     updatedAccount: ImportedGenericAccount,
     originalAccount: ImportedGenericAccount
   ) => Promise<void>;
-  validateNameInput: (trimmed: string) => boolean;
-  getShowAddressDialogData: () => DialogShowAddressData;
-  setShowAddressDialogData: (data: DialogShowAddressData) => void;
   setBulkRenameDialogData: (data: DialogBulkRenameData) => void;
-  getBulkRenameDialogData: () => DialogBulkRenameData;
+  setManageAccountDialogData: (data: DialogManageAccountData) => void;
   setRenameDialogData: (data: DialogRenameData) => void;
-  getRenameDialogData: () => DialogRenameData;
+  setShowAddressDialogData: (data: DialogShowAddressData) => void;
+  validateNameInput: (trimmed: string) => boolean;
 }

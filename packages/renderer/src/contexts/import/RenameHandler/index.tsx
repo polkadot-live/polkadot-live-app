@@ -9,6 +9,7 @@ import { renderToast, validateAccountName } from '@polkadot-live/ui/utils';
 import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';
 import type {
   DialogBulkRenameData,
+  DialogManageAccountData,
   DialogRenameData,
   DialogShowAddressData,
   RenameHandlerContextInterface,
@@ -41,6 +42,19 @@ export const RenameHandlerProvider = ({
   const setRenameDialogData = (data: DialogRenameData) => {
     setRenameDialogState({ ...data });
   };
+
+  /**
+   * Manage account dialog.
+   */
+  const [manageAccountDialogState, setManageAccountDialogState] =
+    useState<DialogManageAccountData>({
+      isOpen: false,
+      genericAccount: null,
+    });
+
+  const getManageAccountDialogData = () => manageAccountDialogState;
+  const setManageAccountDialogData = (data: DialogManageAccountData) =>
+    setManageAccountDialogState({ ...data });
 
   /**
    * Bulk rename dialog.
@@ -86,7 +100,7 @@ export const RenameHandlerProvider = ({
       }
     }
 
-    // Update import window address state
+    // Update import window address state.
     handleAddressImport(updatedAccount);
   };
 
@@ -116,14 +130,16 @@ export const RenameHandlerProvider = ({
   return (
     <RenameHandlerContext.Provider
       value={{
-        getShowAddressDialogData,
-        setShowAddressDialogData,
         getBulkRenameDialogData,
-        setBulkRenameDialogData,
-        renameHandler,
-        validateNameInput,
-        setRenameDialogData,
+        getManageAccountDialogData,
         getRenameDialogData,
+        getShowAddressDialogData,
+        renameHandler,
+        setBulkRenameDialogData,
+        setManageAccountDialogData,
+        setRenameDialogData,
+        setShowAddressDialogData,
+        validateNameInput,
       }}
     >
       {children}
