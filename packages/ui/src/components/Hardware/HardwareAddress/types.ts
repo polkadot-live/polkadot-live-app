@@ -27,19 +27,20 @@ export type HardwareAddressProps = ComponentBase & {
   handleBookmarkToggle: (encodedAccount: EncodedAccount) => Promise<void>;
   // Handle removing subscriptions from main window.
   handleRemoveSubscriptions: (encodedAccount: EncodedAccount) => Promise<void>;
+  // Handle clicking on manage account button.
+  handleManageAccountClick: () => void;
   // Handle show address click for an encoded account.
-  handleShowAddressClick: (key: string) => void;
+  handleShowAddressClick: (encodedAccount: EncodedAccount) => void;
   // Handle confirm delete UI.
   openDeleteHandler: () => void;
   // Sets open flag for rename dialogs.
-  setIsDialogOpen: (
-    genericAccount: ImportedGenericAccount,
-    flag: boolean
-  ) => void;
-  // Manage networks dialog component.
-  DialogManageAccounts: React.ComponentType<{
-    genericAccount: ImportedGenericAccount;
-  }>;
+  setBulkRenameDialogData: ({
+    genericAccount,
+    isOpen,
+  }: {
+    genericAccount: ImportedGenericAccount | null;
+    isOpen: boolean;
+  }) => void;
   // Account options menu.
   DropdownAccount: React.FC<{
     encodedAccount: EncodedAccount;

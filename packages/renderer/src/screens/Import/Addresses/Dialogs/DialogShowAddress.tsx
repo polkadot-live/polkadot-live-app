@@ -28,22 +28,21 @@ export const DialogShowAddress = ({
 }: {
   encodedAccount: EncodedAccount;
 }) => {
-  const { address, chainId } = encodedAccount;
-  const key = `${chainId}:${address}`;
-
   const { getTheme } = useConnections();
-  const theme = getTheme();
-
-  const { isShowAddressDialogOpen, setIsShowAddressDialogOpen } =
+  const { getShowAddressDialogData, setShowAddressDialogData } =
     useRenameHandler();
 
-  const handleOpenChange = (open: boolean) => {
-    setIsShowAddressDialogOpen(key, open);
-  };
+  const { address } = encodedAccount;
+  const theme = getTheme();
+
+  const handleOpenChange = (open: boolean) =>
+    open
+      ? setShowAddressDialogData({ encodedAccount, isOpen: open })
+      : setShowAddressDialogData({ encodedAccount: null, isOpen: open });
 
   return (
     <Dialog.Root
-      open={isShowAddressDialogOpen(key)}
+      open={getShowAddressDialogData().isOpen}
       onOpenChange={handleOpenChange}
     >
       <Dialog.Portal>

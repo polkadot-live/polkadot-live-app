@@ -29,16 +29,16 @@ export const HardwareAddress = ({
   isConnected,
   anyProcessing,
   theme,
-  DialogManageAccounts,
   DropdownAccount,
   isProcessing,
   handleAddSubscriptions,
   handleBookmarkToggle,
+  handleManageAccountClick,
   handleRemoveSubscriptions,
   handleShowAddressClick,
   openDeleteHandler,
   onClipboardCopy,
-  setIsDialogOpen,
+  setBulkRenameDialogData,
 }: HardwareAddressProps) => {
   const { accountName, encodedAccounts } = genericAccount;
 
@@ -61,7 +61,8 @@ export const HardwareAddress = ({
             <FontAwesomeIcon
               icon={FA.faPenSquare}
               onClick={() =>
-                !anyProcessing && setIsDialogOpen(genericAccount, true)
+                !anyProcessing &&
+                setBulkRenameDialogData({ genericAccount, isOpen: true })
               }
               transform={'grow-1'}
             />
@@ -69,7 +70,16 @@ export const HardwareAddress = ({
         </TooltipRx>
         <h2 className="overflow">{accountName}</h2>
         <FlexRow $gap={'0.25rem'} style={{ flex: 1, paddingLeft: '0.5rem' }}>
-          <DialogManageAccounts genericAccount={genericAccount} />
+          <div
+            role="button"
+            onClick={() => handleManageAccountClick()}
+            className="ManageBtn"
+          >
+            <FlexRow $gap={'0.5rem'}>
+              <FontAwesomeIcon icon={FA.faCaretRight} />
+              <span>Manage</span>
+            </FlexRow>
+          </div>
         </FlexRow>
 
         {/* Account buttons */}
@@ -131,11 +141,7 @@ export const HardwareAddress = ({
                     onCopyClick={async () => await onClipboardCopy(a.address)}
                   />
                   <TooltipRx text={'Show Address'} theme={theme}>
-                    <ViewIconWrapper
-                      onClick={() =>
-                        handleShowAddressClick(`${a.chainId}:${a.address}`)
-                      }
-                    >
+                    <ViewIconWrapper onClick={() => handleShowAddressClick(a)}>
                       <FontAwesomeIcon
                         className="ViewIcon"
                         icon={FA.faEye}

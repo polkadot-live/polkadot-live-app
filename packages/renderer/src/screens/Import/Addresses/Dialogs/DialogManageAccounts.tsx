@@ -47,21 +47,24 @@ export const DialogManageAccounts = ({
 }: DialogManageAccountsProps) => {
   const { accountName, encodedAccounts, publicKeyHex, source } = genericAccount;
 
+  const { getTheme, getOnlineMode } = useConnections();
   const { getStatusForAccount } = useAccountStatuses();
   const { handleAddAddress, handleBookmarkToggle } = useAddHandler();
   const { handleRemoveAddress } = useRemoveHandler();
-  const { setIsShowAddressDialogOpen } = useRenameHandler();
-  const { getTheme, getOnlineMode } = useConnections();
-  const theme = getTheme();
+  const {
+    getManageAccountDialogData,
+    setManageAccountDialogData,
+    setShowAddressDialogData,
+  } = useRenameHandler();
 
-  const [isOpen, setIsOpen] = useState(false);
   const [showBookmarks, setShowBookmarks] = useState(false);
-
+  const theme = getTheme();
   const isConnected = getOnlineMode();
 
-  const handleOpenChange = (open: boolean) => {
-    setIsOpen(open);
-  };
+  const handleOpenChange = (open: boolean) =>
+    open
+      ? setManageAccountDialogData({ genericAccount, isOpen: open })
+      : setManageAccountDialogData({ genericAccount: null, isOpen: open });
 
   const isProcessing = ({ address, chainId }: EncodedAccount) =>
     Boolean(getStatusForAccount(`${chainId}:${address}`, source));
@@ -79,16 +82,10 @@ export const DialogManageAccounts = ({
   };
 
   return (
-    <Dialog.Root open={isOpen} onOpenChange={handleOpenChange}>
-      <Style.DialogTrigger $theme={theme}>
-        <div className="ManageBtn">
-          <Style.FlexRow $gap={'0.5rem'}>
-            <FontAwesomeIcon icon={FA.faCaretRight} />
-            <span>Manage</span>
-          </Style.FlexRow>
-        </div>
-      </Style.DialogTrigger>
-
+    <Dialog.Root
+      open={getManageAccountDialogData().isOpen}
+      onOpenChange={handleOpenChange}
+    >
       <Dialog.Portal>
         <Dialog.Overlay className="Dialog__Overlay" />
         <Style.DialogContent $theme={theme} $size={'lg'}>
@@ -112,7 +109,7 @@ export const DialogManageAccounts = ({
               }}
             />
 
-            {/*  Controls */}
+            {/** Controls */}
             <ControlsRow $theme={theme}>
               <UI.TooltipRx text="Manage Bookmarks" theme={theme}>
                 <span>
@@ -138,7 +135,7 @@ export const DialogManageAccounts = ({
               </UI.TooltipRx>
             </ControlsRow>
 
-            {/*  Encoded addresses */}
+            {/** Encoded addresses */}
             <EncodedAddressesWrapper $theme={theme}>
               <Style.FlexColumn $rowGap={'0.75rem'}>
                 {Array.from(Object.entries(encodedAccounts)).map(
@@ -204,10 +201,10 @@ export const DialogManageAccounts = ({
                             <UI.TooltipRx text={'Show Address'} theme={theme}>
                               <ViewIconWrapper
                                 onClick={() =>
-                                  setIsShowAddressDialogOpen(
-                                    `${a.chainId}:${a.address}`,
-                                    true
-                                  )
+                                  setShowAddressDialogData({
+                                    encodedAccount: a,
+                                    isOpen: true,
+                                  })
                                 }
                               >
                                 <FontAwesomeIcon
