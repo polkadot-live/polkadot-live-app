@@ -4,7 +4,6 @@
 import { useAddresses, useImportHandler } from '@ren/contexts/import';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ellipsisFn } from '@w3ux/utils';
 import { QRVieweraWrapper } from '../Wrappers';
 import { ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
 import { checkValidAddress } from '@polkadot-live/core';
@@ -70,8 +69,7 @@ export const Reader = () => {
 
   // Handle new vault address to local storage and close overlay.
   const handleVaultImport = async (publicKeyHex: string, enAddress: string) => {
-    const accountName = ellipsisFn(publicKeyHex, 5);
-    await handleImportAddress(enAddress, 'vault', accountName, true);
+    await handleImportAddress(enAddress, 'vault', true);
     setImported(true);
   };
 

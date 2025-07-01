@@ -17,7 +17,6 @@ import type {
   EncodedAccount,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
-import { ellipsisFn } from '@w3ux/utils';
 
 export const ImportHandlerContext =
   createContext<ImportHandlerContextInterface>(
@@ -33,18 +32,19 @@ export const ImportHandlerProvider = ({
 }) => {
   const { getOnlineMode } = useConnections();
   const { setStatusForAccount } = useAccountStatuses();
-  const { handleAddressImport } = useAddresses();
+  const { handleAddressImport, getDefaultName } = useAddresses();
 
-  /// Exposed function to import an address.
+  /**
+   * Exposed function to import an address.
+   */
   const handleImportAddress = async (
     enAddress: string,
     source: AccountSource,
-    accountName: string,
     mainImport = true, // Whether to send the address to main window.
     device?: AnyData
   ) => {
     // Construct generic account and set import status.
-    const genericAccount = construct(enAddress, source, accountName, device);
+    const genericAccount = construct(enAddress, source, device);
     const { encodedAccounts } = genericAccount;
 
     for (const enAccount of Object.values(encodedAccounts)) {
@@ -58,19 +58,23 @@ export const ImportHandlerProvider = ({
       } else if (isImported) {
         postToMain(genericAccount, enAccount);
       }
-
-      // Render success message if not importing to main window.
-      if (!enAccount.isImported) {
-        renderToast('Account added successfully', 'import-success', 'success');
-      }
     }
 
     // Update state and store.
     handleAddressImport(genericAccount);
     await persist(genericAccount);
+
+    // Render success message if not importing to main window.
+    renderToast(
+      `Account added successfully as ${genericAccount.accountName}`,
+      'import-success',
+      'success'
+    );
   };
 
-  /// Import an "imported" account from a data file.
+  /**
+   * Import an account from a data file.
+   */
   const handleImportAddressFromBackup = async (
     genericAccount: ImportedGenericAccount
   ) => {
@@ -93,18 +97,18 @@ export const ImportHandlerProvider = ({
   const construct = (
     address: string,
     source: AccountSource,
-    accountName: string,
     device?: AnyData
   ): ImportedGenericAccount => {
-    const publicKeyHex = u8aToHex(decodeAddress(address));
+    const accountName = getDefaultName();
     const encodedAccounts = {} as Record<ChainID, EncodedAccount>;
+    const publicKeyHex = u8aToHex(decodeAddress(address));
 
     for (const [cid, { prefix }] of Object.entries(getSupportedChains())) {
       const chainId = cid as ChainID;
       const encoded = encodeAddress(publicKeyHex, prefix);
       encodedAccounts[chainId] = {
         address: encoded,
-        alias: ellipsisFn(encoded, 5),
+        alias: `${accountName}-${cid}`,
         chainId,
         isBookmarked: false,
         isImported: false,
