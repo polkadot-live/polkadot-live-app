@@ -105,8 +105,6 @@ export const HardwareAddressWrapper = styled.div`
     height: 15px;
   }
   .EncodedRow {
-    padding-left: 0.5rem;
-
     .NameAddressRow {
       flex: 1;
       min-width: 0;
@@ -116,7 +114,7 @@ export const HardwareAddressWrapper = styled.div`
         opacity: 0.35;
       }
       > span:first-of-type {
-        font-size: 1.1rem;
+        font-size: 1.05rem;
       }
       > .AddressRow {
         color: var(--text-color-secondary);
@@ -125,15 +123,20 @@ export const HardwareAddressWrapper = styled.div`
         min-width: 0;
       }
       > .NetworkRow {
-        flex: 1;
-        justify-content: flex-end;
+        background-color: var(--dialog-content-background);
+        min-width: 160px;
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.375rem;
 
         .NetworkLabel {
           color: var(--text-color-secondary);
           display: inline-block;
           font-size: 0.98rem;
           opacity: 0.8;
-          @media (max-width: 590px) {
+        }
+        @media (max-width: 590px) {
+          min-width: 0;
+          .NetworkLabel {
             display: none;
           }
         }

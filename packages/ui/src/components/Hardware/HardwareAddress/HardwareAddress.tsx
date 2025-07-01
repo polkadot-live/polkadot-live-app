@@ -51,38 +51,42 @@ export const HardwareAddress = ({
     <HardwareAddressWrapper style={{ paddingBottom: '1.5rem' }}>
       {/* Account name */}
       <FlexRow $gap={'0.9rem'} className="PrimaryRow">
-        <TooltipRx text={'Rename Accounts'} theme={theme}>
-          <button
-            type="button"
-            className="RenameBtn"
-            disabled={anyProcessing}
-            aria-label="Rename Accounts"
-          >
-            <FontAwesomeIcon
-              icon={FA.faPenSquare}
-              onClick={() =>
-                !anyProcessing &&
-                setBulkRenameDialogData({ genericAccount, isOpen: true })
-              }
-              transform={'grow-1'}
-            />
-          </button>
-        </TooltipRx>
         <h2 className="overflow">{accountName}</h2>
-        <FlexRow $gap={'0.25rem'} style={{ flex: 1, paddingLeft: '0.5rem' }}>
-          <div
-            role="button"
-            onClick={() => handleManageAccountClick()}
-            className="ManageBtn"
-          >
-            <FlexRow $gap={'0.5rem'}>
-              <FontAwesomeIcon icon={FA.faCaretRight} />
-              <span>Manage</span>
-            </FlexRow>
-          </div>
+        <FlexRow $gap={'0.75rem'} style={{ flex: 1 }}>
+          <TooltipRx text={'Rename Accounts'} theme={theme}>
+            <button
+              type="button"
+              className="RenameBtn"
+              disabled={anyProcessing}
+              aria-label="Rename Accounts"
+            >
+              <FontAwesomeIcon
+                icon={FA.faPenSquare}
+                onClick={() =>
+                  !anyProcessing &&
+                  setBulkRenameDialogData({ genericAccount, isOpen: true })
+                }
+                transform={'grow-1'}
+              />
+            </button>
+          </TooltipRx>
+          <TooltipRx text={'Manage Accounts'} theme={theme}>
+            <button
+              type="button"
+              className="RenameBtn"
+              disabled={anyProcessing}
+              aria-label="Manage Accounts"
+            >
+              <FontAwesomeIcon
+                icon={FA.faGear}
+                onClick={() => handleManageAccountClick()}
+                transform={'grow-1'}
+              />
+            </button>
+          </TooltipRx>
         </FlexRow>
 
-        {/* Account buttons */}
+        {/* Delete button */}
         <FlexRow $gap={'0.75rem'}>
           <TooltipRx text={'Delete'} theme={theme}>
             <div style={{ position: 'relative' }}>
@@ -98,7 +102,7 @@ export const HardwareAddress = ({
       </FlexRow>
 
       {/* Encoded addresses */}
-      <FlexColumn $rowGap={'1.25rem'}>
+      <FlexColumn $rowGap={'1rem'}>
         <span
           style={{
             borderTop: `1px solid ${theme.textDimmed}`,
@@ -125,11 +129,22 @@ export const HardwareAddress = ({
               className="EncodedRow"
             >
               <FlexRow $gap="1.25rem" className="NameAddressRow">
-                <FontAwesomeIcon
-                  icon={FA.faCaretRight}
-                  transform={'grow-2'}
-                  className="EntryArrow"
-                />
+                <FlexRow className="NetworkRow">
+                  <ChainIcon
+                    chainId={cid as ChainID}
+                    className="NetworkIcon"
+                    style={{
+                      fill:
+                        cid === 'Polkadot' ||
+                        cid === 'Polkadot Asset Hub' ||
+                        cid === 'Polkadot People'
+                          ? '#ac2461'
+                          : undefined,
+                    }}
+                  />
+                  <span className="overflow NetworkLabel">{a.chainId}</span>
+                </FlexRow>
+
                 <span className="overflow">{a.alias}</span>
                 <FlexRow $gap="0.45rem" className="AddressRow">
                   <span className="overflow">
@@ -149,22 +164,6 @@ export const HardwareAddress = ({
                       />
                     </ViewIconWrapper>
                   </TooltipRx>
-                </FlexRow>
-
-                <FlexRow className="NetworkRow">
-                  <span className="overflow NetworkLabel">{a.chainId}</span>
-                  <ChainIcon
-                    chainId={cid as ChainID}
-                    className="NetworkIcon"
-                    style={{
-                      fill:
-                        cid === 'Polkadot' ||
-                        cid === 'Polkadot Asset Hub' ||
-                        cid === 'Polkadot People'
-                          ? '#ac2461'
-                          : undefined,
-                    }}
-                  />
                 </FlexRow>
               </FlexRow>
 
