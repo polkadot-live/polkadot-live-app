@@ -3,49 +3,35 @@
 
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
-
-import { ItemsColumn } from './Wrappers';
-import {
-  executeOneShot,
-  showGroupTooltip,
-  toolTipTextFor,
-  AccountsController,
-  ConfigRenderer,
-  IntervalsController,
-  SubscriptionsController,
-} from '@polkadot-live/core';
-import {
-  ControlsWrapper,
-  SortControlLabel,
-  Switch,
-} from '@polkadot-live/ui/components';
-import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
-import { ellipsisFn } from '@w3ux/utils';
-import { PermissionRow } from './PermissionRow';
-import { IntervalRow } from './IntervalRow';
-import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
-import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
-import { renderToast } from '@polkadot-live/ui/utils';
-
-/// Contexts.
 import { useEffect, useState } from 'react';
 import { useConnections } from '@ren/contexts/common';
 import {
   useAppSettings,
   useBootstrapping,
-  useIntervalSubscriptions,
   useManage,
   useSubscriptions,
 } from '@ren/contexts/main';
-
-/// Type imports.
+import {
+  executeOneShot,
+  showGroupTooltip,
+  toolTipTextFor,
+  AccountsController,
+  SubscriptionsController,
+} from '@polkadot-live/core';
+import { ellipsisFn } from '@w3ux/utils';
+import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
+import { ChevronDownIcon } from '@radix-ui/react-icons';
+import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
+import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
+import { ItemsColumn } from './Wrappers';
+import { PermissionRow } from './PermissionRow';
+import { renderToast } from '@polkadot-live/ui/utils';
 import type { AnyFunction } from '@polkadot-live/types/misc';
 import type { PermissionsProps } from './types';
 import type {
   SubscriptionTask,
   TaskCategory,
 } from '@polkadot-live/types/subscriptions';
-import { ChevronDownIcon } from '@radix-ui/react-icons';
 
 export const Permissions = ({
   breadcrumb,
@@ -61,23 +47,16 @@ export const Permissions = ({
 
   const { isConnecting } = useBootstrapping();
   const { cacheGet, getTheme, getOnlineMode } = useConnections();
-  const isImportingData = cacheGet('backup:importing');
-  const theme = getTheme();
-
+  const { renderedSubscriptions } = useManage();
   const { handleQueuedToggle, toggleCategoryTasks, getTaskType } =
     useSubscriptions();
 
-  const {
-    activeChainId,
-    renderedSubscriptions,
-    dynamicIntervalTasksState,
-    tryUpdateDynamicIntervalTask,
-    getCategorisedDynamicIntervals,
-  } = useManage();
+  const isImportingData = cacheGet('backup:importing');
+  const theme = getTheme();
 
-  const { updateIntervalSubscription } = useIntervalSubscriptions();
-
-  /// Return subscription tasks mapped by category.
+  /**
+   * Return subscription tasks mapped by category.
+   */
   const getCategorised = (): Map<TaskCategory, SubscriptionTask[]> => {
     const { tasks } = renderedSubscriptions;
     const map = new Map<TaskCategory, SubscriptionTask[]>();
@@ -100,15 +79,21 @@ export const Permissions = ({
     return map;
   };
 
-  // Categorised tasks state.
+  /**
+   * Categorised tasks state.
+   */
   const [categorisedTasks, setCategorisedTasks] = useState(
     new Map<TaskCategory, SubscriptionTask[]>(getCategorised())
   );
 
-  // Mechanism to trigger re-caculating the accordion value AFTER the account state is updated.
+  /**
+   * Mechanism to trigger re-caculating the accordion value AFTER the account state is updated.
+   */
   const [updateAccordionValue, setUpdateAccordionValue] = useState(false);
 
-  /// Accordion state.
+  /**
+   * Accordion state.
+   */
   const [accordionValueAccounts, setAccordionValueAccounts] = useState<
     string[]
   >([
@@ -122,28 +107,17 @@ export const Permissions = ({
   const [accordionValueChains, setAccordionValueChains] = useState<string[]>([
     'Chain',
   ]);
-  const [accordionValueIntervals, setAccordionValueIntervals] = useState<
-    string[]
-  >([]);
 
-  /// Go to section zero if all interval subscriptions have been removed.
-  useEffect(() => {
-    if (typeClicked === 'interval' && dynamicIntervalTasksState.length === 0) {
-      setSection(0);
-    }
-  }, [dynamicIntervalTasksState]);
-
-  /// Go to section zero if show debugging subscriptions setting turned off.
+  /**
+   * Go to section zero if show debugging subscriptions setting turned off.
+   */
   useEffect(() => {
     !showDebuggingSubscriptions && setSection(0);
   }, [showDebuggingSubscriptions]);
 
-  /// Update accordion interval indices if active chain has changed.
-  useEffect(() => {
-    setAccordionValueIntervals([]);
-  }, [activeChainId]);
-
-  /// Re-cache categorised tasks when subscription data changes.
+  /**
+   * Re-cache categorised tasks when subscription data changes.
+   */
   useEffect(() => {
     setCategorisedTasks(getCategorised());
     if (section === 1 && renderedSubscriptions.type == '') {
@@ -153,12 +127,16 @@ export const Permissions = ({
     }
   }, [renderedSubscriptions]);
 
-  /// Trigger updating the accordion value when a new account is selected.
+  /**
+   * Trigger updating the accordion value when a new account is selected.
+   */
   useEffect(() => {
     setUpdateAccordionValue(true);
   }, [selectedAccount]);
 
-  /// Close disabled subscription groups when loading account subscriptions.
+  /**
+   * Close disabled subscription groups when loading account subscriptions.
+   */
   useEffect(() => {
     if (updateAccordionValue) {
       if (typeClicked === 'account') {
@@ -174,20 +152,26 @@ export const Permissions = ({
     }
   }, [updateAccordionValue]);
 
-  /// Handle a subscription toggle and update rendered subscription state.
+  /**
+   * Handle a subscription toggle and update rendered subscription state.
+   */
   const handleToggle = async (task: SubscriptionTask) => {
     await handleQueuedToggle(task);
   };
 
-  /// Handle toggling a subscription task group switch.
+  /**
+   * Handle toggling a subscription task group switch.
+   */
   const handleGroupSwitch = async (category: TaskCategory) => {
     const isOn = getCategoryToggles().get(category) || false;
     await toggleCategoryTasks(category, isOn, renderedSubscriptions);
   };
 
-  /// TODO: Add `toggleable` field on subscription task type.
-  /// Determine whether the toggle should be disabled based on the
-  /// task and account data.
+  /**
+   * TODO: Add `toggleable` field on subscription task type.
+   * Determine whether the toggle should be disabled based on the
+   * task and account data.
+   */
   const getDisabled = (task: SubscriptionTask) => {
     if (!getOnlineMode() || isConnecting || isImportingData) {
       return true;
@@ -213,16 +197,14 @@ export const Permissions = ({
     }
   };
 
-  /// Determines if interval task should be disabled.
-  const isIntervalTaskDisabled = () =>
-    !getOnlineMode() || isConnecting || isImportingData;
-
   const maybeAccountAddress =
     categorisedTasks.size > 0
       ? Array.from(categorisedTasks.values())[0][0].account?.address
       : null;
 
-  /// Map category name to its global toggle state.
+  /**
+   * Map category name to its global toggle state.
+   */
   const getCategoryToggles = () => {
     const map = new Map<TaskCategory, boolean>();
 
@@ -239,84 +221,9 @@ export const Permissions = ({
     return map;
   };
 
-  /// Map referendum ID to its global toggle state.
-  const getOpenGovGlobalToggles = () => {
-    const map = new Map<number, boolean>();
-
-    // A "global" toggle is set if all of its tasks are enabled.
-    for (const [
-      referendumId,
-      intervalTasks,
-    ] of getCategorisedDynamicIntervals().entries()) {
-      const allToggled = intervalTasks.reduce(
-        (acc, task) => (acc ? (task.status === 'enable' ? true : false) : acc),
-        true
-      );
-
-      map.set(referendumId, allToggled);
-    }
-
-    return map;
-  };
-
-  /// Handler for toggling the "global" switch for a referendum.
-  const toggleGlobalSwitch = async (referendumId: number, isOn: boolean) => {
-    // Get all tasks with the target status.
-    const targetStatus = isOn ? 'enable' : 'disable';
-
-    // Get dynamic tasks under the referendum ID with target status and invert it.
-    const tasks = dynamicIntervalTasksState
-      .filter(
-        (t) => t.referendumId === referendumId && t.status === targetStatus
-      )
-      .map((t) => {
-        t.status = t.status === 'enable' ? 'disable' : 'enable';
-        return t;
-      })
-      .sort((a, b) => a.label.localeCompare(b.label));
-
-    // Return early if there are no tasks to toggle.
-    if (tasks.length === 0) {
-      return;
-    }
-
-    // Update managed tasks in intervals controller.
-    switch (tasks[0].status) {
-      case 'enable': {
-        IntervalsController.insertSubscriptions(tasks);
-        break;
-      }
-      case 'disable': {
-        IntervalsController.removeSubscriptions(tasks);
-        break;
-      }
-    }
-
-    // Update React and store state.
-    for (const task of tasks) {
-      updateIntervalSubscription({ ...task });
-      tryUpdateDynamicIntervalTask({ ...task });
-
-      ConfigRenderer.portToOpenGov?.postMessage({
-        task: 'openGov:task:update',
-        data: {
-          serialized: JSON.stringify(task),
-        },
-      });
-
-      await window.myAPI.sendIntervalTask({
-        action: 'interval:task:update',
-        data: { serialized: JSON.stringify(task) },
-      });
-    }
-
-    // Analytics.
-    const event = `subscriptions-interval-category-${targetStatus === 'enable' ? 'off' : 'on'}`;
-    const { category, chainId } = tasks[0];
-    window.myAPI.umamiEvent(event, { category, chainId });
-  };
-
-  /// Handle a one-shot event for a subscription task.
+  /**
+   * Handle a one-shot event for a subscription task.
+   */
   const handleOneShot = async (
     task: SubscriptionTask,
     setOneShotProcessing: AnyFunction,
@@ -341,7 +248,9 @@ export const Permissions = ({
     }
   };
 
-  /// Handle clicking the native checkbox.
+  /**
+   * Handle clicking the native checkbox.
+   */
   const handleNativeCheckbox = async (
     flag: boolean,
     task: SubscriptionTask
@@ -377,7 +286,9 @@ export const Permissions = ({
     }
   };
 
-  /// Renders a list of categorised subscription tasks that can be toggled.
+  /**
+   * Renders a list of categorised subscription tasks that can be toggled.
+   */
   const renderSubscriptionTasks = () => (
     <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
       <Accordion.Root
@@ -425,7 +336,7 @@ export const Permissions = ({
                         side={'left'}
                       >
                         <span>
-                          <Switch
+                          <UI.Switch
                             size="sm"
                             type="primary"
                             isOn={getCategoryToggles().get(category) || false}
@@ -437,7 +348,7 @@ export const Permissions = ({
                         </span>
                       </UI.TooltipRx>
                     ) : (
-                      <Switch
+                      <UI.Switch
                         size="sm"
                         type="primary"
                         isOn={getCategoryToggles().get(category) || false}
@@ -474,71 +385,9 @@ export const Permissions = ({
     </UI.AccordionWrapper>
   );
 
-  /// Render a list of interval subscription tasks that can be toggled.
-  const renderIntervalSubscriptionTasks = () => (
-    <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
-      <Accordion.Root
-        className="AccordionRoot"
-        type="multiple"
-        value={accordionValueIntervals}
-        onValueChange={(val) => setAccordionValueIntervals(val as string[])}
-      >
-        <FlexColumn>
-          {Array.from(getCategorisedDynamicIntervals().entries()).map(
-            ([referendumId, intervalTasks]) => (
-              <Accordion.Item
-                key={`${referendumId}_interval_subscriptions`}
-                className="AccordionItem"
-                value={String(referendumId)}
-              >
-                <FlexRow $gap={'2px'}>
-                  <UI.AccordionTrigger narrow={true}>
-                    <ChevronDownIcon className="AccordionChevron" aria-hidden />
-                    <UI.TriggerHeader>
-                      Referendum {referendumId}
-                    </UI.TriggerHeader>
-                  </UI.AccordionTrigger>
-                  <div
-                    className="HeaderContentDropdownWrapper"
-                    style={{ cursor: 'default' }}
-                  >
-                    <Switch
-                      disabled={isIntervalTaskDisabled()}
-                      size="sm"
-                      type="primary"
-                      isOn={
-                        getOpenGovGlobalToggles().get(referendumId) || false
-                      }
-                      handleToggle={async () =>
-                        await toggleGlobalSwitch(
-                          referendumId,
-                          getOpenGovGlobalToggles().get(referendumId) || false
-                        )
-                      }
-                    />
-                  </div>
-                </FlexRow>
-                <UI.AccordionContent transparent={true}>
-                  <ItemsColumn>
-                    {intervalTasks.map((task) => (
-                      <IntervalRow
-                        key={`${task.referendumId}_${task.action}`}
-                        task={task}
-                      />
-                    ))}
-                  </ItemsColumn>
-                </UI.AccordionContent>
-              </Accordion.Item>
-            )
-          )}
-        </FlexColumn>
-      </Accordion.Root>
-    </UI.AccordionWrapper>
-  );
-
   return (
     <>
-      <ControlsWrapper $sticky={false}>
+      <UI.ControlsWrapper $sticky={false}>
         <div className="left">
           <ButtonPrimaryInvert
             className="back-btn"
@@ -553,20 +402,19 @@ export const Permissions = ({
               side="bottom"
             >
               <span>
-                <SortControlLabel label={breadcrumb} />
+                <UI.SortControlLabel label={breadcrumb} />
               </span>
             </UI.TooltipRx>
           ) : (
-            <SortControlLabel label={breadcrumb} />
+            <UI.SortControlLabel label={breadcrumb} />
           )}
         </div>
-      </ControlsWrapper>
+      </UI.ControlsWrapper>
 
       <FlexColumn style={{ marginTop: '1.5rem' }}>
         {/* Render separate accordions for account and chain subscription tasks. */}
         {typeClicked === 'account' && renderSubscriptionTasks()}
         {typeClicked === 'chain' && renderSubscriptionTasks()}
-        {typeClicked === 'interval' && renderIntervalSubscriptionTasks()}
       </FlexColumn>
     </>
   );

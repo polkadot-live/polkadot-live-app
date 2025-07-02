@@ -12,7 +12,7 @@ import type { ManageProps } from './types';
 import type { SubscriptionTaskType } from '@polkadot-live/types/subscriptions';
 
 export const Manage = ({ addresses }: ManageProps) => {
-  const { setRenderedSubscriptions, setDynamicIntervalTasks } = useManage();
+  const { setRenderedSubscriptions } = useManage();
 
   // Store the currently active manage tab.
   const [section, setSection] = useState<number>(0);
@@ -35,7 +35,7 @@ export const Manage = ({ addresses }: ManageProps) => {
       }}
     >
       <MainHeading style={{ padding: '2rem 1rem 0' }}>
-        Subscriptions
+        Account Subscriptions
       </MainHeading>
       <CarouselWrapper
         animate={section === 0 ? 'home' : 'next'}
@@ -49,7 +49,6 @@ export const Manage = ({ addresses }: ManageProps) => {
         onTransitionEnd={() => {
           if (section === 0) {
             setRenderedSubscriptions({ type: '', tasks: [] });
-            setDynamicIntervalTasks([], 'Polkadot');
           }
         }}
         variants={{

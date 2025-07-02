@@ -4,19 +4,22 @@
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 
-import { ChainIcon, Identicon } from '@polkadot-live/ui/components';
 import { ItemEntryWrapper, ItemsColumn } from './Wrappers';
 import { ButtonText } from '@polkadot-live/ui/kits/buttons';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { NoAccounts, NoOpenGov } from '../NoAccounts';
+import { NoAccounts } from '../NoAccounts';
 import { useConnections } from '@ren/contexts/common';
 import {
   useAppSettings,
   useManage,
-  useIntervalSubscriptions,
   useSubscriptions,
 } from '@ren/contexts/main';
 import { useEffect, useState } from 'react';
+import { ellipsisFn } from '@w3ux/utils';
+import { ChevronDownIcon } from '@radix-ui/react-icons';
+import { FlexColumn } from '@polkadot-live/ui/styles';
+import { getSupportedChains } from '@polkadot-live/consts/chains';
+
 import type { AccountsProps } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
@@ -24,10 +27,6 @@ import type {
   WrappedSubscriptionTasks,
   SubscriptionTask,
 } from '@polkadot-live/types/subscriptions';
-import { ellipsisFn } from '@w3ux/utils';
-import { FlexColumn } from '@polkadot-live/ui/styles';
-import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { getSupportedChains } from '@polkadot-live/consts/chains';
 
 export const Accounts = ({
   addresses,
@@ -41,16 +40,16 @@ export const Accounts = ({
     'setting:show-debugging-subscriptions'
   );
 
-  const { setRenderedSubscriptions, setDynamicIntervalTasks } = useManage();
+  const { setRenderedSubscriptions } = useManage();
   const { getChainSubscriptions, getAccountSubscriptions, chainSubscriptions } =
     useSubscriptions();
-  const { getIntervalSubscriptionsForChain, getSortedKeys } =
-    useIntervalSubscriptions();
 
   const { getTheme } = useConnections();
   const theme = getTheme();
 
-  /// Categorise addresses by their chain ID, sort by name.
+  /**
+   * Categorise addresses by their chain ID, sort by name.
+   */
   const getSortedAddresses = () => {
     const sorted = new Map<ChainID | 'Empty', FlattenedAccountData[]>();
 
@@ -96,14 +95,18 @@ export const Accounts = ({
     return sorted;
   };
 
-  /// Accordion state.
+  /**
+   * Accordion state.
+   */
   const [accordionValue, setAccordionValue] = useState<string[]>(
-    ([...getSortedAddresses().keys()] as string[])
-      .concat(showDebuggingSubscriptions ? ['Debug'] : [])
-      .concat(getSortedKeys().length > 0 ? ['OpenGov'] : [])
+    ([...getSortedAddresses().keys()] as string[]).concat(
+      showDebuggingSubscriptions ? ['Debug'] : []
+    )
   );
 
-  /// Use indices ref to maintain open accordion panels when toggling debugging setting.
+  /**
+   * Use indices ref to maintain open accordion panels when toggling debugging setting.
+   */
   useEffect(() => {
     setAccordionValue((prev) =>
       showDebuggingSubscriptions
@@ -114,14 +117,18 @@ export const Accounts = ({
     );
   }, [showDebuggingSubscriptions]);
 
-  /// Utility to copy tasks.
+  /**
+   * Utility to copy tasks.
+   */
   const copyTasks = (tasks: SubscriptionTask[]) =>
     tasks.map((t) => ({
       ...t,
       actionArgs: t.actionArgs ? [...t.actionArgs] : undefined,
     }));
 
-  /// Set parent subscription tasks state when a chain is clicked.
+  /**
+   * Set parent subscription tasks state when a chain is clicked.
+   */
   const handleClickChain = (chain: string) => {
     const tasks = getChainSubscriptions(chain as ChainID);
     const copy = copyTasks(tasks);
@@ -135,7 +142,9 @@ export const Accounts = ({
     setSection(1);
   };
 
-  /// Set account subscription tasks state when an account is clicked.
+  /**
+   * Set account subscription tasks state when an account is clicked.
+   */
   const handleClickAccount = (
     address: string,
     chainId: ChainID,
@@ -154,16 +163,6 @@ export const Accounts = ({
     setBreadcrumb(accountName);
     setSection(1);
     setSelectedAccount(address);
-  };
-
-  /// Set interval subscription tasks state when chain is clicked.
-  const handleClickOpenGovChain = (chainId: ChainID) => {
-    const tasks = getIntervalSubscriptionsForChain(chainId);
-
-    setTypeClicked('interval');
-    setDynamicIntervalTasks(tasks, chainId);
-    setBreadcrumb(`${chainId} OpenGov`);
-    setSection(1);
   };
 
   return (
@@ -218,7 +217,7 @@ export const Accounts = ({
                                     side="right"
                                   >
                                     <span>
-                                      <Identicon
+                                      <UI.Identicon
                                         value={address}
                                         fontSize={'1.75rem'}
                                       />
@@ -246,53 +245,6 @@ export const Accounts = ({
               )
             )}
 
-            {/* Manage OpenGov Subscriptions*/}
-            <Accordion.Item className="AccordionItem" value={'OpenGov'}>
-              <UI.AccordionTrigger narrow={true}>
-                <ChevronDownIcon className="AccordionChevron" aria-hidden />
-                <UI.TriggerHeader>OpenGov</UI.TriggerHeader>
-              </UI.AccordionTrigger>
-              <UI.AccordionContent transparent={true}>
-                <ItemsColumn>
-                  {getSortedKeys().length === 0 ? (
-                    <NoOpenGov />
-                  ) : (
-                    <>
-                      {getSortedKeys().map((chainId, i) => (
-                        <ItemEntryWrapper
-                          whileHover={{ scale: 1.01 }}
-                          whileTap={{ scale: 0.99 }}
-                          key={`manage_chain_${i}`}
-                          onClick={() => handleClickOpenGovChain(chainId)}
-                        >
-                          <div className="inner">
-                            <div>
-                              <span>
-                                <ChainIcon
-                                  chainId={chainId}
-                                  className="chain-icon"
-                                />
-                              </span>
-                              <div className="content">
-                                <h3>{chainId}</h3>
-                              </div>
-                            </div>
-                            <div>
-                              <ButtonText
-                                text=""
-                                iconRight={faChevronRight}
-                                iconTransform="shrink-3"
-                              />
-                            </div>
-                          </div>
-                        </ItemEntryWrapper>
-                      ))}
-                    </>
-                  )}
-                </ItemsColumn>
-              </UI.AccordionContent>
-            </Accordion.Item>
-
             {/* Manage Chains */}
             {showDebuggingSubscriptions && (
               <Accordion.Item className="AccordionItem" value={'Debug'}>
@@ -312,7 +264,7 @@ export const Accounts = ({
                         <div className="inner">
                           <div>
                             <span>
-                              <ChainIcon
+                              <UI.ChainIcon
                                 chainId={chain}
                                 className="chain-icon"
                               />

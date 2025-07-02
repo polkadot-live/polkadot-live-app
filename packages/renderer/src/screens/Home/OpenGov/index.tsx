@@ -6,11 +6,11 @@ import { useState } from 'react';
 import { CarouselWrapper } from '../Wrappers';
 import { MainHeading } from '@polkadot-live/ui/components';
 import { Wrapper } from '../Manage/Wrappers';
+import { Networks } from './Networks';
+import { Subscriptions } from './Subscriptions';
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
 export const OpenGov = () => {
   const { setDynamicIntervalTasks } = useManage();
-
   const [section, setSection] = useState<number>(0);
   const [breadcrumb, setBreadcrumb] = useState<string>('');
 
@@ -50,17 +50,15 @@ export const OpenGov = () => {
           className="scrollable"
           style={{ height: '100%', padding: '0 1rem' }}
         >
-          {/* OpenGov networks */}
           <Wrapper style={{ alignContent: 'start' }}>
-            <span>OpenGov Left</span>
+            <Networks setBreadcrumb={setBreadcrumb} setSection={setSection} />
           </Wrapper>
         </div>
         <div
           className="scrollable"
           style={{ height: '100%', padding: '0 1rem 1rem' }}
         >
-          {/* OpenGov subscriptions */}
-          <span>OpenGov Right</span>
+          <Subscriptions breadcrumb={breadcrumb} setSection={setSection} />
         </div>
       </CarouselWrapper>
     </div>
