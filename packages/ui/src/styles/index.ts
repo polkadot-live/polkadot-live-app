@@ -9,3 +9,4 @@ export * from './grid';
 
 export * from './ScrollWrappers';
 export * from './StatsFooter';
+export * from './ViewIconWrapper';

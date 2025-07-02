@@ -27,17 +27,6 @@ import type {
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
 
-//TMP
-import styled from 'styled-components';
-const ViewIconWrapper = styled.div`
-  .ViewIcon {
-    cursor: pointer;
-    &:hover {
-      color: var(--text-color-primary);
-    }
-  }
-`;
-
 interface DialogManageAccountsProps {
   genericAccount: ImportedGenericAccount;
 }
@@ -199,7 +188,8 @@ export const DialogManageAccounts = ({
                               }
                             />
                             <UI.TooltipRx text={'Show Address'} theme={theme}>
-                              <ViewIconWrapper
+                              <Style.ViewIconWrapper
+                                $theme={theme}
                                 onClick={() =>
                                   setShowAddressDialogData({
                                     encodedAccount: a,
@@ -212,7 +202,7 @@ export const DialogManageAccounts = ({
                                   icon={FA.faEye}
                                   transform={'shrink-4'}
                                 />
-                              </ViewIconWrapper>
+                              </Style.ViewIconWrapper>
                             </UI.TooltipRx>
                           </Style.FlexRow>
                         </Style.FlexRow>

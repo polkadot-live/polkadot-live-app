@@ -6,23 +6,12 @@ import { ellipsisFn } from '@w3ux/utils';
 import { EllipsisSpinner } from '../../Spinners';
 import { ActionBtn, HardwareAddressWrapper } from './Wrapper';
 import { TooltipRx } from '../../TooltipRx';
-import { FlexColumn, FlexRow } from '../../../styles';
+import { FlexColumn, FlexRow, ViewIconWrapper } from '../../../styles';
 import { ChainIcon } from '../../ChainIcon';
 import { CopyButton } from '../../CopyButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { HardwareAddressProps } from './types';
-
-//TMP
-import styled from 'styled-components';
-const ViewIconWrapper = styled.div`
-  .ViewIcon {
-    cursor: pointer;
-    &:hover {
-      color: var(--text-color-primary);
-    }
-  }
-`;
 
 export const HardwareAddress = ({
   genericAccount,
@@ -156,7 +145,10 @@ export const HardwareAddress = ({
                     onCopyClick={async () => await onClipboardCopy(a.address)}
                   />
                   <TooltipRx text={'Show Address'} theme={theme}>
-                    <ViewIconWrapper onClick={() => handleShowAddressClick(a)}>
+                    <ViewIconWrapper
+                      $theme={theme}
+                      onClick={() => handleShowAddressClick(a)}
+                    >
                       <FontAwesomeIcon
                         className="ViewIcon"
                         icon={FA.faEye}
