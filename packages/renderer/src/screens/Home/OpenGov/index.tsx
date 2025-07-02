@@ -1,29 +1,18 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useState } from 'react';
 import { useManage } from '@ren/contexts/main';
+import { useState } from 'react';
 import { CarouselWrapper } from '../Wrappers';
-import { Accounts } from './Accounts';
-import { Permissions } from './Permissions';
-import { Wrapper } from './Wrappers';
 import { MainHeading } from '@polkadot-live/ui/components';
-import type { ManageProps } from './types';
-import type { SubscriptionTaskType } from '@polkadot-live/types/subscriptions';
+import { Wrapper } from '../Manage/Wrappers';
 
-export const Manage = ({ addresses }: ManageProps) => {
-  const { setRenderedSubscriptions, setDynamicIntervalTasks } = useManage();
+/* eslint-disable @typescript-eslint/no-unused-vars */
+export const OpenGov = () => {
+  const { setDynamicIntervalTasks } = useManage();
 
-  // Store the currently active manage tab.
   const [section, setSection] = useState<number>(0);
-
-  // Outermost breadcrumb title.
   const [breadcrumb, setBreadcrumb] = useState<string>('');
-
-  // Whether the user has clicked on an account or chain.
-  const [typeClicked, setTypeClicked] = useState<SubscriptionTaskType>('');
-
-  const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
 
   return (
     <div
@@ -35,8 +24,9 @@ export const Manage = ({ addresses }: ManageProps) => {
       }}
     >
       <MainHeading style={{ padding: '2rem 1rem 0' }}>
-        Subscriptions
+        OpenGov Subscriptions
       </MainHeading>
+
       <CarouselWrapper
         animate={section === 0 ? 'home' : 'next'}
         transition={{
@@ -48,7 +38,6 @@ export const Manage = ({ addresses }: ManageProps) => {
         // Doing this will remove the scrollbar on the right section.
         onTransitionEnd={() => {
           if (section === 0) {
-            setRenderedSubscriptions({ type: '', tasks: [] });
             setDynamicIntervalTasks([], 'Polkadot');
           }
         }}
@@ -61,29 +50,17 @@ export const Manage = ({ addresses }: ManageProps) => {
           className="scrollable"
           style={{ height: '100%', padding: '0 1rem' }}
         >
-          {/* List of accounts and chains */}
-          <Wrapper>
-            <Accounts
-              addresses={addresses}
-              setSection={setSection}
-              setBreadcrumb={setBreadcrumb}
-              setTypeClicked={setTypeClicked}
-              setSelectedAccount={setSelectedAccount}
-            />
+          {/* OpenGov networks */}
+          <Wrapper style={{ alignContent: 'start' }}>
+            <span>OpenGov Left</span>
           </Wrapper>
         </div>
         <div
           className="scrollable"
           style={{ height: '100%', padding: '0 1rem 1rem' }}
         >
-          {/* Subscription toggles for selected account or chain */}
-          <Permissions
-            setSection={setSection}
-            section={section}
-            selectedAccount={selectedAccount}
-            breadcrumb={breadcrumb}
-            typeClicked={typeClicked}
-          />
+          {/* OpenGov subscriptions */}
+          <span>OpenGov Right</span>
         </div>
       </CarouselWrapper>
     </div>

@@ -6,6 +6,7 @@ import { NavItemWrapper, SideNavWrapper } from './SideNav.styles';
 import { NavItem } from './NavItem';
 import {
   faBarsStaggered,
+  faComments,
   faCubesStacked,
   faDownLeftAndUpRightToCenter,
   faGaugeSimple,
@@ -35,9 +36,10 @@ export const SideNav = ({ handleSideNavCollapse, navState }: SideNavProps) => {
         id={2}
         navState={navState}
         icon={faCubesStacked}
-        label={'Subscribe'}
+        label={'Accounts'}
       />
-      <NavItem id={3} navState={navState} icon={faPaperPlane} label={'Send'} />
+      <NavItem id={3} navState={navState} icon={faComments} label={'OpenGov'} />
+      <NavItem id={4} navState={navState} icon={faPaperPlane} label={'Send'} />
 
       <NavItemWrapper
         $active={false}
