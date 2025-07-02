@@ -1,7 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as smoldot from 'smoldot/no-auto-bytecode';
 import {
   disconnectAPIs,
   AccountsController,
@@ -20,6 +19,7 @@ import React, {
   useState,
 } from 'react';
 import { defaultBootstrappingContext } from './default';
+import { startWithWorker } from 'dedot/smoldot/with-worker';
 import { useConnections } from '@ren/contexts/common';
 import { useIntervalSubscriptions } from '@ren/contexts/main';
 import type { AnyData } from '@polkadot-live/types/misc';
@@ -63,28 +63,12 @@ export const BootstrappingProvider = ({
 
   /// Step 1: Initialize chain APIs (disconnected).
   const initSmoldot = async () => {
-    const waitForWorkerMessage = async (worker: Worker): Promise<AnyData> =>
-      new Promise((resolve) => {
-        worker.onmessage = (event) => {
-          resolve(event.data);
-        };
-      });
+    const SmoldotWorker = new Worker(
+      new URL('dedot/smoldot/worker', import.meta.url),
+      { type: 'module' }
+    );
 
-    const worker = new Worker(new URL('./worker.ts', import.meta.url), {
-      type: 'module',
-    });
-
-    // Wait for bytecode.
-    const bytecode: AnyData = await waitForWorkerMessage(worker);
-    const { port1, port2 } = new MessageChannel();
-    worker.postMessage(port1, [port1]);
-
-    APIsController.smoldotClient = smoldot.startWithBytecode({
-      bytecode,
-      forbidWs: true,
-      maxLogLevel: 0,
-      portToWorker: port2,
-    });
+    APIsController.smoldotClient = startWithWorker(SmoldotWorker);
   };
 
   const initChainAPIs = async () => {
