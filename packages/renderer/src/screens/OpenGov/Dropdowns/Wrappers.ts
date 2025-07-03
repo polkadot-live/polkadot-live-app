@@ -19,7 +19,7 @@ export const MenuButton = styled.button<{ $dark?: boolean }>`
   ${mixinButton};
 
   filter: ${(props) => (props.$dark ? 'brightness(70%)' : 'brightness(120%)')};
-  border-radius: 0.95rem;
+  border-radius: 0.15rem;
   width: 46px;
 
   &:hover {
@@ -35,8 +35,8 @@ export const RoundRightButton = styled.button<{ $dark?: boolean }>`
   ${mixinButton};
 
   filter: ${(props) => (props.$dark ? 'brightness(70%)' : 'brightness(120%)')};
-  border-top-right-radius: 0.95rem;
-  border-bottom-right-radius: 0.95rem;
+  border-top-right-radius: 0.15rem;
+  border-bottom-right-radius: 0.15rem;
   width: 37px;
 
   &:hover {
@@ -52,8 +52,8 @@ export const RoundLeftButton = styled.button<{ $dark?: boolean }>`
   ${mixinButton};
 
   filter: ${(props) => (props.$dark ? 'brightness(70%)' : 'brightness(120%)')};
-  border-top-left-radius: 0.95rem;
-  border-bottom-left-radius: 0.95rem;
+  border-top-left-radius: 0.15rem;
+  border-bottom-left-radius: 0.15rem;
   width: 37px;
 
   &:hover {

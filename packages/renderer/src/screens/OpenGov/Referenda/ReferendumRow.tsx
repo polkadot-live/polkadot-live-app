@@ -96,7 +96,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
           </FlexRow>
         )}
 
-        <FlexRow $gap={'0.75rem'}>
+        <FlexRow>
           <FlexRow $gap={'2px'}>
             {!allSubscriptionsAdded(chainId, referendum) ? (
               <TooltipRx
@@ -114,7 +114,11 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                       )
                     }
                   >
-                    <FontAwesomeIcon className="icon" icon={FA.faPlus} />
+                    <FontAwesomeIcon
+                      className="icon"
+                      icon={FA.faPlus}
+                      transform={'shrink-1'}
+                    />
                   </RoundLeftButton>
                 </span>
               </TooltipRx>
@@ -133,7 +137,11 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                       )
                     }
                   >
-                    <FontAwesomeIcon className="icon" icon={FA.faMinus} />
+                    <FontAwesomeIcon
+                      className="icon"
+                      icon={FA.faMinus}
+                      transform={'shrink-1'}
+                    />
                   </RoundLeftButton>
                 </span>
               </TooltipRx>
@@ -151,6 +159,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                   <FontAwesomeIcon
                     className="icon"
                     icon={expanded ? FA.faChevronUp : FA.faChevronDown}
+                    transform={'shrink-1'}
                   />
                 </RoundRightButton>
               </span>

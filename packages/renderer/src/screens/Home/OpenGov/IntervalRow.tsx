@@ -1,19 +1,12 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as FA from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useRef, useState } from 'react';
 import { useBootstrapping, useIntervalTasksManager } from '@ren/contexts/main';
 import { useConnections, useHelp } from '@ren/contexts/common';
-import { TaskEntryWrapper } from './Wrappers';
+import { TaskEntryWrapper } from '../Manage/Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faCircleCheck,
-  faInfo,
-  faTriangleExclamation,
-  faXmark,
-  faAnglesDown,
-  faList,
-} from '@fortawesome/free-solid-svg-icons';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
 import { Switch, TooltipRx } from '@polkadot-live/ui/components';
 import {
@@ -112,7 +105,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
       {!isDisabled && !oneShotProcessing && (
         <FontAwesomeIcon
           className="enabled"
-          icon={faAnglesDown}
+          icon={FA.faAnglesDown}
           transform={'grow-3'}
           onClick={async () =>
             await handleIntervalOneShot(task, setOneShotProcessing)
@@ -125,7 +118,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
         <FontAwesomeIcon
           className="processing"
           fade
-          icon={faAnglesDown}
+          icon={FA.faAnglesDown}
           transform={'grow-3'}
         />
       )}
@@ -134,7 +127,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
       {isDisabled && (
         <FontAwesomeIcon
           className="disabled"
-          icon={faAnglesDown}
+          icon={FA.faAnglesDown}
           transform={'grow-3'}
         />
       )}
@@ -151,7 +144,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
                 className="icon-wrapper"
                 onClick={() => openHelp(task.helpKey)}
               >
-                <FontAwesomeIcon icon={faInfo} transform={'shrink-1'} />
+                <FontAwesomeIcon icon={FA.faInfo} transform={'shrink-1'} />
               </div>
               {task.label}
             </h3>
@@ -167,7 +160,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
               {!removeClicked ? (
                 <FontAwesomeIcon
                   className="enabled"
-                  icon={faXmark}
+                  icon={FA.faXmark}
                   transform={'grow-4'}
                   onClick={() => {
                     removeTimeoutRef.current = setTimeout(() => {
@@ -180,7 +173,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
               ) : (
                 <FontAwesomeIcon
                   className="enabled"
-                  icon={faTriangleExclamation}
+                  icon={FA.faTriangleExclamation}
                   transform={'grow-4'}
                   onClick={async () => await handleRemove()}
                 />
@@ -245,7 +238,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
                 <div className="close">
                   <FontAwesomeIcon
                     className="enabled"
-                    icon={faXmark}
+                    icon={FA.faXmark}
                     transform={'grow-2'}
                     onClick={() => setIntervalClicked(false)}
                   />
@@ -270,7 +263,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
                         : 'unchecked'
                       : 'disabled'
                   }
-                  icon={faList}
+                  icon={FA.faList}
                   transform={'grow-3'}
                 />
 
@@ -279,7 +272,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
                   <div className="checked-icon-wrapper">
                     <FontAwesomeIcon
                       className={task.status === 'disable' ? 'disable' : ''}
-                      icon={faCircleCheck}
+                      icon={FA.faCircleCheck}
                       transform={'shrink-5'}
                     />
                   </div>

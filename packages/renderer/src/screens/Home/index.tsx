@@ -18,6 +18,7 @@ import { useMainMessagePorts } from '@ren/hooks/useMainMessagePorts';
 import { Classic } from '@theme-toggles/react';
 import { Events } from './Events';
 import { Footer } from './Footer';
+import { OpenGov } from './OpenGov';
 import { Manage } from './Manage';
 import { Send } from './Send';
 import { Summary } from '@ren/screens/Home/Summary';
@@ -227,13 +228,16 @@ export const Home = () => {
               {/* Events */}
               {sideNav.selectedId === 1 && <Events />}
 
-              {/* Subscribe */}
+              {/* Account Subscriptions */}
               {sideNav.selectedId === 2 && (
                 <Manage addresses={getAddresses()} />
               )}
 
+              {/* OpenGov Subscriptions */}
+              {sideNav.selectedId === 3 && <OpenGov />}
+
               {/* Send */}
-              {sideNav.selectedId === 3 && <Send />}
+              {sideNav.selectedId === 4 && <Send />}
             </ScrollWrapper>
           )}
         </BodyInterfaceWrapper>

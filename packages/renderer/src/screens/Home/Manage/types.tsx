@@ -4,7 +4,6 @@
 import type { AnyFunction } from '@polkadot-live/types/misc';
 import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
 import type {
-  IntervalSubscription,
   SubscriptionTask,
   SubscriptionTaskType,
 } from '@polkadot-live/types/subscriptions';
@@ -44,8 +43,4 @@ export interface PermissionRowProps {
     setNativeChecked: AnyFunction
   ) => Promise<void>;
   handleToggle: (task: SubscriptionTask) => Promise<void>;
-}
-
-export interface IntervalRowProps {
-  task: IntervalSubscription;
 }

@@ -58,7 +58,7 @@ export const ReferendumDropdownMenu = ({
             <FontAwesomeIcon
               className="icon"
               icon={faEllipsis}
-              transform={'grow-8'}
+              transform={'grow-3'}
             />
           </div>
         </MenuButton>
