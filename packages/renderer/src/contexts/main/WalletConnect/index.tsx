@@ -91,7 +91,7 @@ export const WalletConnectProvider = ({
       return [
         `polkadot:${wc.WC_POLKADOT_CAIP_ID}`,
         `polkadot:${wc.WC_KUSAMA_CAIP_ID}`,
-        `polkadot:${wc.WC_WESTEND_CAIP_ID}`,
+        `polkadot:${wc.WC_WESTMINT_CAIP_ID}`,
       ];
     }
   };
@@ -102,14 +102,18 @@ export const WalletConnectProvider = ({
   const getAddressPrefix = (chainId: ChainID) => {
     switch (chainId) {
       case 'Polkadot':
-      case 'Polkadot Asset Hub': {
+      case 'Polkadot Asset Hub':
+      case 'Polkadot People': {
         return 0;
       }
-      case 'Kusama': {
+      case 'Kusama':
+      case 'Kusama Asset Hub':
+      case 'Kusama People': {
         return 2;
       }
       case 'Westend':
-      case 'Westend Asset Hub': {
+      case 'Westend Asset Hub':
+      case 'Westend People': {
         return 42;
       }
     }
