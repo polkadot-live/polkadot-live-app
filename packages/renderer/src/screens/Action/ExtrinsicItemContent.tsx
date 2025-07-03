@@ -68,11 +68,7 @@ export const ExtrinsicItemContent = ({
               {renderSummaryButton()}
               <Signer
                 info={info}
-                valid={
-                  info.actionMeta.source !== 'wallet-connect' &&
-                  !isBuildingExtrinsic &&
-                  info.estimatedFee !== undefined
-                }
+                valid={!isBuildingExtrinsic && info.estimatedFee !== undefined}
               />
             </FlexRow>
           </ResponsiveRow>
@@ -93,11 +89,7 @@ export const ExtrinsicItemContent = ({
               {renderSummaryButton()}
               <Signer
                 info={info}
-                valid={
-                  info.actionMeta.source !== 'wallet-connect' &&
-                  !isBuildingExtrinsic &&
-                  info.estimatedFee !== undefined
-                }
+                valid={!isBuildingExtrinsic && info.estimatedFee !== undefined}
               />
             </FlexRow>
           </ResponsiveRow>
@@ -118,11 +110,7 @@ export const ExtrinsicItemContent = ({
               {renderSummaryButton()}
               <Signer
                 info={info}
-                valid={
-                  info.actionMeta.source !== 'wallet-connect' &&
-                  !isBuildingExtrinsic &&
-                  info.estimatedFee !== undefined
-                }
+                valid={!isBuildingExtrinsic && info.estimatedFee !== undefined}
               />
             </FlexRow>
           </ResponsiveRow>
