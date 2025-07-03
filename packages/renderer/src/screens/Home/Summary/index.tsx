@@ -163,7 +163,7 @@ export const Summary: React.FC = () => {
           title="OpenGov"
           target="openGov"
           umamiEvent="window-open-openGov"
-          icon={FA.faComments}
+          icon={FA.faTableList}
         />
         <OpenViewButton
           title="Settings"

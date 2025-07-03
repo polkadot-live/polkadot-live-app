@@ -286,105 +286,6 @@ export const Permissions = ({
     }
   };
 
-  /**
-   * Renders a list of categorised subscription tasks that can be toggled.
-   */
-  const renderSubscriptionTasks = () => (
-    <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
-      <Accordion.Root
-        className="AccordionRoot"
-        type="multiple"
-        value={
-          typeClicked === 'account'
-            ? accordionValueAccounts
-            : accordionValueChains
-        }
-        onValueChange={(val) =>
-          typeClicked === 'account'
-            ? setAccordionValueAccounts(val as string[])
-            : setAccordionValueChains(val as string[])
-        }
-      >
-        <FlexColumn>
-          {Array.from(categorisedTasks.entries()).map(([category, tasks]) => (
-            <Accordion.Item
-              key={category}
-              className="AccordionItem"
-              value={category}
-            >
-              {/** Basic trigger for debugging. */}
-              {category === 'Chain' ? (
-                <UI.AccordionTrigger narrow={true}>
-                  <ChevronDownIcon className="AccordionChevron" aria-hidden />
-                  <UI.TriggerHeader>{category}</UI.TriggerHeader>
-                </UI.AccordionTrigger>
-              ) : (
-                <FlexRow $gap={'2px'}>
-                  {/** Trigger for grouped account subscriptions. */}
-                  <UI.AccordionTrigger narrow={true}>
-                    <ChevronDownIcon className="AccordionChevron" aria-hidden />
-                    <UI.TriggerHeader>{category}</UI.TriggerHeader>
-                  </UI.AccordionTrigger>
-                  <div
-                    className="HeaderContentDropdownWrapper"
-                    style={{ cursor: 'default' }}
-                  >
-                    {showGroupTooltip(tasks[0]) ? (
-                      <UI.TooltipRx
-                        text={toolTipTextFor(category)}
-                        theme={theme}
-                        side={'left'}
-                      >
-                        <span>
-                          <UI.Switch
-                            size="sm"
-                            type="primary"
-                            isOn={getCategoryToggles().get(category) || false}
-                            disabled={getDisabled(tasks[0])}
-                            handleToggle={async () =>
-                              await handleGroupSwitch(category)
-                            }
-                          />
-                        </span>
-                      </UI.TooltipRx>
-                    ) : (
-                      <UI.Switch
-                        size="sm"
-                        type="primary"
-                        isOn={getCategoryToggles().get(category) || false}
-                        disabled={getDisabled(tasks[0])}
-                        handleToggle={async () =>
-                          await handleGroupSwitch(category)
-                        }
-                      />
-                    )}
-                  </div>
-                </FlexRow>
-              )}
-              <UI.AccordionContent transparent={true}>
-                <ItemsColumn>
-                  {tasks
-                    .sort((a, b) => a.label.localeCompare(b.label))
-                    .map((task: SubscriptionTask) => (
-                      <PermissionRow
-                        key={`${category}-${task.action}`}
-                        task={task}
-                        handleToggle={handleToggle}
-                        handleOneShot={handleOneShot}
-                        handleNativeCheckbox={handleNativeCheckbox}
-                        getDisabled={getDisabled}
-                        getTaskType={getTaskType}
-                      />
-                    ))}
-                </ItemsColumn>
-              </UI.AccordionContent>
-            </Accordion.Item>
-          ))}
-        </FlexColumn>
-      </Accordion.Root>
-    </UI.AccordionWrapper>
-  );
-
   return (
     <>
       <UI.ControlsWrapper $sticky={false}>
@@ -412,9 +313,109 @@ export const Permissions = ({
       </UI.ControlsWrapper>
 
       <FlexColumn style={{ marginTop: '1.5rem' }}>
-        {/* Render separate accordions for account and chain subscription tasks. */}
-        {typeClicked === 'account' && renderSubscriptionTasks()}
-        {typeClicked === 'chain' && renderSubscriptionTasks()}
+        <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
+          <Accordion.Root
+            className="AccordionRoot"
+            type="multiple"
+            value={
+              typeClicked === 'account'
+                ? accordionValueAccounts
+                : accordionValueChains
+            }
+            onValueChange={(val) =>
+              typeClicked === 'account'
+                ? setAccordionValueAccounts(val as string[])
+                : setAccordionValueChains(val as string[])
+            }
+          >
+            <FlexColumn>
+              {Array.from(categorisedTasks.entries()).map(
+                ([category, tasks]) => (
+                  <Accordion.Item
+                    key={category}
+                    className="AccordionItem"
+                    value={category}
+                  >
+                    {/** Basic trigger for debugging. */}
+                    {category === 'Chain' ? (
+                      <UI.AccordionTrigger narrow={true}>
+                        <ChevronDownIcon
+                          className="AccordionChevron"
+                          aria-hidden
+                        />
+                        <UI.TriggerHeader>{category}</UI.TriggerHeader>
+                      </UI.AccordionTrigger>
+                    ) : (
+                      <FlexRow $gap={'2px'}>
+                        {/** Trigger for grouped account subscriptions. */}
+                        <UI.AccordionTrigger narrow={true}>
+                          <ChevronDownIcon
+                            className="AccordionChevron"
+                            aria-hidden
+                          />
+                          <UI.TriggerHeader>{category}</UI.TriggerHeader>
+                        </UI.AccordionTrigger>
+                        <div
+                          className="HeaderContentDropdownWrapper"
+                          style={{ cursor: 'default' }}
+                        >
+                          {showGroupTooltip(tasks[0]) ? (
+                            <UI.TooltipRx
+                              text={toolTipTextFor(category)}
+                              theme={theme}
+                              side={'left'}
+                            >
+                              <span>
+                                <UI.Switch
+                                  size="sm"
+                                  type="primary"
+                                  isOn={
+                                    getCategoryToggles().get(category) || false
+                                  }
+                                  disabled={getDisabled(tasks[0])}
+                                  handleToggle={async () =>
+                                    await handleGroupSwitch(category)
+                                  }
+                                />
+                              </span>
+                            </UI.TooltipRx>
+                          ) : (
+                            <UI.Switch
+                              size="sm"
+                              type="primary"
+                              isOn={getCategoryToggles().get(category) || false}
+                              disabled={getDisabled(tasks[0])}
+                              handleToggle={async () =>
+                                await handleGroupSwitch(category)
+                              }
+                            />
+                          )}
+                        </div>
+                      </FlexRow>
+                    )}
+                    <UI.AccordionContent transparent={true}>
+                      <ItemsColumn>
+                        {tasks
+                          .sort((a, b) => a.label.localeCompare(b.label))
+                          .map((task: SubscriptionTask) => (
+                            <PermissionRow
+                              key={`${category}-${task.action}`}
+                              task={task}
+                              handleToggle={handleToggle}
+                              handleOneShot={handleOneShot}
+                              handleNativeCheckbox={handleNativeCheckbox}
+                              getDisabled={getDisabled}
+                              getTaskType={getTaskType}
+                            />
+                          ))}
+                      </ItemsColumn>
+                    </UI.AccordionContent>
+                  </Accordion.Item>
+                )
+              )}
+            </FlexColumn>
+          </Accordion.Root>
+        </UI.AccordionWrapper>
       </FlexColumn>
     </>
   );
