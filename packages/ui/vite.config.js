@@ -73,11 +73,17 @@ export default defineConfig({
     viteStaticCopy({
       targets: [
         {
-          src: join(PACKAGE_ROOT, 'src/kits/Buttons/**/*.scss').replace(/\\/g, '/'),
+          src: join(PACKAGE_ROOT, 'src/kits/Buttons/**/*.scss').replace(
+            /\\/g,
+            '/'
+          ),
           dest: 'scss/buttons',
         },
         {
-          src: join(PACKAGE_ROOT, 'src/kits/Overlay/**/*.scss').replace(/\\/g, '/'),
+          src: join(PACKAGE_ROOT, 'src/kits/Overlay/**/*.scss').replace(
+            /\\/g,
+            '/'
+          ),
           dest: 'scss/overlay',
         },
         {
