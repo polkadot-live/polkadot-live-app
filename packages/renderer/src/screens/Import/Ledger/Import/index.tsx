@@ -119,7 +119,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
 
     const accountNames: string[] = [];
     let n = parseInt(getDefaultName().split('').pop()!);
-    Array.from({ length: n }, () => {
+    Array.from({ length: selectedAddresses.length }, () => {
       accountNames.push(`Account ${n}`);
       n += 1;
     });
