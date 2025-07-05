@@ -29,6 +29,7 @@ export const WalletConnectImportProvider = ({
 }) => {
   const { isAlreadyImported } = useAddresses();
   const { handleImportAddress } = useImportHandler();
+  const { getDefaultName } = useAddresses();
 
   const [isImporting, setIsImporting] = useState(false);
 
@@ -131,6 +132,15 @@ export const WalletConnectImportProvider = ({
     }
 
     setIsImporting(true);
+
+    const accountNames: string[] = [];
+    let n = parseInt(getDefaultName().split('').pop()!);
+    Array.from({ length: n }, () => {
+      accountNames.push(`Account ${n}`);
+      n += 1;
+    });
+
+    let i = 0;
     for (const selected of selectedAddresses) {
       const { encoded, publicKeyHex } = selected;
 
@@ -138,7 +148,12 @@ export const WalletConnectImportProvider = ({
         continue;
       }
 
-      await handleImportAddress(encoded, 'wallet-connect', false);
+      const accountName = accountNames[i];
+      const toast = accountNames.length === 1;
+      const s = 'wallet-connect';
+      const d = undefined;
+      await handleImportAddress(encoded, s, false, accountName, d, toast);
+      i += 1;
     }
 
     setIsImporting(false);
