@@ -11,7 +11,6 @@ export interface ImportHandlerContextInterface {
   handleImportAddress: (
     address: string,
     source: AccountSource,
-    mainImport: boolean,
     accountName?: string,
     device?: AnyData,
     showToast?: boolean

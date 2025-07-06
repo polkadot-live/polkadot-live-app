@@ -7,6 +7,7 @@ import type { AddressesContextInterface } from './types';
 export const defaultAddressesContext: AddressesContextInterface = {
   getAccounts: () => [],
   getDefaultName: () => '',
+  getNextNames: () => [],
   handleAddressImport: () => {},
   handleAddressDelete: () => false,
   handleAddressUpdate: () => {},

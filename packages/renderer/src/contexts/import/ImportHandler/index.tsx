@@ -40,7 +40,6 @@ export const ImportHandlerProvider = ({
   const handleImportAddress = async (
     enAddress: string,
     source: AccountSource,
-    mainImport = true, // Whether to send the address to main window.
     accountName?: string,
     device?: AnyData,
     showToast = true
@@ -55,7 +54,7 @@ export const ImportHandlerProvider = ({
       setStatusForAccount(`${chainId}:${address}`, source, status);
 
       // Send data to main renderer for processing.
-      if ((isImported && !getOnlineMode()) || !mainImport) {
+      if (isImported && !getOnlineMode()) {
         enAccount.isImported = false;
       } else if (isImported) {
         postToMain(genericAccount, enAccount);
