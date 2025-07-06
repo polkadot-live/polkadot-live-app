@@ -54,7 +54,7 @@ export const DialogImportReadOnly = () => {
     setDialogOpen(false);
 
     // Set processing flag to true if online and import via main renderer.
-    await handleImportAddress(trimmed, 'read-only', true);
+    await handleImportAddress(trimmed, 'read-only');
   };
 
   /**

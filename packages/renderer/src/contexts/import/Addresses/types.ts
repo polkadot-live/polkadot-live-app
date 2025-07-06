@@ -9,6 +9,7 @@ import type {
 export interface AddressesContextInterface {
   getAccounts: (source: AccountSource) => ImportedGenericAccount[];
   getDefaultName: () => string;
+  getNextNames: (len: number) => string[];
   handleAddressImport: (genericAccount: ImportedGenericAccount) => void;
   handleAddressDelete: (genericAccount: ImportedGenericAccount) => boolean;
   handleAddressUpdate: (genericAccount: ImportedGenericAccount) => void;

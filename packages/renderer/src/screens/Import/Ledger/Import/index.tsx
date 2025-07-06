@@ -49,7 +49,7 @@ import type { ChainID } from '@polkadot-live/types/chains';
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   const { cacheGet, getTheme } = useConnections();
   const { handleImportAddress } = useImportHandler();
-  const { isAlreadyImported, getAccounts } = useAddresses();
+  const { isAlreadyImported, getAccounts, getNextNames } = useAddresses();
   const genericAccounts = getAccounts('ledger');
 
   const ledger = useLedgerHardware();
@@ -116,7 +116,9 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
     }
 
     ledger.setIsImporting(true);
+    const accountNames = getNextNames(selectedAddresses.length);
 
+    let i = 0;
     for (const selected of selectedAddresses) {
       const { address: add, pubKey: pk, device } = selected;
 
@@ -124,7 +126,11 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
         continue;
       }
 
-      await handleImportAddress(add, 'ledger', false, pk, device);
+      const accountName = accountNames[i];
+      const toast = accountNames.length === 1;
+      const s = 'ledger';
+      await handleImportAddress(add, s, accountName, device, toast);
+      i += 1;
     }
 
     ledger.resetAll();

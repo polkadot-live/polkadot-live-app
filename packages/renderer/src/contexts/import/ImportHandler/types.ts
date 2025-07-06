@@ -11,9 +11,9 @@ export interface ImportHandlerContextInterface {
   handleImportAddress: (
     address: string,
     source: AccountSource,
-    mainImport: boolean,
-    pubKey?: string,
-    device?: AnyData
+    accountName?: string,
+    device?: AnyData,
+    showToast?: boolean
   ) => Promise<void>;
   handleImportAddressFromBackup: (
     genericAccount: ImportedGenericAccount

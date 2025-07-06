@@ -27,9 +27,8 @@ export const WalletConnectImportProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { isAlreadyImported } = useAddresses();
+  const { isAlreadyImported, getNextNames } = useAddresses();
   const { handleImportAddress } = useImportHandler();
-
   const [isImporting, setIsImporting] = useState(false);
 
   /**
@@ -131,6 +130,9 @@ export const WalletConnectImportProvider = ({
     }
 
     setIsImporting(true);
+    const accountNames = getNextNames(selectedAddresses.length);
+
+    let i = 0;
     for (const selected of selectedAddresses) {
       const { encoded, publicKeyHex } = selected;
 
@@ -138,7 +140,12 @@ export const WalletConnectImportProvider = ({
         continue;
       }
 
-      await handleImportAddress(encoded, 'wallet-connect', false);
+      const accountName = accountNames[i];
+      const toast = accountNames.length === 1;
+      const s = 'wallet-connect';
+      const d = undefined;
+      await handleImportAddress(encoded, s, accountName, d, toast);
+      i += 1;
     }
 
     setIsImporting(false);

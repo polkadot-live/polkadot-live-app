@@ -69,7 +69,7 @@ export const Reader = () => {
 
   // Handle new vault address to local storage and close overlay.
   const handleVaultImport = async (publicKeyHex: string, enAddress: string) => {
-    await handleImportAddress(enAddress, 'vault', true);
+    await handleImportAddress(enAddress, 'vault');
     setImported(true);
   };
 

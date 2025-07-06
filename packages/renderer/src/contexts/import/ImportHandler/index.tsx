@@ -40,11 +40,12 @@ export const ImportHandlerProvider = ({
   const handleImportAddress = async (
     enAddress: string,
     source: AccountSource,
-    mainImport = true, // Whether to send the address to main window.
-    device?: AnyData
+    accountName?: string,
+    device?: AnyData,
+    showToast = true
   ) => {
     // Construct generic account and set import status.
-    const genericAccount = construct(enAddress, source, device);
+    const genericAccount = construct(enAddress, source, device, accountName);
     const { encodedAccounts } = genericAccount;
 
     for (const enAccount of Object.values(encodedAccounts)) {
@@ -53,7 +54,7 @@ export const ImportHandlerProvider = ({
       setStatusForAccount(`${chainId}:${address}`, source, status);
 
       // Send data to main renderer for processing.
-      if ((isImported && !getOnlineMode()) || !mainImport) {
+      if (isImported && !getOnlineMode()) {
         enAccount.isImported = false;
       } else if (isImported) {
         postToMain(genericAccount, enAccount);
@@ -65,11 +66,12 @@ export const ImportHandlerProvider = ({
     await persist(genericAccount);
 
     // Render success message if not importing to main window.
-    renderToast(
-      `Account added successfully as ${genericAccount.accountName}`,
-      'import-success',
-      'success'
-    );
+    showToast &&
+      renderToast(
+        `Account added successfully as ${genericAccount.accountName}`,
+        'import-success',
+        'success'
+      );
   };
 
   /**
@@ -97,9 +99,10 @@ export const ImportHandlerProvider = ({
   const construct = (
     address: string,
     source: AccountSource,
-    device?: AnyData
+    device?: AnyData,
+    accountName?: string
   ): ImportedGenericAccount => {
-    const accountName = getDefaultName();
+    const _accountName = accountName || getDefaultName();
     const encodedAccounts = {} as Record<ChainID, EncodedAccount>;
     const publicKeyHex = u8aToHex(decodeAddress(address));
 
@@ -108,7 +111,7 @@ export const ImportHandlerProvider = ({
       const encoded = encodeAddress(publicKeyHex, prefix);
       encodedAccounts[chainId] = {
         address: encoded,
-        alias: `${accountName}-${cid}`,
+        alias: `${_accountName}-${cid}`,
         chainId,
         isBookmarked: false,
         isImported: false,
@@ -116,7 +119,7 @@ export const ImportHandlerProvider = ({
     }
 
     return {
-      accountName,
+      accountName: _accountName,
       encodedAccounts,
       publicKeyHex,
       source,

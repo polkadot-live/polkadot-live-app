@@ -160,11 +160,33 @@ export const AddressesProvider = ({
     return true;
   };
 
+  /**
+   * Get next `n` account names.
+   */
+  const getNextNames = (len: number): string[] => {
+    const accountNames: string[] = [];
+    let uniqueName = getDefaultName();
+
+    Array.from({ length: len }, (_, i) => {
+      if (i > 0) {
+        let n = parseInt(uniqueName.split(' ').pop()!) + 1;
+        while (!isUniqueAccountName(`Account ${n}`)) {
+          n += 1;
+        }
+        uniqueName = `Account ${n}`;
+      }
+      accountNames.push(uniqueName);
+    });
+
+    return accountNames;
+  };
+
   return (
     <AddressesContext.Provider
       value={{
         getAccounts,
         getDefaultName,
+        getNextNames,
         handleAddressImport,
         handleAddressDelete,
         handleAddressUpdate,
