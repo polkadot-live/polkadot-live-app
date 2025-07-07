@@ -26,6 +26,8 @@ export default {
     'packages/main/dist',
     'packages/preload/dist',
     'packages/renderer/dist',
+    'packages/core/dist',
+    'packages/ui/dist',
     'package.json',
     ...(await findFilesThatShouldBeExcluded()),
   ],
