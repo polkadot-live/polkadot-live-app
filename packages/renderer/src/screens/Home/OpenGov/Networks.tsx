@@ -56,43 +56,41 @@ export const Networks = ({ setBreadcrumb, setSection }: NetworksProps) => {
 
               {/** Content */}
               <UI.AccordionContent transparent={true}>
-                <ItemsColumn>
-                  {getSortedKeys().length === 0 ? (
-                    <NoOpenGov />
-                  ) : (
-                    <>
-                      {getSortedKeys().map((chainId, i) => (
-                        <ItemEntryWrapper
-                          whileHover={{ scale: 1.01 }}
-                          whileTap={{ scale: 0.99 }}
-                          key={`manage_chain_${i}`}
-                          onClick={() => handleClickOpenGovChain(chainId)}
-                        >
-                          <div className="inner">
-                            <div>
-                              <span>
-                                <UI.ChainIcon
-                                  chainId={chainId}
-                                  className="chain-icon"
-                                />
-                              </span>
-                              <div className="content">
-                                <h3>{chainId}</h3>
-                              </div>
-                            </div>
-                            <div>
-                              <ButtonText
-                                text=""
-                                iconRight={faChevronRight}
-                                iconTransform="shrink-3"
+                {getSortedKeys().length === 0 ? (
+                  <NoOpenGov />
+                ) : (
+                  <ItemsColumn>
+                    {getSortedKeys().map((chainId, i) => (
+                      <ItemEntryWrapper
+                        whileHover={{ scale: 1.01 }}
+                        whileTap={{ scale: 0.99 }}
+                        key={`manage_chain_${i}`}
+                        onClick={() => handleClickOpenGovChain(chainId)}
+                      >
+                        <div className="inner">
+                          <div>
+                            <span>
+                              <UI.ChainIcon
+                                chainId={chainId}
+                                className="chain-icon"
                               />
+                            </span>
+                            <div className="content">
+                              <h3>{chainId}</h3>
                             </div>
                           </div>
-                        </ItemEntryWrapper>
-                      ))}
-                    </>
-                  )}
-                </ItemsColumn>
+                          <div>
+                            <ButtonText
+                              text=""
+                              iconRight={faChevronRight}
+                              iconTransform="shrink-3"
+                            />
+                          </div>
+                        </div>
+                      </ItemEntryWrapper>
+                    ))}
+                  </ItemsColumn>
+                )}
               </UI.AccordionContent>
             </Accordion.Item>
           </Style.FlexColumn>

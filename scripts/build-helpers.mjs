@@ -76,6 +76,8 @@ export async function findFilesThatShouldBeExcluded() {
 
   const allFilesToExclude = [];
   const electronPackageNames = [
+    '@polkadot-live/consts',
+    '@polkadot-live/core',
     '@polkadot-live/main',
     '@polkadot-live/preload',
     '@polkadot-live/renderer',
@@ -102,7 +104,7 @@ export async function findFilesThatShouldBeExcluded() {
     // Package files are excluded if their path doesn't match any patterns.
     let filesToExclude = getFiles(path, patterns);
 
-    // Transform exluded paths into `!node_modules/<package-name>/<file-name>`.
+    // Transform excluded paths into `!node_modules/<package-name>/<file-name>`.
     filesToExclude = filesToExclude.map((f) =>
       join('!node_modules', name, f.replace(path + sep, ''))
     );
