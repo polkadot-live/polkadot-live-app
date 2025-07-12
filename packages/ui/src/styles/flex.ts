@@ -7,6 +7,7 @@ export const EmptyWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: transparent !important;
 
   > div {
     display: flex;
