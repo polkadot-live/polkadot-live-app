@@ -147,8 +147,8 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
         <Wrappers.PaginationRow>
           <Styles.FlexRow $gap={'0.75rem'} style={{ flex: 1 }}>
             <button
-              className={`btn ${curPage === 1 && 'disable'} ${fetchingMetadata && 'fetching'}`}
-              disabled={curPage === 1}
+              className={`btn ${fetchingMetadata && 'fetching'}`}
+              disabled={curPage === 1 || referenda.length === 0}
               onClick={() => onPageArrowClick(tab, 'prev')}
             >
               <FontAwesomeIcon icon={faCaretLeft} />
@@ -170,8 +170,8 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
               </Styles.FlexRow>
             ))}
             <button
-              className={`btn ${curPage === pageCount && 'disable'} ${fetchingMetadata && 'fetching'}`}
-              disabled={curPage === pageCount}
+              className={`btn ${fetchingMetadata && 'fetching'}`}
+              disabled={curPage === pageCount || referenda.length === 0}
               onClick={() => onPageArrowClick(tab, 'next')}
             >
               <FontAwesomeIcon icon={faCaretRight} />

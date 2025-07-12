@@ -199,7 +199,7 @@ export const PaginationRow = styled.div`
     &.middle {
       border: 1px solid var(--border-subtle);
     }
-    &.disable {
+    &:disabled {
       color: var(--text-dimmed);
       cursor: not-allowed;
     }

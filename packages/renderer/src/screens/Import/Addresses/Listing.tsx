@@ -100,7 +100,11 @@ export const Listing = ({ source, setSection }: ManageAccountsProps) => {
                         ))}
                     </>
                   ) : (
-                    <p>No accounts imported.</p>
+                    <Styles.EmptyWrapper>
+                      <div>
+                        <p>No accounts have been imported yet.</p>
+                      </div>
+                    </Styles.EmptyWrapper>
                   )}
                 </ItemsColumn>
               </UI.AccordionContent>
