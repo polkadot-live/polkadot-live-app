@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.1-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.9.0-alpha...v0.9.1-alpha) (2025-07-12)
+
+
+### Bug Fixes
+
+* build scripts ([#1028](https://github.com/polkadot-live/polkadot-live-app/issues/1028)) ([4416269](https://github.com/polkadot-live/polkadot-live-app/commit/44162691529f18ee394ff035ead8eea0ce6c1b10))
+
 ## [0.9.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.8.0-alpha...v0.9.0-alpha) (2025-07-06)
 
 
