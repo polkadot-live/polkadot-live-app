@@ -16,6 +16,7 @@ import {
 import type { AccountSource } from '@polkadot-live/types/accounts';
 import type {
   ChainID,
+  EcosystemID,
   LedgerSelectNetworkData,
 } from '@polkadot-live/types/chains';
 import type { NodeEndpoint } from '@polkadot-live/types/apis';
@@ -282,3 +283,13 @@ export const getSupportedSources = (): AccountSource[] => [
   'vault',
   'wallet-connect',
 ];
+
+/**
+ * Returns a mapping of ecosystem IDs to their corresponding chain IDs.
+ */
+export const getEcosystemChainMap = (): Map<EcosystemID, ChainID[]> =>
+  new Map([
+    ['Polkadot', ['Polkadot', 'Polkadot Asset Hub', 'Polkadot People']],
+    ['Kusama', ['Kusama', 'Kusama Asset Hub', 'Kusama People']],
+    ['Westend', ['Westend', 'Westend Asset Hub', 'Westend People']],
+  ]);

@@ -60,8 +60,6 @@ export const FooterWrapper = styled.div`
   .network-list-wrapper {
     h3 {
       font-size: 1.1rem;
-      margin-bottom: 0.25rem;
-      margin-left: 0.25rem;
     }
     display: flex;
     flex-direction: column;

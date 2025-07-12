@@ -1,8 +1,12 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as UI from '@polkadot-live/ui/components';
+import * as Accordion from '@radix-ui/react-accordion';
 import * as FA from '@fortawesome/free-solid-svg-icons';
+
 import { faCircle as faCircleRegular } from '@fortawesome/free-regular-svg-icons';
+import { getEcosystemChainMap } from '@polkadot-live/consts/chains';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   useBootstrapping,
@@ -14,9 +18,11 @@ import { useConnections } from '@ren/contexts/common';
 import { useState } from 'react';
 import { FooterWrapper, NetworkItem } from './Wrapper';
 import { SelectRpc } from './SelectRpc';
-import { FlexRow } from '@polkadot-live/ui/styles';
-import { ChainIcon, TooltipRx } from '@polkadot-live/ui/components';
+import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 import { PuffLoader } from 'react-spinners';
+import { ChevronDownIcon } from '@radix-ui/react-icons';
+
+import type { EcosystemID } from 'packages/types/src/chains';
 import type { FlattenedAPIData } from '@polkadot-live/types/apis';
 
 export const Footer = () => {
@@ -39,6 +45,9 @@ export const Footer = () => {
 
   // Flag controlling whether footer is expanded.
   const [expanded, setExpanded] = useState<boolean>(false);
+  const [accordionValue, setAccordionValue] = useState<EcosystemID[]>([
+    'Polkadot',
+  ]);
 
   // Get number of connected APIs.
   const connectionsCount = () =>
@@ -116,75 +125,116 @@ export const Footer = () => {
             </div>
           )}
         </FlexRow>
-        {expanded &&
-          [...chains.entries()].map(([chainId, apiData]) => (
-            <NetworkItem key={`${chainId}_dedot_network`}>
-              <div className="left">
-                <ChainIcon chainId={chainId} width={14} />
-                <h4>{chainId}</h4>
-              </div>
-              <div className="right">
-                <FlexRow $gap={'1.5rem'}>
-                  {/* RPC select box */}
-                  <SelectRpc
-                    apiData={apiData}
-                    setWorkingEndpoint={setWorkingEndpoint}
-                    disabled={isWorking(chainId) || !isConnected}
-                  />
 
-                  {/* Connect button */}
-                  <div className="connect">
-                    <TooltipRx
-                      text={connectTooltip(apiData)}
-                      side="top"
-                      style={{ zIndex: 99 }}
-                      theme={theme}
+        {expanded && (
+          <UI.AccordionWrapper>
+            <Accordion.Root
+              className="AccordionRoot"
+              type="multiple"
+              value={accordionValue}
+              onValueChange={(val) => setAccordionValue(val as EcosystemID[])}
+            >
+              <FlexColumn>
+                {[...getEcosystemChainMap().entries()].map(([ecosystemId]) => (
+                  <Accordion.Item
+                    key={`${ecosystemId}`}
+                    className="AccordionItem AccordionItemNetwork"
+                    value={ecosystemId}
+                  >
+                    <UI.AccordionTrigger
+                      narrow={false}
+                      height={'auto'}
+                      className="AccordionTriggerNetwork"
                     >
-                      <button
-                        onClick={async () => await onConnectClick(chainId)}
-                        disabled={
-                          apiData.status === 'connected' ||
-                          isWorking(chainId) ||
-                          !isConnected
-                        }
-                      >
-                        <FontAwesomeIcon
-                          icon={FA.faPlug}
-                          transform={'grow-2'}
-                        />
-                      </button>
-                    </TooltipRx>
-                  </div>
+                      <ChevronDownIcon
+                        className="AccordionChevron"
+                        aria-hidden
+                      />
+                      <UI.TriggerHeader>{ecosystemId}</UI.TriggerHeader>
+                    </UI.AccordionTrigger>
+                    <UI.AccordionContent
+                      transparent={true}
+                      className={'AccordionContentNetwork'}
+                    >
+                      {[...chains.entries()]
+                        .filter(([chainId]) => chainId.startsWith(ecosystemId))
+                        .map(([chainId, apiData]) => (
+                          <NetworkItem key={`${chainId}`}>
+                            <div className="left">
+                              <UI.ChainIcon chainId={chainId} width={14} />
+                              <h4>{chainId}</h4>
+                            </div>
+                            <div className="right">
+                              <FlexRow $gap={'1.5rem'}>
+                                {/* RPC select box */}
+                                <SelectRpc
+                                  apiData={apiData}
+                                  setWorkingEndpoint={setWorkingEndpoint}
+                                  disabled={isWorking(chainId) || !isConnected}
+                                />
 
-                  {/* Disconnect button */}
-                  <div className="disconnect">
-                    <TooltipRx
-                      text={disconnectTooltip(apiData)}
-                      side="top"
-                      style={{ zIndex: 99 }}
-                      theme={theme}
-                    >
-                      <button
-                        onClick={async () =>
-                          await onDisconnectClick(apiData.chainId)
-                        }
-                        disabled={
-                          !allowDisconnect(apiData) ||
-                          isWorking(chainId) ||
-                          !isConnected
-                        }
-                      >
-                        <FontAwesomeIcon
-                          icon={FA.faCircleXmark}
-                          transform={'grow-2'}
-                        />
-                      </button>
-                    </TooltipRx>
-                  </div>
-                </FlexRow>
-              </div>
-            </NetworkItem>
-          ))}
+                                {/* Connect button */}
+                                <div className="connect">
+                                  <UI.TooltipRx
+                                    text={connectTooltip(apiData)}
+                                    side="top"
+                                    style={{ zIndex: 99 }}
+                                    theme={theme}
+                                  >
+                                    <button
+                                      onClick={async () =>
+                                        await onConnectClick(chainId)
+                                      }
+                                      disabled={
+                                        apiData.status === 'connected' ||
+                                        isWorking(chainId) ||
+                                        !isConnected
+                                      }
+                                    >
+                                      <FontAwesomeIcon
+                                        icon={FA.faPlug}
+                                        transform={'grow-2'}
+                                      />
+                                    </button>
+                                  </UI.TooltipRx>
+                                </div>
+
+                                {/* Disconnect button */}
+                                <div className="disconnect">
+                                  <UI.TooltipRx
+                                    text={disconnectTooltip(apiData)}
+                                    side="top"
+                                    style={{ zIndex: 99 }}
+                                    theme={theme}
+                                  >
+                                    <button
+                                      onClick={async () =>
+                                        await onDisconnectClick(apiData.chainId)
+                                      }
+                                      disabled={
+                                        !allowDisconnect(apiData) ||
+                                        isWorking(chainId) ||
+                                        !isConnected
+                                      }
+                                    >
+                                      <FontAwesomeIcon
+                                        icon={FA.faCircleXmark}
+                                        transform={'grow-2'}
+                                      />
+                                    </button>
+                                  </UI.TooltipRx>
+                                </div>
+                              </FlexRow>
+                            </div>
+                          </NetworkItem>
+                        ))}
+                    </UI.AccordionContent>
+                  </Accordion.Item>
+                ))}
+              </FlexColumn>
+            </Accordion.Root>
+          </UI.AccordionWrapper>
+        )}
       </section>
     </FooterWrapper>
   );
