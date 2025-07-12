@@ -21,9 +21,8 @@ export type ChainStatus =
   | 'reconnecting';
 
 // For network select box.
-export interface SelectNetworkData {
+export interface LedgerSelectNetworkData {
   network: string;
   ledgerId: string;
   iconWidth: number;
-  iconFill: string;
 }

@@ -55,12 +55,6 @@ export const ItemEntryWrapper = styled(motion.div)`
       column-gap: 1.25rem;
       overflow: hidden;
 
-      span > .chain-icon {
-        width: 16px;
-        fill: rgb(160, 37, 90);
-        margin-right: 4px;
-        margin-top: 4px;
-      }
       .content {
         flex: 1;
         display: flex;

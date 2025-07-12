@@ -120,11 +120,7 @@ export const Footer = () => {
           [...chains.entries()].map(([chainId, apiData]) => (
             <NetworkItem key={`${chainId}_dedot_network`}>
               <div className="left">
-                <ChainIcon
-                  chainId={chainId}
-                  className="icon"
-                  style={{ fill: 'var(--text-color-primary)' }}
-                />
+                <ChainIcon chainId={chainId} width={14} />
                 <h4>{chainId}</h4>
               </div>
               <div className="right">
