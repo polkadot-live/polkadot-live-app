@@ -60,8 +60,6 @@ export const FooterWrapper = styled.div`
   .network-list-wrapper {
     h3 {
       font-size: 1.1rem;
-      margin-bottom: 0.25rem;
-      margin-left: 0.25rem;
     }
     display: flex;
     flex-direction: column;
@@ -87,14 +85,12 @@ export const NetworkItem = styled.div`
     column-gap: 0.55rem;
     padding: 0 0.5rem;
 
+    :first-child {
+      margin-right: 0.5rem;
+    }
     > h4 {
       min-width: 75px;
       font-size: 1rem;
-    }
-    > .icon {
-      width: 1.2rem;
-      height: 1.2rem;
-      margin-right: 0.5rem;
     }
   }
   .right {

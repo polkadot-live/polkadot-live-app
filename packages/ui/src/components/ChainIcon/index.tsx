@@ -20,7 +20,7 @@ export const ChainIcon = ({
       return (
         <PolkadotIcon
           className={className}
-          fill={fill}
+          fill={fill || 'rgb(160, 37, 90)'}
           style={style}
           width={width}
         />

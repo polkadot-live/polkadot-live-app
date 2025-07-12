@@ -14,7 +14,11 @@ import {
   westend_people,
 } from '@substrate/connect-known-chains';
 import type { AccountSource } from '@polkadot-live/types/accounts';
-import type { ChainID, SelectNetworkData } from '@polkadot-live/types/chains';
+import type {
+  ChainID,
+  EcosystemID,
+  LedgerSelectNetworkData,
+} from '@polkadot-live/types/chains';
 import type { NodeEndpoint } from '@polkadot-live/types/apis';
 
 interface Chain {
@@ -227,26 +231,16 @@ export const chainUnits = (chain: ChainID) =>
 
 export const getCategory = (category: string) => CategoryList.get(category);
 
-export const getSelectNetworkData = (
-  darkMode: boolean
-): SelectNetworkData[] => [
+export const getSelectLedgerNetworkData = (): LedgerSelectNetworkData[] => [
   {
     network: 'Polkadot',
     ledgerId: 'dot',
     iconWidth: 18,
-    iconFill: '#ac2461',
   },
   {
     network: 'Kusama',
     ledgerId: 'kusama',
-    iconWidth: 24,
-    iconFill: darkMode ? '#e7e7e7' : '#2f2f2f',
-  },
-  {
-    network: 'Westend',
-    ledgerId: '',
-    iconWidth: 24,
-    iconFill: darkMode ? '#e7e7e7' : '#2f2f2f',
+    iconWidth: 18,
   },
 ];
 
@@ -289,3 +283,13 @@ export const getSupportedSources = (): AccountSource[] => [
   'vault',
   'wallet-connect',
 ];
+
+/**
+ * Returns a mapping of ecosystem IDs to their corresponding chain IDs.
+ */
+export const getEcosystemChainMap = (): Map<EcosystemID, ChainID[]> =>
+  new Map([
+    ['Polkadot', ['Polkadot', 'Polkadot Asset Hub', 'Polkadot People']],
+    ['Kusama', ['Kusama', 'Kusama Asset Hub', 'Kusama People']],
+    ['Westend', ['Westend', 'Westend Asset Hub', 'Westend People']],
+  ]);

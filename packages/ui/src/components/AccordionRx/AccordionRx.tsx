@@ -7,7 +7,10 @@ import type { AnyData } from '@polkadot-live/types/misc';
 
 /** Components */
 export const AccordionTrigger = forwardRef(
-  ({ children, className, narrow, ...props }: AnyData, forwardedRef) => (
+  (
+    { children, className, narrow, height, ...props }: AnyData,
+    forwardedRef
+  ) => (
     <Accordion.Header className="AccordionHeader">
       <Accordion.Trigger
         className={`AccordionTrigger ${className}`}
@@ -15,8 +18,8 @@ export const AccordionTrigger = forwardRef(
         ref={forwardedRef}
       >
         <div
+          style={{ height: height || `${narrow ? '36px' : '45px'}` }}
           className="HeaderContent"
-          style={{ height: `${narrow ? '36px' : '45px'}` }}
         >
           {children}
         </div>

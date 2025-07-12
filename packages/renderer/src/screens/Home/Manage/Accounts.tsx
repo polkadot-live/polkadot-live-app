@@ -264,10 +264,7 @@ export const Accounts = ({
                         <div className="inner">
                           <div>
                             <span>
-                              <UI.ChainIcon
-                                chainId={chain}
-                                className="chain-icon"
-                              />
+                              <UI.ChainIcon chainId={chain} width={16} />
                             </span>
                             <div className="content">
                               <h3>{chain}</h3>

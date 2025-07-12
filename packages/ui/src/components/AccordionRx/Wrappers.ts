@@ -158,6 +158,39 @@ export const AccordionWrapper = styled.div<{ $onePart?: boolean }>`
     margin-top: 1rem;
   }
 
+  /**
+   * Custom styles for footer networks accordion.
+   */
+  .AccordionItemNetwork {
+    background-color: var(--background-window);
+    border-radius: 0.375rem;
+  }
+  .AccordionTriggerNetwork {
+    background-color: var(--background-window);
+    height: auto;
+
+    .HeaderContent {
+      height: auto;
+      padding-top: 1.25rem;
+      padding-bottom: 1.25rem;
+      background-color: var(--background-window);
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+  }
+  .AccordionContentNetwork {
+    .AccordionContentTransparent {
+      margin-top: 0;
+      > div {
+        border-radius: 0;
+      }
+      > div:last-of-type {
+        border-bottom-left-radius: 0.375rem;
+        border-bottom-right-radius: 0.375rem;
+      }
+    }
+  }
+
   @keyframes slideDown {
     from {
       height: 0;

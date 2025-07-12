@@ -62,25 +62,11 @@ export const OverviewExplore: React.FC<OverviewExploreProps> = ({
       <Styles.FlexColumn $rowGap={'0.25rem'}>
         <Styles.FlexRow $gap={'0.25rem'} style={{ marginTop: '1rem' }}>
           <NetworkHeader style={{ borderTopLeftRadius: '0.375rem' }}>
-            <UI.ChainIcon
-              chainId="Polkadot"
-              style={{
-                width: '1.3rem',
-                opacity: '0.8',
-                fill: 'var(--text-color-primary)',
-              }}
-            />
+            <UI.ChainIcon chainId="Polkadot" style={{ width: '1.45rem' }} />
             <h4>Polkadot</h4>
           </NetworkHeader>
           <NetworkHeader style={{ borderTopRightRadius: '0.375rem' }}>
-            <UI.ChainIcon
-              chainId="Kusama"
-              style={{
-                width: '2.2rem',
-                opacity: '0.8',
-                fill: 'var(--text-color-primary)',
-              }}
-            />
+            <UI.ChainIcon chainId="Kusama" style={{ width: '1.75rem' }} />
             <h4>Kusama</h4>
           </NetworkHeader>
         </Styles.FlexRow>

@@ -149,21 +149,6 @@ export const DialogManageAccounts = ({
                         <UI.ChainIcon
                           chainId={cid as ChainID}
                           className="NetworkIcon"
-                          style={{
-                            fill: [
-                              'Polkadot',
-                              'Polkadot Asset Hub',
-                              'Polkadot People',
-                            ].includes(cid)
-                              ? '#ac2461'
-                              : [
-                                    'Kusama',
-                                    'Kusama Asset Hub',
-                                    'Kusama People',
-                                  ].includes(cid)
-                                ? 'rgb(133, 113, 177)'
-                                : undefined,
-                          }}
                         />
                         <span className="Overflow NetworkLabel">
                           {a.chainId}
