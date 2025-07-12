@@ -13,7 +13,7 @@ import {
 import { useConnections } from '@ren/contexts/common';
 import { useState } from 'react';
 import { FooterWrapper, NetworkItem } from './Wrapper';
-import { SelectRpc } from './RpcSelect';
+import { SelectRpc } from './SelectRpc';
 import { FlexRow } from '@polkadot-live/ui/styles';
 import { ChainIcon, TooltipRx } from '@polkadot-live/ui/components';
 import { PuffLoader } from 'react-spinners';
