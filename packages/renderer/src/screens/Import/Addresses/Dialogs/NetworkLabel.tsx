@@ -55,22 +55,7 @@ export const NetworkLabel = ({
   >
     {chainId && (
       <div className="IconWrapper">
-        <ChainIcon
-          chainId={chainId as ChainID}
-          style={{
-            fill: [
-              'Polkadot',
-              'Polkadot Asset Hub',
-              'Polkadot People',
-            ].includes(chainId)
-              ? '#ac2461'
-              : ['Kusama', 'Kusama Asset Hub', 'Kusama People'].includes(
-                    chainId
-                  )
-                ? 'rgb(133, 113, 177)'
-                : undefined,
-          }}
-        />
+        <ChainIcon chainId={chainId as ChainID} />
       </div>
     )}
     <label

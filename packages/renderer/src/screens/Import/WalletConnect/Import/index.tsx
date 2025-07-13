@@ -240,11 +240,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                           <ItemsColumn>
                             {wcNetworks.map(({ chainId, selected }, i) => (
                               <ImportAddressRow key={i}>
-                                <ChainIcon
-                                  chainId={chainId}
-                                  width={20}
-                                  fill={chainId === 'Polkadot' ? '#ac2461' : ''}
-                                />
+                                <ChainIcon chainId={chainId} width={18} />
                                 <div className="addressInfo">
                                   <h2>{chainId}</h2>
                                 </div>

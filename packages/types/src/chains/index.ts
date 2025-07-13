@@ -1,6 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+// Ecosystem IDs.
+export type EcosystemID = 'Polkadot' | 'Kusama' | 'Westend';
+
 // Supported chains as string literals.
 export type ChainID =
   | 'Polkadot'
@@ -21,9 +24,8 @@ export type ChainStatus =
   | 'reconnecting';
 
 // For network select box.
-export interface SelectNetworkData {
+export interface LedgerSelectNetworkData {
   network: string;
   ledgerId: string;
   iconWidth: number;
-  iconFill: string;
 }

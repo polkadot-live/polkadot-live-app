@@ -70,10 +70,7 @@ export const Networks = ({ setBreadcrumb, setSection }: NetworksProps) => {
                         <div className="inner">
                           <div>
                             <span>
-                              <UI.ChainIcon
-                                chainId={chainId}
-                                className="chain-icon"
-                              />
+                              <UI.ChainIcon chainId={chainId} width={16} />
                             </span>
                             <div className="content">
                               <h3>{chainId}</h3>

@@ -42,7 +42,7 @@ import { AddressListFooter, ImportAddressRow } from '../../Wrappers';
 import { InfoCardSteps } from '../../InfoCardSteps';
 import { determineStatusFromCodes } from './Utils';
 import { ItemsColumn } from '@ren/screens/Home/Manage/Wrappers';
-import { getSelectNetworkData } from '@polkadot-live/consts/chains';
+import { getSelectLedgerNetworkData } from '@polkadot-live/consts/chains';
 import type { ImportProps } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
 
@@ -256,40 +256,24 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                               </Select.ScrollUpButton>
                               <Select.Viewport className="SelectViewport">
                                 <Select.Group>
-                                  {getSelectNetworkData(darkMode)
-                                    .filter(({ network }) =>
-                                      ['Polkadot', 'Kusama'].includes(network)
-                                    )
-                                    .map(
-                                      ({
-                                        network,
-                                        ledgerId,
-                                        iconWidth,
-                                        iconFill,
-                                      }) => (
-                                        <UI.SelectItem
-                                          key={ledgerId}
-                                          value={network}
-                                        >
-                                          <div className="innerRow">
-                                            <div>
-                                              <ChainIcon
-                                                chainId={network as ChainID}
-                                                width={iconWidth}
-                                                fill={iconFill}
-                                                style={{
-                                                  marginLeft:
-                                                    network === 'Polkadot'
-                                                      ? '2px'
-                                                      : '0',
-                                                }}
-                                              />
-                                            </div>
-                                            <div>{network}</div>
+                                  {getSelectLedgerNetworkData().map(
+                                    ({ network, ledgerId, iconWidth }) => (
+                                      <UI.SelectItem
+                                        key={ledgerId}
+                                        value={network}
+                                      >
+                                        <div className="innerRow">
+                                          <div>
+                                            <ChainIcon
+                                              chainId={network as ChainID}
+                                              width={iconWidth}
+                                            />
                                           </div>
-                                        </UI.SelectItem>
-                                      )
-                                    )}
+                                          <div>{network}</div>
+                                        </div>
+                                      </UI.SelectItem>
+                                    )
+                                  )}
                                 </Select.Group>
                               </Select.Viewport>
                               <Select.ScrollDownButton className="SelectScrollButton">
