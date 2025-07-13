@@ -57,6 +57,7 @@ export const FooterWrapper = styled.div`
 
   &.expanded {
     height: calc(100% - 35px); // minus height of header
+    padding-bottom: 1rem;
     border-top: none;
 
     .status {

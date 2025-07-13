@@ -63,9 +63,9 @@ export const AccordionWrapper = styled.div<{ $onePart?: boolean }>`
   }
 
   .AccordionTrigger {
+    color: var(--text-color-primary);
     display: flex;
     flex: 1;
-    color: var(--text-color-primary);
     display: flex;
     gap: 1rem;
     font-family: InterSemiBold, sans-serif;
@@ -131,8 +131,8 @@ export const AccordionWrapper = styled.div<{ $onePart?: boolean }>`
   }
 
   .AccordionChevron {
-    margin-top: -2px;
     color: var(--text-color-secondary);
+    margin-top: -2px;
     transition: transform 200ms cubic-bezier(0.87, 0, 0.13, 1);
     transform: rotate(-90deg);
   }
@@ -170,10 +170,10 @@ export const AccordionWrapper = styled.div<{ $onePart?: boolean }>`
     height: auto;
 
     .HeaderContent {
+      background-color: var(--background-window);
       height: auto;
       padding-top: 1.25rem;
       padding-bottom: 1.25rem;
-      background-color: var(--background-window);
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
 
