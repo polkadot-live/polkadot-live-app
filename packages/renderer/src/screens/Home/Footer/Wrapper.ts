@@ -9,7 +9,6 @@ export const FooterWrapper = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
   transition: height 0.7s cubic-bezier(0.15, 1, 0.1, 1);
   position: fixed;
   bottom: 0;
@@ -32,12 +31,20 @@ export const FooterWrapper = styled.div`
     padding: 0 1rem;
     transition: height 0.2s;
 
-    > div:first-of-type {
+    > div:first-of-type,
+    h5 {
+      color: var(--text-color-secondary);
+    }
+    > div:nth-of-type(2) {
       flex-grow: 1;
     }
 
     button {
       padding: 0.25rem 0.5rem 0.25rem 1rem;
+      opacity: 0.4;
+      &:hover {
+        opacity: 1;
+      }
     }
     > *:first-child {
       margin-right: 0.5rem;
@@ -58,8 +65,22 @@ export const FooterWrapper = styled.div`
   }
 
   .network-list-wrapper {
-    h3 {
-      font-size: 1.1rem;
+    .TopHeading {
+      border-bottom: 1px solid var(--border-primary-color);
+      margin: 0.75rem 0.2rem 0.2rem !important;
+      padding-bottom: 1rem;
+      h3 {
+        font-size: 1.08rem;
+        flex: 1;
+      }
+      .Spinner {
+        position: relative;
+        > :first-child {
+          position: absolute;
+          margin-right: 0.2rem;
+          top: 0;
+        }
+      }
     }
     display: flex;
     flex-direction: column;
@@ -69,7 +90,7 @@ export const FooterWrapper = styled.div`
 `;
 
 export const NetworkItem = styled.div`
-  background-color: var(--background-window);
+  background-color: var(--background-window-content);
   display: flex;
   align-items: center;
   column-gap: 0.55rem;
@@ -82,15 +103,14 @@ export const NetworkItem = styled.div`
     flex: 1;
     display: flex;
     align-items: center;
-    column-gap: 0.55rem;
-    padding: 0 0.5rem;
+    column-gap: 0.5rem;
+    padding: 0.25rem 0.5rem;
 
-    :first-child {
-      margin-right: 0.5rem;
-    }
     > h4 {
-      min-width: 75px;
+      color: var(--text-color-secondary);
+      min-width: fit-content;
       font-size: 1rem;
+      font: inherit;
     }
   }
   .right {
@@ -156,7 +176,7 @@ export const SelectRpcWrapper = styled.div`
       }
     }
     select {
-      color: var(--text-color-primary);
+      color: var(--text-color-secondary);
       border: 1px solid var(--border-primary-color);
       transition: background-color 0.15s ease-out;
 

@@ -176,11 +176,18 @@ export const AccordionWrapper = styled.div<{ $onePart?: boolean }>`
       background-color: var(--background-window);
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
+
+      h3 {
+        font-size: 1rem !important;
+      }
     }
   }
   .AccordionContentNetwork {
     .AccordionContentTransparent {
       margin-top: 0;
+      > div:first-of-type {
+        border-top: 1px solid var(--background-surface);
+      }
       > div {
         border-radius: 0;
       }

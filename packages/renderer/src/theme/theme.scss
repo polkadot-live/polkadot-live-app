@@ -4,6 +4,7 @@ SPDX-License-Identifier: GPL-3.0-only */
 .theme-dark {
   /* General: Backgrounds */
   --background-window: #111;
+  --background-window-content: #0e0e0e;
   --background-surface: #181818;
   --background-primary: #1c1c1c;
   --background-primary-hover: #212121;
@@ -117,6 +118,7 @@ SPDX-License-Identifier: GPL-3.0-only */
 .theme-light {
   /* General: Backgrounds */
   --background-window: #eee;
+  --background-window-content: #f3f3f3;
   --background-surface: #dadada;
   --background-primary: #e1e1e1;
   --background-primary-hover: #d8d8d8;
