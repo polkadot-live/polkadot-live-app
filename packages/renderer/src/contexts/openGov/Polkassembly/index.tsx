@@ -63,7 +63,7 @@ export const PolkassemblyProvider = ({
     });
 
     // Header requires `polkadot` or `kusama`.
-    const network = (chainId as string).toLowerCase();
+    const network = chainId === 'Polkadot Relay' ? 'polkadot' : 'kusama';
 
     // Make asynchronous requests to Polkassembly API for each referenda.
     const results = await Promise.all(

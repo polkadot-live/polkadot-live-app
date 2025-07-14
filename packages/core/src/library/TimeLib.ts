@@ -35,7 +35,7 @@ export const secondsUntilNextMinute = (minute: number): number => {
  */
 export const formatBlocksToTime = (chainId: ChainID, blocks: string) => {
   const secondsPerBlock =
-    chainId === 'Polkadot' || chainId === 'Kusama' ? 6 : 0;
+    chainId === 'Polkadot Relay' || chainId === 'Kusama Relay' ? 6 : 0;
 
   const seconds = parseInt(rmCommas(blocks)) * secondsPerBlock;
 

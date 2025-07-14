@@ -129,8 +129,8 @@ export const Accounts = ({
   /**
    * Set parent subscription tasks state when a chain is clicked.
    */
-  const handleClickChain = (chain: string) => {
-    const tasks = getChainSubscriptions(chain as ChainID);
+  const handleClickChain = (chainId: string) => {
+    const tasks = getChainSubscriptions(chainId as ChainID);
     const copy = copyTasks(tasks);
 
     setTypeClicked('chain');
@@ -138,7 +138,7 @@ export const Accounts = ({
       type: 'chain',
       tasks: copy,
     } as WrappedSubscriptionTasks);
-    setBreadcrumb(chain);
+    setBreadcrumb(chainId);
     setSection(1);
   };
 
@@ -254,20 +254,20 @@ export const Accounts = ({
                 </UI.AccordionTrigger>
                 <UI.AccordionContent transparent={true}>
                   <ItemsColumn>
-                    {Array.from(chainSubscriptions.keys()).map((chain, i) => (
+                    {Array.from(chainSubscriptions.keys()).map((chainId, i) => (
                       <ItemEntryWrapper
                         whileHover={{ scale: 1.01 }}
                         whileTap={{ scale: 0.99 }}
                         key={`manage_chain_${i}`}
-                        onClick={() => handleClickChain(chain)}
+                        onClick={() => handleClickChain(chainId)}
                       >
                         <div className="inner">
                           <div>
                             <span>
-                              <UI.ChainIcon chainId={chain} width={16} />
+                              <UI.ChainIcon chainId={chainId} width={16} />
                             </span>
                             <div className="content">
-                              <h3>{chain}</h3>
+                              <h3>{chainId}</h3>
                             </div>
                           </div>
                           <div>

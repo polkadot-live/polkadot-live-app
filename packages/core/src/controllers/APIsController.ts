@@ -144,19 +144,19 @@ export class APIsController {
    */
   static castClient = (chainId: ChainID, client: Api<keyof ClientTypes>) => {
     switch (chainId) {
-      case 'Polkadot':
+      case 'Polkadot Relay':
         return client as Api<'polkadot'>;
       case 'Polkadot Asset Hub':
         return client as Api<'statemint'>;
       case 'Polkadot People':
         return client as Api<'people-polkadot'>;
-      case 'Kusama':
+      case 'Kusama Relay':
         return client as Api<'kusama'>;
       case 'Kusama Asset Hub':
         return client as Api<'statemine'>;
       case 'Kusama People':
         return client as Api<'people-kusama'>;
-      case 'Westend':
+      case 'Westend Relay':
         return client as Api<'westend'>;
       case 'Westend Asset Hub':
         return client as Api<'westmint'>;

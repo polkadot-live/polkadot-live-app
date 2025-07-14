@@ -1,10 +1,13 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ChainList } from '@polkadot-live/consts/chains';
+import {
+  ChainList,
+  getChainIdFromRpcChain,
+} from '@polkadot-live/consts/chains';
 import { DedotClient, SmoldotProvider, WsProvider } from 'dedot';
 import type * as smoldot from 'smoldot/no-auto-bytecode';
-import type { ChainID } from '@polkadot-live/types/chains';
+import type { ChainID, RpcSystemChain } from '@polkadot-live/types/chains';
 import type {
   ClientTypes,
   FlattenedAPIData,
@@ -55,21 +58,21 @@ export class Api<T extends keyof ClientTypes> {
       case 'Polkadot People':
         return [
           await client.addChain({
-            chainSpec: ChainList.get('Polkadot')!.endpoints.lightClient,
+            chainSpec: ChainList.get('Polkadot Relay')!.endpoints.lightClient,
           }),
         ];
       case 'Kusama Asset Hub':
       case 'Kusama People':
         return [
           await client.addChain({
-            chainSpec: ChainList.get('Kusama')!.endpoints.lightClient,
+            chainSpec: ChainList.get('Kusama Relay')!.endpoints.lightClient,
           }),
         ];
       case 'Westend Asset Hub':
       case 'Westend People':
         return [
           await client.addChain({
-            chainSpec: ChainList.get('Westend')!.endpoints.lightClient,
+            chainSpec: ChainList.get('Westend Relay')!.endpoints.lightClient,
           }),
         ];
       default:
@@ -114,7 +117,9 @@ export class Api<T extends keyof ClientTypes> {
         cacheMetadata: !isTestEnv(),
       });
 
-      const chainId = (await api.rpc.system_chain()) as ChainID;
+      const rpcChain = (await api.rpc.system_chain()) as RpcSystemChain;
+      const chainId = getChainIdFromRpcChain(rpcChain);
+
       if (!ChainList.get(chainId)) {
         await this.disconnect();
       }

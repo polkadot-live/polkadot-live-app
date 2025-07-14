@@ -503,12 +503,12 @@ export const useMainMessagePorts = () => {
       }
 
       switch (chainId) {
-        case 'Polkadot': {
+        case 'Polkadot Relay': {
           const api = client.api as DedotClient<ClientTypes['polkadot']>;
           await fetchProcessReferenda(api);
           break;
         }
-        case 'Kusama': {
+        case 'Kusama Relay': {
           const api = client.api as DedotClient<ClientTypes['kusama']>;
           await fetchProcessReferenda(api);
           break;
@@ -614,14 +614,14 @@ export const useMainMessagePorts = () => {
       ).getApi();
 
       switch (chainId) {
-        case 'Polkadot': {
+        case 'Polkadot Relay': {
           await processInitTreasury(
             api as DedotClient<ClientTypes['polkadot']>,
             chainId
           );
           break;
         }
-        case 'Kusama': {
+        case 'Kusama Relay': {
           await processInitTreasury(
             api as DedotClient<ClientTypes['kusama']>,
             chainId

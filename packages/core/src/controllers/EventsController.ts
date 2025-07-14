@@ -13,6 +13,11 @@ import {
   getNominationPoolStateText,
 } from '../library/TextLib';
 import { getUnixTime } from 'date-fns';
+import {
+  getPolkassemblySubdomain,
+  getSubscanSubdomain,
+  getSubsquareSubdomain,
+} from '@polkadot-live/consts/chains';
 
 import type { AnyData } from '@polkadot-live/types/misc';
 import type {
@@ -62,12 +67,12 @@ export class EventsController {
           txActions: [],
           uriActions: [
             {
-              label: 'Polkassembly',
-              uri: `https://${chainId}.polkassembly.io/referenda/${referendumId}`,
+              label: 'Subsquare',
+              uri: `https://${getSubsquareSubdomain(chainId)}.subsquare.io/referenda/${referendumId}`,
             },
             {
-              label: 'Subsquare',
-              uri: `https://${chainId}.subsquare.io/referenda/${referendumId}`,
+              label: 'Polkassembly',
+              uri: `https://${getPolkassemblySubdomain(chainId)}.polkassembly.io/referenda/${referendumId}`,
             },
           ],
         };
@@ -95,12 +100,12 @@ export class EventsController {
           txActions: [],
           uriActions: [
             {
-              label: 'Polkassembly',
-              uri: `https://${chainId}.polkassembly.io/referenda/${referendumId}`,
+              label: 'Subsquare',
+              uri: `https://${getSubsquareSubdomain(chainId)}.subsquare.io/referenda/${referendumId}`,
             },
             {
-              label: 'Subsquare',
-              uri: `https://${chainId}.subsquare.io/referenda/${referendumId}`,
+              label: 'Polkassembly',
+              uri: `https://${getPolkassemblySubdomain(chainId)}.polkassembly.io/referenda/${referendumId}`,
             },
           ],
         };
@@ -128,12 +133,12 @@ export class EventsController {
           txActions: [],
           uriActions: [
             {
-              label: 'Polkassembly',
-              uri: `https://${chainId}.polkassembly.io/referenda/${referendumId}`,
+              label: 'Subsquare',
+              uri: `https://${getSubsquareSubdomain(chainId)}.subsquare.io/referenda/${referendumId}`,
             },
             {
-              label: 'Subsquare',
-              uri: `https://${chainId}.subsquare.io/referenda/${referendumId}`,
+              label: 'Polkassembly',
+              uri: `https://${getPolkassemblySubdomain(chainId)}.polkassembly.io/referenda/${referendumId}`,
             },
           ],
         };
@@ -447,7 +452,7 @@ export class EventsController {
           uriActions: [
             {
               label: `Subscan`,
-              uri: `https://${chainId}.subscan.io/nomination_pool/${poolId}?tab=activities`,
+              uri: `https://${getSubscanSubdomain(chainId)}.subscan.io/nomination_pool/${poolId}?tab=activities`,
             },
           ],
         };
@@ -487,7 +492,7 @@ export class EventsController {
           uriActions: [
             {
               label: `Subscan`,
-              uri: `https://${chainId}.subscan.io/nomination_pool/${poolId}`,
+              uri: `https://${getSubscanSubdomain(chainId)}.subscan.io/nomination_pool/${poolId}`,
             },
           ],
         };
@@ -530,7 +535,7 @@ export class EventsController {
           uriActions: [
             {
               label: `Subscan`,
-              uri: `https://${chainId}.subscan.io/nomination_pool/${poolId}`,
+              uri: `https://${getSubscanSubdomain(chainId)}.subscan.io/nomination_pool/${poolId}`,
             },
           ],
         };
@@ -610,7 +615,7 @@ export class EventsController {
             },
             {
               label: 'Subscan',
-              uri: `https://${chainId}.subscan.io/nominator/${address}?tab=reward`,
+              uri: `https://${getSubscanSubdomain(chainId)}.subscan.io/nominator/${address}?tab=reward`,
             },
           ],
         };

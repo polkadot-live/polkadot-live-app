@@ -18,6 +18,7 @@ import type {
   ChainID,
   EcosystemID,
   LedgerSelectNetworkData,
+  RpcSystemChain,
 } from '@polkadot-live/types/chains';
 import type { NodeEndpoint } from '@polkadot-live/types/apis';
 
@@ -41,7 +42,7 @@ const CategoryList = new Map([
 
 export const ChainList = new Map<ChainID, Chain>([
   [
-    'Polkadot',
+    'Polkadot Relay',
     {
       endpoints: {
         rpcs: [
@@ -105,7 +106,7 @@ export const ChainList = new Map<ChainID, Chain>([
     },
   ],
   [
-    'Kusama',
+    'Kusama Relay',
     {
       endpoints: {
         rpcs: [
@@ -166,7 +167,7 @@ export const ChainList = new Map<ChainID, Chain>([
     },
   ],
   [
-    'Westend',
+    'Westend Relay',
     {
       endpoints: {
         rpcs: [
@@ -223,6 +224,52 @@ export const ChainList = new Map<ChainID, Chain>([
   ],
 ]);
 
+const RpcChainToChainID: Record<RpcSystemChain, ChainID> = {
+  Polkadot: 'Polkadot Relay',
+  'Polkadot Asset Hub': 'Polkadot Asset Hub',
+  'Polkadot People': 'Polkadot People',
+  Kusama: 'Kusama Relay',
+  'Kusama Asset Hub': 'Kusama Asset Hub',
+  'Kusama People': 'Kusama People',
+  Westend: 'Westend Relay',
+  'Westend Asset Hub': 'Westend Asset Hub',
+  'Westend People': 'Westend People',
+};
+
+const SubscanSubdomainMap = new Map<ChainID, string>([
+  ['Polkadot Relay', 'polkadot'],
+  ['Polkadot Asset Hub', 'assethub-polkadot'],
+  ['Polkadot People', 'people-polkadot'],
+  ['Kusama Relay', 'kusama'],
+  ['Kusama Asset Hub', 'assethub-kusama'],
+  ['Kusama People', 'people-kusama'],
+  ['Westend Relay', 'westend'],
+  ['Westend Asset Hub', 'assethub-westend'],
+  ['Westend People', 'people-westend'],
+]);
+
+const SubsquareSubdomainMap = new Map<ChainID, string>([
+  ['Polkadot Relay', 'polkadot'],
+  ['Kusama Relay', 'kusama'],
+]);
+
+const PolkassemblySubdomainMap = new Map<ChainID, string>([
+  ['Polkadot Relay', 'polkadot'],
+  ['Kusama Relay', 'kusama'],
+]);
+
+export const getPolkassemblySubdomain = (chainId: ChainID): string =>
+  PolkassemblySubdomainMap.get(chainId)!;
+
+export const getSubscanSubdomain = (chainId: ChainID): string =>
+  SubscanSubdomainMap.get(chainId)!;
+
+export const getSubsquareSubdomain = (chainId: ChainID): string =>
+  SubsquareSubdomainMap.get(chainId)!;
+
+export const getChainIdFromRpcChain = (rpcChain: RpcSystemChain): ChainID =>
+  RpcChainToChainID[rpcChain];
+
 export const chainCurrency = (chain: ChainID) =>
   (ChainList.get(chain) as Chain).unit;
 
@@ -233,12 +280,12 @@ export const getCategory = (category: string) => CategoryList.get(category);
 
 export const getSelectLedgerNetworkData = (): LedgerSelectNetworkData[] => [
   {
-    network: 'Polkadot',
+    network: 'Polkadot Relay',
     ledgerId: 'dot',
     iconWidth: 18,
   },
   {
-    network: 'Kusama',
+    network: 'Kusama Relay',
     ledgerId: 'kusama',
     iconWidth: 18,
   },
@@ -248,7 +295,7 @@ export const getSelectLedgerNetworkData = (): LedgerSelectNetworkData[] => [
  * Get an array of supported chains.
  */
 export const getSupportedChains = (): Record<ChainID, Chain> => {
-  const unsupported: ChainID[] = ['Westend'];
+  const unsupported: ChainID[] = ['Westend Relay'];
   const record = {} as Record<ChainID, Chain>;
 
   for (const [cid, chain] of Array.from(ChainList.entries())) {
@@ -263,14 +310,17 @@ export const getSupportedChains = (): Record<ChainID, Chain> => {
 /**
  * Get chain IDs that support send screen transfers.
  */
-export const getSendChains = (): ChainID[] => ['Kusama', 'Westend Asset Hub'];
+export const getSendChains = (): ChainID[] => [
+  'Kusama Relay',
+  'Westend Asset Hub',
+];
 
 /**
  * Get chain IDs that support staking APIs.
  */
 export const getStakingChains = (): ChainID[] => [
-  'Polkadot',
-  'Kusama',
+  'Polkadot Relay',
+  'Kusama Relay',
   'Westend Asset Hub',
 ];
 
@@ -289,7 +339,7 @@ export const getSupportedSources = (): AccountSource[] => [
  */
 export const getEcosystemChainMap = (): Map<EcosystemID, ChainID[]> =>
   new Map([
-    ['Polkadot', ['Polkadot', 'Polkadot Asset Hub', 'Polkadot People']],
-    ['Kusama', ['Kusama', 'Kusama Asset Hub', 'Kusama People']],
-    ['Westend', ['Westend', 'Westend Asset Hub', 'Westend People']],
+    ['Polkadot', ['Polkadot Relay', 'Polkadot Asset Hub', 'Polkadot People']],
+    ['Kusama', ['Kusama Relay', 'Kusama Asset Hub', 'Kusama People']],
+    ['Westend', ['Westend Relay', 'Westend Asset Hub', 'Westend People']],
   ]);

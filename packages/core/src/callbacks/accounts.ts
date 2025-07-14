@@ -146,7 +146,7 @@ export const callback_account_balance_free = async (
     const max = (a: bigint, b: bigint): bigint => (a > b ? a : b);
 
     const free =
-      chainId === 'Westend'
+      chainId === 'Westend Relay'
         ? balance.free
         : balance.free - max(balance.reserved, balance.frozen);
 
@@ -331,14 +331,14 @@ export const callback_account_balance_spendable = async (
 
     const max = (a: bigint, b: bigint): bigint => (a > b ? a : b);
     const spendable =
-      chainId === 'Westend'
+      chainId === 'Westend Relay'
         ? max(free - ed, 0n)
         : max(free - max(frozen, reserved) - ed, 0n);
 
     // Check if spendable balance has changed.
     const b = account.balance;
     const cur =
-      chainId === 'Westend'
+      chainId === 'Westend Relay'
         ? max(b.free - ed, 0n)
         : max(b.free - max(b.frozen, b.reserved) - ed, 0n);
 
@@ -969,9 +969,9 @@ const getApiOrThrow = async (chainId: ChainID) =>
  */
 const getStakingApi = (chainId: ChainID, api: DedotClientSet) => {
   switch (chainId) {
-    case 'Polkadot':
+    case 'Polkadot Relay':
       return api as DedotClient<ClientTypes['polkadot']>;
-    case 'Kusama':
+    case 'Kusama Relay':
       return api as DedotClient<ClientTypes['kusama']>;
     case 'Westend Asset Hub':
       return api as DedotClient<ClientTypes['westmint']>;

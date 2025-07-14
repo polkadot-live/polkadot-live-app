@@ -84,7 +84,9 @@ export const StatsFooter = styled.section<{ $chainId: ChainID }>`
     }
     span {
       color: ${(props) =>
-        props.$chainId === 'Polkadot' ? 'rgb(169, 74, 117)' : '#8571b1'};
+        props.$chainId.startsWith('Polkadot')
+          ? 'rgb(169, 74, 117)'
+          : '#8571b1'};
       font-weight: 400;
       font-size: 0.95rem;
     }

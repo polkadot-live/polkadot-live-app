@@ -62,11 +62,14 @@ export const OverviewExplore: React.FC<OverviewExploreProps> = ({
       <Styles.FlexColumn $rowGap={'0.25rem'}>
         <Styles.FlexRow $gap={'0.25rem'} style={{ marginTop: '1rem' }}>
           <NetworkHeader style={{ borderTopLeftRadius: '0.375rem' }}>
-            <UI.ChainIcon chainId="Polkadot" style={{ width: '1.45rem' }} />
+            <UI.ChainIcon
+              chainId="Polkadot Relay"
+              style={{ width: '1.45rem' }}
+            />
             <h4>Polkadot</h4>
           </NetworkHeader>
           <NetworkHeader style={{ borderTopRightRadius: '0.375rem' }}>
-            <UI.ChainIcon chainId="Kusama" style={{ width: '1.75rem' }} />
+            <UI.ChainIcon chainId="Kusama Relay" style={{ width: '1.75rem' }} />
             <h4>Kusama</h4>
           </NetworkHeader>
         </Styles.FlexRow>
@@ -74,7 +77,7 @@ export const OverviewExplore: React.FC<OverviewExploreProps> = ({
           <UI.NavCardThin
             title={'Referenda'}
             styleLogoCont={{ opacity: '0.8' }}
-            onClick={() => handleOpenReferenda('Polkadot')}
+            onClick={() => handleOpenReferenda('Polkadot Relay')}
             childrenLogo={
               <FontAwesomeIcon icon={faFilePen} transform={'grow-3'} />
             }
@@ -85,7 +88,7 @@ export const OverviewExplore: React.FC<OverviewExploreProps> = ({
           <UI.NavCardThin
             title={'Referenda'}
             styleLogoCont={{ opacity: '0.8' }}
-            onClick={() => handleOpenReferenda('Kusama')}
+            onClick={() => handleOpenReferenda('Kusama Relay')}
             childrenLogo={
               <FontAwesomeIcon icon={faFilePen} transform={'grow-3'} />
             }
@@ -95,7 +98,7 @@ export const OverviewExplore: React.FC<OverviewExploreProps> = ({
           />
           <UI.NavCardThin
             title={'Tracks'}
-            onClick={() => handleOpenTracks('Polkadot')}
+            onClick={() => handleOpenTracks('Polkadot Relay')}
             childrenLogo={
               <FontAwesomeIcon icon={faList} transform={'grow-2'} />
             }
@@ -103,7 +106,7 @@ export const OverviewExplore: React.FC<OverviewExploreProps> = ({
           />
           <UI.NavCardThin
             title={'Tracks'}
-            onClick={() => handleOpenTracks('Kusama')}
+            onClick={() => handleOpenTracks('Kusama Relay')}
             childrenLogo={
               <FontAwesomeIcon icon={faList} transform={'grow-2'} />
             }

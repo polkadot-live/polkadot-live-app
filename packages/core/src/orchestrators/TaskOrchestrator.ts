@@ -70,13 +70,13 @@ export class TaskOrchestrator {
   private static next(task: SubscriptionTask, wrapper: QueryMultiWrapper) {
     switch (task.chainId) {
       // Identify chain ID
-      case 'Polkadot':
+      case 'Polkadot Relay':
       case 'Polkadot Asset Hub':
       case 'Polkadot People':
-      case 'Kusama':
+      case 'Kusama Relay':
       case 'Kusama Asset Hub':
       case 'Kusama People':
-      case 'Westend':
+      case 'Westend Relay':
       case 'Westend Asset Hub':
       case 'Westend People': {
         // Return if data is missing for certain tasks.

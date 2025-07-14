@@ -94,11 +94,11 @@ export const handleGetAddresses = async (
   }
 
   // Get the correct `coin_type` for the address derivation path.
-  //const slip = chainName === 'Polkadot' ? '354' : '434';
+  //const slip = chainName === 'Polkadot Relay' ? '354' : '434';
   const slip = '354';
 
   // Get the correct chain ID for the metadata API.
-  const chainId = chainName === 'Polkadot' ? 'dot' : 'ksm';
+  const chainId = chainName === 'Polkadot Relay' ? 'dot' : 'ksm';
 
   // Establish connection to Ledger Polkadot app.
   const substrateApp = new PolkadotGenericApp(

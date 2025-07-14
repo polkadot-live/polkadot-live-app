@@ -327,7 +327,7 @@ export const useSendNative = (): SendNativeHook => {
           }
         })
         // NOTE: Disable Polkadot transfers in alpha releases.
-        .filter(({ chainId }) => chainId !== 'Polkadot')
+        .filter(({ chainId }) => !chainId.startsWith('Polkadot'))
         // Don't include sender in list.
         .filter(({ address }) => address !== sender)
         .sort((a, b) => a.alias.localeCompare(b.alias))

@@ -6,6 +6,18 @@ export type EcosystemID = 'Polkadot' | 'Kusama' | 'Westend';
 
 // Supported chains as string literals.
 export type ChainID =
+  | 'Polkadot Relay'
+  | 'Polkadot Asset Hub'
+  | 'Polkadot People'
+  | 'Kusama Relay'
+  | 'Kusama Asset Hub'
+  | 'Kusama People'
+  | 'Westend Relay'
+  | 'Westend Asset Hub'
+  | 'Westend People';
+
+// Chain names from `rpc.system.chain`.
+export type RpcSystemChain =
   | 'Polkadot'
   | 'Polkadot Asset Hub'
   | 'Polkadot People'

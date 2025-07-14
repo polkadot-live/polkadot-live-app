@@ -20,9 +20,9 @@ import type {
 import type { ExtrinsicInfo } from 'packages/types/src';
 
 const mapCaipChainId = new Map<string, ChainID>([
-  [wc.WC_POLKADOT_CAIP_ID, 'Polkadot'],
-  [wc.WC_KUSAMA_CAIP_ID, 'Kusama'],
-  [wc.WC_WESTEND_CAIP_ID, 'Westend'],
+  [wc.WC_POLKADOT_CAIP_ID, 'Polkadot Relay'],
+  [wc.WC_KUSAMA_CAIP_ID, 'Kusama Relay'],
+  [wc.WC_WESTEND_CAIP_ID, 'Westend Relay'],
   [wc.WC_WESTMINT_CAIP_ID, 'Westend Asset Hub'],
 ]);
 
@@ -101,17 +101,17 @@ export const WalletConnectProvider = ({
    */
   const getAddressPrefix = (chainId: ChainID) => {
     switch (chainId) {
-      case 'Polkadot':
+      case 'Polkadot Relay':
       case 'Polkadot Asset Hub':
       case 'Polkadot People': {
         return 0;
       }
-      case 'Kusama':
+      case 'Kusama Relay':
       case 'Kusama Asset Hub':
       case 'Kusama People': {
         return 2;
       }
-      case 'Westend':
+      case 'Westend Relay':
       case 'Westend Asset Hub':
       case 'Westend People': {
         return 42;

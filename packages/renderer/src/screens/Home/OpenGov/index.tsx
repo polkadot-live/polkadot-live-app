@@ -38,7 +38,7 @@ export const OpenGov = () => {
         // Doing this will remove the scrollbar on the right section.
         onTransitionEnd={() => {
           if (section === 0) {
-            setDynamicIntervalTasks([], 'Polkadot');
+            setDynamicIntervalTasks([], 'Polkadot Relay');
           }
         }}
         variants={{

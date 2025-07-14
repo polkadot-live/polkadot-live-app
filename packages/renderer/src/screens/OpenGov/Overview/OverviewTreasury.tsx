@@ -86,8 +86,8 @@ export const OverviewTreasury: React.FC = () => {
                       value={treasuryChainId}
                       onChange={(e) => handleChangeStats(e)}
                     >
-                      <option value="Polkadot">Polkadot</option>
-                      <option value="Kusama">Kusama</option>
+                      <option value="Polkadot Relay">Polkadot</option>
+                      <option value="Kusama Relay">Kusama</option>
                     </select>
                   </div>
                 </UI.TooltipWrapper>

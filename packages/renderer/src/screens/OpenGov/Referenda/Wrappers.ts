@@ -367,7 +367,9 @@ export const TracksFilterList = styled.div<{ $chainId?: ChainID }>`
 
       &.selected {
         color: ${(props) =>
-          props.$chainId === 'Kusama' ? '#8571b1' : 'var(--accent-secondary)'};
+          props.$chainId?.startsWith('Kusama')
+            ? '#8571b1'
+            : 'var(--accent-secondary)'};
         font-weight: 600;
       }
       &.disable {

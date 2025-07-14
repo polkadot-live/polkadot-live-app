@@ -119,18 +119,7 @@ export const HardwareAddress = ({
             >
               <FlexRow $gap="1.25rem" className="NameAddressRow">
                 <FlexRow className="NetworkRow">
-                  <ChainIcon
-                    chainId={cid as ChainID}
-                    className="NetworkIcon"
-                    style={{
-                      fill:
-                        cid === 'Polkadot' ||
-                        cid === 'Polkadot Asset Hub' ||
-                        cid === 'Polkadot People'
-                          ? '#ac2461'
-                          : undefined,
-                    }}
-                  />
+                  <ChainIcon chainId={cid as ChainID} className="NetworkIcon" />
                   <span className="overflow NetworkLabel">{a.chainId}</span>
                 </FlexRow>
 

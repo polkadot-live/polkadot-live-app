@@ -64,8 +64,8 @@ export const DialogRecipient = ({
   }, [trigger]);
 
   const ChainPrefix = new Map<ChainID, number>([
-    ['Polkadot', 0],
-    ['Kusama', 2],
+    ['Polkadot Relay', 0],
+    ['Kusama Relay', 2],
     ['Westend Asset Hub', 42],
   ]);
 

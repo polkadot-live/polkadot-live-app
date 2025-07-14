@@ -55,7 +55,7 @@ export const NetworkLabel = ({
   >
     {chainId && (
       <div className="IconWrapper">
-        <ChainIcon chainId={chainId as ChainID} />
+        <ChainIcon chainId={chainId} />
       </div>
     )}
     <label
