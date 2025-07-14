@@ -3,6 +3,7 @@
 
 import PolkadotIcon from '../../svg/polkadotIcon.svg?react';
 import KusamaIcon from '../../svg/kusamaIcon.svg?react';
+import PaseoIcon from '../../svg/paseoIcon.svg?react';
 import WestendIcon from '../../svg/westendIcon.svg?react';
 import type { ChainIconProps } from './types';
 
@@ -30,6 +31,15 @@ export const ChainIcon = ({
     case 'Kusama People':
       return (
         <KusamaIcon
+          className={className}
+          fill={fill}
+          style={style}
+          width={width}
+        />
+      );
+    case 'Paseo Relay':
+      return (
+        <PaseoIcon
           className={className}
           fill={fill}
           style={style}

@@ -12,6 +12,7 @@ import {
   westend2,
   westend2_asset_hub,
   westend_people,
+  paseo,
 } from '@substrate/connect-known-chains';
 import type { AccountSource } from '@polkadot-live/types/accounts';
 import type {
@@ -167,6 +168,25 @@ export const ChainList = new Map<ChainID, Chain>([
     },
   ],
   [
+    'Paseo Relay',
+    {
+      endpoints: {
+        rpcs: [
+          'wss://paseo-rpc.dwellir.com',
+          'wss://paseo.rpc.amforc.com',
+          'wss://rpc.ibp.network/paseo',
+          'wss://paseo.dotters.network',
+          'wss://pas-rpc.stakeworld.io',
+          'wss://api2.zondax.ch/pas/node/rpc',
+        ],
+        lightClient: paseo,
+      },
+      units: 10,
+      unit: 'PAS',
+      prefix: 0,
+    },
+  ],
+  [
     'Westend Relay',
     {
       endpoints: {
@@ -231,6 +251,7 @@ const RpcChainToChainID: Record<RpcSystemChain, ChainID> = {
   Kusama: 'Kusama Relay',
   'Kusama Asset Hub': 'Kusama Asset Hub',
   'Kusama People': 'Kusama People',
+  'Paseo Testnet': 'Paseo Relay',
   Westend: 'Westend Relay',
   'Westend Asset Hub': 'Westend Asset Hub',
   'Westend People': 'Westend People',
@@ -243,6 +264,7 @@ const SubscanSubdomainMap = new Map<ChainID, string>([
   ['Kusama Relay', 'kusama'],
   ['Kusama Asset Hub', 'assethub-kusama'],
   ['Kusama People', 'people-kusama'],
+  ['Paseo Relay', 'paseo'],
   ['Westend Relay', 'westend'],
   ['Westend Asset Hub', 'assethub-westend'],
   ['Westend People', 'people-westend'],
@@ -321,6 +343,7 @@ export const getSendChains = (): ChainID[] => [
 export const getStakingChains = (): ChainID[] => [
   'Polkadot Relay',
   'Kusama Relay',
+  'Paseo Relay',
   'Westend Asset Hub',
 ];
 
@@ -341,5 +364,6 @@ export const getEcosystemChainMap = (): Map<EcosystemID, ChainID[]> =>
   new Map([
     ['Polkadot', ['Polkadot Relay', 'Polkadot Asset Hub', 'Polkadot People']],
     ['Kusama', ['Kusama Relay', 'Kusama Asset Hub', 'Kusama People']],
+    ['Paseo', ['Paseo Relay']],
     ['Westend', ['Westend Relay', 'Westend Asset Hub', 'Westend People']],
   ]);

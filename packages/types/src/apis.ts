@@ -13,6 +13,7 @@ import type {
   WestendApi,
   WestendAssetHubApi,
   WestendPeopleApi,
+  PaseoApi,
 } from '@dedot/chaintypes';
 
 export type NodeEndpoint = `wss://${string}` | 'smoldot';
@@ -27,15 +28,23 @@ export type DedotClientSet =
   | DedotClient<KusamaApi>
   | DedotClient<KusamaAssetHubApi>
   | DedotClient<KusamaPeopleApi>
+  | DedotClient<PaseoApi>
   | DedotClient<WestendApi>
   | DedotClient<WestendAssetHubApi>
   | DedotClient<WestendPeopleApi>;
 
+/**
+ * Dedot clients with staking.
+ */
 export type DedotStakingClient =
   | DedotClient<PolkadotApi>
   | DedotClient<KusamaApi>
+  | DedotClient<PaseoApi>
   | DedotClient<WestendAssetHubApi>;
 
+/**
+ * Dedot clients with governance.
+ */
 export type DedotOpenGovClient =
   | DedotClient<PolkadotApi>
   | DedotClient<KusamaApi>;
@@ -50,6 +59,7 @@ export interface ClientTypes {
   kusama: KusamaApi;
   statemine: KusamaAssetHubApi;
   'people-kusama': KusamaPeopleApi;
+  paseo: PaseoApi;
   westend: WestendApi;
   westmint: WestendAssetHubApi;
   'people-westend': WestendPeopleApi;
@@ -62,13 +72,14 @@ export type ChainToKey<T extends ChainID> = ChainIdToClientKeyMap[T];
 
 export interface ChainIdToClientKeyMap {
   'Polkadot Relay': 'polkadot';
-  'Kusama Relay': 'kusama';
-  'Westend Relay': 'westend';
   'Polkadot Asset Hub': 'statemint';
-  'Kusama Asset Hub': 'statemine';
-  'Westend Asset Hub': 'westmint';
   'Polkadot People': 'people-polkadot';
+  'Kusama Relay': 'kusama';
+  'Kusama Asset Hub': 'statemine';
   'Kusama People': 'people-kusama';
+  'Paseo Relay': 'paseo';
+  'Westend Relay': 'westend';
+  'Westend Asset Hub': 'westmint';
   'Westend People': 'people-westend';
 }
 

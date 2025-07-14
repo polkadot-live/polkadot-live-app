@@ -156,6 +156,8 @@ export class APIsController {
         return client as Api<'statemine'>;
       case 'Kusama People':
         return client as Api<'people-kusama'>;
+      case 'Paseo Relay':
+        return client as Api<'paseo'>;
       case 'Westend Relay':
         return client as Api<'westend'>;
       case 'Westend Asset Hub':
