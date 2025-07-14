@@ -23,7 +23,8 @@ export const TreasuryProvider = ({
   children: React.ReactNode;
 }) => {
   // Active treasury chain ID.
-  const [treasuryChainId, setTreasuryChainId] = useState<ChainID>('Polkadot');
+  const [treasuryChainId, setTreasuryChainId] =
+    useState<ChainID>('Polkadot Relay');
 
   // Flag to determine whether treasury data is being fetched.
   const [fetchingTreasuryData, setFetchingTreasuryData] = useState(false);

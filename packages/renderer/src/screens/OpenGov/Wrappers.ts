@@ -23,8 +23,10 @@ export const IconWrapper = styled.div<{ $chainId: ChainID }>`
   transition: opacity 0.2s ease-out;
 
   svg {
-    top: ${(props) => (props.$chainId === 'Polkadot' ? '-6px' : '-2rem')};
-    left: ${(props) => (props.$chainId === 'Polkadot' ? '4.75rem' : '3rem')};
+    top: ${(props) =>
+      props.$chainId.startsWith('Polkadot') ? '-6px' : '-2rem'};
+    left: ${(props) =>
+      props.$chainId.startsWith('Polkadot') ? '4.75rem' : '3rem'};
     position: absolute;
   }
 `;

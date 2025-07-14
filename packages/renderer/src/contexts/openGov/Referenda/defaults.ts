@@ -6,7 +6,7 @@ import type { ReferendaContextInterface } from './types';
 
 export const defaultReferendaContext: ReferendaContextInterface = {
   activePagedReferenda: { page: 1, pageCount: 1, referenda: [] },
-  activeReferendaChainId: 'Polkadot',
+  activeReferendaChainId: 'Polkadot Relay',
   fetchingReferenda: false,
   historyPagedReferenda: { page: 1, pageCount: 1, referenda: [] },
   referendaMap: new Map(),

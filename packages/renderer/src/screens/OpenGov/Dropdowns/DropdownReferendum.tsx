@@ -13,6 +13,10 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { MenuButton } from './Wrappers';
 import { InfoOverlay } from '../Referenda/InfoOverlay';
+import {
+  getPolkassemblySubdomain,
+  getSubsquareSubdomain,
+} from '@polkadot-live/consts/chains';
 import type { ReferendumDropdownMenuProps } from './types';
 
 /**
@@ -30,7 +34,7 @@ export const ReferendumDropdownMenu = ({
 
   const onPolkassemblyClick = () => {
     const { refId } = referendum;
-    const uriPolkassembly = `https://${chainId}.polkassembly.io/referenda/${refId}`;
+    const uriPolkassembly = `https://${getPolkassemblySubdomain(chainId)}.polkassembly.io/referenda/${refId}`;
     window.myAPI.openBrowserURL(uriPolkassembly);
     window.myAPI.umamiEvent('link-open', {
       dest: 'polkassembly',
@@ -39,7 +43,7 @@ export const ReferendumDropdownMenu = ({
 
   const onSubsquareClick = () => {
     const { refId } = referendum;
-    const uriSubsquare = `https://${chainId}.subsquare.io/referenda/${refId}`;
+    const uriSubsquare = `https://${getSubsquareSubdomain(chainId)}.subsquare.io/referenda/${refId}`;
     window.myAPI.openBrowserURL(uriSubsquare);
     window.myAPI.umamiEvent('link-open', { dest: 'subsquare' });
   };

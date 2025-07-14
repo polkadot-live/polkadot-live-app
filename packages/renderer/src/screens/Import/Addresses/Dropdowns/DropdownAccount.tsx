@@ -7,12 +7,12 @@ import { useRenameHandler } from '@ren/contexts/import';
 import { ActionBtn } from '../Dialogs/Wrappers';
 import { DropdownMenuContent } from '@polkadot-live/ui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { getSubscanSubdomain } from '@polkadot-live/consts/chains';
 import {
   faCaretRight,
   faEllipsis,
   faUpRightFromSquare,
 } from '@fortawesome/free-solid-svg-icons';
-import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   EncodedAccount,
   ImportedGenericAccount,
@@ -24,18 +24,6 @@ interface DropdownAccountProps {
   onBookmarkToggle: (encodedAccount: EncodedAccount) => Promise<void>;
   triggerSize?: 'sm' | 'lg';
 }
-
-const SubscanChainIdMap = new Map<ChainID, string>([
-  ['Polkadot', 'polkadot'],
-  ['Polkadot Asset Hub', 'assethub-polkadot'],
-  ['Polkadot People', 'people-polkadot'],
-  ['Kusama', 'kusama'],
-  ['Kusama Asset Hub', 'assethub-kusama'],
-  ['Kusama People', 'people-kusama'],
-  ['Westend', 'westend'],
-  ['Westend Asset Hub', 'assethub-westend'],
-  ['Westend People', 'people-westend'],
-]);
 
 /**
  * Dropdown menu component for import window encoded account listings.
@@ -53,10 +41,10 @@ export const DropdownAccount = ({
   const theme = getTheme();
 
   const onBlockExplorerClick = () => {
-    const subscanChainId = SubscanChainIdMap.get(chainId)!;
-    const uri = `https://${subscanChainId}.subscan.io/account/${address}`;
+    const network = getSubscanSubdomain(chainId);
+    const uri = `https://${network}.subscan.io/account/${address}`;
     window.myAPI.openBrowserURL(uri);
-    window.myAPI.umamiEvent('link-open', { dest: 'subsquare' });
+    window.myAPI.umamiEvent('link-open', { dest: 'subscan' });
   };
 
   const onShowAddressClick = () => {

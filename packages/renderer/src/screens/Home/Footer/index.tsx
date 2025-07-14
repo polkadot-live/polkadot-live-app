@@ -150,7 +150,7 @@ export const Footer = () => {
                           <FlexRow style={{ width: '100%' }}>
                             <UI.ChainIcon
                               width={12}
-                              chainId={chainIds[0] || 'Polkadot'}
+                              chainId={chainIds[0] || 'Polkadot Relay'}
                             />
                             <UI.TriggerHeader style={{ flex: 1 }}>
                               {ecosystemId}

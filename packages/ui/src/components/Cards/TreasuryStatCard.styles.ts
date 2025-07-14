@@ -7,10 +7,10 @@ import type { ChainID } from '@polkadot-live/types/chains';
 
 const getChainIdColor = (chainId: ChainID): string => {
   switch (chainId) {
-    case 'Polkadot': {
+    case 'Polkadot Relay': {
       return '#e63081';
     }
-    case 'Kusama': {
+    case 'Kusama Relay': {
       return '#f1f1f1';
     }
     default: {

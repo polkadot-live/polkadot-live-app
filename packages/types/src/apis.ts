@@ -61,9 +61,9 @@ export interface ClientTypes {
 export type ChainToKey<T extends ChainID> = ChainIdToClientKeyMap[T];
 
 export interface ChainIdToClientKeyMap {
-  Polkadot: 'polkadot';
-  Kusama: 'kusama';
-  Westend: 'westend';
+  'Polkadot Relay': 'polkadot';
+  'Kusama Relay': 'kusama';
+  'Westend Relay': 'westend';
   'Polkadot Asset Hub': 'statemint';
   'Kusama Asset Hub': 'statemine';
   'Westend Asset Hub': 'westmint';

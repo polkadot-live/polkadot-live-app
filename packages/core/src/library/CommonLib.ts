@@ -66,11 +66,11 @@ export const generateUID = (): string => {
  * @summary Returns an initial chain ID in preferential order.
  */
 export const getInitialChainAccordionValue = (chains: ChainID[]): ChainID =>
-  chains.includes('Polkadot')
-    ? 'Polkadot'
-    : chains.includes('Kusama')
-      ? 'Kusama'
-      : 'Westend';
+  chains.includes('Polkadot Relay')
+    ? 'Polkadot Relay'
+    : chains.includes('Kusama Relay')
+      ? 'Kusama Relay'
+      : 'Westend Relay';
 
 /**
  * @name getOnlineStatus

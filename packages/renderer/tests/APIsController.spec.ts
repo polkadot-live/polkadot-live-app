@@ -47,7 +47,7 @@ describe('APIsController', () => {
     });
 
     it('Should successfully connect a client', async () => {
-      const chainId: ChainID = 'Polkadot';
+      const chainId: ChainID = 'Polkadot Relay';
       await APIsController.connectApi(chainId);
       const client = APIsController.clients.find((c) => c.chain === chainId)!;
 
@@ -57,7 +57,7 @@ describe('APIsController', () => {
     });
 
     it('Should close a connected client', async () => {
-      const chainId: ChainID = 'Polkadot';
+      const chainId: ChainID = 'Polkadot Relay';
       await APIsController.connectApi(chainId);
       await APIsController.close(chainId);
 
@@ -68,7 +68,7 @@ describe('APIsController', () => {
 
     it('Should close all connected clients', async () => {
       // Connect clients and verify connected status.
-      const chainIds: ChainID[] = ['Polkadot', 'Kusama'];
+      const chainIds: ChainID[] = ['Polkadot Relay', 'Kusama Relay'];
       await Promise.all(chainIds.map((c) => APIsController.connectApi(c)));
       for (const chainId of chainIds) {
         const client = APIsController.clients.find((c) => c.chain === chainId)!;
@@ -85,7 +85,7 @@ describe('APIsController', () => {
     });
 
     it('Should provide a connected client', async () => {
-      const chainId: ChainID = 'Polkadot';
+      const chainId: ChainID = 'Polkadot Relay';
       const client = await APIsController.getConnectedApi(chainId);
 
       expect(client).not.toBeNull();
@@ -93,8 +93,8 @@ describe('APIsController', () => {
     });
 
     it('Should provide the status of managed clients', async () => {
-      const connectedId: ChainID = 'Polkadot';
-      const disconnectedId: ChainID = 'Kusama';
+      const connectedId: ChainID = 'Polkadot Relay';
+      const disconnectedId: ChainID = 'Kusama Relay';
       await APIsController.connectApi(connectedId);
 
       expect(APIsController.getStatus(connectedId)).toBe('connected');
@@ -102,7 +102,7 @@ describe('APIsController', () => {
     });
 
     it('Should connect to a new endpoint', async () => {
-      const chainId: ChainID = 'Polkadot';
+      const chainId: ChainID = 'Polkadot Relay';
       const endpoint1 = ChainList.get(chainId)!.endpoints.rpcs[0];
       const endpoint2 = ChainList.get(chainId)!.endpoints.rpcs[1];
 

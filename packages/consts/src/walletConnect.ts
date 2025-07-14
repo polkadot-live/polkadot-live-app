@@ -16,12 +16,12 @@ export const WC_WESTMINT_CAIP_ID = '67f9723393ef76214df0118c34bbbd3d';
 export const WcNetworks: WcSelectNetwork[] = [
   {
     caipId: WC_POLKADOT_CAIP_ID,
-    chainId: 'Polkadot',
+    chainId: 'Polkadot Relay',
     selected: false,
   },
   {
     caipId: WC_KUSAMA_CAIP_ID,
-    chainId: 'Kusama',
+    chainId: 'Kusama Relay',
     selected: false,
   },
   {
@@ -33,11 +33,11 @@ export const WcNetworks: WcSelectNetwork[] = [
 
 export const getWalletConnectChainId = (chainId: ChainID) => {
   switch (chainId) {
-    case 'Polkadot':
+    case 'Polkadot Relay':
       return WC_POLKADOT_CAIP_ID;
-    case 'Kusama':
+    case 'Kusama Relay':
       return WC_KUSAMA_CAIP_ID;
-    case 'Westend':
+    case 'Westend Relay':
       return WC_WESTEND_CAIP_ID;
     case 'Westend Asset Hub':
       return WC_WESTMINT_CAIP_ID;

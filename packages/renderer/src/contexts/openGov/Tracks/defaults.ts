@@ -5,7 +5,7 @@
 import type { TracksContextInterface } from './types';
 
 export const defaultTracksContext: TracksContextInterface = {
-  activeChainId: 'Polkadot',
+  activeChainId: 'Polkadot Relay',
   fetchingTracks: false,
   tracksMap: new Map(),
   fetchTracksData: (c) => {},
