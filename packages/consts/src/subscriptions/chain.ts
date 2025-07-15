@@ -14,7 +14,7 @@ import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
  * active task on app initialization.
  */
 export const chainTasks: SubscriptionTask[] = [
-  // Polkadot
+  // Polkadot Relay
   {
     action: 'subscribe:chain:timestamp',
     apiCallAsString: 'api.query.timestamp.now',
@@ -35,7 +35,7 @@ export const chainTasks: SubscriptionTask[] = [
     label: 'Current Slot',
     status: 'disable',
   },
-  // Kusama
+  // Kusama Relay
   {
     action: 'subscribe:chain:timestamp',
     apiCallAsString: 'api.query.timestamp.now',
@@ -56,7 +56,28 @@ export const chainTasks: SubscriptionTask[] = [
     label: 'Current Slot',
     status: 'disable',
   },
-  // Westend
+  // Paseo Relay
+  {
+    action: 'subscribe:chain:timestamp',
+    apiCallAsString: 'api.query.timestamp.now',
+    category: 'Chain',
+    chainId: 'Paseo Relay',
+    enableOsNotifications: true,
+    helpKey: 'help:subscription:chain:timestamp',
+    label: 'Timestamps',
+    status: 'disable',
+  },
+  {
+    action: 'subscribe:chain:currentSlot',
+    apiCallAsString: 'api.query.babe.currentSlot',
+    category: 'Chain',
+    chainId: 'Paseo Relay',
+    enableOsNotifications: true,
+    helpKey: 'help:subscription:chain:currentSlot',
+    label: 'Current Slot',
+    status: 'disable',
+  },
+  // Westend Relay
   {
     action: 'subscribe:chain:timestamp',
     apiCallAsString: 'api.query.timestamp.now',
