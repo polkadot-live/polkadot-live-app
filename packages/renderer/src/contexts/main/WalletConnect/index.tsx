@@ -106,7 +106,9 @@ export const WalletConnectProvider = ({
       case 'Polkadot Relay':
       case 'Polkadot Asset Hub':
       case 'Polkadot People':
-      case 'Paseo Relay': {
+      case 'Paseo Relay':
+      case 'Paseo Asset Hub':
+      case 'Paseo People': {
         return 0;
       }
       case 'Kusama Relay':
