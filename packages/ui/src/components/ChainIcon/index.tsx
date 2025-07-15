@@ -38,6 +38,7 @@ export const ChainIcon = ({
         />
       );
     case 'Paseo Relay':
+    case 'Paseo Asset Hub':
       return (
         <PaseoIcon
           className={className}

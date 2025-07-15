@@ -26,13 +26,13 @@ export const WcNetworks: WcSelectNetwork[] = [
     selected: false,
   },
   {
-    caipId: WC_WESTMINT_CAIP_ID,
-    chainId: 'Westend Asset Hub',
+    caipId: WC_PASEO_CAIP_ID,
+    chainId: 'Paseo Relay',
     selected: false,
   },
   {
-    caipId: WC_PASEO_CAIP_ID,
-    chainId: 'Paseo Relay',
+    caipId: WC_WESTMINT_CAIP_ID,
+    chainId: 'Westend Asset Hub',
     selected: false,
   },
 ];

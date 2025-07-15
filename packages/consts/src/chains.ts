@@ -26,7 +26,7 @@ import type { NodeEndpoint } from '@polkadot-live/types/apis';
 interface Chain {
   endpoints: {
     rpcs: NodeEndpoint[];
-    lightClient: string;
+    lightClient: string | undefined;
   };
   units: number;
   unit: string;
@@ -186,6 +186,24 @@ export const ChainList = new Map<ChainID, Chain>([
     },
   ],
   [
+    'Paseo Asset Hub',
+    {
+      endpoints: {
+        rpcs: [
+          'wss://asset-hub-paseo-rpc.dwellir.com',
+          'wss://sys.ibp.network/asset-hub-paseo',
+          'wss://asset-hub-paseo.dotters.network',
+          'wss://pas-rpc.stakeworld.io/assethub',
+          'wss://sys.turboflakes.io/asset-hub-paseo',
+        ],
+        lightClient: undefined,
+      },
+      units: 10,
+      unit: 'PAS',
+      prefix: 0,
+    },
+  ],
+  [
     'Westend Relay',
     {
       endpoints: {
@@ -251,6 +269,7 @@ const RpcChainToChainID: Record<RpcSystemChain, ChainID> = {
   'Kusama Asset Hub': 'Kusama Asset Hub',
   'Kusama People': 'Kusama People',
   'Paseo Testnet': 'Paseo Relay',
+  'Paseo Asset Hub': 'Paseo Asset Hub',
   Westend: 'Westend Relay',
   'Westend Asset Hub': 'Westend Asset Hub',
   'Westend People': 'Westend People',
@@ -264,6 +283,7 @@ const SubscanSubdomainMap = new Map<ChainID, string>([
   ['Kusama Asset Hub', 'assethub-kusama'],
   ['Kusama People', 'people-kusama'],
   ['Paseo Relay', 'paseo'],
+  ['Paseo Asset Hub', 'assethub-paseo'],
   ['Westend Relay', 'westend'],
   ['Westend Asset Hub', 'assethub-westend'],
   ['Westend People', 'people-westend'],
@@ -363,6 +383,12 @@ export const getEcosystemChainMap = (): Map<EcosystemID, ChainID[]> =>
   new Map([
     ['Polkadot', ['Polkadot Relay', 'Polkadot Asset Hub', 'Polkadot People']],
     ['Kusama', ['Kusama Relay', 'Kusama Asset Hub', 'Kusama People']],
-    ['Paseo', ['Paseo Relay']],
+    ['Paseo', ['Paseo Relay', 'Paseo Asset Hub']],
     ['Westend', ['Westend Relay', 'Westend Asset Hub', 'Westend People']],
   ]);
+
+/**
+ * Determine if light client available for chain.
+ */
+export const hasLightClientSupport = (chainId: ChainID): boolean =>
+  ChainList.get(chainId)?.endpoints.lightClient !== undefined;

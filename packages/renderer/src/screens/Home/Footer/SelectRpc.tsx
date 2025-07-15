@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { SelectRpcWrapper } from './Wrapper';
 import { useBootstrapping } from '@ren/contexts/main';
 import { useConnections } from '@ren/contexts/common';
+import { hasLightClientSupport } from '@polkadot-live/consts/chains';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { NodeEndpoint, FlattenedAPIData } from '@polkadot-live/types/apis';
 
@@ -67,7 +68,9 @@ export const SelectRpc = ({
           onChange={(e) => handleRpcChange(e)}
           disabled={disabled}
         >
-          <option value={'smoldot'}>Light Client</option>
+          {hasLightClientSupport(chainId) && (
+            <option value={'smoldot'}>Light Client</option>
+          )}
           {apiData.rpcs.map((rpc, i) => (
             <option key={i} value={rpc}>
               {rpc}

@@ -31,7 +31,7 @@ export const secondsUntilNextMinute = (minute: number): number => {
 
 /**
  * @name formatBlocksToTime
- * @summary Takes a number of blocks and returns a readable duration.
+ * @summary Takes a number of blocks and returns a readable duration for OpenGov chains.
  */
 export const formatBlocksToTime = (chainId: ChainID, blocks: string) => {
   const secondsPerBlock =

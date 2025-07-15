@@ -34,7 +34,7 @@ export class APIsController {
 
     // Set react state.
     const map = new Map<ChainID, FlattenedAPIData>();
-    this.clients.map((c) => map.set(c.chain, c.flatten()));
+    this.clients.map((c) => map.set(c.chainId, c.flatten()));
     this.cachedSetChains(map);
   };
 
@@ -42,7 +42,7 @@ export class APIsController {
    * Disconnect a client.
    */
   static close = async (chainId: ChainID) => {
-    const client = this.clients.find((c) => c.chain === chainId);
+    const client = this.clients.find((c) => c.chainId === chainId);
     if (client !== undefined) {
       // Manually disconnect if system is online (disconnection initiated by user).
       const isOnline: boolean = await CommonLib.getOnlineStatus();
@@ -158,6 +158,8 @@ export class APIsController {
         return client as Api<'people-kusama'>;
       case 'Paseo Relay':
         return client as Api<'paseo'>;
+      case 'Paseo Asset Hub':
+        return client as Api<'asset-hub-paseo'>;
       case 'Westend Relay':
         return client as Api<'westend'>;
       case 'Westend Asset Hub':
@@ -176,14 +178,14 @@ export class APIsController {
    * Get a client.
    */
   private static get = (chainId: ChainID): Api<keyof ClientTypes> | null =>
-    this.clients.find((c) => c.chain === chainId) || null;
+    this.clients.find((c) => c.chainId === chainId) || null;
 
   /**
    * Update a client.
    */
   private static set = (client: Api<keyof ClientTypes>) =>
     (this.clients = this.clients.map((c) =>
-      c.chain === client.chain ? client : c
+      c.chainId === client.chainId ? client : c
     ));
 
   /**
@@ -239,7 +241,7 @@ export class APIsController {
    * Update react state.
    */
   private static updateUiChainState = (client: Api<keyof ClientTypes>) => {
-    this.cachedSetChains((pv) => pv.set(client.chain, client.flatten()));
+    this.cachedSetChains((pv) => pv.set(client.chainId, client.flatten()));
     this.setUiTrigger(true);
   };
 }

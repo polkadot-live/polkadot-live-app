@@ -13,6 +13,7 @@ export type ChainID =
   | 'Kusama Asset Hub'
   | 'Kusama People'
   | 'Paseo Relay'
+  | 'Paseo Asset Hub'
   | 'Westend Relay'
   | 'Westend Asset Hub'
   | 'Westend People';
@@ -26,6 +27,7 @@ export type RpcSystemChain =
   | 'Kusama Asset Hub'
   | 'Kusama People'
   | 'Paseo Testnet'
+  | 'Paseo Asset Hub'
   | 'Westend'
   | 'Westend Asset Hub'
   | 'Westend People';

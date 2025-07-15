@@ -30,7 +30,9 @@ describe('APIsController', () => {
 
       // Check every chain has an API client.
       const sortFn = (a: ChainID, b: ChainID) => a.localeCompare(b);
-      const clientIds = APIsController.clients.map((c) => c.chain).sort(sortFn);
+      const clientIds = APIsController.clients
+        .map((c) => c.chainId)
+        .sort(sortFn);
       expect(clientIds).toEqual(chainIds.sort(sortFn));
     });
   });
@@ -49,10 +51,10 @@ describe('APIsController', () => {
     it('Should successfully connect a client', async () => {
       const chainId: ChainID = 'Polkadot Relay';
       await APIsController.connectApi(chainId);
-      const client = APIsController.clients.find((c) => c.chain === chainId)!;
+      const client = APIsController.clients.find((c) => c.chainId === chainId)!;
 
       expect(client.status()).toBe('connected');
-      expect(client.chain).toEqual(chainId);
+      expect(client.chainId).toEqual(chainId);
       expect(client.api).not.toBeNull();
     });
 
@@ -61,7 +63,7 @@ describe('APIsController', () => {
       await APIsController.connectApi(chainId);
       await APIsController.close(chainId);
 
-      const client = APIsController.clients.find((c) => c.chain === chainId)!;
+      const client = APIsController.clients.find((c) => c.chainId === chainId)!;
       expect(client.status()).toBe('disconnected');
       expect(client.api).toBeNull();
     });
@@ -71,14 +73,18 @@ describe('APIsController', () => {
       const chainIds: ChainID[] = ['Polkadot Relay', 'Kusama Relay'];
       await Promise.all(chainIds.map((c) => APIsController.connectApi(c)));
       for (const chainId of chainIds) {
-        const client = APIsController.clients.find((c) => c.chain === chainId)!;
+        const client = APIsController.clients.find(
+          (c) => c.chainId === chainId
+        )!;
         expect(client.status()).toBe('connected');
       }
 
       // Close all clients and verify status.
       await APIsController.closeAll();
       for (const chainId of chainIds) {
-        const client = APIsController.clients.find((c) => c.chain === chainId)!;
+        const client = APIsController.clients.find(
+          (c) => c.chainId === chainId
+        )!;
         expect(client.status()).toBe('disconnected');
         expect(client.api).toBeNull();
       }
