@@ -76,6 +76,7 @@ export class TaskOrchestrator {
       case 'Kusama Relay':
       case 'Kusama Asset Hub':
       case 'Kusama People':
+      case 'Paseo Relay':
       case 'Westend Relay':
       case 'Westend Asset Hub':
       case 'Westend People': {

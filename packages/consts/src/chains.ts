@@ -177,7 +177,6 @@ export const ChainList = new Map<ChainID, Chain>([
           'wss://rpc.ibp.network/paseo',
           'wss://paseo.dotters.network',
           'wss://pas-rpc.stakeworld.io',
-          'wss://api2.zondax.ch/pas/node/rpc',
         ],
         lightClient: paseo,
       },
