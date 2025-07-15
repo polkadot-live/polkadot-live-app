@@ -160,6 +160,8 @@ export class APIsController {
         return client as Api<'paseo'>;
       case 'Paseo Asset Hub':
         return client as Api<'asset-hub-paseo'>;
+      case 'Paseo People':
+        return client as Api<'people-paseo'>;
       case 'Westend Relay':
         return client as Api<'westend'>;
       case 'Westend Asset Hub':

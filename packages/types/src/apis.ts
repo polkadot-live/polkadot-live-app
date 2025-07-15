@@ -15,6 +15,7 @@ import type {
   WestendPeopleApi,
   PaseoApi,
   PaseoAssetHubApi,
+  PaseoPeopleApi,
 } from '@dedot/chaintypes';
 
 export type NodeEndpoint = `wss://${string}` | 'smoldot';
@@ -31,6 +32,7 @@ export type DedotClientSet =
   | DedotClient<KusamaPeopleApi>
   | DedotClient<PaseoApi>
   | DedotClient<PaseoAssetHubApi>
+  | DedotClient<PaseoPeopleApi>
   | DedotClient<WestendApi>
   | DedotClient<WestendAssetHubApi>
   | DedotClient<WestendPeopleApi>;
@@ -63,6 +65,7 @@ export interface ClientTypes {
   'people-kusama': KusamaPeopleApi;
   paseo: PaseoApi;
   'asset-hub-paseo': PaseoAssetHubApi;
+  'people-paseo': PaseoPeopleApi;
   westend: WestendApi;
   westmint: WestendAssetHubApi;
   'people-westend': WestendPeopleApi;
@@ -82,6 +85,7 @@ export interface ChainIdToClientKeyMap {
   'Kusama People': 'people-kusama';
   'Paseo Relay': 'paseo';
   'Paseo Asset Hub': 'asset-hub-paseo';
+  'Paseo People': 'people-paseo';
   'Westend Relay': 'westend';
   'Westend Asset Hub': 'westmint';
   'Westend People': 'people-westend';

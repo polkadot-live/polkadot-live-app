@@ -204,6 +204,21 @@ export const ChainList = new Map<ChainID, Chain>([
     },
   ],
   [
+    'Paseo People',
+    {
+      endpoints: {
+        rpcs: [
+          'wss://sys.ibp.network/people-paseo',
+          'wss://people-paseo.dotters.network',
+        ],
+        lightClient: undefined,
+      },
+      units: 10,
+      unit: 'PAS',
+      prefix: 0,
+    },
+  ],
+  [
     'Westend Relay',
     {
       endpoints: {
@@ -270,6 +285,7 @@ const RpcChainToChainID: Record<RpcSystemChain, ChainID> = {
   'Kusama People': 'Kusama People',
   'Paseo Testnet': 'Paseo Relay',
   'Paseo Asset Hub': 'Paseo Asset Hub',
+  'Paseo People': 'Paseo People',
   Westend: 'Westend Relay',
   'Westend Asset Hub': 'Westend Asset Hub',
   'Westend People': 'Westend People',
@@ -284,6 +300,7 @@ const SubscanSubdomainMap = new Map<ChainID, string>([
   ['Kusama People', 'people-kusama'],
   ['Paseo Relay', 'paseo'],
   ['Paseo Asset Hub', 'assethub-paseo'],
+  ['Paseo People', 'people-paseo'],
   ['Westend Relay', 'westend'],
   ['Westend Asset Hub', 'assethub-westend'],
   ['Westend People', 'people-westend'],
@@ -383,7 +400,7 @@ export const getEcosystemChainMap = (): Map<EcosystemID, ChainID[]> =>
   new Map([
     ['Polkadot', ['Polkadot Relay', 'Polkadot Asset Hub', 'Polkadot People']],
     ['Kusama', ['Kusama Relay', 'Kusama Asset Hub', 'Kusama People']],
-    ['Paseo', ['Paseo Relay', 'Paseo Asset Hub']],
+    ['Paseo', ['Paseo Relay', 'Paseo Asset Hub', 'Paseo People']],
     ['Westend', ['Westend Relay', 'Westend Asset Hub', 'Westend People']],
   ]);
 
