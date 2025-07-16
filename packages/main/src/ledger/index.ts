@@ -1,16 +1,18 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { getLedgerAppName } from '@polkadot-live/consts/chains';
 import { MainDebug } from '@/utils/DebugUtils';
 import { PolkadotGenericApp, supportedApps } from '@zondax/ledger-substrate';
 import TransportNodeHid from '@ledgerhq/hw-transport-node-hid';
 import type { AnyData, AnyFunction, AnyJson } from '@polkadot-live/types/misc';
-import type { WebContentsView } from 'electron';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   LedgerGetAddressResult,
   LedgerTask,
 } from '@polkadot-live/types/ledger';
 import type Transport from '@ledgerhq/hw-transport';
+import type { WebContentsView } from 'electron';
 
 const debug = MainDebug.extend('Ledger');
 
@@ -74,18 +76,17 @@ export const handleGetAddresses = async (
   };
 
   // Main transpiles to CJS, requiring us to add `.default` on `TransportNodeHid`.
-  const transport: Transport | Error = await withTimeout(
-    3000,
-    (TransportNodeHid as AnyFunction).default.create()
-  );
+  const promise = (TransportNodeHid as AnyFunction).default.create();
+  const transport: Transport | Error = await withTimeout(3000, promise);
 
   if (transport instanceof Error) {
     throw new Error("Couldn't connect to ledger.");
   }
 
   // Get ss58 address prefix for requested chain.
+  const appName = getLedgerAppName(chainName as ChainID);
   const { ss58_addr_type: ss58prefix } = supportedApps.find(
-    (app) => app.name === chainName
+    (app) => app.name === appName
   )!;
 
   if (ss58prefix === undefined) {

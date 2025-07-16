@@ -19,6 +19,9 @@ export type ChainID =
   | 'Westend Asset Hub'
   | 'Westend People';
 
+// Ledger app names.
+export type LedgerAppName = 'Polkadot' | 'Statemint' | 'Kusama' | 'Statemine';
+
 // Chain names from `rpc.system.chain`.
 export type RpcSystemChain =
   | 'Polkadot'
