@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.10.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.9.0-alpha...v0.10.0-alpha) (2025-07-16)
+
+
+### Features
+
+* footer interactive networks ui ([#1031](https://github.com/polkadot-live/polkadot-live-app/issues/1031)) ([aa52215](https://github.com/polkadot-live/polkadot-live-app/commit/aa52215d3078240ea0f5cc512756fcdaeacec1ed))
+* initial paseo chains integration ([#1033](https://github.com/polkadot-live/polkadot-live-app/issues/1033)) ([cfa978a](https://github.com/polkadot-live/polkadot-live-app/commit/cfa978a4b9f1499719d83e4b132d5acbe61ca7d3))
+
+
+### Bug Fixes
+
+* build scripts ([#1028](https://github.com/polkadot-live/polkadot-live-app/issues/1028)) ([4416269](https://github.com/polkadot-live/polkadot-live-app/commit/44162691529f18ee394ff035ead8eea0ce6c1b10))
+
 ## [0.9.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.8.0-alpha...v0.9.0-alpha) (2025-07-06)
 
 
