@@ -973,6 +973,8 @@ const getStakingApi = (chainId: ChainID, api: DedotClientSet) => {
       return api as DedotClient<ClientTypes['polkadot']>;
     case 'Kusama Relay':
       return api as DedotClient<ClientTypes['kusama']>;
+    case 'Paseo Relay':
+      return api as DedotClient<ClientTypes['paseo']>;
     case 'Westend Asset Hub':
       return api as DedotClient<ClientTypes['westmint']>;
     default:
