@@ -28,6 +28,7 @@ import { useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { WcSessionButton } from './Wrappers';
 import { AddressListFooter, ImportAddressRow } from '../../Wrappers';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { ImportProps } from './types';
 
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
@@ -71,11 +72,12 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
    */
   const handleSelectAddress = (
     encoded: string,
+    chainId: ChainID,
     checkState: Checkbox.CheckedState
   ) => {
     setWcFetchedAddresses((prev) => {
       const updated = prev.map((data) =>
-        data.encoded === encoded
+        data.encoded === encoded && data.chainId === chainId
           ? {
               ...data,
               selected:
@@ -340,7 +342,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                 { chainId, encoded, publicKeyHex, selected },
                                 i
                               ) => (
-                                <ImportAddressRow key={encoded}>
+                                <ImportAddressRow key={`${chainId}-${encoded}`}>
                                   <div className="identicon">
                                     <UI.Identicon
                                       value={encoded}
@@ -381,7 +383,11 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                         onCheckedChange={(
                                           checked: Checkbox.CheckedState
                                         ) => {
-                                          handleSelectAddress(encoded, checked);
+                                          handleSelectAddress(
+                                            encoded,
+                                            chainId,
+                                            checked
+                                          );
                                         }}
                                       >
                                         <Checkbox.Indicator className="CheckboxIndicator">

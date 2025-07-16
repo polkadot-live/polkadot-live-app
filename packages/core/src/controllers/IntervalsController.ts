@@ -167,9 +167,6 @@ export class IntervalsController {
       return;
     }
 
-    console.log('UPDATE SUBSCRIPTION:');
-    console.log(task);
-
     // Stop interval.
     this.stopInterval();
 

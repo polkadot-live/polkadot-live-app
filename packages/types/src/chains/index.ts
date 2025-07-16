@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 // Ecosystem IDs.
-export type EcosystemID = 'Polkadot' | 'Kusama' | 'Westend';
+export type EcosystemID = 'Polkadot' | 'Kusama' | 'Paseo' | 'Westend';
 
 // Supported chains as string literals.
 export type ChainID =
@@ -12,6 +12,9 @@ export type ChainID =
   | 'Kusama Relay'
   | 'Kusama Asset Hub'
   | 'Kusama People'
+  | 'Paseo Relay'
+  | 'Paseo Asset Hub'
+  | 'Paseo People'
   | 'Westend Relay'
   | 'Westend Asset Hub'
   | 'Westend People';
@@ -24,6 +27,9 @@ export type RpcSystemChain =
   | 'Kusama'
   | 'Kusama Asset Hub'
   | 'Kusama People'
+  | 'Paseo Testnet'
+  | 'Paseo Asset Hub'
+  | 'Paseo People'
   | 'Westend'
   | 'Westend Asset Hub'
   | 'Westend People';

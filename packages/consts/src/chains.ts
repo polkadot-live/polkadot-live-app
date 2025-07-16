@@ -12,6 +12,7 @@ import {
   westend2,
   westend2_asset_hub,
   westend_people,
+  paseo,
 } from '@substrate/connect-known-chains';
 import type { AccountSource } from '@polkadot-live/types/accounts';
 import type {
@@ -25,7 +26,7 @@ import type { NodeEndpoint } from '@polkadot-live/types/apis';
 interface Chain {
   endpoints: {
     rpcs: NodeEndpoint[];
-    lightClient: string;
+    lightClient: string | undefined;
   };
   units: number;
   unit: string;
@@ -167,6 +168,57 @@ export const ChainList = new Map<ChainID, Chain>([
     },
   ],
   [
+    'Paseo Relay',
+    {
+      endpoints: {
+        rpcs: [
+          'wss://paseo-rpc.dwellir.com',
+          'wss://paseo.rpc.amforc.com',
+          'wss://rpc.ibp.network/paseo',
+          'wss://paseo.dotters.network',
+          'wss://pas-rpc.stakeworld.io',
+        ],
+        lightClient: paseo,
+      },
+      units: 10,
+      unit: 'PAS',
+      prefix: 0,
+    },
+  ],
+  [
+    'Paseo Asset Hub',
+    {
+      endpoints: {
+        rpcs: [
+          'wss://asset-hub-paseo-rpc.dwellir.com',
+          'wss://sys.ibp.network/asset-hub-paseo',
+          'wss://asset-hub-paseo.dotters.network',
+          'wss://pas-rpc.stakeworld.io/assethub',
+          'wss://sys.turboflakes.io/asset-hub-paseo',
+        ],
+        lightClient: undefined,
+      },
+      units: 10,
+      unit: 'PAS',
+      prefix: 0,
+    },
+  ],
+  [
+    'Paseo People',
+    {
+      endpoints: {
+        rpcs: [
+          'wss://sys.ibp.network/people-paseo',
+          'wss://people-paseo.dotters.network',
+        ],
+        lightClient: undefined,
+      },
+      units: 10,
+      unit: 'PAS',
+      prefix: 0,
+    },
+  ],
+  [
     'Westend Relay',
     {
       endpoints: {
@@ -231,6 +283,9 @@ const RpcChainToChainID: Record<RpcSystemChain, ChainID> = {
   Kusama: 'Kusama Relay',
   'Kusama Asset Hub': 'Kusama Asset Hub',
   'Kusama People': 'Kusama People',
+  'Paseo Testnet': 'Paseo Relay',
+  'Paseo Asset Hub': 'Paseo Asset Hub',
+  'Paseo People': 'Paseo People',
   Westend: 'Westend Relay',
   'Westend Asset Hub': 'Westend Asset Hub',
   'Westend People': 'Westend People',
@@ -243,6 +298,9 @@ const SubscanSubdomainMap = new Map<ChainID, string>([
   ['Kusama Relay', 'kusama'],
   ['Kusama Asset Hub', 'assethub-kusama'],
   ['Kusama People', 'people-kusama'],
+  ['Paseo Relay', 'paseo'],
+  ['Paseo Asset Hub', 'assethub-paseo'],
+  ['Paseo People', 'people-paseo'],
   ['Westend Relay', 'westend'],
   ['Westend Asset Hub', 'assethub-westend'],
   ['Westend People', 'people-westend'],
@@ -321,6 +379,7 @@ export const getSendChains = (): ChainID[] => [
 export const getStakingChains = (): ChainID[] => [
   'Polkadot Relay',
   'Kusama Relay',
+  'Paseo Relay',
   'Westend Asset Hub',
 ];
 
@@ -341,5 +400,12 @@ export const getEcosystemChainMap = (): Map<EcosystemID, ChainID[]> =>
   new Map([
     ['Polkadot', ['Polkadot Relay', 'Polkadot Asset Hub', 'Polkadot People']],
     ['Kusama', ['Kusama Relay', 'Kusama Asset Hub', 'Kusama People']],
+    ['Paseo', ['Paseo Relay', 'Paseo Asset Hub', 'Paseo People']],
     ['Westend', ['Westend Relay', 'Westend Asset Hub', 'Westend People']],
   ]);
+
+/**
+ * Determine if light client available for chain.
+ */
+export const hasLightClientSupport = (chainId: ChainID): boolean =>
+  ChainList.get(chainId)?.endpoints.lightClient !== undefined;
