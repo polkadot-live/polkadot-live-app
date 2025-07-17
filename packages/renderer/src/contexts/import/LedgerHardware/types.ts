@@ -24,14 +24,14 @@ export interface LedgerHardwareContextInterface {
   receivedAddresses: RawLedgerAddress[];
   selectedAddresses: NamedRawLedgerAddress[];
   selectedNetworkState: string;
-  statusCodes: LedgerResponse[];
+  lastStatusCode: LedgerResponse | null;
   clearCaches: (
     clearReceived: boolean,
     clearSelected: boolean,
     clearStatusCodes: boolean
   ) => void;
   disableConnect: () => boolean;
-  fetchLedgerAddresses: (network: string, offset: number) => void;
+  fetchLedgerAddresses: (network: string, offset: number) => Promise<void>;
   getChecked: (pk: string) => boolean;
   getImportLabel: () => string;
   resetAll: () => void;

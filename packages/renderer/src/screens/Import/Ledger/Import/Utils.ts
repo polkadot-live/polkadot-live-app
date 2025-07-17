@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { LedgerResponse } from '@polkadot-live/types/ledger';
-import type { AnyJson } from '@polkadot-live/types/misc';
 
 // Formats a title and subtitle depending on the Ledger code received.
 export const getDisplayFromLedgerCode = (
@@ -19,7 +18,7 @@ export const getDisplayFromLedgerCode = (
     case 'DeviceNotConnected':
       title = inStatusBar
         ? 'Waiting For Ledger Device'
-        : 'Ledger Not Connected';
+        : 'Either connect or unlock your Ledger device.';
       subtitle = inStatusBar
         ? ''
         : 'Connect a Ledger device to continue account import.';
@@ -33,6 +32,9 @@ export const getDisplayFromLedgerCode = (
     case 'ReceivedAddress':
       title = 'Successfully Fetched Address';
       break;
+    case 'TypeError':
+      title = 'USB error. Connect again or reopen this tab if issue persists.';
+      break;
     default:
       title = 'Connecting to Device...';
   }
@@ -41,26 +43,14 @@ export const getDisplayFromLedgerCode = (
 
 // Determine the status of connection process. If the device is reported to be connected, ignore
 // `DeviceNotConnected` error returned by other tasks.
-export const determineStatusFromCodes = (
-  responses: LedgerResponse[],
+export const determineStatusFromCode = (
+  response: LedgerResponse | null,
   inStatusBar: boolean
 ) => {
-  if (!responses.length) {
+  if (!response) {
     return getDisplayFromLedgerCode('', inStatusBar);
   }
 
-  const latestStatusCode: string = responses[0].statusCode;
-  let trueCode = latestStatusCode;
-
-  if (latestStatusCode === 'DeviceNotConnected') {
-    responses.every((b: AnyJson) => {
-      if (b.statusCode !== 'DeviceNotConnected') {
-        trueCode = b.statusCode;
-        return false;
-      }
-      return true;
-    });
-  }
-
-  return getDisplayFromLedgerCode(trueCode || '', inStatusBar);
+  const { statusCode } = response;
+  return getDisplayFromLedgerCode(statusCode, inStatusBar);
 };

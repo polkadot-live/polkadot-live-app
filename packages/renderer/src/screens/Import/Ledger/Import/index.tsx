@@ -40,7 +40,7 @@ import {
 import { ConnectButton } from './Wrappers';
 import { AddressListFooter, ImportAddressRow } from '../../Wrappers';
 import { InfoCardSteps } from '../../InfoCardSteps';
-import { determineStatusFromCodes } from './Utils';
+import { determineStatusFromCode } from './Utils';
 import { ItemsColumn } from '@ren/screens/Home/Manage/Wrappers';
 import { getSelectLedgerNetworkData } from '@polkadot-live/consts/chains';
 import type { ImportProps } from './types';
@@ -87,7 +87,10 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   /**
    * Interact with Ledger device and perform necessary tasks.
    */
-  const handleGetLedgerAddresses = (changingPage: boolean, targetIndex = 0) => {
+  const handleGetLedgerAddresses = async (
+    changingPage: boolean,
+    targetIndex = 0
+  ) => {
     const selected = ledger.selectedNetworkState;
 
     if (selected === '') {
@@ -104,7 +107,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
         : connectedNetwork
       : selected;
 
-    ledger.fetchLedgerAddresses(network, offset);
+    await ledger.fetchLedgerAddresses(network, offset);
   };
 
   /**
@@ -140,24 +143,24 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   /**
    * Handle clicks for pagination buttons.
    */
-  const handlePaginationClick = (direction: 'prev' | 'next') => {
+  const handlePaginationClick = async (direction: 'prev' | 'next') => {
     const targetIndex =
       direction === 'prev'
         ? Math.max(0, ledger.pageIndex - 1)
         : Math.max(0, ledger.pageIndex + 1);
 
     ledger.setPageIndex(targetIndex);
-    handleGetLedgerAddresses(true, targetIndex);
+    await handleGetLedgerAddresses(true, targetIndex);
   };
 
   /**
    * Update flag to show error/status messages.
    */
   useEffect(() => {
-    if (ledger.statusCodes.length > 0) {
+    if (ledger.lastStatusCode !== null) {
       setShowConnectStatus(true);
     }
-  }, [ledger.statusCodes]);
+  }, [ledger.lastStatusCode]);
 
   return (
     <UI.ScrollableMax>
@@ -285,9 +288,9 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
 
                         {/** Connect Button */}
                         <ConnectButton
-                          onClick={() => {
+                          onClick={async () => {
                             ledger.setPageIndex(0);
-                            handleGetLedgerAddresses(false);
+                            await handleGetLedgerAddresses(false);
                           }}
                           disabled={ledger.disableConnect()}
                         >
@@ -300,8 +303,8 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                         <InfoCard kind={'warning'} icon={faExclamationTriangle}>
                           <span>
                             {
-                              determineStatusFromCodes(
-                                ledger.statusCodes,
+                              determineStatusFromCode(
+                                ledger.lastStatusCode,
                                 false
                               ).title
                             }

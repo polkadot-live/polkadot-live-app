@@ -5,12 +5,26 @@ import type { AnyData } from './misc';
 
 export type LedgerTask = 'get_address';
 
+export interface LedgerTaskResult {
+  success: boolean;
+  error?: Error;
+  results?: string;
+}
+
+export interface LedgerResult {
+  device: {
+    id: string | undefined;
+    productName: string | undefined;
+  };
+  body: LedgerGetAddressData;
+}
+
 export interface LedgerResponse {
   ack: string;
   statusCode: string;
 }
 
-export interface LedgerGetAddressResult {
+export interface LedgerGetAddressData {
   pubKey: string;
   address: string;
 }
@@ -21,7 +35,7 @@ export interface LedgerGetAddressResult {
 export interface LedgerFetchedAddressData {
   statusCode: string;
   device: { id: string; productName: string };
-  body: [LedgerGetAddressResult];
+  body: LedgerGetAddressData;
 }
 
 export interface GetAddressMessage {

@@ -11,7 +11,7 @@ import {
   systemPreferences,
   Menu,
 } from 'electron';
-import { executeLedgerTask } from './ledger';
+import { executeLedgerTask, handleLedgerTaskError } from './ledger';
 import Store from 'electron-store';
 import AutoLaunch from 'auto-launch';
 import unhandled from 'electron-unhandled';
@@ -431,25 +431,48 @@ app.whenReady().then(async () => {
    */
 
   // Execute communication with a Ledger device.
-  ipcMain.on('app:ledger:task', async (_, serialized) => {
+  ipcMain.handle('app:ledger:task', async (_, serialized) => {
     interface Target {
       accountIndices: number[];
       chainName: string;
       tasks: LedgerTask[];
     }
 
+    // TODO: Rename `chainName` to `chainId`.
     const { accountIndices, chainName, tasks }: Target = JSON.parse(serialized);
-    const importView = WindowsController.getView('import')!;
+    const importView = WindowsController.getView('import');
 
     if (process.env.DEBUG) {
       console.debug(accountIndices, chainName, tasks);
     }
 
     if (importView) {
-      await executeLedgerTask(importView, chainName, tasks, {
+      const result = await executeLedgerTask(chainName, tasks, {
         accountIndices,
       });
+
+      if (result.success) {
+        // TODO: Remove assertion operator.
+        const addresses = result.results!;
+
+        return JSON.stringify({
+          ack: 'success',
+          statusCode: 'ReceiveAddress',
+          options: { accountIndices },
+          addresses,
+        });
+      } else {
+        // TODO: Remove assertion operator.
+        const error = result.error!;
+        return handleLedgerTaskError(error);
+      }
     }
+
+    return JSON.stringify({
+      ack: 'failure',
+      statusCode: 'NoImportView',
+      body: { msg: 'The import view is not open.' },
+    });
   });
 
   /**
