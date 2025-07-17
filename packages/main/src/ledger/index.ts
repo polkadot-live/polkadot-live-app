@@ -9,9 +9,9 @@ import type { AnyFunction } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   LedgerGetAddressData,
-  LedgerTaskResult,
   LedgerResult,
   LedgerTask,
+  LedgerTaskResult,
 } from '@polkadot-live/types/ledger';
 import type Transport from '@ledgerhq/hw-transport';
 
@@ -117,7 +117,6 @@ export const handleGetAddresses = async (
       );
 
       if (result instanceof Error) {
-        console.log('>> Setting maybeError');
         maybeError.flag = true;
         maybeError.error = result;
         break;
