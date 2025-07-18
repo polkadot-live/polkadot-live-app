@@ -12,32 +12,41 @@ export const getDisplayFromLedgerCode = (
   let subtitle = null;
 
   switch (statusCode) {
-    case 'DeviceLocked':
+    case 'DeviceLocked': {
       title = 'Unlock your Ledger device to continue.';
       break;
-    case 'DeviceNotConnected':
+    }
+    case 'DeviceNotConnected': {
       title = inStatusBar
         ? 'Waiting For Ledger Device'
-        : 'Either connect or unlock your Ledger device.';
+        : 'Connect and unlock your Ledger device.';
       subtitle = inStatusBar
         ? ''
         : 'Connect a Ledger device to continue account import.';
       break;
-    case 'AppNotOpen':
+    }
+    case 'AppNotOpen': {
       title = 'Open the Polkadot App';
       break;
-    case 'GettingAddress':
+    }
+    case 'GettingAddress': {
       title = 'Getting Address...';
       break;
-    case 'ReceivedAddress':
+    }
+    case 'ReceivedAddress': {
       title = 'Successfully Fetched Address';
       break;
-    case 'TypeError':
-      title = 'USB error. Connect again or reopen this tab if issue persists.';
+    }
+    case 'TransportUndefined': {
+      title = 'Connect and unlock your Ledger device.';
       break;
-    default:
+    }
+    default: {
       title = 'Connecting to Device...';
+      break;
+    }
   }
+
   return { title, subtitle };
 };
 

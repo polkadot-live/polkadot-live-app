@@ -11,7 +11,11 @@ import {
   systemPreferences,
   Menu,
 } from 'electron';
-import { executeLedgerTask, handleLedgerTaskError } from './ledger';
+import {
+  executeLedgerTask,
+  handleLedgerTaskError,
+  USBController,
+} from './ledger';
 import Store from 'electron-store';
 import AutoLaunch from 'auto-launch';
 import unhandled from 'electron-unhandled';
@@ -137,6 +141,9 @@ app.whenReady().then(async () => {
   SettingsController.initialize();
   const appHideDockIcon = SettingsController.get('setting:hide-dock-icon');
   appHideDockIcon && hideDockIcon();
+
+  // Initialize USB controller.
+  await USBController.initialize();
 
   // Initialize shared state cache.
   await OnlineStatusController.initialize();
