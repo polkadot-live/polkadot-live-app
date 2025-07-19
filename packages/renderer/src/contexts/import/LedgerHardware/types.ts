@@ -3,6 +3,7 @@
 
 import type { LedgerResponse } from '@polkadot-live/types/ledger';
 import type { AnyData } from '@polkadot-live/types/misc';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 export interface RawLedgerAddress {
   address: string;
@@ -31,7 +32,7 @@ export interface LedgerHardwareContextInterface {
     clearStatusCodes: boolean
   ) => void;
   disableConnect: () => boolean;
-  fetchLedgerAddresses: (network: string, offset: number) => Promise<void>;
+  fetchLedgerAddresses: (network: ChainID, offset: number) => Promise<void>;
   getChecked: (pk: string) => boolean;
   getImportLabel: () => string;
   resetAll: () => void;

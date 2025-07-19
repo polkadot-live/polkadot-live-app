@@ -20,8 +20,8 @@ export const getProductId = (productIdMM: number): number => productIdMM << 8;
  */
 export const getProductIdMM = (productId: number): number => productId >> 8;
 
-/***
- # @name handleLedgerTaskError 
+/**
+ * @name handleLedgerTaskError
  * @summary Handle Ledger connection errors and return serialized error data.
  */
 export const handleLedgerTaskError = (err: Error): string => {
@@ -88,8 +88,10 @@ export const withTimeout = async (
   promise: Promise<AnyFunction>
 ) => {
   const timeout = new Promise((_, reject) =>
-    setTimeout(async () => {
-      reject(Error('Timeout'));
+    setTimeout(() => {
+      const error = new Error('Timeout');
+      error.name = 'Timeout';
+      reject(error);
     }, millis)
   );
   return Promise.race([promise, timeout]);

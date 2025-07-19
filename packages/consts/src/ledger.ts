@@ -47,24 +47,24 @@ export const ledgerDevices: Record<LedgerDeviceID, LedgerDeviceMeta> = {
 };
 
 export const ledgerErrorMeta: Record<LedgerErrorStatusCode, LedgerErrorMeta> = {
-  TransportUndefined: {
+  AppNotOpen: {
     ack: 'failure',
-    statusCode: 'TransportUndefined',
-    body: { msg: 'Problem with USB module.' },
+    statusCode: 'AppNotOpen',
+    body: { msg: 'Required Ledger app is not open' },
   },
   DeviceLocked: {
     ack: 'failure',
     statusCode: 'DeviceLocked',
     body: { msg: 'No supported Ledger device connected.' },
   },
-  AppNotOpen: {
-    ack: 'failure',
-    statusCode: 'AppNotOpen',
-    body: { msg: 'Required Ledger app is not open' },
-  },
   DeviceNotConnected: {
     ack: 'failure',
     statusCode: 'DeviceNotConnected',
     body: { msg: 'No supported Ledger device connected.' },
+  },
+  TransportUndefined: {
+    ack: 'failure',
+    statusCode: 'TransportUndefined',
+    body: { msg: 'Problem with USB module.' },
   },
 };

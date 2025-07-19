@@ -21,7 +21,7 @@ const debug = MainDebug.extend('Ledger');
  * Connects to a Ledger device to perform a task.
  */
 export const executeLedgerTask = async (
-  chainId: string,
+  chainId: ChainID,
   tasks: LedgerTask[],
   options: { accountIndices: number[] }
 ): Promise<LedgerTaskResult> => {
@@ -38,17 +38,17 @@ export const executeLedgerTask = async (
  * Gets addresses on the device.
  */
 export const handleGetAddresses = async (
-  chainName: string,
+  chainId: ChainID,
   indices: number[]
 ): Promise<LedgerTaskResult> => {
   try {
-    const transport = USBController.getTransport();
+    const transport = USBController.transport;
     if (!transport) {
       return USBController.getLedgerError('TransportUndefined');
     }
 
     // Get ss58 address prefix for requested chain.
-    const appName = getLedgerAppName(chainName as ChainID);
+    const appName = getLedgerAppName(chainId as ChainID);
     const { ss58_addr_type: ss58prefix } = supportedApps.find(
       (app) => app.name === appName
     )!;
@@ -58,12 +58,12 @@ export const handleGetAddresses = async (
     const slip = '354';
 
     // Get the correct chain name for the metadata API.
-    const chainId = chainName === 'Polkadot Relay' ? 'dot' : 'ksm';
+    const chainName = chainId === 'Polkadot Relay' ? 'dot' : 'ksm';
 
     // Establish connection to Ledger Polkadot app.
     const substrateApp = new PolkadotGenericApp(
       transport,
-      chainId,
+      chainName,
       TX_METADATA_SRV_URL
     );
 

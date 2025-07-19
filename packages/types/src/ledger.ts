@@ -40,10 +40,10 @@ export interface LedgerErrorMeta {
 }
 
 export type LedgerErrorStatusCode =
-  | 'TransportUndefined'
-  | 'DeviceLocked'
   | 'AppNotOpen'
-  | 'DeviceNotConnected';
+  | 'DeviceLocked'
+  | 'DeviceNotConnected'
+  | 'TransportUndefined';
 
 export type LedgerErrorType = 'TransportUndefined' | 'PrefixUndefined';
 

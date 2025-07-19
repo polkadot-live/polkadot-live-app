@@ -41,6 +41,7 @@ import { menuTemplate } from '@/utils/MenuUtils';
 import { version } from '../package.json';
 import * as WindowUtils from '@/utils/WindowUtils';
 import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { IpcTask, SyncID } from '@polkadot-live/types/communication';
 import type { NotificationData } from '@polkadot-live/types/reporter';
 import type { LedgerTask } from '@polkadot-live/types/ledger';
@@ -441,20 +442,19 @@ app.whenReady().then(async () => {
   ipcMain.handle('app:ledger:task', async (_, serialized) => {
     interface Target {
       accountIndices: number[];
-      chainName: string;
+      chainId: ChainID;
       tasks: LedgerTask[];
     }
 
-    // TODO: Rename `chainName` to `chainId`.
-    const { accountIndices, chainName, tasks }: Target = JSON.parse(serialized);
+    const { accountIndices, chainId, tasks }: Target = JSON.parse(serialized);
     const importView = WindowsController.getView('import');
 
     if (process.env.DEBUG) {
-      console.debug(accountIndices, chainName, tasks);
+      console.debug(accountIndices, chainId, tasks);
     }
 
     if (importView) {
-      const result = await executeLedgerTask(chainName, tasks, {
+      const result = await executeLedgerTask(chainId, tasks, {
         accountIndices,
       });
 

@@ -101,11 +101,13 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
     const offset = !changingPage ? 0 : targetIndex * 5;
 
     // Use the connected network if we're changing page. Otherwise, use the selected network.
-    const network = changingPage
-      ? connectedNetwork === ''
-        ? selected
-        : connectedNetwork
-      : selected;
+    const network = (
+      changingPage
+        ? connectedNetwork === ''
+          ? selected
+          : connectedNetwork
+        : selected
+    ) as ChainID;
 
     await ledger.fetchLedgerAddresses(network, offset);
   };

@@ -10,13 +10,22 @@ import type Transport from '@ledgerhq/hw-transport';
 
 const genericErrorMsg = 'Generic error.';
 
-export class USBController {
-  private static transport: Transport | null = null;
+/**
+ * Add delay between closing and initializing the transport.
+ * Give the OS time to release resources and fully close transport.
+ */
+const DELAY = 100;
 
-  static getTransport = () => this.transport;
+export class USBController {
+  static transport: Transport | null = null;
 
   /**
    * Initialize USB listeners.
+   *
+   * The `attach` and `detach` events are invoked in certain scenarios.
+   * `attach` invoked when Ledger device is unlocked.
+   * `detach` invoked when Ledger device is disconnected.
+   * `detach` + `attach` invoked when opening and closing the Polkadot app.
    */
   static initialize = async () => {
     await this.checkAttachedDevices();
@@ -24,7 +33,7 @@ export class USBController {
     usb.on('attach', async (device) => {
       const { idVendor, idProduct } = device.deviceDescriptor;
       if (verifyLedgerDevice(idVendor, idProduct)) {
-        await this.closeTransport();
+        await new Promise((resolve) => setTimeout(resolve, DELAY));
         await this.initializeTransport();
       }
     });
@@ -43,6 +52,7 @@ export class USBController {
 
       if (verifyLedgerDevice(idVendor, idProduct)) {
         await this.closeTransport();
+        await new Promise((resolve) => setTimeout(resolve, DELAY));
         await this.initializeTransport();
         break;
       }
@@ -57,7 +67,6 @@ export class USBController {
       const promise = (TransportNodeHid as AnyFunction).default.create();
       const transport: Transport | Error = await withTimeout(3000, promise);
       if (transport instanceof Error) {
-        console.log(transport);
         throw transport;
       }
 

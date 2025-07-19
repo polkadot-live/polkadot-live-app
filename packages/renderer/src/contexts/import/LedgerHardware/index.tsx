@@ -4,6 +4,7 @@
 import { createContext, useContext, useRef, useState } from 'react';
 import { defaultLedgerHardwareContext } from './defaults';
 import { setStateWithRef } from '@w3ux/utils';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   LedgerHardwareContextInterface,
   NamedRawLedgerAddress,
@@ -61,7 +62,7 @@ export const LedgerHardwareProvider = ({
   /**
    * Interact with Ledger device and perform necessary tasks.
    */
-  const fetchLedgerAddresses = async (network: string, offset: number) => {
+  const fetchLedgerAddresses = async (network: ChainID, offset: number) => {
     if (selectedNetworkRef.current !== connectedNetworkRef.current) {
       preConnect();
     }
@@ -75,7 +76,7 @@ export const LedgerHardwareProvider = ({
 
     const serialized = JSON.stringify({
       accountIndices,
-      chainName: network,
+      chainId: network,
       tasks,
     });
 
