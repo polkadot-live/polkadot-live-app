@@ -33,6 +33,7 @@ export class USBController {
     usb.on('attach', async (device) => {
       const { idVendor, idProduct } = device.deviceDescriptor;
       if (verifyLedgerDevice(idVendor, idProduct)) {
+        await this.closeTransport();
         await new Promise((resolve) => setTimeout(resolve, DELAY));
         await this.initializeTransport();
       }
