@@ -233,11 +233,8 @@ export const API: PreloadAPI = {
    */
 
   // Performs a Ledger task.
-  doLedgerTask: (serialized) => ipcRenderer.send('app:ledger:task', serialized),
-
-  // Reports a Ledger device result to all open windows.
-  reportLedgerStatus: (callback) =>
-    ipcRenderer.on('renderer:ledger:report:status', callback),
+  doLedgerTask: async (serialized) =>
+    await ipcRenderer.invoke('app:ledger:task', serialized),
 
   // Requests to main process to report imported accounts to all windows.
   requestImportedAccounts: () => ipcRenderer.send('app:request:accounts'),

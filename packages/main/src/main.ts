@@ -11,7 +11,11 @@ import {
   systemPreferences,
   Menu,
 } from 'electron';
-import { executeLedgerTask } from './ledger';
+import {
+  executeLedgerTask,
+  handleLedgerTaskError,
+  USBController,
+} from './ledger';
 import Store from 'electron-store';
 import AutoLaunch from 'auto-launch';
 import unhandled from 'electron-unhandled';
@@ -37,6 +41,7 @@ import { menuTemplate } from '@/utils/MenuUtils';
 import { version } from '../package.json';
 import * as WindowUtils from '@/utils/WindowUtils';
 import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { IpcTask, SyncID } from '@polkadot-live/types/communication';
 import type { NotificationData } from '@polkadot-live/types/reporter';
 import type { LedgerTask } from '@polkadot-live/types/ledger';
@@ -137,6 +142,9 @@ app.whenReady().then(async () => {
   SettingsController.initialize();
   const appHideDockIcon = SettingsController.get('setting:hide-dock-icon');
   appHideDockIcon && hideDockIcon();
+
+  // Initialize USB controller.
+  await USBController.initialize();
 
   // Initialize shared state cache.
   await OnlineStatusController.initialize();
@@ -431,25 +439,47 @@ app.whenReady().then(async () => {
    */
 
   // Execute communication with a Ledger device.
-  ipcMain.on('app:ledger:task', async (_, serialized) => {
+  ipcMain.handle('app:ledger:task', async (_, serialized) => {
     interface Target {
       accountIndices: number[];
-      chainName: string;
+      chainId: ChainID;
       tasks: LedgerTask[];
     }
 
-    const { accountIndices, chainName, tasks }: Target = JSON.parse(serialized);
-    const importView = WindowsController.getView('import')!;
+    const { accountIndices, chainId, tasks }: Target = JSON.parse(serialized);
+    const importView = WindowsController.getView('import');
 
     if (process.env.DEBUG) {
-      console.debug(accountIndices, chainName, tasks);
+      console.debug(accountIndices, chainId, tasks);
     }
 
     if (importView) {
-      await executeLedgerTask(importView, chainName, tasks, {
+      const result = await executeLedgerTask(chainId, tasks, {
         accountIndices,
       });
+
+      if (result.success) {
+        // TODO: Remove assertion operator.
+        const addresses = result.results!;
+
+        return JSON.stringify({
+          ack: 'success',
+          statusCode: 'ReceiveAddress',
+          options: { accountIndices },
+          addresses,
+        });
+      } else {
+        // TODO: Remove assertion operator.
+        const error = result.error!;
+        return handleLedgerTaskError(error);
+      }
     }
+
+    return JSON.stringify({
+      ack: 'failure',
+      statusCode: 'NoImportView',
+      body: { msg: 'The import view is not open.' },
+    });
   });
 
   /**

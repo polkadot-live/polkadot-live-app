@@ -3,6 +3,7 @@
 
 import type { LedgerResponse } from '@polkadot-live/types/ledger';
 import type { AnyData } from '@polkadot-live/types/misc';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 export interface RawLedgerAddress {
   address: string;
@@ -24,14 +25,14 @@ export interface LedgerHardwareContextInterface {
   receivedAddresses: RawLedgerAddress[];
   selectedAddresses: NamedRawLedgerAddress[];
   selectedNetworkState: string;
-  statusCodes: LedgerResponse[];
+  lastStatusCode: LedgerResponse | null;
   clearCaches: (
     clearReceived: boolean,
     clearSelected: boolean,
     clearStatusCodes: boolean
   ) => void;
   disableConnect: () => boolean;
-  fetchLedgerAddresses: (network: string, offset: number) => void;
+  fetchLedgerAddresses: (network: ChainID, offset: number) => Promise<void>;
   getChecked: (pk: string) => boolean;
   getImportLabel: () => string;
   resetAll: () => void;
