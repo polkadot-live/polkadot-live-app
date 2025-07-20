@@ -2,10 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Accordion from '@radix-ui/react-accordion';
-import * as UI from '@polkadot-live/ui/components';
-import * as Styles from '@polkadot-live/ui/styles';
 import * as Checkbox from '@radix-ui/react-checkbox';
+import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as Select from '@radix-ui/react-select';
+import * as Styles from '@polkadot-live/ui/styles';
+import * as UI from '@polkadot-live/ui/components';
 
 import { useEffect, useState } from 'react';
 import { useConnections } from '@ren/contexts/common';
@@ -15,12 +16,12 @@ import {
   useLedgerHardware,
 } from '@ren/contexts/import';
 
+import { BarLoader } from 'react-spinners';
 import { ChainIcon, InfoCard } from '@polkadot-live/ui/components';
 import {
   ButtonPrimaryInvert,
   ButtonText,
 } from '@polkadot-live/ui/kits/buttons';
-import { BarLoader } from 'react-spinners';
 import {
   CheckIcon,
   ChevronDownIcon,
@@ -30,13 +31,6 @@ import {
 } from '@radix-ui/react-icons';
 import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faCaretLeft,
-  faCaretRight,
-  faCircleDot,
-  faExclamationTriangle,
-  faX,
-} from '@fortawesome/free-solid-svg-icons';
 import { ConnectButton } from './Wrappers';
 import { AddressListFooter, ImportAddressRow } from '../../Wrappers';
 import { InfoCardSteps } from '../../InfoCardSteps';
@@ -45,7 +39,6 @@ import { ItemsColumn } from '@ren/screens/Home/Manage/Wrappers';
 import { getSelectLedgerNetworkData } from '@polkadot-live/consts/chains';
 import type { ImportProps } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
-import { decodeAddress, u8aToHex } from 'dedot/utils';
 
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   const { cacheGet, getTheme } = useConnections();
@@ -114,14 +107,6 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   };
 
   /**
-   * Derive public key from encoded address.
-   */
-  const getPublicKey = (address: string) => {
-    const prefix = connectedNetwork === 'Polkadot Relay' ? 0 : 2;
-    return u8aToHex(decodeAddress(address, true, prefix));
-  };
-
-  /**
    * Handle importing the selected Ledger addresses.
    */
   const handleImportProcess = async () => {
@@ -136,7 +121,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
     for (const selected of selectedAddresses) {
       const { address, device } = selected;
 
-      if (isAlreadyImported(getPublicKey(address))) {
+      if (isAlreadyImported(ledger.getPublicKey(address))) {
         continue;
       }
 
@@ -200,7 +185,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                   <ButtonPrimaryInvert
                     className="back-btn"
                     text="Back"
-                    iconLeft={faCaretLeft}
+                    iconLeft={FA.faCaretLeft}
                     onClick={() => {
                       ledger.clearCaches(false, false, true);
                       setShowImportUi(genericAccounts.length === 0);
@@ -211,7 +196,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                 </Styles.FlexRow>
                 <Styles.FlexRow>
                   <ButtonText
-                    iconLeft={faCaretRight}
+                    iconLeft={FA.faCaretRight}
                     text={'Ledger Accounts'}
                     disabled={genericAccounts.length === 0}
                     onClick={() => {
@@ -311,7 +296,10 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
 
                       {/** Error and Status Messages */}
                       {showConnectStatus && !ledger.deviceConnected && (
-                        <InfoCard kind={'warning'} icon={faExclamationTriangle}>
+                        <InfoCard
+                          kind={'warning'}
+                          icon={FA.faExclamationTriangle}
+                        >
                           <span>
                             {
                               determineStatusFromCode(
@@ -324,7 +312,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                             className="dismiss"
                             onClick={() => setShowConnectStatus(false)}
                           >
-                            <FontAwesomeIcon icon={faX} />
+                            <FontAwesomeIcon icon={FA.faX} />
                           </button>
                         </InfoCard>
                       )}
@@ -333,7 +321,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                         ledger.selectedNetworkState === '' && (
                           <InfoCard
                             kind={'warning'}
-                            icon={faExclamationTriangle}
+                            icon={FA.faExclamationTriangle}
                           >
                             <span>Select a network.</span>
                           </InfoCard>
@@ -370,7 +358,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                     <UI.AccordionContent transparent={true}>
                       {!ledger.deviceConnected ? (
                         <InfoCard
-                          icon={faCircleDot}
+                          icon={FA.faCircleDot}
                           iconTransform={'shrink-3'}
                           style={{ marginTop: '0', marginBottom: '0.75rem' }}
                         >
@@ -382,7 +370,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                         <>
                           <ItemsColumn>
                             {receivedAddresses.map(({ address }, i) => {
-                              const pubKey = getPublicKey(address);
+                              const pubKey = ledger.getPublicKey(address);
 
                               return (
                                 <ImportAddressRow key={address}>

@@ -18,6 +18,7 @@ export const defaultLedgerHardwareContext: LedgerHardwareContextInterface = {
   disableConnect: () => false,
   fetchLedgerAddresses: () => new Promise(() => {}),
   getChecked: () => false,
+  getPublicKey: () => `0x`,
   getImportLabel: () => '',
   resetAll: () => {},
   setIsImporting: () => {},

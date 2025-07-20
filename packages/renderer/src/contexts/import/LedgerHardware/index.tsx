@@ -3,6 +3,7 @@
 
 import { createContext, useContext, useRef, useState } from 'react';
 import { defaultLedgerHardwareContext } from './defaults';
+import { decodeAddress, u8aToHex } from 'dedot/utils';
 import { setStateWithRef } from '@w3ux/utils';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
@@ -57,6 +58,14 @@ export const LedgerHardwareProvider = ({
   const preConnect = () => {
     setDeviceConnected(false);
     clearCaches(true, true, false);
+  };
+
+  /**
+   * Derive public key from encoded address.
+   */
+  const getPublicKey = (address: string) => {
+    const prefix = connectedNetwork === 'Polkadot Relay' ? 0 : 2;
+    return u8aToHex(decodeAddress(address, true, prefix));
   };
 
   /**
@@ -130,7 +139,9 @@ export const LedgerHardwareProvider = ({
    * An address which was selected before should have a checked state.
    */
   const getChecked = (pk: string) =>
-    selectedAddresses.find(({ pubKey }) => pubKey === pk) ? true : false;
+    selectedAddresses.find(({ address }) => getPublicKey(address) === pk)
+      ? true
+      : false;
 
   /**
    * Get import button text.
@@ -167,13 +178,15 @@ export const LedgerHardwareProvider = ({
     accountName: string
   ) => {
     setSelectedAddresses((pv) => {
-      const filtered = pv.filter(({ pubKey }) => pk !== pubKey);
+      const filtered = pv.filter(({ address }) => pk !== getPublicKey(address));
 
       if (!checked) {
         return filtered;
       }
 
-      const target = receivedAddresses.find(({ pubKey }) => pk === pubKey);
+      const target = receivedAddresses.find(
+        ({ address }) => pk === getPublicKey(address)
+      );
 
       if (target) {
         const namedTarget: NamedRawLedgerAddress = { ...target, accountName };
@@ -241,6 +254,7 @@ export const LedgerHardwareProvider = ({
         disableConnect,
         fetchLedgerAddresses,
         getChecked,
+        getPublicKey,
         getImportLabel,
         resetAll,
         setIsImporting,

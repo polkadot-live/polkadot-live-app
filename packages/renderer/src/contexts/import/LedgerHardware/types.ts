@@ -34,6 +34,7 @@ export interface LedgerHardwareContextInterface {
   disableConnect: () => boolean;
   fetchLedgerAddresses: (network: ChainID, offset: number) => Promise<void>;
   getChecked: (pk: string) => boolean;
+  getPublicKey: (address: string) => `0x${string}`;
   getImportLabel: () => string;
   resetAll: () => void;
   setIsImporting: React.Dispatch<React.SetStateAction<boolean>>;
