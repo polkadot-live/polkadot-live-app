@@ -45,6 +45,7 @@ import { ItemsColumn } from '@ren/screens/Home/Manage/Wrappers';
 import { getSelectLedgerNetworkData } from '@polkadot-live/consts/chains';
 import type { ImportProps } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
+import { decodeAddress, u8aToHex } from 'dedot/utils';
 
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   const { cacheGet, getTheme } = useConnections();
@@ -113,6 +114,14 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   };
 
   /**
+   * Derive public key from encoded address.
+   */
+  const getPublicKey = (address: string) => {
+    const prefix = connectedNetwork === 'Polkadot Relay' ? 0 : 2;
+    return u8aToHex(decodeAddress(address, true, prefix));
+  };
+
+  /**
    * Handle importing the selected Ledger addresses.
    */
   const handleImportProcess = async () => {
@@ -125,16 +134,16 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
 
     let i = 0;
     for (const selected of selectedAddresses) {
-      const { address: add, pubKey: pk, device } = selected;
+      const { address, device } = selected;
 
-      if (isAlreadyImported(pk)) {
+      if (isAlreadyImported(getPublicKey(address))) {
         continue;
       }
 
       const accountName = accountNames[i];
       const toast = accountNames.length === 1;
       const s = 'ledger';
-      await handleImportAddress(add, s, accountName, device, toast);
+      await handleImportAddress(address, s, accountName, device, toast);
       i += 1;
     }
 
@@ -372,64 +381,68 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                       ) : (
                         <>
                           <ItemsColumn>
-                            {receivedAddresses.map(({ address, pubKey }, i) => (
-                              <ImportAddressRow key={address}>
-                                <div className="identicon">
-                                  <UI.Identicon
-                                    value={address}
-                                    fontSize={'2.5rem'}
-                                  />
-                                </div>
-                                <div className="addressInfo">
-                                  <h2>
-                                    {connectedNetwork} Ledger Account{' '}
-                                    {ledger.pageIndex * 5 + i + 1}
-                                  </h2>
-                                  <Styles.FlexRow $gap={'0.6rem'}>
-                                    <span className="address">
-                                      {ellipsisFn(address, 12)}
-                                    </span>
-                                    <span>
-                                      <UI.CopyButton
-                                        iconFontSize="1rem"
-                                        theme={theme}
-                                        onCopyClick={async () =>
-                                          await window.myAPI.copyToClipboard(
-                                            address
+                            {receivedAddresses.map(({ address }, i) => {
+                              const pubKey = getPublicKey(address);
+
+                              return (
+                                <ImportAddressRow key={address}>
+                                  <div className="identicon">
+                                    <UI.Identicon
+                                      value={address}
+                                      fontSize={'2.5rem'}
+                                    />
+                                  </div>
+                                  <div className="addressInfo">
+                                    <h2>
+                                      {connectedNetwork} Ledger Account{' '}
+                                      {ledger.pageIndex * 5 + i + 1}
+                                    </h2>
+                                    <Styles.FlexRow $gap={'0.6rem'}>
+                                      <span className="address">
+                                        {ellipsisFn(address, 12)}
+                                      </span>
+                                      <span>
+                                        <UI.CopyButton
+                                          iconFontSize="1rem"
+                                          theme={theme}
+                                          onCopyClick={async () =>
+                                            await window.myAPI.copyToClipboard(
+                                              address
+                                            )
+                                          }
+                                        />
+                                      </span>
+                                    </Styles.FlexRow>
+                                  </div>
+                                  <div className="right">
+                                    {isAlreadyImported(pubKey) ? (
+                                      <span className="imported">Imported</span>
+                                    ) : (
+                                      <Styles.CheckboxRoot
+                                        $theme={theme}
+                                        className="CheckboxRoot"
+                                        id={`c${i}`}
+                                        checked={ledger.getChecked(pubKey)}
+                                        disabled={ledger.isFetching}
+                                        onCheckedChange={(
+                                          checked: Checkbox.CheckedState
+                                        ) =>
+                                          handleCheckboxClick(
+                                            checked,
+                                            pubKey,
+                                            `${connectedNetwork} Ledger Account ${ledger.pageIndex * 5 + i + 1}`
                                           )
                                         }
-                                      />
-                                    </span>
-                                  </Styles.FlexRow>
-                                </div>
-                                <div className="right">
-                                  {isAlreadyImported(pubKey) ? (
-                                    <span className="imported">Imported</span>
-                                  ) : (
-                                    <Styles.CheckboxRoot
-                                      $theme={theme}
-                                      className="CheckboxRoot"
-                                      id={`c${i}`}
-                                      checked={ledger.getChecked(pubKey)}
-                                      disabled={ledger.isFetching}
-                                      onCheckedChange={(
-                                        checked: Checkbox.CheckedState
-                                      ) =>
-                                        handleCheckboxClick(
-                                          checked,
-                                          pubKey,
-                                          `${connectedNetwork} Ledger Account ${ledger.pageIndex * 5 + i + 1}`
-                                        )
-                                      }
-                                    >
-                                      <Checkbox.Indicator className="CheckboxIndicator">
-                                        <CheckIcon />
-                                      </Checkbox.Indicator>
-                                    </Styles.CheckboxRoot>
-                                  )}
-                                </div>
-                              </ImportAddressRow>
-                            ))}
+                                      >
+                                        <Checkbox.Indicator className="CheckboxIndicator">
+                                          <CheckIcon />
+                                        </Checkbox.Indicator>
+                                      </Styles.CheckboxRoot>
+                                    )}
+                                  </div>
+                                </ImportAddressRow>
+                              );
+                            })}
                           </ItemsColumn>
 
                           <AddressListFooter>
