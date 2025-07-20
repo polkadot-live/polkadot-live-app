@@ -159,7 +159,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   }, [ledger.lastStatusCode]);
 
   return (
-    <UI.ScrollableMax>
+    <>
       {(ledger.isFetching || ledger.isImporting) && (
         <BarLoader
           color={darkMode ? '#642763' : '#a772a6'}
@@ -475,6 +475,6 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
           </section>
         </Styles.FlexColumn>
       </Styles.PadWrapper>
-    </UI.ScrollableMax>
+    </>
   );
 };
