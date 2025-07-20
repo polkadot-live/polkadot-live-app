@@ -79,7 +79,7 @@ export const handleGetAddresses = async (
       const PATH = `m/44'/${slip}'/${index}'/0'/0'`;
       const result: LedgerGetAddressData | Error = await withTimeout(
         3000,
-        substrateApp.getAddress(PATH, ss58prefix, false)
+        substrateApp.getAddressEd25519(PATH, ss58prefix, false)
       );
 
       if (result instanceof Error) {
