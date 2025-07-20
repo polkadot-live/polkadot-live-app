@@ -1,12 +1,12 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AnyFunction } from '@polkadot-live/types/misc';
 import {
   ledgerUSBVendorId,
   ledgerDevices,
   ledgerErrorMeta,
 } from '@polkadot-live/consts/ledger';
+import type { AnyFunction } from '@polkadot-live/types/misc';
 
 /**
  * @name getProductId
