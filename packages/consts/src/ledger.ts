@@ -16,31 +16,37 @@ export const ledgerUSBVendorId = 0x2c97;
 export const ledgerDevices: Record<LedgerDeviceID, LedgerDeviceMeta> = {
   blue: {
     deviceId: 'blue',
+    legacyUsbProductId: 0x0000,
     productIdMM: 0x00,
     productName: 'Ledger Blue',
   },
   nanoS: {
     deviceId: 'nanoS',
+    legacyUsbProductId: 0x0001,
     productIdMM: 0x10,
     productName: 'Ledger Nano S',
   },
   nanoX: {
     deviceId: 'nanoX',
+    legacyUsbProductId: 0x0004,
     productIdMM: 0x40,
     productName: 'Ledger Nano X',
   },
   nanoSP: {
     deviceId: 'nanoSP',
+    legacyUsbProductId: 0x0005,
     productIdMM: 0x50,
     productName: 'Ledger Nano S Plus',
   },
   stax: {
     deviceId: 'stax',
+    legacyUsbProductId: 0x0006,
     productIdMM: 0x60,
     productName: 'Ledger Stax',
   },
   europa: {
     deviceId: 'europa',
+    legacyUsbProductId: 0x0007,
     productIdMM: 0x70,
     productName: 'Ledger Flex',
   },

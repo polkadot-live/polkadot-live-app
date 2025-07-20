@@ -74,10 +74,21 @@ export const verifyLedgerDevice = (
  * @name verifyProductId
  * @summary Verifies if the given productId matches any valid Ledger device product ID.
  */
-export const verifyProductId = (productId: number): boolean =>
-  Object.values(ledgerDevices)
-    .map(({ productIdMM }) => getProductId(productIdMM))
-    .includes(productId);
+export const verifyProductId = (productId: number): boolean => {
+  const devicesList = Object.values(ledgerDevices);
+  const legacy = devicesList.find(
+    ({ legacyUsbProductId }) => legacyUsbProductId === productId
+  );
+
+  if (legacy !== undefined) {
+    return true;
+  }
+
+  const mm = productId >> 8;
+  return devicesList.find(({ productIdMM }) => productIdMM === mm)
+    ? true
+    : false;
+};
 
 /**
  * @name withTimeout

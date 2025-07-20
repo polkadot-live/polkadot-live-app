@@ -18,6 +18,7 @@ export type LedgerDeviceID =
 
 export interface LedgerDeviceMeta {
   deviceId: LedgerDeviceID;
+  legacyUsbProductId: number;
   productIdMM: number;
   productName: LedgerProductName;
 }
