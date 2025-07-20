@@ -5,7 +5,10 @@ import { usb } from 'usb';
 import { verifyLedgerDevice, withTimeout } from './utils';
 import TransportNodeHid from '@ledgerhq/hw-transport-node-hid';
 import type { AnyFunction } from '@polkadot-live/types/misc';
-import type { LedgerErrorType, LedgerTaskResult } from '@polkadot-live/types';
+import type {
+  LedgerErrorStatusCode,
+  LedgerTaskResult,
+} from '@polkadot-live/types';
 import type Transport from '@ledgerhq/hw-transport';
 
 const genericErrorMsg = 'Generic error.';
@@ -14,7 +17,7 @@ const genericErrorMsg = 'Generic error.';
  * Add delay between closing and initializing the transport.
  * Give the OS time to release resources and fully close transport.
  */
-const DELAY = 100;
+const DELAY = 250;
 
 export class USBController {
   static transport: Transport | null = null;
@@ -90,7 +93,9 @@ export class USBController {
   /**
    * Get transport error.
    */
-  static getLedgerError = (errorType: LedgerErrorType): LedgerTaskResult => {
+  static getLedgerError = (
+    errorType: LedgerErrorStatusCode
+  ): LedgerTaskResult => {
     const error = new Error(genericErrorMsg);
     error.name = errorType;
     return { success: false, error };

@@ -46,8 +46,6 @@ export type LedgerErrorStatusCode =
   | 'DeviceNotConnected'
   | 'TransportUndefined';
 
-export type LedgerErrorType = 'TransportUndefined' | 'PrefixUndefined';
-
 /**
  * Ledger tasks.
  */
