@@ -1,9 +1,11 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, useContext, useRef, useState } from 'react';
 import { defaultLedgerHardwareContext } from './defaults';
+import { decodeAddress, u8aToHex } from 'dedot/utils';
 import { setStateWithRef } from '@w3ux/utils';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   LedgerHardwareContextInterface,
   NamedRawLedgerAddress,
@@ -15,9 +17,6 @@ import type {
   LedgerResponse,
   LedgerTask,
 } from '@polkadot-live/types/ledger';
-import type { IpcRendererEvent } from 'electron';
-
-const TOTAL_ALLOWED_STATUS_CODES = 50;
 
 export const LedgerHardwareContext =
   createContext<LedgerHardwareContextInterface>(defaultLedgerHardwareContext);
@@ -33,8 +32,9 @@ export const LedgerHardwareProvider = ({
   const [isFetching, setIsFetching] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
-  const [statusCodes, setStatusCodes] = useState<LedgerResponse[]>([]);
-  const statusCodesRef = useRef(statusCodes);
+  const [lastStatusCode, setLastStatusCode] = useState<LedgerResponse | null>(
+    null
+  );
 
   const [selectedNetworkState, setSelectedNetworkState] = useState('');
   const [connectedNetwork, setConnectedNetwork] = useState('');
@@ -61,9 +61,17 @@ export const LedgerHardwareProvider = ({
   };
 
   /**
+   * Derive public key from encoded address.
+   */
+  const getPublicKey = (address: string) => {
+    const prefix = connectedNetwork === 'Polkadot Relay' ? 0 : 2;
+    return u8aToHex(decodeAddress(address, true, prefix));
+  };
+
+  /**
    * Interact with Ledger device and perform necessary tasks.
    */
-  const fetchLedgerAddresses = (network: string, offset: number) => {
+  const fetchLedgerAddresses = async (network: ChainID, offset: number) => {
     if (selectedNetworkRef.current !== connectedNetworkRef.current) {
       preConnect();
     }
@@ -77,11 +85,14 @@ export const LedgerHardwareProvider = ({
 
     const serialized = JSON.stringify({
       accountIndices,
-      chainName: network,
+      chainId: network,
       tasks,
     });
 
-    window.myAPI.doLedgerTask(serialized);
+    // TODO: Handle JSON.parse exception.
+    const serResult = await window.myAPI.doLedgerTask(serialized);
+    const parsedResult: GetAddressMessage = JSON.parse(serResult);
+    handleLedgerStatusResponse(parsedResult);
 
     // Update the connected network state post connection.
     const val = selectedNetworkRef.current;
@@ -101,7 +112,7 @@ export const LedgerHardwareProvider = ({
     clearSelected && setReceivedAddresses([]);
 
     if (clearStatusCodes) {
-      setStateWithRef([], setStatusCodes, statusCodesRef);
+      setLastStatusCode(null);
     }
   };
 
@@ -121,15 +132,16 @@ export const LedgerHardwareProvider = ({
   /**
    * Controls the disabled state of connect button.
    */
-  const disableConnect = () =>
-    isFetching || selectedNetworkRef.current === connectedNetworkRef.current;
+  const disableConnect = () => isFetching || selectedNetworkState === '';
 
   /**
    * Determine if the checkbox for a fetched address should be checked.
    * An address which was selected before should have a checked state.
    */
   const getChecked = (pk: string) =>
-    selectedAddresses.find(({ pubKey }) => pubKey === pk) ? true : false;
+    selectedAddresses.find(({ address }) => getPublicKey(address) === pk)
+      ? true
+      : false;
 
   /**
    * Get import button text.
@@ -145,9 +157,7 @@ export const LedgerHardwareProvider = ({
    * Handle an incoming new status code and persist to state.
    */
   const handleNewStatusCode = (ack: string, statusCode: string) => {
-    const updated = [{ ack, statusCode }, ...statusCodesRef.current];
-    updated.length > TOTAL_ALLOWED_STATUS_CODES && updated.pop();
-    setStateWithRef(updated, setStatusCodes, statusCodesRef);
+    setLastStatusCode({ ack, statusCode });
   };
 
   /**
@@ -168,13 +178,15 @@ export const LedgerHardwareProvider = ({
     accountName: string
   ) => {
     setSelectedAddresses((pv) => {
-      const filtered = pv.filter(({ pubKey }) => pk !== pubKey);
+      const filtered = pv.filter(({ address }) => pk !== getPublicKey(address));
 
       if (!checked) {
         return filtered;
       }
 
-      const target = receivedAddresses.find(({ pubKey }) => pk === pubKey);
+      const target = receivedAddresses.find(
+        ({ address }) => pk === getPublicKey(address)
+      );
 
       if (target) {
         const namedTarget: NamedRawLedgerAddress = { ...target, accountName };
@@ -204,7 +216,7 @@ export const LedgerHardwareProvider = ({
           handleNewStatusCode(ack, statusCode);
 
           if (statusCode === 'ReceiveAddress') {
-            const { pubKey, address } = body[0];
+            const { pubKey, address } = body;
             newCache.push({ address, pubKey, device, options });
           }
         }
@@ -226,21 +238,6 @@ export const LedgerHardwareProvider = ({
     }
   };
 
-  /**
-   * Set up main process listener for Ledger IO when component loads.
-   */
-  useEffect(() => {
-    window.myAPI.reportLedgerStatus((_: IpcRendererEvent, result: string) => {
-      const parsed: GetAddressMessage | undefined = JSON.parse(result);
-
-      if (!parsed) {
-        throw new Error('Unable to parse GetAddressMessage');
-      }
-
-      handleLedgerStatusResponse(parsed);
-    });
-  }, []);
-
   return (
     <LedgerHardwareContext.Provider
       value={{
@@ -252,11 +249,12 @@ export const LedgerHardwareProvider = ({
         receivedAddresses,
         selectedAddresses,
         selectedNetworkState,
-        statusCodes,
+        lastStatusCode,
         clearCaches,
         disableConnect,
         fetchLedgerAddresses,
         getChecked,
+        getPublicKey,
         getImportLabel,
         resetAll,
         setIsImporting,

@@ -2,10 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Accordion from '@radix-ui/react-accordion';
-import * as UI from '@polkadot-live/ui/components';
-import * as Styles from '@polkadot-live/ui/styles';
 import * as Checkbox from '@radix-ui/react-checkbox';
+import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as Select from '@radix-ui/react-select';
+import * as Styles from '@polkadot-live/ui/styles';
+import * as UI from '@polkadot-live/ui/components';
 
 import { useEffect, useState } from 'react';
 import { useConnections } from '@ren/contexts/common';
@@ -15,12 +16,12 @@ import {
   useLedgerHardware,
 } from '@ren/contexts/import';
 
+import { BarLoader } from 'react-spinners';
 import { ChainIcon, InfoCard } from '@polkadot-live/ui/components';
 import {
   ButtonPrimaryInvert,
   ButtonText,
 } from '@polkadot-live/ui/kits/buttons';
-import { BarLoader } from 'react-spinners';
 import {
   CheckIcon,
   ChevronDownIcon,
@@ -30,17 +31,10 @@ import {
 } from '@radix-ui/react-icons';
 import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faCaretLeft,
-  faCaretRight,
-  faCircleDot,
-  faExclamationTriangle,
-  faX,
-} from '@fortawesome/free-solid-svg-icons';
 import { ConnectButton } from './Wrappers';
 import { AddressListFooter, ImportAddressRow } from '../../Wrappers';
 import { InfoCardSteps } from '../../InfoCardSteps';
-import { determineStatusFromCodes } from './Utils';
+import { determineStatusFromCode } from './Utils';
 import { ItemsColumn } from '@ren/screens/Home/Manage/Wrappers';
 import { getSelectLedgerNetworkData } from '@polkadot-live/consts/chains';
 import type { ImportProps } from './types';
@@ -87,7 +81,10 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   /**
    * Interact with Ledger device and perform necessary tasks.
    */
-  const handleGetLedgerAddresses = (changingPage: boolean, targetIndex = 0) => {
+  const handleGetLedgerAddresses = async (
+    changingPage: boolean,
+    targetIndex = 0
+  ) => {
     const selected = ledger.selectedNetworkState;
 
     if (selected === '') {
@@ -98,13 +95,15 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
     const offset = !changingPage ? 0 : targetIndex * 5;
 
     // Use the connected network if we're changing page. Otherwise, use the selected network.
-    const network = changingPage
-      ? connectedNetwork === ''
-        ? selected
-        : connectedNetwork
-      : selected;
+    const network = (
+      changingPage
+        ? connectedNetwork === ''
+          ? selected
+          : connectedNetwork
+        : selected
+    ) as ChainID;
 
-    ledger.fetchLedgerAddresses(network, offset);
+    await ledger.fetchLedgerAddresses(network, offset);
   };
 
   /**
@@ -120,16 +119,16 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
 
     let i = 0;
     for (const selected of selectedAddresses) {
-      const { address: add, pubKey: pk, device } = selected;
+      const { address, device } = selected;
 
-      if (isAlreadyImported(pk)) {
+      if (isAlreadyImported(ledger.getPublicKey(address))) {
         continue;
       }
 
       const accountName = accountNames[i];
       const toast = accountNames.length === 1;
       const s = 'ledger';
-      await handleImportAddress(add, s, accountName, device, toast);
+      await handleImportAddress(address, s, accountName, device, toast);
       i += 1;
     }
 
@@ -140,27 +139,27 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   /**
    * Handle clicks for pagination buttons.
    */
-  const handlePaginationClick = (direction: 'prev' | 'next') => {
+  const handlePaginationClick = async (direction: 'prev' | 'next') => {
     const targetIndex =
       direction === 'prev'
         ? Math.max(0, ledger.pageIndex - 1)
         : Math.max(0, ledger.pageIndex + 1);
 
     ledger.setPageIndex(targetIndex);
-    handleGetLedgerAddresses(true, targetIndex);
+    await handleGetLedgerAddresses(true, targetIndex);
   };
 
   /**
    * Update flag to show error/status messages.
    */
   useEffect(() => {
-    if (ledger.statusCodes.length > 0) {
+    if (ledger.lastStatusCode !== null) {
       setShowConnectStatus(true);
     }
-  }, [ledger.statusCodes]);
+  }, [ledger.lastStatusCode]);
 
   return (
-    <UI.ScrollableMax>
+    <>
       {(ledger.isFetching || ledger.isImporting) && (
         <BarLoader
           color={darkMode ? '#642763' : '#a772a6'}
@@ -186,7 +185,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                   <ButtonPrimaryInvert
                     className="back-btn"
                     text="Back"
-                    iconLeft={faCaretLeft}
+                    iconLeft={FA.faCaretLeft}
                     onClick={() => {
                       ledger.clearCaches(false, false, true);
                       setShowImportUi(genericAccounts.length === 0);
@@ -197,7 +196,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                 </Styles.FlexRow>
                 <Styles.FlexRow>
                   <ButtonText
-                    iconLeft={faCaretRight}
+                    iconLeft={FA.faCaretRight}
                     text={'Ledger Accounts'}
                     disabled={genericAccounts.length === 0}
                     onClick={() => {
@@ -285,9 +284,9 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
 
                         {/** Connect Button */}
                         <ConnectButton
-                          onClick={() => {
+                          onClick={async () => {
                             ledger.setPageIndex(0);
-                            handleGetLedgerAddresses(false);
+                            await handleGetLedgerAddresses(false);
                           }}
                           disabled={ledger.disableConnect()}
                         >
@@ -297,11 +296,14 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
 
                       {/** Error and Status Messages */}
                       {showConnectStatus && !ledger.deviceConnected && (
-                        <InfoCard kind={'warning'} icon={faExclamationTriangle}>
+                        <InfoCard
+                          kind={'warning'}
+                          icon={FA.faExclamationTriangle}
+                        >
                           <span>
                             {
-                              determineStatusFromCodes(
-                                ledger.statusCodes,
+                              determineStatusFromCode(
+                                ledger.lastStatusCode,
                                 false
                               ).title
                             }
@@ -310,7 +312,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                             className="dismiss"
                             onClick={() => setShowConnectStatus(false)}
                           >
-                            <FontAwesomeIcon icon={faX} />
+                            <FontAwesomeIcon icon={FA.faX} />
                           </button>
                         </InfoCard>
                       )}
@@ -319,7 +321,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                         ledger.selectedNetworkState === '' && (
                           <InfoCard
                             kind={'warning'}
-                            icon={faExclamationTriangle}
+                            icon={FA.faExclamationTriangle}
                           >
                             <span>Select a network.</span>
                           </InfoCard>
@@ -356,7 +358,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                     <UI.AccordionContent transparent={true}>
                       {!ledger.deviceConnected ? (
                         <InfoCard
-                          icon={faCircleDot}
+                          icon={FA.faCircleDot}
                           iconTransform={'shrink-3'}
                           style={{ marginTop: '0', marginBottom: '0.75rem' }}
                         >
@@ -367,64 +369,68 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                       ) : (
                         <>
                           <ItemsColumn>
-                            {receivedAddresses.map(({ address, pubKey }, i) => (
-                              <ImportAddressRow key={address}>
-                                <div className="identicon">
-                                  <UI.Identicon
-                                    value={address}
-                                    fontSize={'2.5rem'}
-                                  />
-                                </div>
-                                <div className="addressInfo">
-                                  <h2>
-                                    {connectedNetwork} Ledger Account{' '}
-                                    {ledger.pageIndex * 5 + i + 1}
-                                  </h2>
-                                  <Styles.FlexRow $gap={'0.6rem'}>
-                                    <span className="address">
-                                      {ellipsisFn(address, 12)}
-                                    </span>
-                                    <span>
-                                      <UI.CopyButton
-                                        iconFontSize="1rem"
-                                        theme={theme}
-                                        onCopyClick={async () =>
-                                          await window.myAPI.copyToClipboard(
-                                            address
+                            {receivedAddresses.map(({ address }, i) => {
+                              const pubKey = ledger.getPublicKey(address);
+
+                              return (
+                                <ImportAddressRow key={address}>
+                                  <div className="identicon">
+                                    <UI.Identicon
+                                      value={address}
+                                      fontSize={'2.5rem'}
+                                    />
+                                  </div>
+                                  <div className="addressInfo">
+                                    <h2>
+                                      {connectedNetwork} Ledger Account{' '}
+                                      {ledger.pageIndex * 5 + i + 1}
+                                    </h2>
+                                    <Styles.FlexRow $gap={'0.6rem'}>
+                                      <span className="address">
+                                        {ellipsisFn(address, 12)}
+                                      </span>
+                                      <span>
+                                        <UI.CopyButton
+                                          iconFontSize="1rem"
+                                          theme={theme}
+                                          onCopyClick={async () =>
+                                            await window.myAPI.copyToClipboard(
+                                              address
+                                            )
+                                          }
+                                        />
+                                      </span>
+                                    </Styles.FlexRow>
+                                  </div>
+                                  <div className="right">
+                                    {isAlreadyImported(pubKey) ? (
+                                      <span className="imported">Imported</span>
+                                    ) : (
+                                      <Styles.CheckboxRoot
+                                        $theme={theme}
+                                        className="CheckboxRoot"
+                                        id={`c${i}`}
+                                        checked={ledger.getChecked(pubKey)}
+                                        disabled={ledger.isFetching}
+                                        onCheckedChange={(
+                                          checked: Checkbox.CheckedState
+                                        ) =>
+                                          handleCheckboxClick(
+                                            checked,
+                                            pubKey,
+                                            `${connectedNetwork} Ledger Account ${ledger.pageIndex * 5 + i + 1}`
                                           )
                                         }
-                                      />
-                                    </span>
-                                  </Styles.FlexRow>
-                                </div>
-                                <div className="right">
-                                  {isAlreadyImported(pubKey) ? (
-                                    <span className="imported">Imported</span>
-                                  ) : (
-                                    <Styles.CheckboxRoot
-                                      $theme={theme}
-                                      className="CheckboxRoot"
-                                      id={`c${i}`}
-                                      checked={ledger.getChecked(pubKey)}
-                                      disabled={ledger.isFetching}
-                                      onCheckedChange={(
-                                        checked: Checkbox.CheckedState
-                                      ) =>
-                                        handleCheckboxClick(
-                                          checked,
-                                          pubKey,
-                                          `${connectedNetwork} Ledger Account ${ledger.pageIndex * 5 + i + 1}`
-                                        )
-                                      }
-                                    >
-                                      <Checkbox.Indicator className="CheckboxIndicator">
-                                        <CheckIcon />
-                                      </Checkbox.Indicator>
-                                    </Styles.CheckboxRoot>
-                                  )}
-                                </div>
-                              </ImportAddressRow>
-                            ))}
+                                      >
+                                        <Checkbox.Indicator className="CheckboxIndicator">
+                                          <CheckIcon />
+                                        </Checkbox.Indicator>
+                                      </Styles.CheckboxRoot>
+                                    )}
+                                  </div>
+                                </ImportAddressRow>
+                              );
+                            })}
                           </ItemsColumn>
 
                           <AddressListFooter>
@@ -469,6 +475,6 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
           </section>
         </Styles.FlexColumn>
       </Styles.PadWrapper>
-    </UI.ScrollableMax>
+    </>
   );
 };

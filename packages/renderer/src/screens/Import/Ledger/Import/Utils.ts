@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { LedgerResponse } from '@polkadot-live/types/ledger';
-import type { AnyJson } from '@polkadot-live/types/misc';
 
 // Formats a title and subtitle depending on the Ledger code received.
 export const getDisplayFromLedgerCode = (
@@ -13,54 +12,54 @@ export const getDisplayFromLedgerCode = (
   let subtitle = null;
 
   switch (statusCode) {
-    case 'DeviceLocked':
+    case 'DeviceLocked': {
       title = 'Unlock your Ledger device to continue.';
       break;
-    case 'DeviceNotConnected':
+    }
+    case 'DeviceNotConnected': {
       title = inStatusBar
         ? 'Waiting For Ledger Device'
-        : 'Ledger Not Connected';
+        : 'Connect and unlock your Ledger device.';
       subtitle = inStatusBar
         ? ''
         : 'Connect a Ledger device to continue account import.';
       break;
-    case 'AppNotOpen':
+    }
+    case 'AppNotOpen': {
       title = 'Open the Polkadot App';
       break;
-    case 'GettingAddress':
+    }
+    case 'GettingAddress': {
       title = 'Getting Address...';
       break;
-    case 'ReceivedAddress':
+    }
+    case 'ReceivedAddress': {
       title = 'Successfully Fetched Address';
       break;
-    default:
+    }
+    case 'TransportUndefined': {
+      title = 'Connect and unlock your Ledger device.';
+      break;
+    }
+    default: {
       title = 'Connecting to Device...';
+      break;
+    }
   }
+
   return { title, subtitle };
 };
 
 // Determine the status of connection process. If the device is reported to be connected, ignore
 // `DeviceNotConnected` error returned by other tasks.
-export const determineStatusFromCodes = (
-  responses: LedgerResponse[],
+export const determineStatusFromCode = (
+  response: LedgerResponse | null,
   inStatusBar: boolean
 ) => {
-  if (!responses.length) {
+  if (!response) {
     return getDisplayFromLedgerCode('', inStatusBar);
   }
 
-  const latestStatusCode: string = responses[0].statusCode;
-  let trueCode = latestStatusCode;
-
-  if (latestStatusCode === 'DeviceNotConnected') {
-    responses.every((b: AnyJson) => {
-      if (b.statusCode !== 'DeviceNotConnected') {
-        trueCode = b.statusCode;
-        return false;
-      }
-      return true;
-    });
-  }
-
-  return getDisplayFromLedgerCode(trueCode || '', inStatusBar);
+  const { statusCode } = response;
+  return getDisplayFromLedgerCode(statusCode, inStatusBar);
 };

@@ -88,8 +88,7 @@ export interface PreloadAPI {
   closeTab: (destroyViewId: string, showViewId: string | null) => void;
   isViewOpen: (viewId: string) => Promise<boolean>;
 
-  doLedgerTask: (serialized: string) => void;
-  reportLedgerStatus: ApiReportLedgerStatus;
+  doLedgerTask: (serialized: string) => Promise<string>;
 
   requestImportedAccounts: ApiEmptyRequest;
 
@@ -107,10 +106,6 @@ type ApiEmptyRequest = () => void;
 type ApiEmptyPromiseRequest = () => Promise<void>;
 type ApiHideWindow = (id: string) => void;
 type ApiCloseWindow = (id: string) => void;
-
-type ApiReportLedgerStatus = (
-  callback: (_: IpcRendererEvent, result: string) => void
-) => Electron.IpcRenderer;
 
 type ApiReportNewEvent = (
   callback: (_: IpcRendererEvent, eventData: EventCallback) => void

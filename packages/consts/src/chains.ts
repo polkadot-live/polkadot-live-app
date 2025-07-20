@@ -18,6 +18,7 @@ import type { AccountSource } from '@polkadot-live/types/accounts';
 import type {
   ChainID,
   EcosystemID,
+  LedgerAppName,
   LedgerSelectNetworkData,
   RpcSystemChain,
 } from '@polkadot-live/types/chains';
@@ -290,6 +291,16 @@ const RpcChainToChainID: Record<RpcSystemChain, ChainID> = {
   'Westend Asset Hub': 'Westend Asset Hub',
   'Westend People': 'Westend People',
 };
+
+const ChainIDToLedgerAppName = new Map<ChainID, LedgerAppName>([
+  ['Polkadot Relay', 'Polkadot'],
+  ['Polkadot Asset Hub', 'Statemint'],
+  ['Kusama Relay', 'Kusama'],
+  ['Kusama Asset Hub', 'Statemine'],
+]);
+
+export const getLedgerAppName = (chainId: ChainID): LedgerAppName =>
+  ChainIDToLedgerAppName.get(chainId)!;
 
 const SubscanSubdomainMap = new Map<ChainID, string>([
   ['Polkadot Relay', 'polkadot'],
