@@ -141,15 +141,8 @@ export const callback_account_balance_free = async (
     }
 
     // Get the received balance.
-    const chainId = account.chain;
     const balance = data.data as PalletBalancesAccountData;
-    const max = (a: bigint, b: bigint): bigint => (a > b ? a : b);
-
-    const free =
-      chainId === 'Westend Relay'
-        ? balance.free
-        : balance.free - max(balance.reserved, balance.frozen);
-
+    const free = balance.free;
     const b = account.balance;
     const isSame = b.free ? free === b.free : false;
 
@@ -323,24 +316,17 @@ export const callback_account_balance_spendable = async (
     }
 
     // Spendable balance equation:
-    // spendable = free - max(max(frozen, reserved), ed)
+    // spendable = free - ed
     const api = await getApiOrThrow(account.chain);
     const ed = api.consts.balances.existentialDeposit;
-    const { free, frozen, reserved } = data.data as PalletBalancesAccountData;
-    const chainId = account.chain;
+    const { free } = data.data as PalletBalancesAccountData;
 
     const max = (a: bigint, b: bigint): bigint => (a > b ? a : b);
-    const spendable =
-      chainId === 'Westend Relay'
-        ? max(free - ed, 0n)
-        : max(free - max(frozen, reserved) - ed, 0n);
+    const spendable = max(free - ed, 0n);
 
     // Check if spendable balance has changed.
     const b = account.balance;
-    const cur =
-      chainId === 'Westend Relay'
-        ? max(b.free - ed, 0n)
-        : max(b.free - max(b.frozen, b.reserved) - ed, 0n);
+    const cur = max(b.free - ed, 0n);
 
     // Exit early if nothing has changed.
     const isSame = spendable === cur;
