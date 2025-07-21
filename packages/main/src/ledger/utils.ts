@@ -9,18 +9,6 @@ import {
 import type { AnyFunction } from '@polkadot-live/types/misc';
 
 /**
- * @name getProductId
- * @summary Returns the formatted product ID of the connected Ledger device.
- */
-export const getProductId = (productIdMM: number): number => productIdMM << 8;
-
-/**
- * @name getProductIdMM
- * @summary Returns the Ledger model product ID (MM) given an arbitrary product ID.
- */
-export const getProductIdMM = (productId: number): number => productId >> 8;
-
-/**
  * @name handleLedgerTaskError
  * @summary Handle Ledger connection errors and return serialized error data.
  */
