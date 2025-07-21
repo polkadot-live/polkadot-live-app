@@ -57,10 +57,8 @@ export const getSpendableBalance = async (
   const api = (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
   const ed = api.consts.balances.existentialDeposit;
   const balance = await getBalance(api, address, chainId);
-  const { free, frozen, reserved } = balance;
-  const max = (a: bigint, b: bigint): bigint => (a > b ? a : b);
+  const { free } = balance;
 
-  return chainId.startsWith('Westend')
-    ? max(free - ed, 0n)
-    : max(free - max(frozen, reserved) - ed, 0n);
+  const max = (a: bigint, b: bigint): bigint => (a > b ? a : b);
+  return max(free - ed, 0n);
 };
