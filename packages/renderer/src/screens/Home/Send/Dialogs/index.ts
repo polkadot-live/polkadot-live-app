@@ -2,3 +2,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 export * from './DialogSelectAccount';
+export * from './TriggerSelectAccount';
+export * from './types';

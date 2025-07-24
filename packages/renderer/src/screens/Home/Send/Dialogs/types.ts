@@ -14,3 +14,9 @@ export interface DialogSelectAccountProps {
   handleSenderChange: (senderAccount: SendAccount) => void;
   setRecipientFilter: React.Dispatch<React.SetStateAction<string>>;
 }
+
+export interface TriggerSelectAccountProps {
+  accountRole: 'recipient' | 'sender';
+  recipient: SendRecipient | null;
+  sender: SendAccount | null;
+}
