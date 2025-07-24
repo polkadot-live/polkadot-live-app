@@ -424,7 +424,7 @@ export const useSendNative = (): SendNativeHook => {
       return;
     }
 
-    // Function to gets sender's spendable balance.
+    // Function to get sender's spendable balance.
     const getSpendable = () => {
       if (sender === null) {
         return;

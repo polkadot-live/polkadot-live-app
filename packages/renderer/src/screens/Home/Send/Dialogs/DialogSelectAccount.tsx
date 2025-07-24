@@ -26,20 +26,51 @@ import type { ChainID } from '@polkadot-live/types/chains';
 import type { SendRecipient } from '../types';
 import type { SendAccount } from '@polkadot-live/types/accounts';
 
-interface TriggerRecipientProps {
+interface DynamicTriggerProps {
+  accountRole: 'recipient' | 'sender';
   recipient: SendRecipient | null;
-}
-
-interface TriggerSenderProps {
   sender: SendAccount | null;
 }
 
-const TriggerRecipient = ({ recipient }: TriggerRecipientProps) => {
+const DynamicTrigger = ({
+  accountRole,
+  recipient,
+  sender,
+}: DynamicTriggerProps) => {
   const { getTheme, getOnlineMode } = useConnections();
   const theme = getTheme();
 
-  return recipient === null || recipient.address === '' ? (
-    <span style={{ textAlign: 'left', flex: 1 }}>Select Recipient</span>
+  let sendAccount: SendAccount | SendRecipient | null;
+  let accountNotSet: boolean;
+  let notSetMessage: string;
+  let label = '';
+
+  switch (accountRole) {
+    case 'recipient': {
+      sendAccount = recipient;
+      accountNotSet = recipient === null || recipient?.address === '';
+      notSetMessage = 'Select Recipient';
+
+      if (recipient) {
+        const { accountName, address } = recipient;
+        label = accountName !== null ? accountName : ellipsisFn(address, 5);
+      }
+      break;
+    }
+    case 'sender': {
+      sendAccount = sender;
+      accountNotSet = sender === null;
+      notSetMessage = 'Select Sender';
+
+      if (sender) {
+        label = sender.alias;
+      }
+      break;
+    }
+  }
+
+  return accountNotSet ? (
+    <span style={{ textAlign: 'left', flex: 1 }}>{notSetMessage}</span>
   ) : (
     <SelectedAddressItem
       className={!getOnlineMode() ? 'disable' : ''}
@@ -47,37 +78,10 @@ const TriggerRecipient = ({ recipient }: TriggerRecipientProps) => {
     >
       <Styles.FlexRow $gap={'1.25rem'} style={{ width: '100%' }}>
         <div className="identicon" style={{ minWidth: 'fit-content' }}>
-          <Identicon value={recipient.address} fontSize="1.9rem" />
+          <Identicon value={sendAccount!.address} fontSize="1.9rem" />
         </div>
         <Styles.FlexColumn $rowGap={'0.5rem'} style={{ flex: 1, minWidth: 0 }}>
-          <h3>
-            {recipient.accountName !== null
-              ? recipient.accountName
-              : ellipsisFn(recipient.address, 5)}
-          </h3>
-        </Styles.FlexColumn>
-      </Styles.FlexRow>
-    </SelectedAddressItem>
-  );
-};
-
-const TriggerSender = ({ sender }: TriggerSenderProps) => {
-  const { getTheme, getOnlineMode } = useConnections();
-  const theme = getTheme();
-
-  return sender === null ? (
-    <span style={{ textAlign: 'left', flex: 1 }}>Select Sender</span>
-  ) : (
-    <SelectedAddressItem
-      className={!getOnlineMode() ? 'disable' : ''}
-      $theme={theme}
-    >
-      <Styles.FlexRow $gap={'1.25rem'} style={{ width: '100%' }}>
-        <div className="identicon" style={{ minWidth: 'fit-content' }}>
-          <Identicon value={sender.address} fontSize="1.9rem" />
-        </div>
-        <Styles.FlexColumn $rowGap={'0.5rem'} style={{ flex: 1, minWidth: 0 }}>
-          <h3>{sender.alias}</h3>
+          <h3>{label}</h3>
         </Styles.FlexColumn>
       </Styles.FlexRow>
     </SelectedAddressItem>
@@ -276,11 +280,11 @@ export const DialogSelectAccount = ({
           className={!getOnlineMode() ? 'disable' : ''}
         >
           {/** Render Recipient or Sender Trigger */}
-          {accountRole === 'recipient' ? (
-            <TriggerRecipient recipient={recipient} />
-          ) : (
-            <TriggerSender sender={sender} />
-          )}
+          <DynamicTrigger
+            accountRole={accountRole}
+            recipient={recipient}
+            sender={sender}
+          />
 
           <Icons.ChevronDownIcon />
         </TriggerButton>
