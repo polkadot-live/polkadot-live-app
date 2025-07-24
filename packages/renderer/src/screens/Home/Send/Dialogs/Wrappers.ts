@@ -155,7 +155,7 @@ export const InputWrapper = styled.input<{ $theme: AnyData }>`
     color: ${(props) => props.$theme.textColorSecondary};
     opacity: 0.5;
   }
-  &:disabled {
+  &:disabled:not(.AddressInput) {
     opacity: 0.4;
     cursor: not-allowed;
   }

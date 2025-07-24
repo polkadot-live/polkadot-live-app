@@ -57,7 +57,7 @@ export interface LedgerGetAddressData {
 export interface LedgerTaskResult {
   success: boolean;
   error?: Error;
-  results?: string;
+  results?: string | Uint8Array;
 }
 
 export interface LedgerResponse {

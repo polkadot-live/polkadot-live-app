@@ -24,8 +24,11 @@ import type {
   TxStatus,
 } from '@polkadot-live/types/tx';
 import { setStateWithRef } from '@w3ux/utils';
-import { SignOverlay } from '@ren/screens/Action/SignOverlay';
-import { WcSignOverlay } from '@ren/screens/Action/WcSignOverlay';
+import {
+  SignOverlay,
+  WcSignOverlay,
+  SignLedgerOverlay,
+} from '@ren/screens/Action/Overlays';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { renderToast } from '@polkadot-live/ui/utils';
 import { WalletConnectModal } from '@walletconnect/modal';
@@ -406,6 +409,8 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         return <SignOverlay txId={info.txId} from={info.actionMeta.from} />;
       case 'wallet-connect':
         return <WcSignOverlay info={info} />;
+      case 'ledger':
+        return <SignLedgerOverlay info={info} />;
       default:
         <span>Error: Unknown Source</span>;
     }
@@ -426,8 +431,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
 
       info.dynamicInfo = dynamicInfo;
       setUpdateCache(true);
-
-      // Open sign overlay.
       openOverlayWith(getOverlayComponent(info), 'small', true);
     } catch (err) {
       console.log(err);

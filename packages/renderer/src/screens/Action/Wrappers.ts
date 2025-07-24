@@ -156,7 +156,6 @@ export const SubmittedTxWrapper = styled.div`
 /**
  * WalletConnect Sign Overlay
  */
-
 export const WcOverlayWrapper = styled.div`
   background-color: var(--background-overlay-surface);
   width: 100%;
@@ -181,6 +180,39 @@ export const WcOverlayWrapper = styled.div`
       gap: 0.6rem;
       align-items: center;
     }
+    h4 {
+      color: var(--text-color-primary);
+      font-size: 1.25rem;
+    }
+    p {
+      color: var(--text-color-secondary);
+      margin: 0;
+      line-height: 1.75rem;
+    }
+  }
+`;
+
+/**
+ * LedgerOverlayWrapper
+ */
+export const LedgerOverlayWrapper = styled.div`
+  background-color: var(--background-overlay-surface);
+  width: 100%;
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 2rem 1.75rem;
+  text-align: center;
+  border-radius: 0.375rem;
+
+  .ContentColumn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+
     h4 {
       color: var(--text-color-primary);
       font-size: 1.25rem;

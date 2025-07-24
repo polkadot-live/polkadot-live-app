@@ -14,6 +14,7 @@ import type {
   LedgerTask,
   LedgerTaskResult,
 } from '@polkadot-live/types/ledger';
+import type Transport from '@ledgerhq/hw-transport';
 
 const debug = MainDebug.extend('Ledger');
 
@@ -35,6 +36,61 @@ export const executeLedgerTask = async (
 };
 
 /**
+ * Instantiate a Polkadot generic app.
+ */
+export const getPolkadotGenericApp = (
+  chainId: ChainID,
+  transport: Transport
+): { app: PolkadotGenericApp; ss58Prefix: number } => {
+  // Get ss58 address prefix for requested chain.
+  const appName = getLedgerAppName(chainId as ChainID);
+  const { ss58_addr_type: ss58Prefix } = supportedApps.find(
+    (app) => app.name === appName
+  )!;
+
+  // Get the correct chain name for the metadata API.
+  const chainName = chainId === 'Polkadot Relay' ? 'dot' : 'ksm';
+
+  // Establish connection to Ledger Polkadot app.
+  const app = new PolkadotGenericApp(transport, chainName, TX_METADATA_SRV_URL);
+  return { app, ss58Prefix };
+};
+
+/**
+ * Signs a tx blob.
+ */
+export const signLedgerPayload = async (
+  chainId: ChainID,
+  index: number,
+  blob: Uint8Array,
+  proof: Uint8Array
+): Promise<LedgerTaskResult> => {
+  const transport = USBController.transport!;
+  if (!transport) {
+    return USBController.getLedgerError('TransportUndefined');
+  }
+
+  const txBlob = Buffer.from(blob);
+  const txMeta = Buffer.from(proof);
+  const bip42Path = `m/44'/354'/${index}'/0'/0'`;
+
+  const { app } = getPolkadotGenericApp(chainId, transport);
+  const { signature: buffer } = await app.signWithMetadataEd25519(
+    bip42Path,
+    txBlob,
+    txMeta
+  );
+
+  const signature = new Uint8Array(
+    buffer.buffer,
+    buffer.byteOffset,
+    buffer.byteLength
+  );
+
+  return { success: true, results: signature };
+};
+
+/**
  * Gets addresses on the device.
  */
 export const handleGetAddresses = async (
@@ -47,30 +103,15 @@ export const handleGetAddresses = async (
       return USBController.getLedgerError('TransportUndefined');
     }
 
-    // Get ss58 address prefix for requested chain.
-    const appName = getLedgerAppName(chainId as ChainID);
-    const { ss58_addr_type: ss58prefix } = supportedApps.find(
-      (app) => app.name === appName
-    )!;
+    // Establish connection to Ledger Polkadot app.
+    const { app, ss58Prefix } = getPolkadotGenericApp(chainId, transport);
+    const { deviceModel } = transport;
+    const { id, productName } = deviceModel || {};
+    debug('🔷 New Substrate app. Id: %o Product name: %o', id, productName);
 
     // Get the correct `coin_type` for the address derivation path.
     //const slip = chainName === 'Polkadot Relay' ? '354' : '434';
     const slip = '354';
-
-    // Get the correct chain name for the metadata API.
-    const chainName = chainId === 'Polkadot Relay' ? 'dot' : 'ksm';
-
-    // Establish connection to Ledger Polkadot app.
-    const substrateApp = new PolkadotGenericApp(
-      transport,
-      chainName,
-      TX_METADATA_SRV_URL
-    );
-
-    // Get Ledger model information.
-    const { deviceModel } = transport;
-    const { id, productName } = deviceModel || {};
-    debug('🔷 New Substrate app. Id: %o Product name: %o', id, productName);
 
     const results: LedgerResult[] = [];
     let maybeError: Error | null = null;
@@ -79,7 +120,7 @@ export const handleGetAddresses = async (
       const PATH = `m/44'/${slip}'/${index}'/0'/0'`;
       const result: LedgerGetAddressData | Error = await withTimeout(
         3000,
-        substrateApp.getAddressEd25519(PATH, ss58prefix, false)
+        app.getAddressEd25519(PATH, ss58Prefix, false)
       );
 
       if (result instanceof Error) {

@@ -7,7 +7,7 @@ import * as FA from '@fortawesome/free-solid-svg-icons';
 import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 
 import { chainCurrency } from '@polkadot-live/consts/chains';
-import { Identicon, MainHeading } from '@polkadot-live/ui/components';
+import { MainHeading } from '@polkadot-live/ui/components';
 import { useConnections } from '@ren/contexts/common';
 import { useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
@@ -21,14 +21,12 @@ import {
   InfoPanelSingle,
   NextStepArrow,
   ProgressBar,
-  SelectBox,
   TriggerContent,
 } from './SendHelpers';
 
 import { useSendNative } from '@ren/hooks/useSendNative';
-import { DialogRecipient } from './Dialogs';
+import { DialogSelectAccount } from './Dialogs';
 import type { SendAccordionValue } from './types';
-import type { ChainID } from '@polkadot-live/types/chains';
 
 export const Send: React.FC = () => {
   const { getOnlineMode } = useConnections();
@@ -38,13 +36,9 @@ export const Send: React.FC = () => {
     receiver,
     sendAmount,
     sender,
-    senderNetwork,
     spendable,
     summaryComplete,
     validAmount,
-    getReceiverAccounts,
-    getSenderAccounts,
-    getSenderAccountName,
     handleProceedClick,
     handleResetClick,
     handleSendAmountBlur,
@@ -53,6 +47,10 @@ export const Send: React.FC = () => {
     handleSenderChange,
     proceedDisabled,
     setReceiver,
+    setSender,
+    senderAccounts,
+    recipientAccounts,
+    setRecipientFilter,
   } = useSendNative();
 
   /**
@@ -94,8 +92,7 @@ export const Send: React.FC = () => {
   const handleClipboardCopy = async (text: string) =>
     await window.myAPI.copyToClipboard(text);
 
-  const emptySenders = getSenderAccounts().length === 0;
-  const emptyReceivers = getReceiverAccounts().length === 0;
+  const emptySenders = senderAccounts.length === 0;
 
   return (
     <FlexColumn style={{ padding: '2rem 1rem' }}>
@@ -153,32 +150,17 @@ export const Send: React.FC = () => {
                 </UI.AccordionTrigger>
                 <UI.AccordionContent narrow={true}>
                   <FlexColumn $rowGap={'2px'}>
-                    <SelectBox
-                      disabled={emptySenders || !getOnlineMode()}
-                      ariaLabel="Sender"
-                      placeholder="Select Sender"
-                      onValueChange={async (val) => {
-                        const [chainId, address] = val.split(':', 2);
-                        await handleSenderChange(address, chainId as ChainID);
-                      }}
-                    >
-                      {getSenderAccounts().map((enAccount) => (
-                        <UI.SelectItem
-                          key={`sender-${enAccount.chainId}-${enAccount.address}`}
-                          value={`${enAccount.chainId}:${enAccount.address}`}
-                        >
-                          <div className="innerRow">
-                            <div>
-                              <Identicon
-                                value={enAccount.address}
-                                fontSize={'2.1rem'}
-                              />
-                            </div>
-                            <div>{enAccount.alias}</div>
-                          </div>
-                        </UI.SelectItem>
-                      ))}
-                    </SelectBox>
+                    {/** Sender Dialog */}
+                    <DialogSelectAccount
+                      accounts={senderAccounts}
+                      accountRole="sender"
+                      recipient={receiver}
+                      sender={sender}
+                      setReceiver={setReceiver}
+                      setRecipientFilter={setRecipientFilter}
+                      setSender={setSender}
+                      handleSenderChange={handleSenderChange}
+                    />
 
                     {emptySenders ? (
                       <InfoPanelSingle>
@@ -203,12 +185,12 @@ export const Send: React.FC = () => {
                             <>
                               <AddressWithTooltip
                                 theme={theme}
-                                address={sender}
+                                address={sender.address}
                               />
                               <UI.CopyButton
                                 theme={theme}
                                 onCopyClick={async () =>
-                                  await handleClipboardCopy(sender)
+                                  await handleClipboardCopy(sender.address)
                                 }
                               />
                             </>
@@ -237,51 +219,45 @@ export const Send: React.FC = () => {
                 </UI.AccordionTrigger>
                 <UI.AccordionContent narrow={true}>
                   <FlexColumn $rowGap={'2px'}>
-                    {/** Dialog */}
-                    <DialogRecipient
-                      addresses={getReceiverAccounts()}
+                    {/** Recipient Dialog */}
+                    <DialogSelectAccount
+                      accounts={recipientAccounts}
+                      accountRole="recipient"
                       recipient={receiver}
-                      chainId={senderNetwork}
                       sender={sender}
                       setReceiver={setReceiver}
+                      setRecipientFilter={setRecipientFilter}
+                      setSender={setSender}
+                      handleSenderChange={handleSenderChange}
                     />
-
-                    {emptyReceivers ? (
-                      <InfoPanelSingle>
-                        <span style={{ color: 'var(--accent-warning)' }}>
-                          No managed accounts found on this network
-                        </span>
-                      </InfoPanelSingle>
-                    ) : (
-                      <InfoPanelSingle>
-                        <div
-                          style={{
-                            display: 'flex',
-                            gap: '0.8rem',
-                            alignItems: 'center',
-                          }}
-                        >
-                          {!receiver ? (
-                            <span style={{ opacity: '0.5' }}>
-                              No account selected
-                            </span>
-                          ) : (
-                            <>
-                              <AddressWithTooltip
-                                theme={theme}
-                                address={receiver.address}
-                              />
-                              <UI.CopyButton
-                                theme={theme}
-                                onCopyClick={async () =>
-                                  await handleClipboardCopy(receiver.address)
-                                }
-                              />
-                            </>
-                          )}
-                        </div>
-                      </InfoPanelSingle>
-                    )}
+                    <InfoPanelSingle>
+                      <div
+                        style={{
+                          display: 'flex',
+                          gap: '0.8rem',
+                          alignItems: 'center',
+                        }}
+                      >
+                        {!receiver ? (
+                          <span style={{ opacity: '0.5' }}>
+                            No account selected
+                          </span>
+                        ) : (
+                          <>
+                            <AddressWithTooltip
+                              theme={theme}
+                              address={receiver.address}
+                            />
+                            <UI.CopyButton
+                              theme={theme}
+                              onCopyClick={async () =>
+                                await handleClipboardCopy(receiver.address)
+                              }
+                            />
+                          </>
+                        )}
+                      </div>
+                    </InfoPanelSingle>
                     <NextStepArrow
                       complete={receiver !== null}
                       onClick={() => handleNextStep('section-receiver')}
@@ -314,10 +290,7 @@ export const Send: React.FC = () => {
                       <input
                         type="number"
                         disabled={
-                          !sender ||
-                          !senderNetwork ||
-                          fetchingSpendable ||
-                          !getOnlineMode()
+                          !sender || fetchingSpendable || !getOnlineMode()
                         }
                         value={sendAmount}
                         onChange={(e) => handleSendAmountChange(e)}
@@ -325,12 +298,12 @@ export const Send: React.FC = () => {
                         onBlur={() => handleSendAmountBlur()}
                       />
                       <span>
-                        {senderNetwork ? chainCurrency(senderNetwork) : '-'}
+                        {sender ? chainCurrency(sender.chainId) : '-'}
                       </span>
                     </InputWrapper>
                     <InfoPanel label={'Spendable Balance:'}>
-                      {spendable && senderNetwork
-                        ? getBalanceText(spendable, senderNetwork)
+                      {spendable && sender
+                        ? getBalanceText(spendable, sender.chainId)
                         : '-'}
                     </InfoPanel>
                     <NextStepArrow
@@ -352,7 +325,7 @@ export const Send: React.FC = () => {
                 <UI.AccordionContent narrow={true}>
                   <FlexColumn $rowGap={'2px'}>
                     <InfoPanel label={'Network:'}>
-                      {senderNetwork || '-'}
+                      {sender?.chainId || '-'}
                     </InfoPanel>
 
                     {/** Sender */}
@@ -362,8 +335,8 @@ export const Send: React.FC = () => {
                       ) : (
                         <AccountNameWithTooltip
                           theme={theme}
-                          address={sender}
-                          accountName={getSenderAccountName()}
+                          address={sender.address}
+                          accountName={sender.alias}
                         />
                       )}
                     </InfoPanel>
@@ -386,9 +359,12 @@ export const Send: React.FC = () => {
 
                     {/** Send Amount */}
                     <InfoPanel label={'Send Amount:'}>
-                      {sendAmount === '0' || sendAmount === '' || !validAmount
+                      {sendAmount === '0' ||
+                      sendAmount === '' ||
+                      !sender ||
+                      !validAmount
                         ? '-'
-                        : `${formatDecimal(sendAmount)} ${chainCurrency(senderNetwork!)}`}
+                        : `${formatDecimal(sendAmount)} ${chainCurrency(sender.chainId)}`}
                     </InfoPanel>
 
                     <FlexRow $gap={'0.5rem'}>
