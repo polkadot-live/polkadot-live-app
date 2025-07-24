@@ -162,6 +162,7 @@ export const NextStepArrow = ({
 /**
  * @name SelectBox
  * @summary Radix UI select box wrapper.
+ * @deprecated
  */
 export const SelectBox = ({
   children,
@@ -174,7 +175,10 @@ export const SelectBox = ({
   const theme = getTheme();
 
   return (
-    <Select.Root disabled={disabled} onValueChange={onValueChange}>
+    <Select.Root
+      disabled={disabled}
+      onValueChange={(val) => onValueChange(val)}
+    >
       <UI.SelectTrigger $theme={theme} aria-label={ariaLabel}>
         <Select.Value placeholder={placeholder} />
         <Select.Icon className="SelectIcon">

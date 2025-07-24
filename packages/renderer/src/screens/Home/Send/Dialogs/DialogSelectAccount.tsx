@@ -6,65 +6,49 @@ import * as Styles from '@polkadot-live/ui/styles';
 import * as Icons from '@radix-ui/react-icons';
 
 import { useConnections } from '@ren/contexts/common';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { checkAddress } from '@polkadot/util-crypto';
 import { Identicon } from '@polkadot-live/ui/components';
 import { ellipsisFn } from '@w3ux/utils';
+import { TriggerSelectAccount } from '.';
 import {
   AddressesWrapper,
   AddressItem,
   ConfirmBtn,
   InputIdenticonWrapper,
   InputWrapper,
-  SelectedAddressItem,
   TriggerButton,
 } from './Wrappers';
 
-import type { DialogRecipientProps } from './types';
+import type { DialogSelectAccountProps } from './types';
 import type { ChangeEvent } from 'react';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { SendRecipient } from '../types';
+import type { SendAccount } from '@polkadot-live/types/accounts';
 
-export const DialogRecipient = ({
-  addresses,
-  chainId,
+export const DialogSelectAccount = ({
+  accounts,
+  accountRole,
   recipient,
   sender,
   setReceiver,
-}: DialogRecipientProps) => {
+  setSender,
+  handleSenderChange,
+  setRecipientFilter,
+}: DialogSelectAccountProps) => {
   const { getTheme, getOnlineMode } = useConnections();
   const theme = getTheme();
 
   const [isOpen, setIsOpen] = useState(false);
   const [isInputValid, setIsInputValid] = useState(false);
-  const [inputVal, setInputVal] = useState<SendRecipient>({
+  const [inputVal, setInputVal] = useState<SendRecipient | SendAccount>({
     address: '',
     accountName: null,
     managed: false,
+    chainId: sender?.chainId || 'Westend Asset Hub',
   });
 
-  const [filteredAddresses, setFilteredAddresses] = useState(addresses);
-  const allAddresses = useRef(addresses);
-  const [trigger, setTrigger] = useState(false);
-
-  useEffect(() => {
-    setTrigger(true);
-  }, []);
-
-  useEffect(() => {
-    if (trigger) {
-      if (recipient !== null) {
-        setInputVal({ ...recipient });
-        setFilteredAddresses((pv) =>
-          pv.filter(({ address }) => address.startsWith(recipient.address))
-        );
-      }
-      setTrigger(false);
-    }
-  }, [trigger]);
-
   const ChainPrefix = new Map<ChainID, number>([
-    ['Polkadot Relay', 0],
     ['Kusama Relay', 2],
     ['Westend Asset Hub', 42],
   ]);
@@ -73,10 +57,16 @@ export const DialogRecipient = ({
    * Util to validate an address.
    */
   const validateAddressInput = () => {
-    const targetPrefixes: number[] =
-      chainId === null
-        ? [...ChainPrefix.values()]
-        : [ChainPrefix.get(chainId)!];
+    let targetChain: ChainID | null = null;
+    if (accountRole === 'recipient') {
+      targetChain = sender?.chainId || null;
+    } else {
+      targetChain = (inputVal as SendAccount).chainId;
+    }
+
+    const targetPrefixes: number[] = targetChain
+      ? [ChainPrefix.get(targetChain!)!]
+      : [...ChainPrefix.values()];
 
     for (const prefix of targetPrefixes) {
       const result = checkAddress(inputVal.address, prefix);
@@ -94,56 +84,120 @@ export const DialogRecipient = ({
   };
 
   /**
-   * Handle input change.
+   * Handle input change (only for recipients list).
    */
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    // Trim any whitespace.
     const val = event.target.value.trim();
-
-    const managed = allAddresses.current.find(
-      ({ address }) => address.toLowerCase() === val.toLowerCase()
-    )
+    const managed = accounts.find(({ address }) => address === val)
       ? true
       : false;
 
-    setInputVal((pv) => ({ ...pv, address: val, managed }));
-    setIsInputValid(validateAddressInput());
+    setRecipientFilter(val);
+    setInputVal({
+      accountName: ellipsisFn(val, 5),
+      address: val,
+      chainId: sender?.chainId || 'Westend Asset Hub',
+      managed,
+    } as SendRecipient);
 
-    val === ''
-      ? setFilteredAddresses(allAddresses.current)
-      : setFilteredAddresses(
-          allAddresses.current.filter(({ address }) =>
-            address.toLowerCase().startsWith(val.toLowerCase())
-          )
-        );
+    setIsInputValid(validateAddressInput());
   };
 
   /**
    * Handle clicking a listed address.
    */
-  const handleAddressClick = (clickedAddress: string, accountName: string) => {
+  const handleAddressClick = (account: SendAccount) => {
+    const { address, alias, chainId: cid } = account;
     setIsInputValid(validateAddressInput());
 
-    if (inputVal.address === clickedAddress) {
-      setInputVal({ address: '', accountName: null, managed: false });
-      setFilteredAddresses(allAddresses.current);
-      setReceiver(null);
-      return;
-    }
+    // TODO: Enable setInputValue(null)
+    if (inputVal.address === address) {
+      // Un-select.
+      setInputVal({
+        address: '',
+        accountName: null,
+        managed: false,
+        chainId: cid,
+      });
 
-    setInputVal({ address: clickedAddress, accountName, managed: true });
-    setFilteredAddresses((pv) =>
-      pv.filter(({ address }) => address.startsWith(clickedAddress))
-    );
+      accountRole === 'recipient' && setReceiver(null);
+      accountRole === 'sender' && setSender(null);
+    } else {
+      // Set selected.
+      if (accountRole === 'recipient') {
+        setInputVal({
+          address,
+          accountName: alias,
+          managed: true,
+          chainId: cid,
+        } as SendRecipient);
+      } else {
+        setInputVal({ ...account } as SendAccount);
+      }
+    }
   };
 
   /**
    * Handle clicking the confirm button.
    */
   const handleConfirmClick = () => {
-    setReceiver({ ...inputVal });
+    accountRole === 'recipient' &&
+      setReceiver({ ...inputVal } as SendRecipient);
+    accountRole === 'sender' &&
+      handleSenderChange({ ...inputVal } as SendAccount);
     setIsOpen(false);
   };
+
+  /**
+   * Returns whether confirm button is enabled.
+   */
+  const isConfirmEnabled = (): boolean => {
+    if (accountRole === 'recipient') {
+      return validateAddressInput();
+    } else {
+      if (inputVal.address !== '') {
+        return validateAddressInput();
+      } else {
+        return false;
+      }
+    }
+  };
+
+  /**
+   * Set input value to selected account when dialog is re-opened.
+   */
+  useEffect(() => {
+    if (isOpen) {
+      switch (accountRole) {
+        case 'recipient': {
+          if (recipient !== null) {
+            setInputVal({ ...recipient });
+          }
+          break;
+        }
+        case 'sender': {
+          if (sender !== null) {
+            setInputVal({ ...sender });
+          }
+          break;
+        }
+      }
+    }
+  }, [isOpen]);
+
+  /**
+   * Reset recipient input value when sender changes.
+   */
+  useEffect(() => {
+    if (accountRole === 'recipient') {
+      setInputVal({
+        address: '',
+        accountName: null,
+        managed: false,
+        chainId: sender?.chainId || 'Westend Asset Hub',
+      });
+    }
+  }, [sender]);
 
   /**
    * Validate input whenever it changes.
@@ -152,53 +206,28 @@ export const DialogRecipient = ({
     setIsInputValid(validateAddressInput());
   }, [inputVal]);
 
-  /**
-   * Update address list when sender changes.
-   */
-  useEffect(() => {
-    allAddresses.current = addresses;
-    setFilteredAddresses(addresses);
-    setInputVal({ address: '', accountName: '', managed: false });
-    setIsInputValid(false);
-  }, [sender]);
-
   return (
     <Dialog.Root
       open={isOpen}
       onOpenChange={(val) => getOnlineMode() && setIsOpen(val)}
     >
+      {/** Trigger */}
       <Styles.DialogTrigger $theme={theme}>
         <TriggerButton
           $theme={theme}
           className={!getOnlineMode() ? 'disable' : ''}
         >
-          {recipient === null || recipient.address === '' ? (
-            <span style={{ textAlign: 'left', flex: 1 }}>Select Recipient</span>
-          ) : (
-            <SelectedAddressItem
-              className={!getOnlineMode() ? 'disable' : ''}
-              $theme={theme}
-            >
-              <Styles.FlexRow $gap={'1.25rem'} style={{ width: '100%' }}>
-                <div className="identicon" style={{ minWidth: 'fit-content' }}>
-                  <Identicon value={recipient.address} fontSize="1.9rem" />
-                </div>
-                <Styles.FlexColumn
-                  $rowGap={'0.5rem'}
-                  style={{ flex: 1, minWidth: 0 }}
-                >
-                  <h3>
-                    {recipient.accountName !== null
-                      ? recipient.accountName
-                      : ellipsisFn(recipient.address, 5)}
-                  </h3>
-                </Styles.FlexColumn>
-              </Styles.FlexRow>
-            </SelectedAddressItem>
-          )}
+          <TriggerSelectAccount
+            accountRole={accountRole}
+            recipient={recipient}
+            sender={sender}
+          />
+
           <Icons.ChevronDownIcon />
         </TriggerButton>
       </Styles.DialogTrigger>
+
+      {/** Dialog Content */}
       <Dialog.Portal>
         <Dialog.Overlay className="Dialog__Overlay" />
 
@@ -209,12 +238,17 @@ export const DialogRecipient = ({
 
           <Styles.FlexColumn $rowGap={'1.5rem'}>
             <Styles.FlexColumn $rowGap={'0.75rem'}>
-              <Dialog.Title className="Dialog__Title">Recipient</Dialog.Title>
+              <Dialog.Title className="Dialog__Title">
+                {accountRole.charAt(0).toUpperCase() + accountRole.slice(1)}
+              </Dialog.Title>
 
               <Styles.FlexColumn $rowGap={'0.75rem'}>
                 <Dialog.Description>
                   <span style={{ color: theme.textColorSecondary }}>
-                    Enter an address or select one from the list.
+                    {accountRole === 'recipient' &&
+                      'Enter an address or select one from the list.'}
+                    {accountRole === 'sender' &&
+                      'Select an address from the list.'}
                   </span>
                 </Dialog.Description>
 
@@ -227,18 +261,23 @@ export const DialogRecipient = ({
                       <Identicon value={inputVal.address} fontSize="1.5rem" />
                     </InputIdenticonWrapper>
                     <InputWrapper
+                      className="AddressInput"
                       $theme={theme}
                       style={{ flex: 1 }}
-                      disabled={false}
-                      placeholder="Input Address"
+                      disabled={accountRole === 'sender'}
+                      placeholder={
+                        accountRole === 'recipient'
+                          ? 'Input Address'
+                          : 'Select Sender'
+                      }
                       onChange={(e) => handleChange(e)}
                       value={inputVal.address}
                     />
                   </Styles.FlexRow>
 
                   <ConfirmBtn
-                    className={`${validateAddressInput() && 'valid'}`}
-                    disabled={!isInputValid}
+                    className={`${isConfirmEnabled() ? 'valid' : ''}`}
+                    disabled={!isConfirmEnabled()}
                     $theme={theme}
                     onClick={() => isInputValid && handleConfirmClick()}
                   >
@@ -248,43 +287,48 @@ export const DialogRecipient = ({
 
                 <AddressesWrapper $theme={theme}>
                   <div className="Container">
-                    {filteredAddresses.length > 0 ? (
-                      filteredAddresses.map(
-                        ({ alias: accountName, address }) => (
+                    {accounts.length > 0 ? (
+                      accounts.map((a) => {
+                        const selected =
+                          inputVal?.address === a.address &&
+                          inputVal?.chainId === a.chainId;
+
+                        return (
                           <AddressItem
                             role="button"
-                            selected={inputVal.address === address}
-                            onClick={() =>
-                              handleAddressClick(address, accountName)
-                            }
+                            selected={selected}
+                            onClick={() => handleAddressClick(a)}
                             $theme={theme}
-                            key={`recipient-${address}`}
+                            key={`${accountRole}-${a.address}`}
                           >
                             <Styles.FlexRow
                               $gap={'1.25rem'}
                               style={{ width: '100%' }}
                             >
                               <div style={{ minWidth: 'fit-content' }}>
-                                <Identicon value={address} fontSize="1.9rem" />
+                                <Identicon
+                                  value={a.address}
+                                  fontSize="1.9rem"
+                                />
                               </div>
                               <Styles.FlexColumn
                                 $rowGap={'0.5rem'}
                                 style={{ flex: 1, minWidth: 0 }}
                               >
-                                <h3 className="text-ellipsis">{accountName}</h3>
+                                <h3 className="text-ellipsis">{a.alias}</h3>
                                 <h4 className="text-ellipsis">
-                                  {ellipsisFn(address, 12)}
+                                  {ellipsisFn(a.address, 12)}
                                 </h4>
                               </Styles.FlexColumn>
-                              {inputVal.address === address && (
+                              {selected && (
                                 <span className="ClearBtn">
                                   <Icons.Cross1Icon />
                                 </span>
                               )}
                             </Styles.FlexRow>
                           </AddressItem>
-                        )
-                      )
+                        );
+                      })
                     ) : (
                       <Styles.FlexRow>
                         <span
