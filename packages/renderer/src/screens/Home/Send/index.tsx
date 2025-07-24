@@ -34,8 +34,10 @@ export const Send: React.FC = () => {
     fetchingSpendable,
     progress,
     receiver,
+    recipientAccounts,
     sendAmount,
     sender,
+    senderAccounts,
     spendable,
     summaryComplete,
     validAmount,
@@ -47,10 +49,8 @@ export const Send: React.FC = () => {
     handleSenderChange,
     proceedDisabled,
     setReceiver,
-    setSender,
-    senderAccounts,
-    recipientAccounts,
     setRecipientFilter,
+    setSender,
   } = useSendNative();
 
   /**

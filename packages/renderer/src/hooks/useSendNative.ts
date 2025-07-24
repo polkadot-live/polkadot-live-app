@@ -29,8 +29,10 @@ interface SendNativeHook {
   fetchingSpendable: boolean;
   progress: number;
   receiver: SendRecipient | null;
+  recipientAccounts: SendAccount[];
   sendAmount: string;
   sender: SendAccount | null;
+  senderAccounts: SendAccount[];
   spendable: bigint | null;
   summaryComplete: boolean;
   validAmount: boolean;
@@ -42,10 +44,8 @@ interface SendNativeHook {
   handleSenderChange: (senderAccount: SendAccount) => void;
   proceedDisabled: () => boolean;
   setReceiver: React.Dispatch<React.SetStateAction<SendRecipient | null>>;
-  setSender: React.Dispatch<React.SetStateAction<SendAccount | null>>;
-  senderAccounts: SendAccount[];
-  recipientAccounts: SendAccount[];
   setRecipientFilter: React.Dispatch<React.SetStateAction<string>>;
+  setSender: React.Dispatch<React.SetStateAction<SendAccount | null>>;
 }
 
 export const useSendNative = (): SendNativeHook => {
@@ -490,8 +490,10 @@ export const useSendNative = (): SendNativeHook => {
     fetchingSpendable,
     progress,
     receiver,
+    recipientAccounts,
     sendAmount,
     sender,
+    senderAccounts,
     spendable,
     summaryComplete,
     validAmount,
@@ -503,9 +505,7 @@ export const useSendNative = (): SendNativeHook => {
     handleSenderChange,
     proceedDisabled,
     setReceiver,
-    setSender,
-    senderAccounts,
-    recipientAccounts,
     setRecipientFilter,
+    setSender,
   };
 };
