@@ -49,11 +49,8 @@ export const SignLedgerOverlay = ({ info }: LedgerSignOverlayProps) => {
   /**
    * Handle sign click.
    */
-  const handleSign = () => {
+  const handleSign = async () => {
     setIsSigning(true);
-
-    // TMP: Provide Ledger index.
-    info.actionMeta.ledgerMeta = { index: 0 };
 
     ConfigAction.portAction.postMessage({
       task: 'renderer:ledger:sign',

@@ -6,6 +6,7 @@ import { defaultLedgerHardwareContext } from './defaults';
 import { decodeAddress, u8aToHex } from 'dedot/utils';
 import { setStateWithRef } from '@w3ux/utils';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { LedgerMetadata } from '@polkadot-live/types/accounts';
 import type {
   LedgerHardwareContextInterface,
   NamedRawLedgerAddress,
@@ -206,14 +207,22 @@ export const LedgerHardwareProvider = ({
       /** Handle fetched Ledger addresses. */
       case 'ReceiveAddress': {
         const { addresses, options }: GetAddressMessage = JSON.parse(serData!);
+        const { accountIndices } = options;
         const received: LedgerFetchedAddressData[] = JSON.parse(addresses);
 
         // Cache new address list.
         const cache: RawLedgerAddress[] = [];
+        let i = 0;
         for (const { body, device } of received) {
           handleNewStatusCode(ack, statusCode);
           const { pubKey, address } = body;
-          cache.push({ address, pubKey, device, options });
+          const ledgerMeta: LedgerMetadata = {
+            device,
+            accountIndex: accountIndices[i],
+          };
+
+          cache.push({ address, ledgerMeta, pubKey, options });
+          i += 1;
         }
 
         setReceivedAddresses(cache);

@@ -1,15 +1,16 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { LedgerResponse } from '@polkadot-live/types/ledger';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { LedgerMetadata } from '@polkadot-live/types/accounts';
+import type { LedgerResponse } from '@polkadot-live/types/ledger';
 
 export interface RawLedgerAddress {
   address: string;
-  pubKey: string;
-  device: { id: string; productName: string };
+  ledgerMeta: LedgerMetadata;
   options: AnyData;
+  pubKey: string;
 }
 
 export type NamedRawLedgerAddress = RawLedgerAddress & {

@@ -3,19 +3,22 @@
 
 import * as defaults from './defaults';
 import { ConfigImport } from '@polkadot-live/core';
-import { getSupportedChains } from '@polkadot-live/consts/chains';
+import {
+  getSupportedChains,
+  getSupportedLedgerChains,
+} from '@polkadot-live/consts/chains';
 import { createContext, useContext } from 'react';
 import { decodeAddress, encodeAddress, u8aToHex } from 'dedot/utils';
 import { renderToast } from '@polkadot-live/ui/utils';
 import { useAccountStatuses, useAddresses } from '@ren/contexts/import';
 import { useConnections } from '@ren/contexts/common';
-import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ImportHandlerContextInterface } from './types';
 import type {
   AccountSource,
   EncodedAccount,
   ImportedGenericAccount,
+  LedgerMetadata,
 } from '@polkadot-live/types/accounts';
 
 export const ImportHandlerContext =
@@ -41,11 +44,17 @@ export const ImportHandlerProvider = ({
     enAddress: string,
     source: AccountSource,
     accountName?: string,
-    device?: AnyData,
+    ledgerMeta?: LedgerMetadata,
     showToast = true
   ) => {
     // Construct generic account and set import status.
-    const genericAccount = construct(enAddress, source, device, accountName);
+    const genericAccount = construct(
+      enAddress,
+      source,
+      accountName,
+      ledgerMeta
+    );
+
     const { encodedAccounts } = genericAccount;
 
     for (const enAccount of Object.values(encodedAccounts)) {
@@ -99,8 +108,8 @@ export const ImportHandlerProvider = ({
   const construct = (
     address: string,
     source: AccountSource,
-    device?: AnyData,
-    accountName?: string
+    accountName?: string,
+    ledgerMeta?: LedgerMetadata
   ): ImportedGenericAccount => {
     const _accountName = accountName || getDefaultName();
     const encodedAccounts = {} as Record<ChainID, EncodedAccount>;
@@ -109,12 +118,19 @@ export const ImportHandlerProvider = ({
     for (const [cid, { prefix }] of Object.entries(getSupportedChains())) {
       const chainId = cid as ChainID;
       const encoded = encodeAddress(publicKeyHex, prefix);
+
+      const _ledgerMeta: LedgerMetadata | undefined =
+        ledgerMeta && getSupportedLedgerChains().includes(chainId)
+          ? { ...ledgerMeta }
+          : undefined;
+
       encodedAccounts[chainId] = {
         address: encoded,
         alias: `${_accountName}-${cid}`,
         chainId,
         isBookmarked: false,
         isImported: false,
+        ledgerMeta: _ledgerMeta,
       };
     }
 
@@ -123,7 +139,6 @@ export const ImportHandlerProvider = ({
       encodedAccounts,
       publicKeyHex,
       source,
-      ledger: source === 'ledger' ? { ...device } : undefined,
     };
   };
 

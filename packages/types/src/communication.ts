@@ -54,6 +54,7 @@ export interface IpcTask {
   | 'raw-account:add'
     | 'raw-account:delete'
     | 'raw-account:get'
+    | 'raw-account:get:ledger-meta'
     | 'raw-account:getAll'
     | 'raw-account:import'
     | 'raw-account:persist'

@@ -5,7 +5,7 @@ import * as defaults from './defaults';
 import { createContext, useContext } from 'react';
 import { ConfigRenderer, ExtrinsicsController } from '@polkadot-live/core';
 import { ledgerErrorMeta } from '@polkadot-live/consts/ledger';
-import { u8aToHex } from 'dedot/utils';
+import { decodeAddress, u8aToHex } from 'dedot/utils';
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 import type { HexString } from 'dedot/utils';
 import type { LedgerErrorStatusCode } from '@polkadot-live/types/ledger';
@@ -48,12 +48,13 @@ export const LedgerSignerProvider = ({
    */
   const ledgerSignSubmit = async (info: ExtrinsicInfo) => {
     try {
+      await fetchLedgerMetadata(info);
       if (!info.actionMeta.ledgerMeta) {
         throw new LedgerTxError('TxLedgerMetaUndefined');
       }
 
       const { chainId } = info.actionMeta;
-      const { index } = info.actionMeta.ledgerMeta;
+      const { accountIndex: index } = info.actionMeta.ledgerMeta;
       const { txId, dynamicInfo } = info;
 
       if (!dynamicInfo) {
@@ -102,6 +103,31 @@ export const LedgerSignerProvider = ({
       error instanceof LedgerTxError
         ? postError(error.statusCode)
         : console.error(error);
+    }
+  };
+
+  /**
+   * Fetch signing account's Ledger metadata from store if it's currently undefined in info.
+   */
+  const fetchLedgerMetadata = async (info: ExtrinsicInfo) => {
+    try {
+      if (info.actionMeta.ledgerMeta) {
+        return;
+      }
+
+      const result = (await window.myAPI.rawAccountTask({
+        action: 'raw-account:get:ledger-meta',
+        data: {
+          serialized: JSON.stringify({
+            chainId: info.actionMeta.chainId,
+            publicKeyHex: u8aToHex(decodeAddress(info.actionMeta.from)),
+          }),
+        },
+      })) as string;
+
+      result !== '' && (info.actionMeta.ledgerMeta = JSON.parse(result));
+    } catch (error) {
+      console.error('Error parsing JSON:', error);
     }
   };
 

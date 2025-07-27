@@ -405,6 +405,14 @@ export const getSupportedSources = (): AccountSource[] => [
 ];
 
 /**
+ * Get chain IDs that support importing Ledger accounts.
+ */
+export const getSupportedLedgerChains = (): ChainID[] => [
+  'Polkadot Relay',
+  'Kusama Relay',
+];
+
+/**
  * Returns a mapping of ecosystem IDs to their corresponding chain IDs.
  */
 export const getEcosystemChainMap = (): Map<EcosystemID, ChainID[]> =>

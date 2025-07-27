@@ -183,6 +183,7 @@ export const useSendNative = (): SendNativeHook => {
       chainId: sender.chainId,
       data: JSON.stringify(balanceData),
       args: [recipientObj.address, sendAmountPlanck],
+      ledgerMeta: senderObj.ledgerMeta,
     };
 
     // Send extrinsic to action window.

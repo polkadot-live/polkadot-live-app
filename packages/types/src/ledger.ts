@@ -1,7 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AnyData } from './misc';
 import type { PolkadotGenericApp } from '@zondax/ledger-substrate';
 
 export type LedgerTask = 'get_address' | 'close_polkadot' | 'ledger_sign';
@@ -95,7 +94,7 @@ export interface LedgerResult {
  * Data sent to renderer via IPC.
  */
 export interface GetAddressMessage {
-  options: AnyData;
+  options: { accountIndices: number[] };
   addresses: string;
 }
 
