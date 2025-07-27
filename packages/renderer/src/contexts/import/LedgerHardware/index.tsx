@@ -16,6 +16,7 @@ import type {
   LedgerFetchedAddressData,
   LedgerResponse,
   LedgerTask,
+  LedgerTaskResponse,
 } from '@polkadot-live/types/ledger';
 
 export const LedgerHardwareContext =
@@ -76,23 +77,21 @@ export const LedgerHardwareProvider = ({
       preConnect();
     }
 
-    const tasks: LedgerTask[] = ['get_address'];
+    const task: LedgerTask = 'get_address';
     const accountIndices = Array.from({ length: 5 }, (_, i) => i).map(
       (i) => i + offset
     );
 
     setIsFetching(true);
 
-    const serialized = JSON.stringify({
+    const serData = JSON.stringify({
       accountIndices,
       chainId: network,
-      tasks,
     });
 
     // TODO: Handle JSON.parse exception.
-    const serResult = await window.myAPI.doLedgerTask(serialized);
-    const parsedResult: GetAddressMessage = JSON.parse(serResult);
-    handleLedgerStatusResponse(parsedResult);
+    const response = await window.myAPI.doLedgerTask(task, serData);
+    handleLedgerStatusResponse(response);
 
     // Update the connected network state post connection.
     const val = selectedNetworkRef.current;
@@ -200,28 +199,24 @@ export const LedgerHardwareProvider = ({
   /**
    * Handle a collection of received Ledger addresses.
    */
-  const handleLedgerStatusResponse = (parsed: GetAddressMessage) => {
-    const { ack, statusCode, options } = parsed;
+  const handleLedgerStatusResponse = (response: LedgerTaskResponse) => {
+    const { ack, statusCode, serData } = response;
 
     switch (statusCode) {
       /** Handle fetched Ledger addresses. */
       case 'ReceiveAddress': {
-        const { addresses } = parsed;
-        const received: LedgerFetchedAddressData[] = JSON.parse(addresses!);
+        const { addresses, options }: GetAddressMessage = JSON.parse(serData!);
+        const received: LedgerFetchedAddressData[] = JSON.parse(addresses);
 
         // Cache new address list.
-        const newCache: RawLedgerAddress[] = [];
-
+        const cache: RawLedgerAddress[] = [];
         for (const { body, device } of received) {
           handleNewStatusCode(ack, statusCode);
-
-          if (statusCode === 'ReceiveAddress') {
-            const { pubKey, address } = body;
-            newCache.push({ address, pubKey, device, options });
-          }
+          const { pubKey, address } = body;
+          cache.push({ address, pubKey, device, options });
         }
 
-        setReceivedAddresses(newCache);
+        setReceivedAddresses(cache);
         setIsFetching(false);
         setDeviceConnected(true);
         break;

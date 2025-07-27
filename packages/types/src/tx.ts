@@ -52,6 +52,8 @@ export interface ActionMeta {
   args: AnyData;
   // Unique identifier of the action's associated event.
   eventUid?: string;
+  // Cache ledger specific data.
+  ledgerMeta?: { index: number };
 }
 
 /**

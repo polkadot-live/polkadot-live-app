@@ -7,6 +7,7 @@ import TransportNodeHid from '@ledgerhq/hw-transport-node-hid';
 import type { AnyFunction } from '@polkadot-live/types/misc';
 import type {
   LedgerErrorStatusCode,
+  LedgerPolkadotApp,
   LedgerTaskResult,
 } from '@polkadot-live/types';
 import type Transport from '@ledgerhq/hw-transport';
@@ -21,6 +22,7 @@ const DELAY = 250;
 
 export class USBController {
   static transport: Transport | null = null;
+  static appCache: LedgerPolkadotApp | null = null;
 
   /**
    * Initialize USB listeners.
@@ -45,6 +47,21 @@ export class USBController {
     usb.on('detach', async () => {
       await this.closeTransport();
     });
+  };
+
+  /**
+   * Cache the Ledger Polkadot app for later use when signing extrinsics.
+   */
+  static cachePolkadotApp = (appData: LedgerPolkadotApp) => {
+    this.appCache && (this.appCache = null);
+    this.appCache = appData;
+  };
+
+  /**
+   * Clear the Ledger Polkadot app after closing signing overlay.
+   */
+  static clearPolkadotApp = () => {
+    this.appCache = null;
   };
 
   /**

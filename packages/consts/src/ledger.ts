@@ -61,16 +61,57 @@ export const ledgerErrorMeta: Record<LedgerErrorStatusCode, LedgerErrorMeta> = {
   DeviceLocked: {
     ack: 'failure',
     statusCode: 'DeviceLocked',
-    body: { msg: 'No supported Ledger device connected.' },
+    body: { msg: 'Ledger device is locked.' },
   },
   DeviceNotConnected: {
     ack: 'failure',
     statusCode: 'DeviceNotConnected',
     body: { msg: 'No supported Ledger device connected.' },
   },
+  TransactionRejected: {
+    ack: 'failure',
+    statusCode: 'TransactionRejected',
+    body: { msg: 'Transaction rejected.' },
+  },
+  WrongMetadataDigest: {
+    ack: 'failure',
+    statusCode: 'WrongMetadataDigest',
+    body: { msg: 'Wrong metadata hash provided.' },
+  },
+  ValueOutOfRange: {
+    ack: 'failure',
+    statusCode: 'ValueOutOfRange',
+    body: { msg: 'Buffer value out of range.' },
+  },
+  UnexpectedBufferEnd: {
+    ack: 'failure',
+    statusCode: 'UnexpectedBufferEnd',
+    body: { msg: 'Unexpected buffer end.' },
+  },
+  /** Custom */
   TransportUndefined: {
     ack: 'failure',
     statusCode: 'TransportUndefined',
     body: { msg: 'Problem with USB module.' },
+  },
+  TxDataUndefined: {
+    ack: 'failure',
+    statusCode: 'TxDataUndefined',
+    body: { msg: 'Cached transaction data undefined.' },
+  },
+  TxLedgerMetaUndefined: {
+    ack: 'failure',
+    statusCode: 'TxLedgerMetaUndefined',
+    body: { msg: 'Ledger metadata undefined.' },
+  },
+  TxPayloadsUndefined: {
+    ack: 'failure',
+    statusCode: 'TxPayloadsUndefined',
+    body: { msg: 'Transaction payloads undefined.' },
+  },
+  TxDynamicInfoUndefined: {
+    ack: 'failure',
+    statusCode: 'TxDynamicInfoUndefined',
+    body: { msg: 'Transaction dynamic info undefined.' },
   },
 };

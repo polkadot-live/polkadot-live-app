@@ -3,9 +3,10 @@
 
 import { ConfigRenderer } from '../config';
 import { APIsController } from '../controllers/APIsController';
-import { chainUnits } from '@polkadot-live/consts/chains';
+import { ChainList, chainUnits } from '@polkadot-live/consts/chains';
 import { unitToPlanck } from '@w3ux/utils';
-import { concatU8a, hexToU8a } from 'dedot/utils';
+import { concatU8a, hexToU8a, u8aToHex } from 'dedot/utils';
+import { MerkleizedMetadata } from 'dedot/merkleized-metadata';
 import { ExtraSignedExtension } from 'dedot';
 import {
   getAddressNonce,
@@ -15,6 +16,7 @@ import {
 
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { Extrinsic } from 'dedot/codecs';
+import type { HexString } from 'dedot/utils';
 import type {
   ActionMeta,
   ExtrinsicInfo,
@@ -37,6 +39,8 @@ interface CachedExtrinsicData {
   // Required for signing with WalletConnect.
   payload?: SignerPayloadJSON;
   rawPayload?: SignerPayloadRaw;
+  // Required for signing with Ledger.
+  proof?: Uint8Array;
 }
 
 interface VerifyExtrinsicResult {
@@ -186,7 +190,7 @@ export class ExtrinsicsController {
   static build = async (info: ExtrinsicInfo) => {
     try {
       const { txId, actionMeta } = info;
-      const { chainId, from } = info.actionMeta;
+      const { chainId, from, source } = info.actionMeta;
 
       const api = (
         await APIsController.getConnectedApiOrThrow(chainId)
@@ -209,37 +213,69 @@ export class ExtrinsicsController {
 
       // Build and cache payload.
       const { tx } = cached;
-      // Optionally provide `PayloadOptions`.
-      const extra = new ExtraSignedExtension(api, { signerAddress: from });
-      await extra.init();
+      let rawPayload: SignerPayloadRaw;
 
-      const payload = extra.toPayload(tx.callHex);
-      const rawPayload = extra.toRawPayload(tx.callHex);
-      this.txPayloads.set(txId, { ...cached, rawPayload, extra, payload });
+      if (source === 'ledger') {
+        const { units, unit } = ChainList.get(chainId)!;
+        const metadata = api.metadata;
+        const merkleizer = new MerkleizedMetadata(metadata, {
+          decimals: units,
+          tokenSymbol: unit,
+        });
+
+        const extra = new ExtraSignedExtension(api, {
+          signerAddress: from,
+          payloadOptions: {
+            metadataHash: u8aToHex(merkleizer.digest()),
+          },
+        });
+        await extra.init();
+
+        rawPayload = extra.toRawPayload(tx.callHex);
+        const payload = extra.toPayload(tx.callHex);
+        const proof = merkleizer.proofForExtrinsicPayload(
+          rawPayload.data as HexString
+        );
+
+        this.txPayloads.set(txId, {
+          ...cached,
+          rawPayload,
+          extra,
+          payload,
+          proof,
+        });
+      } else {
+        const extra = new ExtraSignedExtension(api, { signerAddress: from });
+        await extra.init();
+
+        rawPayload = extra.toRawPayload(tx.callHex);
+        const payload = extra.toPayload(tx.callHex);
+        this.txPayloads.set(txId, { ...cached, rawPayload, extra, payload });
+      }
 
       // Verify extrinsic is valid for submission.
       const verifyResult = await this.verifyExtrinsic(info);
       console.log(`> Extrinsic is valid: ${JSON.stringify(verifyResult)}`);
 
-      if (verifyResult.isValid) {
-        const genesisHash = api.genesisHash;
-        const nonce = await getAddressNonce(api, from);
-
-        const prefix = $.compactU32.encode(tx.callLength);
-        const prefixedRawPayload = concatU8a(prefix, hexToU8a(rawPayload.data));
-
-        ConfigRenderer.portToAction?.postMessage({
-          task: 'action:tx:report:data',
-          data: {
-            accountNonce: nonce,
-            genesisHash,
-            txId,
-            txPayload: prefixedRawPayload,
-          },
-        });
-      } else {
+      if (!verifyResult.isValid) {
         this.handleTxError(verifyResult.reason || 'Reason unknown.');
       }
+
+      const genesisHash = api.genesisHash;
+      const nonce = await getAddressNonce(api, from);
+      const prefix = $.compactU32.encode(tx.callLength);
+      // Prefixed raw payload for Vault.
+      const prefixedRawPayload = concatU8a(prefix, hexToU8a(rawPayload.data));
+
+      ConfigRenderer.portToAction?.postMessage({
+        task: 'action:tx:report:data',
+        data: {
+          accountNonce: nonce,
+          genesisHash,
+          txId,
+          txPayload: prefixedRawPayload,
+        },
+      });
     } catch (err) {
       console.log(err);
       this.handleTxError('An error occurred.');

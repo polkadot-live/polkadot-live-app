@@ -28,6 +28,7 @@ import {
   useDataBackup,
   useEvents,
   useIntervalSubscriptions,
+  useLedgerSigner,
   useManage,
   useSubscriptions,
   useWalletConnect,
@@ -44,7 +45,7 @@ import type {
 import type {
   EncodedAccount,
   ImportedGenericAccount,
-} from 'packages/types/src';
+} from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { DedotClient } from 'dedot';
 import type { PalletReferendaTrackDetails } from '@dedot/chaintypes/substrate';
@@ -66,6 +67,7 @@ export const useMainMessagePorts = () => {
   const { exportDataToBackup, importDataFromBackup } = useDataBackup();
 
   const { cacheGet } = useConnections();
+  const { ledgerSignSubmit } = useLedgerSigner();
 
   const {
     connectWc,
@@ -867,6 +869,12 @@ export const useMainMessagePorts = () => {
             case 'renderer:wc:connect:action': {
               const { target, chainId } = ev.data.data;
               await wcEstablishSessionForExtrinsic(target, chainId);
+              break;
+            }
+            case 'renderer:ledger:sign': {
+              const { info: serialized } = ev.data.data;
+              const info: ExtrinsicInfo = JSON.parse(serialized);
+              await ledgerSignSubmit(info);
               break;
             }
             case 'renderer:wc:sign': {
