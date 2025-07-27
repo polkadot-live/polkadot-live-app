@@ -1,15 +1,23 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as UI from '@polkadot-live/ui/components';
 import { ConfigAction } from '@polkadot-live/core';
 import { useConnections } from '@ren/contexts/common';
 import { useEffect } from 'react';
 import { useLedgerFeedback } from '@ren/contexts/action';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { ButtonPrimary, ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
-import { FlexRow } from '@polkadot-live/ui/styles';
+import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 import { LedgerOverlayWrapper } from '../Wrappers';
-import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { PuffLoader } from 'react-spinners';
+import {
+  faChevronRight,
+  faExclamationTriangle,
+  faX,
+} from '@fortawesome/free-solid-svg-icons';
+import LedgerLogoSVG from '@w3ux/extension-assets/Ledger.svg?react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { ExtrinsicInfo } from '@polkadot-live/types';
 
 interface LedgerSignOverlayProps {
@@ -20,7 +28,12 @@ export const SignLedgerOverlay = ({ info }: LedgerSignOverlayProps) => {
   const { cacheGet } = useConnections();
   const isBuildingExtrinsic = cacheGet('extrinsic:building');
   const { setDisableClose, setStatus: setOverlayStatus } = useOverlay();
-  const { message: ledgerFeedback } = useLedgerFeedback();
+  const {
+    isSigning,
+    message: ledgerFeedback,
+    clearFeedback,
+    setIsSigning,
+  } = useLedgerFeedback();
 
   useEffect(() => {
     setDisableClose(true);
@@ -37,6 +50,8 @@ export const SignLedgerOverlay = ({ info }: LedgerSignOverlayProps) => {
    * Handle sign click.
    */
   const handleSign = () => {
+    setIsSigning(true);
+
     // TMP: Provide Ledger index.
     info.actionMeta.ledgerMeta = { index: 0 };
 
@@ -48,21 +63,33 @@ export const SignLedgerOverlay = ({ info }: LedgerSignOverlayProps) => {
 
   return (
     <LedgerOverlayWrapper>
-      <div className="ContentColumn">Sign with Ledger</div>
-      <p>
-        Connect and unlock your Ledger, open the Polkadot app, and click{' '}
-        <b>Sign</b> to continue.
-      </p>
-
       {ledgerFeedback && (
-        <p style={{ color: 'orange' }}>{ledgerFeedback.text}</p>
+        <UI.InfoCard
+          kind={'warning'}
+          icon={faExclamationTriangle}
+          style={{ width: '100%' }}
+        >
+          <span>{ledgerFeedback.text}</span>
+          <button className="dismiss" onClick={() => clearFeedback()}>
+            <FontAwesomeIcon icon={faX} />
+          </button>
+        </UI.InfoCard>
       )}
 
-      <FlexRow $gap={'1rem'} style={{ marginTop: '0.5rem' }}>
+      <LedgerLogoSVG className="LedgerIcon" />
+      <FlexColumn $rowGap="0.25rem" className="LedgerColumn">
+        <h1>Sign with Ledger</h1>
+        <p>
+          Connect and unlock your Ledger, open the Polkadot app, and click{' '}
+          <b>Sign</b> to continue.
+        </p>
+      </FlexColumn>
+
+      <FlexRow $gap={'1rem'}>
         <ButtonSecondary
           text="Cancel"
           marginLeft
-          disabled={isBuildingExtrinsic}
+          disabled={isBuildingExtrinsic || isSigning}
           onClick={() => {
             setDisableClose(false);
             setOverlayStatus(0);
@@ -71,11 +98,15 @@ export const SignLedgerOverlay = ({ info }: LedgerSignOverlayProps) => {
 
         <ButtonPrimary
           text="Sign"
-          disabled={isBuildingExtrinsic}
+          disabled={isBuildingExtrinsic || isSigning}
           onClick={() => handleSign()}
           iconRight={faChevronRight}
           iconTransform="shrink-3"
         />
+
+        {isSigning && (
+          <PuffLoader size={24} color={'var(--text-color-secondary)'} />
+        )}
       </FlexRow>
     </LedgerOverlayWrapper>
   );

@@ -8,5 +8,8 @@ import type {
 
 export interface LedgerFeedbackContextInterface {
   message: LedgerFeedbackMessage | null;
+  isSigning: boolean;
+  clearFeedback: () => void;
   resolveMessage: (errorMeta: LedgerErrorMeta) => void;
+  setIsSigning: React.Dispatch<React.SetStateAction<boolean>>;
 }

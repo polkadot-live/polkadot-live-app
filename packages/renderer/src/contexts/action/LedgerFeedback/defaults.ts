@@ -6,5 +6,8 @@ import type { LedgerFeedbackContextInterface } from './types';
 
 export const defaultLedgerFeedbackContext: LedgerFeedbackContextInterface = {
   message: null,
+  isSigning: false,
+  clearFeedback: () => {},
   resolveMessage: () => {},
+  setIsSigning: () => {},
 };

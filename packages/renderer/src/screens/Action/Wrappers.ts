@@ -207,6 +207,20 @@ export const LedgerOverlayWrapper = styled.div`
   text-align: center;
   border-radius: 0.375rem;
 
+  .LedgerIcon {
+    height: 2.25rem;
+    width: fit-content;
+    margin: 0.25rem 0 0.75rem;
+  }
+  .LedgerColumn {
+    h1 {
+      font-size: 1.1rem;
+    }
+    p {
+      line-height: 1.75rem;
+    }
+  }
+
   .ContentColumn {
     display: flex;
     flex-direction: column;

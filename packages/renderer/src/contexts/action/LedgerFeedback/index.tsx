@@ -23,6 +23,12 @@ export const LedgerFeedbackProvider = ({
   children: React.ReactNode;
 }) => {
   const [message, setMessage] = useState<LedgerFeedbackMessage | null>(null);
+  const [isSigning, setIsSigning] = useState(false);
+
+  /**
+   * Clear feedback state.
+   */
+  const clearFeedback = () => setMessage(null);
 
   /**
    * Get a readable feedback message based on a received status code.
@@ -66,7 +72,15 @@ export const LedgerFeedbackProvider = ({
   };
 
   return (
-    <LedgerFeedbackContext.Provider value={{ message, resolveMessage }}>
+    <LedgerFeedbackContext.Provider
+      value={{
+        message,
+        isSigning,
+        clearFeedback,
+        resolveMessage,
+        setIsSigning,
+      }}
+    >
       {children}
     </LedgerFeedbackContext.Provider>
   );

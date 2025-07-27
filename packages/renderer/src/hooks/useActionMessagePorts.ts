@@ -25,7 +25,7 @@ export const useActionMessagePorts = () => {
     updateTxStatus,
   } = useTxMeta();
 
-  const { resolveMessage } = useLedgerFeedback();
+  const { resolveMessage, setIsSigning } = useLedgerFeedback();
   const { setDisableClose, setStatus: setOverlayStatus } = useOverlay();
 
   /**
@@ -129,6 +129,7 @@ export const useActionMessagePorts = () => {
             }
             case 'action:ledger:error': {
               const errorMeta: LedgerErrorMeta = JSON.parse(ev.data.data);
+              setIsSigning(false);
               resolveMessage(errorMeta);
               break;
             }
