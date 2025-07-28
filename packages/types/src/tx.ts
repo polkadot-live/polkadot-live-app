@@ -3,7 +3,7 @@
 
 import type { AnyData } from './misc';
 import type { ChainID } from './chains';
-import type { AccountSource } from './accounts';
+import type { AccountSource, LedgerMetadata } from './accounts';
 
 export interface PagedExtrinsicItems {
   page: number;
@@ -52,6 +52,8 @@ export interface ActionMeta {
   args: AnyData;
   // Unique identifier of the action's associated event.
   eventUid?: string;
+  // Cache ledger specific data.
+  ledgerMeta?: LedgerMetadata;
 }
 
 /**

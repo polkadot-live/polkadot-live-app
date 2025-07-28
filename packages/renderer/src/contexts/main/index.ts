@@ -10,6 +10,7 @@ export * from './DataBackup';
 export * from './Events';
 export * from './IntervalSubscriptions';
 export * from './IntervalTasksManager';
+export * from './LedgerSigner';
 export * from './Manage';
 export * from './Subscriptions';
 export * from './WalletConnect';

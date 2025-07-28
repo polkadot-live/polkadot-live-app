@@ -233,8 +233,8 @@ export const API: PreloadAPI = {
    */
 
   // Performs a Ledger task.
-  doLedgerTask: async (serialized) =>
-    await ipcRenderer.invoke('app:ledger:task', serialized),
+  doLedgerTask: async (task, serData) =>
+    await ipcRenderer.invoke('app:ledger:task', task, serData),
 
   // Requests to main process to report imported accounts to all windows.
   requestImportedAccounts: () => ipcRenderer.send('app:request:accounts'),

@@ -8,7 +8,7 @@ import {
 } from '@polkadot-live/core';
 import { chainUnits, getSendChains } from '@polkadot-live/consts/chains';
 import { ellipsisFn, unitToPlanck } from '@w3ux/utils';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import type {
   ActionMeta,
@@ -29,26 +29,23 @@ interface SendNativeHook {
   fetchingSpendable: boolean;
   progress: number;
   receiver: SendRecipient | null;
+  recipientAccounts: SendAccount[];
   sendAmount: string;
-  sender: string | null;
-  senderNetwork: ChainID | null;
+  sender: SendAccount | null;
+  senderAccounts: SendAccount[];
   spendable: bigint | null;
   summaryComplete: boolean;
   validAmount: boolean;
-  getReceiverAccounts: () => SendAccount[];
-  getSenderAccounts: () => SendAccount[];
-  getSenderAccountName: () => string;
   handleProceedClick: () => Promise<void>;
   handleResetClick: () => void;
   handleSendAmountBlur: () => void;
   handleSendAmountChange: (event: ChangeEvent<HTMLInputElement>) => void;
   handleSendAmountFocus: () => void;
-  handleSenderChange: (
-    senderAddress: string,
-    chainId: ChainID
-  ) => Promise<void>;
+  handleSenderChange: (senderAccount: SendAccount) => void;
   proceedDisabled: () => boolean;
   setReceiver: React.Dispatch<React.SetStateAction<SendRecipient | null>>;
+  setRecipientFilter: React.Dispatch<React.SetStateAction<string>>;
+  setSender: React.Dispatch<React.SetStateAction<SendAccount | null>>;
 }
 
 export const useSendNative = (): SendNativeHook => {
@@ -58,13 +55,75 @@ export const useSendNative = (): SendNativeHook => {
   const [addressMap, setAddressMap] = useState(
     new Map<AccountSource, SendAccount[]>()
   );
-  const addressMapRef = useRef<typeof addressMap>(addressMap);
-  const [updateCache, setUpdateCache] = useState(false);
-  const [progress, setProgress] = useState(0);
 
-  const [sender, setSender] = useState<null | string>(null);
-  const [receiver, setReceiver] = useState<null | SendRecipient>(null);
-  const [senderNetwork, setSenderNetwork] = useState<ChainID | null>(null);
+  const [sender, setSender] = useState<SendAccount | null>(null);
+  const [receiver, setReceiver] = useState<SendRecipient | null>(null);
+  const [recipientFilter, setRecipientFilter] = useState('');
+  const [updateSender, setUpdateSender] = useState(false);
+  const [updateRecipients, setUpdateRecipients] = useState(false);
+
+  /**
+   * Return all addresses capable of signing extrinsics.
+   */
+  const getSenderAccounts = (
+    accountMap?: Map<AccountSource, SendAccount[]>
+  ): SendAccount[] => {
+    const map = accountMap ? accountMap : addressMap;
+    let result: SendAccount[] = [];
+
+    const sources: AccountSource[] = ['ledger', 'vault', 'wallet-connect'];
+    for (const source of sources) {
+      const accounts = map.get(source);
+      if (!accounts || accounts.length === 0) {
+        continue;
+      }
+
+      // NOTE: Disable Polkadot transfers in alpha releases.
+      const supportedChains = getSendChains();
+      const filtered: SendAccount[] = accounts
+        .filter(({ chainId }) => supportedChains.includes(chainId))
+        .map((en) => ({ ...en, source }));
+
+      result = result.concat(filtered);
+    }
+
+    return result.sort((a, b) => a.alias.localeCompare(b.alias));
+  };
+
+  /**
+   * Return all addresses for receiver address list.
+   */
+  const getRecipientAccounts = (
+    accountMap?: Map<AccountSource, SendAccount[]>
+  ): SendAccount[] => {
+    const map = accountMap ? accountMap : addressMap;
+    let result: SendAccount[] = [];
+    for (const addresses of map.values()) {
+      result = result.concat(addresses);
+    }
+
+    // Filter accounts on sender address network.
+    return (
+      result
+        .filter(({ chainId }) => {
+          if (!sender) {
+            return getSendChains().includes(chainId);
+          } else {
+            return chainId === sender.chainId;
+          }
+        })
+        // NOTE: Disable Polkadot transfers in alpha releases.
+        .filter(({ chainId }) => !chainId.startsWith('Polkadot'))
+        // Don't include sender in list.
+        .filter(({ address }) => address !== sender?.address)
+        .sort((a, b) => a.alias.localeCompare(b.alias))
+    );
+  };
+
+  const [senderAccounts, setSenderAccounts] = useState<SendAccount[]>([]);
+  const [recipientAccounts, setRecipientAccounts] = useState<SendAccount[]>([]);
+
+  const [progress, setProgress] = useState(0);
   const [sendAmount, setSendAmount] = useState<string>('0');
 
   const [fetchingSpendable, setFetchingSpendable] = useState(false);
@@ -77,12 +136,12 @@ export const useSendNative = (): SendNativeHook => {
    * Handle proceed click.
    */
   const handleProceedClick = async () => {
-    if (!(senderNetwork && sender && receiver)) {
+    if (!(sender && receiver)) {
       return;
     }
 
     // NOTE: Disable Polkadot transfers in alpha releases.
-    if (!getSendChains().includes(senderNetwork)) {
+    if (!getSendChains().includes(sender.chainId)) {
       return;
     }
 
@@ -90,7 +149,7 @@ export const useSendNative = (): SendNativeHook => {
 
     // Data for action meta.
     const senderObj = getSenderAccounts().find(
-      ({ address }) => address === sender
+      ({ address }) => address === sender.address
     )!;
 
     const recipientObj = {
@@ -103,7 +162,7 @@ export const useSendNative = (): SendNativeHook => {
 
     const sendAmountPlanck: string = unitToPlanck(
       formatDecimal(sendAmount),
-      chainUnits(senderNetwork)
+      chainUnits(sender.chainId)
     ).toString();
 
     // Specific data for transfer extrinsic.
@@ -118,12 +177,13 @@ export const useSendNative = (): SendNativeHook => {
       accountName: senderObj.alias,
       source: senderObj.source,
       action: 'balances_transferKeepAlive',
-      from: sender,
+      from: sender.address,
       pallet: 'balances',
       method: 'transferKeepAlive',
-      chainId: senderNetwork,
+      chainId: sender.chainId,
       data: JSON.stringify(balanceData),
       args: [recipientObj.address, sendAmountPlanck],
+      ledgerMeta: senderObj.ledgerMeta,
     };
 
     // Send extrinsic to action window.
@@ -158,7 +218,8 @@ export const useSendNative = (): SendNativeHook => {
    */
   const handleResetClick = () => {
     setSender(null);
-    setSenderNetwork(null);
+    setUpdateSender(true);
+
     setReceiver(null);
     setSpendable(null);
     setValidAmount(true);
@@ -168,22 +229,9 @@ export const useSendNative = (): SendNativeHook => {
   /**
    * Sender value changed callback.
    */
-  const handleSenderChange = async (
-    senderAddress: string,
-    chainId: ChainID
-  ) => {
-    setFetchingSpendable(true);
-    setSenderNetwork(chainId);
-    setSender(senderAddress);
-
-    const result = await getSpendableBalance(senderAddress, chainId);
-    setSpendable(result);
-    setFetchingSpendable(false);
-
-    // Reset other send fields.
-    setReceiver(null);
-    setSendAmount('0');
-    setValidAmount(true);
+  const handleSenderChange = (senderAccount: SendAccount) => {
+    setSender({ ...senderAccount });
+    setUpdateSender(true);
   };
 
   /**
@@ -224,7 +272,7 @@ export const useSendNative = (): SendNativeHook => {
     const val = event.target.value;
 
     // Check for sender network and spendable flag.
-    if (!(senderNetwork !== null && spendable !== null)) {
+    if (!(sender !== null && spendable !== null)) {
       setValidAmount(false);
       return;
     }
@@ -237,7 +285,7 @@ export const useSendNative = (): SendNativeHook => {
     if (!isNaN(Number(val))) {
       // Truncate to network's allowable decimal places and remove any leading zeros.
       const tmp: string = removeLeadingZeros(val);
-      const amount = truncateDecimals(tmp, senderNetwork);
+      const amount = truncateDecimals(tmp, sender.chainId);
       setSendAmount(amount);
 
       // Check for negative value.
@@ -255,7 +303,7 @@ export const useSendNative = (): SendNativeHook => {
       }
 
       // Check if send amount is less than spendable amount.
-      const units = chainUnits(senderNetwork);
+      const units = chainUnits(sender.chainId);
       const amountAsPlanck = unitToPlanck(amount, units);
       setValidAmount(spendable >= amountAsPlanck);
       return;
@@ -283,58 +331,6 @@ export const useSendNative = (): SendNativeHook => {
   };
 
   /**
-   * Return all addresses capable of signing extrinsics.
-   */
-  const getSenderAccounts = (): SendAccount[] => {
-    let result: SendAccount[] = [];
-
-    const sources: AccountSource[] = ['vault', 'wallet-connect'];
-    for (const source of sources) {
-      const accounts = addressMap.get(source);
-      if (!accounts || accounts.length === 0) {
-        continue;
-      }
-
-      // NOTE: Disable Polkadot transfers in alpha releases.
-      const supportedChains = getSendChains();
-      const filtered: SendAccount[] = accounts
-        .filter(({ chainId }) => supportedChains.includes(chainId))
-        .map((en) => ({ ...en, source }));
-
-      result = result.concat(filtered);
-    }
-
-    return result.sort((a, b) => a.alias.localeCompare(b.alias));
-  };
-
-  /**
-   * Return all addresses for receiver address list.
-   */
-  const getReceiverAccounts = (): SendAccount[] => {
-    let result: SendAccount[] = [];
-    for (const addresses of addressMap.values()) {
-      result = result.concat(addresses);
-    }
-
-    // Filter accounts on sender address network.
-    return (
-      result
-        .filter(({ chainId }) => {
-          if (!senderNetwork) {
-            return getSendChains().includes(chainId);
-          } else {
-            return chainId === senderNetwork;
-          }
-        })
-        // NOTE: Disable Polkadot transfers in alpha releases.
-        .filter(({ chainId }) => !chainId.startsWith('Polkadot'))
-        // Don't include sender in list.
-        .filter(({ address }) => address !== sender)
-        .sort((a, b) => a.alias.localeCompare(b.alias))
-    );
-  };
-
-  /**
    * Conditions to enable the proceed button.
    */
   const proceedDisabled = () =>
@@ -345,19 +341,9 @@ export const useSendNative = (): SendNativeHook => {
     // NOTE: Limit token transfers to 100 tokens in alpha releases.
     (!isNaN(Number(sendAmount)) && Number(sendAmount) > TOKEN_TRANSFER_LIMIT) ||
     // NOTE: Disable Polkadot transfers in alpha releases.
-    senderNetwork === null ||
-    !getSendChains().includes(senderNetwork) ||
+    !getSendChains().includes(sender.chainId) ||
     !validAmount ||
     summaryComplete;
-
-  /**
-   * Utility for getting sender and receiver account names.
-   */
-  const getSenderAccountName = (): string =>
-    !sender
-      ? '-'
-      : getSenderAccounts().find(({ address }) => address === sender)?.alias ||
-        ellipsisFn(sender, 5);
 
   /**
    * Fetch stored addresss from main when component loads.
@@ -370,6 +356,7 @@ export const useSendNative = (): SendNativeHook => {
       })) as string;
 
       const parsedMap = new Map<AccountSource, string>(JSON.parse(serialized));
+      const map = new Map<AccountSource, SendAccount[]>();
 
       for (const [source, ser] of parsedMap.entries()) {
         const parsed: ImportedGenericAccount[] = JSON.parse(ser);
@@ -379,27 +366,19 @@ export const useSendNative = (): SendNativeHook => {
           )
           .flat();
 
-        addressMapRef.current.set(
-          source,
-          addresses.map((en) => ({ ...en, source }))
-        );
-
-        setUpdateCache(true);
+        const accounts = addresses.map((en) => ({ ...en, source }));
+        map.set(source, accounts);
       }
+
+      setAddressMap(map);
+
+      // Set sender and receiver accounts.
+      setSenderAccounts(getSenderAccounts(map));
+      setRecipientAccounts(getRecipientAccounts(map));
     };
 
     fetch();
   }, []);
-
-  /**
-   * Mechanism for updating address map state from an async process.
-   */
-  useEffect(() => {
-    if (updateCache) {
-      setAddressMap(addressMapRef.current);
-      setUpdateCache(false);
-    }
-  }, [updateCache]);
 
   /**
    * Control summary complete flag.
@@ -438,19 +417,87 @@ export const useSendNative = (): SendNativeHook => {
     }
   }, [sender, receiver, sendAmount]);
 
+  /**
+   * Update state when sender change is triggered.
+   */
+  useEffect(() => {
+    if (!updateSender) {
+      return;
+    }
+
+    // Function to get sender's spendable balance.
+    const getSpendable = () => {
+      if (sender === null) {
+        return;
+      }
+
+      const { address, chainId } = sender;
+      setFetchingSpendable(true);
+      getSpendableBalance(address, chainId).then((result) => {
+        setSpendable(result);
+        setFetchingSpendable(false);
+      });
+    };
+
+    // Setup state when new sender set.
+    if (sender !== null) {
+      setSendAmount('0');
+      setValidAmount(true);
+
+      setReceiver(null);
+      setRecipientFilter('');
+      getSpendable();
+    }
+
+    // Update recipients list state.
+    setUpdateRecipients(true);
+    setUpdateSender(false);
+  }, [updateSender]);
+
+  /**
+   * Update recipient accounts list when triggered.
+   */
+  useEffect(() => {
+    if (!updateRecipients) {
+      return;
+    }
+
+    const accounts = getRecipientAccounts();
+    sender === null
+      ? setRecipientAccounts(accounts)
+      : setRecipientAccounts(
+          accounts.filter(({ chainId }) => chainId === sender.chainId)
+        );
+
+    setUpdateRecipients(false);
+  }, [updateRecipients]);
+
+  /**
+   * Update recipient accounts list when filter changes (only in recipients dialog).
+   */
+  useEffect(() => {
+    const accounts = getRecipientAccounts();
+    if (recipientFilter === '') {
+      setRecipientAccounts([...accounts]);
+    } else {
+      const filtered = accounts.filter(({ address }) =>
+        address.startsWith(recipientFilter)
+      );
+      setRecipientAccounts(filtered);
+    }
+  }, [recipientFilter]);
+
   return {
     fetchingSpendable,
     progress,
     receiver,
+    recipientAccounts,
     sendAmount,
     sender,
-    senderNetwork,
+    senderAccounts,
     spendable,
     summaryComplete,
     validAmount,
-    getReceiverAccounts,
-    getSenderAccounts,
-    getSenderAccountName,
     handleProceedClick,
     handleResetClick,
     handleSendAmountBlur,
@@ -459,5 +506,7 @@ export const useSendNative = (): SendNativeHook => {
     handleSenderChange,
     proceedDisabled,
     setReceiver,
+    setRecipientFilter,
+    setSender,
   };
 };

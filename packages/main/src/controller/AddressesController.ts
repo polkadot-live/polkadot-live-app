@@ -10,6 +10,7 @@ import type {
   AccountSource,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 export class AddressesController {
   /**
@@ -24,6 +25,9 @@ export class AddressesController {
       }
       case 'raw-account:get': {
         return this.get(task);
+      }
+      case 'raw-account:get:ledger-meta': {
+        return this.getLedgerMeta(task);
       }
       case 'raw-account:getAll': {
         return this.getAll();
@@ -56,6 +60,29 @@ export class AddressesController {
     }
 
     return JSON.stringify(Array.from(map.entries()));
+  }
+
+  /**
+   * @name getLedgerMeta
+   * @summary Returns an account's ledger metadata if it exists.
+   */
+  private static getLedgerMeta(task: IpcTask): string {
+    interface Target {
+      chainId: ChainID;
+      publicKeyHex: string;
+    }
+
+    const { chainId, publicKeyHex }: Target = JSON.parse(task.data.serialized);
+    const key = ConfigMain.getStorageKey('ledger');
+    const account = this.getStoredAddresses(key).find(
+      (a) => a.publicKeyHex === publicKeyHex
+    );
+
+    const result = account
+      ? account.encodedAccounts[chainId].ledgerMeta
+      : undefined;
+
+    return result ? JSON.stringify(result) : '';
   }
 
   /**

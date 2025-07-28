@@ -19,6 +19,7 @@ import {
   EventsProvider,
   IntervalSubscriptionsProvider,
   IntervalTasksManagerProvider,
+  LedgerSignerProvider,
   ManageProvider,
   SubscriptionsProvider,
   WalletConnectProvider,
@@ -45,7 +46,7 @@ import {
 } from '@ren/contexts/settings';
 
 // Actions window contexts.
-import { TxMetaProvider } from '@ren/contexts/action';
+import { LedgerFeedbackProvider, TxMetaProvider } from '@ren/contexts/action';
 
 // OpenGov window contexts.
 import {
@@ -89,7 +90,8 @@ const getProvidersForWindow = () => {
         DataBackupProvider,
         // Requires useBootstrapping and useHelp.
         CogMenuProvider,
-        WalletConnectProvider
+        WalletConnectProvider,
+        LedgerSignerProvider
       )(Theme);
     }
     case 'import': {
@@ -130,7 +132,8 @@ const getProvidersForWindow = () => {
         HelpProvider,
         OverlayProvider,
         ConnectionsProvider,
-        TxMetaProvider
+        TxMetaProvider,
+        LedgerFeedbackProvider
       )(Theme);
     }
     case 'openGov': {

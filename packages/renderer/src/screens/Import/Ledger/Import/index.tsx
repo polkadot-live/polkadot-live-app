@@ -119,7 +119,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
 
     let i = 0;
     for (const selected of selectedAddresses) {
-      const { address, device } = selected;
+      const { address, ledgerMeta } = selected;
 
       if (isAlreadyImported(ledger.getPublicKey(address))) {
         continue;
@@ -127,8 +127,15 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
 
       const accountName = accountNames[i];
       const toast = accountNames.length === 1;
-      const s = 'ledger';
-      await handleImportAddress(address, s, accountName, device, toast);
+      const source = 'ledger';
+      await handleImportAddress(
+        address,
+        source,
+        accountName,
+        ledgerMeta,
+        toast
+      );
+
       i += 1;
     }
 

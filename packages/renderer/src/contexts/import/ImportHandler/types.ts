@@ -4,15 +4,15 @@
 import type {
   AccountSource,
   ImportedGenericAccount,
+  LedgerMetadata,
 } from '@polkadot-live/types/accounts';
-import type { AnyData } from '@polkadot-live/types/misc';
 
 export interface ImportHandlerContextInterface {
   handleImportAddress: (
     address: string,
     source: AccountSource,
     accountName?: string,
-    device?: AnyData,
+    ledgerMeta?: LedgerMetadata,
     showToast?: boolean
   ) => Promise<void>;
   handleImportAddressFromBackup: (

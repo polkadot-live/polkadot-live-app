@@ -1,9 +1,17 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AnyData } from './misc';
+import type { PolkadotGenericApp } from '@zondax/ledger-substrate';
 
-export type LedgerTask = 'get_address';
+export type LedgerTask = 'get_address' | 'close_polkadot' | 'ledger_sign';
+
+/**
+ * Return result when instantiating `PolkadotGenericApp`.
+ */
+export interface LedgerPolkadotApp {
+  app: PolkadotGenericApp;
+  ss58Prefix: number;
+}
 
 /**
  * Types for identifying Ledger devices.
@@ -44,7 +52,16 @@ export type LedgerErrorStatusCode =
   | 'AppNotOpen'
   | 'DeviceLocked'
   | 'DeviceNotConnected'
-  | 'TransportUndefined';
+  | 'TransactionRejected'
+  | 'UnexpectedBufferEnd'
+  | 'ValueOutOfRange'
+  | 'WrongMetadataDigest'
+  /** Custom */
+  | 'TransportUndefined'
+  | 'TxDataUndefined'
+  | 'TxDynamicInfoUndefined'
+  | 'TxLedgerMetaUndefined'
+  | 'TxPayloadsUndefined';
 
 /**
  * Ledger tasks.
@@ -57,7 +74,7 @@ export interface LedgerGetAddressData {
 export interface LedgerTaskResult {
   success: boolean;
   error?: Error;
-  results?: string;
+  results?: string | Uint8Array;
 }
 
 export interface LedgerResponse {
@@ -77,14 +94,26 @@ export interface LedgerResult {
  * Data sent to renderer via IPC.
  */
 export interface GetAddressMessage {
-  ack: string;
-  options: AnyData;
-  statusCode: string;
-  addresses?: string;
+  options: { accountIndices: number[] };
+  addresses: string;
 }
 
 export interface LedgerFetchedAddressData {
   statusCode: string;
   device: { id: string; productName: string };
   body: LedgerGetAddressData;
+}
+
+export interface LedgerTaskResponse {
+  ack: 'success' | 'failure';
+  statusCode: string;
+  serData?: string;
+}
+
+/**
+ * Feedback type for extrinsics window.
+ */
+export interface LedgerFeedbackMessage {
+  kind: 'error';
+  text: string;
 }

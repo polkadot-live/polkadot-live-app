@@ -12,12 +12,12 @@ import { useConnections } from '@ren/contexts/common';
 import { getSdkError } from '@walletconnect/utils';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { ExtrinsicInfo } from 'packages/types/src';
 import type { WalletConnectContextInterface } from './types';
 import type {
   WcFetchedAddress,
   WcSelectNetwork,
 } from '@polkadot-live/types/walletConnect';
-import type { ExtrinsicInfo } from 'packages/types/src';
 
 const mapCaipChainId = new Map<string, ChainID>([
   [wc.WC_POLKADOT_CAIP_ID, 'Polkadot Relay'],
@@ -433,6 +433,7 @@ export const WalletConnectProvider = ({
       ) {
         const message = 'WalletConnect Error - Insufficient data';
         sendToastError('extrinsics', message);
+        window.myAPI.relaySharedState('extrinsic:building', false);
         return;
       }
 
@@ -465,28 +466,28 @@ export const WalletConnectProvider = ({
         },
       });
 
-      // Retrieve the extrinsic's sign flag to determine if the transaction
-      // has been canceled.
-      const doSubmit = wcTxSignMap.current.has(txId)
+      // Retrieve sign flag to determine if tx has been canceled.
+      const proceed = wcTxSignMap.current.has(txId)
         ? wcTxSignMap.current.get(txId)!
         : false;
 
-      if (doSubmit) {
-        // Attach signature to info and submit transaction.
-        wcTxSignMap.current.delete(txId);
-        info.dynamicInfo.txSignature = result.signature;
-        ExtrinsicsController.submit(info);
-
-        // Close overlay in extrinsics window.
-        ConfigRenderer.portToAction?.postMessage({
-          task: 'action:wc:overlay:close',
-          data: null,
-        });
-      } else {
-        // Signing canceled, don't submit transaction.
+      // Handle a canceled transaction.
+      if (!proceed) {
         wcTxSignMap.current.delete(txId);
         window.myAPI.relaySharedState('extrinsic:building', false);
+        return;
       }
+
+      // Attach signature to info and submit transaction.
+      wcTxSignMap.current.delete(txId);
+      info.dynamicInfo.txSignature = result.signature;
+      ExtrinsicsController.submit(info);
+
+      // Close overlay in extrinsics window.
+      ConfigRenderer.portToAction?.postMessage({
+        task: 'action:overlay:close',
+        data: null,
+      });
     } catch (error: AnyData) {
       wcTxSignMap.current.delete(info.txId);
       window.myAPI.relaySharedState('extrinsic:building', false);

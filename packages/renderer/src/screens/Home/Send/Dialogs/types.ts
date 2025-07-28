@@ -2,13 +2,21 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { SendAccount } from '@polkadot-live/types/accounts';
-import type { ChainID } from '@polkadot-live/types/chains';
 import type { SendRecipient } from '../types';
 
-export interface DialogRecipientProps {
-  addresses: SendAccount[];
-  chainId: ChainID | null;
+export interface DialogSelectAccountProps {
+  accounts: SendAccount[];
+  accountRole: 'sender' | 'recipient';
   recipient: SendRecipient | null;
-  sender: string | null;
+  sender: SendAccount | null;
   setReceiver: React.Dispatch<React.SetStateAction<SendRecipient | null>>;
+  setSender: React.Dispatch<React.SetStateAction<SendAccount | null>>;
+  handleSenderChange: (senderAccount: SendAccount) => void;
+  setRecipientFilter: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export interface TriggerSelectAccountProps {
+  accountRole: 'recipient' | 'sender';
+  recipient: SendRecipient | null;
+  sender: SendAccount | null;
 }

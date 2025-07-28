@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { AnyData } from '@polkadot-live/types/misc';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 export interface AddressWithTooltipProps {
   theme: AnyData;
@@ -31,5 +32,6 @@ export interface SelectBoxProps {
 export interface SendRecipient {
   address: string;
   accountName: string | null;
+  chainId: ChainID;
   managed: boolean;
 }

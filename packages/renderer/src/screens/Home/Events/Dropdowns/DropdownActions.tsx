@@ -102,9 +102,7 @@ export const ActionsDropdown = ({
               </DropdownMenu.Label>
 
               {source &&
-                !(['read-only', 'ledger'] as AccountSource[]).includes(
-                  source
-                ) &&
+                !(['read-only'] as AccountSource[]).includes(source) &&
                 txActions.map(({ txMeta, label }, i) => (
                   <DropdownMenu.Item
                     key={`tx_action_${i}`}

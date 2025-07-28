@@ -9,6 +9,7 @@ import type { IpcRendererEvent } from 'electron';
 import type { WorkspaceItem } from './developerConsole/workspaces';
 import type { AnyData } from './misc';
 import type { SettingKey } from './settings';
+import type { LedgerTask, LedgerTaskResponse } from './ledger';
 
 export interface PreloadAPI {
   getWindowId: () => string;
@@ -88,7 +89,10 @@ export interface PreloadAPI {
   closeTab: (destroyViewId: string, showViewId: string | null) => void;
   isViewOpen: (viewId: string) => Promise<boolean>;
 
-  doLedgerTask: (serialized: string) => Promise<string>;
+  doLedgerTask: (
+    task: LedgerTask,
+    serialized: string
+  ) => Promise<LedgerTaskResponse>;
 
   requestImportedAccounts: ApiEmptyRequest;
 

@@ -11,11 +11,7 @@ import {
   systemPreferences,
   Menu,
 } from 'electron';
-import {
-  executeLedgerTask,
-  handleLedgerTaskError,
-  USBController,
-} from './ledger';
+import { executeLedgerTask, USBController } from './ledger';
 import Store from 'electron-store';
 import AutoLaunch from 'auto-launch';
 import unhandled from 'electron-unhandled';
@@ -41,7 +37,6 @@ import { menuTemplate } from '@/utils/MenuUtils';
 import { version } from '../package.json';
 import * as WindowUtils from '@/utils/WindowUtils';
 import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
-import type { ChainID } from '@polkadot-live/types/chains';
 import type { IpcTask, SyncID } from '@polkadot-live/types/communication';
 import type { NotificationData } from '@polkadot-live/types/reporter';
 import type { LedgerTask } from '@polkadot-live/types/ledger';
@@ -439,48 +434,11 @@ app.whenReady().then(async () => {
    */
 
   // Execute communication with a Ledger device.
-  ipcMain.handle('app:ledger:task', async (_, serialized) => {
-    interface Target {
-      accountIndices: number[];
-      chainId: ChainID;
-      tasks: LedgerTask[];
-    }
-
-    const { accountIndices, chainId, tasks }: Target = JSON.parse(serialized);
-    const importView = WindowsController.getView('import');
-
-    if (process.env.DEBUG) {
-      console.debug(accountIndices, chainId, tasks);
-    }
-
-    if (importView) {
-      const result = await executeLedgerTask(chainId, tasks, {
-        accountIndices,
-      });
-
-      if (result.success) {
-        // TODO: Remove assertion operator.
-        const addresses = result.results!;
-
-        return JSON.stringify({
-          ack: 'success',
-          statusCode: 'ReceiveAddress',
-          options: { accountIndices },
-          addresses,
-        });
-      } else {
-        // TODO: Remove assertion operator.
-        const error = result.error!;
-        return handleLedgerTaskError(error);
-      }
-    }
-
-    return JSON.stringify({
-      ack: 'failure',
-      statusCode: 'NoImportView',
-      body: { msg: 'The import view is not open.' },
-    });
-  });
+  ipcMain.handle(
+    'app:ledger:task',
+    async (_, task: LedgerTask, serData: string) =>
+      await executeLedgerTask(task, serData)
+  );
 
   /**
    * Backup

@@ -3,11 +3,12 @@
 
 import { ConfigAction } from '@polkadot-live/core';
 import { useEffect } from 'react';
-import { useTxMeta } from '@ren/contexts/action';
+import { useLedgerFeedback, useTxMeta } from '@ren/contexts/action';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { renderToast } from '@polkadot-live/ui/utils';
 import type { ActionMeta } from '@polkadot-live/types/tx';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { LedgerErrorMeta } from '@polkadot-live/types/ledger';
 
 export const useActionMessagePorts = () => {
   /**
@@ -24,6 +25,7 @@ export const useActionMessagePorts = () => {
     updateTxStatus,
   } = useTxMeta();
 
+  const { resolveMessage, setIsSigning } = useLedgerFeedback();
   const { setDisableClose, setStatus: setOverlayStatus } = useOverlay();
 
   /**
@@ -125,6 +127,12 @@ export const useActionMessagePorts = () => {
               handleInitAction(ev);
               break;
             }
+            case 'action:ledger:error': {
+              const errorMeta: LedgerErrorMeta = JSON.parse(ev.data.data);
+              setIsSigning(false);
+              resolveMessage(errorMeta);
+              break;
+            }
             case 'action:tx:import': {
               handleTxImport(ev);
               break;
@@ -158,7 +166,7 @@ export const useActionMessagePorts = () => {
               handleOpenCloseWcModal(false);
               break;
             }
-            case 'action:wc:overlay:close': {
+            case 'action:overlay:close': {
               setDisableClose(false);
               setOverlayStatus(0);
               break;

@@ -112,7 +112,7 @@ export interface FlattenedAccountData {
  */
 export interface LedgerMetadata {
   device: { id: string; productName: string };
-  accountIndex?: number;
+  accountIndex: number;
 }
 
 export interface EncodedAccount {
@@ -121,6 +121,7 @@ export interface EncodedAccount {
   chainId: ChainID;
   isBookmarked: boolean;
   isImported: boolean;
+  ledgerMeta?: LedgerMetadata;
 }
 
 /**
@@ -135,5 +136,4 @@ export interface ImportedGenericAccount {
   encodedAccounts: Record<ChainID, EncodedAccount>;
   publicKeyHex: string;
   source: AccountSource;
-  ledger?: LedgerMetadata;
 }

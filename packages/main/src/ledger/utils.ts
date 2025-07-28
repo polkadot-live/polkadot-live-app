@@ -7,25 +7,49 @@ import {
   ledgerErrorMeta,
 } from '@polkadot-live/consts/ledger';
 import type { AnyFunction } from '@polkadot-live/types/misc';
+import type {
+  LedgerErrorMeta,
+  LedgerTaskResponse,
+} from '@polkadot-live/types/ledger';
 
 /**
  * @name handleLedgerTaskError
  * @summary Handle Ledger connection errors and return serialized error data.
  */
-export const handleLedgerTaskError = (err: Error): string => {
+export const handleLedgerTaskError = (err: Error): LedgerTaskResponse => {
+  let errorData: LedgerErrorMeta | null = null;
+
   // Check if transport is undefined.
   if (err.name === 'TransportUndefined') {
-    return JSON.stringify(ledgerErrorMeta['TransportUndefined']);
+    errorData = ledgerErrorMeta['TransportUndefined'];
   }
 
   // Check `errorMessage` property on error object.
   if ('errorMessage' in err) {
     switch (err.errorMessage) {
       case 'Device Locked': {
-        return JSON.stringify(ledgerErrorMeta['DeviceLocked']);
+        errorData = ledgerErrorMeta['DeviceLocked'];
+        break;
       }
       case 'App does not seem to be open': {
-        return JSON.stringify(ledgerErrorMeta['AppNotOpen']);
+        errorData = ledgerErrorMeta['AppNotOpen'];
+        break;
+      }
+      case 'Data is invalid : wrong metadata digest': {
+        errorData = ledgerErrorMeta['WrongMetadataDigest'];
+        break;
+      }
+      case 'Data is invalid : Value out of range': {
+        errorData = ledgerErrorMeta['ValueOutOfRange'];
+        break;
+      }
+      case 'Data is invalid : Unexpected buffer end': {
+        errorData = ledgerErrorMeta['UnexpectedBufferEnd'];
+        break;
+      }
+      case 'Transaction rejected': {
+        errorData = ledgerErrorMeta['TransactionRejected'];
+        break;
       }
     }
   }
@@ -34,13 +58,19 @@ export const handleLedgerTaskError = (err: Error): string => {
   if ('id' in err) {
     switch (err.id) {
       case 'ListenTimeout': {
-        return JSON.stringify(ledgerErrorMeta['DeviceNotConnected']);
+        errorData = ledgerErrorMeta['DeviceNotConnected'];
+        break;
       }
     }
   }
 
   // Send default error status.
-  return JSON.stringify(ledgerErrorMeta['DeviceNotConnected']);
+  if (!errorData) {
+    errorData = ledgerErrorMeta['DeviceNotConnected'];
+  }
+
+  const { ack, statusCode, body } = errorData;
+  return { ack, statusCode, serData: JSON.stringify(body) };
 };
 
 /**
