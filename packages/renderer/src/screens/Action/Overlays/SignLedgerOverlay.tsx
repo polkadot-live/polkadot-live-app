@@ -41,9 +41,7 @@ export const SignLedgerOverlay = ({ info }: LedgerSignOverlayProps) => {
     // Clear generic app cache in main process when overlay closed.
     return () => {
       clearFeedback();
-      window.myAPI
-        .doLedgerTask('close_polkadot', '')
-        .then((response) => console.log(response));
+      window.myAPI.doLedgerTask('close_polkadot', '');
     };
   }, []);
 
@@ -52,6 +50,7 @@ export const SignLedgerOverlay = ({ info }: LedgerSignOverlayProps) => {
    */
   const handleSign = () => {
     setIsSigning(true);
+    window.myAPI.relaySharedState('extrinsic:building', true);
 
     ConfigAction.portAction.postMessage({
       task: 'renderer:ledger:sign',

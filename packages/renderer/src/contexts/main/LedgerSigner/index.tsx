@@ -97,6 +97,7 @@ export const LedgerSignerProvider = ({
         data: null,
       });
     } catch (error) {
+      window.myAPI.relaySharedState('extrinsic:building', false);
       error instanceof LedgerTxError
         ? postError(error.statusCode)
         : console.error(error);

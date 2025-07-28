@@ -433,6 +433,7 @@ export const WalletConnectProvider = ({
       ) {
         const message = 'WalletConnect Error - Insufficient data';
         sendToastError('extrinsics', message);
+        window.myAPI.relaySharedState('extrinsic:building', false);
         return;
       }
 
