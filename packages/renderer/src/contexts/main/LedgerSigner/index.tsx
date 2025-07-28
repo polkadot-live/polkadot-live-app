@@ -87,18 +87,15 @@ export const LedgerSignerProvider = ({
         result.serData!
       );
 
-      const process = false;
-      if (process) {
-        // Attach signature to `info` and submit transaction.
-        dynamicInfo.txSignature = signature;
-        ExtrinsicsController.submit(info);
+      // Attach signature to `info` and submit transaction.
+      dynamicInfo.txSignature = signature;
+      ExtrinsicsController.submit(info);
 
-        // Close overlay in extrinsics window.
-        ConfigRenderer.portToAction?.postMessage({
-          task: 'action:overlay:close',
-          data: null,
-        });
-      }
+      // Close overlay in extrinsics window.
+      ConfigRenderer.portToAction?.postMessage({
+        task: 'action:overlay:close',
+        data: null,
+      });
     } catch (error) {
       error instanceof LedgerTxError
         ? postError(error.statusCode)

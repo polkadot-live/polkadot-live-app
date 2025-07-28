@@ -40,6 +40,7 @@ export const SignLedgerOverlay = ({ info }: LedgerSignOverlayProps) => {
 
     // Clear generic app cache in main process when overlay closed.
     return () => {
+      clearFeedback();
       window.myAPI
         .doLedgerTask('close_polkadot', '')
         .then((response) => console.log(response));
@@ -49,7 +50,7 @@ export const SignLedgerOverlay = ({ info }: LedgerSignOverlayProps) => {
   /**
    * Handle sign click.
    */
-  const handleSign = async () => {
+  const handleSign = () => {
     setIsSigning(true);
 
     ConfigAction.portAction.postMessage({
