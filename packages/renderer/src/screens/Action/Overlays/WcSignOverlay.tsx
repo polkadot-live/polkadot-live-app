@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 import WalletConnectSVG from '@w3ux/extension-assets/WalletConnect.svg?react';
 import { ButtonPrimary, ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { WcOverlayWrapper } from '../Wrappers';
+import { WcOverlayWrapper } from './Wrappers';
 import { PuffLoader } from 'react-spinners';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { FlexRow } from '@polkadot-live/ui/styles';
