@@ -6,6 +6,7 @@ import type { WcSelectNetwork } from '@polkadot-live/types/walletConnect';
 
 export const WC_PROJECT_ID = 'ebded8e9ff244ba8b6d173b6c2885d87';
 export const WC_RELAY_URL = 'wss://relay.walletconnect.com';
+export const WC_EVENT_ORIGIN = 'https://verify.walletconnect.org';
 
 // CAIPs
 export const WC_POLKADOT_CAIP_ID = '91b171bb158e2d3848fa23a9f1c25182';
