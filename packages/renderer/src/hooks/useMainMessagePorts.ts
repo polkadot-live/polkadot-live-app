@@ -71,6 +71,8 @@ export const useMainMessagePorts = () => {
     connectWc,
     disconnectWcSession,
     fetchAddressesFromExistingSession,
+    setSigningChain,
+    tryCacheSession,
     wcEstablishSessionForExtrinsic,
     wcSignExtrinsic,
     updateWcTxSignMap,
@@ -887,8 +889,16 @@ export const useMainMessagePorts = () => {
               break;
             }
             case 'renderer:wc:verify:account': {
-              const { target, chainId } = ev.data.data;
+              const { chainId, target }: { chainId: ChainID; target: string } =
+                ev.data.data;
+
+              setSigningChain(chainId);
+              await tryCacheSession();
               await verifySigningAccount(target, chainId);
+              break;
+            }
+            case 'renderer:wc:clear:signing-network': {
+              setSigningChain(null);
               break;
             }
             default: {

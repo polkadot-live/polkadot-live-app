@@ -11,14 +11,26 @@ import { createContext, useContext, useEffect, useRef } from 'react';
 import { decodeAddress, encodeAddress, u8aToHex } from 'dedot/utils';
 import { useConnections } from '@ren/contexts/common';
 import { getSdkError } from '@walletconnect/utils';
+
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { ExtrinsicInfo } from 'packages/types/src';
+import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 import type { WalletConnectContextInterface } from './types';
 import type {
+  WcErrorStatusCode,
   WcFetchedAddress,
   WcSelectNetwork,
 } from '@polkadot-live/types/walletConnect';
+
+class WcError extends Error {
+  statusCode: WcErrorStatusCode;
+
+  constructor(statusCode: WcErrorStatusCode, message = 'WcError') {
+    super(message);
+    this.name = 'WcError';
+    this.statusCode = statusCode;
+  }
+}
 
 export const WalletConnectContext =
   createContext<WalletConnectContextInterface>(
@@ -42,6 +54,7 @@ export const WalletConnectProvider = ({
   const wcSession = useRef<AnyData | null>(null);
   const wcPairingTopic = useRef<string | null>(null);
   const wcSessionRestoredRef = useRef<boolean>(false);
+  const wcSigningChain = useRef<ChainID | null>(null);
 
   const wcMetaRef = useRef<{
     uri: string | undefined;
@@ -50,6 +63,13 @@ export const WalletConnectProvider = ({
 
   const wcInitializedRef = useRef(false);
   const wcNetworksRef = useRef<WcSelectNetwork[]>([]);
+
+  /**
+   * Utility to set signing chain reference.
+   */
+  const setSigningChain = (signingChain: ChainID | null) => {
+    wcSigningChain.current = signingChain;
+  };
 
   /**
    * Map to track a transaction's canceled signing status.
@@ -77,10 +97,22 @@ export const WalletConnectProvider = ({
       ({ selected }) => selected
     );
 
+    // Select signing network if it's not already.
+    if (wcSigningChain.current) {
+      const cid = wcSigningChain.current;
+      const included = selectedNetworks.find(({ chainId }) => chainId === cid);
+
+      if (!included) {
+        selectedNetworks.push({
+          caipId: wc.getWalletConnectChainId(cid)!,
+          chainId: cid,
+          selected: true,
+        });
+      }
+    }
+
     if (selectedNetworks.length > 0) {
-      return wcNetworksRef.current
-        .filter(({ selected }) => selected)
-        .map(({ caipId }) => `polkadot:${caipId}`);
+      return selectedNetworks.map(({ caipId }) => `polkadot:${caipId}`);
     } else {
       return [
         `polkadot:${wc.WC_POLKADOT_CAIP_ID}`,
@@ -159,7 +191,7 @@ export const WalletConnectProvider = ({
   /**
    * Get connection params for WalletConnect session.
    *
-   * Requires up to 3 different chain namespaces (polkadot, kusama and westend).
+   * Requires multiple chain namespaces (polkadot, kusama, westend, etc.)
    * The supported methods, chains, and events can all be defined by the dapp
    * team based on the requirements of the dapp.
    */
@@ -175,31 +207,41 @@ export const WalletConnectProvider = ({
   });
 
   /**
+   * Utility to cache `uri` and `approval`.
+   */
+  const cacheWcMeta = async () => {
+    const { uri, approval } = await wcProvider.current!.client.connect(
+      getConnectionParams()
+    );
+    wcMetaRef.current = { uri, approval };
+  };
+
+  /**
    * Try to cache a WalletConnect session or prepare a new one.
    */
   const tryCacheSession = async () => {
     try {
       if (!wcInitializedRef.current) {
-        return;
+        throw new WcError('WcNotInitialized');
       }
 
       // Cache an existing session and pairing topic.
       if (wcProvider.current?.session) {
         wcPairingTopic.current = wcProvider.current.session.pairingTopic;
         wcSession.current = wcProvider.current.session;
+
+        // Cache meta if it's currently undefined.
+        if (!wcMetaRef.current) {
+          await cacheWcMeta();
+        }
+
         window.myAPI.relaySharedState('wc:session:restored', true);
       } else {
         console.log('> Re-create session uri and approval.');
-
-        // Otherwise create a new uri and approval function.
-        const { uri, approval } = await wcProvider.current!.client.connect(
-          getConnectionParams()
-        );
-
-        wcMetaRef.current = { uri, approval };
+        await cacheWcMeta();
       }
     } catch (error: AnyData) {
-      console.error(error);
+      handleWcError(error);
     }
   };
 
@@ -211,7 +253,7 @@ export const WalletConnectProvider = ({
     modalWindow: 'import' | 'extrinsics'
   ) => {
     if (!wcInitializedRef.current) {
-      throw new Error('Error: WalletConnect not initialized');
+      throw new WcError('WcNotInitialized');
     }
 
     // Get existing session or generate a new uri and approval.
@@ -246,8 +288,7 @@ export const WalletConnectProvider = ({
     const namespaces = wcSession.current ? wcSession.current.namespaces : null;
 
     if (!namespaces) {
-      sendToastError('import', 'Session Error - Establish a new session');
-      return;
+      throw new WcError('WcSessionError');
     }
 
     // Set received WalletConnect address state.
@@ -300,50 +341,53 @@ export const WalletConnectProvider = ({
    * Verify a signing account is approved in the WalletConnect session.
    */
   const verifySigningAccount = async (target: string, chainId: ChainID) => {
-    window.myAPI.relaySharedState('wc:account:verifying', true);
+    try {
+      window.myAPI.relaySharedState('wc:account:verifying', true);
 
-    if (!wcSession.current) {
-      sendToastError('extrinsics', 'WalletConnect Error - Session not found');
-      window.myAPI.relaySharedState('wc:account:verifying', false);
-    }
-
-    // Get the accounts from the session.
-    const caip = wc.getWalletConnectChainId(chainId);
-    const accounts: { address: string; caipId: string }[] = Object.values(
-      wcSession.current.namespaces
-    )
-      .map((namespace: AnyData) => namespace.accounts)
-      .flat()
-      .map((wcAccount) => ({
-        address: wcAccount.split(':')[2],
-        caipId: wcAccount.split(':')[1],
-      }))
-      .filter(({ caipId }) => caipId === caip);
-
-    // Verify signing account exists in the session.
-    const prefix = ChainList.get(chainId)!.prefix;
-    const found = accounts.find(
-      ({ address }) => encodeAddress(address, prefix) === target
-    );
-
-    // Update relay flags.
-    setTimeout(() => {
-      const approved = found ? true : false;
-      window.myAPI.relaySharedState('wc:account:verifying', false);
-      window.myAPI.relaySharedState('wc:account:approved', approved);
-
-      if (!approved) {
-        // Toast error notification in extrinsics window.
-        ConfigRenderer.portToAction?.postMessage({
-          task: 'action:toast:show',
-          data: {
-            message: 'WalletConnect Error - Approve the signing account',
-            toastId: `wc-error-${String(Date.now())}`,
-            toastType: 'error',
-          },
-        });
+      if (!wcSession.current) {
+        throw new WcError('WcSessionNotFound');
       }
-    }, 2_500);
+
+      // Get the accounts from the session.
+      const caip = wc.getWalletConnectChainId(chainId)!;
+      const accounts: { address: string; caipId: string }[] = Object.values(
+        wcSession.current.namespaces
+      )
+        .map((namespace: AnyData) => namespace.accounts)
+        .flat()
+        .map((wcAccount) => ({
+          address: wcAccount.split(':')[2],
+          caipId: wcAccount.split(':')[1],
+        }))
+        .filter(({ caipId }) => caipId === caip);
+
+      // Verify signing account exists in the session.
+      const prefix = ChainList.get(chainId)!.prefix;
+      const found = accounts.find(
+        ({ address }) => encodeAddress(address, prefix) === target
+      );
+
+      // Update relay flags.
+      setTimeout(() => {
+        const approved = found ? true : false;
+        window.myAPI.relaySharedState('wc:account:verifying', false);
+        window.myAPI.relaySharedState('wc:account:approved', approved);
+
+        if (!approved) {
+          // Toast error notification in extrinsics window.
+          ConfigRenderer.portToAction?.postMessage({
+            task: 'action:toast:show',
+            data: {
+              message: 'WalletConnect Error - Approve the signing account',
+              toastId: `wc-error-${String(Date.now())}`,
+              toastType: 'error',
+            },
+          });
+        }
+      }, 2_500);
+    } catch (error) {
+      handleWcError(error);
+    }
   };
 
   /**
@@ -398,20 +442,14 @@ export const WalletConnectProvider = ({
           info.dynamicInfo
         )
       ) {
-        const message = 'WalletConnect Error - Insufficient data';
-        sendToastError('extrinsics', message);
-        window.myAPI.relaySharedState('extrinsic:building', false);
-        return;
+        throw new WcError('WcInsufficientTxData');
       }
 
       // Send error if this transaction is waiting to be canceled in wallet.
       if (wcTxSignMap.current.has(txId)) {
         if (!wcTxSignMap.current.get(txId)!) {
-          const message = 'Error - Cancel pending signature before re-signing';
-          sendToastError('extrinsics', message);
+          throw new WcError('WcCancelPending');
         }
-        window.myAPI.relaySharedState('extrinsic:building', false);
-        return;
       }
 
       // Add an entry into the sign map.
@@ -440,9 +478,7 @@ export const WalletConnectProvider = ({
 
       // Handle a canceled transaction.
       if (!proceed) {
-        wcTxSignMap.current.delete(txId);
-        window.myAPI.relaySharedState('extrinsic:building', false);
-        return;
+        throw new WcError('WcCanceledTx');
       }
 
       // Attach signature to info and submit transaction.
@@ -456,13 +492,9 @@ export const WalletConnectProvider = ({
         data: null,
       });
     } catch (error: AnyData) {
-      wcTxSignMap.current.delete(info.txId);
       window.myAPI.relaySharedState('extrinsic:building', false);
-
-      console.log(error);
-      error.code === -32000
-        ? sendToastError('extrinsics', 'WalletConnect - Signature canceled')
-        : sendToastError('extrinsics', 'WalletConnect Error');
+      wcTxSignMap.current.delete(info.txId);
+      handleWcError(error);
     }
   };
 
@@ -490,6 +522,45 @@ export const WalletConnectProvider = ({
 
     window.myAPI.relaySharedState('wc:session:restored', false);
     window.myAPI.relaySharedState('wc:disconnecting', false);
+  };
+
+  /**
+   * Handle a WalletConnect error.
+   */
+  const handleWcError = (error: AnyData) => {
+    console.log(error);
+
+    if (error instanceof WcError) {
+      switch (error.statusCode) {
+        case 'WcSessionError': {
+          sendToastError('import', 'Session Error - Establish a new session');
+          break;
+        }
+        case 'WcSessionNotFound': {
+          window.myAPI.relaySharedState('wc:account:verifying', false);
+          sendToastError(
+            'extrinsics',
+            'WalletConnect Error - Session not found'
+          );
+          break;
+        }
+        case 'WcInsufficientTxData': {
+          const message = 'WalletConnect Error - Insufficient data';
+          sendToastError('extrinsics', message);
+          break;
+        }
+        case 'WcCancelPending': {
+          const message = 'Error - Cancel pending signature before re-signing';
+          sendToastError('extrinsics', message);
+          break;
+        }
+      }
+      return;
+    }
+
+    error.code === -32000
+      ? sendToastError('extrinsics', 'WalletConnect - Signature canceled')
+      : sendToastError('extrinsics', 'WalletConnect Error');
   };
 
   /**
@@ -548,6 +619,8 @@ export const WalletConnectProvider = ({
         connectWc,
         disconnectWcSession,
         fetchAddressesFromExistingSession,
+        setSigningChain,
+        tryCacheSession,
         wcEstablishSessionForExtrinsic,
         wcSignExtrinsic,
         updateWcTxSignMap,

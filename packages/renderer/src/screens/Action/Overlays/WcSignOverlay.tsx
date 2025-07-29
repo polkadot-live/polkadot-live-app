@@ -21,7 +21,6 @@ export const WcSignOverlay = ({ info }: WcSignOverlayProps) => {
   const { cacheGet } = useConnections();
   const isBuildingExtrinsic = cacheGet('extrinsic:building');
   const wcAccountApproved = cacheGet('wc:account:approved');
-  const wcSessionRestored = cacheGet('wc:session:restored');
   const wcVerifyingAccount = cacheGet('wc:account:verifying');
 
   const { setDisableClose, setStatus: setOverlayStatus } = useOverlay();
@@ -30,19 +29,20 @@ export const WcSignOverlay = ({ info }: WcSignOverlayProps) => {
    * Check signing account is approved in the WalletConnect session.
    */
   useEffect(() => {
-    // Disable closing the overlay.
     setDisableClose(true);
 
-    if (wcSessionRestored) {
-      const { chainId, from } = info.actionMeta;
-
-      ConfigAction.portAction.postMessage({
-        task: 'renderer:wc:verify:account',
-        data: { chainId, target: from },
-      });
-    }
+    const { chainId, from } = info.actionMeta;
+    ConfigAction.portAction.postMessage({
+      task: 'renderer:wc:verify:account',
+      data: { chainId, target: from },
+    });
 
     return () => {
+      ConfigAction.portAction.postMessage({
+        task: 'renderer:wc:clear:signing-network',
+        data: null,
+      });
+
       // Reset relay flags.
       window.myAPI.relaySharedState('wc:account:approved', false);
       window.myAPI.relaySharedState('wc:account:verifying', false);

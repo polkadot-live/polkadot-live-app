@@ -10,6 +10,8 @@ export interface WalletConnectContextInterface {
   connectWc: (wcNetworks: WcSelectNetwork[]) => Promise<void>;
   disconnectWcSession: () => Promise<void>;
   fetchAddressesFromExistingSession: () => void;
+  setSigningChain: (signingChain: ChainID | null) => void;
+  tryCacheSession: () => Promise<void>;
   wcEstablishSessionForExtrinsic: (
     signingAddress: string,
     chainId: ChainID

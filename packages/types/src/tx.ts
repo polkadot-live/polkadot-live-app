@@ -4,6 +4,13 @@
 import type { AnyData } from './misc';
 import type { ChainID } from './chains';
 import type { AccountSource, LedgerMetadata } from './accounts';
+import type {
+  ISubmittableExtrinsic,
+  SignerPayloadJSON,
+  SignerPayloadRaw,
+} from 'dedot/types';
+import type { ExtraSignedExtension } from 'dedot';
+import type { Extrinsic } from 'dedot/codecs';
 
 export interface PagedExtrinsicItems {
   page: number;
@@ -95,4 +102,19 @@ export interface ExTransferKeepAliveData {
   recipientAddress: string;
   recipientAccountName: string;
   sendAmount: string;
+}
+
+/**
+ * Cached extrinsic data used by extrinsics controller.
+ */
+type SubmittableExtrinsic = Extrinsic & ISubmittableExtrinsic;
+
+export interface CachedExtrinsicData {
+  tx: SubmittableExtrinsic;
+  extra?: ExtraSignedExtension;
+  // Required for signing with WalletConnect.
+  payload?: SignerPayloadJSON;
+  rawPayload?: SignerPayloadRaw;
+  // Required for signing with Ledger.
+  proof?: Uint8Array;
 }
