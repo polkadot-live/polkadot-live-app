@@ -37,6 +37,14 @@ export const WcNetworks: WcSelectNetwork[] = [
   },
 ];
 
+export const WcCaipToChainID: Record<string, ChainID> = {
+  [WC_POLKADOT_CAIP_ID]: 'Polkadot Relay',
+  [WC_KUSAMA_CAIP_ID]: 'Kusama Relay',
+  [WC_PASEO_CAIP_ID]: 'Paseo Relay',
+  [WC_WESTEND_CAIP_ID]: 'Westend Relay',
+  [WC_WESTMINT_CAIP_ID]: 'Westend Asset Hub',
+};
+
 export const getWalletConnectChainId = (chainId: ChainID) => {
   switch (chainId) {
     case 'Polkadot Relay':

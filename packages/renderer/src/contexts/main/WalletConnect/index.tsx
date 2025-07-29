@@ -20,14 +20,6 @@ import type {
   WcSelectNetwork,
 } from '@polkadot-live/types/walletConnect';
 
-const mapCaipChainId = new Map<string, ChainID>([
-  [wc.WC_POLKADOT_CAIP_ID, 'Polkadot Relay'],
-  [wc.WC_KUSAMA_CAIP_ID, 'Kusama Relay'],
-  [wc.WC_PASEO_CAIP_ID, 'Paseo Relay'],
-  [wc.WC_WESTEND_CAIP_ID, 'Westend Relay'],
-  [wc.WC_WESTMINT_CAIP_ID, 'Westend Asset Hub'],
-]);
-
 export const WalletConnectContext =
   createContext<WalletConnectContextInterface>(
     defaults.defaultWalletConnectContext
@@ -119,7 +111,7 @@ export const WalletConnectProvider = ({
     // Send fetched accounts to import window.
     const fetchedAddresses: WcFetchedAddress[] = accounts.map(
       ({ address, caipId }) => {
-        const chainId = mapCaipChainId.get(caipId)!;
+        const chainId = wc.WcCaipToChainID[caipId];
         const prefix = ChainList.get(chainId)!.prefix;
 
         return {
