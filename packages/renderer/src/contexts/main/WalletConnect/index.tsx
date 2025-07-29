@@ -4,6 +4,7 @@
 import * as defaults from './defaults';
 import * as wc from '@polkadot-live/consts/walletConnect';
 
+import { ChainList } from '@polkadot-live/consts/chains';
 import { ConfigRenderer, ExtrinsicsController } from '@polkadot-live/core';
 import UniversalProvider from '@walletconnect/universal-provider';
 import { createContext, useContext, useEffect, useRef } from 'react';
@@ -99,32 +100,6 @@ export const WalletConnectProvider = ({
   };
 
   /**
-   * Util for getting a chain ID's address prefix for encoding.
-   */
-  const getAddressPrefix = (chainId: ChainID) => {
-    switch (chainId) {
-      case 'Polkadot Relay':
-      case 'Polkadot Asset Hub':
-      case 'Polkadot People':
-      case 'Paseo Relay':
-      case 'Paseo Asset Hub':
-      case 'Paseo People': {
-        return 0;
-      }
-      case 'Kusama Relay':
-      case 'Kusama Asset Hub':
-      case 'Kusama People': {
-        return 2;
-      }
-      case 'Westend Relay':
-      case 'Westend Asset Hub':
-      case 'Westend People': {
-        return 42;
-      }
-    }
-  };
-
-  /**
    * Util for setting fetched addresses state.
    */
   const setFetchedAddresses = (namespaces: AnyData) => {
@@ -145,11 +120,11 @@ export const WalletConnectProvider = ({
     const fetchedAddresses: WcFetchedAddress[] = accounts.map(
       ({ address, caipId }) => {
         const chainId = mapCaipChainId.get(caipId)!;
-        const pref = getAddressPrefix(chainId);
+        const prefix = ChainList.get(chainId)!.prefix;
 
         return {
           chainId,
-          encoded: encodeAddress(address, pref),
+          encoded: encodeAddress(address, prefix),
           publicKeyHex: u8aToHex(decodeAddress(address)),
           substrate: address,
           selected: false,
@@ -354,9 +329,9 @@ export const WalletConnectProvider = ({
       .filter(({ caipId }) => caipId === caip);
 
     // Verify signing account exists in the session.
-    const pref = getAddressPrefix(chainId);
+    const prefix = ChainList.get(chainId)!.prefix;
     const found = accounts.find(
-      ({ address }) => encodeAddress(address, pref) === target
+      ({ address }) => encodeAddress(address, prefix) === target
     );
 
     // Update relay flags.
