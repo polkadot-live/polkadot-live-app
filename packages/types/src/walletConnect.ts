@@ -3,6 +3,14 @@
 
 import type { ChainID } from './chains';
 
+export type WcErrorStatusCode =
+  | 'WcCancelPending'
+  | 'WcCanceledTx'
+  | 'WcInsufficientTxData'
+  | 'WcNotInitialized'
+  | 'WcSessionError'
+  | 'WcSessionNotFound';
+
 export interface WcSelectNetwork {
   caipId: string;
   chainId: ChainID;

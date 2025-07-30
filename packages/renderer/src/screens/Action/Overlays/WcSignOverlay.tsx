@@ -4,6 +4,7 @@
 import { ConfigAction } from '@polkadot-live/core';
 import { useConnections } from '@ren/contexts/common';
 import { useEffect } from 'react';
+import { useWcVerifier } from '@ren/contexts/action';
 import WalletConnectSVG from '@w3ux/extension-assets/WalletConnect.svg?react';
 import { ButtonPrimary, ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
@@ -20,47 +21,27 @@ interface WcSignOverlayProps {
 export const WcSignOverlay = ({ info }: WcSignOverlayProps) => {
   const { cacheGet } = useConnections();
   const isBuildingExtrinsic = cacheGet('extrinsic:building');
-  const wcAccountApproved = cacheGet('wc:account:approved');
-  const wcSessionRestored = cacheGet('wc:session:restored');
-  const wcVerifyingAccount = cacheGet('wc:account:verifying');
 
   const { setDisableClose, setStatus: setOverlayStatus } = useOverlay();
+  const {
+    wcAccountApproved,
+    wcAccountVerifying,
+    checkVerifiedSession,
+    initVerifiedSession,
+    resetVerification,
+  } = useWcVerifier();
 
   /**
    * Check signing account is approved in the WalletConnect session.
    */
   useEffect(() => {
-    // Disable closing the overlay.
     setDisableClose(true);
-
-    if (wcSessionRestored) {
-      const { chainId, from } = info.actionMeta;
-
-      ConfigAction.portAction.postMessage({
-        task: 'renderer:wc:verify:account',
-        data: { chainId, target: from },
-      });
-    }
+    checkVerifiedSession(info);
 
     return () => {
-      // Reset relay flags.
-      window.myAPI.relaySharedState('wc:account:approved', false);
-      window.myAPI.relaySharedState('wc:account:verifying', false);
+      resetVerification();
     };
   }, []);
-
-  /**
-   * Establish a WalletConnect session before signing.
-   */
-  const handleConnect = () => {
-    window.myAPI.relaySharedState('extrinsic:building', true);
-    const { chainId, from } = info.actionMeta;
-
-    ConfigAction.portAction.postMessage({
-      task: 'renderer:wc:connect:action',
-      data: { chainId, target: from },
-    });
-  };
 
   /**
    * Sign an extrinsic via WalletConnect (requires a session)
@@ -118,10 +99,21 @@ export const WcSignOverlay = ({ info }: WcSignOverlayProps) => {
       ) : (
         <div className="ContentColumn">
           <h4>Establish Session</h4>
-          {wcVerifyingAccount ? (
+          {wcAccountVerifying ? (
             <div className="VerifyingColumn">
               <p>Verifying WalletConnect sessions.</p>
-              <PuffLoader size={30} color={'var(--text-color-primary)'} />
+              <div style={{ margin: '1rem 0 0.75rem' }}>
+                <PuffLoader size={30} color={'var(--text-color-primary)'} />
+              </div>
+
+              <ButtonSecondary
+                text="Cancel"
+                disabled={isBuildingExtrinsic}
+                onClick={() => {
+                  setDisableClose(false);
+                  setOverlayStatus(0);
+                }}
+              />
             </div>
           ) : (
             <>
@@ -143,7 +135,7 @@ export const WcSignOverlay = ({ info }: WcSignOverlayProps) => {
                   style={{ width: '100px' }}
                   text="Connect"
                   disabled={isBuildingExtrinsic}
-                  onClick={() => handleConnect()}
+                  onClick={() => initVerifiedSession(info)}
                   iconRight={faChevronRight}
                   iconTransform="shrink-3"
                 />

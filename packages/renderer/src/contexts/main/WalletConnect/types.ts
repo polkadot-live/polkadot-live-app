@@ -10,11 +10,20 @@ export interface WalletConnectContextInterface {
   connectWc: (wcNetworks: WcSelectNetwork[]) => Promise<void>;
   disconnectWcSession: () => Promise<void>;
   fetchAddressesFromExistingSession: () => void;
+  postApprovedResult: (verifyResult: {
+    approved: boolean;
+    errorThrown: boolean;
+  }) => void;
+  setSigningChain: (signingChain: ChainID | null) => void;
+  tryCacheSession: () => Promise<void>;
   wcEstablishSessionForExtrinsic: (
     signingAddress: string,
     chainId: ChainID
   ) => Promise<void>;
   wcSignExtrinsic: (info: ExtrinsicInfo) => Promise<void>;
   updateWcTxSignMap: (txId: string, flag: boolean) => void;
-  verifySigningAccount: (target: string, chainId: ChainID) => Promise<void>;
+  verifySigningAccount: (
+    target: string,
+    chainId: ChainID
+  ) => Promise<{ approved: boolean; errorThrown: boolean }>;
 }

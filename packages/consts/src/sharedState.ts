@@ -12,8 +12,6 @@ export const initSharedState = () =>
     ['mode:connected', false],
     ['mode:dark', true],
     ['mode:online', false],
-    ['wc:account:approved', false],
-    ['wc:account:verifying', false],
     ['wc:connecting', false],
     ['wc:disconnecting', false],
     ['wc:initialized', false],

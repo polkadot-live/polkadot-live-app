@@ -3,7 +3,11 @@
 
 import { ConfigAction } from '@polkadot-live/core';
 import { useEffect } from 'react';
-import { useLedgerFeedback, useTxMeta } from '@ren/contexts/action';
+import {
+  useLedgerFeedback,
+  useTxMeta,
+  useWcVerifier,
+} from '@ren/contexts/action';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { renderToast } from '@polkadot-live/ui/utils';
 import type { ActionMeta } from '@polkadot-live/types/tx';
@@ -27,6 +31,7 @@ export const useActionMessagePorts = () => {
 
   const { resolveMessage, setIsSigning } = useLedgerFeedback();
   const { setDisableClose, setStatus: setOverlayStatus } = useOverlay();
+  const { setWcAccountApproved, setWcAccountVerifying } = useWcVerifier();
 
   /**
    * @name handleInitAction
@@ -157,13 +162,19 @@ export const useActionMessagePorts = () => {
               handleInvalidExtrinsic(ev);
               break;
             }
-            case 'action:wc:modal:open': {
-              const { uri } = ev.data.data;
-              await handleOpenCloseWcModal(true, uri);
+            case 'action:wc:approve': {
+              const { approved }: { approved: boolean } = ev.data.data;
+              setWcAccountApproved(approved);
+              setWcAccountVerifying(false);
               break;
             }
             case 'action:wc:modal:close': {
               handleOpenCloseWcModal(false);
+              break;
+            }
+            case 'action:wc:modal:open': {
+              const { uri } = ev.data.data;
+              await handleOpenCloseWcModal(true, uri);
               break;
             }
             case 'action:overlay:close': {

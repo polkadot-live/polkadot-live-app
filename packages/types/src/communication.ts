@@ -19,8 +19,6 @@ export type SyncID =
   // Online mode flag.
   | 'mode:online'
   // WalletConnect flags.
-  | 'wc:account:approved'
-  | 'wc:account:verifying'
   | 'wc:connecting'
   | 'wc:disconnecting'
   | 'wc:initialized'

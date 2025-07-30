@@ -46,7 +46,11 @@ import {
 } from '@ren/contexts/settings';
 
 // Actions window contexts.
-import { LedgerFeedbackProvider, TxMetaProvider } from '@ren/contexts/action';
+import {
+  LedgerFeedbackProvider,
+  TxMetaProvider,
+  WcVerifierProvider,
+} from '@ren/contexts/action';
 
 // OpenGov window contexts.
 import {
@@ -133,7 +137,8 @@ const getProvidersForWindow = () => {
         OverlayProvider,
         ConnectionsProvider,
         TxMetaProvider,
-        LedgerFeedbackProvider
+        LedgerFeedbackProvider,
+        WcVerifierProvider
       )(Theme);
     }
     case 'openGov': {

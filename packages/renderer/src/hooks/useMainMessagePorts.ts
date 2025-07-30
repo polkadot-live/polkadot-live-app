@@ -3,6 +3,8 @@
 
 /// Dependencies.
 import * as Core from '@polkadot-live/core';
+import { WC_EVENT_ORIGIN } from '@polkadot-live/consts/walletConnect';
+import { chainUnits } from '@polkadot-live/consts/chains';
 import {
   ConfigRenderer,
   disconnectAPIs,
@@ -14,7 +16,6 @@ import {
   TaskOrchestrator,
 } from '@polkadot-live/core';
 import BigNumber from 'bignumber.js';
-import { chainUnits } from '@polkadot-live/consts/chains';
 import { planckToUnit } from '@w3ux/utils';
 import { concatU8a, encodeAddress, hexToU8a, stringToU8a } from 'dedot/utils';
 import { useEffect } from 'react';
@@ -56,9 +57,6 @@ import type {
   DedotOpenGovClient,
 } from '@polkadot-live/types/apis';
 
-// TODO: Move to WalletConnect file.
-const WC_EVENT_ORIGIN = 'https://verify.walletconnect.org';
-
 export const useMainMessagePorts = () => {
   /// Main renderer contexts.
   const { importAddress, removeAddress } = useAddresses();
@@ -73,6 +71,9 @@ export const useMainMessagePorts = () => {
     connectWc,
     disconnectWcSession,
     fetchAddressesFromExistingSession,
+    postApprovedResult,
+    setSigningChain,
+    tryCacheSession,
     wcEstablishSessionForExtrinsic,
     wcSignExtrinsic,
     updateWcTxSignMap,
@@ -858,7 +859,6 @@ export const useMainMessagePorts = () => {
               break;
             }
             case 'renderer:tx:vault:submit': {
-              console.log('> handle renderer:tx:vault:submit');
               handleTxVaultSubmit(ev);
               break;
             }
@@ -889,8 +889,17 @@ export const useMainMessagePorts = () => {
               break;
             }
             case 'renderer:wc:verify:account': {
-              const { target, chainId } = ev.data.data;
-              await verifySigningAccount(target, chainId);
+              const { chainId, target }: { chainId: ChainID; target: string } =
+                ev.data.data;
+
+              setSigningChain(chainId);
+              await tryCacheSession();
+              const result = await verifySigningAccount(target, chainId);
+              postApprovedResult(result);
+              break;
+            }
+            case 'renderer:wc:clear:signing-network': {
+              setSigningChain(null);
               break;
             }
             default: {

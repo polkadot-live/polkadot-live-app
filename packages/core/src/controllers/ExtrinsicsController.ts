@@ -15,33 +15,17 @@ import {
 } from '../library/AccountsLib';
 
 import type { AnyData } from '@polkadot-live/types/misc';
-import type { Extrinsic } from 'dedot/codecs';
 import type { HexString } from 'dedot/utils';
 import type {
   ActionMeta,
+  CachedExtrinsicData,
   ExtrinsicInfo,
   TxStatus,
 } from '@polkadot-live/types/tx';
-import type {
-  ISubmittableExtrinsic,
-  SignerPayloadJSON,
-  SignerPayloadRaw,
-} from 'dedot/types';
+import type { SignerPayloadRaw } from 'dedot/types';
 import * as $ from '@dedot/shape';
 
-type SubmittableExtrinsic = Extrinsic & ISubmittableExtrinsic;
-
 const TOKEN_TRANSFER_LIMIT = '100';
-
-interface CachedExtrinsicData {
-  tx: SubmittableExtrinsic;
-  extra?: ExtraSignedExtension;
-  // Required for signing with WalletConnect.
-  payload?: SignerPayloadJSON;
-  rawPayload?: SignerPayloadRaw;
-  // Required for signing with Ledger.
-  proof?: Uint8Array;
-}
 
 interface VerifyExtrinsicResult {
   isValid: boolean;

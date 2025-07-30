@@ -53,8 +53,8 @@ export const ExtrinsicItemContent = ({
             <FlexRow $gap={'0.75rem'}>
               <FontAwesomeIcon icon={FA.faExclamationTriangle} />
               <span>
-                Make sure that you confirm the send amount and recipient on your
-                signing device before signing the transaction.
+                Confirm the send amount and recipient on your device before
+                signing the transaction.
               </span>
             </FlexRow>
           </div>

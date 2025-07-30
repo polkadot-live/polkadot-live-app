@@ -244,9 +244,9 @@ export const ChainList = new Map<ChainID, Chain>([
     {
       endpoints: {
         rpcs: [
+          'wss://westmint-rpc-tn.dwellir.com',
           'wss://sys.ibp.network/asset-hub-westend',
           'wss://asset-hub-westend-rpc.dwellir.com',
-          'wss://westmint-rpc-tn.dwellir.com',
           'wss://asset-hub-westend.dotters.network',
           'wss://westend-asset-hub-rpc.polkadot.io',
           'wss://asset-hub-westend.rpc.permanence.io',
