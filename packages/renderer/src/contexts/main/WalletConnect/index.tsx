@@ -127,12 +127,12 @@ export const WalletConnectProvider = ({
    * Util for setting fetched addresses state.
    */
   const setFetchedAddresses = (namespaces: AnyData) => {
-    /** Get the accounts from the session. */
+    // Get the accounts from the session.
     const wcAccounts = Object.values(namespaces)
       .map((namespace: AnyData) => namespace.accounts)
       .flat();
 
-    /** Grab account addresses and their CAIP ID. */
+    // Grab account addresses and their CAIP ID.
     const accounts: { address: string; caipId: string }[] = wcAccounts.map(
       (wcAccount) => ({
         address: wcAccount.split(':')[2],
@@ -217,6 +217,35 @@ export const WalletConnectProvider = ({
   };
 
   /**
+   * Disconnects from an existing session and starts a new one (opens modal).
+   */
+  const startNewSession = async (targetView: 'import' | 'action') => {
+    window.myAPI.relaySharedState('extrinsic:building', true);
+    window.myAPI.relaySharedState('wc:connecting', true);
+
+    await disconnectWcSession();
+    await cacheWcMeta();
+
+    window.myAPI.relaySharedState('wc:connecting', false);
+    window.myAPI.relaySharedState('extrinsic:building', false);
+
+    const port =
+      targetView === 'import'
+        ? ConfigRenderer.portToImport
+        : ConfigRenderer.portToAction;
+
+    const data = { uri: wcMetaRef.current!.uri };
+    port?.postMessage({ task: `${targetView}:wc:modal:open`, data });
+
+    const session = await wcMetaRef.current!.approval();
+    wcSession.current = session;
+    wcPairingTopic.current = session.pairingTopic;
+
+    window.myAPI.relaySharedState('wc:session:restored', true);
+    port?.postMessage({ task: `${targetView}:wc:modal:close`, data: null });
+  };
+
+  /**
    * Try to cache a WalletConnect session or prepare a new one.
    */
   const tryCacheSession = async () => {
@@ -229,15 +258,8 @@ export const WalletConnectProvider = ({
       if (wcProvider.current?.session) {
         wcPairingTopic.current = wcProvider.current.session.pairingTopic;
         wcSession.current = wcProvider.current.session;
-
-        // Cache meta if it's currently undefined.
-        if (!wcMetaRef.current) {
-          await cacheWcMeta();
-        }
-
         window.myAPI.relaySharedState('wc:session:restored', true);
       } else {
-        console.log('> Re-create session uri and approval.');
         await cacheWcMeta();
       }
     } catch (error: AnyData) {
@@ -246,61 +268,20 @@ export const WalletConnectProvider = ({
   };
 
   /**
-   * Restore an existing session. Called when `Connect` UI button clicked.
-   * Note: Will prompt wallet to approve addresses.
-   */
-  const cacheOrPrepareSession = async (
-    modalWindow: 'import' | 'extrinsics'
-  ) => {
-    if (!wcInitializedRef.current) {
-      throw new WcError('WcNotInitialized');
-    }
-
-    // Get existing session or generate a new uri and approval.
-    await tryCacheSession();
-
-    // If no existing session, open the modal in target window.
-    if (wcMetaRef.current?.uri) {
-      switch (modalWindow) {
-        case 'import': {
-          ConfigRenderer.portToImport?.postMessage({
-            task: 'import:wc:modal:open',
-            data: { uri: wcMetaRef.current.uri },
-          });
-          break;
-        }
-        case 'extrinsics': {
-          ConfigRenderer.portToAction?.postMessage({
-            task: 'action:wc:modal:open',
-            data: { uri: wcMetaRef.current.uri },
-          });
-          break;
-        }
-      }
-    }
-  };
-
-  /**
    * Set addresses from existing session. Called with `Fetch` UI button clicked.
    */
   const fetchAddressesFromExistingSession = () => {
-    // Fetch accounts from the cached session.
     const namespaces = wcSession.current ? wcSession.current.namespaces : null;
-
     if (!namespaces) {
       throw new WcError('WcSessionError');
     }
 
-    // Set received WalletConnect address state.
     setFetchedAddresses(namespaces);
-
-    // Set restored session flag.
     window.myAPI.relaySharedState('wc:session:restored', true);
   };
 
   /**
    * Establish a session or use an existing session to fetch addresses.
-   * @todo UI allows calling this function only when creating a new session. Can be simplified.
    */
   const connectWc = async (wcNetworks: WcSelectNetwork[]) => {
     try {
@@ -308,42 +289,29 @@ export const WalletConnectProvider = ({
       wcNetworksRef.current = wcNetworks;
 
       // Restore existing session or create a new one.
-      window.myAPI.relaySharedState('wc:connecting', true);
-      await cacheOrPrepareSession('import');
-      window.myAPI.relaySharedState('wc:connecting', false);
-
-      if (!wcMetaRef.current?.uri) {
+      if (wcProvider.current?.session) {
+        wcPairingTopic.current = wcProvider.current.session.pairingTopic;
+        wcSession.current = wcProvider.current.session;
         fetchAddressesFromExistingSession();
+        window.myAPI.relaySharedState('wc:session:restored', true);
       } else {
-        // Await approval and cache session and pairing topic.
-        const session = await wcMetaRef.current!.approval();
-        wcSession.current = session;
-        wcPairingTopic.current = session.pairingTopic;
-
-        // Close modal in import window if we're creating a new session.
-        if (wcMetaRef.current?.uri) {
-          ConfigRenderer.portToImport?.postMessage({
-            task: 'import:wc:modal:close',
-            data: null,
-          });
-        }
-
-        // Set received WalletConnect address state.
-        setFetchedAddresses(session.namespaces);
+        await startNewSession('import');
+        setFetchedAddresses(wcSession.current.namespaces);
         window.myAPI.relaySharedState('wc:session:restored', true);
       }
     } catch (error: AnyData) {
-      console.error(error);
+      handleWcError(error);
     }
   };
 
   /**
    * Verify a signing account is approved in the WalletConnect session.
    */
-  const verifySigningAccount = async (target: string, chainId: ChainID) => {
+  const verifySigningAccount = async (
+    target: string,
+    chainId: ChainID
+  ): Promise<{ approved: boolean; errorThrown: boolean }> => {
     try {
-      window.myAPI.relaySharedState('wc:account:verifying', true);
-
       if (!wcSession.current) {
         throw new WcError('WcSessionNotFound');
       }
@@ -367,26 +335,37 @@ export const WalletConnectProvider = ({
         ({ address }) => encodeAddress(address, prefix) === target
       );
 
-      // Update relay flags.
-      setTimeout(() => {
-        const approved = found ? true : false;
-        window.myAPI.relaySharedState('wc:account:verifying', false);
-        window.myAPI.relaySharedState('wc:account:approved', approved);
-
-        if (!approved) {
-          // Toast error notification in extrinsics window.
-          ConfigRenderer.portToAction?.postMessage({
-            task: 'action:toast:show',
-            data: {
-              message: 'WalletConnect Error - Approve the signing account',
-              toastId: `wc-error-${String(Date.now())}`,
-              toastType: 'error',
-            },
-          });
-        }
-      }, 2_500);
+      const approved = found ? true : false;
+      return { approved, errorThrown: false };
     } catch (error) {
       handleWcError(error);
+      return { approved: false, errorThrown: true };
+    }
+  };
+
+  /**
+   * Post verification status to extrinsics window.
+   */
+  const postApprovedResult = (verifyResult: {
+    approved: boolean;
+    errorThrown: boolean;
+  }) => {
+    const { approved, errorThrown } = verifyResult;
+
+    ConfigRenderer.portToAction?.postMessage({
+      task: 'action:wc:approve',
+      data: { approved },
+    });
+
+    if (!approved && !errorThrown) {
+      ConfigRenderer.portToAction?.postMessage({
+        task: 'action:toast:show',
+        data: {
+          message: 'WalletConnect Error - Approve the signing account',
+          toastId: `wc-error-${String(Date.now())}`,
+          toastType: 'error',
+        },
+      });
     }
   };
 
@@ -398,30 +377,11 @@ export const WalletConnectProvider = ({
     chainId: ChainID
   ) => {
     try {
-      window.myAPI.relaySharedState('wc:connecting', true);
-      await cacheOrPrepareSession('extrinsics');
-
-      window.myAPI.relaySharedState('wc:connecting', false);
-      window.myAPI.relaySharedState('extrinsic:building', false);
-
-      // Await approval and cache session and pairing topic.
-      const session = await wcMetaRef.current!.approval();
-      wcSession.current = session;
-      wcPairingTopic.current = session.pairingTopic;
-      window.myAPI.relaySharedState('wc:session:restored', true);
-
-      // Close modal in extrinsics window.
-      if (wcMetaRef.current?.uri) {
-        ConfigRenderer.portToAction?.postMessage({
-          task: 'action:wc:modal:close',
-          data: null,
-        });
-      }
-
-      // Re-verify the session.
-      await verifySigningAccount(signingAddress, chainId);
+      await startNewSession('action');
+      const result = await verifySigningAccount(signingAddress, chainId);
+      postApprovedResult(result);
     } catch (error: AnyData) {
-      console.log(error);
+      handleWcError(error);
     }
   };
 
@@ -519,6 +479,7 @@ export const WalletConnectProvider = ({
 
     wcPairingTopic.current = null;
     wcMetaRef.current = null;
+    wcSession.current = null;
 
     window.myAPI.relaySharedState('wc:session:restored', false);
     window.myAPI.relaySharedState('wc:disconnecting', false);
@@ -528,7 +489,7 @@ export const WalletConnectProvider = ({
    * Handle a WalletConnect error.
    */
   const handleWcError = (error: AnyData) => {
-    console.log(error);
+    console.error(error);
 
     if (error instanceof WcError) {
       switch (error.statusCode) {
@@ -537,7 +498,6 @@ export const WalletConnectProvider = ({
           break;
         }
         case 'WcSessionNotFound': {
-          window.myAPI.relaySharedState('wc:account:verifying', false);
           sendToastError(
             'extrinsics',
             'WalletConnect Error - Session not found'
@@ -619,6 +579,7 @@ export const WalletConnectProvider = ({
         connectWc,
         disconnectWcSession,
         fetchAddressesFromExistingSession,
+        postApprovedResult,
         setSigningChain,
         tryCacheSession,
         wcEstablishSessionForExtrinsic,

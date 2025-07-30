@@ -71,6 +71,7 @@ export const useMainMessagePorts = () => {
     connectWc,
     disconnectWcSession,
     fetchAddressesFromExistingSession,
+    postApprovedResult,
     setSigningChain,
     tryCacheSession,
     wcEstablishSessionForExtrinsic,
@@ -858,7 +859,6 @@ export const useMainMessagePorts = () => {
               break;
             }
             case 'renderer:tx:vault:submit': {
-              console.log('> handle renderer:tx:vault:submit');
               handleTxVaultSubmit(ev);
               break;
             }
@@ -894,7 +894,8 @@ export const useMainMessagePorts = () => {
 
               setSigningChain(chainId);
               await tryCacheSession();
-              await verifySigningAccount(target, chainId);
+              const result = await verifySigningAccount(target, chainId);
+              postApprovedResult(result);
               break;
             }
             case 'renderer:wc:clear:signing-network': {
