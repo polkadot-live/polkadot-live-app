@@ -1,6 +1,6 @@
 {
   "name": "@polkadot-live/main",
-  "version": "0.9.0-alpha",
+  "version": "0.10.0-alpha",
   "type": "module",
   "private": true,
   "main": "./dist/main.cjs",
