@@ -34,12 +34,15 @@ export default {
   npmRebuild: true,
 
   /** Publishing */
-  publish: {
-    provider: 'github',
-    owner: 'polkadot-live',
-    repo: 'polkadot-live-app',
-    releaseType: 'release',
-  },
+  publish:
+    process.platform === 'win32'
+      ? null
+      : {
+          provider: 'github',
+          owner: 'polkadot-live',
+          repo: 'polkadot-live-app',
+          releaseType: 'release',
+        },
 
   /** Mac */
   dmg: {
