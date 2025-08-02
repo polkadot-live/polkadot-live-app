@@ -1,0 +1,82 @@
+name: Release Windows
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Release tag (e.g. 1.2.3)'
+        required: true
+
+jobs:
+  publish_on_windows:
+    runs-on: windows-latest
+    steps:
+    - name: Configure Git to use LF line endings
+      run: git config --global core.autocrlf input
+
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-node@v4
+      with:
+        cache: 'yarn'
+        node-version: 23.x
+    
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Install Python Setuptools
+      run: python -m pip install setuptools
+
+    - name: Install Dependencies
+      run: yarn install
+
+    - name: Build and Package App
+      env:
+        MODE: 'production'
+      run: yarn vendors && yarn package
+
+    - name: Find EXE Path
+      id: find_exe
+      run: |
+        $workspace = $env:GITHUB_WORKSPACE
+        $exePath = Get-ChildItem -Path "$workspace\releases" -Filter "*.exe" | Select-Object -First 1
+        if (-not $exePath) {
+          throw "No .exe file found"
+        }
+        Write-Host "Found EXE: $($exePath.FullName)"
+        "exe_path=$($exePath.FullName)" >> $env:GITHUB_OUTPUT
+
+    - name: Sign Executable with Azure Trusted Signing
+      uses: azure/trusted-signing-action@v0
+      with:
+        azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+        endpoint: ${{ secrets.AZURE_ENDPOINT }}
+        trusted-signing-account-name: ${{ secrets.AZURE_CODE_SIGNING_ACCOUNT_NAME }}
+        certificate-profile-name: ${{ secrets.AZURE_CERTIFICATE_PROFILE_NAME }}
+        files: |
+          ${{ steps.find_exe.outputs.exe_path }}
+        file-digest: SHA256
+        timestamp-rfc3161: http://timestamp.acs.microsoft.com
+        timestamp-digest: SHA256
+
+        exclude-environment-credential: false
+        exclude-workload-identity-credential: true
+        exclude-managed-identity-credential: true
+        exclude-shared-token-cache-credential: true
+        exclude-visual-studio-credential: true
+        exclude-visual-studio-code-credential: true
+        exclude-azure-cli-credential: true
+        exclude-azure-powershell-credential: true
+        exclude-azure-developer-cli-credential: true
+        exclude-interactive-browser-credential: true
+
+    - name: Upload Release Artifacts
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ github.event.inputs.release_tag }}
+        files: |
+          ${{ steps.find_exe.outputs.exe_path }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
