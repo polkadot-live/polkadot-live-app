@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.11.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.10.0-alpha...v0.11.0-alpha) (2025-08-02)
+
+
+### Features
+
+* windows release workflow ([#1044](https://github.com/polkadot-live/polkadot-live-app/issues/1044)) ([fce8fa0](https://github.com/polkadot-live/polkadot-live-app/commit/fce8fa016ce38b0c2c9c8961011692249b25c443))
+
+
+### Bug Fixes
+
+* release please workflow ([#1042](https://github.com/polkadot-live/polkadot-live-app/issues/1042)) ([5b3e121](https://github.com/polkadot-live/polkadot-live-app/commit/5b3e1210dfd5ec6306645c6835a32b77b1b4a68e))
+
 ## [0.10.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.9.0-alpha...v0.10.0-alpha) (2025-07-30)
 
 
