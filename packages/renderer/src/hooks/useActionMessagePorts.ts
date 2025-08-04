@@ -85,7 +85,13 @@ export const useActionMessagePorts = () => {
    * @summary Set tx data in actions window sent from extrinsics controller.
    */
   const handleTxReportData = (ev: MessageEvent) => {
-    const { accountNonce, genesisHash, txId, txPayload } = ev.data.data;
+    interface Target {
+      accountNonce: number;
+      genesisHash: `0x${string}`;
+      txId: string;
+      txPayload: Uint8Array;
+    }
+    const { accountNonce, genesisHash, txId, txPayload }: Target = ev.data.data;
 
     setTxDynamicInfo(txId, {
       accountNonce: String(accountNonce),
