@@ -354,6 +354,7 @@ export const useMainMessagePorts = () => {
     const info: ExtrinsicInfo = JSON.parse(serialized);
     ExtrinsicsController.submit(info);
   };
+
   /**
    * @name handleTxMockSubmit
    * @summary Mock an extrinsic submission for UI testing.

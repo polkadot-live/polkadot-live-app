@@ -24,6 +24,7 @@ import type {
 } from '@polkadot-live/types/tx';
 import type { SignerPayloadRaw } from 'dedot/types';
 import * as $ from '@dedot/shape';
+import { $Metadata } from 'dedot/codecs';
 
 const TOKEN_TRANSFER_LIMIT = '100';
 
@@ -197,11 +198,11 @@ export class ExtrinsicsController {
 
       // Build and cache payload.
       const { tx } = cached;
-      let rawPayload: SignerPayloadRaw;
+      let rawPayload: SignerPayloadRaw | null = null;
 
       if (source === 'ledger') {
         const { units, unit } = ChainList.get(chainId)!;
-        const metadata = api.metadata;
+        const metadata = $Metadata.tryEncode(api.metadata);
         const merkleizer = new MerkleizedMetadata(metadata, {
           decimals: units,
           tokenSymbol: unit,
