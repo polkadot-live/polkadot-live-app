@@ -59,7 +59,7 @@ export const DialogContent = styled(Dialog.Content).attrs<{
   left: 50%;
   transform: translate(-50%, -40%);
   width: 90vw;
-  max-height: 85vh;
+  max-height: calc(100vh - 1rem);
   padding: 2.25rem 2rem;
   animation: dialog_contentShow 400ms cubic-bezier(0.16, 1, 0.3, 1);
 
