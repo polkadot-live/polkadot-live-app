@@ -72,6 +72,37 @@ export const DialogExtrinsicSummary = ({
     );
   };
 
+  const renderSignMethod = () => {
+    if (!info) {
+      return (
+        <span className="RightItem">
+          <TooltipRx text={''} theme={theme}>
+            <span>-</span>
+          </TooltipRx>
+        </span>
+      );
+    }
+
+    let label = '-';
+    switch (info.actionMeta.source) {
+      case 'ledger':
+        label = 'Ledger';
+        break;
+      case 'vault':
+        label = 'Polkadot Vault';
+        break;
+      case 'wallet-connect':
+        label = 'WalletConnect';
+        break;
+    }
+
+    return (
+      <span className="RightItem">
+        <span>{label}</span>
+      </span>
+    );
+  };
+
   /**
    * Renders specific summary information based on the extrinsic type.
    */
@@ -227,6 +258,14 @@ export const DialogExtrinsicSummary = ({
                 <div>
                   <span className="LeftItem">Estimated Fee</span>
                   {renderEstimatedFee()}
+                </div>
+              </InfoPanel>
+
+              {/** Signing Method */}
+              <InfoPanel $theme={theme}>
+                <div>
+                  <span className="LeftItem">Sign Using</span>
+                  {renderSignMethod()}
                 </div>
               </InfoPanel>
             </Styles.FlexColumn>
