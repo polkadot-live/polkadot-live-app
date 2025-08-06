@@ -1,6 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as $ from '@dedot/shape';
 import { ConfigRenderer } from '../config';
 import { APIsController } from '../controllers/APIsController';
 import { ChainList, chainUnits } from '@polkadot-live/consts/chains';
@@ -23,8 +24,6 @@ import type {
   TxStatus,
 } from '@polkadot-live/types/tx';
 import type { SignerPayloadRaw } from 'dedot/types';
-import * as $ from '@dedot/shape';
-import { $Metadata } from 'dedot/codecs';
 
 const TOKEN_TRANSFER_LIMIT = '100';
 
@@ -202,7 +201,7 @@ export class ExtrinsicsController {
 
       if (source === 'ledger') {
         const { units, unit } = ChainList.get(chainId)!;
-        const metadata = $Metadata.tryEncode(api.metadata);
+        const metadata = api.metadata;
         const merkleizer = new MerkleizedMetadata(metadata, {
           decimals: units,
           tokenSymbol: unit,
