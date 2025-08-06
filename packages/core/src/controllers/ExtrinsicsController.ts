@@ -365,7 +365,7 @@ export class ExtrinsicsController {
         extra: extra!.data,
       });
 
-      const unsub = await tx.send(async ({ status }) => {
+      const unsub = await tx.send(async ({ status, txHash }) => {
         switch (status.type) {
           case 'Broadcasting': {
             this.postTxStatus('submitted', info);
@@ -390,6 +390,7 @@ export class ExtrinsicsController {
             break;
           }
           case 'Finalized': {
+            info.txHash = txHash;
             this.postTxStatus('finalized', info);
 
             if (!(await this.silenceOsNotifications())) {
