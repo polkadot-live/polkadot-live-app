@@ -365,7 +365,7 @@ export class ExtrinsicsController {
         extra: extra!.data,
       });
 
-      const unsub = await tx.send(async ({ status }) => {
+      const unsub = await tx.send(async ({ status, txHash }) => {
         switch (status.type) {
           case 'Broadcasting': {
             this.postTxStatus('submitted', info);
@@ -390,6 +390,7 @@ export class ExtrinsicsController {
             break;
           }
           case 'Finalized': {
+            info.txHash = txHash;
             this.postTxStatus('finalized', info);
 
             if (!(await this.silenceOsNotifications())) {
@@ -421,13 +422,14 @@ export class ExtrinsicsController {
   ) => {
     const {
       txId,
+      txHash,
       actionMeta: { eventUid, chainId },
     } = info;
 
     // Report status in actions window.
     ConfigRenderer.portToAction?.postMessage({
       task: 'action:tx:report:status',
-      data: { status, txId },
+      data: txHash ? { status, txId, txHash } : { status, txId },
     });
 
     if (eventUid) {

@@ -29,6 +29,7 @@ export const defaultTxMeta: TxMetaContextInterface = {
   setFilterOption: () => {},
   setPage: () => {},
   setTxDynamicInfo: () => {},
+  setTxHash: () => {},
   setTxSignature: () => {},
   submitTx: () => {},
   submitMockTx: () => {},
