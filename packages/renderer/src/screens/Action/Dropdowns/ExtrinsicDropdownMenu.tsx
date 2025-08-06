@@ -18,10 +18,12 @@ import type { ExtrinsicDropdownMenuProps } from './types';
 export const ExtrinsicDropdownMenu = ({
   isBuilt,
   txStatus,
+  hasTxHash,
   onSign,
   onMockSign,
   onDelete,
   onSummaryClick,
+  onBlockExplorerClick,
 }: ExtrinsicDropdownMenuProps) => {
   const { showMockUI } = useTxMeta();
   const { cacheGet, getTheme, getOnlineMode } = useConnections();
@@ -89,7 +91,6 @@ export const ExtrinsicDropdownMenu = ({
             </DropdownMenu.Item>
           )}
 
-          <DropdownMenu.Separator className="DropdownMenuSeparator" />
           <DropdownMenu.Item
             className="DropdownMenuItem"
             disabled={isBuildingExtrinsic}
@@ -99,6 +100,21 @@ export const ExtrinsicDropdownMenu = ({
               <FontAwesomeIcon icon={FA.faTrash} transform={'shrink-3'} />
             </div>
             <span>Delete</span>
+          </DropdownMenu.Item>
+
+          <DropdownMenu.Separator className="DropdownMenuSeparator" />
+          <DropdownMenu.Item
+            className="DropdownMenuItem"
+            onSelect={() => onBlockExplorerClick()}
+            disabled={!hasTxHash}
+          >
+            <div className="LeftSlot">
+              <FontAwesomeIcon
+                icon={FA.faUpRightFromSquare}
+                transform={'shrink-3'}
+              />
+            </div>
+            <span>Block Explorer</span>
           </DropdownMenu.Item>
 
           {/** Arrow */}

@@ -5,9 +5,11 @@ import type { TxStatus } from 'packages/types/src';
 
 export interface ExtrinsicDropdownMenuProps {
   isBuilt: boolean;
+  hasTxHash: boolean;
   txStatus: TxStatus;
   onSign: () => void;
   onMockSign: () => void;
   onDelete: () => void;
   onSummaryClick: () => void;
+  onBlockExplorerClick: () => void;
 }
