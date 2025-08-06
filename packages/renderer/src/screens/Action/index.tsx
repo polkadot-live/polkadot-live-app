@@ -7,6 +7,7 @@ import * as UI from '@polkadot-live/ui/components';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 
 import { DropdownExtrinsicsFilter, ExtrinsicDropdownMenu } from './Dropdowns';
+import { getSubscanSubdomain } from '@polkadot-live/consts/chains';
 import { ellipsisFn } from '@w3ux/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { useActionMessagePorts } from '@ren/hooks/useActionMessagePorts';
@@ -362,8 +363,18 @@ export const Action = () => {
                           setDialogInfo(info);
                           setDialogOpen(true);
                         }}
+                        onBlockExplorerClick={() => {
+                          if (!info.txHash) {
+                            return;
+                          }
+                          const { chainId } = info.actionMeta;
+                          const network = getSubscanSubdomain(chainId);
+                          const uri = `https://${network}.subscan.io/extrinsic/${info.txHash}`;
+                          window.myAPI.openBrowserURL(uri);
+                        }}
                         isBuilt={info.estimatedFee !== undefined}
                         txStatus={info.txStatus}
+                        hasTxHash={Boolean(info.txHash)}
                         onDelete={async () => await removeExtrinsic(info)}
                         onSign={() => initTxDynamicInfo(info.txId)}
                         onMockSign={() => submitMockTx(info.txId)}
