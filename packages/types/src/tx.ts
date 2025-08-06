@@ -93,10 +93,12 @@ export interface ExtrinsicInfo {
   timestamp: number;
   // Data set dynamically before submitting the extrinsic.
   dynamicInfo?: ExtrinsicDynamicInfo;
+  // Tx hash set after extrinsic finalized.
+  txHash?: `0x${string}`;
 }
 
 /**
- * Specific data send with a transfer extrinsic.
+ * Specific data sent with a transfer extrinsic.
  */
 export interface ExTransferKeepAliveData {
   recipientAddress: string;

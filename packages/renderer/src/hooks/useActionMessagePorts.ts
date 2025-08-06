@@ -10,7 +10,7 @@ import {
 } from '@ren/contexts/action';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { renderToast } from '@polkadot-live/ui/utils';
-import type { ActionMeta } from '@polkadot-live/types/tx';
+import type { ActionMeta, TxStatus } from '@polkadot-live/types/tx';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { LedgerErrorMeta } from '@polkadot-live/types/ledger';
 
@@ -26,6 +26,7 @@ export const useActionMessagePorts = () => {
     setEstimatedFee,
     setTxDynamicInfo,
     updateAccountName,
+    setTxHash,
     updateTxStatus,
   } = useTxMeta();
 
@@ -107,7 +108,15 @@ export const useActionMessagePorts = () => {
    * @summary Update the status for a transaction.
    */
   const handleSetTxStatus = async (ev: MessageEvent) => {
-    const { txId, status } = ev.data.data;
+    const { txId, status }: { txId: string; status: TxStatus } = ev.data.data;
+
+    // Handle transaction hash.
+    if (status === 'finalized') {
+      const { txHash }: { txHash: `0x${string}` } = ev.data.data;
+      setTxHash(txId, txHash);
+    }
+
+    // Also updates store with transaction hash.
     await updateTxStatus(txId, status);
   };
 

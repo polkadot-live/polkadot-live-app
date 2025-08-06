@@ -37,6 +37,7 @@ export interface TxMetaContextInterface {
   setFilterOption: (filter: TxStatus, selected: boolean) => void;
   setPage: (page: number) => void;
   setTxDynamicInfo: (txId: string, dynamicInfo: ExtrinsicDynamicInfo) => void;
+  setTxHash: (txId: string, txHash: `0x${string}`) => void;
   setTxSignature: (txId: string, s: AnyJson) => void;
   submitTx: (txId: string) => void;
   submitMockTx: (txId: string) => void;

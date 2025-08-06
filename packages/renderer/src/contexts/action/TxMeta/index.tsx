@@ -197,13 +197,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       for (const info of parsedB) {
         if (info.txStatus === 'submitted' || info.txStatus === 'in_block') {
           info.txStatus = 'submitted-unknown';
-
-          await window.myAPI.sendExtrinsicsTaskAsync({
-            action: 'extrinsics:update',
-            data: {
-              serialized: JSON.stringify({ ...info, dynamicInfo: undefined }),
-            },
-          });
+          await updateStoreInfo(info);
         }
 
         // Cache data in extrinsics ref.
@@ -513,11 +507,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       // Update tx status in store.
-      const sendInfo: ExtrinsicInfo = { ...info, dynamicInfo: undefined };
-      await window.myAPI.sendExtrinsicsTaskAsync({
-        action: 'extrinsics:update',
-        data: { serialized: JSON.stringify(sendInfo) },
-      });
+      await updateStoreInfo(info);
     } catch (err) {
       console.log(err);
     }
@@ -676,10 +666,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
 
       // Update data in store.
       if (updateStore) {
-        await window.myAPI.sendExtrinsicsTaskAsync({
-          action: 'extrinsics:update',
-          data: { serialized: JSON.stringify(info) },
-        });
+        await updateStoreInfo(info);
       }
     }
 
@@ -745,6 +732,36 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     setUpdateCache(true);
   };
 
+  /**
+    Sets the transaction hash (txHash) for the extrinsic.
+   */
+  const setTxHash = (txId: string, txHash: `0x${string}`) => {
+    try {
+      const info = extrinsicsRef.current.get(txId);
+      if (!info) {
+        throw new Error('Error: Extrinsic not found.');
+      }
+
+      info.txHash = txHash;
+      extrinsicsRef.current.set(txId, info);
+      setUpdateCache(true);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  /**
+   * Utility to update extrinsics data in store.
+   */
+  const updateStoreInfo = async (info: ExtrinsicInfo) => {
+    await window.myAPI.sendExtrinsicsTaskAsync({
+      action: 'extrinsics:update',
+      data: {
+        serialized: JSON.stringify({ ...info, dynamicInfo: undefined }),
+      },
+    });
+  };
+
   return (
     <TxMetaContext.Provider
       value={{
@@ -772,6 +789,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         setFilterOption,
         setPage,
         setTxDynamicInfo,
+        setTxHash,
         setTxSignature,
         submitMockTx,
         submitTx,

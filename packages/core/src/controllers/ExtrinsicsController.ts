@@ -421,13 +421,14 @@ export class ExtrinsicsController {
   ) => {
     const {
       txId,
+      txHash,
       actionMeta: { eventUid, chainId },
     } = info;
 
     // Report status in actions window.
     ConfigRenderer.portToAction?.postMessage({
       task: 'action:tx:report:status',
-      data: { status, txId },
+      data: txHash ? { status, txId, txHash } : { status, txId },
     });
 
     if (eventUid) {
