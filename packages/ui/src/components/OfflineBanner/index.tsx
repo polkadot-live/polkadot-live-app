@@ -14,8 +14,8 @@ const OfflineBannerWrapper = styled(FlexRow)`
   padding: 0.95rem 1rem;
 `;
 
-export const OfflineBanner = () => (
-  <OfflineBannerWrapper $gap={'0.75rem'}>
+export const OfflineBanner = ({ style }: { style?: React.CSSProperties }) => (
+  <OfflineBannerWrapper $gap={'0.75rem'} style={style}>
     <FontAwesomeIcon icon={faCircleExclamation} transform={'grow-1'} />
     <span>Currently offline.</span>
   </OfflineBannerWrapper>

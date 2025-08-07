@@ -18,7 +18,6 @@ import {
   faCaretLeft,
   faCaretRight,
   faCircleDot,
-  faExclamationTriangle,
 } from '@fortawesome/free-solid-svg-icons';
 
 /** Temp */
@@ -100,19 +99,6 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
       : `Import ${len ? len : ''} Address${len === 1 ? '' : 'es'}`;
   };
 
-  /**
-   * Render reusable offline warning info card.
-   */
-  const renderOfflineWarning = (marginTop = '0.5rem') => (
-    <InfoCard
-      kind={'warning'}
-      icon={faExclamationTriangle}
-      style={{ marginTop }}
-    >
-      <span>Currently offline. Please go online to enable connections.</span>
-    </InfoCard>
-  );
-
   return (
     <>
       {(wcConnecting || wcDisconnecting) && (
@@ -182,7 +168,6 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                     <UI.AccordionContent transparent={true}>
                       {wcSessionRestored ? (
                         <Styles.FlexColumn>
-                          {!getOnlineMode() && renderOfflineWarning('0')}
                           <Styles.ResponsiveRow
                             $smWidth="600px"
                             $gap={'0.5rem'}
@@ -279,7 +264,6 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                             ))}
                           </ItemsColumn>
                           <Styles.FlexColumn style={{ marginTop: '0.5rem' }}>
-                            {!getOnlineMode() && renderOfflineWarning()}
                             <Styles.FlexRow $gap={'0.5rem'}>
                               <InfoCard
                                 icon={faCircleDot}

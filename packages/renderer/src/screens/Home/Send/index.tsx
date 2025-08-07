@@ -97,6 +97,9 @@ export const Send: React.FC = () => {
   return (
     <FlexColumn style={{ padding: '2rem 1rem' }}>
       <MainHeading>Send</MainHeading>
+      {!getOnlineMode() && (
+        <UI.OfflineBanner style={{ borderRadius: '0.375rem' }} />
+      )}
 
       <FlexColumn $rowGap={'0.5rem'} style={{ marginBottom: '1rem' }}>
         <UI.InfoCard icon={FA.faInfoCircle} style={{ marginTop: '0' }}>
@@ -127,12 +130,6 @@ export const Send: React.FC = () => {
       </FlexColumn>
 
       <FlexColumn $rowGap={'0'}>
-        {!getOnlineMode() && (
-          <UI.OfflineWarning
-            text={'Disabled in offline mode'}
-            style={{ margin: '0 0 1.25rem 0.25rem' }}
-          />
-        )}
         <UI.AccordionWrapper $onePart={true}>
           <Accordion.Root
             className="AccordionRoot"

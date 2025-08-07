@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useManage } from '@ren/contexts/main';
 import { CarouselWrapper } from '../Wrappers';
 import { Accounts } from './Accounts';
+import { FlexColumn } from '@polkadot-live/ui/styles';
 import { Permissions } from './Permissions';
 import { Wrapper } from './Wrappers';
 import { MainHeading } from '@polkadot-live/ui/components';
@@ -26,17 +27,14 @@ export const Manage = ({ addresses }: ManageProps) => {
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        rowGap: '0.75rem',
-        height: '100%',
-      }}
+    <FlexColumn
+      $rowGap={'1rem'}
+      style={{ height: '100%', padding: '2rem 0rem 1rem' }}
     >
-      <MainHeading style={{ padding: '2rem 1rem 0' }}>
+      <MainHeading style={{ padding: '0 1rem' }}>
         Account Subscriptions
       </MainHeading>
+
       <CarouselWrapper
         animate={section === 0 ? 'home' : 'next'}
         transition={{
@@ -85,6 +83,6 @@ export const Manage = ({ addresses }: ManageProps) => {
           />
         </div>
       </CarouselWrapper>
-    </div>
+    </FlexColumn>
   );
 };

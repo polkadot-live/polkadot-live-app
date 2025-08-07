@@ -47,6 +47,7 @@ export const FadeOpenGov = () => {
 
   return (
     <FadeInWrapper show={stateLoaded}>
+      {!getOnlineMode() && <UI.OfflineBanner />}
       <OpenGov />
     </FadeInWrapper>
   );
