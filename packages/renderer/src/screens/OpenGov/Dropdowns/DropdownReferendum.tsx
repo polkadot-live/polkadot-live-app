@@ -3,16 +3,13 @@
 
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { useConnections } from '@ren/contexts/common';
-import { useOverlay } from '@polkadot-live/ui/contexts';
 import { DropdownMenuContent } from '@polkadot-live/ui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faCircleInfo,
   faEllipsis,
   faUpRightFromSquare,
 } from '@fortawesome/free-solid-svg-icons';
 import { MenuButton } from './Wrappers';
-import { InfoOverlay } from '../Referenda/InfoOverlay';
 import {
   getPolkassemblySubdomain,
   getSubsquareSubdomain,
@@ -24,10 +21,8 @@ import type { ReferendumDropdownMenuProps } from './types';
  */
 export const ReferendumDropdownMenu = ({
   chainId,
-  proposalData,
   referendum,
 }: ReferendumDropdownMenuProps) => {
-  const { openOverlayWith } = useOverlay();
   const { cacheGet, getTheme } = useConnections();
   const darkMode = cacheGet('mode:dark');
   const theme = getTheme();
@@ -46,12 +41,6 @@ export const ReferendumDropdownMenu = ({
     const uriSubsquare = `https://${getSubsquareSubdomain(chainId)}.subsquare.io/referenda/${refId}`;
     window.myAPI.openBrowserURL(uriSubsquare);
     window.myAPI.umamiEvent('link-open', { dest: 'subsquare' });
-  };
-
-  const onMoreClick = () => {
-    if (proposalData !== null) {
-      openOverlayWith(<InfoOverlay proposalData={proposalData!} />, 'large');
-    }
   };
 
   return (
@@ -103,22 +92,6 @@ export const ReferendumDropdownMenu = ({
             </div>
             <span>Polkassembly</span>
           </DropdownMenu.Item>
-
-          {/** More */}
-          {proposalData !== null && (
-            <>
-              <DropdownMenu.Separator className="DropdownMenuSeparator" />
-              <DropdownMenu.Item
-                className="DropdownMenuItem"
-                onSelect={() => onMoreClick()}
-              >
-                <div className="LeftSlot">
-                  <FontAwesomeIcon icon={faCircleInfo} transform={'shrink-3'} />
-                </div>
-                <span>More</span>
-              </DropdownMenu.Item>
-            </>
-          )}
 
           {/** Arrow */}
           <DropdownMenu.Arrow className="DropdownMenuArrow" />

@@ -2,10 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { ChainID } from '@polkadot-live/types/chains';
-import type {
-  PolkassemblyProposal,
-  ReferendaInfo,
-} from '@polkadot-live/types/openGov';
+import type { ReferendaInfo } from '@polkadot-live/types/openGov';
 
 export interface DropdownReferendaFilterProps {
   tab: 'active' | 'history';
@@ -13,6 +10,5 @@ export interface DropdownReferendaFilterProps {
 
 export interface ReferendumDropdownMenuProps {
   chainId: ChainID;
-  proposalData: PolkassemblyProposal | null;
   referendum: ReferendaInfo;
 }

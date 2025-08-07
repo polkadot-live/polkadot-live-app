@@ -44,11 +44,7 @@ export const HistoryRow = ({ info }: HistoryRowProps) => {
                 {title !== '' ? title : 'No Title'}
               </h4>
               <div>
-                <ReferendumDropdownMenu
-                  chainId={chainId}
-                  proposalData={null}
-                  referendum={info}
-                />
+                <ReferendumDropdownMenu chainId={chainId} referendum={info} />
               </div>
             </FlexRow>
           </Wrappers.TitleWithOrigin>
@@ -66,11 +62,7 @@ export const HistoryRow = ({ info }: HistoryRowProps) => {
               {renderOrigin(info)}
             </h4>
             <div>
-              <ReferendumDropdownMenu
-                chainId={chainId}
-                proposalData={null}
-                referendum={info}
-              />
+              <ReferendumDropdownMenu chainId={chainId} referendum={info} />
             </div>
           </FlexRow>
         )}

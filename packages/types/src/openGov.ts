@@ -116,7 +116,6 @@ export interface RefOngoing {
 export interface PolkassemblyProposal {
   title: string;
   postId: number;
-  content: string;
   status: string;
 }
 

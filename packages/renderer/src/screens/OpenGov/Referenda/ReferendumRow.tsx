@@ -166,11 +166,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
             </TooltipRx>
           </FlexRow>
 
-          <ReferendumDropdownMenu
-            chainId={chainId}
-            proposalData={proposalData}
-            referendum={referendum}
-          />
+          <ReferendumDropdownMenu chainId={chainId} referendum={referendum} />
         </FlexRow>
       </FlexRow>
       <motion.section
