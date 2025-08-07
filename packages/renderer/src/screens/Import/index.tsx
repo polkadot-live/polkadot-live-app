@@ -22,10 +22,11 @@ export const FadeImport = () => {
   // Set up port communication for `import` window.
   useImportMessagePorts();
   useDebug(window.myAPI.getWindowId());
-  const { stateLoaded } = useConnections();
+  const { getOnlineMode, stateLoaded } = useConnections();
 
   return (
     <FadeInWrapper show={stateLoaded}>
+      {!getOnlineMode() && <UI.OfflineBanner />}
       <Import />
     </FadeInWrapper>
   );

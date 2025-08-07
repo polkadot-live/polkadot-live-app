@@ -45,10 +45,11 @@ export const FadeAction = () => {
   // Set up port communication for `action` window.
   useActionMessagePorts();
   useDebug(window.myAPI.getWindowId());
-  const { stateLoaded } = useConnections();
+  const { getOnlineMode, stateLoaded } = useConnections();
 
   return (
     <FadeInWrapper show={stateLoaded}>
+      {!getOnlineMode() && <UI.OfflineBanner />}
       <Action />
     </FadeInWrapper>
   );
@@ -86,7 +87,7 @@ export const Action = () => {
       : setPage(page < pageCount ? page + 1 : page);
   };
 
-  const { cacheGet, getTheme, getOnlineMode } = useConnections();
+  const { cacheGet, getTheme } = useConnections();
   const isBuildingExtrinsic = cacheGet('extrinsic:building');
   const darkMode = cacheGet('mode:dark');
   const theme = getTheme();
@@ -225,10 +226,6 @@ export const Action = () => {
           text={'Extrinsics'}
           style={{ margin: '2rem 0 1rem' }}
         />
-
-        {!getOnlineMode() && (
-          <UI.OfflineWarning style={{ marginBottom: '1.25rem' }} />
-        )}
 
         {Array.from(extrinsics.keys()).length === 0 && (
           <EmptyWrapper>

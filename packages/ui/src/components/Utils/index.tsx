@@ -2,9 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { TooltipRx } from '../TooltipRx';
-import { FlexRow } from '../../styles';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { BaseLinksFooter } from '../Footers';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { HelpItemKey } from '@polkadot-live/types/help';
@@ -22,23 +19,6 @@ export const LinksFooter = ({ openHelp }: LinksFooterProps) => (
     handleDisclaimerClick={() => openHelp('help:docs:disclaimer')}
     handlePrivacyClick={() => openHelp('help:docs:privacy')}
   />
-);
-
-/**
- * @name OfflineWarning
- * @summary Render an offline message.
- */
-export const OfflineWarning = ({
-  style,
-  text,
-}: {
-  style?: React.CSSProperties;
-  text?: string;
-}) => (
-  <FlexRow $gap={'0.5rem'} style={{ ...style, color: 'var(--accent-warning)' }}>
-    <FontAwesomeIcon icon={faTriangleExclamation} transform={'shrink-2'} />
-    <p style={{ margin: 0, color: 'inherit' }}>{text || 'Currently offline'}</p>
-  </FlexRow>
 );
 
 /**

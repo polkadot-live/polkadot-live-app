@@ -15,6 +15,7 @@ export * from './Header';
 export * from './Help';
 export * from './Identicon';
 export * from './Menu';
+export * from './OfflineBanner';
 export * from './Overlay';
 export * from './Padlock';
 export * from './QRCode';

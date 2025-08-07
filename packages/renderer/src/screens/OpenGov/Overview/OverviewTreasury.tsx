@@ -91,8 +91,6 @@ export const OverviewTreasury: React.FC = () => {
                     </select>
                   </div>
                 </UI.TooltipWrapper>
-
-                {!getOnlineMode() && <UI.OfflineWarning />}
               </Styles.FlexRow>
             </UI.ControlsWrapper>
 

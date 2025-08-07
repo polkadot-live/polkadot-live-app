@@ -139,7 +139,7 @@ export const Subscriptions = ({
 
   return (
     <>
-      <UI.ControlsWrapper $sticky={false}>
+      <UI.ControlsWrapper $sticky={false} style={{ marginBottom: '1.5rem' }}>
         <div className="left">
           <ButtonPrimaryInvert
             className="back-btn"
@@ -151,7 +151,9 @@ export const Subscriptions = ({
         </div>
       </UI.ControlsWrapper>
 
-      <Style.FlexColumn style={{ marginTop: '1.5rem' }}>
+      {!getOnlineMode() && <UI.OfflineBanner rounded={true} />}
+
+      <Style.FlexColumn>
         <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
           <Accordion.Root
             className="AccordionRoot"
