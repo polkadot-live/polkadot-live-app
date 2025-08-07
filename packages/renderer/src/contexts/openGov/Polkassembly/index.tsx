@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
+import { createContext, useContext, useEffect, useState } from 'react';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   PolkassemblyProposal,
@@ -81,8 +81,8 @@ export const PolkassemblyProvider = ({
     // Store fetched proposals in state and render in OpenGov window.
     const fetched: PolkassemblyProposal[] = [];
     for (const response of results) {
-      const { content, post_id, status, title } = response.data;
-      fetched.push({ title, postId: post_id, content, status });
+      const { post_id, status, title } = response.data;
+      fetched.push({ title, postId: post_id, status });
     }
 
     // Append fetched proposals to existing cached data.
