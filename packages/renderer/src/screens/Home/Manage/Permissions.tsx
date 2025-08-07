@@ -288,7 +288,7 @@ export const Permissions = ({
 
   return (
     <>
-      <UI.ControlsWrapper $sticky={false}>
+      <UI.ControlsWrapper $sticky={false} style={{ marginBottom: '1.5rem' }}>
         <div className="left">
           <ButtonPrimaryInvert
             className="back-btn"
@@ -312,7 +312,11 @@ export const Permissions = ({
         </div>
       </UI.ControlsWrapper>
 
-      <FlexColumn style={{ marginTop: '1.5rem' }}>
+      {!getOnlineMode() && (
+        <UI.OfflineBanner style={{ borderRadius: '0.375rem' }} />
+      )}
+
+      <FlexColumn>
         <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
           <Accordion.Root
             className="AccordionRoot"
