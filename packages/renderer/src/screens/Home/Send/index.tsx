@@ -97,9 +97,7 @@ export const Send: React.FC = () => {
   return (
     <FlexColumn style={{ padding: '2rem 1rem' }}>
       <MainHeading>Send</MainHeading>
-      {!getOnlineMode() && (
-        <UI.OfflineBanner style={{ borderRadius: '0.375rem' }} />
-      )}
+      {!getOnlineMode() && <UI.OfflineBanner rounded={true} />}
 
       <FlexColumn $rowGap={'0.5rem'} style={{ marginBottom: '1rem' }}>
         <UI.InfoCard icon={FA.faInfoCircle} style={{ marginTop: '0' }}>

@@ -7,15 +7,18 @@ import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 
 const OfflineBannerWrapper = styled(FlexRow)`
-  background-color: #e7ad65;
+  background-color: var(--accent-warning-background);
   color: #101010;
-  font-size: 1.02rem;
+  font-size: 1.01rem;
   justify-content: center;
-  padding: 0.95rem 1rem;
+  padding: 0.65rem 1rem;
 `;
 
-export const OfflineBanner = ({ style }: { style?: React.CSSProperties }) => (
-  <OfflineBannerWrapper $gap={'0.75rem'} style={style}>
+export const OfflineBanner = ({ rounded = false }: { rounded?: boolean }) => (
+  <OfflineBannerWrapper
+    $gap={'0.75rem'}
+    style={rounded ? { borderRadius: '0.375rem' } : undefined}
+  >
     <FontAwesomeIcon icon={faCircleExclamation} transform={'grow-1'} />
     <span>Currently offline.</span>
   </OfflineBannerWrapper>

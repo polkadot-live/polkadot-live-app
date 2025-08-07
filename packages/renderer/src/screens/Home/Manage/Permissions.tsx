@@ -312,9 +312,7 @@ export const Permissions = ({
         </div>
       </UI.ControlsWrapper>
 
-      {!getOnlineMode() && (
-        <UI.OfflineBanner style={{ borderRadius: '0.375rem' }} />
-      )}
+      {!getOnlineMode() && <UI.OfflineBanner rounded={true} />}
 
       <FlexColumn>
         <UI.AccordionWrapper style={{ marginTop: '1rem' }}>

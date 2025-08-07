@@ -14,7 +14,8 @@ export const darkTheme = {
 
   accentPrimary: '#ac2461',
   accentSecondary: '#a94a75',
-  accentWarning: '#dd9b22',
+  accentWarning: '#af773d',
+  accentWarningBackground: '#af773d',
   accentSuccess: '#2c7a2c',
 
   /* General: Borders */
@@ -130,6 +131,7 @@ export const lightTheme = {
   accentPrimary: '#ac2461',
   accentSecondary: '#a94a75',
   accentWarning: '#c3590e',
+  accentWarningBackground: '#ebab68',
   accentSuccess: '#2c7a2c',
 
   /* General: Borders */
