@@ -350,22 +350,19 @@ export const WalletConnectProvider = ({
     approved: boolean;
     errorThrown: boolean;
   }) => {
-    const { approved, errorThrown } = verifyResult;
+    try {
+      const { approved, errorThrown } = verifyResult;
 
-    ConfigRenderer.portToAction?.postMessage({
-      task: 'action:wc:approve',
-      data: { approved },
-    });
-
-    if (!approved && !errorThrown) {
       ConfigRenderer.portToAction?.postMessage({
-        task: 'action:toast:show',
-        data: {
-          message: 'WalletConnect Error - Approve the signing account',
-          toastId: `wc-error-${String(Date.now())}`,
-          toastType: 'error',
-        },
+        task: 'action:wc:approve',
+        data: { approved },
       });
+
+      if (!approved && !errorThrown) {
+        throw new WcError('WcAccountNotApproved');
+      }
+    } catch (error) {
+      handleWcError(error);
     }
   };
 
@@ -492,35 +489,18 @@ export const WalletConnectProvider = ({
     console.error(error);
 
     if (error instanceof WcError) {
-      switch (error.statusCode) {
-        case 'WcSessionError': {
-          sendToastError('import', 'Session Error - Establish a new session');
-          break;
-        }
-        case 'WcSessionNotFound': {
-          sendToastError(
-            'extrinsics',
-            'WalletConnect Error - Session not found'
-          );
-          break;
-        }
-        case 'WcInsufficientTxData': {
-          const message = 'WalletConnect Error - Insufficient data';
-          sendToastError('extrinsics', message);
-          break;
-        }
-        case 'WcCancelPending': {
-          const message = 'Error - Cancel pending signature before re-signing';
-          sendToastError('extrinsics', message);
-          break;
-        }
-      }
-      return;
-    }
+      const feedback = wc.wcErrorFeedback[error.statusCode];
+      const view: 'import' | 'extrinsics' =
+        feedback.statusCode === 'WcSessionError' ? 'import' : 'extrinsics';
 
-    error.code === -32000
-      ? sendToastError('extrinsics', 'WalletConnect - Signature canceled')
-      : sendToastError('extrinsics', 'WalletConnect Error');
+      sendToastError(view, feedback.body.msg);
+    } else if (error.code === -32000) {
+      const feedback = wc.wcErrorFeedback['WcCanceledTx'];
+      sendToastError('extrinsics', feedback.body.msg);
+    } else {
+      const feedback = wc.wcErrorFeedback['WcCatchAll'];
+      sendToastError('extrinsics', feedback.body.msg);
+    }
   };
 
   /**
