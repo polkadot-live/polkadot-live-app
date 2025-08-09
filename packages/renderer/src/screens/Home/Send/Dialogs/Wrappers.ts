@@ -11,13 +11,16 @@ export const AccountSourceBadge = styled.div<{
   background-color: ${({ $theme, $selected }) =>
     $selected ? '#275627' : $theme.backgroundDropDown};
   align-items: center;
-  padding: 0.2rem 0.75rem;
+  padding: 0.25rem 0.75rem;
   border-radius: 0.175rem;
 
   > span {
     color: ${({ $theme, $selected }) =>
       $selected ? $theme.textBright : $theme.textColorSecondary};
-    font-size: 0.84rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.82rem;
     opacity: 0.65;
   }
 `;
