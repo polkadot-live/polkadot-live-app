@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.11.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.10.0-alpha...v0.11.0-alpha) (2025-08-09)
+
+
+### Features
+
+* **extrinsics:** store and track transaction hash ([#1049](https://github.com/polkadot-live/polkadot-live-app/issues/1049)) ([1fd4391](https://github.com/polkadot-live/polkadot-live-app/commit/1fd43912673d8c76ae9bdcf7ed831f5dee13eca4))
+* **ui:** display sign method in transaction summary ([#1047](https://github.com/polkadot-live/polkadot-live-app/issues/1047)) ([19f41a5](https://github.com/polkadot-live/polkadot-live-app/commit/19f41a5f65591cf77b4084a71601016fedcd6122))
+* **ui:** display source in account selector dialog ([#1055](https://github.com/polkadot-live/polkadot-live-app/issues/1055)) ([5159c4d](https://github.com/polkadot-live/polkadot-live-app/commit/5159c4ddd9f9ee1fea9ba0b010cfcbc7d759093c))
+* **ui:** integrate block explorer link for extrinsics ([#1050](https://github.com/polkadot-live/polkadot-live-app/issues/1050)) ([123c6df](https://github.com/polkadot-live/polkadot-live-app/commit/123c6df896fd93b86b328bed9105dfd34f8ddcb5))
+* **ui:** offline banner  ([#1053](https://github.com/polkadot-live/polkadot-live-app/issues/1053)) ([bb4ca3f](https://github.com/polkadot-live/polkadot-live-app/commit/bb4ca3f2c02300c31e250f76fda1c41ccda61c47))
+* **ui:** wallet connect signing feedback ([#1054](https://github.com/polkadot-live/polkadot-live-app/issues/1054)) ([2d6403d](https://github.com/polkadot-live/polkadot-live-app/commit/2d6403d3b6ff1a94fbca9910ea7efe245b185eb3))
+* windows release workflow ([#1044](https://github.com/polkadot-live/polkadot-live-app/issues/1044)) ([fce8fa0](https://github.com/polkadot-live/polkadot-live-app/commit/fce8fa016ce38b0c2c9c8961011692249b25c443))
+
+
+### Bug Fixes
+
+* **ci:** markdown link check ([#1045](https://github.com/polkadot-live/polkadot-live-app/issues/1045)) ([dbe3908](https://github.com/polkadot-live/polkadot-live-app/commit/dbe39080e9be5ac5185f4e75ab24ab6ea1bbaf19))
+* **metadata:** ensure Uint8Array input to MerkleizedMetadata ([#1046](https://github.com/polkadot-live/polkadot-live-app/issues/1046)) ([b92ff7c](https://github.com/polkadot-live/polkadot-live-app/commit/b92ff7c8103c06b08ea1caf02295ab0bc74dd9fe))
+* release please workflow ([#1042](https://github.com/polkadot-live/polkadot-live-app/issues/1042)) ([5b3e121](https://github.com/polkadot-live/polkadot-live-app/commit/5b3e1210dfd5ec6306645c6835a32b77b1b4a68e))
+* **ui:** normalise top and bottom spacing around dialogs ([#1048](https://github.com/polkadot-live/polkadot-live-app/issues/1048)) ([9c23767](https://github.com/polkadot-live/polkadot-live-app/commit/9c237674c8237f95e6c8a9d9386490a11bac7d9a))
+* **ui:** styling adjustments ([#1056](https://github.com/polkadot-live/polkadot-live-app/issues/1056)) ([0882926](https://github.com/polkadot-live/polkadot-live-app/commit/08829269c17a7c9275b976140c27245c94b14579))
+
 ## [0.10.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.9.0-alpha...v0.10.0-alpha) (2025-07-30)
 
 
