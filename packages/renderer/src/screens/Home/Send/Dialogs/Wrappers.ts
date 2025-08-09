@@ -4,15 +4,20 @@
 import styled from 'styled-components';
 import type { AnyData } from '@polkadot-live/types/misc';
 
-export const AccountSourceBadge = styled.div<{ $theme: AnyData }>`
-  background-color: ${({ $theme }) => $theme.backgroundDropDown};
+export const AccountSourceBadge = styled.div<{
+  $theme: AnyData;
+  $selected: boolean;
+}>`
+  background-color: ${({ $theme, $selected }) =>
+    $selected ? '#275627' : $theme.backgroundDropDown};
   align-items: center;
   padding: 0.2rem 0.75rem;
   border-radius: 0.175rem;
 
   > span {
-    color: ${({ $theme }) => $theme.textColorSecondary};
-    font-size: 0.85rem;
+    color: ${({ $theme, $selected }) =>
+      $selected ? $theme.textBright : $theme.textColorSecondary};
+    font-size: 0.84rem;
     opacity: 0.65;
   }
 `;
@@ -87,7 +92,7 @@ export const SelectedAddressItem = styled.div<{
   }
 `;
 
-export const AddressItem = styled.div<{ $theme: AnyData; selected: boolean }>`
+export const AddressItem = styled.div<{ $theme: AnyData; $selected: boolean }>`
   --background: ${(props) => props.$theme.backgroundPrimary};
   --background-hover: ${(props) => props.$theme.backgroundPrimaryHover};
   --text-primary: ${(props) => props.$theme.textColorPrimary};
@@ -96,7 +101,7 @@ export const AddressItem = styled.div<{ $theme: AnyData; selected: boolean }>`
   --background-success: ${(props) => props.$theme.accentSuccess};
 
   background-color: ${(props) =>
-    props.selected ? 'var(--background-success)' : 'var(--background)'};
+    props.$selected ? 'var(--background-success)' : 'var(--background)'};
 
   cursor: pointer;
   width: 100%;
@@ -115,13 +120,13 @@ export const AddressItem = styled.div<{ $theme: AnyData; selected: boolean }>`
   }
   h3 {
     color: ${(props) =>
-      props.selected ? 'var(--text-bright)' : 'var(--text-primary)'};
+      props.$selected ? 'var(--text-bright)' : 'var(--text-primary)'};
     font-size: 1.03rem;
   }
   h4 {
     color: ${(props) =>
-      props.selected ? 'var(--text-bright)' : 'var(--text-secondary)'};
-    font-size: 1rem;
+      props.$selected ? 'var(--text-bright)' : 'var(--text-secondary)'};
+    font-size: 0.96rem;
   }
   .ClearBtn {
     transition: opacity 0.1s ease-out;
@@ -131,7 +136,9 @@ export const AddressItem = styled.div<{ $theme: AnyData; selected: boolean }>`
 
   &:hover {
     background-color: ${(props) =>
-      props.selected ? 'var(--background-success)' : 'var(--background-hover)'};
+      props.$selected
+        ? 'var(--background-success)'
+        : 'var(--background-hover)'};
     .ClearBtn {
       opacity: 1;
     }

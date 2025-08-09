@@ -298,8 +298,8 @@ export const DialogSelectAccount = ({
                         return (
                           <AddressItem
                             role="button"
-                            selected={selected}
                             onClick={() => handleAddressClick(a)}
+                            $selected={selected}
                             $theme={theme}
                             key={`${accountRole}-${a.address}`}
                           >
@@ -318,15 +318,15 @@ export const DialogSelectAccount = ({
                                 style={{ flex: 1, minWidth: 0 }}
                               >
                                 <h3 className="text-ellipsis">{a.alias}</h3>
-                                <Styles.FlexRow
-                                  $gap={'0.75rem'}
-                                  style={{ alignItems: 'baseline' }}
-                                >
+                                <Styles.FlexRow>
                                   <h4 className="text-ellipsis">
                                     {ellipsisFn(a.address, 6)}
                                   </h4>
 
-                                  <AccountSourceBadge $theme={theme}>
+                                  <AccountSourceBadge
+                                    $theme={theme}
+                                    $selected={selected}
+                                  >
                                     <span>
                                       {getReadableAccountSource(a.source)}
                                     </span>
