@@ -17,6 +17,7 @@ import type { ChainID } from '@polkadot-live/types/chains';
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 import type { WalletConnectContextInterface } from './types';
 import type {
+  WalletConnectMeta,
   WcErrorStatusCode,
   WcFetchedAddress,
   WcSelectNetwork,
@@ -248,7 +249,9 @@ export const WalletConnectProvider = ({
   /**
    * Try to cache a WalletConnect session or prepare a new one.
    */
-  const tryCacheSession = async () => {
+  const tryCacheSession = async (
+    origin: 'extrinsics' | 'import' | null = null
+  ) => {
     try {
       if (!wcInitializedRef.current) {
         throw new WcError('WcNotInitialized');
@@ -263,7 +266,7 @@ export const WalletConnectProvider = ({
         await cacheWcMeta();
       }
     } catch (error: AnyData) {
-      handleWcError(error);
+      handleWcError(error, origin);
     }
   };
 
@@ -282,6 +285,7 @@ export const WalletConnectProvider = ({
 
   /**
    * Establish a session or use an existing session to fetch addresses.
+   * Initiated from the `import` view.
    */
   const connectWc = async (wcNetworks: WcSelectNetwork[]) => {
     try {
@@ -300,12 +304,13 @@ export const WalletConnectProvider = ({
         window.myAPI.relaySharedState('wc:session:restored', true);
       }
     } catch (error: AnyData) {
-      handleWcError(error);
+      handleWcError(error, 'import');
     }
   };
 
   /**
    * Verify a signing account is approved in the WalletConnect session.
+   * Initiated from the `extrinsics` view.
    */
   const verifySigningAccount = async (
     target: string,
@@ -338,39 +343,38 @@ export const WalletConnectProvider = ({
       const approved = found ? true : false;
       return { approved, errorThrown: false };
     } catch (error) {
-      handleWcError(error);
+      handleWcError(error, 'extrinsics');
       return { approved: false, errorThrown: true };
     }
   };
 
   /**
    * Post verification status to extrinsics window.
+   * Initiated from the `extrinsics` view.
    */
   const postApprovedResult = (verifyResult: {
     approved: boolean;
     errorThrown: boolean;
   }) => {
-    const { approved, errorThrown } = verifyResult;
+    try {
+      const { approved, errorThrown } = verifyResult;
 
-    ConfigRenderer.portToAction?.postMessage({
-      task: 'action:wc:approve',
-      data: { approved },
-    });
-
-    if (!approved && !errorThrown) {
       ConfigRenderer.portToAction?.postMessage({
-        task: 'action:toast:show',
-        data: {
-          message: 'WalletConnect Error - Approve the signing account',
-          toastId: `wc-error-${String(Date.now())}`,
-          toastType: 'error',
-        },
+        task: 'action:wc:approve',
+        data: { approved },
       });
+
+      if (!approved && !errorThrown) {
+        throw new WcError('WcAccountNotApproved');
+      }
+    } catch (error) {
+      handleWcError(error, 'extrinsics');
     }
   };
 
   /**
    * Ensure a session exists with the signing account approved before signing an extrinsic.
+   * Initiated from the `extrinsics` view.
    */
   const wcEstablishSessionForExtrinsic = async (
     signingAddress: string,
@@ -381,12 +385,13 @@ export const WalletConnectProvider = ({
       const result = await verifySigningAccount(signingAddress, chainId);
       postApprovedResult(result);
     } catch (error: AnyData) {
-      handleWcError(error);
+      handleWcError(error, 'extrinsics');
     }
   };
 
   /**
    * Sign an extrinsic via WalletConnect.
+   * Initiated from the `extrinsics` view.
    */
   const wcSignExtrinsic = async (info: ExtrinsicInfo) => {
     try {
@@ -454,7 +459,7 @@ export const WalletConnectProvider = ({
     } catch (error: AnyData) {
       window.myAPI.relaySharedState('extrinsic:building', false);
       wcTxSignMap.current.delete(info.txId);
-      handleWcError(error);
+      handleWcError(error, 'extrinsics');
     }
   };
 
@@ -488,57 +493,49 @@ export const WalletConnectProvider = ({
   /**
    * Handle a WalletConnect error.
    */
-  const handleWcError = (error: AnyData) => {
+  const handleWcError = (
+    error: AnyData,
+    origin: 'import' | 'extrinsics' | null = null
+  ) => {
     console.error(error);
-
-    if (error instanceof WcError) {
-      switch (error.statusCode) {
-        case 'WcSessionError': {
-          sendToastError('import', 'Session Error - Establish a new session');
-          break;
-        }
-        case 'WcSessionNotFound': {
-          sendToastError(
-            'extrinsics',
-            'WalletConnect Error - Session not found'
-          );
-          break;
-        }
-        case 'WcInsufficientTxData': {
-          const message = 'WalletConnect Error - Insufficient data';
-          sendToastError('extrinsics', message);
-          break;
-        }
-        case 'WcCancelPending': {
-          const message = 'Error - Cancel pending signature before re-signing';
-          sendToastError('extrinsics', message);
-          break;
-        }
-      }
+    if (!origin) {
       return;
     }
 
-    error.code === -32000
-      ? sendToastError('extrinsics', 'WalletConnect - Signature canceled')
-      : sendToastError('extrinsics', 'WalletConnect Error');
+    if (error instanceof WcError) {
+      const feedback = wc.wcErrorFeedback[error.statusCode];
+      origin === 'extrinsics'
+        ? sendWcError(feedback)
+        : sendToastError(origin, feedback.body.msg);
+    } else if (error.code === -32000) {
+      sendWcError(wc.wcErrorFeedback['WcCanceledTx']);
+    } else {
+      sendWcError(wc.wcErrorFeedback['WcCatchAll']);
+    }
   };
 
   /**
    * Util to render a toast error in the target window.
    */
   const sendToastError = (target: 'import' | 'extrinsics', message: string) => {
-    const port =
-      target === 'import'
-        ? ConfigRenderer.portToImport
-        : ConfigRenderer.portToAction;
-
-    port?.postMessage({
-      task: 'action:toast:show',
+    const view = target === 'import' ? 'import' : 'action';
+    ConfigRenderer.portToImport?.postMessage({
+      task: `${view}:toast:show`,
       data: {
         message,
         toastId: `wc-error-${String(Date.now())}`,
         toastType: 'error',
       },
+    });
+  };
+
+  /**
+   * Util to send WalletConnect error data to extrinsics window.
+   */
+  const sendWcError = (message: WalletConnectMeta) => {
+    ConfigRenderer.portToAction?.postMessage({
+      task: 'action:wc:error',
+      data: message,
     });
   };
 

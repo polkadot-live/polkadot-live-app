@@ -4,8 +4,10 @@
 import type { ChainID } from './chains';
 
 export type WcErrorStatusCode =
-  | 'WcCancelPending'
+  | 'WcAccountNotApproved'
+  | 'WcCatchAll'
   | 'WcCanceledTx'
+  | 'WcCancelPending'
   | 'WcInsufficientTxData'
   | 'WcNotInitialized'
   | 'WcSessionError'
@@ -23,4 +25,13 @@ export interface WcFetchedAddress {
   publicKeyHex: string;
   substrate: string;
   selected: boolean;
+}
+
+/**
+ * Types for handling WalletConnect feedback.
+ */
+export interface WalletConnectMeta {
+  ack: 'failure' | 'success';
+  statusCode: WcErrorStatusCode;
+  body: { msg: string };
 }

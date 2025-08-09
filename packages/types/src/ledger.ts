@@ -56,7 +56,7 @@ export type LedgerErrorStatusCode =
   | 'UnexpectedBufferEnd'
   | 'ValueOutOfRange'
   | 'WrongMetadataDigest'
-  /** Custom */
+  // Custom
   | 'TransportUndefined'
   | 'TxDataUndefined'
   | 'TxDynamicInfoUndefined'

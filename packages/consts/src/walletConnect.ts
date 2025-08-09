@@ -2,7 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { WcSelectNetwork } from '@polkadot-live/types/walletConnect';
+import type {
+  WalletConnectMeta,
+  WcErrorStatusCode,
+  WcSelectNetwork,
+} from '@polkadot-live/types/walletConnect';
 
 export const WC_PROJECT_ID = 'ebded8e9ff244ba8b6d173b6c2885d87';
 export const WC_RELAY_URL = 'wss://relay.walletconnect.com';
@@ -59,4 +63,50 @@ export const getWalletConnectChainId = (chainId: ChainID) => {
     case 'Westend Asset Hub':
       return WC_WESTMINT_CAIP_ID;
   }
+};
+
+/**
+ * WalletConnect error feedback.
+ */
+export const wcErrorFeedback: Record<WcErrorStatusCode, WalletConnectMeta> = {
+  WcAccountNotApproved: {
+    ack: 'failure',
+    statusCode: 'WcAccountNotApproved',
+    body: { msg: 'The signing account is not authorized in the session.' },
+  },
+  WcCancelPending: {
+    ack: 'failure',
+    statusCode: 'WcCancelPending',
+    body: { msg: 'Cancel the pending signing request to proceed.' },
+  },
+  WcCatchAll: {
+    ack: 'failure',
+    statusCode: 'WcCatchAll',
+    body: { msg: 'Something went wrong with WalletConnect.' },
+  },
+  WcCanceledTx: {
+    ack: 'failure',
+    statusCode: 'WcCanceledTx',
+    body: { msg: 'The signing request has been canceled.' },
+  },
+  WcInsufficientTxData: {
+    ack: 'failure',
+    statusCode: 'WcInsufficientTxData',
+    body: { msg: 'Unable to proceed with signing due to incomplete data.' },
+  },
+  WcNotInitialized: {
+    ack: 'failure',
+    statusCode: 'WcNotInitialized',
+    body: { msg: 'WalletConnect is unavailable.' },
+  },
+  WcSessionError: {
+    ack: 'failure',
+    statusCode: 'WcSessionError',
+    body: { msg: 'Establish a new WalletConnect session to proceed.' },
+  },
+  WcSessionNotFound: {
+    ack: 'failure',
+    statusCode: 'WcSessionNotFound',
+    body: { msg: 'WalletConnect session not found.' },
+  },
 };

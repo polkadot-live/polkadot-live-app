@@ -894,7 +894,7 @@ export const useMainMessagePorts = () => {
                 ev.data.data;
 
               setSigningChain(chainId);
-              await tryCacheSession();
+              await tryCacheSession('extrinsics');
               const result = await verifySigningAccount(target, chainId);
               postApprovedResult(result);
               break;
