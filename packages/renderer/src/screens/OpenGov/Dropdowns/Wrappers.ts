@@ -12,6 +12,7 @@ const mixinButton = css`
   .icon {
     color: var(--text-color-primary);
     transition: all 0.15s ease-out;
+    opacity: 1;
   }
 `;
 
@@ -56,11 +57,17 @@ export const RoundLeftButton = styled.button<{ $dark?: boolean }>`
   border-bottom-left-radius: 0.15rem;
   width: 37px;
 
-  &:hover {
+  &:hover:not(:disabled) {
     filter: ${(props) =>
       props.$dark ? 'brightness(90%)' : 'brightness(110%)'};
     .icon {
       color: var(--text-bright);
     }
+  }
+  &:disabled {
+    .icon {
+      opacity: 0.3;
+    }
+    cursor: not-allowed;
   }
 `;
