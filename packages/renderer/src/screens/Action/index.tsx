@@ -45,11 +45,10 @@ export const FadeAction = () => {
   // Set up port communication for `action` window.
   useActionMessagePorts();
   useDebug(window.myAPI.getWindowId());
-  const { getOnlineMode, stateLoaded } = useConnections();
+  const { stateLoaded } = useConnections();
 
   return (
     <FadeInWrapper show={stateLoaded}>
-      {!getOnlineMode() && <UI.OfflineBanner />}
       <Action />
     </FadeInWrapper>
   );
@@ -87,7 +86,7 @@ export const Action = () => {
       : setPage(page < pageCount ? page + 1 : page);
   };
 
-  const { cacheGet, getTheme } = useConnections();
+  const { cacheGet, getOnlineMode, getTheme } = useConnections();
   const isBuildingExtrinsic = cacheGet('extrinsic:building');
   const darkMode = cacheGet('mode:dark');
   const theme = getTheme();
@@ -128,6 +127,7 @@ export const Action = () => {
 
   return (
     <UI.ScrollableMax>
+      {!getOnlineMode() && <UI.OfflineBanner />}
       <PadWrapper>
         {isBuildingExtrinsic && (
           <BarLoader
