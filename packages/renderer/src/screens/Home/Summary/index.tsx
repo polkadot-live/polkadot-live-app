@@ -5,6 +5,7 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 
+import { getReadableAccountSource } from '@polkadot-live/core';
 import { getSupportedSources } from '@polkadot-live/consts/chains';
 import { useEffect, useRef, useState } from 'react';
 import { useSideNav } from '@polkadot-live/ui/contexts';
@@ -34,7 +35,6 @@ export const Summary: React.FC = () => {
     useEvents();
 
   const {
-    getReadableAccountSource,
     getAllAccounts,
     getSubscriptionCountForAccount,
     getTotalSubscriptionCount,

@@ -4,6 +4,19 @@
 import styled from 'styled-components';
 import type { AnyData } from '@polkadot-live/types/misc';
 
+export const AccountSourceBadge = styled.div<{ $theme: AnyData }>`
+  background-color: ${({ $theme }) => $theme.backgroundDropDown};
+  align-items: center;
+  padding: 0.2rem 0.75rem;
+  border-radius: 0.175rem;
+
+  > span {
+    color: ${({ $theme }) => $theme.textColorSecondary};
+    font-size: 0.85rem;
+    opacity: 0.65;
+  }
+`;
+
 export const AddressesWrapper = styled.div<{ $theme: AnyData }>`
   border-radius: 0.375rem;
   padding: 0.5rem;

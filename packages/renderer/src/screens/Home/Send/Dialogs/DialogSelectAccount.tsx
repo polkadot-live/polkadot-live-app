@@ -8,10 +8,12 @@ import * as Icons from '@radix-ui/react-icons';
 import { useConnections } from '@ren/contexts/common';
 import { useEffect, useState } from 'react';
 import { checkAddress } from '@polkadot/util-crypto';
+import { getReadableAccountSource } from '@polkadot-live/core';
 import { Identicon } from '@polkadot-live/ui/components';
 import { ellipsisFn } from '@w3ux/utils';
 import { TriggerSelectAccount } from '.';
 import {
+  AccountSourceBadge,
   AddressesWrapper,
   AddressItem,
   ConfirmBtn,
@@ -316,9 +318,20 @@ export const DialogSelectAccount = ({
                                 style={{ flex: 1, minWidth: 0 }}
                               >
                                 <h3 className="text-ellipsis">{a.alias}</h3>
-                                <h4 className="text-ellipsis">
-                                  {ellipsisFn(a.address, 12)}
-                                </h4>
+                                <Styles.FlexRow
+                                  $gap={'0.75rem'}
+                                  style={{ alignItems: 'baseline' }}
+                                >
+                                  <h4 className="text-ellipsis">
+                                    {ellipsisFn(a.address, 6)}
+                                  </h4>
+
+                                  <AccountSourceBadge $theme={theme}>
+                                    <span>
+                                      {getReadableAccountSource(a.source)}
+                                    </span>
+                                  </AccountSourceBadge>
+                                </Styles.FlexRow>
                               </Styles.FlexColumn>
                               {selected && (
                                 <span className="ClearBtn">

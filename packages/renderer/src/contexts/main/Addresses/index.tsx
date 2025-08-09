@@ -116,27 +116,6 @@ export const AddressesProvider = ({
       []
     );
 
-  /// Get readable account source for rendering.
-  const getReadableAccountSource = (source: AccountSource): string => {
-    switch (source) {
-      case 'ledger': {
-        return 'Ledger';
-      }
-      case 'read-only': {
-        return 'Read Only';
-      }
-      case 'vault': {
-        return 'Vault';
-      }
-      case 'system': {
-        return 'System';
-      }
-      case 'wallet-connect': {
-        return 'WalletConnect';
-      }
-    }
-  };
-
   /// Get subscription count for address.
   const getSubscriptionCountForAccount = (
     flattened: FlattenedAccountData
@@ -177,7 +156,6 @@ export const AddressesProvider = ({
         importAddress,
         removeAddress,
         getAddress,
-        getReadableAccountSource,
         getAllAccounts,
         getSubscriptionCountForAccount,
         getTotalSubscriptionCount,
