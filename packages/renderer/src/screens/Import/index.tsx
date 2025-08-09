@@ -22,11 +22,10 @@ export const FadeImport = () => {
   // Set up port communication for `import` window.
   useImportMessagePorts();
   useDebug(window.myAPI.getWindowId());
-  const { getOnlineMode, stateLoaded } = useConnections();
+  const { stateLoaded } = useConnections();
 
   return (
     <FadeInWrapper show={stateLoaded}>
-      {!getOnlineMode() && <UI.OfflineBanner />}
       <Import />
     </FadeInWrapper>
   );
@@ -34,6 +33,7 @@ export const FadeImport = () => {
 
 export const Import: React.FC = () => {
   const { openHelp } = useHelp();
+  const { getOnlineMode } = useConnections();
 
   // Active section
   const [section, setSection] = useState<number>(0);
@@ -89,6 +89,7 @@ export const Import: React.FC = () => {
           }}
         >
           <UI.ScrollableMax>
+            {!getOnlineMode() && <UI.OfflineBanner />}
             <Home setSection={setSection} setSource={setSource} />
             <UI.LinksFooter openHelp={openHelp} />
           </UI.ScrollableMax>
@@ -104,6 +105,7 @@ export const Import: React.FC = () => {
         >
           {section === 1 && (
             <UI.ScrollableMax>
+              {!getOnlineMode() && <UI.OfflineBanner />}
               {renderImportScreen()}
               <UI.LinksFooter openHelp={openHelp} />
             </UI.ScrollableMax>

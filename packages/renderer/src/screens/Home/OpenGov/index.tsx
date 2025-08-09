@@ -4,6 +4,7 @@
 import { useManage } from '@ren/contexts/main';
 import { useState } from 'react';
 import { CarouselWrapper } from '../Wrappers';
+import { FlexColumn } from '@polkadot-live/ui/styles';
 import { MainHeading } from '@polkadot-live/ui/components';
 import { Wrapper } from '../Manage/Wrappers';
 import { Networks } from './Networks';
@@ -15,14 +16,7 @@ export const OpenGov = () => {
   const [breadcrumb, setBreadcrumb] = useState<string>('');
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        rowGap: '0.75rem',
-        height: '100%',
-      }}
-    >
+    <FlexColumn $rowGap={'1rem'} style={{ height: '100%' }}>
       <MainHeading style={{ padding: '2rem 1rem 0' }}>
         OpenGov Subscriptions
       </MainHeading>
@@ -61,6 +55,6 @@ export const OpenGov = () => {
           <Subscriptions breadcrumb={breadcrumb} setSection={setSection} />
         </div>
       </CarouselWrapper>
-    </div>
+    </FlexColumn>
   );
 };

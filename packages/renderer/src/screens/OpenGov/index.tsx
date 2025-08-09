@@ -47,13 +47,13 @@ export const FadeOpenGov = () => {
 
   return (
     <FadeInWrapper show={stateLoaded}>
-      {!getOnlineMode() && <UI.OfflineBanner />}
       <OpenGov />
     </FadeInWrapper>
   );
 };
 
 export const OpenGov: React.FC = () => {
+  const { getOnlineMode } = useConnections();
   const { openHelp } = useHelp();
   const [section, setSection] = useState<number>(0);
   const [sectionContent, setSectionContent] = useState('');
@@ -79,6 +79,7 @@ export const OpenGov: React.FC = () => {
           style={{ height: '100%' }}
         >
           <UI.ScrollableMax>
+            {!getOnlineMode() && <UI.OfflineBanner />}
             <Styles.PadWrapper>
               <Overview
                 setSection={setSection}
