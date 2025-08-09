@@ -7,6 +7,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { planckToUnit, rmCommas } from '@w3ux/utils';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
+  AccountSource,
   NominationPoolCommission,
   NominationPoolRoles,
 } from '@polkadot-live/types/accounts';
@@ -87,6 +88,30 @@ export const formatDecimal = (value: string): string => {
   const padded = trimmed.padEnd(2, '0');
 
   return `${intPart}.${padded}`;
+};
+
+/**
+ * @name getReadableAccountSource
+ * @summary Get readable account source for rendering.
+ **/
+export const getReadableAccountSource = (source: AccountSource): string => {
+  switch (source) {
+    case 'ledger': {
+      return 'Ledger';
+    }
+    case 'read-only': {
+      return 'Read Only';
+    }
+    case 'vault': {
+      return 'Vault';
+    }
+    case 'system': {
+      return 'System';
+    }
+    case 'wallet-connect': {
+      return 'WalletConnect';
+    }
+  }
 };
 
 /**

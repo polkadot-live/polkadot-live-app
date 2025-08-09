@@ -8,10 +8,12 @@ import * as Icons from '@radix-ui/react-icons';
 import { useConnections } from '@ren/contexts/common';
 import { useEffect, useState } from 'react';
 import { checkAddress } from '@polkadot/util-crypto';
+import { getReadableAccountSource } from '@polkadot-live/core';
 import { Identicon } from '@polkadot-live/ui/components';
 import { ellipsisFn } from '@w3ux/utils';
 import { TriggerSelectAccount } from '.';
 import {
+  AccountSourceBadge,
   AddressesWrapper,
   AddressItem,
   ConfirmBtn,
@@ -296,8 +298,8 @@ export const DialogSelectAccount = ({
                         return (
                           <AddressItem
                             role="button"
-                            selected={selected}
                             onClick={() => handleAddressClick(a)}
+                            $selected={selected}
                             $theme={theme}
                             key={`${accountRole}-${a.address}`}
                           >
@@ -316,9 +318,20 @@ export const DialogSelectAccount = ({
                                 style={{ flex: 1, minWidth: 0 }}
                               >
                                 <h3 className="text-ellipsis">{a.alias}</h3>
-                                <h4 className="text-ellipsis">
-                                  {ellipsisFn(a.address, 12)}
-                                </h4>
+                                <Styles.FlexRow>
+                                  <h4 className="text-ellipsis">
+                                    {ellipsisFn(a.address, 6)}
+                                  </h4>
+
+                                  <AccountSourceBadge
+                                    $theme={theme}
+                                    $selected={selected}
+                                  >
+                                    <span>
+                                      {getReadableAccountSource(a.source)}
+                                    </span>
+                                  </AccountSourceBadge>
+                                </Styles.FlexRow>
                               </Styles.FlexColumn>
                               {selected && (
                                 <span className="ClearBtn">

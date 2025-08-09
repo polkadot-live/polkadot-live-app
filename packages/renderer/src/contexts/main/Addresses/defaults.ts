@@ -11,7 +11,6 @@ export const defaultAddressesContext: AddressesContextInterface = {
   importAddress: (n, a) => new Promise(() => {}),
   removeAddress: (n, a) => new Promise(() => {}),
   getAddress: (a) => null,
-  getReadableAccountSource: () => '',
   getAllAccounts: () => [],
   getSubscriptionCountForAccount: () => 0,
   getTotalSubscriptionCount: () => 0,

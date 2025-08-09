@@ -25,7 +25,6 @@ export interface AddressesContextInterface {
     fromBackup: boolean
   ) => Promise<void>;
   removeAddress: (chainId: ChainID, address: string) => Promise<void>;
-  getReadableAccountSource: (source: AccountSource) => string;
   getSubscriptionCountForAccount: (flattened: FlattenedAccountData) => number;
   getTotalSubscriptionCount: () => number;
 }
