@@ -50,11 +50,11 @@ export const ExtrinsicItemContent = ({
       return (
         <ExtrinsicItemContentWrapper>
           <div className="WarningBox">
-            <FlexRow $gap={'0.75rem'}>
+            <FlexRow $gap={'0.6rem'}>
               <FontAwesomeIcon icon={FA.faExclamationTriangle} />
               <span>
-                Confirm the send amount and recipient on your device before
-                signing the transaction.
+                Review the send amount and recipient on your device before
+                signing.
               </span>
             </FlexRow>
           </div>
