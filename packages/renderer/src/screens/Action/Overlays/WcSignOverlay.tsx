@@ -1,17 +1,19 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as FA from '@fortawesome/free-solid-svg-icons';
+import WalletConnectSVG from '@w3ux/extension-assets/WalletConnect.svg?react';
 import { ConfigAction } from '@polkadot-live/core';
 import { useConnections } from '@ren/contexts/common';
 import { useEffect } from 'react';
-import { useWcVerifier } from '@ren/contexts/action';
-import WalletConnectSVG from '@w3ux/extension-assets/WalletConnect.svg?react';
-import { ButtonPrimary, ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
-import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { WcOverlayWrapper } from './Wrappers';
-import { PuffLoader } from 'react-spinners';
 import { useOverlay } from '@polkadot-live/ui/contexts';
+import { useWcFeedback, useWcVerifier } from '@ren/contexts/action';
+import { ButtonPrimary, ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
 import { FlexRow } from '@polkadot-live/ui/styles';
+import { InfoCard } from '@polkadot-live/ui/components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { PuffLoader } from 'react-spinners';
+import { WcOverlayWrapper } from './Wrappers';
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 
 interface WcSignOverlayProps {
@@ -21,6 +23,7 @@ interface WcSignOverlayProps {
 export const WcSignOverlay = ({ info }: WcSignOverlayProps) => {
   const { cacheGet } = useConnections();
   const isBuildingExtrinsic = cacheGet('extrinsic:building');
+  const { message: wcFeedback, clearFeedback } = useWcFeedback();
 
   const { setDisableClose, setStatus: setOverlayStatus } = useOverlay();
   const {
@@ -39,6 +42,7 @@ export const WcSignOverlay = ({ info }: WcSignOverlayProps) => {
     checkVerifiedSession(info);
 
     return () => {
+      clearFeedback();
       resetVerification();
     };
   }, []);
@@ -71,6 +75,23 @@ export const WcSignOverlay = ({ info }: WcSignOverlayProps) => {
 
   return (
     <WcOverlayWrapper>
+      {wcFeedback && (
+        <InfoCard kind={'warning'} style={{ width: '100%' }}>
+          <span className="Label">
+            <span style={{ marginRight: '0.6rem' }}>
+              <FontAwesomeIcon
+                icon={FA.faExclamationTriangle}
+                transform={'shrink-1'}
+              />
+            </span>
+            {wcFeedback.body.msg}
+          </span>
+          <button className="dismiss" onClick={() => clearFeedback()}>
+            <FontAwesomeIcon icon={FA.faX} />
+          </button>
+        </InfoCard>
+      )}
+
       <WalletConnectSVG style={{ height: '3rem' }} />
       {wcAccountApproved ? (
         <div className="ContentColumn">
@@ -91,7 +112,7 @@ export const WcSignOverlay = ({ info }: WcSignOverlayProps) => {
               text="Sign"
               disabled={isBuildingExtrinsic}
               onClick={() => handleSign()}
-              iconRight={faChevronRight}
+              iconRight={FA.faChevronRight}
               iconTransform="shrink-3"
             />
           </FlexRow>
@@ -136,7 +157,7 @@ export const WcSignOverlay = ({ info }: WcSignOverlayProps) => {
                   text="Connect"
                   disabled={isBuildingExtrinsic}
                   onClick={() => initVerifiedSession(info)}
-                  iconRight={faChevronRight}
+                  iconRight={FA.faChevronRight}
                   iconTransform="shrink-3"
                 />
               </FlexRow>

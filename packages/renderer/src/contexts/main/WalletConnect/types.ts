@@ -15,7 +15,7 @@ export interface WalletConnectContextInterface {
     errorThrown: boolean;
   }) => void;
   setSigningChain: (signingChain: ChainID | null) => void;
-  tryCacheSession: () => Promise<void>;
+  tryCacheSession: (origin?: 'extrinsics' | 'import' | null) => Promise<void>;
   wcEstablishSessionForExtrinsic: (
     signingAddress: string,
     chainId: ChainID

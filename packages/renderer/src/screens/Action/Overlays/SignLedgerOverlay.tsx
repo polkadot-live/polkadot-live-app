@@ -61,12 +61,16 @@ export const SignLedgerOverlay = ({ info }: LedgerSignOverlayProps) => {
   return (
     <LedgerOverlayWrapper>
       {ledgerFeedback && (
-        <UI.InfoCard
-          kind={'warning'}
-          icon={faExclamationTriangle}
-          style={{ width: '100%' }}
-        >
-          <span>{ledgerFeedback.text}</span>
+        <UI.InfoCard kind={'warning'} style={{ width: '100%' }}>
+          <span className="Label">
+            <span style={{ marginRight: '0.6rem' }}>
+              <FontAwesomeIcon
+                icon={faExclamationTriangle}
+                transform={'shrink-1'}
+              />
+            </span>
+            {ledgerFeedback.text}
+          </span>
           <button className="dismiss" onClick={() => clearFeedback()}>
             <FontAwesomeIcon icon={faX} />
           </button>

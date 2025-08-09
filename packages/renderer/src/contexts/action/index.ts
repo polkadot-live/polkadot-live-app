@@ -3,4 +3,5 @@
 
 export * from './LedgerFeedback';
 export * from './TxMeta';
+export * from './WcFeedback';
 export * from './WcVerifier';

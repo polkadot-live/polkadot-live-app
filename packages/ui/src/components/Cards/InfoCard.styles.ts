@@ -29,8 +29,11 @@ export const InfoCardWrapper = styled.div`
       flex: 1;
     }
   }
+  .Label {
+    line-height: 1.4rem;
+  }
 
-  span {
+  > span {
     display: flex;
     gap: 0.9rem;
     align-items: center;

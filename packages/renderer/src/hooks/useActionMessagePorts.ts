@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import {
   useLedgerFeedback,
   useTxMeta,
+  useWcFeedback,
   useWcVerifier,
 } from '@ren/contexts/action';
 import { useOverlay } from '@polkadot-live/ui/contexts';
@@ -13,6 +14,7 @@ import { renderToast } from '@polkadot-live/ui/utils';
 import type { ActionMeta, TxStatus } from '@polkadot-live/types/tx';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { LedgerErrorMeta } from '@polkadot-live/types/ledger';
+import type { WalletConnectMeta } from '@polkadot-live/types/walletConnect';
 
 export const useActionMessagePorts = () => {
   /**
@@ -31,6 +33,7 @@ export const useActionMessagePorts = () => {
   } = useTxMeta();
 
   const { resolveMessage, setIsSigning } = useLedgerFeedback();
+  const { resolveMessage: resolveWcMessage, clearFeedback } = useWcFeedback();
   const { setDisableClose, setStatus: setOverlayStatus } = useOverlay();
   const { setWcAccountApproved, setWcAccountVerifying } = useWcVerifier();
 
@@ -181,6 +184,12 @@ export const useActionMessagePorts = () => {
               const { approved }: { approved: boolean } = ev.data.data;
               setWcAccountApproved(approved);
               setWcAccountVerifying(false);
+              approved && clearFeedback();
+              break;
+            }
+            case 'action:wc:error': {
+              const feedback: WalletConnectMeta = ev.data.data;
+              resolveWcMessage(feedback);
               break;
             }
             case 'action:wc:modal:close': {
