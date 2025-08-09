@@ -45,6 +45,10 @@ export const ActionBtn = styled.button`
   &:hover:not(:disabled) {
     background-color: var(--button-background-primary-hover);
   }
+  &:disabled {
+    color: var(--text-dimmed);
+    cursor: not-allowed;
+  }
 `;
 
 export const HardwareAddressWrapper = styled.div`
