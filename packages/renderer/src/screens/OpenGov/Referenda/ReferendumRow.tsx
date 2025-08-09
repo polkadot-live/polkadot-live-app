@@ -123,10 +123,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                 </span>
               </TooltipRx>
             ) : (
-              <TooltipRx
-                theme={theme}
-                text={isOnline ? 'Unsubscribe All' : 'Currently Offline'}
-              >
+              <TooltipRx theme={theme} text={'Unsubscribe All'}>
                 <span>
                   <RoundLeftButton
                     $dark={darkMode}
