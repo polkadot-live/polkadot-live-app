@@ -111,7 +111,10 @@ export const Subscriptions = ({
     // Update managed tasks in intervals controller.
     tasks[0].status === 'enable'
       ? IntervalsController.insertSubscriptions(tasks)
-      : IntervalsController.removeSubscriptions(tasks);
+      : IntervalsController.removeSubscriptions(
+          cacheGet('mode:connected'),
+          tasks
+        );
 
     // Update React and store state.
     for (const task of tasks) {

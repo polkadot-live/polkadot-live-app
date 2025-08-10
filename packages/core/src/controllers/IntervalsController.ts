@@ -94,7 +94,10 @@ export class IntervalsController {
    * @name removeSubscriptions
    * @summary Allows removing multiple interval subscriptions from this controller's map.
    */
-  static removeSubscriptions(subscriptions: IntervalSubscription[]) {
+  static removeSubscriptions(
+    isOnline: boolean,
+    subscriptions: IntervalSubscription[]
+  ) {
     // Stop interval.
     this.stopInterval();
 
@@ -116,7 +119,7 @@ export class IntervalsController {
         : this.subscriptions.delete(chainId);
     }
 
-    if (this.subscriptions.size > 0) {
+    if (isOnline && this.subscriptions.size > 0) {
       this.initClock();
     }
   }
@@ -129,12 +132,8 @@ export class IntervalsController {
     subscription: IntervalSubscription,
     isOnline = true
   ) {
-    console.log('REMOVE SUBSCRIPTION:');
-    console.log(subscription);
-
     // Stop interval.
     this.stopInterval();
-
     const { chainId, action, referendumId } = subscription;
 
     // This task may not be enabled and thus not managed by this controller.
@@ -171,7 +170,6 @@ export class IntervalsController {
     this.stopInterval();
 
     const { chainId, action, referendumId } = task;
-
     const updated = this.subscriptions
       .get(chainId)!
       .map((t) =>

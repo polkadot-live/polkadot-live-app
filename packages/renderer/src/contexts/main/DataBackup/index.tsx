@@ -177,6 +177,7 @@ export const DataBackupProvider = ({
     const p_array: [AccountSource, string][] = JSON.parse(s_addresses);
     const p_map = new Map<AccountSource, string>(p_array);
     const importWindowOpen = await window.myAPI.isViewOpen('import');
+    const isOnline = cacheGet('mode:connected');
 
     for (const [source, ser] of p_map.entries()) {
       const genericAccounts: ImportedGenericAccount[] = JSON.parse(ser);
@@ -184,7 +185,6 @@ export const DataBackupProvider = ({
       // Process parsed addresses.
       for (const genericAccount of genericAccounts) {
         const { encodedAccounts, publicKeyHex } = genericAccount;
-        const isOnline = cacheGet('mode:connected');
 
         // Iterate encoded accounts and set `isImported` flag.
         for (const en of Object.values(encodedAccounts)) {
@@ -314,7 +314,11 @@ export const DataBackupProvider = ({
     }
 
     if (updates.length > 0) {
-      IntervalsController.removeSubscriptions(updates);
+      IntervalsController.removeSubscriptions(
+        cacheGet('mode:connected'),
+        updates
+      );
+
       updates.forEach((t) => {
         t.status === 'enable' && IntervalsController.insertSubscription(t);
         tryUpdateDynamicIntervalTask(t);

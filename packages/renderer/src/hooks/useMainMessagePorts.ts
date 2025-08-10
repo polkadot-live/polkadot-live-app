@@ -725,7 +725,7 @@ export const useMainMessagePorts = () => {
     const parsed: IntervalSubscription[] = JSON.parse(tasks);
 
     // Update managed tasks in intervals controller.
-    IntervalsController.removeSubscriptions(parsed);
+    IntervalsController.removeSubscriptions(cacheGet('mode:connected'), parsed);
 
     // Update React and store state.
     for (const task of parsed) {
