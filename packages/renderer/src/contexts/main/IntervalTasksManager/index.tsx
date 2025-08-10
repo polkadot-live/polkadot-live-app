@@ -43,8 +43,8 @@ export const IntervalTasksManagerProvider = ({
 
     // Handle task in intervals controller.
     newStatus === 'enable'
-      ? IntervalsController.insertSubscription(task)
-      : IntervalsController.removeSubscription(task);
+      ? IntervalsController.insertSubscription(task, getOnlineMode())
+      : IntervalsController.removeSubscription(task, getOnlineMode());
 
     // Update main renderer state.
     updateIntervalSubscription(task);

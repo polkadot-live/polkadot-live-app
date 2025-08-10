@@ -46,7 +46,7 @@ export const DataBackupProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { cacheGet } = useConnections();
+  const { getOnlineMode } = useConnections();
   const { setEvents } = useEvents();
 
   const { tryAddIntervalSubscription, tryUpdateDynamicIntervalTask } =
@@ -177,7 +177,7 @@ export const DataBackupProvider = ({
     const p_array: [AccountSource, string][] = JSON.parse(s_addresses);
     const p_map = new Map<AccountSource, string>(p_array);
     const importWindowOpen = await window.myAPI.isViewOpen('import');
-    const isOnline = cacheGet('mode:connected');
+    const isOnline = getOnlineMode();
 
     for (const [source, ser] of p_map.entries()) {
       const genericAccounts: ImportedGenericAccount[] = JSON.parse(ser);
@@ -303,10 +303,11 @@ export const DataBackupProvider = ({
     const updates: IntervalSubscription[] = JSON.parse(
       map.get('update') || '[]'
     );
+    const isOnline = getOnlineMode();
 
     // Update manage subscriptions in controller and update React state.
     if (inserts.length > 0) {
-      IntervalsController.insertSubscriptions(inserts);
+      IntervalsController.insertSubscriptions(inserts, isOnline);
       inserts.forEach((t) => {
         tryAddIntervalSubscription(t);
         addIntervalSubscription(t);
@@ -314,13 +315,11 @@ export const DataBackupProvider = ({
     }
 
     if (updates.length > 0) {
-      IntervalsController.removeSubscriptions(
-        cacheGet('mode:connected'),
-        updates
-      );
+      IntervalsController.removeSubscriptions(updates, isOnline);
 
       updates.forEach((t) => {
-        t.status === 'enable' && IntervalsController.insertSubscription(t);
+        t.status === 'enable' &&
+          IntervalsController.insertSubscription(t, isOnline);
         tryUpdateDynamicIntervalTask(t);
         updateIntervalSubscription(t);
       });

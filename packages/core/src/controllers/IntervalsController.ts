@@ -40,7 +40,7 @@ export class IntervalsController {
    */
   static insertSubscriptions(
     subscriptions: IntervalSubscription[],
-    isOnline = true
+    isOnline: boolean
   ) {
     // Stop interval if it is running.
     this.stopInterval();
@@ -70,7 +70,7 @@ export class IntervalsController {
    */
   static insertSubscription(
     subscription: IntervalSubscription,
-    isOnline = true
+    isOnline: boolean
   ) {
     console.log('INSERT SUBSCRIPTION:');
     console.log(subscription);
@@ -95,8 +95,8 @@ export class IntervalsController {
    * @summary Allows removing multiple interval subscriptions from this controller's map.
    */
   static removeSubscriptions(
-    isOnline: boolean,
-    subscriptions: IntervalSubscription[]
+    subscriptions: IntervalSubscription[],
+    isOnline: boolean
   ) {
     // Stop interval.
     this.stopInterval();
@@ -130,7 +130,7 @@ export class IntervalsController {
    */
   static removeSubscription(
     subscription: IntervalSubscription,
-    isOnline = true
+    isOnline: boolean
   ) {
     // Stop interval.
     this.stopInterval();

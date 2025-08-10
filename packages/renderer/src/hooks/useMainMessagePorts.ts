@@ -64,7 +64,7 @@ export const useMainMessagePorts = () => {
   const { syncOpenGovWindow } = useBootstrapping();
   const { exportDataToBackup, importDataFromBackup } = useDataBackup();
 
-  const { cacheGet } = useConnections();
+  const { getOnlineMode } = useConnections();
   const { ledgerSignSubmit } = useLedgerSigner();
 
   const {
@@ -146,7 +146,7 @@ export const useMainMessagePorts = () => {
       }
 
       // Sync managed account data if online.
-      if (cacheGet('mode:connected')) {
+      if (getOnlineMode()) {
         const res = await APIsController.getConnectedApiOrThrow(chainId);
         const api = res.getApi();
         await AccountsController.syncAccount(account, api);
@@ -650,7 +650,7 @@ export const useMainMessagePorts = () => {
     const task: IntervalSubscription = JSON.parse(serialized);
 
     // Add task to interval controller.
-    IntervalsController.insertSubscription({ ...task });
+    IntervalsController.insertSubscription({ ...task }, getOnlineMode());
 
     // Add task to dynamic manage state if necessary.
     tryAddIntervalSubscription({ ...task });
@@ -674,7 +674,7 @@ export const useMainMessagePorts = () => {
     const task: IntervalSubscription = JSON.parse(serialized);
 
     // Remove task from interval controller.
-    IntervalsController.removeSubscription({ ...task });
+    IntervalsController.removeSubscription({ ...task }, getOnlineMode());
 
     // Remove task from dynamic manage state if necessary.
     tryRemoveIntervalSubscription({ ...task });
@@ -698,7 +698,7 @@ export const useMainMessagePorts = () => {
     const parsed: IntervalSubscription[] = JSON.parse(tasks);
 
     // Update managed tasks in intervals controller.
-    IntervalsController.insertSubscriptions(parsed);
+    IntervalsController.insertSubscriptions(parsed, getOnlineMode());
 
     // Update React and store state.
     for (const task of parsed) {
@@ -725,7 +725,7 @@ export const useMainMessagePorts = () => {
     const parsed: IntervalSubscription[] = JSON.parse(tasks);
 
     // Update managed tasks in intervals controller.
-    IntervalsController.removeSubscriptions(cacheGet('mode:connected'), parsed);
+    IntervalsController.removeSubscriptions(parsed, getOnlineMode());
 
     // Update React and store state.
     for (const task of parsed) {
