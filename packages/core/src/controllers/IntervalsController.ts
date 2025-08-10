@@ -25,6 +25,26 @@ export class IntervalsController {
   static durations: IntervalSetting[] = [...intervalDurationsConfig];
 
   /**
+   * @name hasActiveSubscriptions
+   * @summary Returns `true` if there are any active subscriptions, `false` otherwise.
+   */
+  static hasActiveSubscriptions = (): boolean => {
+    if (this.subscriptions.size === 0) {
+      return false;
+    }
+
+    for (const items of this.subscriptions.values()) {
+      for (const { status } of items) {
+        if (status === 'enable') {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  };
+
+  /**
    * @name initIntervals
    * @summary Initialize the interval clock.
    *
@@ -40,7 +60,7 @@ export class IntervalsController {
    */
   static insertSubscriptions(
     subscriptions: IntervalSubscription[],
-    isOnline = true
+    isOnline: boolean
   ) {
     // Stop interval if it is running.
     this.stopInterval();
@@ -70,9 +90,9 @@ export class IntervalsController {
    */
   static insertSubscription(
     subscription: IntervalSubscription,
-    isOnline = true
+    isOnline: boolean
   ) {
-    console.log('INSERT SUBSCRIPTION:');
+    console.log('Insert interval subscription:');
     console.log(subscription);
 
     // Stop interval.
@@ -94,7 +114,10 @@ export class IntervalsController {
    * @name removeSubscriptions
    * @summary Allows removing multiple interval subscriptions from this controller's map.
    */
-  static removeSubscriptions(subscriptions: IntervalSubscription[]) {
+  static removeSubscriptions(
+    subscriptions: IntervalSubscription[],
+    isOnline: boolean
+  ) {
     // Stop interval.
     this.stopInterval();
 
@@ -116,7 +139,7 @@ export class IntervalsController {
         : this.subscriptions.delete(chainId);
     }
 
-    if (this.subscriptions.size > 0) {
+    if (isOnline && this.hasActiveSubscriptions()) {
       this.initClock();
     }
   }
@@ -127,14 +150,10 @@ export class IntervalsController {
    */
   static removeSubscription(
     subscription: IntervalSubscription,
-    isOnline = true
+    isOnline: boolean
   ) {
-    console.log('REMOVE SUBSCRIPTION:');
-    console.log(subscription);
-
     // Stop interval.
     this.stopInterval();
-
     const { chainId, action, referendumId } = subscription;
 
     // This task may not be enabled and thus not managed by this controller.
@@ -153,7 +172,7 @@ export class IntervalsController {
       : this.subscriptions.delete(chainId);
 
     // Start interval if tasks are still being managed.
-    if (isOnline && this.subscriptions.size > 0) {
+    if (isOnline && this.hasActiveSubscriptions()) {
       this.initClock();
     }
   }
@@ -171,7 +190,6 @@ export class IntervalsController {
     this.stopInterval();
 
     const { chainId, action, referendumId } = task;
-
     const updated = this.subscriptions
       .get(chainId)!
       .map((t) =>
@@ -196,13 +214,13 @@ export class IntervalsController {
     console.log(this.subscriptions);
 
     // Exit early if no subscriptions are being managed.
-    if (this.subscriptions.size === 0) {
+    if (!this.hasActiveSubscriptions()) {
       return;
     }
 
     // Seconds until next period synched with clock.
     const seconds = secondsUntilNextMinute(this.tickDuration);
-    console.log(`seconds to wait: ${seconds}`);
+    console.log(`Seconds to wait: ${seconds}`);
 
     if (seconds === 0) {
       // Start the interval now clock is synched.
@@ -230,7 +248,7 @@ export class IntervalsController {
       async () => {
         await this.processTick();
       },
-      this.tickDuration * 60 * 1000 // tick duration in minutes
+      this.tickDuration * 60 * 1000 // tick duration in minutes.
     );
   }
 
