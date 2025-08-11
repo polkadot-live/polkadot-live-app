@@ -131,6 +131,9 @@ export const DialogContent = styled(Dialog.Content).attrs<{
     &:hover:not([disabled]) {
       filter: brightness(110%);
     }
+    &.Danger {
+      color: #dd6060;
+    }
   }
   .Dialog__IconButton {
     color: ${({ $theme }) => $theme.textColorPrimary} !important;
