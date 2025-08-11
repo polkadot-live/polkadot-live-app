@@ -91,12 +91,7 @@ export const DialogManageAccounts = ({
               </Dialog.Description>
             </Style.FlexColumn>
 
-            <span
-              style={{
-                borderTop: `1px solid ${theme.textColorSecondary}`,
-                opacity: '0.1',
-              }}
-            />
+            <Style.DialogHr $theme={theme} />
 
             {/** Controls */}
             <ControlsRow $theme={theme}>

@@ -206,6 +206,8 @@ export const DialogExtrinsicSummary = ({
               </Dialog.Description>
             </Styles.FlexColumn>
 
+            <Styles.DialogHr $theme={theme} />
+
             <Styles.FlexColumn $rowGap={'2px'}>
               {/** Network */}
               <InfoPanel $theme={theme}>
