@@ -75,7 +75,7 @@ export const RenameHandlerProvider = ({
   const [showAddressDialogState, setShowAddressDialogState] =
     useState<DialogShowAddressData>({
       isOpen: false,
-      encodedAccount: null,
+      address: null,
     });
 
   const getShowAddressDialogData = () => showAddressDialogState;

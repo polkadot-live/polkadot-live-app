@@ -167,23 +167,15 @@ export const DialogManageAccounts = ({
                                 await window.myAPI.copyToClipboard(a.address)
                               }
                             />
-                            <UI.TooltipRx text={'Show Address'} theme={theme}>
-                              <Style.ViewIconWrapper
-                                $theme={theme}
-                                onClick={() =>
-                                  setShowAddressDialogData({
-                                    encodedAccount: a,
-                                    isOpen: true,
-                                  })
-                                }
-                              >
-                                <FontAwesomeIcon
-                                  className="ViewIcon"
-                                  icon={FA.faEye}
-                                  transform={'shrink-4'}
-                                />
-                              </Style.ViewIconWrapper>
-                            </UI.TooltipRx>
+                            <UI.ViewAddressIcon
+                              theme={theme}
+                              onClick={() =>
+                                setShowAddressDialogData({
+                                  address: a.address,
+                                  isOpen: true,
+                                })
+                              }
+                            />
                           </Style.FlexRow>
                         </Style.FlexRow>
                       </Style.FlexRow>

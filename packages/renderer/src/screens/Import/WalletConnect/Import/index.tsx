@@ -5,6 +5,7 @@ import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/ui/styles';
 import * as AccordionRx from '@radix-ui/react-accordion';
 import * as Checkbox from '@radix-ui/react-checkbox';
+import * as FA from '@fortawesome/free-solid-svg-icons';
 
 import { BarLoader } from 'react-spinners';
 import { CheckIcon, ChevronDownIcon } from '@radix-ui/react-icons';
@@ -14,19 +15,20 @@ import {
 } from '@polkadot-live/ui/kits/buttons';
 import { ItemsColumn } from '@ren/screens/Home/Manage/Wrappers';
 import { ChainIcon, InfoCard } from '@polkadot-live/ui/components';
-import {
-  faCaretLeft,
-  faCaretRight,
-  faCircleDot,
-} from '@fortawesome/free-solid-svg-icons';
 
 /** Temp */
-import { useAddresses, useWalletConnectImport } from '@ren/contexts/import';
+import {
+  useAddresses,
+  useRenameHandler,
+  useWalletConnectImport,
+} from '@ren/contexts/import';
 import { useConnections } from '@ren/contexts/common';
 import { useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { WcSessionButton } from './Wrappers';
 import { AddressListFooter, ImportAddressRow } from '../../Wrappers';
+import { DialogShowAddress } from '../../Addresses/Dialogs';
+
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ImportProps } from './types';
 
@@ -54,6 +56,9 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
     handleImportProcess,
     setWcNetworks,
   } = useWalletConnectImport();
+
+  const { getShowAddressDialogData, setShowAddressDialogData } =
+    useRenameHandler();
 
   /**
    * Accordion state.
@@ -111,6 +116,10 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
         />
       )}
 
+      {getShowAddressDialogData().address && (
+        <DialogShowAddress address={getShowAddressDialogData().address!} />
+      )}
+
       <Styles.PadWrapper>
         <Styles.FlexColumn $rowGap={'1.75rem'}>
           <section>
@@ -126,7 +135,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                   <ButtonPrimaryInvert
                     className="back-btn"
                     text="Back"
-                    iconLeft={faCaretLeft}
+                    iconLeft={FA.faCaretLeft}
                     onClick={() => {
                       setSection(0);
                     }}
@@ -135,7 +144,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                 </Styles.FlexRow>
                 <Styles.FlexRow>
                   <ButtonText
-                    iconLeft={faCaretRight}
+                    iconLeft={FA.faCaretRight}
                     text={'WalletConnect Accounts'}
                     disabled={wcAddresses.length === 0}
                     onClick={() => setShowImportUi(false)}
@@ -178,7 +187,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                               style={{ flex: 1 }}
                             >
                               <InfoCard
-                                icon={faCircleDot}
+                                icon={FA.faCircleDot}
                                 iconTransform={'shrink-3'}
                                 style={{ margin: '0', flex: 1 }}
                               >
@@ -266,7 +275,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                           <Styles.FlexColumn style={{ marginTop: '0.5rem' }}>
                             <Styles.FlexRow $gap={'0.5rem'}>
                               <InfoCard
-                                icon={faCircleDot}
+                                icon={FA.faCircleDot}
                                 iconTransform={'shrink-3'}
                                 style={{ margin: '0', flex: 1 }}
                               >
@@ -310,7 +319,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                     <UI.AccordionContent transparent={true}>
                       {wcFetchedAddresses.length === 0 ? (
                         <InfoCard
-                          icon={faCircleDot}
+                          icon={FA.faCircleDot}
                           iconTransform={'shrink-3'}
                           style={{ marginTop: '0', marginBottom: '0.75rem' }}
                         >
@@ -352,6 +361,15 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                           }
                                         />
                                       </span>
+                                      <UI.ViewAddressIcon
+                                        theme={theme}
+                                        onClick={() =>
+                                          setShowAddressDialogData({
+                                            address: encoded,
+                                            isOpen: true,
+                                          })
+                                        }
+                                      />
                                     </Styles.FlexRow>
                                   </div>
                                   <div className="right">

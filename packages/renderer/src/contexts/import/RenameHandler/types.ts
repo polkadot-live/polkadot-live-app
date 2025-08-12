@@ -24,7 +24,7 @@ export interface DialogRenameData {
 
 export interface DialogShowAddressData {
   isOpen: boolean;
-  encodedAccount: EncodedAccount | null;
+  address: string | null;
 }
 
 export interface RenameHandlerContextInterface {

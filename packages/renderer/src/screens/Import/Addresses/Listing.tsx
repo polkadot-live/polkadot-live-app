@@ -63,10 +63,8 @@ export const Listing = ({ source, setSection }: ManageAccountsProps) => {
         />
       )}
 
-      {getShowAddressDialogData().encodedAccount && (
-        <DialogShowAddress
-          encodedAccount={getShowAddressDialogData().encodedAccount!}
-        />
+      {getShowAddressDialogData().address && (
+        <DialogShowAddress address={getShowAddressDialogData().address!} />
       )}
 
       {/* Address List */}
