@@ -10,6 +10,7 @@ import {
   FlexRow,
   DialogContent,
   DialogTrigger,
+  DialogHr,
 } from '@polkadot-live/ui/styles';
 import { TooltipRx } from '@polkadot-live/ui/components';
 import { Cross2Icon } from '@radix-ui/react-icons';
@@ -126,6 +127,8 @@ export const DialogFindReferendum = ({ tab }: DialogFindReferendumProps) => {
                 {getDescription()}
               </Dialog.Description>
             </FlexColumn>
+
+            <DialogHr $theme={theme} />
 
             <form
               onSubmit={(e) => {

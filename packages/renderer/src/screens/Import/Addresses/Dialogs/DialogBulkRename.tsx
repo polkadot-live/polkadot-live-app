@@ -2,7 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Dialog from '@radix-ui/react-dialog';
-import { DialogContent, FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
+import {
+  DialogContent,
+  DialogHr,
+  FlexColumn,
+  FlexRow,
+} from '@polkadot-live/ui/styles';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { NetworkLabel } from './NetworkLabel';
 import { useConnections } from '@ren/contexts/common';
@@ -172,14 +177,7 @@ export const DialogBulkRename = ({ genericAccount }: DialogBulkRenameProps) => {
               </Dialog.Description>
             </FlexColumn>
 
-            <span
-              style={{
-                marginTop: '0.6rem',
-                borderBottom: `1px solid ${theme.textDimmed}`,
-                opacity: '0.25',
-              }}
-            />
-
+            <DialogHr $theme={theme} />
             <FlexColumn $rowGap={'0.75rem'}>
               <form
                 onSubmit={(e) => {

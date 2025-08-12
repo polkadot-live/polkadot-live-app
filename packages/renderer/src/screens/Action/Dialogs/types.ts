@@ -3,6 +3,12 @@
 
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 
+export interface DialogDeleteExtrinsicProps {
+  dialogOpen: boolean;
+  info: ExtrinsicInfo | null;
+  setDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
 export interface DialogExtrinsicSummaryProps {
   info: ExtrinsicInfo | null;
   dialogOpen?: boolean;

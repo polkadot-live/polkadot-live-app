@@ -5,7 +5,12 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { useConnections } from '@ren/contexts/common';
 import { useRenameHandler } from '@ren/contexts/import';
-import { DialogContent, FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
+import {
+  DialogContent,
+  DialogHr,
+  FlexColumn,
+  FlexRow,
+} from '@polkadot-live/ui/styles';
 import { CopyButton } from '@polkadot-live/ui/components';
 import styled from 'styled-components';
 import type { EncodedAccount } from '@polkadot-live/types/accounts';
@@ -59,12 +64,7 @@ export const DialogShowAddress = ({
               </Dialog.Title>
             </FlexColumn>
 
-            <span
-              style={{
-                borderBottom: `1px solid ${theme.textDimmed}`,
-                opacity: '0.25',
-              }}
-            />
+            <DialogHr $theme={theme} />
 
             <FlexRow $gap={'1rem'}>
               <AddressText style={{ color: theme.textColorSecondary }}>

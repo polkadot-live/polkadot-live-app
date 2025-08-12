@@ -21,10 +21,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import { TriggerRightIconWrapper } from './Wrappers';
 import { BarLoader } from 'react-spinners';
-import { DialogExtrinsicSummary } from './Dialogs';
+import { DialogDeleteExtrinsic, DialogExtrinsicSummary } from './Dialogs';
 import { useEffect, useState } from 'react';
 import { PaginationRow } from '../OpenGov/Referenda/Wrappers';
 import { FadeInWrapper } from '@polkadot-live/ui/utils';
+
 import type { ExtrinsicInfo, TxStatus } from '@polkadot-live/types/tx';
 import type { TriggerRightIconProps } from './types';
 
@@ -67,7 +68,6 @@ export const Action = () => {
     getPageNumbers,
     initTxDynamicInfo,
     onFilterChange,
-    removeExtrinsic,
     setPage,
     submitMockTx,
   } = useTxMeta();
@@ -91,8 +91,13 @@ export const Action = () => {
   const darkMode = cacheGet('mode:dark');
   const theme = getTheme();
 
-  const [dialogInfo, setDialogInfo] = useState<ExtrinsicInfo | null>(null);
-  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  // Summary dialog.
+  const [summaryInfo, setSummaryInfo] = useState<ExtrinsicInfo | null>(null);
+  const [summaryDialogOpen, setSummaryDialogOpen] = useState<boolean>(false);
+
+  // Delete extrinsic dialog.
+  const [deleteInfo, setDeleteInfo] = useState<ExtrinsicInfo | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
 
   // Utility to get title based on tx status.
   const getTxStatusTitle = (txStatus: TxStatus): string => {
@@ -120,10 +125,16 @@ export const Action = () => {
     txStatus === 'submitted' || txStatus === 'in_block' ? true : false;
 
   useEffect(() => {
-    if (!dialogOpen) {
-      setDialogInfo(null);
+    if (!summaryDialogOpen) {
+      setSummaryInfo(null);
     }
-  }, [dialogOpen]);
+  }, [summaryDialogOpen]);
+
+  useEffect(() => {
+    if (!deleteDialogOpen) {
+      setDeleteInfo(null);
+    }
+  }, [deleteDialogOpen]);
 
   return (
     <UI.ScrollableMax>
@@ -215,10 +226,17 @@ export const Action = () => {
 
         {/* Summary Dialog */}
         <DialogExtrinsicSummary
-          info={dialogInfo}
-          dialogOpen={dialogOpen}
-          setDialogOpen={setDialogOpen}
+          info={summaryInfo}
+          dialogOpen={summaryDialogOpen}
+          setDialogOpen={setSummaryDialogOpen}
           renderTrigger={false}
+        />
+
+        {/* Delete Extrinsic Dialog */}
+        <DialogDeleteExtrinsic
+          info={deleteInfo}
+          dialogOpen={deleteDialogOpen}
+          setDialogOpen={setDeleteDialogOpen}
         />
 
         <UI.ActionItem
@@ -357,8 +375,8 @@ export const Action = () => {
                     <div className="HeaderContentDropdownWrapper">
                       <ExtrinsicDropdownMenu
                         onSummaryClick={() => {
-                          setDialogInfo(info);
-                          setDialogOpen(true);
+                          setSummaryInfo(info);
+                          setSummaryDialogOpen(true);
                         }}
                         onBlockExplorerClick={() => {
                           if (!info.txHash) {
@@ -372,7 +390,10 @@ export const Action = () => {
                         isBuilt={info.estimatedFee !== undefined}
                         txStatus={info.txStatus}
                         hasTxHash={Boolean(info.txHash)}
-                        onDelete={async () => await removeExtrinsic(info)}
+                        onDelete={() => {
+                          setDeleteInfo(info);
+                          setDeleteDialogOpen(true);
+                        }}
                         onSign={() => initTxDynamicInfo(info.txId)}
                         onMockSign={() => submitMockTx(info.txId)}
                       />
@@ -382,8 +403,8 @@ export const Action = () => {
                     <ExtrinsicItemContent
                       info={info}
                       onClickSummary={() => {
-                        setDialogInfo(info);
-                        setDialogOpen(true);
+                        setSummaryInfo(info);
+                        setSummaryDialogOpen(true);
                       }}
                     />
                   </UI.AccordionContent>

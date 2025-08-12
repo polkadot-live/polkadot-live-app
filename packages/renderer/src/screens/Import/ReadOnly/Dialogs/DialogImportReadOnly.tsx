@@ -10,6 +10,7 @@ import { checkAddress } from '@polkadot/util-crypto';
 import { decodeAddress, u8aToHex } from 'dedot/utils';
 import {
   DialogContent,
+  DialogHr,
   DialogTrigger,
   FlexColumn,
   FlexRow,
@@ -121,12 +122,7 @@ export const DialogImportReadOnly = () => {
               </Dialog.Description>
             </FlexColumn>
 
-            <span
-              style={{
-                borderTop: `1px solid ${theme.textColorSecondary}`,
-                opacity: '0.1',
-              }}
-            />
+            <DialogHr $theme={theme} />
 
             <form
               onSubmit={(e) => {

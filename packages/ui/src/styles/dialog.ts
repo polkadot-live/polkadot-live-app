@@ -5,6 +5,15 @@ import * as Dialog from '@radix-ui/react-dialog';
 import styled from 'styled-components';
 import type { AnyData } from '@polkadot-live/types/misc';
 
+export const DialogHr = styled.span<{
+  $theme: AnyData;
+  $marginTop?: string;
+}>`
+  margin-top: ${({ $marginTop }) => ($marginTop ? $marginTop : '0')};
+  border-bottom: ${({ $theme }) => `1px solid ${$theme.textDimmed}`};
+  opacity: 0.25;
+`;
+
 export const DialogTrigger = styled(Dialog.Trigger).attrs<{
   $theme: AnyData;
 }>((props) => ({
@@ -121,6 +130,9 @@ export const DialogContent = styled(Dialog.Content).attrs<{
     }
     &:hover:not([disabled]) {
       filter: brightness(110%);
+    }
+    &.Danger {
+      color: #dd6060;
     }
   }
   .Dialog__IconButton {

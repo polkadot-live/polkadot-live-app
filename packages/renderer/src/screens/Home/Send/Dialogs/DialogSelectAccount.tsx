@@ -244,6 +244,8 @@ export const DialogSelectAccount = ({
                 {accountRole.charAt(0).toUpperCase() + accountRole.slice(1)}
               </Dialog.Title>
 
+              <Styles.DialogHr $theme={theme} />
+
               <Styles.FlexColumn $rowGap={'0.75rem'}>
                 <Dialog.Description>
                   <span style={{ color: theme.textColorSecondary }}>
