@@ -16,7 +16,7 @@ export const defaultRenameHandlerContext: RenameHandlerContextInterface = {
     isOpen: false,
   }),
   getShowAddressDialogData: () => ({
-    encodedAccount: null,
+    address: null,
     isOpen: false,
   }),
   renameHandler: () => new Promise(() => {}),

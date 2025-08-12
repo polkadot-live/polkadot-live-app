@@ -50,7 +50,10 @@ export const Address = ({ genericAccount, setSection }: AddressProps) => {
         setManageAccountDialogData({ genericAccount, isOpen: true })
       }
       handleShowAddressClick={(encodedAccount) =>
-        setShowAddressDialogData({ encodedAccount, isOpen: true })
+        setShowAddressDialogData({
+          address: encodedAccount.address,
+          isOpen: true,
+        })
       }
       handleAddSubscriptions={async (encodedAccount: EncodedAccount) =>
         await handleAddAddress(encodedAccount, genericAccount)

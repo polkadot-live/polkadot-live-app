@@ -11,6 +11,7 @@ export const ViewIconWrapper = styled.div.attrs<{
 }))`
   .ViewIcon {
     cursor: pointer;
+    color: ${({ $theme }) => $theme.textColorSecondary};
     &:hover {
       color: ${({ $theme }) => $theme.textColorPrimary};
     }

@@ -13,7 +13,6 @@ import {
 } from '@polkadot-live/ui/styles';
 import { CopyButton } from '@polkadot-live/ui/components';
 import styled from 'styled-components';
-import type { EncodedAccount } from '@polkadot-live/types/accounts';
 
 const AddressText = styled.p`
   line-height: 2rem;
@@ -28,22 +27,17 @@ const AddressText = styled.p`
   }
 `;
 
-export const DialogShowAddress = ({
-  encodedAccount,
-}: {
-  encodedAccount: EncodedAccount;
-}) => {
+export const DialogShowAddress = ({ address }: { address: string }) => {
   const { getTheme } = useConnections();
   const { getShowAddressDialogData, setShowAddressDialogData } =
     useRenameHandler();
 
-  const { address } = encodedAccount;
   const theme = getTheme();
 
   const handleOpenChange = (open: boolean) =>
     open
-      ? setShowAddressDialogData({ encodedAccount, isOpen: open })
-      : setShowAddressDialogData({ encodedAccount: null, isOpen: open });
+      ? setShowAddressDialogData({ address, isOpen: open })
+      : setShowAddressDialogData({ address: null, isOpen: open });
 
   return (
     <Dialog.Root

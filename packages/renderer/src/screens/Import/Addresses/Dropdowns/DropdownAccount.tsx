@@ -48,7 +48,7 @@ export const DropdownAccount = ({
   };
 
   const onShowAddressClick = () => {
-    setShowAddressDialogData({ encodedAccount, isOpen: true });
+    setShowAddressDialogData({ address: encodedAccount.address, isOpen: true });
   };
 
   const onRenameClick = () => {

@@ -14,6 +14,7 @@ import {
   useAddresses,
   useImportHandler,
   useLedgerHardware,
+  useRenameHandler,
 } from '@ren/contexts/import';
 
 import { BarLoader } from 'react-spinners';
@@ -32,6 +33,7 @@ import {
 import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ConnectButton } from './Wrappers';
+import { DialogShowAddress } from '../../Addresses/Dialogs';
 import { AddressListFooter, ImportAddressRow } from '../../Wrappers';
 import { InfoCardSteps } from '../../InfoCardSteps';
 import { determineStatusFromCode } from './Utils';
@@ -49,6 +51,9 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   const ledger = useLedgerHardware();
   const { connectedNetwork, selectedAddresses, receivedAddresses } =
     useLedgerHardware();
+
+  const { getShowAddressDialogData, setShowAddressDialogData } =
+    useRenameHandler();
 
   /**
    * Accordion state.
@@ -175,6 +180,10 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
           cssOverride={{ position: 'fixed', top: 0, zIndex: 99 }}
           speedMultiplier={0.75}
         />
+      )}
+
+      {getShowAddressDialogData().address && (
+        <DialogShowAddress address={getShowAddressDialogData().address!} />
       )}
 
       <Styles.PadWrapper>
@@ -407,6 +416,15 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                           }
                                         />
                                       </span>
+                                      <UI.ViewAddressIcon
+                                        theme={theme}
+                                        onClick={() =>
+                                          setShowAddressDialogData({
+                                            address,
+                                            isOpen: true,
+                                          })
+                                        }
+                                      />
                                     </Styles.FlexRow>
                                   </div>
                                   <div className="right">
