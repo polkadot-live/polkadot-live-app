@@ -92,8 +92,8 @@ export const Action = () => {
   const theme = getTheme();
 
   // Summary dialog.
-  const [dialogInfo, setDialogInfo] = useState<ExtrinsicInfo | null>(null);
-  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const [summaryInfo, setSummaryInfo] = useState<ExtrinsicInfo | null>(null);
+  const [summaryDialogOpen, setSummaryDialogOpen] = useState<boolean>(false);
 
   // Delete extrinsic dialog.
   const [deleteInfo, setDeleteInfo] = useState<ExtrinsicInfo | null>(null);
@@ -125,10 +125,10 @@ export const Action = () => {
     txStatus === 'submitted' || txStatus === 'in_block' ? true : false;
 
   useEffect(() => {
-    if (!dialogOpen) {
-      setDialogInfo(null);
+    if (!summaryDialogOpen) {
+      setSummaryInfo(null);
     }
-  }, [dialogOpen]);
+  }, [summaryDialogOpen]);
 
   useEffect(() => {
     if (!deleteDialogOpen) {
@@ -226,9 +226,9 @@ export const Action = () => {
 
         {/* Summary Dialog */}
         <DialogExtrinsicSummary
-          info={dialogInfo}
-          dialogOpen={dialogOpen}
-          setDialogOpen={setDialogOpen}
+          info={summaryInfo}
+          dialogOpen={summaryDialogOpen}
+          setDialogOpen={setSummaryDialogOpen}
           renderTrigger={false}
         />
 
@@ -375,8 +375,8 @@ export const Action = () => {
                     <div className="HeaderContentDropdownWrapper">
                       <ExtrinsicDropdownMenu
                         onSummaryClick={() => {
-                          setDialogInfo(info);
-                          setDialogOpen(true);
+                          setSummaryInfo(info);
+                          setSummaryDialogOpen(true);
                         }}
                         onBlockExplorerClick={() => {
                           if (!info.txHash) {
@@ -403,8 +403,8 @@ export const Action = () => {
                     <ExtrinsicItemContent
                       info={info}
                       onClickSummary={() => {
-                        setDialogInfo(info);
-                        setDialogOpen(true);
+                        setSummaryInfo(info);
+                        setSummaryDialogOpen(true);
                       }}
                     />
                   </UI.AccordionContent>
