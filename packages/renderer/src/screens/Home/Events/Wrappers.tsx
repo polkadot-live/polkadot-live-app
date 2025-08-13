@@ -95,6 +95,9 @@ export const EventItem = styled(motion.div)`
   .TimeAgoBtn {
     ${eventBtnBase}
   }
+  .NetworkBtn {
+    ${eventBtnBase}
+  }
   .DividerVertical {
     color: var(--text-dimmed);
     opacity: 0.5;
@@ -117,10 +120,9 @@ export const EventItem = styled(motion.div)`
 
     // All direct divs
     .icon-wrapper {
-      padding-left: 0.7rem;
       min-width: fit-content;
       align-self: start;
-      padding-top: 0.1rem;
+      padding-top: 0.15rem;
     }
     h4 {
       color: var(--text-color-secondary);
