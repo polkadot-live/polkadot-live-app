@@ -114,97 +114,6 @@ export class AccountsController {
   };
 
   /**
-   * Set up-to-date balances for all managed accounts.
-   */
-  static syncAllBalances = async (api: DedotClientSet, chainId: ChainID) => {
-    console.log(`fetching balances for chain: ${chainId}`);
-    const accounts = this.accounts.get(chainId);
-    if (accounts) {
-      await Promise.all(accounts.map((a) => this.syncBalance(a, api)));
-    }
-  };
-
-  /**
-   * Set up-to-date balance for a single managed account.
-   */
-  static syncBalance = async (account: Account, api: DedotClientSet) => {
-    const result = await api.query.system.account(account.address);
-
-    account.balance = {
-      nonce: BigInt(result.nonce),
-      free: result.data.free,
-      reserved: result.data.reserved,
-      frozen: result.data.frozen,
-    } as AccountBalance;
-
-    await this.set(account);
-  };
-
-  /**
-   * Set up-to-date nominating data for all managed accounts.
-   */
-  static syncAllNominatingData = async (
-    api: DedotStakingClient,
-    chainId: ChainID
-  ) => {
-    console.log(`fetching nominating data for chain: ${chainId}`);
-    const accounts = this.accounts.get(chainId);
-    if (accounts) {
-      await Promise.all(accounts.map((a) => this.syncNominatingData(a, api)));
-    }
-  };
-
-  /**
-   * Set up-to-date nominating data for a single managed accounts.
-   */
-  static syncNominatingData = async (
-    account: Account,
-    api: DedotStakingClient
-  ) => {
-    try {
-      const maybeNominatingData = await getAccountNominatingData(api, account);
-
-      account.nominatingData = maybeNominatingData
-        ? { ...maybeNominatingData }
-        : null;
-
-      await this.set(account);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  /**
-   * Set up-to-date nomination pool data for all managed accounts.
-   */
-  static syncAllNominationPoolData = async (
-    api: DedotStakingClient,
-    chainId: ChainID
-  ) => {
-    console.log(`fetching nomination pool data for chain: ${chainId}`);
-    const accounts = this.accounts.get(chainId);
-    if (accounts) {
-      await Promise.all(
-        accounts.map((a) => this.syncNominationPoolData(a, api))
-      );
-    }
-  };
-
-  /**
-   * Set up-to-date nomination pool data for a single managed accounts.
-   */
-  static syncNominationPoolData = async (
-    account: Account,
-    api: DedotStakingClient
-  ) => {
-    const result = await getNominationPoolData(account, api);
-    if (result) {
-      account.nominationPoolData = result;
-      await this.set(account);
-    }
-  };
-
-  /**
    * Fetch persisted tasks from the store and re-subscribe to them.
    */
   static async subscribeAccounts() {
@@ -428,5 +337,102 @@ export class AccountsController {
   private static serializeAccounts = () => {
     const serialized = JSON.stringify(Array.from(this.accounts.entries()));
     return serialized;
+  };
+
+  /**
+   * Set up-to-date balances for all managed accounts.
+   */
+  private static syncAllBalances = async (
+    api: DedotClientSet,
+    chainId: ChainID
+  ) => {
+    console.log(`fetching balances for chain: ${chainId}`);
+    const accounts = this.accounts.get(chainId);
+    if (accounts) {
+      await Promise.all(accounts.map((a) => this.syncBalance(a, api)));
+    }
+  };
+
+  /**
+   * Set up-to-date balance for a single managed account.
+   */
+  private static syncBalance = async (
+    account: Account,
+    api: DedotClientSet
+  ) => {
+    const result = await api.query.system.account(account.address);
+
+    account.balance = {
+      nonce: BigInt(result.nonce),
+      free: result.data.free,
+      reserved: result.data.reserved,
+      frozen: result.data.frozen,
+    } as AccountBalance;
+
+    await this.set(account);
+  };
+
+  /**
+   * Set up-to-date nominating data for all managed accounts.
+   */
+  private static syncAllNominatingData = async (
+    api: DedotStakingClient,
+    chainId: ChainID
+  ) => {
+    console.log(`fetching nominating data for chain: ${chainId}`);
+    const accounts = this.accounts.get(chainId);
+    if (accounts) {
+      await Promise.all(accounts.map((a) => this.syncNominatingData(a, api)));
+    }
+  };
+
+  /**
+   * Set up-to-date nominating data for a single managed accounts.
+   */
+  private static syncNominatingData = async (
+    account: Account,
+    api: DedotStakingClient
+  ) => {
+    try {
+      const maybeNominatingData = await getAccountNominatingData(api, account);
+
+      account.nominatingData = maybeNominatingData
+        ? { ...maybeNominatingData }
+        : null;
+
+      await this.set(account);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  /**
+   * Set up-to-date nomination pool data for all managed accounts.
+   */
+  private static syncAllNominationPoolData = async (
+    api: DedotStakingClient,
+    chainId: ChainID
+  ) => {
+    console.log(`fetching nomination pool data for chain: ${chainId}`);
+    const accounts = this.accounts.get(chainId);
+    if (accounts) {
+      await Promise.all(
+        accounts.map((a) => this.syncNominationPoolData(a, api))
+      );
+    }
+  };
+
+  /**
+   * Set up-to-date nomination pool data for a single managed accounts.
+   */
+  private static syncNominationPoolData = async (
+    account: Account,
+    api: DedotStakingClient
+  ) => {
+    const result = await getNominationPoolData(account, api);
+    if (result) {
+      account.nominationPoolData = result;
+      await this.set(account);
+    }
   };
 }
