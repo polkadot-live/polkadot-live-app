@@ -1,11 +1,13 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { ApiError } from '../errors';
 import {
   ChainList,
   getChainIdFromRpcChain,
 } from '@polkadot-live/consts/chains';
 import { DedotClient, SmoldotProvider, WsProvider } from 'dedot';
+
 import type * as smoldot from 'smoldot/no-auto-bytecode';
 import type { ChainID, RpcSystemChain } from '@polkadot-live/types/chains';
 import type {
@@ -34,7 +36,7 @@ export class Api<T extends keyof ClientTypes> {
    */
   getApi = () => {
     if (this.api === null) {
-      throw Error('api is null');
+      throw new ApiError('ApiUndefined');
     }
     return this.api;
   };
@@ -92,13 +94,13 @@ export class Api<T extends keyof ClientTypes> {
       let provider: WsProvider | SmoldotProvider;
       if (this.endpoint === 'smoldot') {
         if (!smoldotClient) {
-          throw new Error('Error - smoldot client is null.');
+          throw new ApiError('SmoldotClientUndefined');
         }
 
         // Smoldot chain arguments.
         const chainSpec = ChainList.get(this.chainId)!.endpoints.lightClient;
         if (!chainSpec) {
-          throw new Error('Error - Light client chainspec is undefined.');
+          throw new ApiError('LightClientChainSpecUndefined');
         }
 
         const potentialRelayChains = await this.getPotentialRelayChains(

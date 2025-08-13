@@ -21,6 +21,15 @@ import type {
 export type NodeEndpoint = `wss://${string}` | 'smoldot';
 
 /**
+ * API error status codes.
+ */
+export type ApiErrorStatusCode =
+  | 'ApiUndefined'
+  | 'CouldNotGetConnectedApi'
+  | 'LightClientChainSpecUndefined'
+  | 'SmoldotClientUndefined';
+
+/**
  * Chain dodeot clients.
  */
 export type DedotClientSet =

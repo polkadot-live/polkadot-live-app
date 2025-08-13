@@ -2,10 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as CommonLib from '../library/CommonLib';
-import type * as smoldot from 'smoldot/no-auto-bytecode';
-
 import { Api } from '../model';
+import { ApiError } from '../errors';
 import { ChainList } from '@polkadot-live/consts/chains';
+
+import type * as smoldot from 'smoldot/no-auto-bytecode';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   ChainToKey,
@@ -67,7 +68,7 @@ export class APIsController {
   static connectApi = async (chainId: ChainID) => {
     const client = this.get(chainId);
     if (!client) {
-      throw new Error(`connectApi: API for ${chainId} not found`);
+      throw new ApiError('ApiUndefined');
     }
 
     await client.connect(this.smoldotClient);
@@ -133,7 +134,7 @@ export class APIsController {
   static getConnectedApiOrThrow = async (chainId: ChainID) => {
     const client = await this.getConnectedApi(chainId);
     if (client === null) {
-      throw new Error(`Error - Could not get API client.`);
+      throw new ApiError('CouldNotGetConnectedApi');
     }
 
     return client;
