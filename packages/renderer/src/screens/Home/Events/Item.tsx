@@ -7,7 +7,11 @@ import { useEvents } from '@ren/contexts/main';
 import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 import { AnimatePresence } from 'framer-motion';
 import { EventItem } from './Wrappers';
-import { faTimes, faClock } from '@fortawesome/free-solid-svg-icons';
+import {
+  faTimes,
+  faClock,
+  faCircleNodes,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getEventChainId, renderTimeAgo } from '@polkadot-live/core';
 import { ellipsisFn } from '@w3ux/utils';
@@ -93,29 +97,41 @@ export const Item = memo(function Item({ event }: ItemProps) {
         >
           {/* Main content */}
           <div>
-            <FlexColumn $rowGap={'0.6rem'}>
+            <FlexColumn $rowGap={'0.4rem'}>
               <FlexRow>
-                <FlexRow $gap={'0.35rem'} style={{ flex: 1, minWidth: 0 }}>
+                <FlexRow $gap={'0.25rem'} style={{ flex: 1, minWidth: 0 }}>
                   <h4>{accountName}</h4>
 
                   {!['openGov', 'debugging'].includes(event.category) && (
-                    <div className="icon-wrapper">
-                      <div className="icon ">
-                        <TooltipRx text={ellipsisFn(address, 12)} theme={theme}>
-                          <span>
-                            <Identicon value={address} fontSize={'1.3rem'} />
-                          </span>
-                        </TooltipRx>
+                    <>
+                      <DividerVerticalIcon className="DividerVertical" />
+                      <div className="icon-wrapper">
+                        <div className="icon">
+                          <TooltipRx
+                            text={ellipsisFn(address, 12)}
+                            theme={theme}
+                          >
+                            <span>
+                              <Identicon value={address} fontSize={'1.3rem'} />
+                            </span>
+                          </TooltipRx>
+                        </div>
                       </div>
-                    </div>
+                    </>
                   )}
-
-                  <DividerVerticalIcon className="DividerVertical" />
-                  <h5 className="text-ellipsis">{title}</h5>
                 </FlexRow>
 
                 {/** Buttons */}
                 <FlexRow style={{ minWidth: 'fit-content' }}>
+                  <TooltipRx text={chainId} theme={theme}>
+                    <div className="NetworkBtn">
+                      <FontAwesomeIcon
+                        icon={faCircleNodes}
+                        transform={'shrink-2'}
+                      />
+                    </div>
+                  </TooltipRx>
+
                   <TooltipRx
                     text={renderTimeAgo(event.timestamp)}
                     theme={theme}
@@ -134,6 +150,9 @@ export const Item = memo(function Item({ event }: ItemProps) {
                 </FlexRow>
               </FlexRow>
 
+              <FlexRow>
+                <h5 className="text-ellipsis">{title}</h5>
+              </FlexRow>
               {uriActions.length + txActions.length > 0 ? (
                 <FlexRow style={{ paddingRight: '0.5rem' }}>
                   <ActionsDropdown
