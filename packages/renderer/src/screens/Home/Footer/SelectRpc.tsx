@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import { SelectRpcWrapper } from './Wrapper';
-import { useBootstrapping } from '@ren/contexts/main';
+import { useApiHealth } from '@ren/contexts/main';
 import { useConnections } from '@ren/contexts/common';
 import { hasLightClientSupport } from '@polkadot-live/consts/chains';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -20,11 +20,12 @@ export const SelectRpc = ({
   disabled,
   setWorkingEndpoint,
 }: SelectRpcProps) => {
-  const { chainId, endpoint } = apiData;
-  const [selectedRpc, setSelectedRpc] = useState(endpoint);
-  const { handleNewEndpointForChain } = useBootstrapping();
+  const { onEndpointChange } = useApiHealth();
   const { cacheGet } = useConnections();
   const isConnected = cacheGet('mode:connected');
+
+  const { chainId, endpoint } = apiData;
+  const [selectedRpc, setSelectedRpc] = useState(endpoint);
 
   /// Handle RPC change.
   const handleRpcChange = async (
@@ -42,7 +43,7 @@ export const SelectRpc = ({
     setSelectedRpc(newEndpoint);
 
     // Re-connect and subscribe to active tasks.
-    await handleNewEndpointForChain(chainId, newEndpoint);
+    await onEndpointChange(chainId, newEndpoint);
     setWorkingEndpoint && setWorkingEndpoint(chainId, false);
   };
 

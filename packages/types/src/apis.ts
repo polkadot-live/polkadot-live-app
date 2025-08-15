@@ -25,9 +25,19 @@ export type NodeEndpoint = `wss://${string}` | 'smoldot';
  */
 export type ApiErrorStatusCode =
   | 'ApiUndefined'
+  | 'ApiConnectError'
   | 'CouldNotGetConnectedApi'
   | 'LightClientChainSpecUndefined'
   | 'SmoldotClientUndefined';
+
+/**
+ * Data for connection cache.
+ */
+export interface ApiConnectResult<T extends Error> {
+  ack: 'success' | 'failure';
+  chainId: ChainID;
+  error?: T;
+}
 
 /**
  * Chain dodeot clients.

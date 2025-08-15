@@ -9,6 +9,7 @@ import { faCircle as faCircleRegular } from '@fortawesome/free-regular-svg-icons
 import { getEcosystemChainMap } from '@polkadot-live/consts/chains';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
+  useApiHealth,
   useBootstrapping,
   useChains,
   useIntervalSubscriptions,
@@ -27,6 +28,8 @@ import type { FlattenedAPIData } from '@polkadot-live/types/apis';
 
 export const Footer = () => {
   const { appLoading, isConnecting, isAborting } = useBootstrapping();
+  const { failedConnections } = useApiHealth();
+
   const {
     chains,
     isWorking,
@@ -176,6 +179,15 @@ export const Footer = () => {
                                 </div>
                                 <div className="right">
                                   <FlexRow $gap={'1.5rem'}>
+                                    {Array.from(
+                                      failedConnections.keys()
+                                    ).includes(chainId) && (
+                                      <FontAwesomeIcon
+                                        style={{ color: '#c51515' }}
+                                        transform={'grow-1'}
+                                        icon={FA.faCircleExclamation}
+                                      />
+                                    )}
                                     {/* RPC select box */}
                                     <SelectRpc
                                       apiData={apiData}

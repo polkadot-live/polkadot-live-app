@@ -210,8 +210,8 @@ export class QueryMultiWrapper {
   }
 
   /**
-   * @name build
-   * @summary Dynamically build the query multi argument, and make the actual API call.
+   * @name run
+   * @summary Run the query multi API call.
    * @param {ChainID} chainId - The target chain to subscribe to.
    */
   async run(chainId: ChainID) {

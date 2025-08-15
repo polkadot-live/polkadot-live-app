@@ -18,7 +18,14 @@ import type { DedotClientSet } from '@polkadot-live/types/apis';
 export const executeOneShot = async (
   task: SubscriptionTask
 ): Promise<boolean> => {
-  const client = await APIsController.getConnectedApi(task.chainId);
+  const { chainId } = task;
+
+  // Return early if network failed to connect.
+  if (APIsController.getFailedChainIds().includes(chainId)) {
+    return false;
+  }
+
+  const client = await APIsController.getConnectedApi(chainId);
   if (!client || !client.api) {
     return false;
   }
