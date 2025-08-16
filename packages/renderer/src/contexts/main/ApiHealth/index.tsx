@@ -50,14 +50,11 @@ export const ApiHealthProvider = ({
    * Handle settings a new chain RPC endpoint.
    */
   const onEndpointChange = async (chainId: ChainID, endpoint: NodeEndpoint) => {
-    const { ack } = await APIsController.connectEndpoint(chainId, endpoint);
+    await APIsController.setEndpoint(chainId, endpoint);
 
-    // Re-subscribe account and chain tasks.
+    const { ack } = await APIsController.connectApi(chainId);
     if (ack == 'success') {
-      await Promise.all([
-        AccountsController.subscribeAccountsForChain(chainId),
-        SubscriptionsController.resubscribeChain(chainId),
-      ]);
+      await onApiRecover(chainId);
     }
 
     SubscriptionsController.syncState();
@@ -67,16 +64,20 @@ export const ApiHealthProvider = ({
    * Handle a recovered chain API connection.
    */
   const onApiRecover = async (chainId: ChainID) => {
-    APIsController.failedCache.delete(chainId);
-    APIsController.syncFailedConnections();
+    if (failedConnections.has(chainId)) {
+      APIsController.failedCache.delete(chainId);
+      APIsController.syncFailedConnections();
+    }
 
     // Resync accounts and start subscriptions.
     const res = await APIsController.getConnectedApiOrThrow(chainId);
     const api = res.getApi();
 
     await AccountsController.syncAllAccounts(api, chainId);
-    await AccountsController.subscribeAccountsForChain(chainId);
-    await SubscriptionsController.resubscribeChain(chainId);
+    await Promise.all([
+      AccountsController.subscribeAccountsForChain(chainId),
+      SubscriptionsController.resubscribeChain(chainId),
+    ]);
   };
 
   /**

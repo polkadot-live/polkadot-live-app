@@ -107,21 +107,21 @@ export class APIsController {
   /**
    * Set and connect to an endpoint for a given client if online.
    */
-  static connectEndpoint = async (
+  static setEndpoint = async (
     chainId: ChainID,
     endpoint: NodeEndpoint
-  ): Promise<{ ack: 'success' | 'failure'; error?: ApiError }> => {
+  ): Promise<void> => {
     const status = this.getStatus(chainId);
 
     switch (status) {
       case 'disconnected': {
         this.setClientEndpoint(chainId, endpoint);
-        return { ack: 'success' };
+        break;
       }
       default: {
         await this.close(chainId);
         this.setClientEndpoint(chainId, endpoint);
-        return await this.connectApi(chainId);
+        break;
       }
     }
   };
