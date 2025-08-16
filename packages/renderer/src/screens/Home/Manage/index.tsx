@@ -9,6 +9,7 @@ import { FlexColumn } from '@polkadot-live/ui/styles';
 import { Permissions } from './Permissions';
 import { Wrapper } from './Wrappers';
 import { MainHeading } from '@polkadot-live/ui/components';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { ManageProps } from './types';
 import type { SubscriptionTaskType } from '@polkadot-live/types/subscriptions';
 
@@ -20,6 +21,7 @@ export const Manage = ({ addresses }: ManageProps) => {
 
   // Outermost breadcrumb title.
   const [breadcrumb, setBreadcrumb] = useState<string>('');
+  const [tasksChainId, setTasksChainId] = useState<ChainID | null>(null);
 
   // Whether the user has clicked on an account or chain.
   const [typeClicked, setTypeClicked] = useState<SubscriptionTaskType>('');
@@ -62,6 +64,7 @@ export const Manage = ({ addresses }: ManageProps) => {
           <Wrapper>
             <Accounts
               addresses={addresses}
+              setTasksChainId={setTasksChainId}
               setSection={setSection}
               setBreadcrumb={setBreadcrumb}
               setTypeClicked={setTypeClicked}
@@ -79,6 +82,7 @@ export const Manage = ({ addresses }: ManageProps) => {
             section={section}
             selectedAccount={selectedAccount}
             breadcrumb={breadcrumb}
+            tasksChainId={tasksChainId}
             typeClicked={typeClicked}
           />
         </div>

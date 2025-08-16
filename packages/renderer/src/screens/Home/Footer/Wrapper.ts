@@ -18,6 +18,13 @@ export const FooterWrapper = styled.div`
   padding-top: 0.5rem;
   z-index: 20;
 
+  .Header {
+    .WarningIcon {
+      color: var(--accent-warning);
+      margin-top: -2px;
+    }
+  }
+
   section {
     width: 100%;
   }
@@ -106,6 +113,12 @@ export const NetworkItem = styled.div`
     align-items: center;
     column-gap: 0.5rem;
     padding: 0.25rem 0.5rem;
+
+    .WarningIcon {
+      color: var(--accent-warning);
+      margin-left: 0.4rem;
+      margin-top: -2px;
+    }
 
     > h4 {
       color: var(--text-color-secondary);

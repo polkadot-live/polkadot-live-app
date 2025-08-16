@@ -14,6 +14,5 @@ export const defaultBootstrappingContext: BootstrappingInterface = {
   handleInitializeApp: () => new Promise(() => {}),
   handleInitializeAppOffline: () => new Promise(() => {}),
   handleInitializeAppOnline: () => new Promise(() => {}),
-  handleNewEndpointForChain: (c, e) => new Promise(() => {}),
   syncOpenGovWindow: () => new Promise(() => {}),
 };

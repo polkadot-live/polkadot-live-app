@@ -4,6 +4,7 @@
 export * from './callbacks';
 export * from './config';
 export * from './controllers';
+export * from './errors';
 export * from './library';
 export * from './model';
 export * from './orchestrators';

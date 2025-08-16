@@ -30,6 +30,7 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
     IntervalSubscription[]
   >([]);
 
+  /// Active ChainID for OpenGov subscriptions list.
   const [activeChainId, setActiveChainId] = useState<ChainID | null>(null);
   const activeChainRef = useRef<ChainID | null>(null);
 

@@ -11,6 +11,7 @@ import { TabsProvider } from '@ren/contexts/tabs';
 // Main window contexts.
 import {
   AddressesProvider,
+  ApiHealthProvider,
   AppSettingsProvider,
   BootstrappingProvider,
   ChainsProvider,
@@ -83,6 +84,7 @@ const getProvidersForWindow = () => {
         AppSettingsProvider,
         // Side nav relies on app settings.
         SideNavProvider,
+        ApiHealthProvider,
         ChainsProvider,
         SubscriptionsProvider,
         IntervalSubscriptionsProvider,

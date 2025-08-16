@@ -119,7 +119,8 @@ describe('APIsController', () => {
       expect(client?.status()).toBe('connected');
 
       // Connect to another endpoint.
-      await APIsController.connectEndpoint(chainId, endpoint2);
+      await APIsController.setEndpoint(chainId, endpoint2);
+      await APIsController.connectApi(chainId);
       expect(client?.endpoint).toBe(endpoint2);
       expect(client?.status()).toBe('connected');
     });

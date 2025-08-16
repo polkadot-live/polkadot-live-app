@@ -21,13 +21,11 @@ import React, {
 import { defaultBootstrappingContext } from './default';
 import { startWithWorker } from 'dedot/smoldot/with-worker';
 import { useConnections } from '@ren/contexts/common';
-import { useIntervalSubscriptions } from '@ren/contexts/main';
+import { useApiHealth, useIntervalSubscriptions } from '@ren/contexts/main';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { BootstrappingInterface } from './types';
-import type { ChainID } from '@polkadot-live/types/chains';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { IpcTask } from '@polkadot-live/types/communication';
-import type { NodeEndpoint } from '@polkadot-live/types/apis';
 
 export const BootstrappingContext = createContext<BootstrappingInterface>(
   defaultBootstrappingContext
@@ -40,6 +38,7 @@ export const BootstrappingProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { startApi } = useApiHealth();
   const { addIntervalSubscription } = useIntervalSubscriptions();
   const { cacheGet } = useConnections();
   const isConnected = cacheGet('mode:connected');
@@ -81,15 +80,10 @@ export const BootstrappingProvider = ({
 
   /// Step 3: Connect necessary API instances.
   const connectAPIs = async () => {
-    try {
-      const isOnline = await getOnlineStatus();
-      if (isOnline) {
-        const chainIds = Array.from(AccountsController.accounts.keys());
-        await Promise.all(chainIds.map((c) => APIsController.connectApi(c)));
-      }
-    } catch (err) {
-      // TODO: Handle connection error.
-      console.error(err);
+    const isOnline = await getOnlineStatus();
+    if (isOnline) {
+      const chainIds = Array.from(AccountsController.accounts.keys());
+      await Promise.all(chainIds.map((c) => startApi(c)));
     }
   };
 
@@ -97,10 +91,19 @@ export const BootstrappingProvider = ({
   const fetchAccountData = async () => {
     const isOnline = await getOnlineStatus();
     if (isOnline) {
+      const failedChainIds = APIsController.getFailedChainIds();
       for (const chainId of AccountsController.getManagedChains()) {
-        const res = await APIsController.getConnectedApiOrThrow(chainId);
-        const api = res.getApi();
-        await AccountsController.syncAllAccounts(api, chainId);
+        try {
+          if (failedChainIds.includes(chainId)) {
+            continue;
+          }
+
+          const res = await APIsController.getConnectedApiOrThrow(chainId);
+          const api = res.getApi();
+          await AccountsController.syncAllAccounts(api, chainId);
+        } catch (error) {
+          console.error(error);
+        }
       }
     }
   };
@@ -254,23 +257,6 @@ export const BootstrappingProvider = ({
     }
   };
 
-  /// Re-subscribe to tasks when switching to a different endpoint.
-  const handleNewEndpointForChain = async (
-    chainId: ChainID,
-    newEndpoint: NodeEndpoint
-  ) => {
-    await APIsController.connectEndpoint(chainId, newEndpoint);
-
-    // Re-subscribe account and chain tasks.
-    if (APIsController.getStatus(chainId) === 'connected') {
-      await Promise.all([
-        AccountsController.subscribeAccountsForChain(chainId),
-        SubscriptionsController.resubscribeChain(chainId),
-      ]);
-    }
-    SubscriptionsController.syncState();
-  };
-
   /// Util for initializing the intervals controller.
   const initIntervalsController = async () => {
     const ipcTask: IpcTask = { action: 'interval:task:get', data: null };
@@ -317,7 +303,6 @@ export const BootstrappingProvider = ({
         handleInitializeApp,
         handleInitializeAppOffline,
         handleInitializeAppOnline,
-        handleNewEndpointForChain,
         syncOpenGovWindow,
       }}
     >

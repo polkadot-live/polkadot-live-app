@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { AnyFunction } from '@polkadot-live/types/misc';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
 import type {
   SubscriptionTask,
@@ -15,6 +16,7 @@ export interface ManageProps {
 export interface AccountsProps {
   addresses: FlattenedAccountData[];
   setBreadcrumb: (s: string) => void;
+  setTasksChainId: React.Dispatch<React.SetStateAction<ChainID | null>>;
   setSection: (n: number) => void;
   setTypeClicked: (t: SubscriptionTaskType) => void;
   setSelectedAccount: (a: string | null) => void;
@@ -24,6 +26,7 @@ export interface PermissionsProps {
   breadcrumb: string;
   section: number;
   selectedAccount: string | null;
+  tasksChainId: ChainID | null;
   typeClicked: SubscriptionTaskType;
   setSection: (n: number) => void;
 }

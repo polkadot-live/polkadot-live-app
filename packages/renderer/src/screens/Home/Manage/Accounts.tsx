@@ -31,6 +31,7 @@ import type {
 export const Accounts = ({
   addresses,
   setBreadcrumb,
+  setTasksChainId,
   setSection,
   setTypeClicked,
   setSelectedAccount,
@@ -129,10 +130,11 @@ export const Accounts = ({
   /**
    * Set parent subscription tasks state when a chain is clicked.
    */
-  const handleClickChain = (chainId: string) => {
-    const tasks = getChainSubscriptions(chainId as ChainID);
+  const handleClickChain = (chainId: ChainID) => {
+    const tasks = getChainSubscriptions(chainId);
     const copy = copyTasks(tasks);
 
+    setTasksChainId(chainId);
     setTypeClicked('chain');
     setRenderedSubscriptions({
       type: 'chain',
@@ -159,6 +161,7 @@ export const Accounts = ({
       tasks: copy,
     } as WrappedSubscriptionTasks);
 
+    setTasksChainId(chainId);
     setTypeClicked('account');
     setBreadcrumb(accountName);
     setSection(1);
