@@ -28,7 +28,8 @@ import type { FlattenedAPIData } from '@polkadot-live/types/apis';
 
 export const Footer = () => {
   const { appLoading, isConnecting, isAborting } = useBootstrapping();
-  const { failedConnections } = useApiHealth();
+  const { hasConnectionIssue, failedConnections } = useApiHealth();
+  const numFailed = failedConnections.size;
 
   const {
     chains,
@@ -105,9 +106,23 @@ export const Footer = () => {
           )}
         </div>
 
-        <div>
+        <FlexRow className="Header">
           <h5>{getHeadingText()}</h5>
-        </div>
+          {numFailed > 0 && (
+            <UI.TooltipRx
+              side="top"
+              style={{ zIndex: 99 }}
+              text={`${numFailed} Failed Connection${numFailed !== 1 ? 's' : ''}`}
+              theme={theme}
+            >
+              <FontAwesomeIcon
+                className="WarningIcon"
+                transform={'shrink-1'}
+                icon={FA.faTriangleExclamation}
+              />
+            </UI.TooltipRx>
+          )}
+        </FlexRow>
         <button type="button" onClick={() => setExpanded(!expanded)}>
           <FontAwesomeIcon
             icon={expanded ? FA.faAngleDown : FA.faAngleUp}
@@ -176,18 +191,16 @@ export const Footer = () => {
                               <NetworkItem key={`${chainId}`}>
                                 <div className="left">
                                   <h4>{chainId}</h4>
+
+                                  {hasConnectionIssue(chainId) && (
+                                    <FontAwesomeIcon
+                                      className="WarningIcon"
+                                      icon={FA.faTriangleExclamation}
+                                    />
+                                  )}
                                 </div>
                                 <div className="right">
                                   <FlexRow $gap={'1.5rem'}>
-                                    {Array.from(
-                                      failedConnections.keys()
-                                    ).includes(chainId) && (
-                                      <FontAwesomeIcon
-                                        style={{ color: '#c51515' }}
-                                        transform={'grow-1'}
-                                        icon={FA.faCircleExclamation}
-                                      />
-                                    )}
                                     {/* RPC select box */}
                                     <SelectRpc
                                       apiData={apiData}
