@@ -6,6 +6,7 @@ import type { ApiHealthContextInterface } from './types';
 
 export const defaultApiHealthContext: ApiHealthContextInterface = {
   failedConnections: new Map(),
+  hasConnectionIssue: () => false,
   onEndpointChange: () => new Promise(() => {}),
   setFailedConnections: () => {},
   startApi: () => new Promise(() => {}),

@@ -29,6 +29,12 @@ export const ApiHealthProvider = ({
   );
 
   /**
+   * Returns `true` if the chain is currently unavailable due to a failed connection attempt.
+   */
+  const hasConnectionIssue = (chainId: ChainID): boolean =>
+    Array.from(failedConnections.keys()).includes(chainId);
+
+  /**
    * Attempt connecting to a chain API.
    */
   const startApi = async (chainId: ChainID) => {
@@ -84,6 +90,7 @@ export const ApiHealthProvider = ({
     <ApiHealthContext.Provider
       value={{
         failedConnections,
+        hasConnectionIssue,
         onEndpointChange,
         setFailedConnections,
         startApi,

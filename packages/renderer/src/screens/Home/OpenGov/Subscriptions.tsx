@@ -7,6 +7,7 @@ import * as Style from '@polkadot-live/ui/styles';
 import { ConfigRenderer, IntervalsController } from '@polkadot-live/core';
 
 import {
+  useApiHealth,
   useBootstrapping,
   useIntervalSubscriptions,
   useManage,
@@ -25,6 +26,7 @@ export const Subscriptions = ({
   setSection,
 }: SubscriptionsProps) => {
   const { isConnecting } = useBootstrapping();
+  const { hasConnectionIssue } = useApiHealth();
   const { cacheGet, getOnlineMode } = useConnections();
   const { updateIntervalSubscription } = useIntervalSubscriptions();
 
@@ -61,7 +63,10 @@ export const Subscriptions = ({
    * Determines if interval task should be disabled.
    */
   const isIntervalTaskDisabled = () =>
-    !getOnlineMode() || isConnecting || isImportingData;
+    !getOnlineMode() ||
+    showConnectionIssue() ||
+    isConnecting ||
+    isImportingData;
 
   /**
    * Map referendum ID to its global toggle state.
@@ -137,6 +142,12 @@ export const Subscriptions = ({
     window.myAPI.umamiEvent(event, { category, chainId });
   };
 
+  /**
+   * Utility to determine if a connection issue exists.
+   */
+  const showConnectionIssue = (): boolean =>
+    activeChainId ? hasConnectionIssue(activeChainId) : false;
+
   return (
     <>
       <UI.ControlsWrapper $sticky={false} style={{ marginBottom: '1.5rem' }}>
@@ -152,6 +163,13 @@ export const Subscriptions = ({
       </UI.ControlsWrapper>
 
       {!getOnlineMode() && <UI.OfflineBanner rounded={true} />}
+
+      {getOnlineMode() && showConnectionIssue() && (
+        <UI.OfflineBanner
+          rounded={true}
+          text={'Reconnect chain to restore API access.'}
+        />
+      )}
 
       <Style.FlexColumn>
         <UI.AccordionWrapper style={{ marginTop: '1rem' }}>

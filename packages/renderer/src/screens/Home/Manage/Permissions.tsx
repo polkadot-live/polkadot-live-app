@@ -6,6 +6,7 @@ import * as UI from '@polkadot-live/ui/components';
 import { useEffect, useState } from 'react';
 import { useConnections } from '@ren/contexts/common';
 import {
+  useApiHealth,
   useAppSettings,
   useBootstrapping,
   useManage,
@@ -37,6 +38,7 @@ export const Permissions = ({
   breadcrumb,
   section,
   selectedAccount,
+  tasksChainId,
   typeClicked,
   setSection,
 }: PermissionsProps) => {
@@ -45,6 +47,7 @@ export const Permissions = ({
     'setting:show-debugging-subscriptions'
   );
 
+  const { hasConnectionIssue } = useApiHealth();
   const { isConnecting } = useBootstrapping();
   const { cacheGet, getTheme, getOnlineMode } = useConnections();
   const { renderedSubscriptions } = useManage();
@@ -173,27 +176,17 @@ export const Permissions = ({
    * task and account data.
    */
   const getDisabled = (task: SubscriptionTask) => {
-    if (!getOnlineMode() || isConnecting || isImportingData) {
-      return true;
-    }
+    const { action, account, chainId } = task;
+    const failed = hasConnectionIssue(chainId);
 
-    switch (task.action) {
-      case 'subscribe:account:nominationPools:rewards':
-      case 'subscribe:account:nominationPools:state':
-      case 'subscribe:account:nominationPools:renamed':
-      case 'subscribe:account:nominationPools:roles':
-      case 'subscribe:account:nominationPools:commission': {
-        return task.account?.nominationPoolData ? false : true;
-      }
-      case 'subscribe:account:nominating:pendingPayouts':
-      case 'subscribe:account:nominating:exposure':
-      case 'subscribe:account:nominating:commission':
-      case 'subscribe:account:nominating:nominations': {
-        return task.account?.nominatingData ? false : true;
-      }
-      default: {
-        return false;
-      }
+    if (!getOnlineMode() || isConnecting || isImportingData || failed) {
+      return true;
+    } else if (action.startsWith('subscribe:account:nominationPools')) {
+      return account?.nominationPoolData ? false : true;
+    } else if (action.startsWith('subscribe:account:nominating')) {
+      return account?.nominatingData ? false : true;
+    } else {
+      return false;
     }
   };
 
@@ -286,6 +279,12 @@ export const Permissions = ({
     }
   };
 
+  /**
+   * Utility to determine if a connection issue exists.
+   */
+  const showConnectionIssue = (): boolean =>
+    tasksChainId ? hasConnectionIssue(tasksChainId) : false;
+
   return (
     <>
       <UI.ControlsWrapper $sticky={false} style={{ marginBottom: '1.5rem' }}>
@@ -313,6 +312,13 @@ export const Permissions = ({
       </UI.ControlsWrapper>
 
       {!getOnlineMode() && <UI.OfflineBanner rounded={true} />}
+
+      {getOnlineMode() && showConnectionIssue() && (
+        <UI.OfflineBanner
+          rounded={true}
+          text={'Reconnect chain to restore API access.'}
+        />
+      )}
 
       <FlexColumn>
         <UI.AccordionWrapper style={{ marginTop: '1rem' }}>

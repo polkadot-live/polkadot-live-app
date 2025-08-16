@@ -7,6 +7,7 @@ import type { ApiError } from '@polkadot-live/core';
 
 export interface ApiHealthContextInterface {
   failedConnections: Map<ChainID, ApiConnectResult<ApiError>>;
+  hasConnectionIssue: (chainId: ChainID) => boolean;
   onEndpointChange: (chainId: ChainID, endpoint: NodeEndpoint) => Promise<void>;
   setFailedConnections: React.Dispatch<
     React.SetStateAction<Map<ChainID, ApiConnectResult<ApiError>>>
