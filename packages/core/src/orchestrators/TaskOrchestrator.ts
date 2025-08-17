@@ -19,6 +19,27 @@ import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 // Orchestrator class to receive and handle subscription tasks.
 export class TaskOrchestrator {
   /**
+   * @name buildTasks
+   * @summary Inserts subscription tasks and builds the query multi argument.
+   */
+  static async buildTasks(
+    tasks: SubscriptionTask[],
+    wrapper: QueryMultiWrapper
+  ) {
+    if (tasks.length === 0) {
+      return;
+    }
+
+    // Insert task in owner account's query multi wrapper.
+    for (const task of tasks) {
+      this.next(task, wrapper);
+    }
+
+    // Build query multi API argument.
+    await wrapper.build(tasks[0].chainId);
+  }
+
+  /**
    * @name subscribeTask
    * @summary Cache the task in its respective wrapper and build (subscribe) if app is online.
    */
@@ -50,11 +71,13 @@ export class TaskOrchestrator {
       return;
     }
 
-    // Cache task in its owner account's query multi wrapper.
+    // Insert task in owner account's query multi wrapper.
     for (const task of tasks) {
       this.next(task, wrapper);
-      await wrapper.build(task.chainId);
     }
+
+    // Build query multi API argument.
+    await wrapper.build(tasks[0].chainId);
 
     // Run the tasks if the app is in online mode.
     const isOnline: boolean = await getOnlineStatus();

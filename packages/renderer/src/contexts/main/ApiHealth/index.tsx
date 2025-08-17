@@ -39,9 +39,7 @@ export const ApiHealthProvider = ({
    */
   const startApi = async (chainId: ChainID) => {
     const { ack } = await APIsController.connectApi(chainId);
-
-    // Handle a potential connection recovery.
-    if (ack === 'success' && failedConnections.has(chainId)) {
+    if (ack === 'success') {
       await onApiRecover(chainId);
     }
   };
@@ -64,20 +62,24 @@ export const ApiHealthProvider = ({
    * Handle a recovered chain API connection.
    */
   const onApiRecover = async (chainId: ChainID) => {
-    if (failedConnections.has(chainId)) {
-      APIsController.failedCache.delete(chainId);
-      APIsController.syncFailedConnections();
+    try {
+      if (failedConnections.has(chainId)) {
+        APIsController.failedCache.delete(chainId);
+        APIsController.syncFailedConnections();
+      }
+
+      // Resync accounts and start subscriptions.
+      const res = await APIsController.getConnectedApiOrThrow(chainId);
+      const api = res.getApi();
+
+      await AccountsController.syncAllAccounts(api, chainId);
+      await Promise.all([
+        AccountsController.subscribeAccountsForChain(chainId),
+        SubscriptionsController.resubscribeChain(chainId),
+      ]);
+    } catch (error) {
+      console.error(error);
     }
-
-    // Resync accounts and start subscriptions.
-    const res = await APIsController.getConnectedApiOrThrow(chainId);
-    const api = res.getApi();
-
-    await AccountsController.syncAllAccounts(api, chainId);
-    await Promise.all([
-      AccountsController.subscribeAccountsForChain(chainId),
-      SubscriptionsController.resubscribeChain(chainId),
-    ]);
   };
 
   /**

@@ -147,8 +147,8 @@ export class Api<T extends keyof ClientTypes> {
       if (this.api !== null) {
         await this.api.disconnect();
         this.api = null;
+        console.log('❌ Dedot: %o', this.endpoint, ' DISCONNECTED');
       }
-      console.log('❌ Dedot: %o', this.endpoint, ' DISCONNECTED');
     } catch (err) {
       console.log('!disconnect error');
       console.error(err);

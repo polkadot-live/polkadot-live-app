@@ -19,6 +19,7 @@ import React, {
   useState,
 } from 'react';
 import { defaultBootstrappingContext } from './default';
+import { setStateWithRef } from '@w3ux/utils';
 import { startWithWorker } from 'dedot/smoldot/with-worker';
 import { useConnections } from '@ren/contexts/common';
 import { useApiHealth, useIntervalSubscriptions } from '@ren/contexts/main';
@@ -51,7 +52,9 @@ export const BootstrappingProvider = ({
   const refAborted = useRef(false);
   const refSwitchingToOnline = useRef(false);
 
-  /// Notify main process there may be a change in connection status.
+  /**
+   * Notify main process there may be a change in connection status.
+   */
   const handleOnline = () => {
     window.myAPI.relaySharedState('mode:connected', true);
   };
@@ -60,7 +63,9 @@ export const BootstrappingProvider = ({
     window.myAPI.relaySharedState('mode:connected', false);
   };
 
-  /// Step 1: Initialize chain APIs (disconnected).
+  /**
+   * Initialize smoldot.
+   */
   const initSmoldot = async () => {
     const SmoldotWorker = new Worker(
       new URL('dedot/smoldot/worker', import.meta.url),
@@ -70,15 +75,24 @@ export const BootstrappingProvider = ({
     APIsController.smoldotClient = startWithWorker(SmoldotWorker);
   };
 
-  const initChainAPIs = async () => {
-    await APIsController.initialize();
+  /**
+   * Initialize application systems.
+   */
+  const initSystems = async () => {
     await initSmoldot();
+    await Promise.all([
+      APIsController.initialize(),
+      AccountsController.initialize(),
+    ]);
+    await Promise.all([
+      AccountsController.initAccountSubscriptions(),
+      SubscriptionsController.initChainSubscriptions(),
+    ]);
   };
 
-  /// Step 2: Initialize accounts.
-  const initAccounts = async () => await AccountsController.initialize();
-
-  /// Step 3: Connect necessary API instances.
+  /**
+   * Connect APIs and restore systems.
+   */
   const connectAPIs = async () => {
     const isOnline = await getOnlineStatus();
     if (isOnline) {
@@ -87,94 +101,23 @@ export const BootstrappingProvider = ({
     }
   };
 
-  /// Step 4: Fetch current account data.
-  const fetchAccountData = async () => {
-    const isOnline = await getOnlineStatus();
-    if (isOnline) {
-      const failedChainIds = APIsController.getFailedChainIds();
-      for (const chainId of AccountsController.getManagedChains()) {
-        try {
-          if (failedChainIds.includes(chainId)) {
-            continue;
-          }
-
-          const res = await APIsController.getConnectedApiOrThrow(chainId);
-          const api = res.getApi();
-          await AccountsController.syncAllAccounts(api, chainId);
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    }
-  };
-
-  /// Step 5: Initiate subscriptions.
-  const initSubscriptions = async () => {
-    const isOnline = await getOnlineStatus();
-    if (isOnline) {
-      await Promise.all([
-        AccountsController.subscribeAccounts(),
-        SubscriptionsController.initChainSubscriptions(),
-      ]);
-    }
-  };
-
-  /// Handle event listeners.
-  useEffect(() => {
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, []);
-
-  /// Handle Dedot clients when online mode changes.
-  useEffect(() => {
-    const disconnectAll = async () => {
-      await APIsController.closeAll();
-    };
-
-    if (!isConnected) {
-      disconnectAll();
-    } else {
-      // TODO: Handle online mode.
-    }
-  }, [isConnected]);
-
-  /// Handle abort flag.
-  useEffect(() => {
-    if (ConfigRenderer.abortConnecting) {
-      ConfigRenderer.abortConnecting = false;
-      refAborted.current = true;
-    }
-  }, [ConfigRenderer.abortConnecting]);
-
-  /// Handle app initialization.
+  /**
+   * Handle app initialization.
+   */
   const handleInitializeApp = async () => {
     if (!refAppInitialized.current) {
       setAppLoading(true);
 
-      // Initialize APIs and smoldot light client.
-      await initChainAPIs();
-
+      await initSystems();
       const initTasks: (() => Promise<AnyData>)[] = [
-        initAccounts,
         connectAPIs,
-        fetchAccountData,
-        initSubscriptions,
         initIntervalsController,
         disconnectAPIs,
       ];
 
+      // Always initialize intervals controller.
       for (const [index, task] of initTasks.entries()) {
-        if (index === 4) {
-          // Always initialize intervals controller.
-          await task();
-        } else if (!refAborted.current) {
-          await task();
-        }
+        index === 1 ? await task() : !refAborted.current && (await task());
       }
 
       // Set application state.
@@ -184,20 +127,20 @@ export const BootstrappingProvider = ({
 
       // Set app in offline mode if connection processing was aborted.
       if (refAborted.current) {
-        refAborted.current = false;
+        setStateWithRef(false, setIsAborting, refAborted);
         await handleInitializeAppOffline();
-        setIsAborting(false);
       }
 
       // Wait 100ms to avoid a snapping loading spinner.
-      console.log('App initialized...');
       setTimeout(() => {
         setAppLoading(false);
       }, 100);
     }
   };
 
-  /// Handle switching to offline mode.
+  /**
+   * Handle switching to offline mode.
+   */
   const handleInitializeAppOffline = async () => {
     // Set config flag to false to re-start the online mode initialization
     // when connection status goes back online.
@@ -215,7 +158,9 @@ export const BootstrappingProvider = ({
     await APIsController.closeAll();
   };
 
-  /// Handle switching to online mode.
+  /**
+   * Handle switching to online mode.
+   */
   const handleInitializeAppOnline = async () => {
     if (refSwitchingToOnline.current) {
       return;
@@ -224,16 +169,10 @@ export const BootstrappingProvider = ({
     // Set config flag to `true` to make sure the app doesn't re-execute
     // this function's logic whilst the connection status is online.
     refSwitchingToOnline.current = true;
-
-    const initTasks: (() => Promise<AnyData>)[] = [
-      connectAPIs,
-      fetchAccountData,
-      initSubscriptions,
-      disconnectAPIs,
-    ];
+    const initTasks: (() => Promise<AnyData>)[] = [connectAPIs, disconnectAPIs];
 
     for (const [index, task] of initTasks.entries()) {
-      if (!refAborted.current && index === 3) {
+      if (!refAborted.current && index === 1) {
         // Initialise intervals controller before disconnecting APIs.
         IntervalsController.initIntervals(true);
         await task();
@@ -246,8 +185,7 @@ export const BootstrappingProvider = ({
     refSwitchingToOnline.current = false;
 
     if (refAborted.current) {
-      refAborted.current = false;
-      setIsAborting(false);
+      setStateWithRef(false, setIsAborting, refAborted);
       await handleInitializeAppOffline();
     } else {
       // Report online status to renderers.
@@ -257,7 +195,9 @@ export const BootstrappingProvider = ({
     }
   };
 
-  /// Util for initializing the intervals controller.
+  /**
+   * Util for initializing the intervals controller.
+   */
   const initIntervalsController = async () => {
     const ipcTask: IpcTask = { action: 'interval:task:get', data: null };
     const serialized = (await window.myAPI.sendIntervalTask(ipcTask)) || '[]';
@@ -274,7 +214,9 @@ export const BootstrappingProvider = ({
     }
   };
 
-  /// Called when initializing the openGov window.
+  /**
+   * Called when initializing the openGov window.
+   */
   const syncOpenGovWindow = async () => {
     const ipcTask: IpcTask = { action: 'interval:task:get', data: null };
     const serialized = (await window.myAPI.sendIntervalTask(ipcTask)) || '[]';
@@ -290,6 +232,42 @@ export const BootstrappingProvider = ({
       });
     }
   };
+
+  /**
+   * Handle event listeners.
+   */
+  useEffect(() => {
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  /**
+   * Handle Dedot clients when online mode changes.
+   */
+  useEffect(() => {
+    const disconnectAll = async () => {
+      await APIsController.closeAll();
+    };
+
+    if (!isConnected) {
+      disconnectAll();
+    }
+  }, [isConnected]);
+
+  /**
+   * Handle abort flag.
+   */
+  useEffect(() => {
+    if (ConfigRenderer.abortConnecting) {
+      ConfigRenderer.abortConnecting = false;
+      refAborted.current = true;
+    }
+  }, [ConfigRenderer.abortConnecting]);
 
   return (
     <BootstrappingContext.Provider

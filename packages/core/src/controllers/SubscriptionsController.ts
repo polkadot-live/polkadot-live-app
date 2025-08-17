@@ -31,7 +31,7 @@ import type {
  */
 
 export class SubscriptionsController {
-  static chainSubscriptions: QueryMultiWrapper | null = null;
+  static chainSubscriptions = new QueryMultiWrapper();
 
   /**
    * React state.
@@ -108,12 +108,9 @@ export class SubscriptionsController {
 
   /**
    * @name initChainSubscriptions
-   * @summary Fetch persisted chain subscription tasks from store and re-subscribe to them.
+   * @summary Fetch and build persisted chain subscription tasks from store.
    */
   static async initChainSubscriptions() {
-    // Instantiate QueryMultiWrapper.
-    this.chainSubscriptions = new QueryMultiWrapper();
-
     // Send IPC message to get chain tasks from store.
     const serialized =
       (await window.myAPI.sendSubscriptionTask({
@@ -121,26 +118,19 @@ export class SubscriptionsController {
         data: null,
       })) || '';
 
-    // Deserialize fetched chain tasks.
-    const tasks: SubscriptionTask[] =
-      serialized !== '' ? JSON.parse(serialized) : [];
-
     // Subscribe to tasks.
-    await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions);
+    await TaskOrchestrator.buildTasks(
+      serialized !== '' ? JSON.parse(serialized) : [],
+      this.chainSubscriptions
+    );
   }
 
   /**
    * @name resubscribeChains
-   * @summary Recalls the `queryMulti` api and subscribes to the wrapper's cached
-   * subscription tasks. This method is called when the app goes into online mode.
+   * @summary Run managed chain subscriptions. Called when the app goes into online mode.
    */
   static async resubscribeChains() {
-    if (!this.chainSubscriptions) {
-      return;
-    }
-
-    // Get subscription task array and subscribe to batched tasks.
-    const tasks = this.chainSubscriptions?.getSubscriptionTasks() || [];
+    const tasks = this.chainSubscriptions.getSubscriptionTasks() || [];
     await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions);
   }
 
@@ -149,11 +139,6 @@ export class SubscriptionsController {
    * @summary Re-subscribe to tasks for a particular chain.
    */
   static async resubscribeChain(chainId: ChainID) {
-    if (!this.chainSubscriptions) {
-      return;
-    }
-
-    // Fetch task to re-subscribe to.
     const tasks = this.chainSubscriptions
       .getSubscriptionTasks()
       .filter((task) => task.chainId === chainId);
@@ -166,13 +151,7 @@ export class SubscriptionsController {
    * @summary Subscribe to a batch of chain tasks.
    */
   static async subscribeChainTasks(tasks: SubscriptionTask[]) {
-    if (this.chainSubscriptions) {
-      await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions);
-    } else {
-      throw new Error(
-        'Error: SubscriptionsController::subscribeChainTask QueryMultiWrapper null'
-      );
-    }
+    await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions);
   }
 
   /**
@@ -181,7 +160,7 @@ export class SubscriptionsController {
    * @returns {boolean} Represents if API instance is required for the provided chainID.
    */
   static requiresChainApi(chainId: ChainID) {
-    return this.chainSubscriptions?.requiresChainApi(chainId);
+    return this.chainSubscriptions.requiresChainApi(chainId);
   }
 
   /**
@@ -190,7 +169,7 @@ export class SubscriptionsController {
    * a chain. Active subscriptions need to be included in the array.
    */
   static getChainSubscriptions() {
-    const activeTasks = this.chainSubscriptions?.getSubscriptionTasks();
+    const activeTasks = this.chainSubscriptions.getSubscriptionTasks();
 
     // TODO: Populate inactive tasks with their correct arguments.
     // No chain API calls so far require arguments.

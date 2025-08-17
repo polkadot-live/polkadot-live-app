@@ -114,9 +114,9 @@ export class AccountsController {
   };
 
   /**
-   * Fetch persisted tasks from the store and re-subscribe to them.
+   * Fetch and build persisted tasks from the store.
    */
-  static async subscribeAccounts() {
+  static async initAccountSubscriptions() {
     if (!this.accounts) {
       return;
     }
@@ -133,7 +133,7 @@ export class AccountsController {
 
         if (account.queryMulti !== null) {
           const tasks: SubscriptionTask[] = JSON.parse(stored);
-          await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
+          await TaskOrchestrator.buildTasks(tasks, account.queryMulti);
         }
       }
     }
@@ -175,23 +175,6 @@ export class AccountsController {
 
       if (tasks.length && account.queryMulti) {
         await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
-      }
-    }
-  }
-
-  /**
-   * Recalls the `queryMulti` api and subscribes to the wrapper's cached
-   * subscription tasks. This method is called when the app goes into online mode.
-   *
-   * @deprecated Currently not being called.
-   */
-  static async resubscribeAccounts() {
-    for (const accounts of this.accounts.values()) {
-      for (const account of accounts) {
-        if (account.queryMulti) {
-          const tasks = account.getSubscriptionTasks() || [];
-          await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
-        }
       }
     }
   }
