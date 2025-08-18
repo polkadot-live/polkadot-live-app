@@ -32,6 +32,7 @@ import {
   AddressesProvider as ImportAddressesProvider,
   AddHandlerProvider,
   DeleteHandlerProvider,
+  DialogControlProvider,
   ImportHandlerProvider,
   LedgerHardwareProvider,
   RemoveHandlerProvider,
@@ -108,6 +109,7 @@ const getProvidersForWindow = () => {
         ConnectionsProvider,
         ImportAddressesProvider,
         AccountStatusesProvider,
+        DialogControlProvider,
         // Requires useAccountStatuses + useAddresses
         ImportHandlerProvider,
         // Requires useAccountStatuses + useAddresses

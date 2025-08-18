@@ -3,17 +3,11 @@
 
 import * as defaults from './defaults';
 import { postRenameAccount, renameAccountInStore } from '@polkadot-live/core';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext } from 'react';
 import { useAddresses } from '@ren/contexts/import/Addresses';
 import { renderToast, validateAccountName } from '@polkadot-live/ui/utils';
 import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';
-import type {
-  DialogBulkRenameData,
-  DialogManageAccountData,
-  DialogRenameData,
-  DialogShowAddressData,
-  RenameHandlerContextInterface,
-} from './types';
+import type { RenameHandlerContextInterface } from './types';
 
 export const RenameHandlerContext =
   createContext<RenameHandlerContextInterface>(
@@ -28,59 +22,6 @@ export const RenameHandlerProvider = ({
   children: React.ReactNode;
 }) => {
   const { handleAddressImport, isUniqueAccountName } = useAddresses();
-
-  /**
-   * Rename dialog.
-   */
-  const [renameDialogState, setRenameDialogState] = useState<DialogRenameData>({
-    isOpen: false,
-    encodedAccount: null,
-    genericAccount: null,
-  });
-
-  const getRenameDialogData = () => renameDialogState;
-  const setRenameDialogData = (data: DialogRenameData) => {
-    setRenameDialogState({ ...data });
-  };
-
-  /**
-   * Manage account dialog.
-   */
-  const [manageAccountDialogState, setManageAccountDialogState] =
-    useState<DialogManageAccountData>({
-      isOpen: false,
-      genericAccount: null,
-    });
-
-  const getManageAccountDialogData = () => manageAccountDialogState;
-  const setManageAccountDialogData = (data: DialogManageAccountData) =>
-    setManageAccountDialogState({ ...data });
-
-  /**
-   * Bulk rename dialog.
-   */
-  const [bulkRenameDialogState, setBulkRenameDialogState] =
-    useState<DialogBulkRenameData>({
-      isOpen: false,
-      genericAccount: null,
-    });
-
-  const getBulkRenameDialogData = () => bulkRenameDialogState;
-  const setBulkRenameDialogData = (data: DialogBulkRenameData) =>
-    setBulkRenameDialogState({ ...data });
-
-  /**
-   * Show address dialog.
-   */
-  const [showAddressDialogState, setShowAddressDialogState] =
-    useState<DialogShowAddressData>({
-      isOpen: false,
-      address: null,
-    });
-
-  const getShowAddressDialogData = () => showAddressDialogState;
-  const setShowAddressDialogData = (data: DialogShowAddressData) =>
-    setShowAddressDialogState({ ...data });
 
   /**
    * Rename handler for generic and encoded accounts.
@@ -130,15 +71,7 @@ export const RenameHandlerProvider = ({
   return (
     <RenameHandlerContext.Provider
       value={{
-        getBulkRenameDialogData,
-        getManageAccountDialogData,
-        getRenameDialogData,
-        getShowAddressDialogData,
         renameHandler,
-        setBulkRenameDialogData,
-        setManageAccountDialogData,
-        setRenameDialogData,
-        setShowAddressDialogData,
         validateNameInput,
       }}
     >

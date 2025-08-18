@@ -7,8 +7,8 @@ import { HardwareAddress } from '@polkadot-live/ui/components';
 import {
   useAccountStatuses,
   useAddHandler,
+  useDialogControl,
   useRemoveHandler,
-  useRenameHandler,
 } from '@ren/contexts/import';
 import { useConnections } from '@ren/contexts/common';
 import { useOverlay } from '@polkadot-live/ui/contexts';
@@ -21,10 +21,12 @@ export const Address = ({ genericAccount, setSection }: AddressProps) => {
   const { getStatusForAccount, anyProcessing } = useAccountStatuses();
   const { handleAddAddress, handleBookmarkToggle } = useAddHandler();
   const { handleRemoveAddress } = useRemoveHandler();
-  const { setManageAccountDialogData } = useRenameHandler();
   const { getTheme, getOnlineMode } = useConnections();
-  const { setBulkRenameDialogData, setShowAddressDialogData } =
-    useRenameHandler();
+  const {
+    setManageAccountDialogData,
+    setBulkRenameDialogData,
+    setShowAddressDialogData,
+  } = useDialogControl();
 
   const theme = getTheme();
 
