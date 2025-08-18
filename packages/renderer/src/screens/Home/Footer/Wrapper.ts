@@ -202,6 +202,10 @@ export const SelectRpcWrapper = styled.div`
       border-radius: 0.375rem;
       font-size: 1rem;
       cursor: pointer;
+
+      &:disabled {
+        cursor: not-allowed;
+      }
     }
   }
 `;

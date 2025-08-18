@@ -41,7 +41,7 @@ export const Footer = () => {
   } = useChains();
 
   const { getOnlineMode, getTheme, cacheGet } = useConnections();
-  const isConnected = cacheGet('mode:connected');
+  const isConnected = getOnlineMode();
   const theme = getTheme();
 
   const { chainHasIntervalSubscriptions } = useIntervalSubscriptions();

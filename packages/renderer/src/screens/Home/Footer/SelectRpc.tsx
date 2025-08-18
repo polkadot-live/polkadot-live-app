@@ -67,7 +67,6 @@ export const SelectRpc = ({
         </div>
 
         <select
-          className="select-rpc"
           id={`${chainId}_rpcs`}
           value={selectedRpc}
           onChange={(e) => handleRpcChange(e)}
