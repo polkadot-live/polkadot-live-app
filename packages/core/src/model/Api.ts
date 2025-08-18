@@ -85,10 +85,19 @@ export class Api<T extends keyof ClientTypes> {
   /**
    * Connect to an endpoint.
    */
-  connect = async (smoldotClient: smoldot.Client | null) => {
+  connect = async (
+    smoldotClient: smoldot.Client | null,
+    signal: AbortSignal
+  ): Promise<{ ack: 'success' | 'failure'; error?: ApiError }> => {
     try {
+      const throwIfAborted = () => {
+        if (signal.aborted) {
+          throw new ApiError('ApiConnectAborted');
+        }
+      };
+
       if (this.api && this.status() !== 'disconnected') {
-        return;
+        return { ack: 'success' };
       }
 
       let provider: WsProvider | SmoldotProvider;
@@ -103,11 +112,13 @@ export class Api<T extends keyof ClientTypes> {
           throw new ApiError('LightClientChainSpecUndefined');
         }
 
+        throwIfAborted();
         const potentialRelayChains = await this.getPotentialRelayChains(
           this.chainId,
           smoldotClient
         );
 
+        throwIfAborted();
         const chain = await smoldotClient.addChain({
           chainSpec,
           potentialRelayChains,
@@ -118,6 +129,7 @@ export class Api<T extends keyof ClientTypes> {
         provider = new WsProvider(this.endpoint);
       }
 
+      throwIfAborted();
       const api = await DedotClient.new<ClientTypes[T]>({
         provider,
         cacheMetadata: !isTestEnv(),
@@ -130,12 +142,16 @@ export class Api<T extends keyof ClientTypes> {
         await this.disconnect();
       }
 
+      throwIfAborted();
       this.api = api;
       this.chainId = chainId;
       console.log('⭕ Dedot: %o', this.endpoint, ' CONNECTED', this.chainId);
-    } catch (err) {
-      console.log('!connect error');
-      console.error(err);
+
+      return { ack: 'success' };
+    } catch (e) {
+      console.error(e);
+      const error = e instanceof ApiError ? e : new ApiError('ApiConnectError');
+      return { ack: 'failure', error };
     }
   };
 

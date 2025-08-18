@@ -26,6 +26,8 @@ export type NodeEndpoint = `wss://${string}` | 'smoldot';
 export type ApiErrorStatusCode =
   | 'ApiUndefined'
   | 'ApiConnectError'
+  | 'ApiConnectAborted'
+  | 'ApiConnectTimeout'
   | 'CouldNotGetConnectedApi'
   | 'LightClientChainSpecUndefined'
   | 'SmoldotClientUndefined';

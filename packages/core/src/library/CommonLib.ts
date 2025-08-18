@@ -86,7 +86,7 @@ export const getOnlineStatus = async () =>
  * @name waitMs
  * @summary Waits the given milliseconds and returns the provided boolean result.
  */
-export const waitMs = async (ms: number, result: boolean): Promise<boolean> =>
+export const waitMs = async (ms: number, result = false): Promise<boolean> =>
   new Promise<boolean>((resolve) => setTimeout(() => resolve(result), ms));
 
 /**

@@ -112,6 +112,15 @@ export interface QueryMultiEntry {
   unsub: AnyFunction | null;
 }
 
+/**
+ * Data required to construct query with params.
+ */
+export interface QueryParamMeta {
+  action: TaskAction;
+  actionArgs?: string[];
+  chainId: ChainID;
+}
+
 export type SubscriptionTaskType = 'account' | 'chain' | 'interval' | '';
 
 // Wraps an array of subscription tasks along with their

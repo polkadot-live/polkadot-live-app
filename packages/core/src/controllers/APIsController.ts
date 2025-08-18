@@ -79,6 +79,12 @@ export class APIsController {
   };
 
   /**
+   * Get timeout duration for RPC or light client connection.
+   */
+  static getConnectionTimeout = (chainId: ChainID) =>
+    this.getEndpoint(chainId) === 'smoldot' ? 40_000 : 10_000;
+
+  /**
    * Ensure a client is connected.
    */
   static connectApi = async (
@@ -90,7 +96,21 @@ export class APIsController {
         throw new ApiError('ApiUndefined');
       }
 
-      await client.connect(this.smoldotClient);
+      const controller = new AbortController();
+      const timeout = this.getConnectionTimeout(chainId);
+
+      const { ack, error } = await Promise.race([
+        client.connect(this.smoldotClient, controller.signal),
+        CommonLib.waitMs(timeout).then(() => {
+          controller.abort();
+          return { ack: 'failure', error: new ApiError('ApiConnectTimeout') };
+        }),
+      ]);
+
+      if (ack === 'failure') {
+        throw error || new ApiError('ApiConnectError');
+      }
+
       this.set(client);
       this.updateUiChainState(client);
 
@@ -142,15 +162,24 @@ export class APIsController {
         return connected ? this.castClient(chainId, this.get(chainId)!) : null;
       }
       case 'disconnected': {
-        // Wait up to 30 seconds to connect.
-        const result = await Promise.race([
-          client.connect(this.smoldotClient).then(() => true),
-          CommonLib.waitMs(30_000, false),
+        const controller = new AbortController();
+        const timeout = this.getConnectionTimeout(chainId);
+
+        const { ack } = await Promise.race([
+          client.connect(this.smoldotClient, controller.signal),
+          CommonLib.waitMs(timeout).then(() => {
+            controller.abort();
+            return { ack: 'failure' };
+          }),
         ]);
 
+        if (ack === 'failure') {
+          return null;
+        }
+
         // Return the connected instance if connection was successful.
-        result && this.updateUiChainState(this.get(chainId)!);
-        return result ? this.castClient(chainId, this.get(chainId)!) : null;
+        this.updateUiChainState(this.get(chainId)!);
+        return this.castClient(chainId, this.get(chainId)!);
       }
       default: {
         return null;
@@ -233,6 +262,12 @@ export class APIsController {
     this.set(client);
     this.updateUiChainState(client);
   };
+
+  /**
+   * Get client endoint.
+   */
+  static getEndpoint = (chainId: ChainID): NodeEndpoint =>
+    this.get(chainId)!.endpoint;
 
   /**
    * Push a disconnected API instance.
