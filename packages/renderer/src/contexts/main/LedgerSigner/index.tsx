@@ -3,23 +3,17 @@
 
 import * as defaults from './defaults';
 import { createContext, useContext } from 'react';
-import { ConfigRenderer, ExtrinsicsController } from '@polkadot-live/core';
+import {
+  ConfigRenderer,
+  ExtrinsicsController,
+  LedgerTxError,
+} from '@polkadot-live/core';
 import { ledgerErrorMeta } from '@polkadot-live/consts/ledger';
 import { decodeAddress, u8aToHex } from 'dedot/utils';
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 import type { HexString } from 'dedot/utils';
 import type { LedgerErrorStatusCode } from '@polkadot-live/types/ledger';
 import type { LedgerSignerContextInterface } from './types';
-
-class LedgerTxError extends Error {
-  statusCode: LedgerErrorStatusCode;
-
-  constructor(statusCode: LedgerErrorStatusCode, message = 'LedgerTxError') {
-    super(message);
-    this.name = 'LedgerTxError';
-    this.statusCode = statusCode;
-  }
-}
 
 export const LedgerSignerContext = createContext<LedgerSignerContextInterface>(
   defaults.defaultLedgerSignerContext
