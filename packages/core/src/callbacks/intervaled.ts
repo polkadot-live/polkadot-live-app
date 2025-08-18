@@ -45,7 +45,7 @@ export const executeIntervaledOneShot = async (
 
   // Return early if network failed to connect.
   if (APIsController.getFailedChainIds().includes(task.chainId)) {
-    return { success: false, message: 'TODO' };
+    return { success: false };
   }
 
   switch (action) {
