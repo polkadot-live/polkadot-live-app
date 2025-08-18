@@ -38,15 +38,10 @@ export const ApiHealthProvider = ({
    * Attempt connecting to a chain API.
    */
   const startApi = async (chainId: ChainID) => {
-    const { ack, error } = await APIsController.connectApi(chainId);
+    const { ack } = await APIsController.connectApi(chainId);
 
     if (ack === 'success') {
       await onApiRecover(chainId);
-    } else {
-      type T = ApiConnectResult<ApiError>;
-      const res: T = { ack: 'failure', chainId, error };
-      APIsController.failedCache.set(chainId, res);
-      APIsController.syncFailedConnections();
     }
   };
 
@@ -55,12 +50,7 @@ export const ApiHealthProvider = ({
    */
   const onEndpointChange = async (chainId: ChainID, endpoint: NodeEndpoint) => {
     await APIsController.setEndpoint(chainId, endpoint);
-
-    const { ack } = await APIsController.connectApi(chainId);
-    if (ack == 'success') {
-      await onApiRecover(chainId);
-    }
-
+    await startApi(chainId);
     SubscriptionsController.syncState();
   };
 

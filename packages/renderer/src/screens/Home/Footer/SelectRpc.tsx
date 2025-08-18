@@ -27,7 +27,9 @@ export const SelectRpc = ({
   const { chainId, endpoint } = apiData;
   const [selectedRpc, setSelectedRpc] = useState(endpoint);
 
-  /// Handle RPC change.
+  /**
+   * Handle RPC change.
+   */
   const handleRpcChange = async (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
@@ -47,7 +49,9 @@ export const SelectRpc = ({
     setWorkingEndpoint && setWorkingEndpoint(chainId, false);
   };
 
-  /// Get class name for connected status icon.
+  /**
+   * Get class name for connected status icon.
+   */
   const getStatusClass = () =>
     !isConnected
       ? 'danger'
