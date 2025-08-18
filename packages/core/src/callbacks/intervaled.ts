@@ -43,6 +43,11 @@ export const executeIntervaledOneShot = async (
     return { success: false, message: 'Undefined referendum ID' };
   }
 
+  // Return early if network failed to connect.
+  if (APIsController.getFailedChainIds().includes(task.chainId)) {
+    return { success: false };
+  }
+
   switch (action) {
     case 'subscribe:interval:openGov:referendumVotes': {
       const result = await oneShot_openGov_referendumVotes(task, policy);

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 export * from './Addresses';
+export * from './ApiHealth';
 export * from './AppSettings';
 export * from './Bootstrapping';
 export * from './Chains';

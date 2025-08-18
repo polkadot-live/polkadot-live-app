@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { getOnlineStatus } from '../library/CommonLib';
+import { APIsController } from '../controllers';
 import type { QueryMultiWrapper } from '../model';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 
@@ -18,6 +19,27 @@ import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 // Orchestrator class to receive and handle subscription tasks.
 export class TaskOrchestrator {
   /**
+   * @name buildTasks
+   * @summary Inserts subscription tasks and builds the query multi argument.
+   */
+  static async buildTasks(
+    tasks: SubscriptionTask[],
+    wrapper: QueryMultiWrapper
+  ) {
+    if (tasks.length === 0) {
+      return;
+    }
+
+    // Insert task in owner account's query multi wrapper.
+    for (const task of tasks) {
+      this.next(task, wrapper);
+    }
+
+    // Build query multi API argument.
+    await wrapper.build(tasks[0].chainId);
+  }
+
+  /**
    * @name subscribeTask
    * @summary Cache the task in its respective wrapper and build (subscribe) if app is online.
    */
@@ -25,12 +47,14 @@ export class TaskOrchestrator {
     task: SubscriptionTask,
     wrapper: QueryMultiWrapper
   ) {
+    const { chainId } = task;
     const isOnline: boolean = await getOnlineStatus();
+    const isRunnable = !APIsController.getFailedChainIds().includes(chainId);
     this.next(task, wrapper);
 
+    await wrapper.build(task.chainId);
     if (isOnline) {
-      await wrapper.build(task.chainId);
-      await wrapper.run(task.chainId);
+      isRunnable && (await wrapper.run(chainId));
     }
   }
 
@@ -47,19 +71,30 @@ export class TaskOrchestrator {
       return;
     }
 
-    // Cache task in its owner account's query multi wrapper.
+    // Insert task in owner account's query multi wrapper.
     for (const task of tasks) {
       this.next(task, wrapper);
-      await wrapper.build(task.chainId);
     }
 
-    // Build the tasks if the app is in online mode.
+    // Build query multi API argument.
+    await wrapper.build(tasks[0].chainId);
+
+    // Run the tasks if the app is in online mode.
     const isOnline: boolean = await getOnlineStatus();
-    if (isOnline) {
-      const chainIds = new Set(tasks.map((t) => t.chainId));
-      for (const chainId of chainIds) {
-        await wrapper.run(chainId);
-      }
+    if (!isOnline) {
+      return;
+    }
+
+    const disconnected = APIsController.getFailedChainIds();
+    const chainIds = new Set(
+      [...new Set(tasks.map(({ chainId }) => chainId))].map((chainId) => ({
+        chainId,
+        isRunnable: !disconnected.includes(chainId),
+      }))
+    );
+
+    for (const { chainId, isRunnable } of chainIds) {
+      isRunnable && (await wrapper.run(chainId));
     }
   }
 

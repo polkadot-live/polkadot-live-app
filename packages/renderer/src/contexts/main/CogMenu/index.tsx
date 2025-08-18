@@ -32,7 +32,7 @@ export const CogMenuProvider = ({
   } = useBootstrapping();
 
   const { cacheGet, getOnlineMode } = useConnections();
-  const isOnline = cacheGet('mode:connected');
+  const isConnected = cacheGet('mode:connected');
 
   const { openHelp } = useHelp();
   const { toggleSetting } = useAppSettings();
@@ -62,7 +62,7 @@ export const CogMenuProvider = ({
       await handleInitializeAppOffline();
     } else {
       // Confirm online connection.
-      if (isOnline) {
+      if (isConnected) {
         // Handle going online.
         setIsConnecting(true);
         await handleInitializeAppOnline();

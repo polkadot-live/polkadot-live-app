@@ -18,6 +18,13 @@ export const FooterWrapper = styled.div`
   padding-top: 0.5rem;
   z-index: 20;
 
+  .Header {
+    .WarningIcon {
+      color: var(--accent-warning);
+      margin-top: -2px;
+    }
+  }
+
   section {
     width: 100%;
   }
@@ -107,6 +114,12 @@ export const NetworkItem = styled.div`
     column-gap: 0.5rem;
     padding: 0.25rem 0.5rem;
 
+    .WarningIcon {
+      color: var(--accent-warning);
+      margin-left: 0.4rem;
+      margin-top: -2px;
+    }
+
     > h4 {
       color: var(--text-color-secondary);
       min-width: fit-content;
@@ -189,6 +202,10 @@ export const SelectRpcWrapper = styled.div`
       border-radius: 0.375rem;
       font-size: 1rem;
       cursor: pointer;
+
+      &:disabled {
+        cursor: not-allowed;
+      }
     }
   }
 `;

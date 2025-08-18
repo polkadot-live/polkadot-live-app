@@ -2,12 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as CommonLib from '../library/CommonLib';
-import type * as smoldot from 'smoldot/no-auto-bytecode';
-
 import { Api } from '../model';
+import { ApiError } from '../errors';
 import { ChainList } from '@polkadot-live/consts/chains';
+
+import type * as smoldot from 'smoldot/no-auto-bytecode';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
+  ApiConnectResult,
   ChainToKey,
   ClientTypes,
   FlattenedAPIData,
@@ -17,11 +19,26 @@ import type {
 export class APIsController {
   static clients: Api<keyof ClientTypes>[] = [];
   static smoldotClient: smoldot.Client | null = null;
+  static failedCache = new Map<ChainID, ApiConnectResult<ApiError>>();
 
   static setUiTrigger: React.Dispatch<React.SetStateAction<boolean>>;
   static cachedSetChains: React.Dispatch<
     React.SetStateAction<Map<ChainID, FlattenedAPIData>>
   >;
+
+  static setFailedConnections: React.Dispatch<
+    React.SetStateAction<Map<ChainID, ApiConnectResult<ApiError>>>
+  >;
+
+  static syncFailedConnections = () => {
+    this.setFailedConnections(new Map(this.failedCache));
+  };
+
+  /**
+   * Get failed connections from cache.
+   */
+  static getFailedChainIds = (): ChainID[] =>
+    Array.from(this.failedCache.keys());
 
   /**
    * Initalize disconnected API clients.
@@ -62,23 +79,58 @@ export class APIsController {
   };
 
   /**
+   * Get timeout duration for RPC or light client connection.
+   */
+  static getConnectionTimeout = (chainId: ChainID) =>
+    this.getEndpoint(chainId) === 'smoldot' ? 40_000 : 10_000;
+
+  /**
    * Ensure a client is connected.
    */
-  static connectApi = async (chainId: ChainID) => {
-    const client = this.get(chainId);
-    if (!client) {
-      throw new Error(`connectApi: API for ${chainId} not found`);
-    }
+  static connectApi = async (
+    chainId: ChainID
+  ): Promise<{ ack: 'success' | 'failure'; error?: ApiError }> => {
+    try {
+      const client = this.get(chainId);
+      if (!client) {
+        throw new ApiError('ApiUndefined');
+      }
 
-    await client.connect(this.smoldotClient);
-    this.set(client);
-    this.updateUiChainState(client);
+      const controller = new AbortController();
+      const timeout = this.getConnectionTimeout(chainId);
+
+      const { ack, error } = await Promise.race([
+        client.connect(this.smoldotClient, controller.signal),
+        CommonLib.waitMs(timeout).then(() => {
+          controller.abort();
+          return { ack: 'failure', error: new ApiError('ApiConnectTimeout') };
+        }),
+      ]);
+
+      if (ack === 'failure') {
+        throw error || new ApiError('ApiConnectError');
+      }
+
+      this.set(client);
+      this.updateUiChainState(client);
+
+      return { ack: 'success' };
+    } catch (e) {
+      const error = e instanceof ApiError ? e : new ApiError('ApiConnectError');
+      this.failedCache.set(chainId, { ack: 'failure', chainId, error });
+      this.syncFailedConnections();
+
+      return { ack: 'failure', error };
+    }
   };
 
   /**
    * Set and connect to an endpoint for a given client if online.
    */
-  static connectEndpoint = async (chainId: ChainID, endpoint: NodeEndpoint) => {
+  static setEndpoint = async (
+    chainId: ChainID,
+    endpoint: NodeEndpoint
+  ): Promise<void> => {
     const status = this.getStatus(chainId);
 
     switch (status) {
@@ -89,7 +141,6 @@ export class APIsController {
       default: {
         await this.close(chainId);
         this.setClientEndpoint(chainId, endpoint);
-        await this.connectApi(chainId);
         break;
       }
     }
@@ -111,15 +162,24 @@ export class APIsController {
         return connected ? this.castClient(chainId, this.get(chainId)!) : null;
       }
       case 'disconnected': {
-        // Wait up to 30 seconds to connect.
-        const result = await Promise.race([
-          client.connect(this.smoldotClient).then(() => true),
-          CommonLib.waitMs(30_000, false),
+        const controller = new AbortController();
+        const timeout = this.getConnectionTimeout(chainId);
+
+        const { ack } = await Promise.race([
+          client.connect(this.smoldotClient, controller.signal),
+          CommonLib.waitMs(timeout).then(() => {
+            controller.abort();
+            return { ack: 'failure' };
+          }),
         ]);
 
+        if (ack === 'failure') {
+          return null;
+        }
+
         // Return the connected instance if connection was successful.
-        result && this.updateUiChainState(this.get(chainId)!);
-        return result ? this.castClient(chainId, this.get(chainId)!) : null;
+        this.updateUiChainState(this.get(chainId)!);
+        return this.castClient(chainId, this.get(chainId)!);
       }
       default: {
         return null;
@@ -133,7 +193,7 @@ export class APIsController {
   static getConnectedApiOrThrow = async (chainId: ChainID) => {
     const client = await this.getConnectedApi(chainId);
     if (client === null) {
-      throw new Error(`Error - Could not get API client.`);
+      throw new ApiError('CouldNotGetConnectedApi');
     }
 
     return client;
@@ -202,6 +262,12 @@ export class APIsController {
     this.set(client);
     this.updateUiChainState(client);
   };
+
+  /**
+   * Get client endoint.
+   */
+  static getEndpoint = (chainId: ChainID): NodeEndpoint =>
+    this.get(chainId)!.endpoint;
 
   /**
    * Push a disconnected API instance.

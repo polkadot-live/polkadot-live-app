@@ -3,7 +3,11 @@
 
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useRef, useState } from 'react';
-import { useBootstrapping, useIntervalTasksManager } from '@ren/contexts/main';
+import {
+  useApiHealth,
+  useBootstrapping,
+  useIntervalTasksManager,
+} from '@ren/contexts/main';
 import { useConnections, useHelp } from '@ren/contexts/common';
 import { TaskEntryWrapper } from '../Manage/Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -18,6 +22,7 @@ import type { IntervalRowProps } from './types';
 
 export const IntervalRow = ({ task }: IntervalRowProps) => {
   const { openHelp } = useHelp();
+  const { failedConnections, hasConnectionIssue } = useApiHealth();
   const { isConnecting } = useBootstrapping();
 
   const { cacheGet, getOnlineMode, getTheme } = useConnections();
@@ -48,12 +53,20 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
   );
 
   const [isDisabled, setIsDisabled] = useState<boolean>(
-    isConnecting || !getOnlineMode() || isImportingData
+    isConnecting ||
+      !getOnlineMode() ||
+      hasConnectionIssue(task.chainId) ||
+      isImportingData
   );
 
   useEffect(() => {
-    setIsDisabled(isConnecting || !getOnlineMode() || isImportingData);
-  }, [isConnecting, isOnlineMode, isImportingData]);
+    setIsDisabled(
+      isConnecting ||
+        !getOnlineMode() ||
+        hasConnectionIssue(task.chainId) ||
+        isImportingData
+    );
+  }, [failedConnections, isConnecting, isOnlineMode, isImportingData]);
 
   useEffect(() => {
     const newStatusToBoolean = task.status === 'enable';

@@ -24,6 +24,7 @@ import type {
   QueryMultiEntry,
   ApiCallEntry,
   PostCallbackFlags,
+  QueryParamMeta,
 } from '@polkadot-live/types/subscriptions';
 
 export class QueryMultiWrapper {
@@ -31,7 +32,7 @@ export class QueryMultiWrapper {
    * API call entries (subscription tasks) are keyed by their chain ID.
    */
   private subscriptions = new Map<ChainID, QueryMultiEntry>();
-  private queries = new Map<ChainID, QueryWithParams<AnyFunction>[]>();
+  private queries = new Map<ChainID, QueryParamMeta[]>();
 
   /**
    * Flag what data needs syncing after executing callbacks.
@@ -210,8 +211,8 @@ export class QueryMultiWrapper {
   }
 
   /**
-   * @name build
-   * @summary Dynamically build the query multi argument, and make the actual API call.
+   * @name run
+   * @summary Run the query multi API call.
    * @param {ChainID} chainId - The target chain to subscribe to.
    */
   async run(chainId: ChainID) {
@@ -221,10 +222,18 @@ export class QueryMultiWrapper {
         return;
       }
 
-      const queries = this.queries.get(chainId);
-      if (!queries) {
+      const ordered = this.queries.get(chainId);
+      if (!ordered) {
         throw new Error('Error - no built queries.');
       }
+
+      const queries: QueryWithParams<AnyFunction>[] = [];
+      for (const meta of ordered) {
+        const apiCall: AnyFunction = await QueryMultiWrapper.getApiCall(meta);
+        const args = QueryMultiWrapper.parseActionArgs(meta) || [];
+        queries.push({ fn: apiCall, args });
+      }
+
       const api = (
         await APIsController.getConnectedApiOrThrow(chainId)
       ).getApi();
@@ -472,7 +481,7 @@ export class QueryMultiWrapper {
    */
   async build(chainId: ChainID) {
     // An array of arrays. The inner array represents a single API call.
-    const queries: QueryWithParams<AnyFunction>[] = [];
+    const queries: QueryParamMeta[] = [];
     const entry: QueryMultiEntry | undefined = this.subscriptions.get(chainId);
 
     if (!entry) {
@@ -522,9 +531,8 @@ export class QueryMultiWrapper {
             dataIndex: nextIndex,
           });
 
-          const apiCall: AnyFunction = await QueryMultiWrapper.getApiCall(task);
-          const args = QueryMultiWrapper.parseActionArgs(task) || [];
-          queries.push({ fn: apiCall, args });
+          const { action, actionArgs, chainId: cid } = task;
+          queries.push({ action, actionArgs, chainId: cid });
           break;
         } else if (tasksCanShare(task, innerT)) {
           task.dataIndex = innerT.dataIndex;
@@ -574,8 +582,8 @@ export class QueryMultiWrapper {
    * @name getApiQuery
    * @summary Get the API query associated with a subscription.
    */
-  static async getApiCall(task: SubscriptionTask): Promise<AnyData> {
-    const { action, chainId } = task;
+  static async getApiCall(meta: QueryParamMeta): Promise<AnyData> {
+    const { action, chainId } = meta;
     const api = (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
 
     switch (action) {
@@ -609,8 +617,8 @@ export class QueryMultiWrapper {
    * @name parseActionArgs
    * @summary Parse serialized args into correct data types for API arguments.
    */
-  static parseActionArgs = (task: SubscriptionTask) => {
-    const { action, actionArgs: args } = task;
+  static parseActionArgs = (meta: QueryParamMeta) => {
+    const { action, actionArgs: args } = meta;
     if (!args) {
       return args;
     }
