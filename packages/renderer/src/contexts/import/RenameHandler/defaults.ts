@@ -5,24 +5,6 @@
 import type { RenameHandlerContextInterface } from './types';
 
 export const defaultRenameHandlerContext: RenameHandlerContextInterface = {
-  getBulkRenameDialogData: () => ({
-    genericAccount: null,
-    isOpen: false,
-  }),
-  getManageAccountDialogData: () => ({ isOpen: false, genericAccount: null }),
-  getRenameDialogData: () => ({
-    encodedAccount: null,
-    genericAccount: null,
-    isOpen: false,
-  }),
-  getShowAddressDialogData: () => ({
-    address: null,
-    isOpen: false,
-  }),
   renameHandler: () => new Promise(() => {}),
-  setBulkRenameDialogData: () => {},
-  setManageAccountDialogData: () => {},
-  setRenameDialogData: () => {},
-  setShowAddressDialogData: () => {},
   validateNameInput: () => false,
 };

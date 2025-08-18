@@ -19,7 +19,7 @@ import { ChainIcon, InfoCard } from '@polkadot-live/ui/components';
 /** Temp */
 import {
   useAddresses,
-  useRenameHandler,
+  useDialogControl,
   useWalletConnectImport,
 } from '@ren/contexts/import';
 import { useConnections } from '@ren/contexts/common';
@@ -58,7 +58,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   } = useWalletConnectImport();
 
   const { getShowAddressDialogData, setShowAddressDialogData } =
-    useRenameHandler();
+    useDialogControl();
 
   /**
    * Accordion state.

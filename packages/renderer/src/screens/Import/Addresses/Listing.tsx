@@ -5,7 +5,7 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/ui/styles';
 
-import { useAddresses, useRenameHandler } from '@ren/contexts/import';
+import { useAddresses, useDialogControl } from '@ren/contexts/import';
 import { useState } from 'react';
 import { Address } from './Address';
 import { ItemsColumn } from '../../Home/Manage/Wrappers';
@@ -21,12 +21,13 @@ import type { ManageAccountsProps } from './types';
 
 export const Listing = ({ source, setSection }: ManageAccountsProps) => {
   const { getAccounts } = useAddresses();
+  const genericAccounts = getAccounts(source);
+
   const {
     getBulkRenameDialogData,
     getManageAccountDialogData,
     getShowAddressDialogData,
-  } = useRenameHandler();
-  const genericAccounts = getAccounts(source);
+  } = useDialogControl();
 
   const getAccordionTitle = (): string => {
     switch (source) {

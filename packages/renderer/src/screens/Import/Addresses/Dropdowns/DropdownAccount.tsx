@@ -3,7 +3,7 @@
 
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { useConnections } from '@ren/contexts/common';
-import { useRenameHandler } from '@ren/contexts/import';
+import { useDialogControl } from '@ren/contexts/import';
 import { ActionBtn } from '../Dialogs/Wrappers';
 import { DropdownMenuContent } from '@polkadot-live/ui/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -37,7 +37,7 @@ export const DropdownAccount = ({
   const { address, chainId, isBookmarked } = encodedAccount;
 
   const { getTheme } = useConnections();
-  const { setShowAddressDialogData, setRenameDialogData } = useRenameHandler();
+  const { setShowAddressDialogData, setRenameDialogData } = useDialogControl();
   const theme = getTheme();
 
   const onBlockExplorerClick = () => {

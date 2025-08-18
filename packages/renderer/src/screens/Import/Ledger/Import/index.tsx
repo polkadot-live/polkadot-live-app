@@ -14,7 +14,7 @@ import {
   useAddresses,
   useImportHandler,
   useLedgerHardware,
-  useRenameHandler,
+  useDialogControl,
 } from '@ren/contexts/import';
 
 import { BarLoader } from 'react-spinners';
@@ -53,7 +53,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
     useLedgerHardware();
 
   const { getShowAddressDialogData, setShowAddressDialogData } =
-    useRenameHandler();
+    useDialogControl();
 
   /**
    * Accordion state.

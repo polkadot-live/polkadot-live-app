@@ -4,7 +4,7 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { useConnections } from '@ren/contexts/common';
-import { useRenameHandler } from '@ren/contexts/import';
+import { useDialogControl } from '@ren/contexts/import';
 import {
   DialogContent,
   DialogHr,
@@ -30,7 +30,7 @@ const AddressText = styled.p`
 export const DialogShowAddress = ({ address }: { address: string }) => {
   const { getTheme } = useConnections();
   const { getShowAddressDialogData, setShowAddressDialogData } =
-    useRenameHandler();
+    useDialogControl();
 
   const theme = getTheme();
 

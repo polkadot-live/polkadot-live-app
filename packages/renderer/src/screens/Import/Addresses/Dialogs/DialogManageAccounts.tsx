@@ -18,7 +18,7 @@ import {
   useAccountStatuses,
   useAddHandler,
   useRemoveHandler,
-  useRenameHandler,
+  useDialogControl,
 } from '@ren/contexts/import';
 
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -44,7 +44,7 @@ export const DialogManageAccounts = ({
     getManageAccountDialogData,
     setManageAccountDialogData,
     setShowAddressDialogData,
-  } = useRenameHandler();
+  } = useDialogControl();
 
   const [showBookmarks, setShowBookmarks] = useState(false);
   const theme = getTheme();

@@ -11,7 +11,7 @@ import {
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { NetworkLabel } from './NetworkLabel';
 import { useConnections } from '@ren/contexts/common';
-import { useRenameHandler } from '@ren/contexts/import';
+import { useDialogControl, useRenameHandler } from '@ren/contexts/import';
 import { useEffect, useState } from 'react';
 import { renderToast } from '@polkadot-live/ui/utils';
 import { TooltipRx } from '@polkadot-live/ui/components';
@@ -30,12 +30,9 @@ export const DialogBulkRename = ({ genericAccount }: DialogBulkRenameProps) => {
   const { accountName, encodedAccounts } = genericAccount;
 
   const { getTheme } = useConnections();
-  const {
-    getBulkRenameDialogData,
-    renameHandler,
-    setBulkRenameDialogData,
-    validateNameInput,
-  } = useRenameHandler();
+  const { renameHandler, validateNameInput } = useRenameHandler();
+  const { getBulkRenameDialogData, setBulkRenameDialogData } =
+    useDialogControl();
 
   const theme = getTheme();
   const [inputVal, setInputVal] = useState<string>(accountName);
