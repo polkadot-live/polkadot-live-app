@@ -5,12 +5,16 @@ import * as defaults from './defaults';
 import * as wc from '@polkadot-live/consts/walletConnect';
 
 import { ChainList } from '@polkadot-live/consts/chains';
-import { ConfigRenderer, ExtrinsicsController } from '@polkadot-live/core';
-import UniversalProvider from '@walletconnect/universal-provider';
+import {
+  ConfigRenderer,
+  ExtrinsicsController,
+  WcError,
+} from '@polkadot-live/core';
 import { createContext, useContext, useEffect, useRef } from 'react';
 import { decodeAddress, encodeAddress, u8aToHex } from 'dedot/utils';
 import { useConnections } from '@ren/contexts/common';
 import { getSdkError } from '@walletconnect/utils';
+import UniversalProvider from '@walletconnect/universal-provider';
 
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -18,20 +22,9 @@ import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 import type { WalletConnectContextInterface } from './types';
 import type {
   WalletConnectMeta,
-  WcErrorStatusCode,
   WcFetchedAddress,
   WcSelectNetwork,
 } from '@polkadot-live/types/walletConnect';
-
-class WcError extends Error {
-  statusCode: WcErrorStatusCode;
-
-  constructor(statusCode: WcErrorStatusCode, message = 'WcError') {
-    super(message);
-    this.name = 'WcError';
-    this.statusCode = statusCode;
-  }
-}
 
 export const WalletConnectContext =
   createContext<WalletConnectContextInterface>(

@@ -2,3 +2,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 export * from './api.error';
+export * from './ledger.error';
+export * from './wc.error';
