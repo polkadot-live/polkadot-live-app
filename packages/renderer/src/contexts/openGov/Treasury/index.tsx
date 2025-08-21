@@ -84,7 +84,7 @@ export const TreasuryProvider = ({
       toBeAwardedAsStr,
       spendPeriodAsStr,
       spendPeriodElapsedBlocksAsStr,
-    } = data;
+    } = data.coreTreasuryInfo;
 
     setTreasuryFreeBalance(new BigNumber(rmCommas(freeBalance)));
     setTreasuryNextBurn(new BigNumber(rmCommas(nextBurn)));

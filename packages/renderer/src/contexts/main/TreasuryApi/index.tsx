@@ -12,8 +12,12 @@ import { TreasuryAccounts } from '@polkadot-live/consts/treasury';
 
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { DedotClient } from 'dedot';
-import type { StatemintTreasuryInfo } from '@polkadot-live/types/treasury';
 import type { TreasuryApiContextInterface } from './types';
+import type {
+  CoreTreasuryInfo,
+  IpcTreasuryInfo,
+  StatemintTreasuryInfo,
+} from '@polkadot-live/types/treasury';
 import type {
   ClientTypes,
   DedotOpenGovClient,
@@ -30,6 +34,83 @@ export const TreasuryApiProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  /**
+   * @name handleInitTreasury
+   * @summary Cast API to get treasury data for OpenGov window.
+   */
+  const handleInitTreasury = async (ev: MessageEvent) => {
+    try {
+      const { chainId }: { chainId: ChainID } = ev.data.data;
+      const api = (
+        await APIsController.getConnectedApiOrThrow(chainId)
+      ).getApi();
+
+      switch (chainId) {
+        case 'Polkadot Relay': {
+          const castApi = api as DedotClient<ClientTypes['polkadot']>;
+          const [coreTreasuryInfo, statemintTreasuryInfo] = await Promise.all([
+            fetchCoreTreasuryInfo(castApi, chainId),
+            fetchStatemintTreasuryInfo(),
+          ]);
+
+          postTreasuryInfo({ coreTreasuryInfo, statemintTreasuryInfo });
+          break;
+        }
+        case 'Kusama Relay': {
+          const castApi = api as DedotClient<ClientTypes['kusama']>;
+          const coreTreasuryInfo = await fetchCoreTreasuryInfo(
+            castApi,
+            chainId
+          );
+
+          postTreasuryInfo({ coreTreasuryInfo });
+          break;
+        }
+      }
+    } catch (e) {
+      postTreasuryInfo(null);
+    }
+  };
+
+  /**
+   * @name postTreasuryInfo
+   * @summary Send treasury info to OpenGov view.
+   */
+  const postTreasuryInfo = (info: IpcTreasuryInfo | null) => {
+    ConfigRenderer.portToOpenGov?.postMessage({
+      task: 'openGov:treasury:set',
+      data: info,
+    });
+  };
+
+  /**
+   * @name fetchCoreTreasuryInfo
+   * @summary Use API to get treasury data for OpenGov view.
+   */
+  const fetchCoreTreasuryInfo = async (
+    api: DedotOpenGovClient,
+    chainId: ChainID
+  ): Promise<CoreTreasuryInfo> => {
+    const publicKey = getTreasuryPublicKey(api);
+    const free = await getFreeBalance(api, publicKey);
+    const freeBalance: string = planckToUnit(free, chainUnits(chainId));
+    const nextBurn = getNextBurn(api, chainId, free);
+    const toBeAwarded = await getToBeAwarded(api, chainId);
+    const spendPeriod = api.consts.treasury.spendPeriod;
+    const spendPeriodElapsedBlocksAsStr = await getElapsedSpendPeriod(
+      api,
+      spendPeriod
+    );
+
+    return {
+      freeBalance,
+      nextBurn,
+      toBeAwardedAsStr: toBeAwarded,
+      spendPeriodAsStr: spendPeriod.toString(),
+      spendPeriodElapsedBlocksAsStr,
+    };
+  };
+
   /**
    * @name fetchStatemintTreasuryInfo
    * @summary Fetch asset balances from the Polkadot Asset Hub treasury.
@@ -53,76 +134,6 @@ export const TreasuryApiProvider = ({
         dotBalance: dotAccount.data.free,
       };
     };
-
-  /**
-   * @name handleInitTreasury
-   * @summary Cast API to get treasury data for OpenGov window.
-   */
-  const handleInitTreasury = async (ev: MessageEvent) => {
-    try {
-      const { chainId }: { chainId: ChainID } = ev.data.data;
-      const api = (
-        await APIsController.getConnectedApiOrThrow(chainId)
-      ).getApi();
-
-      switch (chainId) {
-        case 'Polkadot Relay': {
-          await processInitTreasury(
-            api as DedotClient<ClientTypes['polkadot']>,
-            chainId
-          );
-          break;
-        }
-        case 'Kusama Relay': {
-          await processInitTreasury(
-            api as DedotClient<ClientTypes['kusama']>,
-            chainId
-          );
-          break;
-        }
-      }
-    } catch (e) {
-      ConfigRenderer.portToOpenGov?.postMessage({
-        task: 'openGov:treasury:set',
-        data: null,
-      });
-    }
-  };
-
-  /**
-   * @name processInitTreasury
-   * @summary Use API to get treasury data for OpenGov window.
-   */
-  const processInitTreasury = async (
-    api: DedotOpenGovClient,
-    chainId: ChainID
-  ) => {
-    const publicKey = getTreasuryPublicKey(api);
-    const free = await getFreeBalance(api, publicKey);
-    const freeBalance: string = planckToUnit(free, chainUnits(chainId));
-    const nextBurn = getNextBurn(api, chainId, free);
-    const toBeAwarded = await getToBeAwarded(api, chainId);
-    const spendPeriod = api.consts.treasury.spendPeriod;
-    const spendPeriodElapsedBlocksAsStr = await getElapsedSpendPeriod(
-      api,
-      spendPeriod
-    );
-
-    const statemintTreasuryInfo =
-      chainId === 'Polkadot Relay' ? await fetchStatemintTreasuryInfo() : null;
-
-    ConfigRenderer.portToOpenGov?.postMessage({
-      task: 'openGov:treasury:set',
-      data: {
-        freeBalance,
-        nextBurn,
-        toBeAwardedAsStr: toBeAwarded,
-        spendPeriodAsStr: spendPeriod.toString(),
-        spendPeriodElapsedBlocksAsStr,
-        statemintTreasuryInfo,
-      },
-    });
-  };
 
   /**
    * Utilities.
