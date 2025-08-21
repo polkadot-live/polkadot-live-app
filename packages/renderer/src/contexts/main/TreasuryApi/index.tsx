@@ -114,7 +114,6 @@ export const TreasuryApiProvider = ({
     ConfigRenderer.portToOpenGov?.postMessage({
       task: 'openGov:treasury:set',
       data: {
-        publicKey,
         freeBalance,
         nextBurn,
         toBeAwardedAsStr: toBeAwarded,

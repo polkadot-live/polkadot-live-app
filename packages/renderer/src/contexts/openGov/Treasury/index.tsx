@@ -30,9 +30,6 @@ export const TreasuryProvider = ({
   const [fetchingTreasuryData, setFetchingTreasuryData] = useState(false);
   const [hasFetched, setHasFetched] = useState(false);
 
-  // Treasury raw public key.
-  const [treasuryU8Pk, setTreasuryU8Pk] = useState<Uint8Array | null>(null);
-
   // Treasury free balance.
   const [treasuryFreeBalance, setTreasuryFreeBalance] = useState(
     new BigNumber(0)
@@ -82,7 +79,6 @@ export const TreasuryProvider = ({
   // Setter for treasury public key.
   const setTreasuryData = (data: AnyData) => {
     const {
-      publicKey,
       freeBalance,
       nextBurn,
       toBeAwardedAsStr,
@@ -90,7 +86,6 @@ export const TreasuryProvider = ({
       spendPeriodElapsedBlocksAsStr,
     } = data;
 
-    setTreasuryU8Pk(publicKey);
     setTreasuryFreeBalance(new BigNumber(rmCommas(freeBalance)));
     setTreasuryNextBurn(new BigNumber(rmCommas(nextBurn)));
     setToBeAwarded(new BigNumber(rmCommas(toBeAwardedAsStr)));
@@ -185,7 +180,6 @@ export const TreasuryProvider = ({
       value={{
         initTreasury,
         treasuryChainId,
-        treasuryU8Pk,
         fetchingTreasuryData,
         hasFetched,
         setFetchingTreasuryData,

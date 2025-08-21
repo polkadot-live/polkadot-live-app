@@ -7,7 +7,6 @@ import type { ChainID } from '@polkadot-live/types/chains';
 export interface TreasuryContextInterface {
   initTreasury: (chainId: ChainID) => void;
   treasuryChainId: ChainID;
-  treasuryU8Pk: Uint8Array | null;
   fetchingTreasuryData: boolean;
   hasFetched: boolean;
   getFormattedNextBurn: () => string;
