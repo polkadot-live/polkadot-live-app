@@ -8,9 +8,11 @@ import { chainUnits } from '@polkadot-live/consts/chains';
 import { concatU8a, encodeAddress, hexToU8a, stringToU8a } from 'dedot/utils';
 import { createContext, useContext } from 'react';
 import { planckToUnit } from '@w3ux/utils';
+import { TreasuryAccounts } from '@polkadot-live/consts/treasury';
 
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { DedotClient } from 'dedot';
+import type { StatemintTreasuryInfo } from '@polkadot-live/types/treasury';
 import type { TreasuryApiContextInterface } from './types';
 import type {
   ClientTypes,
@@ -28,6 +30,30 @@ export const TreasuryApiProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  /**
+   * @name fetchStatemintTreasuryInfo
+   * @summary Fetch asset balances from the Polkadot Asset Hub treasury.
+   */
+  const fetchStatemintTreasuryInfo =
+    async (): Promise<StatemintTreasuryInfo> => {
+      const chainId: ChainID = 'Polkadot Asset Hub';
+      const client = await APIsController.getConnectedApiOrThrow(chainId);
+      const api = client.getApi() as DedotClient<ClientTypes['statemint']>;
+
+      const treasury = TreasuryAccounts.get('Polkadot Asset Hub')!;
+      const [usdcAccount, usdtAccount, dotAccount] = await api.queryMulti([
+        { fn: api.query.assets.account, args: [[1337, treasury]] },
+        { fn: api.query.assets.account, args: [[1984, treasury]] },
+        { fn: api.query.system.account, args: [treasury] },
+      ]);
+
+      return {
+        usdcBalance: usdcAccount?.balance || 0n,
+        usdtBalance: usdtAccount?.balance || 0n,
+        dotBalance: dotAccount.data.free,
+      };
+    };
+
   /**
    * @name handleInitTreasury
    * @summary Cast API to get treasury data for OpenGov window.
@@ -71,6 +97,38 @@ export const TreasuryApiProvider = ({
     api: DedotOpenGovClient,
     chainId: ChainID
   ) => {
+    const publicKey = getTreasuryPublicKey(api);
+    const free = await getFreeBalance(api, publicKey);
+    const freeBalance: string = planckToUnit(free, chainUnits(chainId));
+    const nextBurn = getNextBurn(api, chainId, free);
+    const toBeAwarded = await getToBeAwarded(api, chainId);
+    const spendPeriod = api.consts.treasury.spendPeriod;
+    const spendPeriodElapsedBlocksAsStr = await getElapsedSpendPeriod(
+      api,
+      spendPeriod
+    );
+
+    const statemintTreasuryInfo =
+      chainId === 'Polkadot Relay' ? await fetchStatemintTreasuryInfo() : null;
+
+    ConfigRenderer.portToOpenGov?.postMessage({
+      task: 'openGov:treasury:set',
+      data: {
+        publicKey,
+        freeBalance,
+        nextBurn,
+        toBeAwardedAsStr: toBeAwarded,
+        spendPeriodAsStr: spendPeriod.toString(),
+        spendPeriodElapsedBlocksAsStr,
+        statemintTreasuryInfo,
+      },
+    });
+  };
+
+  /**
+   * Utilities.
+   */
+  const getTreasuryPublicKey = (api: DedotOpenGovClient): Uint8Array => {
     const EMPTY_U8A_32 = new Uint8Array(32);
     const hexPalletId = api.consts.treasury.palletId;
     const u8aPalleId = hexPalletId
@@ -83,15 +141,26 @@ export const TreasuryApiProvider = ({
       EMPTY_U8A_32
     ).subarray(0, 32);
 
-    // Get free balance.
+    return publicKey;
+  };
+
+  const getFreeBalance = async (
+    api: DedotOpenGovClient,
+    publicKey: Uint8Array
+  ): Promise<bigint> => {
     const prefix: number = api.consts.system.ss58Prefix;
     const encoded = encodeAddress(publicKey, prefix);
     const result = await api.query.system.account(encoded);
-
     const { free } = result.data;
-    const freeBalance: string = planckToUnit(free, chainUnits(chainId));
 
-    // Get next burn.
+    return free;
+  };
+
+  const getNextBurn = (
+    api: DedotOpenGovClient,
+    chainId: ChainID,
+    free: bigint
+  ): string => {
     const burn = api.consts.treasury.burn;
     const toBurn = new BigNumber(burn)
       .dividedBy(Math.pow(10, 6))
@@ -102,7 +171,13 @@ export const TreasuryApiProvider = ({
       chainUnits(chainId)
     ).toString();
 
-    // Get to be awarded.
+    return nextBurn;
+  };
+
+  const getToBeAwarded = async (
+    api: DedotOpenGovClient,
+    chainId: ChainID
+  ): Promise<string> => {
     const [approvals, proposals] = await Promise.all([
       api.query.treasury.approvals(),
       api.query.treasury.proposals.entries(),
@@ -116,9 +191,13 @@ export const TreasuryApiProvider = ({
     }
 
     const strToBeAwarded = planckToUnit(toBeAwarded, chainUnits(chainId));
+    return strToBeAwarded;
+  };
 
-    // Spend period + elapsed spend period.
-    const spendPeriod = api.consts.treasury.spendPeriod;
+  const getElapsedSpendPeriod = async (
+    api: DedotOpenGovClient,
+    spendPeriod: number
+  ) => {
     const lastHeader = await api.rpc.chain_getHeader();
     const dedotBlockHeight = lastHeader?.number;
 
@@ -129,17 +208,7 @@ export const TreasuryApiProvider = ({
         .toString();
     }
 
-    ConfigRenderer.portToOpenGov?.postMessage({
-      task: 'openGov:treasury:set',
-      data: {
-        publicKey,
-        freeBalance,
-        nextBurn,
-        toBeAwardedAsStr: strToBeAwarded,
-        spendPeriodAsStr: spendPeriod.toString(),
-        spendPeriodElapsedBlocksAsStr,
-      },
-    });
+    return spendPeriodElapsedBlocksAsStr;
   };
 
   return (
