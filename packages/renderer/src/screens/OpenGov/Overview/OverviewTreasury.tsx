@@ -96,10 +96,7 @@ export const OverviewTreasury: React.FC = () => {
             </UI.ControlsWrapper>
 
             <Styles.FlexColumn $rowGap="2px">
-              <Styles.GridFourCol
-                id="OpenGovStats"
-                $roundBottonBorder={treasuryChainId === 'Kusama Relay'}
-              >
+              <Styles.GridFourCol id="OpenGovStats">
                 <UI.TreasuryStatCard
                   chainId={treasuryChainId}
                   title={'Treasury Balance'}
@@ -138,7 +135,7 @@ export const OverviewTreasury: React.FC = () => {
                 <Styles.FlexRow className="PolkadotHubStats">
                   <Styles.FlexColumn $rowGap={'0.2rem'}>
                     <h2 className="Heading">{'Polkadot Asset Hub'}</h2>
-                    <Styles.FlexRow>
+                    <Styles.FlexRow className="StatsRow">
                       <UI.TreasuryBalanceCard
                         chainId={treasuryChainId}
                         symbol={'DOT'}
@@ -166,7 +163,7 @@ export const OverviewTreasury: React.FC = () => {
                 <Styles.FlexRow className="PolkadotHubStats">
                   <Styles.FlexColumn $rowGap={'0.2rem'}>
                     <h2 className="Heading">{'Kusama Asset Hub'}</h2>
-                    <Styles.FlexRow>
+                    <Styles.FlexRow className="StatsRow">
                       <UI.TreasuryBalanceCard
                         chainId={treasuryChainId}
                         symbol={'KSM'}

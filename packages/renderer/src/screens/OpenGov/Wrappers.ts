@@ -48,5 +48,10 @@ export const TreasuryStats = styled.div<{ $chainId: ChainID }>`
       font-size: 1.1rem;
       padding: 1rem 1rem 0;
     }
+    .StatsRow {
+      > div:first-of-type {
+        border-bottom-left-radius: 0.375rem;
+      }
+    }
   }
 `;
