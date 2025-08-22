@@ -152,7 +152,7 @@ export const TreasuryProvider = ({
       const { decimals } = asset;
       return `${formatWithUnit(new BigNumber(balance).dividedBy(10 ** decimals))}`;
     } else {
-      const decimals = chainUnits('Paseo Asset Hub');
+      const decimals = chainUnits('Polkadot Asset Hub');
       const balance = new BigNumber(statemintTreasuryInfo?.dotBalance || 0n);
       return `${formatWithUnit(balance.dividedBy(10 ** decimals))}`;
     }
