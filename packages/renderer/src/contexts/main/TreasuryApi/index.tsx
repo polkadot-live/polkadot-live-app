@@ -16,6 +16,7 @@ import type { TreasuryApiContextInterface } from './types';
 import type {
   CoreTreasuryInfo,
   IpcTreasuryInfo,
+  StatemineTreasuryInfo,
   StatemintTreasuryInfo,
 } from '@polkadot-live/types/treasury';
 import type {
@@ -58,12 +59,12 @@ export const TreasuryApiProvider = ({
         }
         case 'Kusama Relay': {
           const castApi = api as DedotClient<ClientTypes['kusama']>;
-          const coreTreasuryInfo = await fetchCoreTreasuryInfo(
-            castApi,
-            chainId
-          );
+          const [coreTreasuryInfo, statemineTreasuryInfo] = await Promise.all([
+            fetchCoreTreasuryInfo(castApi, chainId),
+            fetchStatemineTreasuryInfo(),
+          ]);
 
-          postTreasuryInfo({ coreTreasuryInfo });
+          postTreasuryInfo({ coreTreasuryInfo, statemineTreasuryInfo });
           break;
         }
       }
@@ -132,6 +133,23 @@ export const TreasuryApiProvider = ({
         usdcBalance: usdcAccount?.balance || 0n,
         usdtBalance: usdtAccount?.balance || 0n,
         dotBalance: dotAccount.data.free,
+      };
+    };
+
+  /**
+   * @name fetchStatemineTreasuryInfo
+   * @summary Fetch asset balances from the Kusama Asset Hub treasury.
+   */
+  const fetchStatemineTreasuryInfo =
+    async (): Promise<StatemineTreasuryInfo> => {
+      const chainId: ChainID = 'Kusama Asset Hub';
+      const client = await APIsController.getConnectedApiOrThrow(chainId);
+      const api = client.getApi() as DedotClient<ClientTypes['statemine']>;
+      const treasury = TreasuryAccounts.get('Kusama Asset Hub')!;
+      const ksmAccount = await api.query.system.account(treasury);
+
+      return {
+        ksmBalance: ksmAccount.data.free,
       };
     };
 

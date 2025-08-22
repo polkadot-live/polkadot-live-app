@@ -137,7 +137,7 @@ export const OverviewTreasury: React.FC = () => {
               {treasuryChainId === 'Polkadot Relay' && (
                 <Styles.FlexRow className="PolkadotHubStats">
                   <Styles.FlexColumn $rowGap={'0.2rem'}>
-                    <h2 className="Heading">{'Polkadot Hub'}</h2>
+                    <h2 className="Heading">{'Polkadot Asset Hub'}</h2>
                     <Styles.FlexRow>
                       <UI.TreasuryBalanceCard
                         chainId={treasuryChainId}
@@ -155,6 +155,22 @@ export const OverviewTreasury: React.FC = () => {
                         chainId={treasuryChainId}
                         symbol={'USDT'}
                         balance={getFormattedHubBalance('USDT')}
+                        disable={statDisabled}
+                      />
+                    </Styles.FlexRow>
+                  </Styles.FlexColumn>
+                </Styles.FlexRow>
+              )}
+
+              {treasuryChainId === 'Kusama Relay' && (
+                <Styles.FlexRow className="PolkadotHubStats">
+                  <Styles.FlexColumn $rowGap={'0.2rem'}>
+                    <h2 className="Heading">{'Kusama Asset Hub'}</h2>
+                    <Styles.FlexRow>
+                      <UI.TreasuryBalanceCard
+                        chainId={treasuryChainId}
+                        symbol={'KSM'}
+                        balance={getFormattedHubBalance('KSM')}
                         disable={statDisabled}
                       />
                     </Styles.FlexRow>

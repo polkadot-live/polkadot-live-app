@@ -6,6 +6,7 @@ import type { StatemintAssetInfo } from '@polkadot-live/types/treasury';
 
 export const TreasuryAccounts = new Map<ChainID, string>([
   ['Polkadot Asset Hub', '14xmwinmCEz6oRrFdczHKqHgWNMiCysE2KrA4jXXAAM1Eogk'],
+  ['Kusama Asset Hub', 'HWZmQq6zMMk7TxixHfseFT2ewicT6UofPa68VCn3gkXrdJF'],
 ]);
 
 export const StatemintAssets: Record<number, StatemintAssetInfo> = {

@@ -9,7 +9,9 @@ export interface TreasuryContextInterface {
   treasuryChainId: ChainID;
   fetchingTreasuryData: boolean;
   hasFetched: boolean;
-  getFormattedHubBalance: (assetSymbol: 'DOT' | 'USDC' | 'USDT') => string;
+  getFormattedHubBalance: (
+    assetSymbol: 'DOT' | 'KSM' | 'USDC' | 'USDT'
+  ) => string;
   getFormattedNextBurn: () => string;
   setFetchingTreasuryData: (fetching: boolean) => void;
   setTreasuryData: (data: AnyData) => void;

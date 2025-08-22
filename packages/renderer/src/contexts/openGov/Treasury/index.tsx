@@ -10,7 +10,10 @@ import { rmCommas } from '@w3ux/utils';
 import { chainCurrency, chainUnits } from '@polkadot-live/consts/chains';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { StatemintTreasuryInfo } from '@polkadot-live/types/treasury';
+import type {
+  StatemineTreasuryInfo,
+  StatemintTreasuryInfo,
+} from '@polkadot-live/types/treasury';
 import type { TreasuryContextInterface } from './types';
 
 export const TreasuryContext = createContext<TreasuryContextInterface>(
@@ -52,6 +55,10 @@ export const TreasuryProvider = ({
   // Statemint treasury balances.
   const [statemintTreasuryInfo, setStatemintTreasuryInfo] =
     useState<StatemintTreasuryInfo | null>(null);
+
+  // Statemine treasury balances.
+  const [statemineTreasuryInfo, setStatemineTreasuryInfo] =
+    useState<StatemineTreasuryInfo | null>(null);
 
   // Ref to indicate if data is has been fetched and cached.
   const dataCachedRef = useRef(false);
@@ -101,6 +108,7 @@ export const TreasuryProvider = ({
     );
 
     setStatemintTreasuryInfo(data.statemintTreasuryInfo || null);
+    setStatemineTreasuryInfo(data.statemineTreasuryInfo || null);
     setFetchingTreasuryData(false);
     setHasFetched(true);
 
@@ -129,9 +137,11 @@ export const TreasuryProvider = ({
    * Get readable balance for Polkadot Hub treasury assets.
    */
   const getFormattedHubBalance = (
-    assetSymbol: 'DOT' | 'USDC' | 'USDT'
+    assetSymbol: 'DOT' | 'KSM' | 'USDC' | 'USDT'
   ): string => {
-    if (assetSymbol !== 'DOT') {
+    const relayTokens: string[] = ['DOT', 'KSM'];
+
+    if (!relayTokens.includes(assetSymbol)) {
       const asset = Object.values(StatemintAssets).find(
         ({ symbol }) => symbol === assetSymbol
       );
@@ -151,9 +161,13 @@ export const TreasuryProvider = ({
 
       const { decimals } = asset;
       return `${formatWithUnit(new BigNumber(balance).dividedBy(10 ** decimals))}`;
-    } else {
+    } else if (assetSymbol === 'DOT') {
       const decimals = chainUnits('Polkadot Asset Hub');
       const balance = new BigNumber(statemintTreasuryInfo?.dotBalance || 0n);
+      return `${formatWithUnit(balance.dividedBy(10 ** decimals))}`;
+    } else {
+      const decimals = chainUnits('Kusama Asset Hub');
+      const balance = new BigNumber(statemineTreasuryInfo?.ksmBalance || 0n);
       return `${formatWithUnit(balance.dividedBy(10 ** decimals))}`;
     }
   };
