@@ -119,18 +119,19 @@ export const TreasuryProvider = ({
   /**
    * Format number with unit.
    */
-  const formatWithUnit = (balance: BigNumber) => {
+  const formatWithUnit = (balance: BigNumber): string => {
     const million = new BigNumber(1_000_000);
     const thousand = new BigNumber(1_000);
     const unit: 'K' | 'M' = balance.gte(million) ? 'M' : 'K';
     const divisor = unit === 'M' ? million : thousand;
 
-    return balance
+    const str = balance
       .dividedBy(divisor)
       .decimalPlaces(2)
       .toString()
-      .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-      .concat(unit);
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+    return str === '0' ? str : `${str}${unit}`;
   };
 
   /**
