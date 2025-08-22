@@ -39,4 +39,14 @@ export const TreasuryStats = styled.div<{ $chainId: ChainID }>`
     display: flex;
     column-gap: 1rem;
   }
+  .PolkadotHubStats {
+    background-color: var(--background-primary-hover);
+    border-bottom-left-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+
+    .Heading {
+      font-size: 1.1rem;
+      padding: 1rem 1rem 0;
+    }
+  }
 `;

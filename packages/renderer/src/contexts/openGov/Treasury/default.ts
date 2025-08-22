@@ -9,6 +9,7 @@ export const defaultTreasuryContext: TreasuryContextInterface = {
   treasuryChainId: 'Polkadot Relay',
   fetchingTreasuryData: false,
   hasFetched: false,
+  getFormattedHubBalance: () => '',
   getFormattedNextBurn: () => '',
   setFetchingTreasuryData: (fetching) => {},
   setTreasuryData: (d) => {},

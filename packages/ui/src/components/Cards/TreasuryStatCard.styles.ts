@@ -2,33 +2,20 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import styled from 'styled-components';
+import { getChainIdColor } from './utils';
 import { mixinHelpIcon } from '../Common';
 import type { ChainID } from '@polkadot-live/types/chains';
 
-const getChainIdColor = (chainId: ChainID): string => {
-  switch (chainId) {
-    case 'Polkadot Relay': {
-      return '#e63081';
-    }
-    case 'Kusama Relay': {
-      return '#f1f1f1';
-    }
-    default: {
-      return '#e63081';
-    }
-  }
-};
-
 export const TreasuryStatCardWrapper = styled.div<{ $chainId: ChainID }>`
   background-color: var(--background-primary-hover);
-  padding: 1.5rem 2rem;
+  padding: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.5rem;
 
   h4 {
     color: ${({ $chainId }) => getChainIdColor($chainId)};
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     &.disable {
       animation: fadeInOut 3s infinite;
     }
