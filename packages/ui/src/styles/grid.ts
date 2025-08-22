@@ -13,18 +13,20 @@ export const GridTwoCol = styled.div<{ $gap?: string }>`
   }
 `;
 
-export const GridFourCol = styled.div`
+export const GridFourCol = styled.div<{ $roundBottonBorder?: boolean }>`
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.25rem;
+  gap: 2px;
 
   > div:first-of-type {
     border-top-left-radius: 0.375rem;
-    border-bottom-left-radius: 0.375rem;
+    border-bottom-left-radius: ${(props) =>
+      props.$roundBottonBorder ? '0.375rem' : '0'};
   }
   > div:last-of-type {
     border-top-right-radius: 0.375rem;
-    border-bottom-right-radius: 0.375rem;
+    border-bottom-right-radius: ${(props) =>
+      props.$roundBottonBorder ? '0.375rem' : '0'};
   }
 
   // Responsive class for OpenGov stats grid.

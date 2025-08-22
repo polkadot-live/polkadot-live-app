@@ -7,9 +7,9 @@ import type { ChainID } from '@polkadot-live/types/chains';
 export interface TreasuryContextInterface {
   initTreasury: (chainId: ChainID) => void;
   treasuryChainId: ChainID;
-  treasuryU8Pk: Uint8Array | null;
   fetchingTreasuryData: boolean;
   hasFetched: boolean;
+  getFormattedHubBalance: (assetSymbol: 'DOT' | 'USDC' | 'USDT') => string;
   getFormattedNextBurn: () => string;
   setFetchingTreasuryData: (fetching: boolean) => void;
   setTreasuryData: (data: AnyData) => void;

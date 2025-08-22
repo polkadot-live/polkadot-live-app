@@ -4,7 +4,6 @@
 /// Dependencies.
 import * as Core from '@polkadot-live/core';
 import { WC_EVENT_ORIGIN } from '@polkadot-live/consts/walletConnect';
-import { chainUnits } from '@polkadot-live/consts/chains';
 import {
   ConfigRenderer,
   disconnectAPIs,
@@ -15,9 +14,6 @@ import {
   SubscriptionsController,
   TaskOrchestrator,
 } from '@polkadot-live/core';
-import BigNumber from 'bignumber.js';
-import { planckToUnit } from '@w3ux/utils';
-import { concatU8a, encodeAddress, hexToU8a, stringToU8a } from 'dedot/utils';
 import { useEffect } from 'react';
 
 /// Main window contexts.
@@ -32,6 +28,7 @@ import {
   useLedgerSigner,
   useManage,
   useSubscriptions,
+  useTreasuryApi,
   useWalletConnect,
 } from '@ren/contexts/main';
 
@@ -63,9 +60,9 @@ export const useMainMessagePorts = () => {
   const { updateEventsOnAccountRename } = useEvents();
   const { syncOpenGovWindow } = useBootstrapping();
   const { exportDataToBackup, importDataFromBackup } = useDataBackup();
-
   const { getOnlineMode } = useConnections();
   const { ledgerSignSubmit } = useLedgerSigner();
+  const { handleInitTreasury } = useTreasuryApi();
 
   const {
     connectWc,
@@ -523,120 +520,6 @@ export const useMainMessagePorts = () => {
       ConfigRenderer.portToOpenGov?.postMessage({
         task: 'openGov:referenda:receive',
         data: { json: null },
-      });
-    }
-  };
-
-  /**
-   * @name processInitTreasury
-   * @summary Use API to get treasury data for OpenGov window.
-   */
-  const processInitTreasury = async (
-    api: DedotOpenGovClient,
-    chainId: ChainID
-  ) => {
-    const EMPTY_U8A_32 = new Uint8Array(32);
-    const hexPalletId = api.consts.treasury.palletId;
-    const u8aPalleId = hexPalletId
-      ? hexToU8a(hexPalletId)
-      : stringToU8a('py/trsry');
-
-    const publicKey = concatU8a(
-      stringToU8a('modl'),
-      u8aPalleId,
-      EMPTY_U8A_32
-    ).subarray(0, 32);
-
-    // Get free balance.
-    const prefix: number = api.consts.system.ss58Prefix;
-    const encoded = encodeAddress(publicKey, prefix);
-    const result = await api.query.system.account(encoded);
-
-    const { free } = result.data;
-    const freeBalance: string = planckToUnit(free, chainUnits(chainId));
-
-    // Get next burn.
-    const burn = api.consts.treasury.burn;
-    const toBurn = new BigNumber(burn)
-      .dividedBy(Math.pow(10, 6))
-      .multipliedBy(new BigNumber(free.toString()));
-
-    const nextBurn = planckToUnit(
-      toBurn.toString(),
-      chainUnits(chainId)
-    ).toString();
-
-    // Get to be awarded.
-    const [approvals, proposals] = await Promise.all([
-      api.query.treasury.approvals(),
-      api.query.treasury.proposals.entries(),
-    ]);
-
-    let toBeAwarded = 0n;
-    for (const [proposalId, proposalData] of proposals) {
-      if (approvals.includes(proposalId)) {
-        toBeAwarded += proposalData.value;
-      }
-    }
-
-    const strToBeAwarded = planckToUnit(toBeAwarded, chainUnits(chainId));
-
-    // Spend period + elapsed spend period.
-    const spendPeriod = api.consts.treasury.spendPeriod;
-    const lastHeader = await api.rpc.chain_getHeader();
-    const dedotBlockHeight = lastHeader?.number;
-
-    let spendPeriodElapsedBlocksAsStr = '0';
-    if (dedotBlockHeight) {
-      spendPeriodElapsedBlocksAsStr = new BigNumber(dedotBlockHeight)
-        .mod(new BigNumber(spendPeriod))
-        .toString();
-    }
-
-    ConfigRenderer.portToOpenGov?.postMessage({
-      task: 'openGov:treasury:set',
-      data: {
-        publicKey,
-        freeBalance,
-        nextBurn,
-        toBeAwardedAsStr: strToBeAwarded,
-        spendPeriodAsStr: spendPeriod.toString(),
-        spendPeriodElapsedBlocksAsStr,
-      },
-    });
-  };
-
-  /**
-   * @name handleInitTreasury
-   * @summary Cast API to get treasury data for OpenGov window.
-   */
-  const handleInitTreasury = async (ev: MessageEvent) => {
-    try {
-      const { chainId }: { chainId: ChainID } = ev.data.data;
-      const api = (
-        await APIsController.getConnectedApiOrThrow(chainId)
-      ).getApi();
-
-      switch (chainId) {
-        case 'Polkadot Relay': {
-          await processInitTreasury(
-            api as DedotClient<ClientTypes['polkadot']>,
-            chainId
-          );
-          break;
-        }
-        case 'Kusama Relay': {
-          await processInitTreasury(
-            api as DedotClient<ClientTypes['kusama']>,
-            chainId
-          );
-          break;
-        }
-      }
-    } catch (e) {
-      ConfigRenderer.portToOpenGov?.postMessage({
-        task: 'openGov:treasury:set',
-        data: null,
       });
     }
   };

@@ -19,6 +19,7 @@
     "./reporter": "./src/reporter.ts",
     "./settings": "./src/settings.ts",
     "./subscriptions": "./src/subscriptions.ts",
+    "./treasury": "./src/treasury.ts",
     "./tx": "./src/tx.ts",
     "./walletConnect": "./src/walletConnect.ts",
     "./chains": "./src/chains/index.ts",

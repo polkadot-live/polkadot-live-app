@@ -7,9 +7,9 @@ import type { TreasuryContextInterface } from './types';
 export const defaultTreasuryContext: TreasuryContextInterface = {
   initTreasury: (c) => {},
   treasuryChainId: 'Polkadot Relay',
-  treasuryU8Pk: null,
   fetchingTreasuryData: false,
   hasFetched: false,
+  getFormattedHubBalance: () => '',
   getFormattedNextBurn: () => '',
   setFetchingTreasuryData: (fetching) => {},
   setTreasuryData: (d) => {},

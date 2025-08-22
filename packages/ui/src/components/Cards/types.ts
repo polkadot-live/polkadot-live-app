@@ -25,6 +25,13 @@ export interface NavCardProps extends NavCardBaseProps {
   openHelp: (key: HelpItemKey) => void;
 }
 
+export interface TreasuryBalanceCardProps {
+  chainId: ChainID;
+  symbol: string;
+  balance: string;
+  disable: boolean;
+}
+
 export interface TreasuryStatCardProps {
   chainId: ChainID;
   title: string;

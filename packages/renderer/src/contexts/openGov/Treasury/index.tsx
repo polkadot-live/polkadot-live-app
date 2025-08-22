@@ -2,14 +2,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './default';
+import BigNumber from 'bignumber.js';
+import { StatemintAssets } from '@polkadot-live/consts/treasury';
 import { ConfigOpenGov, formatBlocksToTime } from '@polkadot-live/core';
 import { createContext, useContext, useRef, useState } from 'react';
-import BigNumber from 'bignumber.js';
 import { rmCommas } from '@w3ux/utils';
-import { chainCurrency } from '@polkadot-live/consts/chains';
+import { chainCurrency, chainUnits } from '@polkadot-live/consts/chains';
 import type { AnyData } from '@polkadot-live/types/misc';
-import type { TreasuryContextInterface } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { StatemintTreasuryInfo } from '@polkadot-live/types/treasury';
+import type { TreasuryContextInterface } from './types';
 
 export const TreasuryContext = createContext<TreasuryContextInterface>(
   defaults.defaultTreasuryContext
@@ -30,9 +32,6 @@ export const TreasuryProvider = ({
   const [fetchingTreasuryData, setFetchingTreasuryData] = useState(false);
   const [hasFetched, setHasFetched] = useState(false);
 
-  // Treasury raw public key.
-  const [treasuryU8Pk, setTreasuryU8Pk] = useState<Uint8Array | null>(null);
-
   // Treasury free balance.
   const [treasuryFreeBalance, setTreasuryFreeBalance] = useState(
     new BigNumber(0)
@@ -49,6 +48,10 @@ export const TreasuryProvider = ({
   const [elapsedSpendPeriod, setElapsedSpendPeriod] = useState(
     new BigNumber(0)
   );
+
+  // Statemint treasury balances.
+  const [statemintTreasuryInfo, setStatemintTreasuryInfo] =
+    useState<StatemintTreasuryInfo | null>(null);
 
   // Ref to indicate if data is has been fetched and cached.
   const dataCachedRef = useRef(false);
@@ -82,15 +85,13 @@ export const TreasuryProvider = ({
   // Setter for treasury public key.
   const setTreasuryData = (data: AnyData) => {
     const {
-      publicKey,
       freeBalance,
       nextBurn,
       toBeAwardedAsStr,
       spendPeriodAsStr,
       spendPeriodElapsedBlocksAsStr,
-    } = data;
+    } = data.coreTreasuryInfo;
 
-    setTreasuryU8Pk(publicKey);
     setTreasuryFreeBalance(new BigNumber(rmCommas(freeBalance)));
     setTreasuryNextBurn(new BigNumber(rmCommas(nextBurn)));
     setToBeAwarded(new BigNumber(rmCommas(toBeAwardedAsStr)));
@@ -99,6 +100,7 @@ export const TreasuryProvider = ({
       new BigNumber(rmCommas(spendPeriodElapsedBlocksAsStr))
     );
 
+    setStatemintTreasuryInfo(data.statemintTreasuryInfo || null);
     setFetchingTreasuryData(false);
     setHasFetched(true);
 
@@ -106,67 +108,98 @@ export const TreasuryProvider = ({
     dataCachedRef.current = true;
   };
 
-  /// Get readable free balance to render.
-  const getFormattedFreeBalance = (): string => {
-    if (!hasFetched) {
-      return `0 ${chainCurrency(treasuryChainId)}`;
-    } else {
-      const formatted = treasuryFreeBalance
-        .dividedBy(1_000_000)
-        .decimalPlaces(2)
-        .toString()
-        .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  /**
+   * Format number with unit.
+   */
+  const formatWithUnit = (balance: BigNumber) => {
+    const million = new BigNumber(1_000_000);
+    const thousand = new BigNumber(1_000);
+    const unit: 'K' | 'M' = balance.gte(million) ? 'M' : 'K';
+    const divisor = unit === 'M' ? million : thousand;
 
-      return `${formatted}M ${chainCurrency(treasuryChainId)}`;
+    return balance
+      .dividedBy(divisor)
+      .decimalPlaces(2)
+      .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+      .concat(unit);
+  };
+
+  /**
+   * Get readable balance for Polkadot Hub treasury assets.
+   */
+  const getFormattedHubBalance = (
+    assetSymbol: 'DOT' | 'USDC' | 'USDT'
+  ): string => {
+    if (assetSymbol !== 'DOT') {
+      const asset = Object.values(StatemintAssets).find(
+        ({ symbol }) => symbol === assetSymbol
+      );
+      if (!asset) {
+        return '-';
+      }
+
+      let balance = 0n;
+      switch (assetSymbol) {
+        case 'USDC':
+          balance = statemintTreasuryInfo?.usdcBalance || 0n;
+          break;
+        case 'USDT':
+          balance = statemintTreasuryInfo?.usdtBalance || 0n;
+          break;
+      }
+
+      const { decimals } = asset;
+      return `${formatWithUnit(new BigNumber(balance).dividedBy(10 ** decimals))}`;
+    } else {
+      const decimals = chainUnits('Polkadot Asset Hub');
+      const balance = new BigNumber(statemintTreasuryInfo?.dotBalance || 0n);
+      return `${formatWithUnit(balance.dividedBy(10 ** decimals))}`;
     }
   };
 
-  /// Get readable next burn amount to render.
-  const getFormattedNextBurn = (): string => {
-    if (!hasFetched) {
-      return `0 ${chainCurrency(treasuryChainId)}`;
-    } else {
-      const formatted = treasuryNextBurn
-        .dividedBy(1_000)
-        .decimalPlaces(2)
-        .toString()
-        .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  /**
+   * Get readable free balance to render.
+   */
+  const getFormattedFreeBalance = (): string =>
+    `${hasFetched ? formatWithUnit(treasuryFreeBalance) : '0'} ${chainCurrency(treasuryChainId)}`;
 
-      return `${formatted}K ${chainCurrency(treasuryChainId)}`;
-    }
-  };
+  /**
+   * Get readable next burn amount to render.
+   */
+  const getFormattedNextBurn = (): string =>
+    `${hasFetched ? formatWithUnit(treasuryNextBurn) : '0'} ${chainCurrency(treasuryChainId)}`;
 
-  /// Get readable to be awarded.
-  const getFormattedToBeAwarded = (): string => {
-    if (!hasFetched) {
-      return `0 ${chainCurrency(treasuryChainId)}`;
-    } else {
-      const formatted = toBeAwarded
-        .dividedBy(1_000_000)
-        .decimalPlaces(2)
-        .toString()
-        .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  /**
+   * Get readable to be awarded.
+   */
+  const getFormattedToBeAwarded = (): string =>
+    `${hasFetched ? formatWithUnit(toBeAwarded) : '0'} ${chainCurrency(treasuryChainId)}`;
 
-      return `${formatted}M ${chainCurrency(treasuryChainId)}`;
-    }
-  };
-
-  /// Get readable elapsed spend period.
+  /**
+   * Get readable elapsed spend period.
+   */
   const getFormattedElapsedSpendPeriod = (): string =>
     formatBlocksToTime(treasuryChainId, elapsedSpendPeriod.toString());
 
-  /// Get readable remaining spend period.
+  /**
+   * Get readable remaining spend period.
+   */
   const getFormattedRemainingSpendPeriod = (): string =>
     formatBlocksToTime(
       treasuryChainId,
       spendPeriod.minus(elapsedSpendPeriod).toString()
     );
 
-  /// Get readable spend period.
+  /**
+   * Get readable spend period.
+   */
   const getFormattedSpendPeriod = (): string =>
     formatBlocksToTime(treasuryChainId, spendPeriod.toString());
 
-  /// Get spend period progress as percentage.
+  /**
+   * Get spend period progress as percentage.
+   */
   const getSpendPeriodProgress = (): string => {
     if (!hasFetched) {
       return '0%';
@@ -185,12 +218,12 @@ export const TreasuryProvider = ({
       value={{
         initTreasury,
         treasuryChainId,
-        treasuryU8Pk,
         fetchingTreasuryData,
         hasFetched,
         setFetchingTreasuryData,
         setTreasuryData,
         getFormattedFreeBalance,
+        getFormattedHubBalance,
         getFormattedNextBurn,
         getFormattedToBeAwarded,
         getFormattedElapsedSpendPeriod,

@@ -23,6 +23,7 @@ import {
   LedgerSignerProvider,
   ManageProvider,
   SubscriptionsProvider,
+  TreasuryApiProvider,
   WalletConnectProvider,
 } from '@ren/contexts/main';
 
@@ -86,6 +87,7 @@ const getProvidersForWindow = () => {
         // Side nav relies on app settings.
         SideNavProvider,
         ApiHealthProvider,
+        TreasuryApiProvider,
         ChainsProvider,
         SubscriptionsProvider,
         IntervalSubscriptionsProvider,

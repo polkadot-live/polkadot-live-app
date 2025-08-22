@@ -23,6 +23,7 @@ export const OverviewTreasury: React.FC = () => {
     initTreasury,
     refetchStats,
     getFormattedFreeBalance,
+    getFormattedHubBalance,
     getFormattedNextBurn,
     getFormattedToBeAwarded,
     getSpendPeriodProgress,
@@ -94,40 +95,73 @@ export const OverviewTreasury: React.FC = () => {
               </Styles.FlexRow>
             </UI.ControlsWrapper>
 
-            <Styles.GridFourCol id="OpenGovStats">
-              <UI.TreasuryStatCard
-                chainId={treasuryChainId}
-                title={'Treasury Balance'}
-                statText={getFormattedFreeBalance()}
-                helpKey={'help:openGov:treasuryBalance'}
-                openHelp={openHelp}
-                disable={statDisabled}
-              />
-              <UI.TreasuryStatCard
-                chainId={treasuryChainId}
-                title={'Next Burn'}
-                statText={getFormattedNextBurn()}
-                helpKey={'help:openGov:nextBurn'}
-                openHelp={openHelp}
-                disable={statDisabled}
-              />
-              <UI.TreasuryStatCard
-                chainId={treasuryChainId}
-                title={'To Be Awarded'}
-                statText={getFormattedToBeAwarded()}
-                helpKey={'help:openGov:toBeAwarded'}
-                openHelp={openHelp}
-                disable={statDisabled}
-              />
-              <UI.TreasuryStatCard
-                chainId={treasuryChainId}
-                title={'Spend Period'}
-                statText={getSpendPeriodProgress()}
-                helpKey={'help:openGov:spendPeriod'}
-                openHelp={openHelp}
-                disable={statDisabled}
-              />
-            </Styles.GridFourCol>
+            <Styles.FlexColumn $rowGap="2px">
+              <Styles.GridFourCol
+                id="OpenGovStats"
+                $roundBottonBorder={treasuryChainId === 'Kusama Relay'}
+              >
+                <UI.TreasuryStatCard
+                  chainId={treasuryChainId}
+                  title={'Treasury Balance'}
+                  statText={getFormattedFreeBalance()}
+                  helpKey={'help:openGov:treasuryBalance'}
+                  openHelp={openHelp}
+                  disable={statDisabled}
+                />
+                <UI.TreasuryStatCard
+                  chainId={treasuryChainId}
+                  title={'Next Burn'}
+                  statText={getFormattedNextBurn()}
+                  helpKey={'help:openGov:nextBurn'}
+                  openHelp={openHelp}
+                  disable={statDisabled}
+                />
+                <UI.TreasuryStatCard
+                  chainId={treasuryChainId}
+                  title={'To Be Awarded'}
+                  statText={getFormattedToBeAwarded()}
+                  helpKey={'help:openGov:toBeAwarded'}
+                  openHelp={openHelp}
+                  disable={statDisabled}
+                />
+                <UI.TreasuryStatCard
+                  chainId={treasuryChainId}
+                  title={'Spend Period'}
+                  statText={getSpendPeriodProgress()}
+                  helpKey={'help:openGov:spendPeriod'}
+                  openHelp={openHelp}
+                  disable={statDisabled}
+                />
+              </Styles.GridFourCol>
+
+              {treasuryChainId === 'Polkadot Relay' && (
+                <Styles.FlexRow className="PolkadotHubStats">
+                  <Styles.FlexColumn $rowGap={'0.2rem'}>
+                    <h2 className="Heading">{'Polkadot Hub'}</h2>
+                    <Styles.FlexRow>
+                      <UI.TreasuryBalanceCard
+                        chainId={treasuryChainId}
+                        symbol={'DOT'}
+                        balance={getFormattedHubBalance('DOT')}
+                        disable={statDisabled}
+                      />
+                      <UI.TreasuryBalanceCard
+                        chainId={treasuryChainId}
+                        symbol={'USDC'}
+                        balance={getFormattedHubBalance('USDC')}
+                        disable={statDisabled}
+                      />
+                      <UI.TreasuryBalanceCard
+                        chainId={treasuryChainId}
+                        symbol={'USDT'}
+                        balance={getFormattedHubBalance('USDT')}
+                        disable={statDisabled}
+                      />
+                    </Styles.FlexRow>
+                  </Styles.FlexColumn>
+                </Styles.FlexRow>
+              )}
+            </Styles.FlexColumn>
           </Styles.FlexColumn>
         </TreasuryStats>
       </Styles.FlexColumn>
