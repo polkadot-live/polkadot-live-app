@@ -162,25 +162,19 @@ export const TreasuryProvider = ({
    * Get readable free balance to render.
    */
   const getFormattedFreeBalance = (): string =>
-    hasFetched
-      ? `${formatWithUnit(treasuryFreeBalance)} ${chainCurrency(treasuryChainId)}`
-      : `0 ${chainCurrency(treasuryChainId)}`;
+    `${hasFetched ? formatWithUnit(treasuryFreeBalance) : '0'} ${chainCurrency(treasuryChainId)}`;
 
   /**
    * Get readable next burn amount to render.
    */
   const getFormattedNextBurn = (): string =>
-    hasFetched
-      ? `${formatWithUnit(treasuryNextBurn)} ${chainCurrency(treasuryChainId)}`
-      : `0 ${chainCurrency(treasuryChainId)}`;
+    `${hasFetched ? formatWithUnit(treasuryNextBurn) : '0'} ${chainCurrency(treasuryChainId)}`;
 
   /**
    * Get readable to be awarded.
    */
   const getFormattedToBeAwarded = (): string =>
-    hasFetched
-      ? `${formatWithUnit(toBeAwarded)} ${chainCurrency(treasuryChainId)}`
-      : `0 ${chainCurrency(treasuryChainId)}`;
+    `${hasFetched ? formatWithUnit(toBeAwarded) : '0'} ${chainCurrency(treasuryChainId)}`;
 
   /**
    * Get readable elapsed spend period.
