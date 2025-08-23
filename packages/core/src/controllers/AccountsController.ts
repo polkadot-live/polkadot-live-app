@@ -4,6 +4,7 @@
 import { Account } from '../model';
 import { getAccountNominatingData, getNominationPoolData } from '../library';
 import { getStakingChains } from '@polkadot-live/consts/chains';
+import { QueryError } from '../errors';
 import { TaskOrchestrator } from '../orchestrators';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
@@ -153,7 +154,7 @@ export class AccountsController {
     if (account && account.queryMulti !== null) {
       await TaskOrchestrator.subscribeTask(task, account.queryMulti);
     } else {
-      throw new Error('Error: Account::subscribeTask QueryMultiWrapper null');
+      throw new QueryError('QueryMultiUndefined');
     }
   };
 

@@ -76,6 +76,7 @@ export interface SubscriptionTask {
 
 export type QueryErrorStatusCode =
   | 'InvalidAction'
+  | 'QueryMultiUndefined'
   | 'QueryParamsUndefined'
   | 'IndexRegistryMismatch';
 
