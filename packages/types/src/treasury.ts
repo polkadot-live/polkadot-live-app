@@ -12,6 +12,7 @@ export interface CoreTreasuryInfo {
 export interface IpcTreasuryInfo {
   coreTreasuryInfo: CoreTreasuryInfo;
   statemintTreasuryInfo?: StatemintTreasuryInfo;
+  statemineTreasuryInfo?: StatemineTreasuryInfo;
 }
 
 export interface StatemintAssetInfo {
@@ -23,4 +24,8 @@ export interface StatemintTreasuryInfo {
   usdcBalance: bigint;
   usdtBalance: bigint;
   dotBalance: bigint;
+}
+
+export interface StatemineTreasuryInfo {
+  ksmBalance: bigint;
 }
