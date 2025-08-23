@@ -8,6 +8,7 @@ import { ChainList, chainUnits } from '@polkadot-live/consts/chains';
 import { unitToPlanck } from '@w3ux/utils';
 import { concatU8a, hexToU8a, u8aToHex } from 'dedot/utils';
 import { MerkleizedMetadata } from 'dedot/merkleized-metadata';
+import { ExtrinsicError } from '../errors';
 import { ExtraSignedExtension } from 'dedot';
 import {
   getAddressNonce,
@@ -192,7 +193,7 @@ export class ExtrinsicsController {
       // Generate payload.
       const cached = this.txPayloads.get(txId);
       if (cached === undefined) {
-        throw new Error('Error: Cached extrinsic data not found.');
+        throw new ExtrinsicError('ExtrinsicNotFound');
       }
 
       // Build and cache payload.
@@ -342,8 +343,10 @@ export class ExtrinsicsController {
     const { from, chainId } = info.actionMeta;
 
     try {
-      if (!(info.dynamicInfo && info.dynamicInfo.txSignature)) {
-        throw new Error('Error: Extrinsic not built or signature missing.');
+      if (!info.dynamicInfo) {
+        throw new ExtrinsicError('DynamicInfoUndefined');
+      } else if (!info.dynamicInfo.txSignature) {
+        throw new ExtrinsicError('SignatureUndefined');
       }
 
       const api = (

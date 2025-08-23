@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as wc from '@polkadot-live/consts/walletConnect';
-import { ConfigAction, generateUID } from '@polkadot-live/core';
+import { ConfigAction, ExtrinsicError, generateUID } from '@polkadot-live/core';
 import React, {
   createContext,
   useContext,
@@ -329,7 +329,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const info = extrinsicsRef.current.get(txId);
       if (!info) {
-        throw new Error('Error: Extrinsic not found.');
+        throw new ExtrinsicError('ExtrinsicNotFound');
       }
 
       ConfigAction.portAction.postMessage({
@@ -338,7 +338,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       });
     } catch (err) {
       window.myAPI.relaySharedState('extrinsic:building', false);
-      console.log(err);
+      console.error(err);
     }
   };
 
@@ -349,7 +349,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const info = extrinsicsRef.current.get(txId);
       if (!info) {
-        throw new Error('Error: Extrinsic not found.');
+        throw new ExtrinsicError('ExtrinsicNotFound');
       }
 
       info.estimatedFee = estimatedFee;
@@ -367,7 +367,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         'success'
       );
     } catch (err) {
-      console.log(err);
+      console.error(err);
     } finally {
       // Relay building extrinsic flag to app.
       window.myAPI.relaySharedState('extrinsic:building', false);
@@ -382,7 +382,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const info = extrinsicsRef.current.get(txId);
       if (!info) {
-        throw new Error('Error: Extrinsic not found.');
+        throw new ExtrinsicError('ExtrinsicNotFound');
       }
 
       // Relay building extrinsic flag to app.
@@ -420,14 +420,14 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const info = extrinsicsRef.current.get(txId);
       if (!info) {
-        throw new Error('Error: Extrinsic not found.');
+        throw new ExtrinsicError('ExtrinsicNotFound');
       }
 
       info.dynamicInfo = dynamicInfo;
       setUpdateCache(true);
       openOverlayWith(getOverlayComponent(info), 'small', true);
     } catch (err) {
-      console.log(err);
+      console.error(err);
     } finally {
       window.myAPI.relaySharedState('extrinsic:building', false);
     }
@@ -451,13 +451,13 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const info = extrinsicsRef.current.get(txId);
       if (!info) {
-        throw new Error('Error: Extrinsic not found.');
+        throw new ExtrinsicError('ExtrinsicNotFound');
       }
       if (!info.dynamicInfo) {
-        throw new Error('Error: Extrinsic dynamic info not found.');
+        throw new ExtrinsicError('DynamicInfoUndefined');
       }
       if (!info.dynamicInfo.txSignature) {
-        throw new Error('Error: Signature not found.');
+        throw new ExtrinsicError('SignatureUndefined');
       }
 
       // Send extrinsic info to main renderer and submit.
@@ -466,7 +466,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         data: { info: JSON.stringify(info) },
       });
     } catch (err) {
-      console.log(err);
+      console.error(err);
       window.myAPI.relaySharedState('extrinsic:building', false);
     }
   };
@@ -479,7 +479,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
 
     const info = extrinsicsRef.current.get(txId);
     if (!info) {
-      throw new Error('Error: Extrinsic not found.');
+      throw new ExtrinsicError('ExtrinsicNotFound');
     }
 
     // Send extrinsic info to main renderer and submit.
@@ -496,7 +496,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const info = extrinsicsRef.current.get(txId);
       if (!info) {
-        throw new Error('Error: Extrinsic not found.');
+        throw new ExtrinsicError('ExtrinsicNotFound');
       }
 
       info.txStatus = txStatus;
@@ -509,7 +509,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       // Update tx status in store.
       await updateStoreInfo(info);
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   };
 
@@ -519,11 +519,11 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   const setTxSignature = (txUid: string, s: AnyJson) => {
     const info = extrinsicsRef.current.get(txUid);
     if (!info) {
-      console.log('> no extrinsic found.');
+      console.error(new ExtrinsicError('ExtrinsicNotFound'));
       return;
     }
     if (!info.dynamicInfo) {
-      console.log('> no dynamic info found.');
+      console.error(new ExtrinsicError('DynamicInfoUndefined'));
       return;
     }
 
@@ -553,10 +553,11 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   const getGenesisHash = (txUid: string) => {
     const info = extrinsicsRef.current.get(txUid);
     if (!info) {
-      console.log('> no extrinsic found.');
+      console.error(new ExtrinsicError('ExtrinsicNotFound'));
       return null;
     }
     if (!info.dynamicInfo) {
+      console.error(new ExtrinsicError('DynamicInfoUndefined'));
       return null;
     }
 
@@ -739,7 +740,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const info = extrinsicsRef.current.get(txId);
       if (!info) {
-        throw new Error('Error: Extrinsic not found.');
+        throw new ExtrinsicError('ExtrinsicNotFound');
       }
 
       info.txHash = txHash;

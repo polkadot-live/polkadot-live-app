@@ -9,6 +9,7 @@ import {
   getNominationPoolData,
   getAccountNominatingData,
 } from '../library/AccountsLib';
+import { QueryError } from '../errors';
 
 import type { Account } from './Account';
 import type { AnyData, AnyFunction } from '@polkadot-live/types/misc';
@@ -224,7 +225,7 @@ export class QueryMultiWrapper {
 
       const ordered = this.queries.get(chainId);
       if (!ordered) {
-        throw new Error('Error - no built queries.');
+        throw new QueryError('QueryParamsUndefined');
       }
 
       const queries: QueryWithParams<AnyFunction>[] = [];
@@ -553,7 +554,7 @@ export class QueryMultiWrapper {
     const updatedEntries = entry.callEntries.map((e, i) => {
       const { entryIndex, dataIndex } = dataIndexRegistry[i];
       if (entryIndex !== i) {
-        throw new Error("indices don't match");
+        throw new QueryError('IndexRegistryMismatch');
       }
       e.task.dataIndex = dataIndex;
       e.task.justBuilt = true;
@@ -609,7 +610,7 @@ export class QueryMultiWrapper {
       case 'subscribe:account:nominating:pendingPayouts':
         return api.query.staking.activeEra;
       default:
-        throw new Error('Subscription action not found');
+        throw new QueryError('InvalidAction');
     }
   }
 

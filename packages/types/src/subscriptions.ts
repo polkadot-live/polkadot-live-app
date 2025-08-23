@@ -74,6 +74,12 @@ export interface SubscriptionTask {
   helpKey: HelpItemKey;
 }
 
+export type QueryErrorStatusCode =
+  | 'InvalidAction'
+  | 'QueryMultiUndefined'
+  | 'QueryParamsUndefined'
+  | 'IndexRegistryMismatch';
+
 // String literals to limit subscription task actions.
 export type TaskAction =
   | 'subscribe:chain:timestamp'

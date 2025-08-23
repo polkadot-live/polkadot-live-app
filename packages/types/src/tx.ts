@@ -12,6 +12,11 @@ import type {
 import type { ExtraSignedExtension } from 'dedot';
 import type { Extrinsic } from 'dedot/codecs';
 
+export type ExtrinsicErrorStatusCode =
+  | 'DynamicInfoUndefined'
+  | 'ExtrinsicNotFound'
+  | 'SignatureUndefined';
+
 export interface PagedExtrinsicItems {
   page: number;
   pageCount: number;
