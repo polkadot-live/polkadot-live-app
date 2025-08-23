@@ -3,4 +3,5 @@
 
 export * from './api.error';
 export * from './ledger.error';
+export * from './query.error';
 export * from './wc.error';
