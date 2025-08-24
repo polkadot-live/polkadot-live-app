@@ -36,12 +36,7 @@ export const ListWrapper = styled(motion.div)`
 `;
 
 export const DefinitionWrapper = styled(motion.div)`
-  background: var(--help-definition-fallback);
-  background: linear-gradient(
-    32deg,
-    var(--help-definition-gradient-start) 0%,
-    var(--help-definition-gradient-end) 100%
-  );
+  background-color: var(--help-definition-fallback);
   border-radius: 1.5em;
 
   display: flex;

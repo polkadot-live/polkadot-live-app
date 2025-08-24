@@ -129,7 +129,7 @@ export const DialogContent = styled(Dialog.Content).attrs<{
     &:focus-visible {
     }
     &:hover:not([disabled]) {
-      filter: brightness(110%);
+      background-color: ${({ $theme }) => $theme.buttonBackgroundPrimaryHover};
     }
     &.Danger {
       color: #dd6060;

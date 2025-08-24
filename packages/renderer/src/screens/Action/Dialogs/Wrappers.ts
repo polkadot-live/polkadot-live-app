@@ -14,7 +14,7 @@ export const InfoPanel = styled.div.attrs<{
   gap: 1rem;
   font-size: 1rem;
   padding: 1rem;
-  background-color: ${({ $theme }) => $theme.backgroundSurface};
+  background-color: ${({ $theme }) => $theme.backgroundPrimary};
   border-radius: 0.375rem;
 
   > div {

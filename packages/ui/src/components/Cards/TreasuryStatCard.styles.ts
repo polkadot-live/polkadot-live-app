@@ -7,7 +7,7 @@ import { mixinHelpIcon } from '../Common';
 import type { ChainID } from '@polkadot-live/types/chains';
 
 export const TreasuryStatCardWrapper = styled.div<{ $chainId: ChainID }>`
-  background-color: var(--background-primary-hover);
+  background-color: var(--background-primary);
   padding: 1rem;
   display: flex;
   flex-direction: column;

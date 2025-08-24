@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import type { ChainID } from '@polkadot-live/types/chains';
 
 export const TreasuryBalanceCardWrapper = styled.div<{ $chainId: ChainID }>`
-  background-color: var(--background-primary-hover);
+  background-color: var(--background-primary);
   padding: 0.5rem 1rem 0.75rem;
   display: flex;
   flex-direction: row;

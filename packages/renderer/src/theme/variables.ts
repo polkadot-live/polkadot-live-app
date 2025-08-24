@@ -80,9 +80,7 @@ export const darkTheme = {
   badgeAlphaBackground: '#2a2a2a',
 
   /* Help Overlay */
-  helpDefinitionFallback: '#282728',
-  helpDefinitionGradientStart: 'rgb(74 74 74 / 35%)',
-  helpDefinitionGradientEnd: 'rgb(62 62 62 / 52%)',
+  helpDefinitionFallback: '#2b2b2b',
 
   /* Side Nav */
   navBackground: '#1a1919',
@@ -144,7 +142,7 @@ export const lightTheme = {
   accentSuccess: '#2c7a2c',
 
   /* General: Borders */
-  borderPrimaryColor: '#b9b9b9',
+  borderPrimaryColor: '#dbdbdb',
   borderSecondaryColor: '#8a8a8a',
   borderMidColor: '#a8a8a8',
   borderSubtle: '#bdbdbd',
@@ -205,9 +203,7 @@ export const lightTheme = {
   badgeAlphaBackground: '#f1f1f1',
 
   /* Help Overlay */
-  helpDefinitionFallback: '#c9c9c9',
-  helpDefinitionGradientStart: 'rgb(177 177 177 /47%)',
-  helpDefinitionGradientEnd: 'rgb(191 191 191 / 57%)',
+  helpDefinitionFallback: '#fdfdfd',
 
   /* Side Nav */
   navBackground: '#fefefe',
