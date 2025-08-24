@@ -97,7 +97,7 @@ export const FooterWrapper = styled.div`
 `;
 
 export const NetworkItem = styled.div`
-  background-color: var(--background-window-content);
+  background-color: var(--background-primary);
   display: flex;
   align-items: center;
   column-gap: 0.55rem;

@@ -148,8 +148,8 @@ export const TaskEntryWrapper = styled(motion.div)`
     }
 
     .interval-badge {
-      color: var(--text-color-tertiary);
-      background-color: var(--border-mid-color);
+      color: var(--text-color-primary);
+      background-color: var(--background-surface);
       position: absolute;
       top: 9px;
       left: -6px;
@@ -157,7 +157,7 @@ export const TaskEntryWrapper = styled(motion.div)`
       padding: 1px 0;
       opacity: 0.9;
       border-radius: 1.25rem;
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       font-weight: 600;
       text-align: center;
       z-index: 3;
