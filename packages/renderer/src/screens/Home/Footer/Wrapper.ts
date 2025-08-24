@@ -14,7 +14,6 @@ export const FooterWrapper = styled.div`
   left: 0;
   height: 3rem;
   overflow: hidden;
-  padding-top: 0.5rem;
   z-index: 20;
 
   .Header {
