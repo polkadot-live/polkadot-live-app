@@ -4,7 +4,6 @@
 export const darkTheme = {
   /* General: Backgrounds */
   backgroundWindow: '#111',
-  backgroundWindowContent: '#0e0e0e',
   backgroundSurface: '#181818',
   backgroundPrimary: '#1c1c1c',
   backgroundPrimaryHover: '#212121',
@@ -127,7 +126,6 @@ export const darkTheme = {
 export const lightTheme = {
   /* General: Backgrounds */
   backgroundWindow: '#eaeaea',
-  backgroundWindowContent: '#f3f3f3',
   backgroundSurface: '#f6f6f6',
   backgroundPrimary: '#fefefe',
   backgroundPrimaryHover: '#f5f5f5',
