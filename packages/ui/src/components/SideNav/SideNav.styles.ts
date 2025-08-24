@@ -59,7 +59,6 @@ export const NavItemWrapper = styled(motion.button).attrs<{
 `;
 
 export const SideNavWrapper = styled.nav<{ $isCollapsed: boolean }>`
-  border-top: 1px solid var(--border-primary-color);
   background-color: var(--nav-background);
   flex: 1;
   display: flex;

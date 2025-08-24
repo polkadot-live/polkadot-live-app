@@ -38,7 +38,6 @@ export const ToggleGroupRoot = styled(ToggleGroup.Root)`
   }
   .ToggleGroupItem[data-state='on'] {
     background-color: var(--button-background-primary-hover);
-    color: var(--text-bright);
   }
   .ToggleGroupItem:focus {
     position: relative;

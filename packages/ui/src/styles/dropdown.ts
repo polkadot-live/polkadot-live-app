@@ -6,7 +6,7 @@ import styled, { css } from 'styled-components';
 import type { AnyData } from '@polkadot-live/types/misc';
 
 const dropdownMixin = css`
-  background-color: var(--background-primary);
+  background-color: var(--dropdown-background);
   min-width: 130px;
   border-radius: 6px;
   padding: 1rem 5px 1rem 5px;
@@ -58,7 +58,7 @@ const dropdownMixin = css`
   .DropdownMenuCheckboxItem[data-highlighted],
   .DropdownMenuRadioItem[data-highlighted],
   .DropdownMenuSubTrigger[data-highlighted] {
-    background-color: var(--button-primary-hover);
+    background-color: var(--background-overlay);
     color: var(--text-bright);
   }
 
@@ -85,7 +85,7 @@ const dropdownMixin = css`
   }
 
   .DropdownMenuArrow {
-    fill: var(--background-primary);
+    fill: var(--dropdown-background);
   }
   .LeftSlot {
     padding: 0 1.25rem 0 0.75rem;
@@ -98,7 +98,7 @@ const dropdownMixin = css`
   }
   [data-highlighted] > .RightSlot,
   [data-highlighted] > .LeftSlot {
-    color: var(--text-secondary);
+    color: var(--text-bright);
   }
   [data-disabled] .RightSlot,
   [data-disabled] .LeftSlot {
@@ -156,11 +156,12 @@ export const DropdownMenuContent = styled(DropdownMenu.Content).attrs<{
   $theme: props.$theme,
 }))`
   --accent-primary: ${(props) => props.$theme.accentPrimary};
-  --background-primary: ${(props) => props.$theme.backgroundDropDown};
+  --background-overlay: ${(props) => props.$theme.backgroundOverlay};
   --button-primary: ${(props) => props.$theme.buttonBackgroundPrimary};
   --button-primary-hover: ${(props) =>
     props.$theme.buttonBackgroundPrimaryHover};
   --border-primary: ${(props) => props.$theme.borderPrimaryColor};
+  --dropdown-background: ${(props) => props.$theme.dropdownBackground};
   --text-primary: ${(props) => props.$theme.textColorPrimary};
   --text-secondary: ${(props) => props.$theme.textColorSecondary};
   --text-bright: ${(props) => props.$theme.textBright};
@@ -175,7 +176,6 @@ export const DropdownMenuSubContent = styled(DropdownMenu.SubContent).attrs<{
   $theme: props.$theme,
 }))`
   --accent-primary: ${(props) => props.$theme.accentPrimary};
-  --background-primary: ${(props) => props.$theme.backgroundPrimary};
   --button-primary: ${(props) => props.$theme.buttonBackgroundPrimary};
   --button-primary-hover: ${(props) =>
     props.$theme.buttonBackgroundPrimaryHover};

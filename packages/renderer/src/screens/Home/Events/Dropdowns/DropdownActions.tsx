@@ -68,11 +68,7 @@ export const ActionsDropdown = ({
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
         <MenuButton
-          style={{
-            width: '31px',
-            height: '16px',
-            backgroundColor: 'var(--button-background-secondary)',
-          }}
+          style={{ width: '31px', height: '16px' }}
           $dark={darkMode}
           aria-label="Referendum Actions"
         >

@@ -69,6 +69,9 @@ export const darkTheme = {
   dialogScrollbarThumbBackgroundColor: '#191919',
   dialogScrollbarThumbBackgroundColorHover: '#2a2a2a',
 
+  /* Dropdown */
+  dropdownBackground: '#1c1c1c',
+
   /* Ellipsis Spinner */
   ellipsisSpinnerColor: '#afafaf',
 
@@ -97,8 +100,14 @@ export const darkTheme = {
   sortButtonText: '#ededed',
 
   /* Stats */
-  statsBackgroundHighlight: '#242424',
   statsTextTitle: '#d1d1d1',
+
+  /* Tabs */
+  tabBackground: '#313131',
+  tabBackgroundHover: '#3d3d3d',
+
+  /* Tooltip */
+  tooltipBackground: '#464646',
 
   /* Legacy */
   backgroundDefault: '#171717',
@@ -119,12 +128,12 @@ export const darkTheme = {
 
 export const lightTheme = {
   /* General: Backgrounds */
-  backgroundWindow: '#eee',
+  backgroundWindow: '#eaeaea',
   backgroundWindowContent: '#f3f3f3',
-  backgroundSurface: '#dadada',
-  backgroundPrimary: '#e1e1e1',
-  backgroundPrimaryHover: '#dedede',
-  backgroundOverlay: 'rgba(120, 120, 120, 0.5)',
+  backgroundSurface: '#f6f6f6',
+  backgroundPrimary: '#fefefe',
+  backgroundPrimaryHover: '#f5f5f5',
+  backgroundOverlay: 'rgba(46, 46, 46, 0.75)',
   backgroundOverlaySurface: 'rgba(245, 245, 245, 0.7)',
   backgroundDropDown: '#eee',
 
@@ -135,17 +144,17 @@ export const lightTheme = {
   accentSuccess: '#2c7a2c',
 
   /* General: Borders */
-  borderPrimaryColor: '#c0c0c0',
+  borderPrimaryColor: '#b9b9b9',
   borderSecondaryColor: '#8a8a8a',
   borderMidColor: '#a8a8a8',
-  borderSubtle: '#a8a8a8',
+  borderSubtle: '#bdbdbd',
 
   /* General: Buttons */
-  buttonBackgroundPrimary: '#d2d2d2',
-  buttonBackgroundPrimaryHover: '#c8c8c8',
+  buttonBackgroundPrimary: '#e7e7e7',
+  buttonBackgroundPrimaryHover: '#dadada',
   buttonPinkBackground: '#953254',
   buttonPinkColor: '#ededed',
-  buttonBackgroundSecondary: '#a5a5a5',
+  buttonBackgroundSecondary: 'rgba(46, 46, 46, 0.75)',
 
   /* General: Chains */
   polkadotPink: '#ac2461',
@@ -172,7 +181,7 @@ export const lightTheme = {
   textColorInvert: '#050505',
 
   /* Accordion */
-  accordionBackgroundHover: '#e5e5e5',
+  accordionBackgroundHover: '#fefefe',
 
   /* Cog Menu */
   menuButtonHover: '#ccc',
@@ -184,6 +193,9 @@ export const lightTheme = {
   dialogScrollbarTrackBackgroundColor: '#d8d8d8',
   dialogScrollbarThumbBackgroundColor: '#afafaf',
   dialogScrollbarThumbBackgroundColorHover: '#9b9b9b',
+
+  /* Dropdown */
+  dropdownBackground: '#ddd',
 
   /* Ellipsis Spinner */
   ellipsisSpinnerColor: '#505050',
@@ -198,10 +210,10 @@ export const lightTheme = {
   helpDefinitionGradientEnd: 'rgb(191 191 191 / 57%)',
 
   /* Side Nav */
-  navBackground: '#e5e6e6',
-  navButtonBackground: '#cecece',
+  navBackground: '#fefefe',
+  navButtonBackground: '#e3e3e3',
   navButtonBackgroundActive: 'var(--accent-primary)',
-  navButtonBackgroundHover: '#c2c2c2',
+  navButtonBackgroundHover: '#d1d1d1',
   navButtonIcon: '#363636',
   navButtonText: '#5e5e5e',
   navButtonIconActive: '#c9c9c9',
@@ -213,8 +225,14 @@ export const lightTheme = {
   sortButtonText: '#121212',
 
   /* Stats */
-  statsBackgroundHighlight: '#dbdbdb',
   statsTextTitle: '#505050',
+
+  /* Tabs */
+  tabBackground: '#e7e7e7',
+  tabBackgroundHover: 'rgba(46, 46, 46, 0.9)',
+
+  /* Tooltip */
+  tooltipBackground: 'rgb(54, 54, 54)',
 
   /* Legacy */
   backgroundDefault: '#efeeee',

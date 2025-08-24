@@ -5,7 +5,6 @@ import styled from 'styled-components';
 
 export const FooterWrapper = styled.div`
   background: var(--background-surface);
-  border-top: 1px solid var(--border-primary-color);
   width: 100%;
   display: flex;
   flex-direction: column;
