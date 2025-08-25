@@ -318,7 +318,7 @@ export const Send: React.FC = () => {
                   <TriggerContent label="Summary" complete={summaryComplete} />
                 </UI.AccordionTrigger>
                 <UI.AccordionContent narrow={true}>
-                  <FlexColumn $rowGap={'2px'}>
+                  <FlexColumn $rowGap={'0.25rem'}>
                     <InfoPanel label={'Network:'}>
                       {sender?.chainId || '-'}
                     </InfoPanel>
@@ -353,14 +353,16 @@ export const Send: React.FC = () => {
                     </InfoPanel>
 
                     {/** Send Amount */}
-                    <InfoPanel label={'Send Amount:'}>
-                      {sendAmount === '0' ||
-                      sendAmount === '' ||
-                      !sender ||
-                      !validAmount
-                        ? '-'
-                        : `${formatDecimal(sendAmount)} ${chainCurrency(sender.chainId)}`}
-                    </InfoPanel>
+                    <div style={{ marginBottom: '0.25rem' }}>
+                      <InfoPanel label={'Send Amount:'}>
+                        {sendAmount === '0' ||
+                        sendAmount === '' ||
+                        !sender ||
+                        !validAmount
+                          ? '-'
+                          : `${formatDecimal(sendAmount)} ${chainCurrency(sender.chainId)}`}
+                      </InfoPanel>
+                    </div>
 
                     <FlexRow $gap={'0.5rem'}>
                       <ActionButton

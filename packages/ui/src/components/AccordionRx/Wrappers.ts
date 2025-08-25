@@ -162,21 +162,22 @@ export const AccordionWrapper = styled.div<{ $onePart?: boolean }>`
    * Custom styles for footer networks accordion.
    */
   .AccordionItemNetwork {
-    background-color: var(--background-window);
     border-radius: 0.375rem;
   }
   .AccordionTriggerNetwork {
-    background-color: var(--background-window);
     height: auto;
 
     .HeaderContent {
-      background-color: var(--background-window);
+      background-color: var(--background-surface);
       height: auto;
       padding-top: 1.25rem;
       padding-bottom: 1.25rem;
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
 
+      &:hover {
+        background-color: var(--background-primary);
+      }
       h3 {
         font-size: 1rem !important;
       }
@@ -185,9 +186,6 @@ export const AccordionWrapper = styled.div<{ $onePart?: boolean }>`
   .AccordionContentNetwork {
     .AccordionContentTransparent {
       margin-top: 0;
-      > div:first-of-type {
-        border-top: 1px solid var(--background-surface);
-      }
       > div {
         border-radius: 0;
       }

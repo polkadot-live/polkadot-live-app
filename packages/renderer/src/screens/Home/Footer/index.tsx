@@ -132,19 +132,19 @@ export const Footer = () => {
       </section>
 
       {/* Dedot Connections */}
-      <ScrollWrapper>
-        <section className="network-list-wrapper">
-          <FlexRow $gap={'0.7rem'} className="TopHeading">
-            <FontAwesomeIcon icon={FA.faGlobe} transform={'shrink-1'} />
-            <h3>Networks</h3>
-            {showWorkingSpinner() && (
-              <div className="Spinner">
-                <PuffLoader size={16} color={'var(--text-color-primary)'} />
-              </div>
-            )}
-          </FlexRow>
+      {expanded && (
+        <ScrollWrapper>
+          <section className="network-list-wrapper">
+            <FlexRow $gap={'0.7rem'} className="TopHeading">
+              <FontAwesomeIcon icon={FA.faGlobe} transform={'shrink-1'} />
+              <h3>Networks</h3>
+              {showWorkingSpinner() && (
+                <div className="Spinner">
+                  <PuffLoader size={16} color={'var(--text-color-primary)'} />
+                </div>
+              )}
+            </FlexRow>
 
-          {expanded && (
             <UI.AccordionWrapper>
               <Accordion.Root
                 className="AccordionRoot"
@@ -274,9 +274,9 @@ export const Footer = () => {
                 </FlexColumn>
               </Accordion.Root>
             </UI.AccordionWrapper>
-          )}
-        </section>
-      </ScrollWrapper>
+          </section>
+        </ScrollWrapper>
+      )}
     </FooterWrapper>
   );
 };

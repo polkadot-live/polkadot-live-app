@@ -10,11 +10,11 @@ export const TooltipContent = styled(Tooltip.Content).attrs<{
 }>((props) => ({
   $theme: props.$theme,
 }))`
-  --background-primary: ${(props) => props.$theme.buttonBackgroundSecondary};
-  --text-primary: ${(props) => props.$theme.textColorPrimary};
+  --tooltip-background: ${(props) => props.$theme.tooltipBackground};
+  --text-bright: ${(props) => props.$theme.textBright};
 
-  background-color: var(--background-primary);
-  color: var(--text-primary);
+  background-color: var(--tooltip-background);
+  color: var(--text-bright);
   border-radius: 0.375rem;
   padding: 0.5rem 0.75rem;
   font-size: 1rem;

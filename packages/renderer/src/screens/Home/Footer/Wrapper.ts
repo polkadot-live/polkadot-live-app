@@ -5,7 +5,6 @@ import styled from 'styled-components';
 
 export const FooterWrapper = styled.div`
   background: var(--background-surface);
-  border-top: 1px solid var(--border-primary-color);
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -15,7 +14,6 @@ export const FooterWrapper = styled.div`
   left: 0;
   height: 3rem;
   overflow: hidden;
-  padding-top: 0.5rem;
   z-index: 20;
 
   .Header {
@@ -98,7 +96,7 @@ export const FooterWrapper = styled.div`
 `;
 
 export const NetworkItem = styled.div`
-  background-color: var(--background-window-content);
+  background-color: var(--background-primary);
   display: flex;
   align-items: center;
   column-gap: 0.55rem;

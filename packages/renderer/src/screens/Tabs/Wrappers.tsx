@@ -52,7 +52,7 @@ export const TabWrapper = styled(motion.div).attrs<{
 }>((props) => ({
   $active: props.$active,
 }))`
-  background-color: var(--nav-button-background);
+  background-color: var(--tab-background);
   transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   border-radius: 0.375rem;
@@ -66,10 +66,6 @@ export const TabWrapper = styled(motion.div).attrs<{
       $active ? 'var(--text-bright)' : 'var(--text-color-primary)'};
     flex-grow: 1;
   }
-  &:hover {
-    background-color: var(--nav-button-background-hover);
-  }
-
   .inner {
     position: relative;
     display: flex;
@@ -88,6 +84,13 @@ export const TabWrapper = styled(motion.div).attrs<{
       &:hover {
         opacity: 1;
       }
+    }
+  }
+  &:hover {
+    background-color: var(--tab-background-hover);
+    .label,
+    .btn-close {
+      color: var(--text-bright);
     }
   }
 `;

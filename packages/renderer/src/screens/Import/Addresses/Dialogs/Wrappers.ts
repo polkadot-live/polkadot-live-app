@@ -117,7 +117,7 @@ export const ControlsRow = styled(Style.FlexRow).attrs<{
 export const ToggleRx = styled(Toggle.Root).attrs<{ $theme: typeof darkTheme }>(
   (props) => ({ $theme: props.$theme })
 )`
-  background-color: ${({ $theme }) => $theme.buttonBackgroundSecondary};
+  background-color: ${({ $theme }) => $theme.buttonBackgroundPrimary};
   color: ${({ $theme }) => $theme.textColorPrimary};
   height: 30px;
   width: 30px;

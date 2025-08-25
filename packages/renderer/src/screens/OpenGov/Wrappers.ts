@@ -40,7 +40,7 @@ export const TreasuryStats = styled.div<{ $chainId: ChainID }>`
     column-gap: 1rem;
   }
   .PolkadotHubStats {
-    background-color: var(--background-primary-hover);
+    background-color: var(--background-primary);
     border-bottom-left-radius: 0.375rem;
     border-bottom-right-radius: 0.375rem;
 

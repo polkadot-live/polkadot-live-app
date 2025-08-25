@@ -57,7 +57,7 @@ export const TabsRoot = styled(Tabs.Root)`
 `;
 
 export const RefStatusBadge = styled.h5<{ $status: RefStatus }>`
-  color: #cfcfcf;
+  color: #e6e6e6;
   font-size: 0.92rem;
   padding: 0.25rem 0.6rem;
   border-radius: 0.375rem;
@@ -190,10 +190,10 @@ export const PaginationRow = styled.div`
     cursor: pointer;
 
     &:hover:not(.disable):not(.selected):not(.fetching) {
-      background-color: var(--background-primary-hover);
+      background-color: var(--background-primary);
     }
     &.selected {
-      background-color: var(--background-primary-hover);
+      background-color: var(--background-primary);
       color: var(--text-active);
     }
     &.middle {

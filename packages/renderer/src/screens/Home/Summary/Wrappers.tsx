@@ -14,7 +14,7 @@ export const HoverGradient = styled(motion.span).attrs<{
   $dark: boolean;
 }>((props) => ({ $dark: props.$dark }))`
   --hover-color: ${({ $dark }) =>
-    $dark ? 'rgba(119, 93, 181, 0.411) 41%' : 'rgba(255, 255, 255, 0.837) 41%'};
+    $dark ? 'rgba(119, 93, 181, 0.411) 40%' : 'rgba(205, 185, 247, 0.411) 20%'};
 
   position: absolute;
   transition: 0.35s;
@@ -123,10 +123,7 @@ export const StatItem = ({
 
 export const StatItemRowWrapper = styled.div<{ $total?: boolean }>`
   padding: 1rem;
-  background-color: ${(props) =>
-    props.$total
-      ? 'var(--stats-background-highlight)'
-      : 'var(--background-surface)'};
+  background-color: var(--background-primary);
 
   &:first-child {
     border-top-right-radius: 0.375rem;
@@ -140,7 +137,7 @@ export const StatItemRowWrapper = styled.div<{ $total?: boolean }>`
   h3 {
     color: var(--text-color-secondary);
     flex: 1;
-    font-size: 1.1rem;
+    font-size: 1.02rem;
     overflow-x: hidden;
 
     &.total {

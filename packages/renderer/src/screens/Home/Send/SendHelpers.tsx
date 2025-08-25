@@ -87,8 +87,8 @@ export const InfoPanel = ({
       gap: '1rem',
       fontSize: '1rem',
       padding: '1rem',
-      backgroundColor: 'var(--background-surface)',
-      border: '0.375rem',
+      backgroundColor: 'var(--background-primary)',
+      borderRadius: '0.375rem',
     }}
   >
     <div

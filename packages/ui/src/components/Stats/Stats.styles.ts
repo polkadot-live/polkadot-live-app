@@ -47,11 +47,9 @@ export const StatsSectionWrapper = styled.div`
   row-gap: 1rem;
 
   .total-item {
-    background-color: var(--stats-background-highlight) !important;
     h3,
     span {
       color: var(--text-highlight) !important;
-      //font-size: 1.26rem !important;
     }
   }
 
