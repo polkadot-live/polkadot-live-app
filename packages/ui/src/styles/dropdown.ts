@@ -58,7 +58,7 @@ const dropdownMixin = css`
   .DropdownMenuCheckboxItem[data-highlighted],
   .DropdownMenuRadioItem[data-highlighted],
   .DropdownMenuSubTrigger[data-highlighted] {
-    background-color: var(--background-overlay);
+    background-color: var(--dropdown-item-highlight);
     color: var(--text-bright);
   }
 
@@ -156,7 +156,7 @@ export const DropdownMenuContent = styled(DropdownMenu.Content).attrs<{
   $theme: props.$theme,
 }))`
   --accent-primary: ${(props) => props.$theme.accentPrimary};
-  --background-overlay: ${(props) => props.$theme.backgroundOverlay};
+  --dropdown-item-highlight: ${(props) => props.$theme.dropdownItemHighlight};
   --button-primary: ${(props) => props.$theme.buttonBackgroundPrimary};
   --button-primary-hover: ${(props) =>
     props.$theme.buttonBackgroundPrimaryHover};

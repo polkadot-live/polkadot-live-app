@@ -70,6 +70,7 @@ export const darkTheme = {
 
   /* Dropdown */
   dropdownBackground: '#1c1c1c',
+  dropdownItemHighlight: 'rgb(22 18 22 / 70%)',
 
   /* Ellipsis Spinner */
   ellipsisSpinnerColor: '#afafaf',
@@ -129,8 +130,8 @@ export const lightTheme = {
   backgroundSurface: '#f6f6f6',
   backgroundPrimary: '#fefefe',
   backgroundPrimaryHover: '#f5f5f5',
-  backgroundOverlay: 'rgba(46, 46, 46, 0.75)',
-  backgroundOverlaySurface: 'rgba(245, 245, 245, 0.7)',
+  backgroundOverlay: 'rgba(46, 46, 46, 0.5)',
+  backgroundOverlaySurface: '#fefefe',
   backgroundDropDown: '#eee',
 
   accentPrimary: '#ac2461',
@@ -192,6 +193,7 @@ export const lightTheme = {
 
   /* Dropdown */
   dropdownBackground: '#ddd',
+  dropdownItemHighlight: 'rgba(46, 46, 46, 0.75)',
 
   /* Ellipsis Spinner */
   ellipsisSpinnerColor: '#505050',

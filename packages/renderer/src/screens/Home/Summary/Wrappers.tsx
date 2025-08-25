@@ -137,7 +137,7 @@ export const StatItemRowWrapper = styled.div<{ $total?: boolean }>`
   h3 {
     color: var(--text-color-secondary);
     flex: 1;
-    font-size: 1.1rem;
+    font-size: 1.02rem;
     overflow-x: hidden;
 
     &.total {

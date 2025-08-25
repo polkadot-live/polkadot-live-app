@@ -70,6 +70,7 @@ SPDX-License-Identifier: GPL-3.0-only */
 
   /* Dropdown */
   --dropdown-background: #1c1c1c;
+  --dropdown-item-highlight: rgb(22 18 22 / 70%);
 
   /* Ellipsis Spinner */
   --ellipsis-spinner-color: #afafaf;
@@ -103,7 +104,7 @@ SPDX-License-Identifier: GPL-3.0-only */
   --tab-background: #313131;
   --tab-background-hover: #3d3d3d;
 
-    /* Tooltip */
+  /* Tooltip */
   --tooltip-background: #464646;
 
   /* Legacy */
@@ -128,8 +129,8 @@ SPDX-License-Identifier: GPL-3.0-only */
   --background-surface: #f6f6f6;
   --background-primary: #fefefe;
   --background-primary-hover: #f5f5f5;
-  --background-overlay: rgba(46, 46, 46, 0.75);
-  --background-overlay-surface: rgba(245, 245, 245, 0.7);
+  --background-overlay: rgba(46, 46, 46, 0.5);
+  --background-overlay-surface: #fefefe;
   --background-drop-down: #eee;
 
   --accent-primary: #ac2461;
@@ -191,6 +192,7 @@ SPDX-License-Identifier: GPL-3.0-only */
 
   /* Dropdown */
   --dropdown-background: #ddd;
+  --dropdown-item-highlight: rgba(46, 46, 46, 0.75);
 
   /* Ellipsis Spinner */
   --ellipsis-spinner-color: #505050;
