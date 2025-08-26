@@ -1,7 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { address as ipAddress } from 'ip';
 import { Umami } from '@/model/Umami';
 import type { AnyData } from '@polkadot-live/types/misc';
 
@@ -19,9 +18,11 @@ export class AnalyticsController {
       return;
     }
 
-    this.umami = new Umami(ipAddress(), agent, language);
-    this.enabled = true;
-    windowId !== 'tabs' && this.umami.view(`/${windowId}`, { data: {} });
+    if (!this.umami) {
+      this.umami = new Umami(agent, language);
+      this.enabled = true;
+      windowId !== 'tabs' && this.umami.view(`/${windowId}`, { data: {} });
+    }
   }
 
   /**

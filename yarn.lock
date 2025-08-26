@@ -8865,13 +8865,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ip@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "ip@npm:2.0.1"
-  checksum: cab8eb3e88d0abe23e4724829621ec4c4c5cb41a7f936a2e626c947128c1be16ed543448d42af7cca95379f9892bfcacc1ccd8d09bc7e8bea0e86d492ce33616
-  languageName: node
-  linkType: hard
-
 "iron-webcrypto@npm:^1.2.1":
   version: 1.2.1
   resolution: "iron-webcrypto@npm:1.2.1"
@@ -11252,7 +11245,6 @@ __metadata:
     eslint-plugin-unused-imports: "npm:^4.0.0"
     framer-motion: "npm:^11.1.1"
     html5-qrcode: "npm:^2.3.8"
-    ip: "npm:^2.0.1"
     jsdom: "npm:^25.0.1"
     nx: "npm:^20.1.2"
     postcss: "npm:^8.5.3"
