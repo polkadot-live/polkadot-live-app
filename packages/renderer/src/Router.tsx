@@ -58,14 +58,14 @@ export const RouterInner = () => {
 export const Router = () => {
   const [windowId] = useState<string>(window.myAPI.getWindowId());
 
-  /// Initialize analytics.
+  /// Initialize analytics once.
   useEffect(() => {
     window.myAPI.initAnalytics(
       navigator.userAgent,
       window.myAPI.getWindowId(),
       navigator.language
     );
-  });
+  }, []);
 
   return (
     <HashRouter

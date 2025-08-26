@@ -26,7 +26,6 @@ export class Umami {
   private websiteId = '91d31f77-5789-42b7-b662-7e499908e926';
   private tracker = 'https://cloud.umami.is';
 
-  private ip: string | null = null;
   private agent: string | null = null;
   private screen: string | null = null;
   private language: string | null = null;
@@ -35,8 +34,7 @@ export class Umami {
    * @name constructor
    * @summary Initialize an umami instance with IP, user agent and screen data.
    */
-  constructor(ip: string, agent: string, language: string) {
-    this.ip = ip;
+  constructor(agent: string, language: string) {
     this.agent = agent;
     this.language = language;
 
@@ -102,7 +100,6 @@ export class Umami {
       headers: {
         'Content-Type': 'application/json',
         'User-Agent': userAgent,
-        'X-Forwarded-For': String(this.ip),
       },
       body: JSON.stringify({ type, payload }),
     }).catch((err) => console.error(err.message));
