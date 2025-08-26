@@ -410,7 +410,7 @@ export class EventsController {
           ],
           uriActions: [
             {
-              uri: `https://staking.polkadot.cloud/#/pools?n=${chainId}&a=${address}`,
+              uri: 'https://staking.polkadot.cloud/#/pools',
               label: 'Dashboard',
             },
           ],
@@ -611,7 +611,7 @@ export class EventsController {
           uriActions: [
             {
               label: 'Dashboard',
-              uri: `https://staking.polkadot.cloud/#/nominate?n=${chainId}&a=${address}`,
+              uri: 'https://staking.polkadot.cloud/#/nominate',
             },
             {
               label: 'Subscan',
@@ -657,7 +657,7 @@ export class EventsController {
           uriActions: [
             {
               label: 'Dashboard',
-              uri: `https://staking.polkadot.cloud/#/nominate?n=${chainId}&a=${address}`,
+              uri: 'https://staking.polkadot.cloud/#/nominate',
             },
           ],
         };
@@ -697,7 +697,7 @@ export class EventsController {
           uriActions: [
             {
               label: 'Dashboard',
-              uri: `https://staking.polkadot.cloud/#/nominate?n=${chainId}&a=${address}`,
+              uri: 'https://staking.polkadot.cloud/#/nominate',
             },
           ],
         };
@@ -737,7 +737,7 @@ export class EventsController {
           uriActions: [
             {
               label: 'Dashboard',
-              uri: `https://staking.polkadot.cloud/#/nominate?n=${chainId}&a=${address}`,
+              uri: 'https://staking.polkadot.cloud/#/nominate',
             },
           ],
         };
