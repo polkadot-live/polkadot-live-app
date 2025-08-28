@@ -7,6 +7,7 @@ import { checkAddress } from '@polkadot/util-crypto';
 import type { Account } from '../../model';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ApiCallEntry } from '@polkadot-live/types/subscriptions';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
 
 /**
@@ -114,15 +115,37 @@ export const checkFlattenedAccountProperties = (
     }
   };
 
-  // Iterate properties and return false if any are undefined or null.
-  for (const key of properties) {
-    const result = getProperty(entry.task.account, key);
+  const { chainId } = entry.task;
+  const { address } = entry.task.account;
+  const account = AccountsController.get(chainId, address);
+  if (!account) {
+    throw new Error('checkFlattenedAccountProperties: Account not found');
+  }
 
+  // Iterate properties and return false if any are undefined or null.
+  const flattened = account.flatten();
+  for (const key of properties) {
+    const result = getProperty(flattened, key);
     if (result === null || result === undefined) {
       throw new Error('checkFlattenedAccountWithProperties: Data not found');
     }
   }
 
   // Otherwise, return the account.
-  return entry.task.account;
+  return flattened;
+};
+
+/**
+ * @name getFlattenedAccount
+ * @summary Retrieves account data in a flattened format from the accounts controller.
+ */
+export const getFlattenedAccount = (
+  address: string,
+  chainId: ChainID
+): FlattenedAccountData => {
+  const account = AccountsController.get(chainId, address);
+  if (!account) {
+    throw new Error('getFlattenedAccount: Account not found');
+  }
+  return account.flatten();
 };

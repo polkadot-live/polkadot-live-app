@@ -329,13 +329,12 @@ export class QueryMultiWrapper {
     chainId: ChainID,
     flattened: FlattenedAccountData
   ) => {
-    const maybeSubscriptions = this.subscriptions.get(chainId);
-    if (!maybeSubscriptions) {
+    const subscriptions = this.subscriptions.get(chainId);
+    if (!subscriptions) {
       return;
     }
 
-    const { callEntries } = maybeSubscriptions;
-    for (const entry of callEntries) {
+    for (const entry of subscriptions.callEntries) {
       if (entry.task.account) {
         entry.task.account = flattened;
       }
