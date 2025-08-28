@@ -66,7 +66,7 @@ export const DialogRename = () => {
   /**
    * Validate input and rename account.
    */
-  const commitEdit = () => {
+  const commitEdit = async () => {
     if (!(genericAccount && encodedAccount)) {
       return;
     }
@@ -92,18 +92,18 @@ export const DialogRename = () => {
     };
     updatedAccount.encodedAccounts[chainId].alias = trimmed;
 
-    renameHandler(updatedAccount, genericAccount).then(() => {
-      setInputVal(trimmed);
-      setRenameDialogData({
-        encodedAccount: updatedAccount.encodedAccounts[chainId],
-        genericAccount,
-        isOpen: true,
-      });
-      setManageAccountDialogData({
-        genericAccount: updatedAccount,
-        isOpen: getManageAccountDialogData().isOpen,
-      });
+    setInputVal(trimmed);
+    setRenameDialogData({
+      encodedAccount: updatedAccount.encodedAccounts[chainId],
+      genericAccount: updatedAccount,
+      isOpen: true,
     });
+    setManageAccountDialogData({
+      genericAccount: updatedAccount,
+      isOpen: getManageAccountDialogData().isOpen,
+    });
+
+    await renameHandler(updatedAccount, genericAccount);
   };
 
   return (
@@ -130,9 +130,9 @@ export const DialogRename = () => {
             <DialogHr $theme={theme} />
 
             <form
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault();
-                commitEdit();
+                await commitEdit();
               }}
             >
               <FlexRow style={{ marginTop: '0.75rem' }}>
