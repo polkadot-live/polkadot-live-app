@@ -5,12 +5,18 @@ import { getUid } from '@/utils/CryptoUtils';
 import { MainDebug } from '@/utils/DebugUtils';
 import { doRemoveOutdatedEvents, pushUniqueEvent } from '@/utils/EventUtils';
 import { store } from '@/main';
+import { AddressesController } from './AddressesController';
 import { NotificationsController } from '@/controller/NotificationsController';
 import { SettingsController } from '@/controller/SettingsController';
 import { SubscriptionsController } from '@/controller/SubscriptionsController';
 import { WindowsController } from '@/controller/WindowsController';
 import type { AnyJson } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type {
+  AccountSource,
+  EncodedAccount,
+  ImportedGenericAccount,
+} from '@polkadot-live/types/accounts';
 import type {
   EventAccountData,
   EventCallback,
@@ -192,21 +198,7 @@ export class EventsController {
    */
   private static doImport(serialized: string): string {
     const parsed: EventCallback[] = JSON.parse(serialized);
-
-    // Update persisted event account names.
-    const addressesChecked: string[] = [];
-    for (const event of parsed) {
-      if (event.who.origin !== 'account') {
-        continue;
-      }
-
-      const { address, chainId } = event.who.data as EventAccountData;
-      const key = `${chainId}:${address}`;
-      if (!addressesChecked.includes(key)) {
-        addressesChecked.push(key);
-        this.syncAccountName(event);
-      }
-    }
+    this.syncAccountNames();
 
     // Add imported event if it's not a duplicate.
     let stored = this.getEventsFromStore();
@@ -232,30 +224,45 @@ export class EventsController {
   /**
    * @name syncAccountName
    * @summary Updates the associated account names of persisted events.
-   * (receives an event that was just imported)
    */
-  private static syncAccountName(event: EventCallback) {
-    if (event.who.origin !== 'account') {
-      return event;
-    }
-
-    // Find any imported accounts with the same chainId:address and sync the event's account name.
-    const { address, accountName, chainId } = event.who
-      .data as EventAccountData;
-
+  private static syncAccountNames() {
+    const accounts = this.getAllGenericAccounts();
     const updated = this.getEventsFromStore().map((e: EventCallback) => {
       if (e.who.origin !== 'account') {
         return e;
       }
+
       const who = e.who.data as EventAccountData;
-      if (who.address === address && who.chainId === chainId) {
-        (e.who.data as EventAccountData).accountName = accountName;
+      const encoded: EncodedAccount[] = [];
+
+      for (const { encodedAccounts } of accounts) {
+        const enAccount = encodedAccounts?.[who.chainId] ?? null;
+        enAccount && encoded.push(enAccount);
       }
+
+      for (const { address, alias } of encoded) {
+        if (who.address === address) {
+          (e.who.data as EventAccountData).accountName = alias;
+        }
+      }
+
       return e;
     });
 
-    // Persist updated events to store.
     this.persistEventsToStore(updated);
+  }
+
+  /**
+   * @name getAllGenericAccounts
+   * @summary Retrieves all generic accounts and returns them as an array.
+   */
+  private static getAllGenericAccounts(): ImportedGenericAccount[] {
+    const serialized = AddressesController.getAll();
+    const map = new Map<AccountSource, string>(JSON.parse(serialized));
+
+    return Array.from(map.values()).flatMap(
+      (ser) => JSON.parse(ser) as ImportedGenericAccount[]
+    );
   }
 
   /**

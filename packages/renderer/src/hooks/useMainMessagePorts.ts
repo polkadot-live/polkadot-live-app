@@ -278,6 +278,11 @@ export const useMainMessagePorts = () => {
       account.name = newName;
       await AccountsController.set(account);
 
+      // Update cached account name in subscription tasks.
+      const flattened = account.flatten();
+      flattened.name = newName;
+      account.queryMulti?.updateEntryAccountData(chainId, flattened);
+
       // Update account react state.
       AccountsController.syncState();
 

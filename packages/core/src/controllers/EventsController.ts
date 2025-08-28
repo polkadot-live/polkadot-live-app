@@ -4,6 +4,7 @@
 import {
   checkAccountWithProperties,
   checkFlattenedAccountProperties,
+  getFlattenedAccount,
 } from '../library/AccountsLib';
 import {
   getBalanceText,
@@ -216,7 +217,7 @@ export class EventsController {
         const account = checkAccountWithProperties(entry, ['balance']);
         const address = account.address;
         const source = account.source;
-        const accountName = entry.task.account!.name;
+        const accountName = account.name;
 
         return {
           uid: '',
@@ -251,7 +252,7 @@ export class EventsController {
         const account = checkAccountWithProperties(entry, ['balance']);
         const address = account.address;
         const source = account.source;
-        const accountName = entry.task.account!.name;
+        const accountName = account.name;
 
         return {
           uid: '',
@@ -286,7 +287,7 @@ export class EventsController {
         const account = checkAccountWithProperties(entry, ['balance']);
         const address = account.address;
         const source = account.source;
-        const accountName = entry.task.account!.name;
+        const accountName = account.name;
 
         return {
           uid: '',
@@ -321,7 +322,7 @@ export class EventsController {
         const account = checkAccountWithProperties(entry, ['balance']);
         const address = account.address;
         const source = account.source;
-        const accountName = entry.task.account!.name;
+        const accountName = account.name;
 
         return {
           uid: '',
@@ -350,12 +351,12 @@ export class EventsController {
        * subscribe:account:nominationPools:rewards
        */
       case 'subscribe:account:nominationPools:rewards': {
-        const flattenedAccount = checkFlattenedAccountProperties(entry, [
+        const flattened = checkFlattenedAccountProperties(entry, [
           'nominationPoolData',
         ]);
 
         const { chainId } = entry.task;
-        const { address, name: accountName, source } = flattenedAccount;
+        const { address, name: accountName, source } = flattened;
         const { pending }: { pending: bigint } = miscData;
 
         return {
@@ -420,13 +421,13 @@ export class EventsController {
        * subscribe:account:nominationPools:state
        */
       case 'subscribe:account:nominationPools:state': {
-        const flattenedAccount = checkFlattenedAccountProperties(entry, [
+        const flattened = checkFlattenedAccountProperties(entry, [
           'nominationPoolData',
         ]);
 
         const { chainId } = entry.task;
-        const { address, name: accountName, source } = flattenedAccount;
-        const { poolId } = flattenedAccount.nominationPoolData!;
+        const { address, name: accountName, source } = flattened;
+        const { poolId } = flattened.nominationPoolData!;
         const { cur: poolState, prev }: { cur: string; prev: string } =
           miscData;
 
@@ -461,13 +462,13 @@ export class EventsController {
        * subscribe:account:nominationPools:renamed
        */
       case 'subscribe:account:nominationPools:renamed': {
-        const flattenedAccount = checkFlattenedAccountProperties(entry, [
+        const flattened = checkFlattenedAccountProperties(entry, [
           'nominationPoolData',
         ]);
 
         const { chainId } = entry.task;
-        const { address, name: accountName, source } = flattenedAccount;
-        const { poolId } = flattenedAccount.nominationPoolData!;
+        const { address, name: accountName, source } = flattened;
+        const { poolId } = flattened.nominationPoolData!;
         const { cur: poolName, prev }: { cur: string; prev: string } = miscData;
 
         return {
@@ -501,13 +502,13 @@ export class EventsController {
        * subscribe:account:nominationPools:roles
        */
       case 'subscribe:account:nominationPools:roles': {
-        const flattenedAccount = checkFlattenedAccountProperties(entry, [
+        const flattened = checkFlattenedAccountProperties(entry, [
           'nominationPoolData',
         ]);
 
         const { chainId } = entry.task;
-        const { address, name: accountName, source } = flattenedAccount;
-        const { poolId } = flattenedAccount.nominationPoolData!;
+        const { address, name: accountName, source } = flattened;
+        const { poolId } = flattened.nominationPoolData!;
         const {
           cur: poolRoles,
           prev,
@@ -544,13 +545,13 @@ export class EventsController {
        * subscribe:account:nominationPools:commission
        */
       case 'subscribe:account:nominationPools:commission': {
-        const flattenedAccount = checkFlattenedAccountProperties(entry, [
+        const flattened = checkFlattenedAccountProperties(entry, [
           'nominationPoolData',
         ]);
 
         const { chainId } = entry.task;
-        const { address, name: accountName, source } = flattenedAccount;
-        const { poolCommission } = flattenedAccount.nominationPoolData!;
+        const { address, name: accountName, source } = flattened;
+        const { poolCommission } = flattened.nominationPoolData!;
         const {
           cur,
           prev,
@@ -586,7 +587,8 @@ export class EventsController {
        */
       case 'subscribe:account:nominating:pendingPayouts': {
         const { chainId } = entry.task;
-        const { address, name: accountName, source } = entry.task.account!;
+        const { address } = entry.task.account!;
+        const { name: alias, source } = getFlattenedAccount(address, chainId);
         const { rewards, era }: { rewards: string; era: string } = miscData;
 
         return {
@@ -596,7 +598,7 @@ export class EventsController {
           who: {
             origin: 'account',
             data: {
-              accountName,
+              accountName: alias,
               address,
               chainId,
               source,
@@ -625,7 +627,8 @@ export class EventsController {
        */
       case 'subscribe:account:nominating:exposure': {
         const { chainId } = entry.task;
-        const { address, name: accountName, source } = entry.task.account!;
+        const { address } = entry.task.account!;
+        const { name: alias, source } = getFlattenedAccount(address, chainId);
         const { era, exposed }: { era: number; exposed: boolean } = miscData;
 
         const subtitle = exposed
@@ -639,7 +642,7 @@ export class EventsController {
           who: {
             origin: 'account',
             data: {
-              accountName,
+              accountName: alias,
               address,
               chainId,
               source,
@@ -667,7 +670,8 @@ export class EventsController {
        */
       case 'subscribe:account:nominating:commission': {
         const { chainId } = entry.task;
-        const { address, name: accountName, source } = entry.task.account!;
+        const { address } = entry.task.account!;
+        const { name: alias, source } = getFlattenedAccount(address, chainId);
         const { era, hasChanged }: { era: number; hasChanged: boolean } =
           miscData;
 
@@ -682,7 +686,7 @@ export class EventsController {
           who: {
             origin: 'account',
             data: {
-              accountName,
+              accountName: alias,
               address,
               chainId,
               source,
@@ -707,7 +711,8 @@ export class EventsController {
        */
       case 'subscribe:account:nominating:nominations': {
         const { chainId } = entry.task;
-        const { address, name: accountName, source } = entry.task.account!;
+        const { address } = entry.task.account!;
+        const { name: alias, source } = getFlattenedAccount(address, chainId);
         const { era, hasChanged }: { era: number; hasChanged: boolean } =
           miscData;
 
@@ -722,7 +727,7 @@ export class EventsController {
           who: {
             origin: 'account',
             data: {
-              accountName,
+              accountName: alias,
               address,
               chainId,
               source,
