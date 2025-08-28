@@ -83,7 +83,7 @@ export const Setting = ({ setting, handleSetting }: SettingProps) => {
             />
 
             {getImportFlag(setting) && (
-              <EllipsisSpinner style={{ left: '26px', top: '10px' }} />
+              <EllipsisSpinner style={{ left: '30px', top: '11px' }} />
             )}
           </div>
         )}
