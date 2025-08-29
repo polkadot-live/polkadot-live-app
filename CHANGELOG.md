@@ -1,5 +1,38 @@
 # Changelog
 
+## [0.11.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.10.0-alpha...v0.11.0-alpha) (2025-08-29)
+
+
+### Features
+
+* **extrinsics:** store and track transaction hash ([#1049](https://github.com/polkadot-live/polkadot-live-app/issues/1049)) ([1fd4391](https://github.com/polkadot-live/polkadot-live-app/commit/1fd43912673d8c76ae9bdcf7ed831f5dee13eca4))
+* **ui:** add network icon to events ([#1060](https://github.com/polkadot-live/polkadot-live-app/issues/1060)) ([c176a4f](https://github.com/polkadot-live/polkadot-live-app/commit/c176a4f9b6abecd6bdfdb218990f5b39e035483b))
+* **ui:** confirm dialog on extrinsic delete ([#1058](https://github.com/polkadot-live/polkadot-live-app/issues/1058)) ([5a51a5b](https://github.com/polkadot-live/polkadot-live-app/commit/5a51a5b07f96767a5e38b36a4023474f0439924c))
+* **ui:** display sign method in transaction summary ([#1047](https://github.com/polkadot-live/polkadot-live-app/issues/1047)) ([19f41a5](https://github.com/polkadot-live/polkadot-live-app/commit/19f41a5f65591cf77b4084a71601016fedcd6122))
+* **ui:** display source in account selector dialog ([#1055](https://github.com/polkadot-live/polkadot-live-app/issues/1055)) ([5159c4d](https://github.com/polkadot-live/polkadot-live-app/commit/5159c4ddd9f9ee1fea9ba0b010cfcbc7d759093c))
+* **ui:** integrate block explorer link for extrinsics ([#1050](https://github.com/polkadot-live/polkadot-live-app/issues/1050)) ([123c6df](https://github.com/polkadot-live/polkadot-live-app/commit/123c6df896fd93b86b328bed9105dfd34f8ddcb5))
+* **ui:** kusama asset hub treasury balances ([#1065](https://github.com/polkadot-live/polkadot-live-app/issues/1065)) ([8a70049](https://github.com/polkadot-live/polkadot-live-app/commit/8a700494d84f89d82e47e2db854b2b31c81081a8))
+* **ui:** offline banner  ([#1053](https://github.com/polkadot-live/polkadot-live-app/issues/1053)) ([bb4ca3f](https://github.com/polkadot-live/polkadot-live-app/commit/bb4ca3f2c02300c31e250f76fda1c41ccda61c47))
+* **ui:** polkadot asset hub treasury balances ([#1064](https://github.com/polkadot-live/polkadot-live-app/issues/1064)) ([4fe72fa](https://github.com/polkadot-live/polkadot-live-app/commit/4fe72fa2dbb1b058ccc190c42fa15fa94204b4e5))
+* **ui:** show address dialog for fetched ledger and wallet connect accounts ([#1059](https://github.com/polkadot-live/polkadot-live-app/issues/1059)) ([b7a9522](https://github.com/polkadot-live/polkadot-live-app/commit/b7a9522f15b62f303a41ce4b9cbd5c99e7f2132d))
+* **ui:** wallet connect signing feedback ([#1054](https://github.com/polkadot-live/polkadot-live-app/issues/1054)) ([2d6403d](https://github.com/polkadot-live/polkadot-live-app/commit/2d6403d3b6ff1a94fbca9910ea7efe245b185eb3))
+* windows release workflow ([#1044](https://github.com/polkadot-live/polkadot-live-app/issues/1044)) ([fce8fa0](https://github.com/polkadot-live/polkadot-live-app/commit/fce8fa016ce38b0c2c9c8961011692249b25c443))
+
+
+### Bug Fixes
+
+* **analytics:** debugging ([#1069](https://github.com/polkadot-live/polkadot-live-app/issues/1069)) ([bc4bca6](https://github.com/polkadot-live/polkadot-live-app/commit/bc4bca6959f570cbefa8a2c78bd4efc527729f8d))
+* **ci:** markdown link check ([#1045](https://github.com/polkadot-live/polkadot-live-app/issues/1045)) ([dbe3908](https://github.com/polkadot-live/polkadot-live-app/commit/dbe39080e9be5ac5185f4e75ab24ab6ea1bbaf19))
+* **core:** account name syncing ([#1070](https://github.com/polkadot-live/polkadot-live-app/issues/1070)) ([87dad6a](https://github.com/polkadot-live/polkadot-live-app/commit/87dad6a80a71a9237148e73f8d71bdcc953cc80c))
+* **core:** online status and subscriptions checking in intervals controller ([#1057](https://github.com/polkadot-live/polkadot-live-app/issues/1057)) ([63d56f5](https://github.com/polkadot-live/polkadot-live-app/commit/63d56f5bab1b33856521bde40f06e613c4b7ca5b))
+* **dialog:** generic account state on account rename ([#1071](https://github.com/polkadot-live/polkadot-live-app/issues/1071)) ([4107236](https://github.com/polkadot-live/polkadot-live-app/commit/4107236118a9b0888072360ce886fd2186f26594))
+* **events:** staking dashboard urls ([#1068](https://github.com/polkadot-live/polkadot-live-app/issues/1068)) ([6e1b710](https://github.com/polkadot-live/polkadot-live-app/commit/6e1b7101eef64aa434629818f3ea53350ab22977))
+* **metadata:** ensure Uint8Array input to MerkleizedMetadata ([#1046](https://github.com/polkadot-live/polkadot-live-app/issues/1046)) ([b92ff7c](https://github.com/polkadot-live/polkadot-live-app/commit/b92ff7c8103c06b08ea1caf02295ab0bc74dd9fe))
+* release please workflow ([#1042](https://github.com/polkadot-live/polkadot-live-app/issues/1042)) ([5b3e121](https://github.com/polkadot-live/polkadot-live-app/commit/5b3e1210dfd5ec6306645c6835a32b77b1b4a68e))
+* **ui:** import button spinner position ([#1072](https://github.com/polkadot-live/polkadot-live-app/issues/1072)) ([4178554](https://github.com/polkadot-live/polkadot-live-app/commit/4178554e0d9fae534269f68975daafe4ea61dc15))
+* **ui:** normalise top and bottom spacing around dialogs ([#1048](https://github.com/polkadot-live/polkadot-live-app/issues/1048)) ([9c23767](https://github.com/polkadot-live/polkadot-live-app/commit/9c237674c8237f95e6c8a9d9386490a11bac7d9a))
+* **ui:** styling adjustments ([#1056](https://github.com/polkadot-live/polkadot-live-app/issues/1056)) ([0882926](https://github.com/polkadot-live/polkadot-live-app/commit/08829269c17a7c9275b976140c27245c94b14579))
+
 ## [0.10.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.9.0-alpha...v0.10.0-alpha) (2025-07-30)
 
 
