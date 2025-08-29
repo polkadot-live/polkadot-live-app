@@ -116,7 +116,7 @@ export class ExtrinsicsController {
 
     switch (action) {
       case 'balances_transferKeepAlive': {
-        // NOTE: Disable Polkadot network transfers in alpha releases.
+        // NOTE: Disable Polkadot network transfers in pre-releases.
         if (chainId === 'Polkadot Relay') {
           return {
             isValid: false,
@@ -128,7 +128,7 @@ export class ExtrinsicsController {
         const spendable = await getSpendableBalance(from, chainId);
         const fee = BigInt(estimatedFee);
 
-        // NOTE: Limit send amount to 100 tokens in alpha releases.
+        // NOTE: Limit send amount to 100 tokens in pre-releases.
         const biLimit = unitToPlanck(TOKEN_TRANSFER_LIMIT, chainUnits(chainId));
         const checkA = sendAmount <= biLimit;
         const checkB = spendable >= sendAmount + fee;

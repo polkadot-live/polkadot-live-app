@@ -6,7 +6,7 @@ import * as UI from '@polkadot-live/ui/components';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
 
-import { chainCurrency } from '@polkadot-live/consts/chains';
+import { chainCurrency, PreRelease } from '@polkadot-live/consts/chains';
 import { MainHeading } from '@polkadot-live/ui/components';
 import { useConnections } from '@ren/contexts/common';
 import { useState } from 'react';
@@ -115,8 +115,9 @@ export const Send: React.FC = () => {
               <div
                 style={{ lineHeight: '1.5rem', color: 'var(--accent-warning)' }}
               >
-                This alpha release supports native transfers of up to <b>100</b>{' '}
-                tokens on <b>Kusama</b> and <b>Westend Asset Hub</b> networks.
+                This {PreRelease} release supports native transfers of up to{' '}
+                <b>100</b> tokens on <b>Kusama</b> and <b>Westend Asset Hub</b>{' '}
+                networks.
               </div>
             </FlexColumn>
           </UI.InfoCard>
