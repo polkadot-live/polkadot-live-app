@@ -76,8 +76,8 @@ export const darkTheme = {
   ellipsisSpinnerColor: '#afafaf',
 
   /* Header */
-  badgeAlphaColor: '#959595',
-  badgeAlphaBackground: '#2a2a2a',
+  releaseBadgeColor: '#959595',
+  releaseBadgeBackground: '#2a2a2a',
 
   /* Help Overlay */
   helpDefinitionFallback: '#2b2b2b',
@@ -199,8 +199,8 @@ export const lightTheme = {
   ellipsisSpinnerColor: '#505050',
 
   /* Header */
-  badgeAlphaColor: '#545454',
-  badgeAlphaBackground: '#f1f1f1',
+  releaseBadgeColor: '#545454',
+  releaseBadgeBackground: '#f1f1f1',
 
   /* Help Overlay */
   helpDefinitionFallback: '#fdfdfd',

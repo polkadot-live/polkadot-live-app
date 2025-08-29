@@ -26,7 +26,7 @@ export const Header = ({
   <HeaderWrapper>
     <div className="content-wrapper">
       <div className="grab" />
-      <span data-testid="version" className="alpha">
+      <span data-testid="version" className="release">
         {version || 'unknown'}
       </span>
       <div className="right">
