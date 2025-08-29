@@ -264,7 +264,7 @@
 * os notification toggle ([#596](https://github.com/polkadot-live/polkadot-live-app/issues/596)) ([d5feffc](https://github.com/polkadot-live/polkadot-live-app/commit/d5feffc388a3bee3842db2bca42ca8a49b4c6466))
 * referenda data parsing ([#630](https://github.com/polkadot-live/polkadot-live-app/issues/630)) ([0a36ecb](https://github.com/polkadot-live/polkadot-live-app/commit/0a36ecb61733d6bb0ce0cc419b69940785ffa96b))
 
-## [0.1.0-alpha](https://github.com/polkadot-live/polkadot-live-app/compare/v0.1.0-alpha...v0.1.0-alpha) (2024-07-26)
+## 0.1.0-alpha (2024-07-26)
 
 
 ### Features
