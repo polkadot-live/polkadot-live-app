@@ -64,7 +64,7 @@ export type DedotClientSet =
 export type DedotStakingClient =
   | DedotClient<PolkadotApi>
   | DedotClient<KusamaApi>
-  | DedotClient<PaseoApi>
+  | DedotClient<PaseoAssetHubApi>
   | DedotClient<WestendAssetHubApi>;
 
 /**

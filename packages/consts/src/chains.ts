@@ -364,7 +364,7 @@ export const getSelectLedgerNetworkData = (): LedgerSelectNetworkData[] => [
  * Get an array of supported chains.
  */
 export const getSupportedChains = (): Record<ChainID, Chain> => {
-  const unsupported: ChainID[] = ['Westend Relay'];
+  const unsupported: ChainID[] = ['Paseo Relay', 'Westend Relay'];
   const record = {} as Record<ChainID, Chain>;
 
   for (const [cid, chain] of Array.from(ChainList.entries())) {
@@ -390,7 +390,7 @@ export const getSendChains = (): ChainID[] => [
 export const getStakingChains = (): ChainID[] => [
   'Polkadot Relay',
   'Kusama Relay',
-  'Paseo Relay',
+  'Paseo Asset Hub',
   'Westend Asset Hub',
 ];
 

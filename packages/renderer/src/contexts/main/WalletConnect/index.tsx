@@ -111,7 +111,7 @@ export const WalletConnectProvider = ({
       return [
         `polkadot:${wc.WC_POLKADOT_CAIP_ID}`,
         `polkadot:${wc.WC_KUSAMA_CAIP_ID}`,
-        `polkadot:${wc.WC_PASEO_CAIP_ID}`,
+        `polkadot:${wc.WC_PASEO_ASSET_HUB_CAIP_ID}`,
         `polkadot:${wc.WC_WESTMINT_CAIP_ID}`,
       ];
     }
