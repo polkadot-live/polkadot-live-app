@@ -23,9 +23,9 @@ export const HeaderWrapper = styled.div`
     width: 100%;
     position: relative;
 
-    .alpha {
-      color: var(--badge-alpha-color);
-      background-color: var(--badge-alpha-background);
+    .release {
+      color: var(--release-badge-color);
+      background-color: var(--release-badge-background);
       position: absolute;
       top: 0.5rem;
       left: 0;

@@ -78,7 +78,7 @@ export const useSendNative = (): SendNativeHook => {
         continue;
       }
 
-      // NOTE: Disable Polkadot transfers in alpha releases.
+      // NOTE: Disable Polkadot transfers in pre-releases.
       const supportedChains = getSendChains();
       const filtered: SendAccount[] = accounts
         .filter(({ chainId }) => supportedChains.includes(chainId))
@@ -112,7 +112,7 @@ export const useSendNative = (): SendNativeHook => {
             return chainId === sender.chainId;
           }
         })
-        // NOTE: Disable Polkadot transfers in alpha releases.
+        // NOTE: Disable Polkadot transfers in pre-releases.
         .filter(({ chainId }) => !chainId.startsWith('Polkadot'))
         // Don't include sender in list.
         .filter(({ address }) => address !== sender?.address)
@@ -140,7 +140,7 @@ export const useSendNative = (): SendNativeHook => {
       return;
     }
 
-    // NOTE: Disable Polkadot transfers in alpha releases.
+    // NOTE: Disable Polkadot transfers in pre-releases.
     if (!getSendChains().includes(sender.chainId)) {
       return;
     }
@@ -295,7 +295,7 @@ export const useSendNative = (): SendNativeHook => {
         return;
       }
 
-      // NOTE: Limit send amount to 100 tokens in alpha releases.
+      // NOTE: Limit send amount to 100 tokens in pre-releases.
       if (Number(amount) > TOKEN_TRANSFER_LIMIT) {
         setSendAmount(amount);
         setValidAmount(false);
@@ -338,9 +338,9 @@ export const useSendNative = (): SendNativeHook => {
     receiver === null ||
     sendAmount === '0' ||
     sendAmount === '' ||
-    // NOTE: Limit token transfers to 100 tokens in alpha releases.
+    // NOTE: Limit token transfers to 100 tokens in pre-releases.
     (!isNaN(Number(sendAmount)) && Number(sendAmount) > TOKEN_TRANSFER_LIMIT) ||
-    // NOTE: Disable Polkadot transfers in alpha releases.
+    // NOTE: Disable Polkadot transfers in pre-releases.
     !getSendChains().includes(sender.chainId) ||
     !validAmount ||
     summaryComplete;
