@@ -1,6 +1,6 @@
 {
   "name": "@polkadot-live/consts",
-  "version": "0.10.0-alpha",
+  "version": "0.11.0-beta",
   "type": "module",
   "private": true,
   "exports": {
