@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { createContext, useContext, useRef, useState } from 'react';
+import { createContext, use, useRef, useState } from 'react';
 import { defaultLedgerHardwareContext } from './defaults';
 import { decodeAddress, u8aToHex } from 'dedot/utils';
 import { setStateWithRef } from '@w3ux/utils';
@@ -23,7 +23,7 @@ import type {
 export const LedgerHardwareContext =
   createContext<LedgerHardwareContextInterface>(defaultLedgerHardwareContext);
 
-export const useLedgerHardware = () => useContext(LedgerHardwareContext);
+export const useLedgerHardware = () => use(LedgerHardwareContext);
 
 export const LedgerHardwareProvider = ({
   children,
@@ -243,7 +243,7 @@ export const LedgerHardwareProvider = ({
   };
 
   return (
-    <LedgerHardwareContext.Provider
+    <LedgerHardwareContext
       value={{
         connectedNetwork,
         deviceConnected,
@@ -268,6 +268,6 @@ export const LedgerHardwareProvider = ({
       }}
     >
       {children}
-    </LedgerHardwareContext.Provider>
+    </LedgerHardwareContext>
   );
 };

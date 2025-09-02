@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ConfigRenderer } from '@polkadot-live/core';
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, use, useEffect, useRef, useState } from 'react';
 import { defaultAppSettingsContext } from './defaults';
 import { getDefaultSettings } from '@polkadot-live/consts/settings';
 import { setStateWithRef } from '@w3ux/utils';
@@ -13,7 +13,7 @@ export const AppSettingsContext = createContext<AppSettingsContextInterface>(
   defaultAppSettingsContext
 );
 
-export const useAppSettings = () => useContext(AppSettingsContext);
+export const useAppSettings = () => use(AppSettingsContext);
 
 export const AppSettingsProvider = ({
   children,
@@ -90,13 +90,13 @@ export const AppSettingsProvider = ({
   }, []);
 
   return (
-    <AppSettingsContext.Provider
+    <AppSettingsContext
       value={{
         cacheGet,
         toggleSetting,
       }}
     >
       {children}
-    </AppSettingsContext.Provider>
+    </AppSettingsContext>
   );
 };

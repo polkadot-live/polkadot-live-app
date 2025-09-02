@@ -6,7 +6,7 @@ import BigNumber from 'bignumber.js';
 import { ConfigRenderer, APIsController } from '@polkadot-live/core';
 import { chainUnits } from '@polkadot-live/consts/chains';
 import { concatU8a, encodeAddress, hexToU8a, stringToU8a } from 'dedot/utils';
-import { createContext, useContext } from 'react';
+import { createContext, use } from 'react';
 import { planckToUnit } from '@w3ux/utils';
 import { TreasuryAccounts } from '@polkadot-live/consts/treasury';
 
@@ -28,7 +28,7 @@ export const TreasuryApiContext = createContext<TreasuryApiContextInterface>(
   defaults.defaultTreasuryApiContext
 );
 
-export const useTreasuryApi = () => useContext(TreasuryApiContext);
+export const useTreasuryApi = () => use(TreasuryApiContext);
 
 export const TreasuryApiProvider = ({
   children,
@@ -240,8 +240,8 @@ export const TreasuryApiProvider = ({
   };
 
   return (
-    <TreasuryApiContext.Provider value={{ handleInitTreasury }}>
+    <TreasuryApiContext value={{ handleInitTreasury }}>
       {children}
-    </TreasuryApiContext.Provider>
+    </TreasuryApiContext>
   );
 };

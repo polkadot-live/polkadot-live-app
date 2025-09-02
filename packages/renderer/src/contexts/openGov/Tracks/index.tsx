@@ -3,7 +3,7 @@
 
 import * as defaults from './defaults';
 import { ConfigOpenGov } from '@polkadot-live/core';
-import { createContext, useContext, useRef, useState } from 'react';
+import { createContext, use, useRef, useState } from 'react';
 import { useConnections } from '../../common/Connections';
 import { setStateWithRef } from '@w3ux/utils';
 import type { Track } from '@polkadot-live/core';
@@ -14,7 +14,7 @@ export const TracksContext = createContext<TracksContextInterface>(
   defaults.defaultTracksContext
 );
 
-export const useTracks = () => useContext(TracksContext);
+export const useTracks = () => use(TracksContext);
 
 export const TracksProvider = ({ children }: { children: React.ReactNode }) => {
   const { getOnlineMode } = useConnections();
@@ -54,7 +54,7 @@ export const TracksProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <TracksContext.Provider
+    <TracksContext
       value={{
         tracksMap,
         activeChainId,
@@ -67,6 +67,6 @@ export const TracksProvider = ({ children }: { children: React.ReactNode }) => {
       }}
     >
       {children}
-    </TracksContext.Provider>
+    </TracksContext>
   );
 };

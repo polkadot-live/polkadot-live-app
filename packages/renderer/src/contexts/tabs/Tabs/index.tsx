@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, use, useEffect, useRef, useState } from 'react';
 import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import {
   KeyboardSensor,
@@ -19,7 +19,7 @@ export const TabsContext = createContext<TabsContextInterface>(
   defaults.defaultTabsContext
 );
 
-export const useTabs = () => useContext(TabsContext);
+export const useTabs = () => use(TabsContext);
 
 export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
   const [activeId, setActiveId] = useState<number | null>(null);
@@ -139,7 +139,7 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <TabsContext.Provider
+    <TabsContext
       value={{
         activeId,
         clickedId,
@@ -154,6 +154,6 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
       }}
     >
       {children}
-    </TabsContext.Provider>
+    </TabsContext>
   );
 };

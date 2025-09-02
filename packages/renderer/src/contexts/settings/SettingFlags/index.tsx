@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, use, useEffect, useRef, useState } from 'react';
 import { getDefaultSettings } from '@polkadot-live/consts/settings';
 import { setStateWithRef } from '@w3ux/utils';
 import type { SettingFlagsContextInterface } from './types';
@@ -12,7 +12,7 @@ export const SettingFlagsContext = createContext<SettingFlagsContextInterface>(
   defaults.defaultSettingFlagsContext
 );
 
-export const useSettingFlags = () => useContext(SettingFlagsContext);
+export const useSettingFlags = () => use(SettingFlagsContext);
 
 export const SettingFlagsProvider = ({
   children,
@@ -103,7 +103,7 @@ export const SettingFlagsProvider = ({
   }, []);
 
   return (
-    <SettingFlagsContext.Provider
+    <SettingFlagsContext
       value={{
         cacheSet,
         getSwitchState,
@@ -111,6 +111,6 @@ export const SettingFlagsProvider = ({
       }}
     >
       {children}
-    </SettingFlagsContext.Provider>
+    </SettingFlagsContext>
   );
 };

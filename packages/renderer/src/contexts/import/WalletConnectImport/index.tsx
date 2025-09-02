@@ -5,7 +5,7 @@ import * as defaults from './defaults';
 import * as wc from '@polkadot-live/consts/walletConnect';
 
 import { ConfigImport } from '@polkadot-live/core';
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, use, useEffect, useRef, useState } from 'react';
 import { useAddresses, useImportHandler } from '@ren/contexts/import';
 import { WalletConnectModal } from '@walletconnect/modal';
 import type { WalletConnectImportContextInterface } from './types';
@@ -19,8 +19,7 @@ export const WalletConnectImportContext =
     defaults.defaultWalletConnectImportContext
   );
 
-export const useWalletConnectImport = () =>
-  useContext(WalletConnectImportContext);
+export const useWalletConnectImport = () => use(WalletConnectImportContext);
 
 export const WalletConnectImportProvider = ({
   children,
@@ -158,7 +157,7 @@ export const WalletConnectImportProvider = ({
   };
 
   return (
-    <WalletConnectImportContext.Provider
+    <WalletConnectImportContext
       value={{
         isImporting,
         wcFetchedAddresses,
@@ -174,6 +173,6 @@ export const WalletConnectImportProvider = ({
       }}
     >
       {children}
-    </WalletConnectImportContext.Provider>
+    </WalletConnectImportContext>
   );
 };

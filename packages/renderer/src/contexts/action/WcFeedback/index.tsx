@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { createContext, useContext, useState } from 'react';
+import { createContext, use, useState } from 'react';
 import type { WalletConnectMeta } from '@polkadot-live/types/walletConnect';
 import type { WcFeedbackContextInterface } from './types';
 
@@ -10,7 +10,7 @@ export const WcFeedbackContext = createContext<WcFeedbackContextInterface>(
   defaults.defaultWcFeedbackContext
 );
 
-export const useWcFeedback = () => useContext(WcFeedbackContext);
+export const useWcFeedback = () => use(WcFeedbackContext);
 
 export const WcFeedbackProvider = ({
   children,
@@ -32,7 +32,7 @@ export const WcFeedbackProvider = ({
   };
 
   return (
-    <WcFeedbackContext.Provider
+    <WcFeedbackContext
       value={{
         message,
         clearFeedback,
@@ -40,6 +40,6 @@ export const WcFeedbackProvider = ({
       }}
     >
       {children}
-    </WcFeedbackContext.Provider>
+    </WcFeedbackContext>
   );
 };

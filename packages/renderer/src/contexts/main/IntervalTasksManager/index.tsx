@@ -208,7 +208,7 @@ export const IntervalTasksManagerProvider = ({
   };
 
   return (
-    <IntervalTasksManagerContext.Provider
+    <IntervalTasksManagerContext
       value={{
         handleIntervalToggle,
         handleIntervalNativeCheckbox,
@@ -218,6 +218,6 @@ export const IntervalTasksManagerProvider = ({
       }}
     >
       {children}
-    </IntervalTasksManagerContext.Provider>
+    </IntervalTasksManagerContext>
   );
 };

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { createContext, useContext, useState } from 'react';
+import { createContext, use, useState } from 'react';
 import type { LedgerFeedbackContextInterface } from './types';
 import type {
   LedgerErrorMeta,
@@ -15,7 +15,7 @@ export const LedgerFeedbackContext =
     defaults.defaultLedgerFeedbackContext
   );
 
-export const useLedgerFeedback = () => useContext(LedgerFeedbackContext);
+export const useLedgerFeedback = () => use(LedgerFeedbackContext);
 
 export const LedgerFeedbackProvider = ({
   children,
@@ -72,7 +72,7 @@ export const LedgerFeedbackProvider = ({
   };
 
   return (
-    <LedgerFeedbackContext.Provider
+    <LedgerFeedbackContext
       value={{
         message,
         isSigning,
@@ -82,6 +82,6 @@ export const LedgerFeedbackProvider = ({
       }}
     >
       {children}
-    </LedgerFeedbackContext.Provider>
+    </LedgerFeedbackContext>
   );
 };

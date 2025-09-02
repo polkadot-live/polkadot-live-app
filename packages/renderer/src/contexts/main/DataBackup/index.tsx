@@ -3,7 +3,7 @@
 
 /// Dependencies.
 import * as Core from '@polkadot-live/core';
-import { createContext, useContext } from 'react';
+import { createContext, use } from 'react';
 import { defaultDataBackupContext } from './default';
 import {
   AccountsController,
@@ -39,7 +39,7 @@ export const DataBackupContext = createContext<DataBackupContextInterface>(
   defaultDataBackupContext
 );
 
-export const useDataBackup = () => useContext(DataBackupContext);
+export const useDataBackup = () => use(DataBackupContext);
 
 export const DataBackupProvider = ({
   children,
@@ -413,13 +413,13 @@ export const DataBackupProvider = ({
   };
 
   return (
-    <DataBackupContext.Provider
+    <DataBackupContext
       value={{
         exportDataToBackup,
         importDataFromBackup,
       }}
     >
       {children}
-    </DataBackupContext.Provider>
+    </DataBackupContext>
   );
 };

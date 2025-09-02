@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { createContext, useContext } from 'react';
+import { createContext, use } from 'react';
 import {
   ConfigRenderer,
   ExtrinsicsController,
@@ -19,7 +19,7 @@ export const LedgerSignerContext = createContext<LedgerSignerContextInterface>(
   defaults.defaultLedgerSignerContext
 );
 
-export const useLedgerSigner = () => useContext(LedgerSignerContext);
+export const useLedgerSigner = () => use(LedgerSignerContext);
 
 export const LedgerSignerProvider = ({
   children,
@@ -124,8 +124,8 @@ export const LedgerSignerProvider = ({
   };
 
   return (
-    <LedgerSignerContext.Provider value={{ ledgerSignSubmit }}>
+    <LedgerSignerContext value={{ ledgerSignSubmit }}>
       {children}
-    </LedgerSignerContext.Provider>
+    </LedgerSignerContext>
   );
 };

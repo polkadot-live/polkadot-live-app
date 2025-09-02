@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, use, useEffect, useRef, useState } from 'react';
 import { HelpConfig } from '@polkadot-live/consts/help';
 import * as defaults from './defaults';
 import type {
@@ -15,7 +15,7 @@ export const HelpContext = createContext<HelpContextInterface>(
   defaults.defaultHelpContext
 );
 
-export const useHelp = () => useContext(HelpContext);
+export const useHelp = () => use(HelpContext);
 
 export const HelpProvider = ({ children }: HelpContextProps) => {
   // Help module state.
@@ -73,7 +73,7 @@ export const HelpProvider = ({ children }: HelpContextProps) => {
   };
 
   return (
-    <HelpContext.Provider
+    <HelpContext
       value={{
         openHelp,
         closeHelp,
@@ -84,6 +84,6 @@ export const HelpProvider = ({ children }: HelpContextProps) => {
       }}
     >
       {children}
-    </HelpContext.Provider>
+    </HelpContext>
   );
 };

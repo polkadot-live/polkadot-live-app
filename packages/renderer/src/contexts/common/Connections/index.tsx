@@ -4,7 +4,7 @@
 import * as defaults from './defaults';
 import * as themeVariables from '@ren/theme/variables';
 import { initSharedState } from '@polkadot-live/consts/sharedState';
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, use, useEffect, useRef, useState } from 'react';
 import { setStateWithRef } from '@w3ux/utils';
 import type { ConnectionsContextInterface } from './types';
 import type { IpcRendererEvent } from 'electron';
@@ -21,7 +21,7 @@ export const ConnectionsContext = createContext<ConnectionsContextInterface>(
   defaults.defaultConnectionsContext
 );
 
-export const useConnections = () => useContext(ConnectionsContext);
+export const useConnections = () => use(ConnectionsContext);
 
 export const ConnectionsProvider = ({
   children,
@@ -86,7 +86,7 @@ export const ConnectionsProvider = ({
   }, []);
 
   return (
-    <ConnectionsContext.Provider
+    <ConnectionsContext
       value={{
         stateLoaded,
         cacheGet,
@@ -95,6 +95,6 @@ export const ConnectionsProvider = ({
       }}
     >
       {children}
-    </ConnectionsContext.Provider>
+    </ConnectionsContext>
   );
 };

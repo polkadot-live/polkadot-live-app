@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, use, useState } from 'react';
 import { defaultOverlayContext } from './defaults';
 import type { OverlayContextInterface } from './types';
 import type { AnyJson } from '@polkadot-live/types/misc';
@@ -10,7 +10,7 @@ export const OverlayContext = createContext<OverlayContextInterface>(
   defaultOverlayContext
 );
 
-export const useOverlay = () => useContext(OverlayContext);
+export const useOverlay = () => use(OverlayContext);
 
 export const OverlayProvider = ({
   children,
@@ -87,7 +87,7 @@ export const OverlayProvider = ({
   };
 
   return (
-    <OverlayContext.Provider
+    <OverlayContext
       value={{
         setOnCloseOverlay,
         openOverlayWith,
@@ -103,6 +103,6 @@ export const OverlayProvider = ({
       }}
     >
       {children}
-    </OverlayContext.Provider>
+    </OverlayContext>
   );
 };

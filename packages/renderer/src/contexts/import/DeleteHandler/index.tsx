@@ -3,7 +3,7 @@
 
 import * as defaults from './defaults';
 import { ConfigImport } from '@polkadot-live/core';
-import { createContext, useContext } from 'react';
+import { createContext, use } from 'react';
 import { useAccountStatuses } from '../AccountStatuses';
 import { useAddresses } from '@ren/contexts/import';
 import type {
@@ -19,7 +19,7 @@ export const DeleteHandlerContext =
     defaults.defaultDeleteHandlerContext
   );
 
-export const useDeleteHandler = () => useContext(DeleteHandlerContext);
+export const useDeleteHandler = () => use(DeleteHandlerContext);
 
 export const DeleteHandlerProvider = ({
   children,
@@ -81,12 +81,12 @@ export const DeleteHandlerProvider = ({
   };
 
   return (
-    <DeleteHandlerContext.Provider
+    <DeleteHandlerContext
       value={{
         handleDeleteAddress,
       }}
     >
       {children}
-    </DeleteHandlerContext.Provider>
+    </DeleteHandlerContext>
   );
 };

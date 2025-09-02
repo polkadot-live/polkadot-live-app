@@ -238,7 +238,7 @@ export const SubscriptionsProvider = ({
   };
 
   return (
-    <SubscriptionsContext.Provider
+    <SubscriptionsContext
       value={{
         chainSubscriptions: chainSubscriptionsState,
         accountSubscriptions: accountSubscriptionsState,
@@ -252,6 +252,6 @@ export const SubscriptionsProvider = ({
       }}
     >
       {children}
-    </SubscriptionsContext.Provider>
+    </SubscriptionsContext>
   );
 };

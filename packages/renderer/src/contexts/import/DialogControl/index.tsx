@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { createContext, useContext, useState } from 'react';
+import { createContext, use, useState } from 'react';
 import type {
   DialogBulkRenameData,
   DialogManageAccountData,
@@ -16,7 +16,7 @@ export const DialogControlContext =
     defaults.defaultDialogControlContext
   );
 
-export const useDialogControl = () => useContext(DialogControlContext);
+export const useDialogControl = () => use(DialogControlContext);
 
 export const DialogControlProvider = ({
   children,
@@ -77,7 +77,7 @@ export const DialogControlProvider = ({
     setShowAddressDialogState({ ...data });
 
   return (
-    <DialogControlContext.Provider
+    <DialogControlContext
       value={{
         getBulkRenameDialogData,
         getManageAccountDialogData,
@@ -90,6 +90,6 @@ export const DialogControlProvider = ({
       }}
     >
       {children}
-    </DialogControlContext.Provider>
+    </DialogControlContext>
   );
 };

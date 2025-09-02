@@ -3,13 +3,7 @@
 
 import * as wc from '@polkadot-live/consts/walletConnect';
 import { ConfigAction, ExtrinsicError, generateUID } from '@polkadot-live/core';
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { createContext, use, useEffect, useRef, useState } from 'react';
 import * as defaults from './defaults';
 import type { AnyJson } from '@polkadot-live/types/misc';
 import type { TxMetaContextInterface } from './types';
@@ -40,7 +34,7 @@ export const TxMetaContext = createContext<TxMetaContextInterface>(
   defaults.defaultTxMeta
 );
 
-export const useTxMeta = () => useContext(TxMetaContext);
+export const useTxMeta = () => use(TxMetaContext);
 
 export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   const { openOverlayWith } = useOverlay();
@@ -764,7 +758,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <TxMetaContext.Provider
+    <TxMetaContext
       value={{
         addressesInfo,
         extrinsics,
@@ -799,6 +793,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       }}
     >
       {children}
-    </TxMetaContext.Provider>
+    </TxMetaContext>
   );
 };

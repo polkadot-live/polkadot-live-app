@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { createContext, useContext, useState } from 'react';
+import { createContext, use, useState } from 'react';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { ReferendaSubscriptionsContextInterface } from './types';
@@ -14,7 +14,7 @@ export const ReferendaSubscriptionsContext =
   );
 
 export const useReferendaSubscriptions = () =>
-  useContext(ReferendaSubscriptionsContext);
+  use(ReferendaSubscriptionsContext);
 
 export const ReferendaSubscriptionsProvider = ({
   children,
@@ -199,7 +199,7 @@ export const ReferendaSubscriptionsProvider = ({
   };
 
   return (
-    <ReferendaSubscriptionsContext.Provider
+    <ReferendaSubscriptionsContext
       value={{
         subscriptions,
         setSubscriptions,
@@ -214,6 +214,6 @@ export const ReferendaSubscriptionsProvider = ({
       }}
     >
       {children}
-    </ReferendaSubscriptionsContext.Provider>
+    </ReferendaSubscriptionsContext>
   );
 };

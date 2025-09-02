@@ -3,7 +3,7 @@
 
 import * as defaults from './defaults';
 import { ConfigImport } from '@polkadot-live/core';
-import { createContext, useContext } from 'react';
+import { createContext, use } from 'react';
 import { useAccountStatuses, useAddresses } from '@ren/contexts/import';
 import { useConnections } from '@ren/contexts/common';
 import type { AddHandlerContextInterface } from './types';
@@ -16,7 +16,7 @@ export const AddHandlerContext = createContext<AddHandlerContextInterface>(
   defaults.defaultAddHandlerContext
 );
 
-export const useAddHandler = () => useContext(AddHandlerContext);
+export const useAddHandler = () => use(AddHandlerContext);
 
 export const AddHandlerProvider = ({
   children,
@@ -94,13 +94,13 @@ export const AddHandlerProvider = ({
   };
 
   return (
-    <AddHandlerContext.Provider
+    <AddHandlerContext
       value={{
         handleAddAddress,
         handleBookmarkToggle,
       }}
     >
       {children}
-    </AddHandlerContext.Provider>
+    </AddHandlerContext>
   );
 };

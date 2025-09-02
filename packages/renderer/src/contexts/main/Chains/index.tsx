@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, use, useEffect, useState } from 'react';
 import { APIsController } from '@polkadot-live/core';
 import { ChainList } from '@polkadot-live/consts/chains';
 import { useApiHealth } from '../ApiHealth';
@@ -14,7 +14,7 @@ export const ChainsContext = createContext<ChainsContextInterface>(
   defaults.defaultChainsContext
 );
 
-export const useChains = () => useContext(ChainsContext);
+export const useChains = () => use(ChainsContext);
 
 export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
   const { startApi } = useApiHealth();
@@ -100,7 +100,7 @@ export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   return (
-    <ChainsContext.Provider
+    <ChainsContext
       value={{
         chains,
         isWorking,
@@ -111,6 +111,6 @@ export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
       }}
     >
       {children}
-    </ChainsContext.Provider>
+    </ChainsContext>
   );
 };

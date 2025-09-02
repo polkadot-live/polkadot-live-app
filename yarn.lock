@@ -4146,19 +4146,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/prop-types@npm:*, @types/prop-types@npm:^15.7.14":
+"@types/prop-types@npm:^15.7.14":
   version: 15.7.14
   resolution: "@types/prop-types@npm:15.7.14"
   checksum: 1ec775160bfab90b67a782d735952158c7e702ca4502968aa82565bd8e452c2de8601c8dfe349733073c31179116cf7340710160d3836aa8a1ef76d1532893b1
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^18.3.1":
-  version: 18.3.7
-  resolution: "@types/react-dom@npm:18.3.7"
+"@types/react-dom@npm:^19.1.9":
+  version: 19.1.9
+  resolution: "@types/react-dom@npm:19.1.9"
   peerDependencies:
-    "@types/react": ^18.0.0
-  checksum: 8bd309e2c3d1604a28a736a24f96cbadf6c05d5288cfef8883b74f4054c961b6b3a5e997fd5686e492be903c8f3380dba5ec017eff3906b1256529cd2d39603e
+    "@types/react": ^19.0.0
+  checksum: 34c8dda86c1590b3ef0e7ecd38f9663a66ba2dd69113ba74fb0adc36b83bbfb8c94c1487a2505282a5f7e5e000d2ebf36f4c0fd41b3b672f5178fd1d4f1f8f58
   languageName: node
   linkType: hard
 
@@ -4171,13 +4171,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^18.3.12":
-  version: 18.3.21
-  resolution: "@types/react@npm:18.3.21"
+"@types/react@npm:^19.1.12":
+  version: 19.1.12
+  resolution: "@types/react@npm:19.1.12"
   dependencies:
-    "@types/prop-types": "npm:*"
     csstype: "npm:^3.0.2"
-  checksum: b33424c62f01ab2404c60abef995e05aa1a696a636bdd77a34ef6c942d171c673b1e451d9dba7f9a169a83c9eef0ddfaf1ba08f6cef542df9404290199a73967
+  checksum: e35912b43da0caaab5252444bab87a31ca22950cde2822b3b3dc32e39c2d42dad1a4cf7b5dde9783aa2d007f0b2cba6ab9563fc6d2dbcaaa833b35178118767c
   languageName: node
   linkType: hard
 
@@ -11209,8 +11208,8 @@ __metadata:
     "@testing-library/react": "npm:^16.0.1"
     "@testing-library/user-event": "npm:^14.5.2"
     "@theme-toggles/react": "npm:^4.1.0"
-    "@types/react": "npm:^18.3.12"
-    "@types/react-dom": "npm:^18.3.1"
+    "@types/react": "npm:^19.1.12"
+    "@types/react-dom": "npm:^19.1.9"
     "@typescript-eslint/eslint-plugin": "npm:^7.7.0"
     "@typescript-eslint/parser": "npm:^7.7.0"
     "@vitejs/plugin-react-swc": "npm:^3.9.0"
@@ -11251,8 +11250,8 @@ __metadata:
     prettier: "npm:^3.2.5"
     prettier-plugin-organize-imports: "npm:^3.2.4"
     qrcode-generator: "npm:^1.4.4"
-    react: "npm:^18.2.0"
-    react-dom: "npm:^18.2.0"
+    react: "npm:^19.1.1"
+    react-dom: "npm:^19.1.1"
     react-error-boundary: "npm:^4.0.12"
     react-router-dom: "npm:^6.22.3"
     react-spinners: "npm:^0.14.1"

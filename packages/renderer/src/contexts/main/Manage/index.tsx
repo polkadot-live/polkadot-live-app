@@ -138,7 +138,7 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <ManageContext.Provider
+    <ManageContext
       value={{
         activeChainId,
         dynamicIntervalTasksState,
@@ -153,6 +153,6 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
       }}
     >
       {children}
-    </ManageContext.Provider>
+    </ManageContext>
   );
 };

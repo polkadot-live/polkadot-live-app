@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { createContext, useContext, useState } from 'react';
+import { createContext, use, useState } from 'react';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { IntervalSubscriptionsContextInterface } from './types';
@@ -12,8 +12,7 @@ export const IntervalSubscriptionsContext =
     defaults.defaultIntervalSubscriptionsContext
   );
 
-export const useIntervalSubscriptions = () =>
-  useContext(IntervalSubscriptionsContext);
+export const useIntervalSubscriptions = () => use(IntervalSubscriptionsContext);
 
 export const IntervalSubscriptionsProvider = ({
   children,
@@ -116,7 +115,7 @@ export const IntervalSubscriptionsProvider = ({
     );
 
   return (
-    <IntervalSubscriptionsContext.Provider
+    <IntervalSubscriptionsContext
       value={{
         subscriptions,
         addIntervalSubscription,
@@ -130,6 +129,6 @@ export const IntervalSubscriptionsProvider = ({
       }}
     >
       {children}
-    </IntervalSubscriptionsContext.Provider>
+    </IntervalSubscriptionsContext>
   );
 };

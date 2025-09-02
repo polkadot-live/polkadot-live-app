@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, use, useState } from 'react';
 import {
   pushUniqueEvent,
   getEventChainId,
@@ -23,7 +23,7 @@ export const EventsContext = createContext<EventsContextInterface>(
   defaults.defaultEventsContext
 );
 
-export const useEvents = () => useContext(EventsContext);
+export const useEvents = () => use(EventsContext);
 
 export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
   /// Store the currently imported events
@@ -268,7 +268,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
   ];
 
   return (
-    <EventsContext.Provider
+    <EventsContext
       value={{
         events,
         addEvent,
@@ -286,6 +286,6 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
       }}
     >
       {children}
-    </EventsContext.Provider>
+    </EventsContext>
   );
 };

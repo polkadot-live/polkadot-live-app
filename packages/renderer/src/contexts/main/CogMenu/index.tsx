@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ConfigRenderer } from '@polkadot-live/core';
-import { createContext, useContext } from 'react';
+import { createContext, use } from 'react';
 import { defaultCogMenuContext } from './defaults';
 import { useAppSettings, useBootstrapping } from '@ren/contexts/main';
 import { useConnections, useHelp } from '@ren/contexts/common';
@@ -14,7 +14,7 @@ export const CogMenuContext = createContext<CogMenuContextInterface>(
   defaultCogMenuContext
 );
 
-export const useCogMenu = () => useContext(CogMenuContext);
+export const useCogMenu = () => use(CogMenuContext);
 
 export const CogMenuProvider = ({
   children,
@@ -158,7 +158,7 @@ export const CogMenuProvider = ({
   });
 
   return (
-    <CogMenuContext.Provider
+    <CogMenuContext
       value={{
         getAppFlags,
         getConnectionButtonText,
@@ -169,6 +169,6 @@ export const CogMenuProvider = ({
       }}
     >
       {children}
-    </CogMenuContext.Provider>
+    </CogMenuContext>
   );
 };

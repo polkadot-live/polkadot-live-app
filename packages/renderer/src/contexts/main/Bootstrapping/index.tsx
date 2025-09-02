@@ -11,13 +11,7 @@ import {
   getOnlineStatus,
 } from '@polkadot-live/core';
 
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { createContext, use, useEffect, useRef, useState } from 'react';
 import { defaultBootstrappingContext } from './default';
 import { setStateWithRef } from '@w3ux/utils';
 import { startWithWorker } from 'dedot/smoldot/with-worker';
@@ -32,7 +26,7 @@ export const BootstrappingContext = createContext<BootstrappingInterface>(
   defaultBootstrappingContext
 );
 
-export const useBootstrapping = () => useContext(BootstrappingContext);
+export const useBootstrapping = () => use(BootstrappingContext);
 
 export const BootstrappingProvider = ({
   children,
@@ -270,7 +264,7 @@ export const BootstrappingProvider = ({
   }, [ConfigRenderer.abortConnecting]);
 
   return (
-    <BootstrappingContext.Provider
+    <BootstrappingContext
       value={{
         appLoading,
         isAborting,
@@ -285,6 +279,6 @@ export const BootstrappingProvider = ({
       }}
     >
       {children}
-    </BootstrappingContext.Provider>
+    </BootstrappingContext>
   );
 };

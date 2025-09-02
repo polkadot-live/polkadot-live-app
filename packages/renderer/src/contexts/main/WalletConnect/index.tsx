@@ -10,7 +10,7 @@ import {
   ExtrinsicsController,
   WcError,
 } from '@polkadot-live/core';
-import { createContext, useContext, useEffect, useRef } from 'react';
+import { createContext, use, useEffect, useRef } from 'react';
 import { decodeAddress, encodeAddress, u8aToHex } from 'dedot/utils';
 import { useConnections } from '@ren/contexts/common';
 import { getSdkError } from '@walletconnect/utils';
@@ -31,7 +31,7 @@ export const WalletConnectContext =
     defaults.defaultWalletConnectContext
   );
 
-export const useWalletConnect = () => useContext(WalletConnectContext);
+export const useWalletConnect = () => use(WalletConnectContext);
 
 export const WalletConnectProvider = ({
   children,
@@ -563,7 +563,7 @@ export const WalletConnectProvider = ({
   }, [wcSessionRestored]);
 
   return (
-    <WalletConnectContext.Provider
+    <WalletConnectContext
       value={{
         wcSessionRestored,
         connectWc,
@@ -579,6 +579,6 @@ export const WalletConnectProvider = ({
       }}
     >
       {children}
-    </WalletConnectContext.Provider>
+    </WalletConnectContext>
   );
 };

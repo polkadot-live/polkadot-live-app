@@ -3,7 +3,7 @@
 
 import * as defaults from './defaults';
 import { postRenameAccount, renameAccountInStore } from '@polkadot-live/core';
-import { createContext, useContext } from 'react';
+import { createContext, use } from 'react';
 import { useAddresses } from '@ren/contexts/import/Addresses';
 import { renderToast, validateAccountName } from '@polkadot-live/ui/utils';
 import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';
@@ -14,7 +14,7 @@ export const RenameHandlerContext =
     defaults.defaultRenameHandlerContext
   );
 
-export const useRenameHandler = () => useContext(RenameHandlerContext);
+export const useRenameHandler = () => use(RenameHandlerContext);
 
 export const RenameHandlerProvider = ({
   children,
@@ -69,13 +69,13 @@ export const RenameHandlerProvider = ({
   };
 
   return (
-    <RenameHandlerContext.Provider
+    <RenameHandlerContext
       value={{
         renameHandler,
         validateNameInput,
       }}
     >
       {children}
-    </RenameHandlerContext.Provider>
+    </RenameHandlerContext>
   );
 };

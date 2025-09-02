@@ -3,7 +3,7 @@
 
 import * as defaults from './defaults';
 import axios from 'axios';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, use, useEffect, useState } from 'react';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   PolkassemblyProposal,
@@ -15,7 +15,7 @@ export const PolkassemblyContext = createContext<PolkassemblyContextInterface>(
   defaults.defaultPolkassemblyContext
 );
 
-export const usePolkassembly = () => useContext(PolkassemblyContext);
+export const usePolkassembly = () => use(PolkassemblyContext);
 
 export const PolkassemblyProvider = ({
   children,
@@ -106,7 +106,7 @@ export const PolkassemblyProvider = ({
   };
 
   return (
-    <PolkassemblyContext.Provider
+    <PolkassemblyContext
       value={{
         usePolkassemblyApi,
         fetchingMetadata,
@@ -118,6 +118,6 @@ export const PolkassemblyProvider = ({
       }}
     >
       {children}
-    </PolkassemblyContext.Provider>
+    </PolkassemblyContext>
   );
 };

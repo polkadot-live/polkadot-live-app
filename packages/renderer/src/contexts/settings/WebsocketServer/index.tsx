@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { createContext, useContext, useState } from 'react';
+import { createContext, use, useState } from 'react';
 import type { WebsocketServerContextInterface } from './types';
 
 export const WebsocketServerContext =
@@ -10,7 +10,7 @@ export const WebsocketServerContext =
     defaults.defaultWebsocketServerContext
   );
 
-export const useWebsocketServer = () => useContext(WebsocketServerContext);
+export const useWebsocketServer = () => use(WebsocketServerContext);
 
 export const WebsocketServerProvider = ({
   children,
@@ -40,10 +40,10 @@ export const WebsocketServerProvider = ({
   };
 
   return (
-    <WebsocketServerContext.Provider
+    <WebsocketServerContext
       value={{ isListening, setIsListening, startServer, stopServer }}
     >
       {children}
-    </WebsocketServerContext.Provider>
+    </WebsocketServerContext>
   );
 };

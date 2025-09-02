@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, use, useEffect, useRef, useState } from 'react';
 import * as defaults from './defaults';
 import { getSupportedSources } from '@polkadot-live/consts/chains';
 import { setStateWithRef } from '@w3ux/utils';
@@ -20,7 +20,7 @@ export const AddressesContext = createContext<AddressesContextInterface>(
  * @name useAddresses
  * @summary Manages state of addresses for the `import` child window.
  */
-export const useAddresses = () => useContext(AddressesContext);
+export const useAddresses = () => use(AddressesContext);
 
 export const AddressesProvider = ({
   children,
@@ -182,7 +182,7 @@ export const AddressesProvider = ({
   };
 
   return (
-    <AddressesContext.Provider
+    <AddressesContext
       value={{
         getAccounts,
         getDefaultName,
@@ -195,6 +195,6 @@ export const AddressesProvider = ({
       }}
     >
       {children}
-    </AddressesContext.Provider>
+    </AddressesContext>
   );
 };

@@ -3,7 +3,7 @@
 
 import * as defaults from './defaults';
 import { ConfigImport } from '@polkadot-live/core';
-import { createContext, useContext } from 'react';
+import { createContext, use } from 'react';
 import { useAddresses } from '@ren/contexts/import';
 import type {
   EncodedAccount,
@@ -17,7 +17,7 @@ export const RemoveHandlerContext =
     defaults.defaultRemoveHandlerContext
   );
 
-export const useRemoveHandler = () => useContext(RemoveHandlerContext);
+export const useRemoveHandler = () => use(RemoveHandlerContext);
 
 export const RemoveHandlerProvider = ({
   children,
@@ -65,12 +65,12 @@ export const RemoveHandlerProvider = ({
   };
 
   return (
-    <RemoveHandlerContext.Provider
+    <RemoveHandlerContext
       value={{
         handleRemoveAddress,
       }}
     >
       {children}
-    </RemoveHandlerContext.Provider>
+    </RemoveHandlerContext>
   );
 };

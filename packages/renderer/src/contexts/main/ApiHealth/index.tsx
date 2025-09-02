@@ -7,7 +7,7 @@ import {
   APIsController,
   SubscriptionsController,
 } from '@polkadot-live/core';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, use, useEffect, useState } from 'react';
 import type { ApiConnectResult, NodeEndpoint } from '@polkadot-live/types/apis';
 import type { ApiError } from '@polkadot-live/core';
 import type { ApiHealthContextInterface } from './types';
@@ -17,7 +17,7 @@ export const ApiHealthContext = createContext<ApiHealthContextInterface>(
   defaults.defaultApiHealthContext
 );
 
-export const useApiHealth = () => useContext(ApiHealthContext);
+export const useApiHealth = () => use(ApiHealthContext);
 
 export const ApiHealthProvider = ({
   children,
@@ -86,7 +86,7 @@ export const ApiHealthProvider = ({
   }, []);
 
   return (
-    <ApiHealthContext.Provider
+    <ApiHealthContext
       value={{
         failedConnections,
         hasConnectionIssue,
@@ -96,6 +96,6 @@ export const ApiHealthProvider = ({
       }}
     >
       {children}
-    </ApiHealthContext.Provider>
+    </ApiHealthContext>
   );
 };

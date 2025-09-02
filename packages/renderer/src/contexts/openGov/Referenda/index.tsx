@@ -6,7 +6,7 @@ import { ConfigOpenGov } from '@polkadot-live/core';
 import {
   createContext,
   useCallback,
-  useContext,
+  use,
   useEffect,
   useRef,
   useState,
@@ -32,7 +32,7 @@ export const ReferendaContext = createContext<ReferendaContextInterface>(
   defaults.defaultReferendaContext
 );
 
-export const useReferenda = () => useContext(ReferendaContext);
+export const useReferenda = () => use(ReferendaContext);
 
 export const ReferendaProvider = ({
   children,
@@ -441,7 +441,7 @@ export const ReferendaProvider = ({
   }, [activeReferendaChainId]);
 
   return (
-    <ReferendaContext.Provider
+    <ReferendaContext
       value={{
         activePagedReferenda,
         activeReferendaChainId,
@@ -471,6 +471,6 @@ export const ReferendaProvider = ({
       }}
     >
       {children}
-    </ReferendaContext.Provider>
+    </ReferendaContext>
   );
 };

@@ -7,7 +7,7 @@ import {
   getSupportedChains,
   getSupportedLedgerChains,
 } from '@polkadot-live/consts/chains';
-import { createContext, useContext } from 'react';
+import { createContext, use } from 'react';
 import { decodeAddress, encodeAddress, u8aToHex } from 'dedot/utils';
 import { renderToast } from '@polkadot-live/ui/utils';
 import { useAccountStatuses, useAddresses } from '@ren/contexts/import';
@@ -26,7 +26,7 @@ export const ImportHandlerContext =
     defaults.defaultImportHandlerContext
   );
 
-export const useImportHandler = () => useContext(ImportHandlerContext);
+export const useImportHandler = () => use(ImportHandlerContext);
 
 export const ImportHandlerProvider = ({
   children,
@@ -169,13 +169,13 @@ export const ImportHandlerProvider = ({
   };
 
   return (
-    <ImportHandlerContext.Provider
+    <ImportHandlerContext
       value={{
         handleImportAddress,
         handleImportAddressFromBackup,
       }}
     >
       {children}
-    </ImportHandlerContext.Provider>
+    </ImportHandlerContext>
   );
 };

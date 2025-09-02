@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as defaults from './defaults';
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, use, useEffect, useRef, useState } from 'react';
 import { getSupportedSources } from '@polkadot-live/consts/chains';
 import { setStateWithRef } from '@w3ux/utils';
 import { useAddresses } from '../Addresses';
@@ -26,7 +26,7 @@ export const AccountStatusesContext =
  * and sync its data with the state on its blockchain network. During this processing
  * time, its status is set to `true`.
  */
-export const useAccountStatuses = () => useContext(AccountStatusesContext);
+export const useAccountStatuses = () => use(AccountStatusesContext);
 
 export const AccountStatusesProvider = ({
   children,
@@ -107,7 +107,7 @@ export const AccountStatusesProvider = ({
   };
 
   return (
-    <AccountStatusesContext.Provider
+    <AccountStatusesContext
       value={{
         anyProcessing,
         setStatusForAccount,
@@ -116,6 +116,6 @@ export const AccountStatusesProvider = ({
       }}
     >
       {children}
-    </AccountStatusesContext.Provider>
+    </AccountStatusesContext>
   );
 };

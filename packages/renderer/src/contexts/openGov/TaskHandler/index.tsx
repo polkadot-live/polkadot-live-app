@@ -3,7 +3,7 @@
 
 import * as defaults from './defaults';
 import { ConfigOpenGov } from '@polkadot-live/core';
-import { createContext, useContext } from 'react';
+import { createContext, use } from 'react';
 import { useReferendaSubscriptions } from '../ReferendaSubscriptions';
 import { renderToast } from '@polkadot-live/ui/utils';
 import type { ReferendaInfo } from '@polkadot-live/types/openGov';
@@ -14,7 +14,7 @@ export const TaskHandlerContext = createContext<TaskHandlerContextInterface>(
   defaults.defaultTaskHandlerContext
 );
 
-export const useTaskHandler = () => useContext(TaskHandlerContext);
+export const useTaskHandler = () => use(TaskHandlerContext);
 
 export const TaskHandlerProvider = ({
   children,
@@ -100,7 +100,11 @@ export const TaskHandlerProvider = ({
       .filter((t) => !isSubscribedToTask(referendumInfo, t))
       .map(
         (t) =>
-          ({ ...t, status: 'enable', referendumId }) as IntervalSubscription
+          ({
+            ...t,
+            status: 'enable',
+            referendumId,
+          }) as IntervalSubscription
       );
 
     // Cache task data in referenda subscriptions context.
@@ -136,7 +140,11 @@ export const TaskHandlerProvider = ({
       .filter((t) => isSubscribedToTask(referendumInfo, t))
       .map(
         (t) =>
-          ({ ...t, status: 'disable', referendumId }) as IntervalSubscription
+          ({
+            ...t,
+            status: 'disable',
+            referendumId,
+          }) as IntervalSubscription
       );
 
     // Cache task data in referenda subscriptions context.
@@ -161,7 +169,7 @@ export const TaskHandlerProvider = ({
   };
 
   return (
-    <TaskHandlerContext.Provider
+    <TaskHandlerContext
       value={{
         addIntervalSubscription,
         addAllIntervalSubscriptions,
@@ -170,6 +178,6 @@ export const TaskHandlerProvider = ({
       }}
     >
       {children}
-    </TaskHandlerContext.Provider>
+    </TaskHandlerContext>
   );
 };

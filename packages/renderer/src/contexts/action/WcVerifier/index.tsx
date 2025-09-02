@@ -3,7 +3,7 @@
 
 import * as defaults from './defaults';
 import { ConfigAction } from '@polkadot-live/core';
-import { createContext, useContext, useState } from 'react';
+import { createContext, use, useState } from 'react';
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 import type { WcVerifierContextInterface } from './types';
 
@@ -11,7 +11,7 @@ export const WcVerifierContext = createContext<WcVerifierContextInterface>(
   defaults.defaultWcVerifierContext
 );
 
-export const useWcVerifier = () => useContext(WcVerifierContext);
+export const useWcVerifier = () => use(WcVerifierContext);
 
 export const WcVerifierProvider = ({
   children,
@@ -64,7 +64,7 @@ export const WcVerifierProvider = ({
   };
 
   return (
-    <WcVerifierContext.Provider
+    <WcVerifierContext
       value={{
         wcAccountApproved,
         wcAccountVerifying,
@@ -76,6 +76,6 @@ export const WcVerifierProvider = ({
       }}
     >
       {children}
-    </WcVerifierContext.Provider>
+    </WcVerifierContext>
   );
 };
