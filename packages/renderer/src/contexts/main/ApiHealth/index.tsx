@@ -1,23 +1,26 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './defaults';
 import {
   AccountsController,
   APIsController,
   SubscriptionsController,
 } from '@polkadot-live/core';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import type { ApiConnectResult, NodeEndpoint } from '@polkadot-live/types/apis';
 import type { ApiError } from '@polkadot-live/core';
 import type { ApiHealthContextInterface } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
 
-export const ApiHealthContext = createContext<ApiHealthContextInterface>(
-  defaults.defaultApiHealthContext
-);
+export const ApiHealthContext = createContext<
+  ApiHealthContextInterface | undefined
+>(undefined);
 
-export const useApiHealth = () => useContext(ApiHealthContext);
+export const useApiHealth = createSafeContextHook(
+  ApiHealthContext,
+  'ApiHealthContext'
+);
 
 export const ApiHealthProvider = ({
   children,
@@ -86,7 +89,7 @@ export const ApiHealthProvider = ({
   }, []);
 
   return (
-    <ApiHealthContext.Provider
+    <ApiHealthContext
       value={{
         failedConnections,
         hasConnectionIssue,
@@ -96,6 +99,6 @@ export const ApiHealthProvider = ({
       }}
     >
       {children}
-    </ApiHealthContext.Provider>
+    </ApiHealthContext>
   );
 };

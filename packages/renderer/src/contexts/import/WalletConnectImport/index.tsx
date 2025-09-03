@@ -1,11 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './defaults';
 import * as wc from '@polkadot-live/consts/walletConnect';
-
 import { ConfigImport } from '@polkadot-live/core';
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, useEffect, useRef, useState } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import { useAddresses, useImportHandler } from '@ren/contexts/import';
 import { WalletConnectModal } from '@walletconnect/modal';
 import type { WalletConnectImportContextInterface } from './types';
@@ -14,13 +13,14 @@ import type {
   WcSelectNetwork,
 } from '@polkadot-live/types/walletConnect';
 
-export const WalletConnectImportContext =
-  createContext<WalletConnectImportContextInterface>(
-    defaults.defaultWalletConnectImportContext
-  );
+export const WalletConnectImportContext = createContext<
+  WalletConnectImportContextInterface | undefined
+>(undefined);
 
-export const useWalletConnectImport = () =>
-  useContext(WalletConnectImportContext);
+export const useWalletConnectImport = createSafeContextHook(
+  WalletConnectImportContext,
+  'WalletConnectImportContext'
+);
 
 export const WalletConnectImportProvider = ({
   children,
@@ -158,7 +158,7 @@ export const WalletConnectImportProvider = ({
   };
 
   return (
-    <WalletConnectImportContext.Provider
+    <WalletConnectImportContext
       value={{
         isImporting,
         wcFetchedAddresses,
@@ -174,6 +174,6 @@ export const WalletConnectImportProvider = ({
       }}
     >
       {children}
-    </WalletConnectImportContext.Provider>
+    </WalletConnectImportContext>
   );
 };

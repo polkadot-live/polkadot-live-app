@@ -1,20 +1,22 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './defaults';
 import { postRenameAccount, renameAccountInStore } from '@polkadot-live/core';
-import { createContext, useContext } from 'react';
+import { createContext } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import { useAddresses } from '@ren/contexts/import/Addresses';
 import { renderToast, validateAccountName } from '@polkadot-live/ui/utils';
 import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';
 import type { RenameHandlerContextInterface } from './types';
 
-export const RenameHandlerContext =
-  createContext<RenameHandlerContextInterface>(
-    defaults.defaultRenameHandlerContext
-  );
+export const RenameHandlerContext = createContext<
+  RenameHandlerContextInterface | undefined
+>(undefined);
 
-export const useRenameHandler = () => useContext(RenameHandlerContext);
+export const useRenameHandler = createSafeContextHook(
+  RenameHandlerContext,
+  'RenameHandlerContext'
+);
 
 export const RenameHandlerProvider = ({
   children,
@@ -69,13 +71,13 @@ export const RenameHandlerProvider = ({
   };
 
   return (
-    <RenameHandlerContext.Provider
+    <RenameHandlerContext
       value={{
         renameHandler,
         validateNameInput,
       }}
     >
       {children}
-    </RenameHandlerContext.Provider>
+    </RenameHandlerContext>
   );
 };

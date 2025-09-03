@@ -1,20 +1,20 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './defaults';
 import { ConfigOpenGov } from '@polkadot-live/core';
-import { createContext, useContext, useRef, useState } from 'react';
+import { createContext, useRef, useState } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import { useConnections } from '../../common/Connections';
 import { setStateWithRef } from '@w3ux/utils';
 import type { Track } from '@polkadot-live/core';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { TracksContextInterface } from './types';
 
-export const TracksContext = createContext<TracksContextInterface>(
-  defaults.defaultTracksContext
+export const TracksContext = createContext<TracksContextInterface | undefined>(
+  undefined
 );
 
-export const useTracks = () => useContext(TracksContext);
+export const useTracks = createSafeContextHook(TracksContext, 'TracksContext');
 
 export const TracksProvider = ({ children }: { children: React.ReactNode }) => {
   const { getOnlineMode } = useConnections();
@@ -54,7 +54,7 @@ export const TracksProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <TracksContext.Provider
+    <TracksContext
       value={{
         tracksMap,
         activeChainId,
@@ -67,6 +67,6 @@ export const TracksProvider = ({ children }: { children: React.ReactNode }) => {
       }}
     >
       {children}
-    </TracksContext.Provider>
+    </TracksContext>
   );
 };

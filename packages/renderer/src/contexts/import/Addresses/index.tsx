@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
-import * as defaults from './defaults';
+import { createContext, useEffect, useRef, useState } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import { getSupportedSources } from '@polkadot-live/consts/chains';
 import { setStateWithRef } from '@w3ux/utils';
 import type { AddressesContextInterface } from './types';
@@ -12,15 +12,18 @@ import type {
 } from '@polkadot-live/types/accounts';
 import type { IpcTask } from '@polkadot-live/types/communication';
 
-export const AddressesContext = createContext<AddressesContextInterface>(
-  defaults.defaultAddressesContext
-);
+export const AddressesContext = createContext<
+  AddressesContextInterface | undefined
+>(undefined);
 
 /**
  * @name useAddresses
  * @summary Manages state of addresses for the `import` child window.
  */
-export const useAddresses = () => useContext(AddressesContext);
+export const useAddresses = createSafeContextHook(
+  AddressesContext,
+  'AddressesContext'
+);
 
 export const AddressesProvider = ({
   children,
@@ -182,7 +185,7 @@ export const AddressesProvider = ({
   };
 
   return (
-    <AddressesContext.Provider
+    <AddressesContext
       value={{
         getAccounts,
         getDefaultName,
@@ -195,6 +198,6 @@ export const AddressesProvider = ({
       }}
     >
       {children}
-    </AddressesContext.Provider>
+    </AddressesContext>
   );
 };

@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './defaults';
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useState } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import {
   pushUniqueEvent,
   getEventChainId,
@@ -19,11 +19,11 @@ import type {
   SortedChainEvents,
 } from './types';
 
-export const EventsContext = createContext<EventsContextInterface>(
-  defaults.defaultEventsContext
+export const EventsContext = createContext<EventsContextInterface | undefined>(
+  undefined
 );
 
-export const useEvents = () => useContext(EventsContext);
+export const useEvents = createSafeContextHook(EventsContext, 'EventsContext');
 
 export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
   /// Store the currently imported events
@@ -268,7 +268,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
   ];
 
   return (
-    <EventsContext.Provider
+    <EventsContext
       value={{
         events,
         addEvent,
@@ -286,6 +286,6 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
       }}
     >
       {children}
-    </EventsContext.Provider>
+    </EventsContext>
   );
 };

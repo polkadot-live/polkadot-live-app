@@ -1,9 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './defaults';
 import { ConfigImport } from '@polkadot-live/core';
-import { createContext, useContext } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import { createContext } from 'react';
 import { useAccountStatuses, useAddresses } from '@ren/contexts/import';
 import { useConnections } from '@ren/contexts/common';
 import type { AddHandlerContextInterface } from './types';
@@ -12,11 +12,14 @@ import type {
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
 
-export const AddHandlerContext = createContext<AddHandlerContextInterface>(
-  defaults.defaultAddHandlerContext
-);
+export const AddHandlerContext = createContext<
+  AddHandlerContextInterface | undefined
+>(undefined);
 
-export const useAddHandler = () => useContext(AddHandlerContext);
+export const useAddHandler = createSafeContextHook(
+  AddHandlerContext,
+  'AddHandlerContext'
+);
 
 export const AddHandlerProvider = ({
   children,
@@ -94,13 +97,13 @@ export const AddHandlerProvider = ({
   };
 
   return (
-    <AddHandlerContext.Provider
+    <AddHandlerContext
       value={{
         handleAddAddress,
         handleBookmarkToggle,
       }}
     >
       {children}
-    </AddHandlerContext.Provider>
+    </AddHandlerContext>
   );
 };

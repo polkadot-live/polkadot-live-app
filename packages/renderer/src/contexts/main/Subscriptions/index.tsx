@@ -1,9 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import * as Core from '@polkadot-live/core';
-import * as defaults from './defaults';
 import {
   AccountsController,
   TaskOrchestrator,
@@ -20,12 +20,14 @@ import type {
   WrappedSubscriptionTasks,
 } from '@polkadot-live/types/subscriptions';
 
-export const SubscriptionsContext =
-  createContext<SubscriptionsContextInterface>(
-    defaults.defaultSubscriptionsContext
-  );
+export const SubscriptionsContext = createContext<
+  SubscriptionsContextInterface | undefined
+>(undefined);
 
-export const useSubscriptions = () => useContext(SubscriptionsContext);
+export const useSubscriptions = createSafeContextHook(
+  SubscriptionsContext,
+  'SubscriptionsContext'
+);
 
 export const SubscriptionsProvider = ({
   children,
@@ -238,7 +240,7 @@ export const SubscriptionsProvider = ({
   };
 
   return (
-    <SubscriptionsContext.Provider
+    <SubscriptionsContext
       value={{
         chainSubscriptions: chainSubscriptionsState,
         accountSubscriptions: accountSubscriptionsState,
@@ -252,6 +254,6 @@ export const SubscriptionsProvider = ({
       }}
     >
       {children}
-    </SubscriptionsContext.Provider>
+    </SubscriptionsContext>
   );
 };

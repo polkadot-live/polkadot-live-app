@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './defaults';
-import { createContext, useContext } from 'react';
+import { createContext } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import {
   ConfigRenderer,
   ExtrinsicsController,
@@ -15,11 +15,14 @@ import type { HexString } from 'dedot/utils';
 import type { LedgerErrorStatusCode } from '@polkadot-live/types/ledger';
 import type { LedgerSignerContextInterface } from './types';
 
-export const LedgerSignerContext = createContext<LedgerSignerContextInterface>(
-  defaults.defaultLedgerSignerContext
-);
+export const LedgerSignerContext = createContext<
+  LedgerSignerContextInterface | undefined
+>(undefined);
 
-export const useLedgerSigner = () => useContext(LedgerSignerContext);
+export const useLedgerSigner = createSafeContextHook(
+  LedgerSignerContext,
+  'LedgerSignerContext'
+);
 
 export const LedgerSignerProvider = ({
   children,
@@ -124,8 +127,8 @@ export const LedgerSignerProvider = ({
   };
 
   return (
-    <LedgerSignerContext.Provider value={{ ledgerSignSubmit }}>
+    <LedgerSignerContext value={{ ledgerSignSubmit }}>
       {children}
-    </LedgerSignerContext.Provider>
+    </LedgerSignerContext>
   );
 };

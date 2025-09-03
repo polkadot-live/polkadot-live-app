@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './defaults';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useState } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import type { LedgerFeedbackContextInterface } from './types';
 import type {
   LedgerErrorMeta,
@@ -10,12 +10,14 @@ import type {
   LedgerFeedbackMessage,
 } from '@polkadot-live/types/ledger';
 
-export const LedgerFeedbackContext =
-  createContext<LedgerFeedbackContextInterface>(
-    defaults.defaultLedgerFeedbackContext
-  );
+export const LedgerFeedbackContext = createContext<
+  LedgerFeedbackContextInterface | undefined
+>(undefined);
 
-export const useLedgerFeedback = () => useContext(LedgerFeedbackContext);
+export const useLedgerFeedback = createSafeContextHook(
+  LedgerFeedbackContext,
+  'LedgerFeedbackContext'
+);
 
 export const LedgerFeedbackProvider = ({
   children,
@@ -72,7 +74,7 @@ export const LedgerFeedbackProvider = ({
   };
 
   return (
-    <LedgerFeedbackContext.Provider
+    <LedgerFeedbackContext
       value={{
         message,
         isSigning,
@@ -82,6 +84,6 @@ export const LedgerFeedbackProvider = ({
       }}
     >
       {children}
-    </LedgerFeedbackContext.Provider>
+    </LedgerFeedbackContext>
   );
 };

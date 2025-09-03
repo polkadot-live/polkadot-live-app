@@ -13,7 +13,7 @@ export const Definition = ({ title, description }: DefinitionProps) => {
   // Store the current height of the definition content.
   const [height, setHeight] = useState<number>(0);
 
-  const contentRef: RefObject<HTMLDivElement> = useRef(null);
+  const contentRef: RefObject<HTMLDivElement | null> = useRef(null);
 
   useEffect(() => {
     const h = contentRef?.current?.clientHeight || 0;

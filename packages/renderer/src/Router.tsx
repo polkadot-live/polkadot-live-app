@@ -4,7 +4,7 @@
 import { MainInterfaceWrapper } from '@ren/Wrappers';
 import { Overlay, Help } from '@polkadot-live/ui/components';
 import { useEffect, useState } from 'react';
-import { HashRouter, Route, Routes } from 'react-router-dom';
+import { HashRouter, Route, Routes } from 'react-router';
 import { FadeAction } from '@ren/screens/Action';
 import { Tabs } from './screens/Tabs';
 import { Home } from './screens/Home';
@@ -68,10 +68,7 @@ export const Router = () => {
   }, []);
 
   return (
-    <HashRouter
-      basename="/"
-      future={{ v7_relativeSplatPath: true, v7_startTransition: true }}
-    >
+    <HashRouter basename="/">
       {windowId === 'tabs' ? (
         <Routes>
           <Route path={'/tabs'} element={<Tabs />} />

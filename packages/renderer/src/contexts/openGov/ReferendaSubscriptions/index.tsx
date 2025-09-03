@@ -1,20 +1,21 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './defaults';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useState } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { ReferendaSubscriptionsContextInterface } from './types';
 import type { ReferendaInfo, RefStatus } from '@polkadot-live/types/openGov';
 
-export const ReferendaSubscriptionsContext =
-  createContext<ReferendaSubscriptionsContextInterface>(
-    defaults.defaultReferendaSubscriptionsContext
-  );
+export const ReferendaSubscriptionsContext = createContext<
+  ReferendaSubscriptionsContextInterface | undefined
+>(undefined);
 
-export const useReferendaSubscriptions = () =>
-  useContext(ReferendaSubscriptionsContext);
+export const useReferendaSubscriptions = createSafeContextHook(
+  ReferendaSubscriptionsContext,
+  'ReferendaSubscriptionsContext'
+);
 
 export const ReferendaSubscriptionsProvider = ({
   children,
@@ -199,7 +200,7 @@ export const ReferendaSubscriptionsProvider = ({
   };
 
   return (
-    <ReferendaSubscriptionsContext.Provider
+    <ReferendaSubscriptionsContext
       value={{
         subscriptions,
         setSubscriptions,
@@ -214,6 +215,6 @@ export const ReferendaSubscriptionsProvider = ({
       }}
     >
       {children}
-    </ReferendaSubscriptionsContext.Provider>
+    </ReferendaSubscriptionsContext>
   );
 };

@@ -1,16 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './defaults';
 import { ConfigOpenGov } from '@polkadot-live/core';
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { createContext, useCallback, useEffect, useRef, useState } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import { useConnections } from '@ren/contexts/common';
 import { usePolkassembly } from '../Polkassembly';
 import { setStateWithRef } from '@w3ux/utils';
@@ -28,11 +21,14 @@ import type {
 const PAGINATION_ACTIVE_ITEMS_PER_PAGE = 10;
 const PAGINATION_HISTORY_ITEMS_PER_PAGE = 15;
 
-export const ReferendaContext = createContext<ReferendaContextInterface>(
-  defaults.defaultReferendaContext
-);
+export const ReferendaContext = createContext<
+  ReferendaContextInterface | undefined
+>(undefined);
 
-export const useReferenda = () => useContext(ReferendaContext);
+export const useReferenda = createSafeContextHook(
+  ReferendaContext,
+  'ReferendaContext'
+);
 
 export const ReferendaProvider = ({
   children,
@@ -441,7 +437,7 @@ export const ReferendaProvider = ({
   }, [activeReferendaChainId]);
 
   return (
-    <ReferendaContext.Provider
+    <ReferendaContext
       value={{
         activePagedReferenda,
         activeReferendaChainId,
@@ -471,6 +467,6 @@ export const ReferendaProvider = ({
       }}
     >
       {children}
-    </ReferendaContext.Provider>
+    </ReferendaContext>
   );
 };

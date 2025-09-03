@@ -2,4 +2,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 export * from './helpers';
+export * from './react-utils';
 export * from './toast';

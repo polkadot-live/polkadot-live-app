@@ -1,10 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './defaults';
 import * as themeVariables from '@ren/theme/variables';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import { initSharedState } from '@polkadot-live/consts/sharedState';
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, useEffect, useRef, useState } from 'react';
 import { setStateWithRef } from '@w3ux/utils';
 import type { ConnectionsContextInterface } from './types';
 import type { IpcRendererEvent } from 'electron';
@@ -16,12 +16,14 @@ import type { SyncID } from '@polkadot-live/types/communication';
  *
  * Keeps state synchronized between processes.
  */
+export const ConnectionsContext = createContext<
+  ConnectionsContextInterface | undefined
+>(undefined);
 
-export const ConnectionsContext = createContext<ConnectionsContextInterface>(
-  defaults.defaultConnectionsContext
+export const useConnections = createSafeContextHook(
+  ConnectionsContext,
+  'ConnectionsContext'
 );
-
-export const useConnections = () => useContext(ConnectionsContext);
 
 export const ConnectionsProvider = ({
   children,
@@ -86,7 +88,7 @@ export const ConnectionsProvider = ({
   }, []);
 
   return (
-    <ConnectionsContext.Provider
+    <ConnectionsContext
       value={{
         stateLoaded,
         cacheGet,
@@ -95,6 +97,6 @@ export const ConnectionsProvider = ({
       }}
     >
       {children}
-    </ConnectionsContext.Provider>
+    </ConnectionsContext>
   );
 };

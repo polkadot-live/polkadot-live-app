@@ -1,13 +1,13 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './defaults';
 import { ConfigImport } from '@polkadot-live/core';
 import {
   getSupportedChains,
   getSupportedLedgerChains,
 } from '@polkadot-live/consts/chains';
-import { createContext, useContext } from 'react';
+import { createContext } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import { decodeAddress, encodeAddress, u8aToHex } from 'dedot/utils';
 import { renderToast } from '@polkadot-live/ui/utils';
 import { useAccountStatuses, useAddresses } from '@ren/contexts/import';
@@ -21,12 +21,14 @@ import type {
   LedgerMetadata,
 } from '@polkadot-live/types/accounts';
 
-export const ImportHandlerContext =
-  createContext<ImportHandlerContextInterface>(
-    defaults.defaultImportHandlerContext
-  );
+export const ImportHandlerContext = createContext<
+  ImportHandlerContextInterface | undefined
+>(undefined);
 
-export const useImportHandler = () => useContext(ImportHandlerContext);
+export const useImportHandler = createSafeContextHook(
+  ImportHandlerContext,
+  'ImportHandlerContext'
+);
 
 export const ImportHandlerProvider = ({
   children,
@@ -169,13 +171,13 @@ export const ImportHandlerProvider = ({
   };
 
   return (
-    <ImportHandlerContext.Provider
+    <ImportHandlerContext
       value={{
         handleImportAddress,
         handleImportAddressFromBackup,
       }}
     >
       {children}
-    </ImportHandlerContext.Provider>
+    </ImportHandlerContext>
   );
 };

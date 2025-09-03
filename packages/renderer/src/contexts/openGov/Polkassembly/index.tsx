@@ -1,9 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './defaults';
 import axios from 'axios';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   PolkassemblyProposal,
@@ -11,11 +11,14 @@ import type {
 } from '@polkadot-live/types/openGov';
 import type { PolkassemblyContextInterface } from './types';
 
-export const PolkassemblyContext = createContext<PolkassemblyContextInterface>(
-  defaults.defaultPolkassemblyContext
-);
+export const PolkassemblyContext = createContext<
+  PolkassemblyContextInterface | undefined
+>(undefined);
 
-export const usePolkassembly = () => useContext(PolkassemblyContext);
+export const usePolkassembly = createSafeContextHook(
+  PolkassemblyContext,
+  'PolkassemblyContext'
+);
 
 export const PolkassemblyProvider = ({
   children,
@@ -106,7 +109,7 @@ export const PolkassemblyProvider = ({
   };
 
   return (
-    <PolkassemblyContext.Provider
+    <PolkassemblyContext
       value={{
         usePolkassemblyApi,
         fetchingMetadata,
@@ -118,6 +121,6 @@ export const PolkassemblyProvider = ({
       }}
     >
       {children}
-    </PolkassemblyContext.Provider>
+    </PolkassemblyContext>
   );
 };

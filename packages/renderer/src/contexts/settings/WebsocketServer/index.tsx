@@ -1,16 +1,18 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './defaults';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useState } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import type { WebsocketServerContextInterface } from './types';
 
-export const WebsocketServerContext =
-  createContext<WebsocketServerContextInterface>(
-    defaults.defaultWebsocketServerContext
-  );
+export const WebsocketServerContext = createContext<
+  WebsocketServerContextInterface | undefined
+>(undefined);
 
-export const useWebsocketServer = () => useContext(WebsocketServerContext);
+export const useWebsocketServer = createSafeContextHook(
+  WebsocketServerContext,
+  'WebsocketServerContext'
+);
 
 export const WebsocketServerProvider = ({
   children,
@@ -40,10 +42,10 @@ export const WebsocketServerProvider = ({
   };
 
   return (
-    <WebsocketServerContext.Provider
+    <WebsocketServerContext
       value={{ isListening, setIsListening, startServer, stopServer }}
     >
       {children}
-    </WebsocketServerContext.Provider>
+    </WebsocketServerContext>
   );
 };

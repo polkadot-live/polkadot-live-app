@@ -51,6 +51,7 @@
   },
   "dependencies": {
     "@polkadot-live/consts": "workspace:*",
+    "@polkadot-live/core": "workspace:*",
     "react-svg": "^16.2.0"
   },
   "devDependencies": {

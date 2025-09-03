@@ -1,9 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './defaults';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import { ConfigImport } from '@polkadot-live/core';
-import { createContext, useContext } from 'react';
+import { createContext } from 'react';
 import { useAccountStatuses } from '../AccountStatuses';
 import { useAddresses } from '@ren/contexts/import';
 import type {
@@ -14,12 +14,14 @@ import type { DeleteHandlerContextInterface } from './types';
 import type { IpcTask } from '@polkadot-live/types/communication';
 import type { ChainID } from '@polkadot-live/types/chains';
 
-export const DeleteHandlerContext =
-  createContext<DeleteHandlerContextInterface>(
-    defaults.defaultDeleteHandlerContext
-  );
+export const DeleteHandlerContext = createContext<
+  DeleteHandlerContextInterface | undefined
+>(undefined);
 
-export const useDeleteHandler = () => useContext(DeleteHandlerContext);
+export const useDeleteHandler = createSafeContextHook(
+  DeleteHandlerContext,
+  'DeleteHandlerContext'
+);
 
 export const DeleteHandlerProvider = ({
   children,
@@ -81,12 +83,12 @@ export const DeleteHandlerProvider = ({
   };
 
   return (
-    <DeleteHandlerContext.Provider
+    <DeleteHandlerContext
       value={{
         handleDeleteAddress,
       }}
     >
       {children}
-    </DeleteHandlerContext.Provider>
+    </DeleteHandlerContext>
   );
 };

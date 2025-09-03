@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './defaults';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useState } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import type {
   DialogBulkRenameData,
   DialogManageAccountData,
@@ -11,12 +11,14 @@ import type {
   DialogControlContextInterface,
 } from './types';
 
-export const DialogControlContext =
-  createContext<DialogControlContextInterface>(
-    defaults.defaultDialogControlContext
-  );
+export const DialogControlContext = createContext<
+  DialogControlContextInterface | undefined
+>(undefined);
 
-export const useDialogControl = () => useContext(DialogControlContext);
+export const useDialogControl = createSafeContextHook(
+  DialogControlContext,
+  'DialogControlContext'
+);
 
 export const DialogControlProvider = ({
   children,
@@ -77,7 +79,7 @@ export const DialogControlProvider = ({
     setShowAddressDialogState({ ...data });
 
   return (
-    <DialogControlContext.Provider
+    <DialogControlContext
       value={{
         getBulkRenameDialogData,
         getManageAccountDialogData,
@@ -90,6 +92,6 @@ export const DialogControlProvider = ({
       }}
     >
       {children}
-    </DialogControlContext.Provider>
+    </DialogControlContext>
   );
 };
