@@ -1,9 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './defaults';
 import { ConfigImport } from '@polkadot-live/core';
-import { createContext, use } from 'react';
+import { createContext } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import { useAddresses } from '@ren/contexts/import';
 import type {
   EncodedAccount,
@@ -12,12 +12,14 @@ import type {
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { RemoveHandlerContextInterface } from './types';
 
-export const RemoveHandlerContext =
-  createContext<RemoveHandlerContextInterface>(
-    defaults.defaultRemoveHandlerContext
-  );
+export const RemoveHandlerContext = createContext<
+  RemoveHandlerContextInterface | undefined
+>(undefined);
 
-export const useRemoveHandler = () => use(RemoveHandlerContext);
+export const useRemoveHandler = createSafeContextHook(
+  RemoveHandlerContext,
+  'RemoveHandlerContext'
+);
 
 export const RemoveHandlerProvider = ({
   children,

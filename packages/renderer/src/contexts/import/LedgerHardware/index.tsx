@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { createContext, use, useRef, useState } from 'react';
-import { defaultLedgerHardwareContext } from './defaults';
+import { createContext, useRef, useState } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import { decodeAddress, u8aToHex } from 'dedot/utils';
 import { setStateWithRef } from '@w3ux/utils';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -20,10 +20,14 @@ import type {
   LedgerTaskResponse,
 } from '@polkadot-live/types/ledger';
 
-export const LedgerHardwareContext =
-  createContext<LedgerHardwareContextInterface>(defaultLedgerHardwareContext);
+export const LedgerHardwareContext = createContext<
+  LedgerHardwareContextInterface | undefined
+>(undefined);
 
-export const useLedgerHardware = () => use(LedgerHardwareContext);
+export const useLedgerHardware = createSafeContextHook(
+  LedgerHardwareContext,
+  'LedgerHardwareContext'
+);
 
 export const LedgerHardwareProvider = ({
   children,

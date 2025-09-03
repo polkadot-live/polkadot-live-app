@@ -35,7 +35,7 @@ export class AccountsController {
   static cachedSetAddresses: React.Dispatch<
     React.SetStateAction<FlattenedAccounts>
   >;
-  static cachedAddressesRef: React.MutableRefObject<FlattenedAccounts>;
+  static cachedAddressesRef: React.RefObject<FlattenedAccounts>;
 
   /**
    * Sync react state with managed account data in controller.

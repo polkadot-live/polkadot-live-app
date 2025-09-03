@@ -2,18 +2,21 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ConfigRenderer } from '@polkadot-live/core';
-import { createContext, use, useEffect, useRef, useState } from 'react';
-import { defaultAppSettingsContext } from './defaults';
+import { createContext, useEffect, useRef, useState } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import { getDefaultSettings } from '@polkadot-live/consts/settings';
 import { setStateWithRef } from '@w3ux/utils';
 import type { AppSettingsContextInterface } from './types';
 import type { SettingKey } from '@polkadot-live/types/settings';
 
-export const AppSettingsContext = createContext<AppSettingsContextInterface>(
-  defaultAppSettingsContext
-);
+export const AppSettingsContext = createContext<
+  AppSettingsContextInterface | undefined
+>(undefined);
 
-export const useAppSettings = () => use(AppSettingsContext);
+export const useAppSettings = createSafeContextHook(
+  AppSettingsContext,
+  'AppSettingsContext'
+);
 
 export const AppSettingsProvider = ({
   children,

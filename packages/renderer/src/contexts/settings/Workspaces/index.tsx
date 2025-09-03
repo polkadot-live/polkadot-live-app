@@ -1,16 +1,19 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './defaults';
-import { createContext, use, useState } from 'react';
+import { createContext, useState } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import type { WorkspacesContextInterface } from './types';
 import type { WorkspaceItem } from '@polkadot-live/types/developerConsole/workspaces';
 
-export const WorkspacesContext = createContext<WorkspacesContextInterface>(
-  defaults.defaultWorkspacesContext
-);
+export const WorkspacesContext = createContext<
+  WorkspacesContextInterface | undefined
+>(undefined);
 
-export const useWorkspaces = () => use(WorkspacesContext);
+export const useWorkspaces = createSafeContextHook(
+  WorkspacesContext,
+  'WorkspacesContext'
+);
 
 export const WorkspacesProvider = ({
   children,

@@ -1,16 +1,18 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './defaults';
-import { createContext, use, useState } from 'react';
+import { createContext, useState } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import type { WebsocketServerContextInterface } from './types';
 
-export const WebsocketServerContext =
-  createContext<WebsocketServerContextInterface>(
-    defaults.defaultWebsocketServerContext
-  );
+export const WebsocketServerContext = createContext<
+  WebsocketServerContextInterface | undefined
+>(undefined);
 
-export const useWebsocketServer = () => use(WebsocketServerContext);
+export const useWebsocketServer = createSafeContextHook(
+  WebsocketServerContext,
+  'WebsocketServerContext'
+);
 
 export const WebsocketServerProvider = ({
   children,

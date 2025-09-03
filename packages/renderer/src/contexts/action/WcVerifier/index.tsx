@@ -1,17 +1,20 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './defaults';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import { ConfigAction } from '@polkadot-live/core';
-import { createContext, use, useState } from 'react';
+import { createContext, useState } from 'react';
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 import type { WcVerifierContextInterface } from './types';
 
-export const WcVerifierContext = createContext<WcVerifierContextInterface>(
-  defaults.defaultWcVerifierContext
-);
+export const WcVerifierContext = createContext<
+  WcVerifierContextInterface | undefined
+>(undefined);
 
-export const useWcVerifier = () => use(WcVerifierContext);
+export const useWcVerifier = createSafeContextHook(
+  WcVerifierContext,
+  'WcVerifierContext'
+);
 
 export const WcVerifierProvider = ({
   children,

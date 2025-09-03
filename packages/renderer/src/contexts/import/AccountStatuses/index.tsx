@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './defaults';
-import { createContext, use, useEffect, useRef, useState } from 'react';
+import { createContext, useEffect, useRef, useState } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import { getSupportedSources } from '@polkadot-live/consts/chains';
 import { setStateWithRef } from '@w3ux/utils';
 import { useAddresses } from '../Addresses';
@@ -12,10 +12,9 @@ import type {
 } from '@polkadot-live/types/accounts';
 import type { AccountStatusesContextInterface } from './types';
 
-export const AccountStatusesContext =
-  createContext<AccountStatusesContextInterface>(
-    defaults.defaultAccountStatusesContext
-  );
+export const AccountStatusesContext = createContext<
+  AccountStatusesContextInterface | undefined
+>(undefined);
 
 /**
  * @name useAccountStatuses
@@ -26,7 +25,10 @@ export const AccountStatusesContext =
  * and sync its data with the state on its blockchain network. During this processing
  * time, its status is set to `true`.
  */
-export const useAccountStatuses = () => use(AccountStatusesContext);
+export const useAccountStatuses = createSafeContextHook(
+  AccountStatusesContext,
+  'AccountStatusesContext'
+);
 
 export const AccountStatusesProvider = ({
   children,

@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './defaults';
-import React, { createContext, use, useEffect, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import { APIsController } from '@polkadot-live/core';
 import { ChainList } from '@polkadot-live/consts/chains';
 import { useApiHealth } from '../ApiHealth';
@@ -10,11 +10,11 @@ import type { ChainsContextInterface } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAPIData } from '@polkadot-live/types/apis';
 
-export const ChainsContext = createContext<ChainsContextInterface>(
-  defaults.defaultChainsContext
+export const ChainsContext = createContext<ChainsContextInterface | undefined>(
+  undefined
 );
 
-export const useChains = () => use(ChainsContext);
+export const useChains = createSafeContextHook(ChainsContext, 'ChainsContext');
 
 export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
   const { startApi } = useApiHealth();

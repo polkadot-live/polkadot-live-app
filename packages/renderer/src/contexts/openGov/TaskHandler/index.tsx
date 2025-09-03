@@ -1,20 +1,23 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './defaults';
 import { ConfigOpenGov } from '@polkadot-live/core';
-import { createContext, use } from 'react';
+import { createContext } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import { useReferendaSubscriptions } from '../ReferendaSubscriptions';
 import { renderToast } from '@polkadot-live/ui/utils';
 import type { ReferendaInfo } from '@polkadot-live/types/openGov';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { TaskHandlerContextInterface } from './types';
 
-export const TaskHandlerContext = createContext<TaskHandlerContextInterface>(
-  defaults.defaultTaskHandlerContext
-);
+export const TaskHandlerContext = createContext<
+  TaskHandlerContextInterface | undefined
+>(undefined);
 
-export const useTaskHandler = () => use(TaskHandlerContext);
+export const useTaskHandler = createSafeContextHook(
+  TaskHandlerContext,
+  'TaskHandlerContext'
+);
 
 export const TaskHandlerProvider = ({
   children,

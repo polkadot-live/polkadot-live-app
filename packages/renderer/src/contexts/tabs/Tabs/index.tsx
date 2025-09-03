@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './defaults';
-import { createContext, use, useEffect, useRef, useState } from 'react';
+import { createContext, useEffect, useRef, useState } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import {
   KeyboardSensor,
@@ -15,11 +15,11 @@ import type { IpcRendererEvent } from 'electron';
 import type { TabsContextInterface } from './types';
 import type { TabData } from '@polkadot-live/types/communication';
 
-export const TabsContext = createContext<TabsContextInterface>(
-  defaults.defaultTabsContext
+export const TabsContext = createContext<TabsContextInterface | undefined>(
+  undefined
 );
 
-export const useTabs = () => use(TabsContext);
+export const useTabs = createSafeContextHook(TabsContext, 'TabsContext');
 
 export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
   const [activeId, setActiveId] = useState<number | null>(null);

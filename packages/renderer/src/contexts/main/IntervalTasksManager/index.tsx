@@ -7,22 +7,23 @@ import {
   IntervalsController,
 } from '@polkadot-live/core';
 import { Flip, toast } from 'react-toastify';
-import { createContext, useContext } from 'react';
+import { createContext } from 'react';
 import { useConnections } from '@ren/contexts/common';
 import { useManage, useIntervalSubscriptions } from '@ren/contexts/main';
 import type { AnyFunction } from '@polkadot-live/types/misc';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { IntervalTasksManagerContextInterface } from './types';
 import type { ReactNode } from 'react';
-import * as defaults from './defaults';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 
-export const IntervalTasksManagerContext =
-  createContext<IntervalTasksManagerContextInterface>(
-    defaults.defaultIntervalTasksManagerContext
-  );
+export const IntervalTasksManagerContext = createContext<
+  IntervalTasksManagerContextInterface | undefined
+>(undefined);
 
-export const useIntervalTasksManager = () =>
-  useContext(IntervalTasksManagerContext);
+export const useIntervalTasksManager = createSafeContextHook(
+  IntervalTasksManagerContext,
+  'IntervalTasksManagerContext'
+);
 
 export const IntervalTasksManagerProvider = ({
   children,

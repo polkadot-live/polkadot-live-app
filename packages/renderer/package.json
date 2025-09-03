@@ -29,9 +29,5 @@
     "sass": "^1.87.0",
     "sass-loader": "^16.0.5"
   },
-  "resolutions": {
-    "react": "18.2.0",
-    "react-dom": "18.2.0"
-  },
   "packageManager": "yarn@4.0.2"
 }

@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './defaults';
-import { useState, createContext, useContext, useRef, useEffect } from 'react';
+import { useState, createContext, useRef, useEffect } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import type { ReactNode } from 'react';
 import type {
   IntervalSubscription,
@@ -12,13 +12,13 @@ import { SubscriptionsController } from '@polkadot-live/core';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ManageContextInterface } from './types';
 
-// Hook to manage context.
-export const useManage = () => useContext(ManageContext);
-
 // Manage context.
-export const ManageContext = createContext<ManageContextInterface>(
-  defaults.defaultManageContext
+export const ManageContext = createContext<ManageContextInterface | undefined>(
+  undefined
 );
+
+// Hook to manage context.
+export const useManage = createSafeContextHook(ManageContext, 'ManageContext');
 
 // Manage context provider.
 export const ManageProvider = ({ children }: { children: ReactNode }) => {

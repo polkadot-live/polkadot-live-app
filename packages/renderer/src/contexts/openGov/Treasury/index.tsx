@@ -1,11 +1,11 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './default';
 import BigNumber from 'bignumber.js';
 import { StatemintAssets } from '@polkadot-live/consts/treasury';
 import { ConfigOpenGov, formatBlocksToTime } from '@polkadot-live/core';
-import { createContext, use, useRef, useState } from 'react';
+import { createContext, useRef, useState } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import { rmCommas } from '@w3ux/utils';
 import { chainCurrency, chainUnits } from '@polkadot-live/consts/chains';
 import type { AnyData } from '@polkadot-live/types/misc';
@@ -16,11 +16,14 @@ import type {
 } from '@polkadot-live/types/treasury';
 import type { TreasuryContextInterface } from './types';
 
-export const TreasuryContext = createContext<TreasuryContextInterface>(
-  defaults.defaultTreasuryContext
-);
+export const TreasuryContext = createContext<
+  TreasuryContextInterface | undefined
+>(undefined);
 
-export const useTreasury = () => use(TreasuryContext);
+export const useTreasury = createSafeContextHook(
+  TreasuryContext,
+  'TreasuryContext'
+);
 
 export const TreasuryProvider = ({
   children,

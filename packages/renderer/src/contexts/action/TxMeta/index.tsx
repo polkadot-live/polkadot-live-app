@@ -3,8 +3,7 @@
 
 import * as wc from '@polkadot-live/consts/walletConnect';
 import { ConfigAction, ExtrinsicError, generateUID } from '@polkadot-live/core';
-import React, { createContext, use, useEffect, useRef, useState } from 'react';
-import * as defaults from './defaults';
+import React, { createContext, useEffect, useRef, useState } from 'react';
 import type { AnyJson } from '@polkadot-live/types/misc';
 import type { TxMetaContextInterface } from './types';
 import type {
@@ -24,17 +23,17 @@ import {
   SignLedgerOverlay,
 } from '@ren/screens/Action/Overlays';
 import { useOverlay } from '@polkadot-live/ui/contexts';
-import { renderToast } from '@polkadot-live/ui/utils';
+import { createSafeContextHook, renderToast } from '@polkadot-live/ui/utils';
 import { WalletConnectModal } from '@walletconnect/modal';
 import { ChainIcon } from '@polkadot-live/ui/components';
 
 const PAGINATION_ITEMS_PER_PAGE = 10;
 
-export const TxMetaContext = createContext<TxMetaContextInterface>(
-  defaults.defaultTxMeta
+export const TxMetaContext = createContext<TxMetaContextInterface | undefined>(
+  undefined
 );
 
-export const useTxMeta = () => use(TxMetaContext);
+export const useTxMeta = createSafeContextHook(TxMetaContext, 'TxMetaContext');
 
 export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   const { openOverlayWith } = useOverlay();

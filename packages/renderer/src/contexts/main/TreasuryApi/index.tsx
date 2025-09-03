@@ -1,12 +1,12 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './defaults';
 import BigNumber from 'bignumber.js';
 import { ConfigRenderer, APIsController } from '@polkadot-live/core';
 import { chainUnits } from '@polkadot-live/consts/chains';
 import { concatU8a, encodeAddress, hexToU8a, stringToU8a } from 'dedot/utils';
-import { createContext, use } from 'react';
+import { createContext } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import { planckToUnit } from '@w3ux/utils';
 import { TreasuryAccounts } from '@polkadot-live/consts/treasury';
 
@@ -24,11 +24,14 @@ import type {
   DedotOpenGovClient,
 } from '@polkadot-live/types/apis';
 
-export const TreasuryApiContext = createContext<TreasuryApiContextInterface>(
-  defaults.defaultTreasuryApiContext
-);
+export const TreasuryApiContext = createContext<
+  TreasuryApiContextInterface | undefined
+>(undefined);
 
-export const useTreasuryApi = () => use(TreasuryApiContext);
+export const useTreasuryApi = createSafeContextHook(
+  TreasuryApiContext,
+  'TreasuryApiContext'
+);
 
 export const TreasuryApiProvider = ({
   children,

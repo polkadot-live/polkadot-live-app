@@ -15,7 +15,7 @@ export interface SideNavProps {
 }
 
 export interface NavItemProps {
-  children?: JSX.Element;
+  children?: React.JSX.Element;
   icon?: IconProp;
   label?: string;
   id: number;

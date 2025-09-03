@@ -1,16 +1,15 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './defaults';
 import * as wc from '@polkadot-live/consts/walletConnect';
-
 import { ChainList } from '@polkadot-live/consts/chains';
 import {
   ConfigRenderer,
   ExtrinsicsController,
   WcError,
 } from '@polkadot-live/core';
-import { createContext, use, useEffect, useRef } from 'react';
+import { createContext, useEffect, useRef } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import { decodeAddress, encodeAddress, u8aToHex } from 'dedot/utils';
 import { useConnections } from '@ren/contexts/common';
 import { getSdkError } from '@walletconnect/utils';
@@ -26,12 +25,14 @@ import type {
   WcSelectNetwork,
 } from '@polkadot-live/types/walletConnect';
 
-export const WalletConnectContext =
-  createContext<WalletConnectContextInterface>(
-    defaults.defaultWalletConnectContext
-  );
+export const WalletConnectContext = createContext<
+  WalletConnectContextInterface | undefined
+>(undefined);
 
-export const useWalletConnect = () => use(WalletConnectContext);
+export const useWalletConnect = createSafeContextHook(
+  WalletConnectContext,
+  'WalletConnectContext'
+);
 
 export const WalletConnectProvider = ({
   children,

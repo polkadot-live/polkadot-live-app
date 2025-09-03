@@ -2,19 +2,22 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ConfigRenderer } from '@polkadot-live/core';
-import { createContext, use } from 'react';
-import { defaultCogMenuContext } from './defaults';
+import { createContext } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import { useAppSettings, useBootstrapping } from '@ren/contexts/main';
 import { useConnections, useHelp } from '@ren/contexts/common';
 import { Flip, toast } from 'react-toastify';
 import type { CogMenuContextInterface } from './types';
 import type { MenuItemData } from '@polkadot-live/ui/components';
 
-export const CogMenuContext = createContext<CogMenuContextInterface>(
-  defaultCogMenuContext
-);
+export const CogMenuContext = createContext<
+  CogMenuContextInterface | undefined
+>(undefined);
 
-export const useCogMenu = () => use(CogMenuContext);
+export const useCogMenu = createSafeContextHook(
+  CogMenuContext,
+  'CogMenuContext'
+);
 
 export const CogMenuProvider = ({
   children,

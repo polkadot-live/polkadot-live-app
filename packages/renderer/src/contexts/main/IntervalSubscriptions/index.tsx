@@ -1,18 +1,20 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './defaults';
-import { createContext, use, useState } from 'react';
+import { createContext, useState } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { IntervalSubscriptionsContextInterface } from './types';
 
-export const IntervalSubscriptionsContext =
-  createContext<IntervalSubscriptionsContextInterface>(
-    defaults.defaultIntervalSubscriptionsContext
-  );
+export const IntervalSubscriptionsContext = createContext<
+  IntervalSubscriptionsContextInterface | undefined
+>(undefined);
 
-export const useIntervalSubscriptions = () => use(IntervalSubscriptionsContext);
+export const useIntervalSubscriptions = createSafeContextHook(
+  IntervalSubscriptionsContext,
+  'IntervalSubscriptionsContext'
+);
 
 export const IntervalSubscriptionsProvider = ({
   children,

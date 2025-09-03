@@ -11,8 +11,8 @@ import {
   getOnlineStatus,
 } from '@polkadot-live/core';
 
-import React, { createContext, use, useEffect, useRef, useState } from 'react';
-import { defaultBootstrappingContext } from './default';
+import React, { createContext, useEffect, useRef, useState } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import { setStateWithRef } from '@w3ux/utils';
 import { startWithWorker } from 'dedot/smoldot/with-worker';
 import { useConnections } from '@ren/contexts/common';
@@ -22,11 +22,14 @@ import type { BootstrappingInterface } from './types';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { IpcTask } from '@polkadot-live/types/communication';
 
-export const BootstrappingContext = createContext<BootstrappingInterface>(
-  defaultBootstrappingContext
-);
+export const BootstrappingContext = createContext<
+  BootstrappingInterface | undefined
+>(undefined);
 
-export const useBootstrapping = () => use(BootstrappingContext);
+export const useBootstrapping = createSafeContextHook(
+  BootstrappingContext,
+  'BootstrappingContext'
+);
 
 export const BootstrappingProvider = ({
   children,

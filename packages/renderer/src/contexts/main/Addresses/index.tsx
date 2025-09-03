@@ -1,9 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './defaults';
 import { AccountsController } from '@polkadot-live/core';
-import { use, createContext, useState, useRef, useEffect } from 'react';
+import { createContext, useState, useRef, useEffect } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import type { AddressesContextInterface } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
@@ -12,11 +12,14 @@ import type {
   FlattenedAccounts,
 } from '@polkadot-live/types/accounts';
 
-export const AddressesContext = createContext<AddressesContextInterface>(
-  defaults.defaultAddressesContext
-);
+export const AddressesContext = createContext<
+  AddressesContextInterface | undefined
+>(undefined);
 
-export const useAddresses = () => use(AddressesContext);
+export const useAddresses = createSafeContextHook(
+  AddressesContext,
+  'AddressesContext'
+);
 
 export const AddressesProvider = ({
   children,

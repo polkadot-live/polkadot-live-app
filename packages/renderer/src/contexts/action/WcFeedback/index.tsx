@@ -1,16 +1,19 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './defaults';
-import { createContext, use, useState } from 'react';
+import { createContext, useState } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import type { WalletConnectMeta } from '@polkadot-live/types/walletConnect';
 import type { WcFeedbackContextInterface } from './types';
 
-export const WcFeedbackContext = createContext<WcFeedbackContextInterface>(
-  defaults.defaultWcFeedbackContext
-);
+export const WcFeedbackContext = createContext<
+  WcFeedbackContextInterface | undefined
+>(undefined);
 
-export const useWcFeedback = () => use(WcFeedbackContext);
+export const useWcFeedback = createSafeContextHook(
+  WcFeedbackContext,
+  'WcFeedbackContext'
+);
 
 export const WcFeedbackProvider = ({
   children,

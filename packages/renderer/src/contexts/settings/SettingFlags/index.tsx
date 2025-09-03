@@ -1,18 +1,21 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as defaults from './defaults';
-import { createContext, use, useEffect, useRef, useState } from 'react';
+import { createContext, useEffect, useRef, useState } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import { getDefaultSettings } from '@polkadot-live/consts/settings';
 import { setStateWithRef } from '@w3ux/utils';
 import type { SettingFlagsContextInterface } from './types';
 import type { SettingKey, SettingItem } from '@polkadot-live/types/settings';
 
-export const SettingFlagsContext = createContext<SettingFlagsContextInterface>(
-  defaults.defaultSettingFlagsContext
-);
+export const SettingFlagsContext = createContext<
+  SettingFlagsContextInterface | undefined
+>(undefined);
 
-export const useSettingFlags = () => use(SettingFlagsContext);
+export const useSettingFlags = createSafeContextHook(
+  SettingFlagsContext,
+  'SettingFlagsContext'
+);
 
 export const SettingFlagsProvider = ({
   children,

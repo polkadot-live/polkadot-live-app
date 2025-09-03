@@ -3,8 +3,8 @@
 
 /// Dependencies.
 import * as Core from '@polkadot-live/core';
-import { createContext, use } from 'react';
-import { defaultDataBackupContext } from './default';
+import { createContext } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import {
   AccountsController,
   IntervalsController,
@@ -35,11 +35,14 @@ import type {
   SubscriptionTask,
 } from '@polkadot-live/types/subscriptions';
 
-export const DataBackupContext = createContext<DataBackupContextInterface>(
-  defaultDataBackupContext
-);
+export const DataBackupContext = createContext<
+  DataBackupContextInterface | undefined
+>(undefined);
 
-export const useDataBackup = () => use(DataBackupContext);
+export const useDataBackup = createSafeContextHook(
+  DataBackupContext,
+  'DataBackupContext'
+);
 
 export const DataBackupProvider = ({
   children,

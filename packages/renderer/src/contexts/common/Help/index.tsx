@@ -1,9 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { createContext, use, useEffect, useRef, useState } from 'react';
+import { createContext, useEffect, useRef, useState } from 'react';
+import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import { HelpConfig } from '@polkadot-live/consts/help';
-import * as defaults from './defaults';
 import type {
   HelpContextInterface,
   HelpContextProps,
@@ -11,11 +11,11 @@ import type {
 } from './types';
 import type { HelpItemKey, HelpStatus } from '@polkadot-live/types/help';
 
-export const HelpContext = createContext<HelpContextInterface>(
-  defaults.defaultHelpContext
+export const HelpContext = createContext<HelpContextInterface | undefined>(
+  undefined
 );
 
-export const useHelp = () => use(HelpContext);
+export const useHelp = createSafeContextHook(HelpContext, 'HelpContext');
 
 export const HelpProvider = ({ children }: HelpContextProps) => {
   // Help module state.
