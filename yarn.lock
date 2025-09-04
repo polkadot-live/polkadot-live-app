@@ -2045,8 +2045,6 @@ __metadata:
     "@polkadot-live/types": "workspace:*"
     "@types/auto-launch": "npm:^5.0.2"
     "@types/debug": "npm:^4.1.12"
-    "@types/electron-localshortcut": "npm:^3.1.0"
-    "@types/ip": "npm:^1.1.3"
     debug: "npm:^4.3.4"
   languageName: unknown
   linkType: soft
@@ -4030,15 +4028,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/electron-localshortcut@npm:^3.1.0":
-  version: 3.1.3
-  resolution: "@types/electron-localshortcut@npm:3.1.3"
-  dependencies:
-    electron: "npm:*"
-  checksum: eaf89d15b186ff4c89c3a2ca7bb6c0d61ca900574935ab29aed5faf7796f28ec601fb06e30aa2dc3fae9baaf9e04a62a304ebfeceeb1b71f373c9b0685b81bc4
-  languageName: node
-  linkType: hard
-
 "@types/eslint@npm:^8.4.5":
   version: 8.56.12
   resolution: "@types/eslint@npm:8.56.12"
@@ -4079,15 +4068,6 @@ __metadata:
   version: 4.0.4
   resolution: "@types/http-cache-semantics@npm:4.0.4"
   checksum: 51b72568b4b2863e0fe8d6ce8aad72a784b7510d72dc866215642da51d84945a9459fa89f49ec48f1e9a1752e6a78e85a4cda0ded06b1c73e727610c925f9ce6
-  languageName: node
-  linkType: hard
-
-"@types/ip@npm:^1.1.3":
-  version: 1.1.3
-  resolution: "@types/ip@npm:1.1.3"
-  dependencies:
-    "@types/node": "npm:*"
-  checksum: af576e33830196be01b71c48ad5f83380a1c51d62f394a5601e8c2a5b8b31cf6dc8fe71ac39c38d806bcf1d6f1c5c8205c129eca6b6d168c0df7ab3722df23b9
   languageName: node
   linkType: hard
 
@@ -6525,7 +6505,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:4, debug@npm:^4.0.1, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.3.1, debug@npm:^4.3.2, debug@npm:^4.3.3, debug@npm:^4.3.4, debug@npm:^4.4.0":
+"debug@npm:4, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.3.1, debug@npm:^4.3.2, debug@npm:^4.3.3, debug@npm:^4.3.4, debug@npm:^4.4.0":
   version: 4.4.0
   resolution: "debug@npm:4.4.0"
   dependencies:
@@ -6997,29 +6977,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-is-accelerator@npm:^0.1.0":
-  version: 0.1.2
-  resolution: "electron-is-accelerator@npm:0.1.2"
-  checksum: 120da55c3b581cbca5eccdd80c9099574a7aa0a8ea8b9fd4e5dcd906dcf83308c94587ad771b066cdd073e45e68dbe4c06256602998f16ccafbcfe1cab968718
-  languageName: node
-  linkType: hard
-
 "electron-is-dev@npm:^2.0.0":
   version: 2.0.0
   resolution: "electron-is-dev@npm:2.0.0"
   checksum: aa540115f144f9c8c788e13fc581be7b0f9f83422eecb940af6367c67d63c3a656e03ad9c1138f17bcfbafc9edca8b83f655feff24dead2cc4866169c6e565f9
-  languageName: node
-  linkType: hard
-
-"electron-localshortcut@npm:^3.2.1":
-  version: 3.2.1
-  resolution: "electron-localshortcut@npm:3.2.1"
-  dependencies:
-    debug: "npm:^4.0.1"
-    electron-is-accelerator: "npm:^0.1.0"
-    keyboardevent-from-electron-accelerator: "npm:^2.0.0"
-    keyboardevents-areequal: "npm:^0.2.1"
-  checksum: 6490a1dd0155926d5664500d45a5acb4771ba96e3ad4a878367e24ab96096c8824197cf3e2890a4f51b0307665afe680fe5f22dae2e4ba781cf32ddab9dcc335
   languageName: node
   linkType: hard
 
@@ -7078,29 +7039,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:*":
-  version: 36.1.0
-  resolution: "electron@npm:36.1.0"
+"electron@npm:^37.4.0":
+  version: 37.4.0
+  resolution: "electron@npm:37.4.0"
   dependencies:
     "@electron/get": "npm:^2.0.0"
     "@types/node": "npm:^22.7.7"
     extract-zip: "npm:^2.0.1"
   bin:
     electron: cli.js
-  checksum: 850e7ee65a86e66290bdf9e99902d8d862d568e805ac2749e599f582ba48e384d834559b6ee0bafd845416438a335f8b23fbd55043739d8782434b21fc69d963
-  languageName: node
-  linkType: hard
-
-"electron@npm:^35.2.1":
-  version: 35.2.2
-  resolution: "electron@npm:35.2.2"
-  dependencies:
-    "@electron/get": "npm:^2.0.0"
-    "@types/node": "npm:^22.7.7"
-    extract-zip: "npm:^2.0.1"
-  bin:
-    electron: cli.js
-  checksum: 54f9dac6b7fe6ed3da6aeb72249ec7e2164ae05170cf1e97f5b196d966dc4eb18de012dfec28d18157f6406db33ba446c11b3a9d158d8b20148698241ae7a2da
+  checksum: 92a0c41190e234d302bc612af6cce9af08cd07f6699c1ff21a9365297e73dc9d88c6c4c25ddabf352447e3e555878d2ab0f2f31a14e210dda6de74d2787ff323
   languageName: node
   linkType: hard
 
@@ -9532,20 +9480,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"keyboardevent-from-electron-accelerator@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "keyboardevent-from-electron-accelerator@npm:2.0.0"
-  checksum: 94bd9da6eb80145b36f336adb3f0a55cc8fdf0138f0df3028feb30d790d0727f8de27f040278805a499cc61dba816c8fab012e7f76c2495033d2fd7c2762f309
-  languageName: node
-  linkType: hard
-
-"keyboardevents-areequal@npm:^0.2.1":
-  version: 0.2.2
-  resolution: "keyboardevents-areequal@npm:0.2.2"
-  checksum: 1612c2aa52001163b2517ef6c0ea9abf20117e206e6796ba15eb99c0ae331a8826ab60a18e7ddb8ed0e15272af64d3b14383d2ae832beaa2f68548c1c53e4fa6
-  languageName: node
-  linkType: hard
-
 "keyv@npm:^4.0.0, keyv@npm:^4.5.3":
   version: 4.5.4
   resolution: "keyv@npm:4.5.4"
@@ -11229,9 +11163,8 @@ __metadata:
     cross-env: "npm:^7.0.3"
     date-fns: "npm:^3.6.0"
     dedot: "npm:^0.15.2"
-    electron: "npm:^35.2.1"
+    electron: "npm:^37.4.0"
     electron-builder: "npm:26.0.12"
-    electron-localshortcut: "npm:^3.2.1"
     electron-squirrel-startup: "npm:^1.0.1"
     electron-store: "npm:^8.1.0"
     electron-unhandled: "npm:^4.0.1"
