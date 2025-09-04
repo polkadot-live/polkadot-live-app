@@ -73,6 +73,7 @@ export class BackupController {
         SharedState.set('backup:exporting', false);
         return { result: true, msg: 'success' };
       } catch (err) {
+        console.error(err);
         SharedState.set('backup:exporting', false);
         return { result: false, msg: 'error' };
       }
@@ -132,6 +133,7 @@ export class BackupController {
         });
         return { result: true, msg: 'success', data: { serialized } };
       } catch (err) {
+        console.error(err);
         return { result: false, msg: 'error' };
       }
     } else {

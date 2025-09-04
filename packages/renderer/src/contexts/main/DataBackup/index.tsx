@@ -135,6 +135,7 @@ export const DataBackupProvider = ({
             text: 'Data imported successfully.',
           });
         } catch (err) {
+          console.error(err);
           Core.postToSettings('settings:render:toast', {
             success: false,
             text: 'Error parsing JSON.',
