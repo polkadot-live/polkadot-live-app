@@ -18,7 +18,7 @@
     "@polkadot-live/types": "workspace:*",
     "@types/auto-launch": "^5.0.2",
     "@types/debug": "^4.1.12",
-    "debug": "^4.3.4"
+    "debug": "^4.4.1"
   },
   "packageManager": "yarn@4.0.2"
 }
