@@ -15,6 +15,7 @@
     "build:core": "nx build:dev @polkadot-live/core",
     "build:ui": "nx build:dev @polkadot-live/ui",
     "lint": "nx run-many -t lint",
+    "lint:check": "eslint . --ext .js,.ts,.tsx,.jsx",
     "typecheck": "nx run-many -t typecheck",
     "clear:core": "nx clear:dist @polkadot-live/core",
     "clear:dist": "nx run-many -t clear:dist",
