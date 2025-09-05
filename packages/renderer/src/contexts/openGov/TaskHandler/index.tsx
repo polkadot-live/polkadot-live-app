@@ -3,9 +3,8 @@
 
 import { ConfigOpenGov } from '@polkadot-live/core';
 import { createContext } from 'react';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import { createSafeContextHook, renderToast } from '@polkadot-live/ui/utils';
 import { useReferendaSubscriptions } from '../ReferendaSubscriptions';
-import { renderToast } from '@polkadot-live/ui/utils';
 import type { ReferendaInfo } from '@polkadot-live/types/openGov';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { TaskHandlerContextInterface } from './types';

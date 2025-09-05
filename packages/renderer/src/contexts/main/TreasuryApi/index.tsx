@@ -72,6 +72,7 @@ export const TreasuryApiProvider = ({
         }
       }
     } catch (e) {
+      console.error(e);
       postTreasuryInfo(null);
     }
   };

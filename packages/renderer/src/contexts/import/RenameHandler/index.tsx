@@ -3,11 +3,14 @@
 
 import { postRenameAccount, renameAccountInStore } from '@polkadot-live/core';
 import { createContext } from 'react';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import {
+  createSafeContextHook,
+  renderToast,
+  validateAccountName,
+} from '@polkadot-live/ui/utils';
 import { useAddresses } from '@ren/contexts/import/Addresses';
-import { renderToast, validateAccountName } from '@polkadot-live/ui/utils';
-import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';
 import type { RenameHandlerContextInterface } from './types';
+import type { ImportedGenericAccount } from 'packages/types/src';
 
 export const RenameHandlerContext = createContext<
   RenameHandlerContextInterface | undefined

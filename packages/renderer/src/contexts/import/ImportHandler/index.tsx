@@ -7,9 +7,8 @@ import {
   getSupportedLedgerChains,
 } from '@polkadot-live/consts/chains';
 import { createContext } from 'react';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import { createSafeContextHook, renderToast } from '@polkadot-live/ui/utils';
 import { decodeAddress, encodeAddress, u8aToHex } from 'dedot/utils';
-import { renderToast } from '@polkadot-live/ui/utils';
 import { useAccountStatuses, useAddresses } from '@ren/contexts/import';
 import { useConnections } from '@ren/contexts/common';
 import type { ChainID } from '@polkadot-live/types/chains';

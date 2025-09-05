@@ -43,11 +43,6 @@ import type { LedgerTask } from '@polkadot-live/types/ledger';
 
 const debug = MainDebug;
 
-// Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (require('electron-squirrel-startup')) {
-  app.quit();
-}
-
 // Hide application menu (mac OS) if DEBUG env variable doesn't exist.
 // NOTE: Showing window on all workspaces disables the application menu.
 if (!process.env.DEBUG) {
