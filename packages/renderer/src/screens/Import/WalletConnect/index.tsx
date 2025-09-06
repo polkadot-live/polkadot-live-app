@@ -16,7 +16,6 @@ export const ImportWalletConnect = ({
   const { getAccounts } = useAddresses();
   const genericAccounts = getAccounts('wallet-connect');
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [showImportUi, setShowImportUi] = useState<boolean>(
     genericAccounts.length === 0
   );

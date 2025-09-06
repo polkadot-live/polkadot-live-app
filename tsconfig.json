@@ -27,7 +27,7 @@
     "noEmitOnError": true,
   },
   "include": [
-    ".eslintrc.cjs",
+    "eslint.config.cjs",
     "packages/**/*.ts",
     "packages/**/*.js",
     "packages/**/*.tsx",
