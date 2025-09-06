@@ -50,10 +50,7 @@ export const checkAccountWithProperties = (
   }
 
   // eslint-disable-next-line prettier/prettier
-  const {
-    chainId,
-    account: { address },
-  } = entry.task;
+  const { chainId, account: { address } } = entry.task;
   const account = AccountsController.get(chainId, address);
 
   if (account === undefined) {
