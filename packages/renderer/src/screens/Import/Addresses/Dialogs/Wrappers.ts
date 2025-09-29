@@ -4,7 +4,7 @@
 import * as Style from '@polkadot-live/ui/styles';
 import * as Toggle from '@radix-ui/react-toggle';
 import styled from 'styled-components';
-import type { darkTheme } from '@ren/theme/variables';
+import type { darkTheme } from '@polkadot-live/styles/theme/variables';
 
 export const ActionBtn = styled.button.attrs<{ $theme: typeof darkTheme }>(
   (props) => ({

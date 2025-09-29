@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as themeVariables from '@ren/theme/variables';
+import * as themeVariables from '@polkadot-live/styles/theme/variables';
 import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import { initSharedState } from '@polkadot-live/consts/sharedState';
 import { createContext, useEffect, useRef, useState } from 'react';

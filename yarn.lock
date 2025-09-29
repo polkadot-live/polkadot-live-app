@@ -2351,6 +2351,7 @@ __metadata:
     "@polkadot-live/consts": "workspace:*"
     "@polkadot-live/core": "workspace:*"
     "@polkadot-live/preload": "workspace:*"
+    "@polkadot-live/styles": "workspace:*"
     "@polkadot-live/types": "workspace:*"
     "@polkadot-live/ui": "workspace:*"
     "@polkadot/types": "npm:^14.3.1"
@@ -2358,6 +2359,12 @@ __metadata:
     "@types/styled-components": "npm:^5.1.34"
     sass: "npm:^1.87.0"
     sass-loader: "npm:^16.0.5"
+  languageName: unknown
+  linkType: soft
+
+"@polkadot-live/styles@workspace:*, @polkadot-live/styles@workspace:packages/styles":
+  version: 0.0.0-use.local
+  resolution: "@polkadot-live/styles@workspace:packages/styles"
   languageName: unknown
   linkType: soft
 

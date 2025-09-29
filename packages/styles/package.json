@@ -1,0 +1,17 @@
+{
+  "name": "@polkadot-live/styles",
+  "version": "0.11.0-beta",
+  "type": "module",
+  "private": true,
+  "exports": {
+    "./accents/*": "./src/accents/*",
+    "./partials/*": "./src/partials/*",
+    "./theme/variables": "./src/theme/variables.ts",
+    "./theme/*": "./src/theme/*"
+  },
+  "scripts": {
+    "lint": "eslint --fix ./src",
+    "typecheck": "tsc --noEmit"
+  },
+  "packageManager": "yarn@4.0.2"
+}
