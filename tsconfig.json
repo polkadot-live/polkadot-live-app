@@ -22,6 +22,7 @@
     "paths": {
       "@/*": ["./packages/main/src/*"],
       "@ren/*": ["./packages/renderer/src/*"],
+      "@ext/*": ["./packages/extension/src/*"],
     },
     "declarationMap": false,
     "noEmitOnError": true,

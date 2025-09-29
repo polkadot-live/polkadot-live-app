@@ -1,0 +1,18 @@
+{
+  "name": "@polkadot-live/extension",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build"
+  },
+  "devDependencies": {
+    "@crxjs/vite-plugin": "^2.0.3",
+    "@types/chrome": "^0.1.1",
+    "@types/node": "^24.0.15",
+    "@vitejs/plugin-react": "^4.7.0",
+    "vite-plugin-zip-pack": "^1.2.4"
+  },
+  "packageManager": "yarn@4.0.2"
+}

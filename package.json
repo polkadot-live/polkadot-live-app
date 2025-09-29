@@ -16,7 +16,7 @@
     "build:ui": "nx build:dev @polkadot-live/ui",
     "lint": "nx run-many -t lint",
     "lint:check": "eslint .",
-    "typecheck": "nx run-many -t typecheck",
+    "typecheck": "tsc --noEmit",
     "clear:core": "nx clear:dist @polkadot-live/core",
     "clear:dist": "nx run-many -t clear:dist",
     "clear:ui": "nx clear @polkadot-live/ui",
@@ -28,7 +28,9 @@
     "package:dev": "cross-env MODE=development yarn run build && electron-builder --config scripts/electron-builder.config.dev.mjs",
     "package:win": "cross-env MODE=production yarn run build && electron-builder build --win --config scripts/electron-builder.config.prod.mjs",
     "graph": "nx graph",
-    "test": "nx run-many -t test"
+    "test": "nx run-many -t test",
+    "ext:dev": "nx dev @polkadot-live/extension",
+    "ext:build": "cross-env NODE_ENV=production nx build @polkadot-live/extension"
   },
   "engines": {
     "node": ">=23.1.0"
@@ -123,11 +125,11 @@
     "prettier-plugin-organize-imports": "^3.2.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2",
-    "vite": "^6.2.4",
+    "vite": "^7.0.5",
     "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-svgr": "^4.3.0",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.1.2"
+    "vitest": "^3.2.4"
   },
   "packageManager": "yarn@4.0.2"
 }
