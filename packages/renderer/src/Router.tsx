@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { MainInterfaceWrapper } from '@ren/Wrappers';
+import { MainInterfaceWrapper } from '@polkadot-live/styles/wrappers';
 import { Overlay, Help } from '@polkadot-live/ui/components';
 import { useEffect, useState } from 'react';
 import { HashRouter, Route, Routes } from 'react-router';

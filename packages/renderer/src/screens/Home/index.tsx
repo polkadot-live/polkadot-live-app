@@ -23,7 +23,7 @@ import { Manage } from './Manage';
 import { Send } from './Send';
 import { Summary } from '@ren/screens/Home/Summary';
 import { FixedFlexWrapper, IconWrapper } from './Wrappers';
-import { BodyInterfaceWrapper } from '@ren/Wrappers';
+import { BodyInterfaceWrapper } from '@polkadot-live/styles/wrappers';
 import { ScrollWrapper } from '@polkadot-live/ui/styles';
 import { useSideNav } from '@polkadot-live/ui/contexts';
 import PolkadotIcon from '@polkadot-live/ui/svg/polkadotIcon.svg?react';

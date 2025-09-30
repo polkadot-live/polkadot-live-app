@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import './App.scss';
+import { MainInterfaceWrapper } from '@polkadot-live/styles/wrappers';
 import type { SettingKey } from '@polkadot-live/types/settings';
 
 export default function App() {
@@ -25,12 +26,14 @@ export default function App() {
   };
 
   return (
-    <div className={`theme-polkadot-relay theme-${theme} container`}>
+    <MainInterfaceWrapper
+      className={`theme-polkadot-relay theme-${theme} container`}
+    >
       <div className="placeholder">
-        <h1>Polkadot Live Popup</h1>
+        <h1>Polkadot Live</h1>
         <h2>{theme}</h2>
         <button onClick={onOpenTab}>Open Tab</button>
       </div>
-    </div>
+    </MainInterfaceWrapper>
   );
 }
