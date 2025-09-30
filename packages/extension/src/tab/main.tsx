@@ -4,7 +4,15 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
-import './index.css';
+
+// Network themes.
+import '@polkadot-live/styles/accents/polkadot-relay.css';
+
+// App styles.
+import '@polkadot-live/styles/theme/theme.scss';
+import '@polkadot-live/styles/theme/index.scss';
+import '@polkadot-live/styles/partials/utils.scss';
+import '@polkadot-live/styles/partials/dialog.scss';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

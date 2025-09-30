@@ -7,12 +7,21 @@ import zip from 'vite-plugin-zip-pack';
 import { crx } from '@crxjs/vite-plugin';
 import { defineConfig } from 'vite';
 import { version } from './package.json';
-import { resolve } from 'node:path';
+import { join, resolve } from 'node:path';
+
+const PACKAGE_ROOT = __dirname;
+const PROJECT_ROOT = join(PACKAGE_ROOT, '../..');
 
 export default defineConfig({
   resolve: {
     alias: {
       '@ext': `${resolve(__dirname, 'src')}`,
+      '@polkadot-live/styles': resolve(
+        PROJECT_ROOT,
+        'packages',
+        'styles',
+        'src'
+      ),
     },
   },
   plugins: [

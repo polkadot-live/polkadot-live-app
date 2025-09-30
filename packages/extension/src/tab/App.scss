@@ -4,6 +4,16 @@ SPDX-License-Identifier: GPL-3.0-only */
 #root {
   width: 100%;
 }
+.container {
+  background-color: var(--background-surface);
+  padding: 2rem;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  flex: 1;
+}
 .placeholder {
   width: 100%;
   display: flex;

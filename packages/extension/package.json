@@ -7,6 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build"
   },
+  "dependencies": {
+    "@polkadot-live/styles": "workspace:*"
+  },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.3",
     "@types/chrome": "^0.1.1",

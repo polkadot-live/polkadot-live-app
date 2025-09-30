@@ -18,6 +18,9 @@
     "isolatedModules": true,
     "skipLibCheck": true,
     "noUncheckedSideEffectImports": true,
+    "paths": {
+      "@polkadot-live/styles/*": ["./packages/styles/src/*"],
+    },
   },
   "include": ["src"]
 }

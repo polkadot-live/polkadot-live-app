@@ -2317,6 +2317,7 @@ __metadata:
   resolution: "@polkadot-live/extension@workspace:packages/extension"
   dependencies:
     "@crxjs/vite-plugin": "npm:^2.0.3"
+    "@polkadot-live/styles": "workspace:*"
     "@types/chrome": "npm:^0.1.1"
     "@types/node": "npm:^24.0.15"
     "@vitejs/plugin-react": "npm:^4.7.0"
