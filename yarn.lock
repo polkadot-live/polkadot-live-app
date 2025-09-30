@@ -2317,10 +2317,13 @@ __metadata:
   resolution: "@polkadot-live/extension@workspace:packages/extension"
   dependencies:
     "@crxjs/vite-plugin": "npm:^2.0.3"
+    "@polkadot-live/consts": "workspace:*"
     "@polkadot-live/styles": "workspace:*"
+    "@polkadot-live/types": "workspace:*"
     "@types/chrome": "npm:^0.1.1"
     "@types/node": "npm:^24.0.15"
     "@vitejs/plugin-react": "npm:^4.7.0"
+    idb: "npm:^8.0.3"
     vite-plugin-zip-pack: "npm:^1.2.4"
   languageName: unknown
   linkType: soft
@@ -9417,6 +9420,13 @@ __metadata:
   version: 6.2.1
   resolution: "idb-keyval@npm:6.2.1"
   checksum: 9f0c83703a365e00bd0b4ed6380ce509a06dedfc6ec39b2ba5740085069fd2f2ff5c14ba19356488e3612a2f9c49985971982d836460a982a5d0b4019eeba48a
+  languageName: node
+  linkType: hard
+
+"idb@npm:^8.0.3":
+  version: 8.0.3
+  resolution: "idb@npm:8.0.3"
+  checksum: 421cd9a3281b7564528857031cc33fd9e95753f8191e483054cb25d1ceea7303a0d1462f4f69f5b41606f0f066156999e067478abf2460dfcf9cab80dae2a2b2
   languageName: node
   linkType: hard
 

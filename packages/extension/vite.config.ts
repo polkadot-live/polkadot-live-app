@@ -11,17 +11,15 @@ import { join, resolve } from 'node:path';
 
 const PACKAGE_ROOT = __dirname;
 const PROJECT_ROOT = join(PACKAGE_ROOT, '../..');
+const PR = PROJECT_ROOT;
 
 export default defineConfig({
   resolve: {
     alias: {
       '@ext': `${resolve(__dirname, 'src')}`,
-      '@polkadot-live/styles': resolve(
-        PROJECT_ROOT,
-        'packages',
-        'styles',
-        'src'
-      ),
+      '@polkadot-live/consts': resolve(PR, 'packages', 'consts', 'src'),
+      '@polkadot-live/styles': resolve(PR, 'packages', 'styles', 'src'),
+      '@polkadot-live/types': resolve(PR, 'packages', 'types', 'src'),
     },
   },
   plugins: [

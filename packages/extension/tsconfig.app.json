@@ -18,8 +18,11 @@
     "isolatedModules": true,
     "skipLibCheck": true,
     "noUncheckedSideEffectImports": true,
+    "baseUrl": ".",
     "paths": {
-      "@polkadot-live/styles/*": ["./packages/styles/src/*"],
+      "@polkadot-live/consts/*": ["../consts/src/*"],
+      "@polkadot-live/styles/*": ["../styles/src/*"],
+      "@polkadot-live/types/*": ["../types/src/*"],
     },
   },
   "include": ["src"]

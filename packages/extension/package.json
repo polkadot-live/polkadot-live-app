@@ -8,7 +8,10 @@
     "build": "tsc -b && vite build"
   },
   "dependencies": {
-    "@polkadot-live/styles": "workspace:*"
+    "@polkadot-live/consts": "workspace:*",
+    "@polkadot-live/styles": "workspace:*",
+    "@polkadot-live/types": "workspace:*",
+    "idb": "^8.0.3"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.3",
