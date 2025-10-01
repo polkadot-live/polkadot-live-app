@@ -85,7 +85,7 @@
     "react-toastify": "^11.0.5",
     "smoldot": "^2.0.34",
     "socket.io": "^4.8.1",
-    "styled-components": "^6.1.17",
+    "styled-components": "^6.1.19",
     "svg-inline-loader": "^0.8.2"
   },
   "devDependencies": {

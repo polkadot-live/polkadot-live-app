@@ -11382,7 +11382,7 @@ __metadata:
     react-toastify: "npm:^11.0.5"
     smoldot: "npm:^2.0.34"
     socket.io: "npm:^4.8.1"
-    styled-components: "npm:^6.1.17"
+    styled-components: "npm:^6.1.19"
     svg-inline-loader: "npm:^0.8.2"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.9.2"
@@ -13064,9 +13064,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"styled-components@npm:^6.1.17":
-  version: 6.1.17
-  resolution: "styled-components@npm:6.1.17"
+"styled-components@npm:^6.1.19":
+  version: 6.1.19
+  resolution: "styled-components@npm:6.1.19"
   dependencies:
     "@emotion/is-prop-valid": "npm:1.2.2"
     "@emotion/unitless": "npm:0.8.1"
@@ -13080,7 +13080,7 @@ __metadata:
   peerDependencies:
     react: ">= 16.8.0"
     react-dom: ">= 16.8.0"
-  checksum: 87f35173c5fc2291ddba7ed8224d19fe6872d056a577f55fe130248f5ea23e5c48c012e881fa1ad93df60b56a12c1c2d553f628e204f090189221734927e50b0
+  checksum: 8d20427a5debe54bfa3b55f79af2a3577551ed7f1d1cd34df986b73fd01ac519f9081b7737cc1f76e12fbc483fa50551e55be0bc984296e623cc6a2364697cd8
   languageName: node
   linkType: hard
 
