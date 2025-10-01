@@ -2320,6 +2320,7 @@ __metadata:
     "@polkadot-live/consts": "workspace:*"
     "@polkadot-live/styles": "workspace:*"
     "@polkadot-live/types": "workspace:*"
+    "@polkadot-live/ui": "workspace:*"
     "@types/chrome": "npm:^0.1.1"
     "@types/node": "npm:^24.0.15"
     "@vitejs/plugin-react": "npm:^4.7.0"

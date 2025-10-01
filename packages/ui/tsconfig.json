@@ -17,5 +17,6 @@
     "allowSyntheticDefaultImports": true,
     "types": ["node", "vitest/globals"],
     "removeComments": true,
-  },
+    "rootDir": "."
+  }
 }

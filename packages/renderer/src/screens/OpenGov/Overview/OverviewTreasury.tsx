@@ -6,7 +6,8 @@ import * as Styles from '@polkadot-live/ui/styles';
 
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { TreasuryStats } from '../Wrappers';
-import { useConnections, useHelp } from '@ren/contexts/common';
+import { useConnections } from '@ren/contexts/common';
+import { useHelp } from '@polkadot-live/ui/contexts';
 import { useTreasury } from '@ren/contexts/openGov';
 import type { ChainID } from '@polkadot-live/types/chains';
 

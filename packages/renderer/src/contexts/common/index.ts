@@ -2,4 +2,3 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 export * from './Connections';
-export * from './Help';

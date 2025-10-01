@@ -12,7 +12,7 @@ import {
   useCogMenu,
   useEvents,
 } from '@ren/contexts/main';
-import { useConnections, useHelp } from '@ren/contexts/common';
+import { useConnections } from '@ren/contexts/common';
 import { useInitIpcHandlers } from '@ren/hooks/useInitIpcHandlers';
 import { useMainMessagePorts } from '@ren/hooks/useMainMessagePorts';
 import { Classic } from '@theme-toggles/react';
@@ -25,7 +25,7 @@ import { Summary } from '@ren/screens/Home/Summary';
 import { FixedFlexWrapper, IconWrapper } from './Wrappers';
 import { BodyInterfaceWrapper } from '@polkadot-live/styles/wrappers';
 import { ScrollWrapper } from '@polkadot-live/ui/styles';
-import { useSideNav } from '@polkadot-live/ui/contexts';
+import { useHelp, useSideNav } from '@polkadot-live/ui/contexts';
 import PolkadotIcon from '@polkadot-live/ui/svg/polkadotIcon.svg?react';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { EventCallback } from '@polkadot-live/types/reporter';

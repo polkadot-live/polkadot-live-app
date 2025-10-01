@@ -8,7 +8,8 @@ import {
   useBootstrapping,
   useIntervalTasksManager,
 } from '@ren/contexts/main';
-import { useConnections, useHelp } from '@ren/contexts/common';
+import { useConnections } from '@ren/contexts/common';
+import { useHelp } from '@polkadot-live/ui/contexts';
 import { TaskEntryWrapper } from '../Manage/Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock } from '@fortawesome/free-regular-svg-icons';

@@ -11,6 +11,7 @@
     "@polkadot-live/consts": "workspace:*",
     "@polkadot-live/styles": "workspace:*",
     "@polkadot-live/types": "workspace:*",
+    "@polkadot-live/ui": "workspace:*",
     "idb": "^8.0.3"
   },
   "devDependencies": {

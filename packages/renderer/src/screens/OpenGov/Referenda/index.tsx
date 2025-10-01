@@ -20,7 +20,8 @@ import {
   faCaretRight,
   faEllipsis,
 } from '@fortawesome/free-solid-svg-icons';
-import { useConnections, useHelp } from '@ren/contexts/common';
+import { useConnections } from '@ren/contexts/common';
+import { useHelp } from '@polkadot-live/ui/contexts';
 import { useEffect, useState } from 'react';
 import {
   usePolkassembly,

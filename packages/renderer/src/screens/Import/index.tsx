@@ -14,7 +14,8 @@ import { ImportReadOnly } from './ReadOnly';
 import { ImportWalletConnect } from './WalletConnect';
 import { useImportMessagePorts } from '@ren/hooks/useImportMessagePorts';
 import { useDebug } from '@ren/hooks/useDebug';
-import { useConnections, useHelp } from '@ren/contexts/common';
+import { useConnections } from '@ren/contexts/common';
+import { useHelp } from '@polkadot-live/ui/contexts';
 import { FadeInWrapper } from '@polkadot-live/ui/utils';
 import type { AccountSource } from '@polkadot-live/types/accounts';
 

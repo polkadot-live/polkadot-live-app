@@ -2,11 +2,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useEffect, useState } from 'react';
-import './App.scss';
+import { useHelp } from '@polkadot-live/ui/contexts';
+import { Help } from '@polkadot-live/ui/components';
 import { MainInterfaceWrapper } from '@polkadot-live/styles/wrappers';
+import { ToastContainer } from 'react-toastify';
 import type { SettingKey } from '@polkadot-live/types/settings';
+import './App.scss';
 
 export default function App() {
+  const { status: helpStatus, definition, closeHelp, setStatus } = useHelp();
+
   // TODO: Lift to context.
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
@@ -26,10 +31,15 @@ export default function App() {
   };
 
   return (
-    <MainInterfaceWrapper
-      className={`theme-polkadot-relay theme-${theme} container`}
-    >
-      <div className="placeholder">
+    <MainInterfaceWrapper className={`theme-polkadot-relay theme-${theme}`}>
+      <Help
+        status={helpStatus}
+        definition={definition}
+        closeHelp={closeHelp}
+        setStatus={setStatus}
+      />
+      <ToastContainer stacked />
+      <div className="placeholder container">
         <h1>Polkadot Live</h1>
         <h2>{theme}</h2>
         <button onClick={onOpenTab}>Open Tab</button>

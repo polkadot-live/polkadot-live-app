@@ -9,7 +9,8 @@ import {
   TitleWithOrigin,
 } from './Wrappers';
 import { renderOrigin } from '@polkadot-live/core';
-import { useConnections, useHelp } from '@ren/contexts/common';
+import { useConnections } from '@ren/contexts/common';
+import { useHelp } from '@polkadot-live/ui/contexts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   usePolkassembly,
