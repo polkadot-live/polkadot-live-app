@@ -4,6 +4,9 @@
 import { Providers } from './Providers';
 import { createRoot } from 'react-dom/client';
 
+// Package styles.
+import '@theme-toggles/react/css/Classic.css';
+
 // Library styles.
 import '@polkadot-live/ui/scss/buttons/index.scss';
 import '@polkadot-live/ui/scss/overlay/index.scss';

@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 export interface HeaderProps {
+  appLoading?: boolean;
   showButtons?: boolean;
   showDock?: boolean;
   showMinimize?: boolean;
-  appLoading?: boolean;
   dockToggled?: boolean;
   version?: string;
   ToggleNode?: React.ReactNode;

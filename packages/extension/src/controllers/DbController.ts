@@ -4,6 +4,7 @@
 import { openDB } from 'idb';
 import { getDefaultSettings } from '@polkadot-live/consts/settings';
 import type { DBSchema, IDBPDatabase } from 'idb';
+import type { AnyData } from '@polkadot-live/types/misc';
 
 interface MyDB extends DBSchema {
   settings: {
@@ -40,7 +41,6 @@ export class DbController {
         }
       },
     });
-    console.log('> Database initialized');
   }
 
   /**
@@ -48,5 +48,25 @@ export class DbController {
    */
   static async get(store: Stores, key: string) {
     return this.getDb().get(store, key);
+  }
+
+  /**
+   * Set value in databse.
+   */
+  static async set(store: Stores, key: string, value: AnyData) {
+    await this.getDb().put(store, value, key);
+  }
+
+  /**
+   * Get all objects in a store.
+   */
+  static async getAll(storeName: Stores) {
+    const map = new Map();
+    let cursor = await this.getDb().transaction(storeName).store.openCursor();
+    while (cursor) {
+      map.set(cursor.key, cursor.value);
+      cursor = await cursor.continue();
+    }
+    return JSON.stringify(Array.from(map.entries()));
   }
 }

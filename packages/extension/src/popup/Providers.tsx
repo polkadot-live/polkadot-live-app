@@ -3,6 +3,16 @@
 
 import { HelpProvider } from '@polkadot-live/ui/contexts';
 import { withProviders } from '@polkadot-live/ui/hooks';
+import {
+  AppSettingsProvider,
+  BootstrappingProvider,
+  CogMenuProvider,
+} from './contexts';
 import App from './App';
 
-export const Providers = withProviders(HelpProvider)(App);
+export const Providers = withProviders(
+  BootstrappingProvider,
+  HelpProvider,
+  AppSettingsProvider,
+  CogMenuProvider
+)(App);
