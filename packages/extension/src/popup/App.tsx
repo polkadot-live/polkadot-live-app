@@ -24,10 +24,6 @@ export default function App() {
       />
       <ToastContainer stacked />
       <Home />
-      <div className="placeholder container">
-        <h1>Polkadot Live</h1>
-        <h2>{theme}</h2>
-      </div>
     </MainInterfaceWrapper>
   );
 }

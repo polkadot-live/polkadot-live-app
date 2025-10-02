@@ -58,3 +58,23 @@ export const BodyInterfaceWrapper = styled.div<{
     display: none;
   }
 `;
+
+// Wrapper containing the side nav and main content.
+export const FixedFlexWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  position: fixed;
+  top: 3rem; // header height
+  bottom: 3rem; // footer height
+  left: 0;
+`;
+
+// Main window background icon wrapper.
+export const BackgroundIconWrapper = styled.div`
+  position: absolute;
+  top: 6rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  z-index: 0;
+`;

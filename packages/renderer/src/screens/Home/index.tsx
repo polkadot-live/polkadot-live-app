@@ -22,8 +22,11 @@ import { OpenGov } from './OpenGov';
 import { Manage } from './Manage';
 import { Send } from './Send';
 import { Summary } from '@ren/screens/Home/Summary';
-import { FixedFlexWrapper, IconWrapper } from './Wrappers';
-import { BodyInterfaceWrapper } from '@polkadot-live/styles/wrappers';
+import {
+  BackgroundIconWrapper,
+  BodyInterfaceWrapper,
+  FixedFlexWrapper,
+} from '@polkadot-live/styles/wrappers';
 import { ScrollWrapper } from '@polkadot-live/ui/styles';
 import { useHelp, useSideNav } from '@polkadot-live/ui/contexts';
 import PolkadotIcon from '@polkadot-live/ui/svg/polkadotIcon.svg?react';
@@ -211,9 +214,9 @@ export const Home = () => {
         />
 
         <BodyInterfaceWrapper $maxHeight>
-          <IconWrapper>
+          <BackgroundIconWrapper>
             <PolkadotIcon width={175} opacity={appLoading ? 0.01 : 0.02} />
-          </IconWrapper>
+          </BackgroundIconWrapper>
 
           {appLoading ? (
             <div className="app-loading">

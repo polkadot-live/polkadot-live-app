@@ -3,6 +3,7 @@
 
 import manifest from './manifest.config.js';
 import react from '@vitejs/plugin-react';
+import svgr from 'vite-plugin-svgr';
 import zip from 'vite-plugin-zip-pack';
 import { crx } from '@crxjs/vite-plugin';
 import { defineConfig } from 'vite';
@@ -24,6 +25,7 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    svgr(),
     crx({ manifest }),
     zip({
       outDir: resolve(__dirname, 'release'),
