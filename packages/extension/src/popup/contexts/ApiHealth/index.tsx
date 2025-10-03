@@ -1,13 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import {
-  AccountsController,
-  APIsController,
-  SubscriptionsController,
-} from '@polkadot-live/core';
 import { createContext, useEffect, useState } from 'react';
 import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import type { AnyData } from '@polkadot-live/types/misc';
 import type { ApiConnectResult, NodeEndpoint } from '@polkadot-live/types/apis';
 import type { ApiError } from '@polkadot-live/core';
 import type { ApiHealthContextInterface } from './types';
@@ -41,50 +37,36 @@ export const ApiHealthProvider = ({
    * Attempt connecting to a chain API.
    */
   const startApi = async (chainId: ChainID) => {
-    const { ack } = await APIsController.connectApi(chainId);
-    if (ack === 'success') {
-      await onApiRecover(chainId);
-    }
+    const data = { type: 'api', task: 'startApi', chainId };
+    await chrome.runtime.sendMessage(data);
   };
 
   /**
    * Handle settings a new chain RPC endpoint.
    */
   const onEndpointChange = async (chainId: ChainID, endpoint: NodeEndpoint) => {
-    await APIsController.setEndpoint(chainId, endpoint);
-    await startApi(chainId);
-    SubscriptionsController.syncState();
+    const meta = { chainId, endpoint };
+    const data = { type: 'api', task: 'endpointChange', meta };
+    await chrome.runtime.sendMessage(data);
   };
 
   /**
-   * Handle a recovered chain API connection.
-   */
-  const onApiRecover = async (chainId: ChainID) => {
-    try {
-      if (failedConnections.has(chainId)) {
-        APIsController.failedCache.delete(chainId);
-        APIsController.syncFailedConnections();
-      }
-
-      // Resync accounts and start subscriptions.
-      const res = await APIsController.getConnectedApiOrThrow(chainId);
-      const api = res.getApi();
-
-      await AccountsController.syncAllAccounts(api, chainId);
-      await Promise.all([
-        AccountsController.subscribeAccountsForChain(chainId),
-        SubscriptionsController.resubscribeChain(chainId),
-      ]);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  /**
-   * Cache React setter in APIs controller.
+   * Listen for react state tasks from background worker.
    */
   useEffect(() => {
-    APIsController.setFailedConnections = setFailedConnections;
+    const callback = (message: AnyData) => {
+      const { type, task } = message;
+      if (type === 'api' && task === 'state:failedConnections') {
+        const { ser }: { ser: string } = message;
+        const array: [ChainID, ApiConnectResult<ApiError>][] = JSON.parse(ser);
+        const map = new Map<ChainID, ApiConnectResult<ApiError>>(array);
+        setFailedConnections(map);
+      }
+    };
+    chrome.runtime.onMessage.addListener(callback);
+    return () => {
+      chrome.runtime.onMessage.removeListener(callback);
+    };
   }, []);
 
   return (

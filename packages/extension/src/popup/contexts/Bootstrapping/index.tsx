@@ -35,7 +35,13 @@ export const BootstrappingProvider = ({
    * Initialize application systems.
    */
   const initSystems = async () => {
-    // TODO
+    const data = { type: 'bootstrap', task: 'initSystems' };
+    await chrome.runtime.sendMessage(data);
+  };
+
+  const initSubscriptions = async () => {
+    const data = { type: 'bootstrap', task: 'initSubscriptions' };
+    await chrome.runtime.sendMessage(data);
   };
 
   /**
@@ -43,8 +49,17 @@ export const BootstrappingProvider = ({
    */
   const connectAPIs = async () => {
     if (isConnected) {
-      // TODO
+      const data = { type: 'bootstrap', task: 'connectApis' };
+      await chrome.runtime.sendMessage(data);
     }
+  };
+
+  /**
+   * Disconnect idle APIs after bootstrapping phase.
+   */
+  const disconnectAPIs = async () => {
+    const data = { type: 'bootstrap', task: 'disconnectApis' };
+    await chrome.runtime.sendMessage(data);
   };
 
   /**
@@ -56,8 +71,8 @@ export const BootstrappingProvider = ({
     }
 
     setAppLoading(true);
-    await initSystems();
-    const initTasks: (() => Promise<AnyData>)[] = [connectAPIs];
+    await Promise.all([initSystems(), initSubscriptions()]);
+    const initTasks: (() => Promise<AnyData>)[] = [connectAPIs, disconnectAPIs];
 
     for (const task of initTasks) {
       if (!refAborted.current) {
@@ -85,6 +100,8 @@ export const BootstrappingProvider = ({
     // when connection status goes back online.
     refSwitchingToOnline.current = false;
     setIsOnlineMode(false);
+    const data = { type: 'bootstrap', task: 'closeApis' };
+    await chrome.runtime.sendMessage(data);
   };
 
   /**

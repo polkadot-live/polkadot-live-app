@@ -47,8 +47,16 @@ export class TaskOrchestrator {
     task: SubscriptionTask,
     wrapper: QueryMultiWrapper
   ) {
+    const backend = APIsController.backend;
     const { chainId } = task;
-    const isOnline: boolean = await getOnlineStatus();
+
+    let isOnline: boolean;
+    if (backend === 'electron') {
+      isOnline = await getOnlineStatus();
+    } else {
+      isOnline = navigator.onLine;
+    }
+
     const isRunnable = !APIsController.getFailedChainIds().includes(chainId);
     this.next(task, wrapper);
 

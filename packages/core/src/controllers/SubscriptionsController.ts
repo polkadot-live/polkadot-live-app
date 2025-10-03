@@ -31,6 +31,7 @@ import type {
  */
 
 export class SubscriptionsController {
+  static backend: 'browser' | 'electron';
   static chainSubscriptions = new QueryMultiWrapper();
 
   /**
@@ -52,8 +53,12 @@ export class SubscriptionsController {
    * Sync react state with managed controller data.
    */
   static syncState = () => {
-    this.syncChainSubscriptionsState();
-    this.syncAccountSubscriptionsState();
+    if (this.backend === 'electron') {
+      this.syncChainSubscriptionsState();
+      this.syncAccountSubscriptionsState();
+    } else {
+      // TODO: Sync React state for extension.
+    }
   };
 
   static syncChainSubscriptionsState = () => {
@@ -79,24 +84,32 @@ export class SubscriptionsController {
     const { address, chain } = task.account!;
     const key = `${chain}:${address}`;
 
-    this.setAccountSubscriptions((prev) => {
-      const tasks = prev.get(key);
-      const val = !tasks
-        ? [{ ...task }]
-        : tasks.map((t) => (compareTasks(task, t) ? task : t));
-      return prev.set(key, val);
-    });
-    this.updateRendererdTask(task);
+    if (this.backend === 'electron') {
+      this.setAccountSubscriptions((prev) => {
+        const tasks = prev.get(key);
+        const val = !tasks
+          ? [{ ...task }]
+          : tasks.map((t) => (compareTasks(task, t) ? task : t));
+        return prev.set(key, val);
+      });
+      this.updateRendererdTask(task);
+    } else if (this.backend === 'browser') {
+      // TODO: Update React account task state.
+    }
   };
 
   private static updateChainTaskState = (task: SubscriptionTask) => {
     const key = task.chainId;
-    this.setChainSubscriptions((prev) => {
-      const tasks = prev.get(key)!;
-      const val = tasks.map((t) => (compareTasks(task, t) ? task : t));
-      return prev.set(key, val);
-    });
-    this.updateRendererdTask(task);
+    if (this.backend === 'electron') {
+      this.setChainSubscriptions((prev) => {
+        const tasks = prev.get(key)!;
+        const val = tasks.map((t) => (compareTasks(task, t) ? task : t));
+        return prev.set(key, val);
+      });
+      this.updateRendererdTask(task);
+    } else if (this.backend === 'browser') {
+      // TODO: Update React chain tasks state.
+    }
   };
 
   static updateRendererdTask = (task: SubscriptionTask) => {
@@ -111,12 +124,17 @@ export class SubscriptionsController {
    * @summary Fetch and build persisted chain subscription tasks from store.
    */
   static async initChainSubscriptions() {
-    // Send IPC message to get chain tasks from store.
-    const serialized =
-      (await window.myAPI.sendSubscriptionTask({
-        action: 'subscriptions:chain:getAll',
-        data: null,
-      })) || '';
+    let serialized = '';
+    if (this.backend === 'electron') {
+      // Send IPC message to get chain tasks from store.
+      serialized =
+        (await window.myAPI.sendSubscriptionTask({
+          action: 'subscriptions:chain:getAll',
+          data: null,
+        })) || '';
+    } else {
+      // TODO: Get chain tasks from database.
+    }
 
     // Subscribe to tasks.
     await TaskOrchestrator.buildTasks(
