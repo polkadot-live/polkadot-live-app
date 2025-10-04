@@ -2386,6 +2386,7 @@ __metadata:
   dependencies:
     "@polkadot-live/consts": "workspace:*"
     "@polkadot-live/core": "workspace:*"
+    "@polkadot-live/styles": "workspace:*"
     "@polkadot-live/types": "workspace:*"
     react-svg: "npm:^16.2.0"
     vite-plugin-dts: "npm:^4.5.3"

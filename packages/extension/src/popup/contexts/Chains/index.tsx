@@ -96,21 +96,35 @@ export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
    * Listen for react state tasks from background worker.
    */
   useEffect(() => {
+    const syncState = async () => {
+      const data = { type: 'api', task: 'syncChainState' };
+      chrome.runtime.sendMessage(data);
+    };
     const callback = (message: AnyData) => {
       const { type, task } = message;
-      if (type === 'api' && task === 'state:chains') {
-        const { ser }: { ser: string } = message;
-        const array: [ChainID, FlattenedAPIData][] = JSON.parse(ser);
-        const map = new Map<ChainID, FlattenedAPIData>(array);
-        setChains(map);
-      } else if (type === 'api' && task === 'state:chain') {
-        const { ser }: { ser: string } = message;
-        const flattened: FlattenedAPIData = JSON.parse(ser);
-        setChains((pv) => pv.set(flattened.chainId, flattened));
-        setUiTrigger(true);
+      if (type === 'api') {
+        switch (task) {
+          case 'state:chains':
+          case 'state:onPopupReload': {
+            const { ser }: { ser: string } = message;
+            const array: [ChainID, FlattenedAPIData][] = JSON.parse(ser);
+            const map = new Map<ChainID, FlattenedAPIData>(array);
+            setChains(map);
+            setUiTrigger(true);
+            break;
+          }
+          case 'state:chain': {
+            const { ser }: { ser: string } = message;
+            const flattened: FlattenedAPIData = JSON.parse(ser);
+            setChains((pv) => new Map(pv).set(flattened.chainId, flattened));
+            setUiTrigger(true);
+            break;
+          }
+        }
       }
     };
     chrome.runtime.onMessage.addListener(callback);
+    syncState();
     return () => {
       chrome.runtime.onMessage.removeListener(callback);
     };

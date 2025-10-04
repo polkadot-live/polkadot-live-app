@@ -337,4 +337,15 @@ export class APIsController {
       chrome.runtime.sendMessage(data);
     }
   };
+
+  /**
+   * Sync chain state on popup reload (extension).
+   */
+  static syncChainConnections = () => {
+    const map = new Map<ChainID, FlattenedAPIData>();
+    this.clients.map((client) => map.set(client.chainId, client.flatten()));
+    const ser = JSON.stringify(Array.from(map.entries()));
+    const data = { type: 'api', task: 'state:onPopupReload', ser };
+    chrome.runtime.sendMessage(data);
+  };
 }

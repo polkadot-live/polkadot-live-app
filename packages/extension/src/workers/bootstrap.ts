@@ -146,11 +146,6 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
           closeApis().then(() => sendResponse(true));
           return true;
         }
-        case 'closeApi': {
-          const { chainId }: { chainId: ChainID } = message;
-          closeApi(chainId).then(() => sendResponse(true));
-          return true;
-        }
       }
       break;
     }
@@ -164,6 +159,11 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
           startApi(chainId).then(() => sendResponse(true));
           return true;
         }
+        case 'closeApi': {
+          const { chainId }: { chainId: ChainID } = message;
+          closeApi(chainId).then(() => sendResponse(true));
+          return true;
+        }
         case 'endpointChange': {
           const {
             chainId,
@@ -171,6 +171,10 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
           }: { chainId: ChainID; endpoint: NodeEndpoint } = message.meta;
           onEndpointChange(chainId, endpoint).then(() => sendResponse(true));
           return true;
+        }
+        case 'syncChainState': {
+          APIsController.syncChainConnections();
+          return false;
         }
       }
       break;

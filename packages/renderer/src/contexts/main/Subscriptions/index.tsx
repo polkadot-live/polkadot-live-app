@@ -70,11 +70,9 @@ export const SubscriptionsProvider = ({
   /// Update cached account name for an account's subscription tasks.
   const updateAccountNameInTasks = (key: string, newName: string) => {
     const tasks = accountSubscriptionsState.get(key);
-
     if (!tasks) {
       return;
     }
-
     setAccountSubscriptionsState((prev) => {
       prev.set(
         key,

@@ -2,22 +2,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as UI from '@polkadot-live/ui/components';
+import * as Ctx from '@ren/contexts/main';
+
 import { version } from '../../../package.json';
 import { ConfigRenderer } from '@polkadot-live/core';
 import { useEffect, useState } from 'react';
-import {
-  useAddresses,
-  useAppSettings,
-  useBootstrapping,
-  useCogMenu,
-  useEvents,
-} from '@ren/contexts/main';
 import { useConnections } from '@ren/contexts/common';
 import { useInitIpcHandlers } from '@ren/hooks/useInitIpcHandlers';
 import { useMainMessagePorts } from '@ren/hooks/useMainMessagePorts';
 import { Classic } from '@theme-toggles/react';
 import { Events } from './Events';
-import { Footer } from './Footer';
 import { OpenGov } from './OpenGov';
 import { Manage } from './Manage';
 import { Send } from './Send';
@@ -41,20 +35,20 @@ export const Home = () => {
   // Set up app initialization and online/offline switching handlers.
   useInitIpcHandlers();
 
-  const { getAddresses } = useAddresses();
-  const { addEvent, markStaleEvent, removeOutdatedEvents } = useEvents();
+  const { getAddresses } = Ctx.useAddresses();
+  const { addEvent, markStaleEvent, removeOutdatedEvents } = Ctx.useEvents();
   const { openHelp } = useHelp();
 
   const { cacheGet: getSharedState } = useConnections();
   const darkMode = getSharedState('mode:dark');
 
-  const { cacheGet, toggleSetting } = useAppSettings();
+  const { cacheGet, toggleSetting } = Ctx.useAppSettings();
   const dockToggled = cacheGet('setting:docked-window');
   const sideNavCollapsed = cacheGet('setting:collapse-side-nav');
   const silenceOsNotifications = cacheGet('setting:silence-os-notifications');
 
-  const { appLoading } = useBootstrapping();
-  const cogMenu = useCogMenu();
+  const { appLoading } = Ctx.useBootstrapping();
+  const cogMenu = Ctx.useCogMenu();
   const sideNav = useSideNav();
 
   const [platform, setPlatform] = useState<string | null>(null);
@@ -245,7 +239,14 @@ export const Home = () => {
           )}
         </BodyInterfaceWrapper>
       </FixedFlexWrapper>
-      <Footer />
+      <UI.Footer
+        bootstrappingCtx={Ctx.useBootstrapping()}
+        apiHealthCtx={Ctx.useApiHealth()}
+        chainsCtx={Ctx.useChains()}
+        connectionsCtx={useConnections()}
+        intervalSubscriptionsCtx={Ctx.useIntervalSubscriptions()}
+        subscriptionsCtx={Ctx.useSubscriptions()}
+      />
     </>
   );
 };

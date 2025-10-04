@@ -22,11 +22,9 @@ export const FooterWrapper = styled.div`
       margin-top: -2px;
     }
   }
-
   section {
     width: 100%;
   }
-
   .status {
     height: 3rem;
     display: flex;
@@ -43,7 +41,6 @@ export const FooterWrapper = styled.div`
     > div:nth-of-type(2) {
       flex-grow: 1;
     }
-
     button {
       padding: 0.25rem 0.5rem 0.25rem 1rem;
       opacity: 0.4;

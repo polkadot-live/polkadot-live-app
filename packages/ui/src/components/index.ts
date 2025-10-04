@@ -9,6 +9,7 @@ export * from './CheckboxRx';
 export * from './CopyButton';
 export * from './Common';
 export * from './DragClose';
+export * from './Footer';
 export * from './Footers';
 export * from './Hardware';
 export * from './Header';
