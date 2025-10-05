@@ -12,7 +12,7 @@ import {
   TxInfoBadge,
 } from '@polkadot-live/ui/components';
 import { faCoins, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
-import { FlexRow } from '@polkadot-live/ui/styles';
+import { FlexRow } from '@polkadot-live/styles/wrappers';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type {
   ExTransferKeepAliveData,

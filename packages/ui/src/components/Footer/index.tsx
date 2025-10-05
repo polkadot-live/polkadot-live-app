@@ -1,51 +1,46 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as UI from '@polkadot-live/ui/components';
+import * as UI from '..';
 import * as Accordion from '@radix-ui/react-accordion';
 import * as FA from '@fortawesome/free-solid-svg-icons';
-
+import {
+  FlexColumn,
+  FlexRow,
+  ScrollWrapper,
+} from '@polkadot-live/styles/wrappers';
 import { faCircle as faCircleRegular } from '@fortawesome/free-regular-svg-icons';
 import { getEcosystemChainMap } from '@polkadot-live/consts/chains';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  useApiHealth,
-  useBootstrapping,
-  useChains,
-  useIntervalSubscriptions,
-  useSubscriptions,
-} from '@ren/contexts/main';
-import { useConnections } from '@ren/contexts/common';
 import { useState } from 'react';
 import { FooterWrapper, NetworkItem } from './Wrapper';
 import { SelectRpc } from './SelectRpc';
-import { FlexColumn, FlexRow, ScrollWrapper } from '@polkadot-live/ui/styles';
 import { PuffLoader } from 'react-spinners';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-
-import type { EcosystemID } from 'packages/types/src/chains';
+import type { EcosystemID } from '@polkadot-live/types/chains';
 import type { FlattenedAPIData } from '@polkadot-live/types/apis';
+import type { FooterProps } from './types';
 
-export const Footer = () => {
-  const { appLoading, isConnecting, isAborting } = useBootstrapping();
-  const { hasConnectionIssue, failedConnections } = useApiHealth();
+export const Footer = ({
+  apiHealthCtx,
+  bootstrappingCtx,
+  chainsCtx,
+  connectionsCtx,
+  intervalSubscriptionsCtx,
+  subscriptionsCtx,
+}: FooterProps) => {
+  const { hasConnectionIssue, failedConnections, onEndpointChange } =
+    apiHealthCtx;
+  const { appLoading, isConnecting, isAborting } = bootstrappingCtx;
+  const { chains, isWorking } = chainsCtx;
+  const { onConnectClick, onDisconnectClick, setWorkingEndpoint } = chainsCtx;
+  const { getOnlineMode, getTheme, cacheGet } = connectionsCtx;
+  const { chainHasIntervalSubscriptions } = intervalSubscriptionsCtx;
+  const { chainHasSubscriptions } = subscriptionsCtx;
+
   const numFailed = failedConnections.size;
-
-  const {
-    chains,
-    isWorking,
-    onConnectClick,
-    onDisconnectClick,
-    setWorkingEndpoint,
-    showWorkingSpinner,
-  } = useChains();
-
-  const { getOnlineMode, getTheme, cacheGet } = useConnections();
   const isConnected = getOnlineMode();
   const theme = getTheme();
-
-  const { chainHasIntervalSubscriptions } = useIntervalSubscriptions();
-  const { chainHasSubscriptions } = useSubscriptions();
 
   // Flag controlling whether footer is expanded.
   const [expanded, setExpanded] = useState<boolean>(false);
@@ -138,7 +133,7 @@ export const Footer = () => {
             <FlexRow $gap={'0.7rem'} className="TopHeading">
               <FontAwesomeIcon icon={FA.faGlobe} transform={'shrink-1'} />
               <h3>Networks</h3>
-              {showWorkingSpinner() && (
+              {chainsCtx.showWorkingSpinner() && (
                 <div className="Spinner">
                   <PuffLoader size={16} color={'var(--text-color-primary)'} />
                 </div>
@@ -203,6 +198,8 @@ export const Footer = () => {
                                   <FlexRow $gap={'1.5rem'}>
                                     {/* RPC select box */}
                                     <SelectRpc
+                                      onEndpointChange={onEndpointChange}
+                                      cacheGet={cacheGet}
                                       apiData={apiData}
                                       setWorkingEndpoint={setWorkingEndpoint}
                                       disabled={

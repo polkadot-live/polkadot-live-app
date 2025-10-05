@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import { useLedgerFeedback } from '@ren/contexts/action';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { ButtonPrimary, ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
-import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
+import { FlexColumn, FlexRow } from '@polkadot-live/styles/wrappers';
 import { LedgerOverlayWrapper } from './Wrappers';
 import { PuffLoader } from 'react-spinners';
 import {

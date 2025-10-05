@@ -1,8 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { MainInterfaceWrapper } from '@ren/Wrappers';
+import { MainInterfaceWrapper } from '@polkadot-live/styles/wrappers';
 import { Overlay, Help } from '@polkadot-live/ui/components';
+import { useHelp } from '@polkadot-live/ui/contexts';
 import { useEffect, useState } from 'react';
 import { HashRouter, Route, Routes } from 'react-router';
 import { FadeAction } from '@ren/screens/Action';
@@ -11,7 +12,6 @@ import { Home } from './screens/Home';
 import { FadeImport } from '@ren/screens/Import';
 import { FadeSettings } from './screens/Settings';
 import { FadeOpenGov } from './screens/OpenGov';
-import { useHelp } from './contexts/common';
 import { useTheme } from 'styled-components';
 import { ToastContainer } from 'react-toastify';
 import type { AnyJson } from '@polkadot-live/types/misc';

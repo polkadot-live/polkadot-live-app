@@ -3,12 +3,13 @@
 
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
-import * as Styles from '@polkadot-live/ui/styles';
+import * as Styles from '@polkadot-live/styles/wrappers';
 
 import { Setting } from './Setting';
 import { SettingsList } from '@polkadot-live/consts/settings';
 import { useEffect, useState } from 'react';
-import { useConnections, useHelp } from '@ren/contexts/common';
+import { useConnections } from '@ren/contexts/common';
+import { useHelp } from '@polkadot-live/ui/contexts';
 import { ConfigSettings } from '@polkadot-live/core';
 import { useDebug } from '@ren/hooks/useDebug';
 import { useSettingsMessagePorts } from '@ren/hooks/useSettingsMessagePorts';

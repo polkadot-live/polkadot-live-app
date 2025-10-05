@@ -9,7 +9,8 @@ import {
   TitleWithOrigin,
 } from './Wrappers';
 import { renderOrigin } from '@polkadot-live/core';
-import { useConnections, useHelp } from '@ren/contexts/common';
+import { useConnections } from '@ren/contexts/common';
+import { useHelp } from '@polkadot-live/ui/contexts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   usePolkassembly,
@@ -20,7 +21,7 @@ import {
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { TooltipRx } from '@polkadot-live/ui/components';
-import { FlexRow } from '@polkadot-live/ui/styles';
+import { FlexRow } from '@polkadot-live/styles/wrappers';
 import { ReferendumDropdownMenu } from '../Dropdowns';
 import { RoundLeftButton, RoundRightButton } from '../Dropdowns/Wrappers';
 import type { RefStatus } from '@polkadot-live/types/openGov';

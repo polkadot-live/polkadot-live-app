@@ -3,7 +3,7 @@
 
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import * as Styles from '@polkadot-live/ui/styles';
+import * as Styles from '@polkadot-live/styles/wrappers';
 import { CheckboxRx, TooltipRx } from '@polkadot-live/ui/components';
 import { useConnections } from '@ren/contexts/common';
 import { usePolkassembly, useReferenda } from '@ren/contexts/openGov';

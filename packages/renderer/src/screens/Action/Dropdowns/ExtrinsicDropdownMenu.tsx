@@ -6,7 +6,7 @@ import * as FA from '@fortawesome/free-solid-svg-icons';
 
 import { useState } from 'react';
 import { useConnections } from '@ren/contexts/common';
-import { DropdownMenuContent } from '@polkadot-live/ui/styles';
+import { DropdownMenuContent } from '@polkadot-live/styles/wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconButton } from './Wrappers';
 import { useTxMeta } from '@ren/contexts/action';

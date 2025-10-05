@@ -14,7 +14,7 @@ import {
   DialogTrigger,
   FlexColumn,
   FlexRow,
-} from '@polkadot-live/ui/styles';
+} from '@polkadot-live/styles/wrappers';
 import { faAngleRight, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getSupportedChains } from '@polkadot-live/consts/chains';

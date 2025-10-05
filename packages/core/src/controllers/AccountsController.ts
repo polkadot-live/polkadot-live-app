@@ -27,6 +27,7 @@ import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
  * @property {ImportedAccounts} accounts - list of imported accounts, separated by chain.
  */
 export class AccountsController {
+  static backend: 'browser' | 'electron';
   static accounts: ImportedAccounts = new Map();
 
   /**
@@ -42,19 +43,30 @@ export class AccountsController {
    */
   static syncState = () => {
     const data = this.getAllFlattenedAccountData();
-    this.cachedSetAddresses(data);
-    this.cachedAddressesRef.current = data;
+    if (this.backend === 'electron') {
+      this.cachedSetAddresses(data);
+      this.cachedAddressesRef.current = data;
+    } else if (this.backend === 'browser') {
+      // TODO: Sync state in frontend.
+    }
   };
 
   /**
    * Injects accounts into class from store.
    */
-  static async initialize() {
-    const serialized: string =
-      (await window.myAPI.sendAccountTask({
-        action: 'account:getAll',
-        data: null,
-      })) || '';
+  static async initialize(backend: 'browser' | 'electron') {
+    this.backend = backend;
+    let serialized = '';
+
+    if (backend === 'electron') {
+      serialized =
+        (await window.myAPI.sendAccountTask({
+          action: 'account:getAll',
+          data: null,
+        })) || '';
+    } else if (backend === 'browser') {
+      // TODO: Get accounts from database.
+    }
 
     // Instantiate empty map if no accounts exist.
     if (serialized === '') {
@@ -124,13 +136,18 @@ export class AccountsController {
 
     for (const accounts of this.accounts.values()) {
       for (const account of accounts) {
-        const stored =
-          (await window.myAPI.sendSubscriptionTask({
-            action: 'subscriptions:account:getAll',
-            data: {
-              data: { address: account.address, chainId: account.chain },
-            },
-          })) || '[]';
+        let stored = '[]';
+        if (this.backend === 'electron') {
+          stored =
+            (await window.myAPI.sendSubscriptionTask({
+              action: 'subscriptions:account:getAll',
+              data: {
+                data: { address: account.address, chainId: account.chain },
+              },
+            })) || '[]';
+        } else if (this.backend === 'browser') {
+          // TODO: Fetch subscriptions from database.
+        }
 
         if (account.queryMulti !== null) {
           const tasks: SubscriptionTask[] = JSON.parse(stored);
@@ -200,13 +217,17 @@ export class AccountsController {
       // Remove tasks from electron store.
       // TODO: Batch removal of task data in electron store.
       for (const task of tasks) {
-        await window.myAPI.sendSubscriptionTask({
-          action: 'subscriptions:account:update',
-          data: {
-            serAccount: JSON.stringify(account.flatten()),
-            serTask: JSON.stringify(task),
-          },
-        });
+        if (this.backend === 'electron') {
+          await window.myAPI.sendSubscriptionTask({
+            action: 'subscriptions:account:update',
+            data: {
+              serAccount: JSON.stringify(account.flatten()),
+              serTask: JSON.stringify(task),
+            },
+          });
+        } else if (this.backend === 'browser') {
+          // TODO: Update task in database.
+        }
       }
     }
   }
@@ -246,10 +267,14 @@ export class AccountsController {
         ?.map((a) => (a.address === account.address ? account : a)) || []
     );
 
-    await window.myAPI.sendAccountTask({
-      action: 'account:updateAll',
-      data: { accounts: this.serializeAccounts() },
-    });
+    if (this.backend === 'electron') {
+      await window.myAPI.sendAccountTask({
+        action: 'account:updateAll',
+        data: { accounts: this.serializeAccounts() },
+      });
+    } else if (this.backend === 'browser') {
+      // TODO: Update accounts in database.
+    }
   };
 
   /**
@@ -291,14 +316,18 @@ export class AccountsController {
    * Utility to update accounts in store.
    */
   private static updateStore = () => {
-    window.myAPI
-      .sendAccountTask({
-        action: 'account:updateAll',
-        data: { accounts: this.serializeAccounts() },
-      })
-      .then(() => {
-        console.log('🆕 Accounts updated');
-      });
+    if (this.backend === 'electron') {
+      window.myAPI
+        .sendAccountTask({
+          action: 'account:updateAll',
+          data: { accounts: this.serializeAccounts() },
+        })
+        .then(() => {
+          console.log('🆕 Accounts updated');
+        });
+    } else if (this.backend === 'browser') {
+      // TODO: Update accounts in database.
+    }
   };
 
   /**

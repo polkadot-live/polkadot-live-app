@@ -8,7 +8,7 @@ import {
   DropdownMenuContent,
   FlexColumn,
   FlexRow,
-} from '@polkadot-live/ui/styles';
+} from '@polkadot-live/styles/wrappers';
 import { useConnections } from '@ren/contexts/common';
 import { useTxMeta } from '@ren/contexts/action';
 import { CheckboxRx, TooltipRx } from '@polkadot-live/ui/components';

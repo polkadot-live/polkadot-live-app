@@ -6,7 +6,7 @@ import type * as OG from '@polkadot-live/types/openGov';
 
 import { renderOrigin } from '@polkadot-live/core';
 import { usePolkassembly, useReferenda } from '@ren/contexts/openGov';
-import { FlexRow } from '@polkadot-live/ui/styles';
+import { FlexRow } from '@polkadot-live/styles/wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHashtag } from '@fortawesome/free-solid-svg-icons';
 import { ReferendumDropdownMenu } from '../Dropdowns';

@@ -42,7 +42,6 @@ export const ApiHealthProvider = ({
    */
   const startApi = async (chainId: ChainID) => {
     const { ack } = await APIsController.connectApi(chainId);
-
     if (ack === 'success') {
       await onApiRecover(chainId);
     }

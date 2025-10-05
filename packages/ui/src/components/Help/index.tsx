@@ -3,7 +3,7 @@
 
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { useAnimation } from 'framer-motion';
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { ActiveDefinition } from './Items/ActiveDefinition';
 
 /** Kits */
@@ -21,14 +21,14 @@ export const Help = ({
 }: HelpProps) => {
   const controls = useAnimation();
 
-  const onFadeIn = useCallback(async () => {
+  const onFadeIn = async () => {
     await controls.start('visible');
-  }, []);
+  };
 
-  const onFadeOut = useCallback(async () => {
+  const onFadeOut = async () => {
     await controls.start('hidden');
     setStatus('closed');
-  }, []);
+  };
 
   // Control canvas fade.
   useEffect(() => {

@@ -6,6 +6,5 @@ export * from './dialog';
 export * from './dropdown';
 export * from './flex';
 export * from './grid';
-
-export * from './ScrollWrappers';
-export * from './StatsFooter';
+export * from './layout';
+export * from './scroll';

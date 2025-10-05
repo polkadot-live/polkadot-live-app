@@ -15,7 +15,7 @@ import {
   useIntervalSubscriptions,
 } from '@ren/contexts/main';
 import { MainHeading } from '@polkadot-live/ui/components';
-import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
+import { FlexColumn, FlexRow } from '@polkadot-live/styles/wrappers';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { SideTriggerButton } from './Wrappers';
 import { OpenViewButton } from './OpenViewButton';

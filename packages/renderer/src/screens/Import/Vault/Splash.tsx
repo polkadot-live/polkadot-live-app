@@ -11,7 +11,7 @@ import { useOverlay } from '@polkadot-live/ui/contexts';
 import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
 import { Reader } from './Reader';
 import { SplashWrapper } from '../Wrappers';
-import { FlexRow } from '@polkadot-live/ui/styles';
+import { FlexRow } from '@polkadot-live/styles/wrappers';
 import type { VaultSplashProps } from '../types';
 
 export const Splash = ({ setSection }: VaultSplashProps) => {

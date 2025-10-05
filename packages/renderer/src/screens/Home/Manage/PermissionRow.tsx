@@ -11,7 +11,8 @@ import {
   faList,
   faCircleCheck,
 } from '@fortawesome/free-solid-svg-icons';
-import { useConnections, useHelp } from '@ren/contexts/common';
+import { useConnections } from '@ren/contexts/common';
+import { useHelp } from '@polkadot-live/ui/contexts';
 import { showGroupTooltip, toolTipTextFor } from '@polkadot-live/core';
 import type { PermissionRowProps } from './types';
 

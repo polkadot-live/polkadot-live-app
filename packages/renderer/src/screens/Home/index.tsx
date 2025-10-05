@@ -2,30 +2,27 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as UI from '@polkadot-live/ui/components';
+import * as Ctx from '@ren/contexts/main';
+
 import { version } from '../../../package.json';
 import { ConfigRenderer } from '@polkadot-live/core';
 import { useEffect, useState } from 'react';
-import {
-  useAddresses,
-  useAppSettings,
-  useBootstrapping,
-  useCogMenu,
-  useEvents,
-} from '@ren/contexts/main';
-import { useConnections, useHelp } from '@ren/contexts/common';
+import { useConnections } from '@ren/contexts/common';
 import { useInitIpcHandlers } from '@ren/hooks/useInitIpcHandlers';
 import { useMainMessagePorts } from '@ren/hooks/useMainMessagePorts';
 import { Classic } from '@theme-toggles/react';
 import { Events } from './Events';
-import { Footer } from './Footer';
 import { OpenGov } from './OpenGov';
 import { Manage } from './Manage';
 import { Send } from './Send';
 import { Summary } from '@ren/screens/Home/Summary';
-import { FixedFlexWrapper, IconWrapper } from './Wrappers';
-import { BodyInterfaceWrapper } from '@ren/Wrappers';
-import { ScrollWrapper } from '@polkadot-live/ui/styles';
-import { useSideNav } from '@polkadot-live/ui/contexts';
+import {
+  BackgroundIconWrapper,
+  BodyInterfaceWrapper,
+  FixedFlexWrapper,
+  ScrollWrapper,
+} from '@polkadot-live/styles/wrappers';
+import { useHelp, useSideNav } from '@polkadot-live/ui/contexts';
 import PolkadotIcon from '@polkadot-live/ui/svg/polkadotIcon.svg?react';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { EventCallback } from '@polkadot-live/types/reporter';
@@ -38,20 +35,20 @@ export const Home = () => {
   // Set up app initialization and online/offline switching handlers.
   useInitIpcHandlers();
 
-  const { getAddresses } = useAddresses();
-  const { addEvent, markStaleEvent, removeOutdatedEvents } = useEvents();
+  const { getAddresses } = Ctx.useAddresses();
+  const { addEvent, markStaleEvent, removeOutdatedEvents } = Ctx.useEvents();
   const { openHelp } = useHelp();
 
   const { cacheGet: getSharedState } = useConnections();
   const darkMode = getSharedState('mode:dark');
 
-  const { cacheGet, toggleSetting } = useAppSettings();
+  const { cacheGet, toggleSetting } = Ctx.useAppSettings();
   const dockToggled = cacheGet('setting:docked-window');
   const sideNavCollapsed = cacheGet('setting:collapse-side-nav');
   const silenceOsNotifications = cacheGet('setting:silence-os-notifications');
 
-  const { appLoading } = useBootstrapping();
-  const cogMenu = useCogMenu();
+  const { appLoading } = Ctx.useBootstrapping();
+  const cogMenu = Ctx.useCogMenu();
   const sideNav = useSideNav();
 
   const [platform, setPlatform] = useState<string | null>(null);
@@ -211,9 +208,9 @@ export const Home = () => {
         />
 
         <BodyInterfaceWrapper $maxHeight>
-          <IconWrapper>
+          <BackgroundIconWrapper>
             <PolkadotIcon width={175} opacity={appLoading ? 0.01 : 0.02} />
-          </IconWrapper>
+          </BackgroundIconWrapper>
 
           {appLoading ? (
             <div className="app-loading">
@@ -242,7 +239,14 @@ export const Home = () => {
           )}
         </BodyInterfaceWrapper>
       </FixedFlexWrapper>
-      <Footer />
+      <UI.Footer
+        bootstrappingCtx={Ctx.useBootstrapping()}
+        apiHealthCtx={Ctx.useApiHealth()}
+        chainsCtx={Ctx.useChains()}
+        connectionsCtx={useConnections()}
+        intervalSubscriptionsCtx={Ctx.useIntervalSubscriptions()}
+        subscriptionsCtx={Ctx.useSubscriptions()}
+      />
     </>
   );
 };

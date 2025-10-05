@@ -6,7 +6,7 @@ import { ellipsisFn } from '@w3ux/utils';
 import { EllipsisSpinner } from '../../Spinners';
 import { ActionBtn, HardwareAddressWrapper } from './Wrapper';
 import { TooltipRx } from '../../TooltipRx';
-import { FlexColumn, FlexRow } from '../../../styles';
+import { FlexColumn, FlexRow } from '@polkadot-live/styles/wrappers';
 import { ChainIcon } from '../../ChainIcon';
 import { CopyButton } from '../../CopyButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

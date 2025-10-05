@@ -1,20 +1,29 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { useHelp } from '@polkadot-live/ui/contexts';
+import { Help } from '@polkadot-live/ui/components';
+import { MainInterfaceWrapper } from '@polkadot-live/styles/wrappers';
+import { ToastContainer } from 'react-toastify';
+import { Home } from './screens';
 import './App.scss';
+import { useAppSettings } from './contexts';
 
 export default function App() {
-  const onOpenTab = () => {
-    const url = chrome.runtime.getURL('src/tab/index.html');
-    chrome.tabs.create({ url });
-  };
+  const { status: helpStatus, definition, closeHelp, setStatus } = useHelp();
+  const { cacheGet } = useAppSettings();
+  const theme = cacheGet('setting:dark-mode') ? 'dark' : 'light';
 
   return (
-    <div className={'theme-polkadot-relay theme-dark container'}>
-      <div className="placeholder">
-        <h1>Polkadot Live Popup</h1>
-        <button onClick={onOpenTab}>Open Tab</button>
-      </div>
-    </div>
+    <MainInterfaceWrapper className={`theme-polkadot-relay theme-${theme}`}>
+      <Help
+        status={helpStatus}
+        definition={definition}
+        closeHelp={closeHelp}
+        setStatus={setStatus}
+      />
+      <ToastContainer stacked />
+      <Home />
+    </MainInterfaceWrapper>
   );
 }

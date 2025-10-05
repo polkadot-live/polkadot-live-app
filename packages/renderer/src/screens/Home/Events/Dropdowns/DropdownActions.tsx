@@ -12,7 +12,7 @@ import {
   faUpRightFromSquare,
 } from '@fortawesome/free-solid-svg-icons';
 import { MenuButton } from '@ren/screens/OpenGov/Dropdowns/Wrappers';
-import { DropdownMenuContent } from '@polkadot-live/ui/styles';
+import { DropdownMenuContent } from '@polkadot-live/styles/wrappers';
 import type { EventAccountData } from '@polkadot-live/types/reporter';
 import type { AccountSource } from '@polkadot-live/types/accounts';
 import type { ActionMeta } from '@polkadot-live/types/tx';

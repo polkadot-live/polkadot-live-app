@@ -12,9 +12,9 @@ import {
   faHashtag,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useHelp } from '@ren/contexts/common';
+import { useHelp } from '@polkadot-live/ui/contexts';
 import { useTracks } from '@ren/contexts/openGov';
-import { FlexRow } from '@polkadot-live/ui/styles';
+import { FlexRow } from '@polkadot-live/styles/wrappers';
 import type { HelpItemKey } from '@polkadot-live/types/help';
 import type { TrackRowProps } from '../types';
 

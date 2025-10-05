@@ -3,27 +3,18 @@
 
 import { useState } from 'react';
 import { SelectRpcWrapper } from './Wrapper';
-import { useApiHealth } from '@ren/contexts/main';
-import { useConnections } from '@ren/contexts/common';
 import { hasLightClientSupport } from '@polkadot-live/consts/chains';
-import type { ChainID } from '@polkadot-live/types/chains';
-import type { NodeEndpoint, FlattenedAPIData } from '@polkadot-live/types/apis';
-
-interface SelectRpcProps {
-  apiData: FlattenedAPIData;
-  disabled: boolean;
-  setWorkingEndpoint?: (chainId: ChainID, val: boolean) => void;
-}
+import type { NodeEndpoint } from '@polkadot-live/types/apis';
+import type { SelectRpcProps } from './types';
 
 export const SelectRpc = ({
   apiData,
   disabled,
+  cacheGet,
+  onEndpointChange,
   setWorkingEndpoint,
 }: SelectRpcProps) => {
-  const { onEndpointChange } = useApiHealth();
-  const { cacheGet } = useConnections();
   const isConnected = cacheGet('mode:connected');
-
   const { chainId, endpoint } = apiData;
   const [selectedRpc, setSelectedRpc] = useState(endpoint);
 

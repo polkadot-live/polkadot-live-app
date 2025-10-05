@@ -16,8 +16,6 @@ import type {
   NodeEndpoint,
 } from '@polkadot-live/types/apis';
 
-const isTestEnv = (): boolean => process.env.NODE_ENV === 'test';
-
 export class Api<T extends keyof ClientTypes> {
   api: DedotClient<ClientTypes[T]> | null;
   chainId: ChainID;
@@ -132,7 +130,7 @@ export class Api<T extends keyof ClientTypes> {
       throwIfAborted();
       const api = await DedotClient.new<ClientTypes[T]>({
         provider,
-        cacheMetadata: !isTestEnv(),
+        cacheMetadata: false,
       });
 
       const rpcChain = (await api.rpc.system_chain()) as RpcSystemChain;

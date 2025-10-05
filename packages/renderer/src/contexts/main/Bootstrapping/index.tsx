@@ -76,10 +76,13 @@ export const BootstrappingProvider = ({
    * Initialize application systems.
    */
   const initSystems = async () => {
+    const backend = 'electron';
+    SubscriptionsController.backend = backend;
+
     await initSmoldot();
     await Promise.all([
-      APIsController.initialize(),
-      AccountsController.initialize(),
+      APIsController.initialize(backend),
+      AccountsController.initialize(backend),
     ]);
     await Promise.all([
       AccountsController.initAccountSubscriptions(),

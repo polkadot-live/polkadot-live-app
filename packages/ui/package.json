@@ -19,10 +19,6 @@
       "import": "./dist/hooks.es.js",
       "types": "./dist/hooks.d.ts"
     },
-    "./styles": {
-      "import": "./dist/styles.es.js",
-      "types": "./dist/styles.d.ts"
-    },
     "./utils": {
       "import": "./dist/utils.es.js",
       "types": "./dist/utils.d.ts"
@@ -55,6 +51,7 @@
     "react-svg": "^16.2.0"
   },
   "devDependencies": {
+    "@polkadot-live/styles": "workspace:*",
     "@polkadot-live/types": "workspace:*",
     "vite-plugin-dts": "^4.5.3",
     "vite-plugin-static-copy": "^2.3.1"

@@ -12,11 +12,16 @@ import { ellipsisFn } from '@w3ux/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { useActionMessagePorts } from '@ren/hooks/useActionMessagePorts';
 import { useDebug } from '@ren/hooks/useDebug';
-import { useConnections, useHelp } from '@ren/contexts/common';
+import { useConnections } from '@ren/contexts/common';
+import { useHelp } from '@polkadot-live/ui/contexts';
 import { useTxMeta } from '@ren/contexts/action';
 import { getExtrinsicTitle } from './Helpers';
 import { ExtrinsicItemContent } from './ExtrinsicItemContent';
-import { EmptyWrapper, FlexRow, PadWrapper } from '@polkadot-live/ui/styles';
+import {
+  EmptyWrapper,
+  FlexRow,
+  PadWrapper,
+} from '@polkadot-live/styles/wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import { TriggerRightIconWrapper } from './Wrappers';

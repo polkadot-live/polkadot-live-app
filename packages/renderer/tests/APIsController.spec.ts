@@ -15,7 +15,7 @@ describe('APIsController', () => {
       APIsController.cachedSetChains = vi.fn();
 
       const chainIds = Array.from(ChainList.keys());
-      APIsController.initialize();
+      APIsController.initialize('electron');
 
       // Check total number of initialized clients.
       const numChains = chainIds.length;
@@ -41,7 +41,7 @@ describe('APIsController', () => {
     beforeEach(() => {
       APIsController.setUiTrigger = vi.fn();
       APIsController.cachedSetChains = vi.fn();
-      APIsController.initialize();
+      APIsController.initialize('electron');
     });
 
     afterEach(async () => {

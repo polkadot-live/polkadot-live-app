@@ -17,7 +17,7 @@ import {
 import { useEffect, useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { FlexColumn } from '@polkadot-live/ui/styles';
+import { FlexColumn } from '@polkadot-live/styles/wrappers';
 import { getSupportedChains } from '@polkadot-live/consts/chains';
 
 import type { AccountsProps } from './types';

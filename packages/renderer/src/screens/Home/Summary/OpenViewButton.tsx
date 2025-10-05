@@ -4,7 +4,7 @@
 import { useConnections } from '@ren/contexts/common';
 import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { FlexColumn } from '@polkadot-live/ui/styles';
+import { FlexColumn } from '@polkadot-live/styles/wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { HoverGradient, OpenViewButtonWrapper } from './Wrappers';
 import type { OpenViewButtonProps } from './types';

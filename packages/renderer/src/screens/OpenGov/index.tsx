@@ -2,13 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as UI from '@polkadot-live/ui/components';
-import * as Styles from '@polkadot-live/ui/styles';
+import * as Styles from '@polkadot-live/styles/wrappers';
 import * as Kits from '@polkadot-live/ui/kits/overlay';
 
 import { ConfigOpenGov } from '@polkadot-live/core';
 import { useOpenGovMessagePorts } from '@ren/hooks/useOpenGovMessagePorts';
 import { useEffect, useState } from 'react';
-import { useConnections, useHelp } from '@ren/contexts/common';
+import { useConnections } from '@ren/contexts/common';
+import { useHelp } from '@polkadot-live/ui/contexts';
 import { useDebug } from '@ren/hooks/useDebug';
 import { useTreasury } from '@ren/contexts/openGov';
 import { Overview } from './Overview';

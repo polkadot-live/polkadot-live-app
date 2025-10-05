@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { AnyElement } from '@polkadot-live/types/misc';
-
 /*
  * A hook that wraps multiple context providers to a component and makes each parent context accessible.
  */

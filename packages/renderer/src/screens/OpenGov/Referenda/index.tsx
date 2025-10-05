@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as UI from '@polkadot-live/ui/components';
-import * as Styles from '@polkadot-live/ui/styles';
+import * as Styles from '@polkadot-live/styles/wrappers';
 import * as Tabs from '@radix-ui/react-tabs';
 import * as Wrappers from './Wrappers';
 import { HistoryRow } from './HistoryRow';
@@ -20,7 +20,8 @@ import {
   faCaretRight,
   faEllipsis,
 } from '@fortawesome/free-solid-svg-icons';
-import { useConnections, useHelp } from '@ren/contexts/common';
+import { useConnections } from '@ren/contexts/common';
+import { useHelp } from '@polkadot-live/ui/contexts';
 import { useEffect, useState } from 'react';
 import {
   usePolkassembly,

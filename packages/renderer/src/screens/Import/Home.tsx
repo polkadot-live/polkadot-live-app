@@ -8,11 +8,11 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { ContentWrapper } from '@ren/screens/Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { GridTwoCol } from '@polkadot-live/ui/styles';
+import { GridTwoCol } from '@polkadot-live/styles/wrappers';
 import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
 import WalletConnectSVG from '@w3ux/extension-assets/WalletConnect.svg?react';
 import LedgerLogoSVG from '@w3ux/extension-assets/Ledger.svg?react';
-import { useHelp } from '@ren/contexts/common';
+import { useHelp } from '@polkadot-live/ui/contexts';
 import { useEffect } from 'react';
 import type { AccountSource } from '@polkadot-live/types/accounts';
 import type { HomeProps } from './types';

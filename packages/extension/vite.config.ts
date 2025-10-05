@@ -3,6 +3,7 @@
 
 import manifest from './manifest.config.js';
 import react from '@vitejs/plugin-react';
+import svgr from 'vite-plugin-svgr';
 import zip from 'vite-plugin-zip-pack';
 import { crx } from '@crxjs/vite-plugin';
 import { defineConfig } from 'vite';
@@ -11,21 +12,20 @@ import { join, resolve } from 'node:path';
 
 const PACKAGE_ROOT = __dirname;
 const PROJECT_ROOT = join(PACKAGE_ROOT, '../..');
+const PR = PROJECT_ROOT;
 
 export default defineConfig({
   resolve: {
     alias: {
       '@ext': `${resolve(__dirname, 'src')}`,
-      '@polkadot-live/styles': resolve(
-        PROJECT_ROOT,
-        'packages',
-        'styles',
-        'src'
-      ),
+      '@polkadot-live/consts': resolve(PR, 'packages', 'consts', 'src'),
+      '@polkadot-live/styles': resolve(PR, 'packages', 'styles', 'src'),
+      '@polkadot-live/types': resolve(PR, 'packages', 'types', 'src'),
     },
   },
   plugins: [
     react(),
+    svgr(),
     crx({ manifest }),
     zip({
       outDir: resolve(__dirname, 'release'),

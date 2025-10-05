@@ -3,7 +3,7 @@
 
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
-import * as Style from '@polkadot-live/ui/styles';
+import * as Style from '@polkadot-live/styles/wrappers';
 
 import { useIntervalSubscriptions, useManage } from '@ren/contexts/main';
 import { useState } from 'react';

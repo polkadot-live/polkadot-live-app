@@ -3,7 +3,7 @@
 
 import * as Checkbox from '@radix-ui/react-checkbox';
 import { CheckIcon } from '@radix-ui/react-icons';
-import { CheckboxRootSimple } from '../../styles';
+import { CheckboxRootSimple } from '@polkadot-live/styles/wrappers';
 import type { CheckboxRxProps } from './types';
 
 export const CheckboxRx = ({ selected, theme, onChecked }: CheckboxRxProps) => (

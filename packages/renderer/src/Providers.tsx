@@ -2,8 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 // General contexts.
-import { ConnectionsProvider, HelpProvider } from '@ren/contexts/common';
-import { OverlayProvider, SideNavProvider } from '@polkadot-live/ui/contexts';
+import { ConnectionsProvider } from '@ren/contexts/common';
+import {
+  HelpProvider,
+  OverlayProvider,
+  SideNavProvider,
+} from '@polkadot-live/ui/contexts';
 
 // Tabs contexts.
 import { TabsProvider } from '@ren/contexts/tabs';
