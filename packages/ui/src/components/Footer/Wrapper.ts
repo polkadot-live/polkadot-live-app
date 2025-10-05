@@ -114,12 +114,12 @@ export const NetworkItem = styled.div`
       margin-left: 0.4rem;
       margin-top: -2px;
     }
-
     > h4 {
       color: var(--text-color-secondary);
       min-width: fit-content;
-      font-size: 1rem;
       font: inherit;
+      font-size: 0.98rem;
+      font-weight: 400;
     }
   }
   .right {
