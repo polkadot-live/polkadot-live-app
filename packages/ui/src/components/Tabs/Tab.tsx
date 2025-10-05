@@ -5,22 +5,25 @@ import { CSS } from '@dnd-kit/utilities';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { TabWrapper } from './Wrappers';
-import { useTabs } from '@ren/contexts/tabs';
 import { useSortable } from '@dnd-kit/sortable';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { TabProps } from './types';
 
-export const Tab: React.FC<TabProps> = ({ id, label }: TabProps) => {
-  const { activeId, clickedId, handleTabClick, handleTabClose } = useTabs();
+export const Tab: React.FC<TabProps> = ({ id, label, tabsCtx }: TabProps) => {
+  const { activeId, clickedId, handleTabClick, handleTabClose } = tabsCtx;
 
-  /// Dnd
+  /**
+   * Dnd
+   */
   const { attributes, listeners, transform, transition, setNodeRef } =
     useSortable({
       id,
       transition: { duration: 250, easing: 'cubic-bezier(0.25, 1, 0.5, 1)' },
     });
 
-  /// Handle tab click.
+  /**
+   * Handle tab click.
+   */
   const handleClick = (
     event: React.MouseEvent<HTMLSpanElement, MouseEvent>
   ) => {
@@ -30,7 +33,9 @@ export const Tab: React.FC<TabProps> = ({ id, label }: TabProps) => {
     }
   };
 
-  /// Handle close tab.
+  /**
+   * Handle close tab.
+   */
   const handleClose = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.stopPropagation();
     handleTabClose(id);

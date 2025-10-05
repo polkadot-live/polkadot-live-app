@@ -1,6 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { version } from '../../../package.json';
 import { closestCenter, DndContext } from '@dnd-kit/core';
 import {
   horizontalListSortingStrategy,
@@ -10,32 +11,27 @@ import {
   restrictToHorizontalAxis,
   restrictToParentElement,
 } from '@dnd-kit/modifiers';
-import { version } from '../../../package.json';
-import { useTabs } from '@ren/contexts/tabs';
-import { Header } from '@polkadot-live/ui/components';
-import { useDebug } from '@ren/hooks/useDebug';
-import { TabsWrapper } from './Wrappers';
+import { Header } from '../Header';
 import { Tab } from './Tab';
-import { ResizeToggles } from './ResizeToggles';
+import { TabsWrapper } from './Wrappers';
+import type { TabsProps } from './types';
 
-export const Tabs: React.FC = () => {
-  useDebug(window.myAPI.getWindowId());
-
-  const { handleDragStart, handleDragEnd, items, sensors, tabsData } =
-    useTabs();
+export const Tabs: React.FC<TabsProps> = ({
+  tabsCtx,
+  leftButtons,
+}: TabsProps) => {
+  const { handleDragStart, handleDragEnd, items, sensors, tabsData } = tabsCtx;
 
   return (
     <>
       <Header
         version={version}
         onCloseWindow={() => {
-          const windowId = window.myAPI.getWindowId();
-          window.myAPI.closeWindow(windowId);
+          /* TODO */
         }}
       />
-
       <TabsWrapper>
-        <ResizeToggles />
+        {leftButtons && leftButtons}
         <div className="inner">
           <DndContext
             sensors={sensors}
@@ -54,7 +50,12 @@ export const Tabs: React.FC = () => {
                 </div>
               )}
               {tabsData.map(({ id, label }) => (
-                <Tab key={String(id)} id={id} label={label} />
+                <Tab
+                  key={String(id)}
+                  id={id}
+                  label={label}
+                  tabsCtx={{ ...tabsCtx }}
+                />
               ))}
             </SortableContext>
           </DndContext>

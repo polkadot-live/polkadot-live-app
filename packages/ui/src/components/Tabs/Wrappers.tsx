@@ -35,7 +35,6 @@ export const TabsWrapper = styled.div`
       background-color: var(--scrollbar-thumb-background-color-hover);
     }
   }
-
   .inner {
     flex: 1;
     display: flex;

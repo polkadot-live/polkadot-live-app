@@ -32,8 +32,8 @@ export const CogMenuProvider = ({
   /**
    * Open tab page.
    */
-  const onOpenTab = () => {
-    const url = chrome.runtime.getURL('src/tab/index.html');
+  const onOpenTab = (route: string) => {
+    const url = chrome.runtime.getURL(`src/tab/index.html#${route}`);
     chrome.tabs.create({ url });
   };
 
@@ -89,23 +89,23 @@ export const CogMenuProvider = ({
     {
       label: 'Accounts',
       disabled: appLoading,
-      onClick: () => onOpenTab(),
+      onClick: () => onOpenTab('import'),
     },
     {
       label: 'Extrinsics',
       disabled: appLoading,
-      onClick: () => onOpenTab(),
+      onClick: () => onOpenTab('action'),
     },
     {
       label: 'OpenGov',
       disabled: appLoading,
-      onClick: () => onOpenTab(),
+      onClick: () => onOpenTab('openGov'),
     },
     {
       label: 'Settings',
       disabled: appLoading,
       appendSeparator: true,
-      onClick: () => onOpenTab(),
+      onClick: () => onOpenTab('settings'),
     },
     {
       label: 'Disclaimer',

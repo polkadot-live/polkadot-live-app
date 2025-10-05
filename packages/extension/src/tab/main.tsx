@@ -1,9 +1,15 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { StrictMode } from 'react';
+import { Providers } from './Providers';
 import { createRoot } from 'react-dom/client';
-import App from './App';
+
+// Package styles.
+import '@theme-toggles/react/css/Classic.css';
+
+// Library styles.
+import '@polkadot-live/ui/scss/buttons/index.scss';
+import '@polkadot-live/ui/scss/overlay/index.scss';
 
 // Network themes.
 import '@polkadot-live/styles/accents/polkadot-relay.css';
@@ -14,8 +20,4 @@ import '@polkadot-live/styles/theme/index.scss';
 import '@polkadot-live/styles/partials/utils.scss';
 import '@polkadot-live/styles/partials/dialog.scss';
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>
-);
+createRoot(document.getElementById('root')!).render(<Providers />);
