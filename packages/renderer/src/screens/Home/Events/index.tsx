@@ -17,7 +17,7 @@ import {
   ControlsWrapper,
   SortControlButton,
 } from '@polkadot-live/ui/components';
-import { FlexColumn } from '@polkadot-live/ui/styles';
+import { FlexColumn } from '@polkadot-live/styles/wrappers';
 
 export const Events = () => {
   /// State for sorting controls.

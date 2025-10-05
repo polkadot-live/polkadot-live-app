@@ -20,8 +20,8 @@ import {
   BackgroundIconWrapper,
   BodyInterfaceWrapper,
   FixedFlexWrapper,
+  ScrollWrapper,
 } from '@polkadot-live/styles/wrappers';
-import { ScrollWrapper } from '@polkadot-live/ui/styles';
 import { useHelp, useSideNav } from '@polkadot-live/ui/contexts';
 import PolkadotIcon from '@polkadot-live/ui/svg/polkadotIcon.svg?react';
 import type { ChainID } from '@polkadot-live/types/chains';

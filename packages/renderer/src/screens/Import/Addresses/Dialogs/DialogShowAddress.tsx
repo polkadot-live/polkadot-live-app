@@ -10,7 +10,7 @@ import {
   DialogHr,
   FlexColumn,
   FlexRow,
-} from '@polkadot-live/ui/styles';
+} from '@polkadot-live/styles/wrappers';
 import { CopyButton } from '@polkadot-live/ui/components';
 import styled from 'styled-components';
 

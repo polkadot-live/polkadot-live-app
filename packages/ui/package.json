@@ -19,10 +19,6 @@
       "import": "./dist/hooks.es.js",
       "types": "./dist/hooks.d.ts"
     },
-    "./styles": {
-      "import": "./dist/styles.es.js",
-      "types": "./dist/styles.d.ts"
-    },
     "./utils": {
       "import": "./dist/utils.es.js",
       "types": "./dist/utils.d.ts"

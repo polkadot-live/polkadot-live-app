@@ -37,7 +37,6 @@ export default defineConfig({
         components: join(PACKAGE_ROOT, 'src/components/index.ts'),
         contexts: join(PACKAGE_ROOT, 'src/contexts/index.ts'),
         hooks: join(PACKAGE_ROOT, 'src/hooks/index.ts'),
-        styles: join(PACKAGE_ROOT, 'src/styles/index.ts'),
         utils: join(PACKAGE_ROOT, 'src/utils/index.ts'),
         buttons: join(PACKAGE_ROOT, 'src/kits/Buttons/index.ts'),
         overlay: join(PACKAGE_ROOT, 'src/kits/Overlay/index.ts'),

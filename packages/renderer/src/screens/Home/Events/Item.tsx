@@ -4,7 +4,7 @@
 import { useEffect, useState, memo } from 'react';
 import { useConnections } from '@ren/contexts/common';
 import { useEvents } from '@ren/contexts/main';
-import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
+import { FlexColumn, FlexRow } from '@polkadot-live/styles/wrappers';
 import { AnimatePresence } from 'framer-motion';
 import { EventItem } from './Wrappers';
 import {

@@ -17,7 +17,11 @@ import { useHelp } from '@polkadot-live/ui/contexts';
 import { useTxMeta } from '@ren/contexts/action';
 import { getExtrinsicTitle } from './Helpers';
 import { ExtrinsicItemContent } from './ExtrinsicItemContent';
-import { EmptyWrapper, FlexRow, PadWrapper } from '@polkadot-live/ui/styles';
+import {
+  EmptyWrapper,
+  FlexRow,
+  PadWrapper,
+} from '@polkadot-live/styles/wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import { TriggerRightIconWrapper } from './Wrappers';

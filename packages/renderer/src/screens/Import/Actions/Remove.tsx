@@ -7,7 +7,7 @@ import { ConfirmWrapper } from './Wrappers';
 import { ButtonMonoInvert, ButtonMono } from '@polkadot-live/ui/kits/buttons';
 import { useRemoveHandler } from '@ren/contexts/import';
 import { ellipsisFn } from '@w3ux/utils';
-import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
+import { FlexColumn, FlexRow } from '@polkadot-live/styles/wrappers';
 import type { RemoveProps } from './types';
 
 /**

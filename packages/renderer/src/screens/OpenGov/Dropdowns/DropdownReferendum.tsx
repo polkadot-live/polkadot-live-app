@@ -3,7 +3,7 @@
 
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { useConnections } from '@ren/contexts/common';
-import { DropdownMenuContent } from '@polkadot-live/ui/styles';
+import { DropdownMenuContent } from '@polkadot-live/styles/wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faEllipsis,

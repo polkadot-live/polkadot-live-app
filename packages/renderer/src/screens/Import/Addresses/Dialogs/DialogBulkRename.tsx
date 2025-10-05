@@ -7,7 +7,7 @@ import {
   DialogHr,
   FlexColumn,
   FlexRow,
-} from '@polkadot-live/ui/styles';
+} from '@polkadot-live/styles/wrappers';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { NetworkLabel } from './NetworkLabel';
 import { useConnections } from '@ren/contexts/common';

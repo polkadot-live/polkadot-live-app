@@ -4,7 +4,7 @@
 import { useHelp } from '@polkadot-live/ui/contexts';
 import { faCaretRight, faInfo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { FlexRow } from '@polkadot-live/ui/styles';
+import { FlexRow } from '@polkadot-live/styles/wrappers';
 import { ShiftingMeter, StatItemWrapper } from '@polkadot-live/ui/components';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';

@@ -21,7 +21,7 @@ import {
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { TooltipRx } from '@polkadot-live/ui/components';
-import { FlexRow } from '@polkadot-live/ui/styles';
+import { FlexRow } from '@polkadot-live/styles/wrappers';
 import { ReferendumDropdownMenu } from '../Dropdowns';
 import { RoundLeftButton, RoundRightButton } from '../Dropdowns/Wrappers';
 import type { RefStatus } from '@polkadot-live/types/openGov';

@@ -6,7 +6,7 @@ import * as Icons from '@radix-ui/react-icons';
 import {
   DropdownMenuContent,
   DropdownMenuSubContent,
-} from '@polkadot-live/ui/styles';
+} from '@polkadot-live/styles/wrappers';
 import { useState } from 'react';
 import { useConnections } from '@ren/contexts/common';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

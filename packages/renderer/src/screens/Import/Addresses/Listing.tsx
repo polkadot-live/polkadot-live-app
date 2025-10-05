@@ -3,7 +3,7 @@
 
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
-import * as Styles from '@polkadot-live/ui/styles';
+import * as Styles from '@polkadot-live/styles/wrappers';
 
 import { useAddresses, useDialogControl } from '@ren/contexts/import';
 import { useState } from 'react';

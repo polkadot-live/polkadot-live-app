@@ -9,11 +9,11 @@ import PolkadotIcon from '@polkadot-live/ui/svg/polkadotIcon.svg?react';
 import { version } from '../../../../package.json';
 import { Classic } from '@theme-toggles/react';
 import { useSideNav } from '@polkadot-live/ui/contexts';
-import { ScrollWrapper } from '@polkadot-live/ui/styles';
 import {
   BackgroundIconWrapper,
   BodyInterfaceWrapper,
   FixedFlexWrapper,
+  ScrollWrapper,
 } from '@polkadot-live/styles/wrappers';
 
 const TitlePlaceholder = ({ text }: { text: string }) => (

@@ -4,7 +4,7 @@
 import { useManage } from '@ren/contexts/main';
 import { useState } from 'react';
 import { CarouselWrapper } from '../Wrappers';
-import { FlexColumn } from '@polkadot-live/ui/styles';
+import { FlexColumn } from '@polkadot-live/styles/wrappers';
 import { MainHeading } from '@polkadot-live/ui/components';
 import { Wrapper } from '../Manage/Wrappers';
 import { Networks } from './Networks';

@@ -4,7 +4,11 @@
 import * as UI from '..';
 import * as Accordion from '@radix-ui/react-accordion';
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import { FlexColumn, FlexRow, ScrollWrapper } from '../../styles';
+import {
+  FlexColumn,
+  FlexRow,
+  ScrollWrapper,
+} from '@polkadot-live/styles/wrappers';
 import { faCircle as faCircleRegular } from '@fortawesome/free-regular-svg-icons';
 import { getEcosystemChainMap } from '@polkadot-live/consts/chains';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

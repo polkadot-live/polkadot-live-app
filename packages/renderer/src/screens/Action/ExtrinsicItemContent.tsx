@@ -7,7 +7,7 @@ import { formatDecimal } from '@polkadot-live/core';
 import { planckToUnit } from '@w3ux/utils';
 import { useConnections } from '@ren/contexts/common';
 import { Signer } from './Signer';
-import { FlexRow, ResponsiveRow } from '@polkadot-live/ui/styles';
+import { FlexRow, ResponsiveRow } from '@polkadot-live/styles/wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ExtrinsicItemContentWrapper } from './Wrappers';
 import type { ExtrinsicItemContentProps } from './types';

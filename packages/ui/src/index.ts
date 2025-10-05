@@ -4,7 +4,6 @@
 export * from './components';
 export * from './contexts';
 export * from './hooks';
-export * from './styles';
 export * from './kits/Buttons/';
 export * from './kits/Icons/IconWarning';
 export * from './kits/Overlay';

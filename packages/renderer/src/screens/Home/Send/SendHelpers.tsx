@@ -3,7 +3,7 @@
 
 import * as Select from '@radix-ui/react-select';
 import * as UI from '@polkadot-live/ui/components';
-import * as Styles from '@polkadot-live/ui/styles';
+import * as Styles from '@polkadot-live/styles/wrappers';
 
 import { useConnections } from '@ren/contexts/common';
 import { ellipsisFn } from '@w3ux/utils';

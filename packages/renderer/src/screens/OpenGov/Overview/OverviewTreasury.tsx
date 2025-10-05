@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as UI from '@polkadot-live/ui/components';
-import * as Styles from '@polkadot-live/ui/styles';
-
+import * as Styles from '@polkadot-live/styles/wrappers';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { TreasuryStats } from '../Wrappers';
 import { useConnections } from '@ren/contexts/common';

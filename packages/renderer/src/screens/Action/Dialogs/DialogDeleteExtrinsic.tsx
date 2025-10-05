@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Dialog from '@radix-ui/react-dialog';
-import * as Styles from '@polkadot-live/ui/styles';
+import * as Styles from '@polkadot-live/styles/wrappers';
 import { useConnections } from '@ren/contexts/common';
 import { useTxMeta } from '@ren/contexts/action';
 import { Cross2Icon } from '@radix-ui/react-icons';

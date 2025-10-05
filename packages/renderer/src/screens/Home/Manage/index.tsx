@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useManage } from '@ren/contexts/main';
 import { CarouselWrapper } from '../Wrappers';
 import { Accounts } from './Accounts';
-import { FlexColumn } from '@polkadot-live/ui/styles';
+import { FlexColumn } from '@polkadot-live/styles/wrappers';
 import { Permissions } from './Permissions';
 import { Wrapper } from './Wrappers';
 import { MainHeading } from '@polkadot-live/ui/components';

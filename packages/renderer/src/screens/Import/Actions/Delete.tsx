@@ -9,7 +9,7 @@ import { useDeleteHandler } from '@ren/contexts/import';
 import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faKey } from '@fortawesome/free-solid-svg-icons';
-import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
+import { FlexColumn, FlexRow } from '@polkadot-live/styles/wrappers';
 import type { DeleteProps } from './types';
 
 export const Delete = ({ genericAccount, setSection }: DeleteProps) => {
