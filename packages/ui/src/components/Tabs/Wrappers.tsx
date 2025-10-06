@@ -43,6 +43,11 @@ export const TabsWrapper = styled.div`
     height: 100%;
     padding: 0 1rem 0 0.75rem;
   }
+  .NoTabsOpen {
+    color: var(--text-color-secondary);
+    font-size: 1rem;
+    padding-left: 0.25rem;
+  }
 `;
 
 // Tab top div.

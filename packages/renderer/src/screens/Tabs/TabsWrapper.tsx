@@ -9,5 +9,14 @@ import { ResizeToggles } from './ResizeToggles';
 export const TabsWrapper = () => {
   useDebug(window.myAPI.getWindowId());
   const tabsCtx = useTabs();
-  return <Tabs tabsCtx={tabsCtx} leftButtons={<ResizeToggles />} />;
+  return (
+    <Tabs
+      tabsCtx={tabsCtx}
+      leftButtons={<ResizeToggles />}
+      onCloseWindow={() => {
+        const windowId = window.myAPI.getWindowId();
+        window.myAPI.closeWindow(windowId);
+      }}
+    />
+  );
 };

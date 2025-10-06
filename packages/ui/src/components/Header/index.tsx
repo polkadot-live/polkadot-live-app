@@ -63,6 +63,7 @@ export const Header = ({
           </div>
         ) : (
           <button
+            style={onCloseWindow ? undefined : { display: 'none' }}
             type="button"
             data-testid="close-btn"
             disabled={Boolean(appLoading)}

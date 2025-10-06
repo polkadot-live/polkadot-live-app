@@ -12,8 +12,11 @@ import type { ChainID } from '@polkadot-live/types/chains';
 import type { NodeEndpoint } from '@polkadot-live/types/apis';
 import type { SettingKey } from '@polkadot-live/types/settings';
 import type { Stores } from '../controllers';
+import type { TabData } from '@polkadot-live/types/communication';
 
 const BACKEND = 'browser';
+let PENDING_TAB_DATA: TabData | null = null;
+let TAB_ID: number | null = null;
 
 const bootstrap = async () => {
   await DbController.initialize();
@@ -175,6 +178,43 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
         case 'syncChainState': {
           APIsController.syncChainConnections();
           return false;
+        }
+      }
+      break;
+    }
+    /**
+     * Handle tab tasks.
+     */
+    case 'tabs': {
+      switch (message.task) {
+        case 'openTabRelay': {
+          const tabData: TabData = message.tabData;
+          const route = tabData.viewId;
+          const url = chrome.runtime.getURL(`src/tab/index.html#${route}`);
+
+          chrome.tabs.query({}, function (tabs) {
+            const cleanUrl = url.split('#')[0];
+            const foundTab = tabs.find(
+              (tab) => tab.url?.split('#')[0] === cleanUrl
+            );
+            if (foundTab) {
+              TAB_ID && chrome.tabs.update(TAB_ID, { active: true });
+              const data = { type: 'tabs', task: 'openTab', tabData };
+              chrome.runtime.sendMessage(data);
+            } else {
+              PENDING_TAB_DATA = tabData;
+              chrome.tabs.create({ url }).then((tab) => {
+                TAB_ID = tab.id || null;
+              });
+            }
+          });
+          return false;
+        }
+        case 'syncTabs': {
+          const tabData = PENDING_TAB_DATA;
+          PENDING_TAB_DATA = null;
+          sendResponse(tabData);
+          return true;
         }
       }
       break;

@@ -1,17 +1,17 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { createContext, useEffect, useRef, useState } from 'react';
 import { createSafeContextHook } from '@polkadot-live/ui/utils';
-import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import {
   KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
+import type { AnyData } from '@polkadot-live/types/misc';
 import type { DragStartEvent, DragEndEvent } from '@dnd-kit/core';
-import type { IpcRendererEvent } from 'electron';
 import type { TabsContextInterface } from './types';
 import type { TabData } from '@polkadot-live/types/communication';
 
@@ -30,35 +30,56 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
   const tabsDataRef = useRef<TabData[]>(tabsData);
 
   /**
+   * Handle a new request for adding a tab.
+   */
+  const addTab = (tab: TabData) => {
+    const found = tabsDataRef.current.find(
+      ({ viewId }) => viewId === tab.viewId
+    );
+    if (found !== undefined) {
+      setClickedId(found.id);
+    } else {
+      let tabId = Number(tabsDataRef.current.length) + 1;
+      const takenIds = tabsDataRef.current.reduce(
+        (acc, item) => [...acc, item.id],
+        [] as number[]
+      );
+      while (takenIds.includes(tabId)) {
+        tabId += 1;
+      }
+      tab.id = tabId;
+      tabsDataRef.current = [...tabsDataRef.current, tab];
+      setItems((prev) => [...prev, tab.id]);
+      setTabsData((prev) => [...prev, tab]);
+      setClickedId(tab.id);
+    }
+  };
+
+  /**
    * Open tab callback.
    */
   useEffect(() => {
-    window.myAPI.handleOpenTab((_: IpcRendererEvent, tabData: TabData) => {
-      const found = tabsDataRef.current.find(
-        ({ viewId }) => viewId === tabData.viewId
-      );
+    // Get the requested tab from background worker on mount.
+    const sync = async () => {
+      const data = { type: 'tabs', task: 'syncTabs' };
+      const tab: null | TabData = await chrome.runtime.sendMessage(data);
+      tab && addTab(tab);
+    };
 
-      if (found !== undefined) {
-        setClickedId(found.id);
-      } else {
-        let tabId = Number(tabsDataRef.current.length) + 1;
-        const takenIds = tabsDataRef.current.reduce(
-          (acc, item) => [...acc, item.id],
-          [] as number[]
-        );
-
-        while (takenIds.includes(tabId)) {
-          tabId += 1;
-        }
-
-        tabData.id = tabId;
-        tabsDataRef.current = [...tabsDataRef.current, tabData];
-
-        setItems((prev) => [...prev, tabData.id]);
-        setTabsData((prev) => [...prev, tabData]);
-        setClickedId(tabData.id);
+    // Handle receiving a new request to open a tab.
+    const callback = (message: AnyData) => {
+      if (message.type !== 'tabs' && message.type !== 'openTab') {
+        return;
       }
-    });
+      const { tabData }: { tabData: TabData } = message;
+      addTab(tabData);
+    };
+
+    sync();
+    chrome.runtime.onMessage.addListener(callback);
+    return () => {
+      chrome.runtime.onMessage.removeListener(callback);
+    };
   }, []);
 
   /**
@@ -109,8 +130,6 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
    */
   const handleTabClick = (id: number) => {
     setClickedId(id);
-    const { viewId } = tabsData.find((t) => t.id === id)!;
-    window.myAPI.showTab(viewId);
   };
 
   /**
@@ -118,36 +137,28 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
    */
   const handleTabClose = (id: number) => {
     const itemIndex = items.indexOf(id);
+    const filtered = tabsData.filter((t) => t.id !== id);
 
-    // Get index of tab to show.
+    // Get index of next tab to show.
     let showIndex: number | null = null;
     items.length > 1 &&
       (showIndex = itemIndex === 0 ? itemIndex + 1 : itemIndex - 1);
-
-    // Get IDs for views to destroy and show.
-    const destroyViewId = tabsData.at(itemIndex)!.viewId;
     const maybeShowViewId: string | null =
       showIndex !== null ? tabsData.at(showIndex)!.viewId : null;
 
+    // If the destroyed tab is in focus, give focus to the next tab to show.
+    if (maybeShowViewId !== null && clickedId === id) {
+      const { id: showId } = filtered.find(
+        (t) => t.viewId === maybeShowViewId
+      )!;
+      setClickedId(showId);
+    }
+
     // Remove destroyed tab's item and data.
     setItems((prev) => prev.filter((n) => n !== id));
-    setTabsData((prev) => {
-      const filtered = prev.filter((t) => t.id !== id);
-
-      // If the destroyed tab is in focus, give focus to the next tab to show.
-      if (maybeShowViewId !== null && clickedId === id) {
-        const { id: showId } = filtered.find(
-          (t) => t.viewId === maybeShowViewId
-        )!;
-
-        setClickedId(showId);
-      }
-
-      tabsDataRef.current = [...filtered];
-      return filtered;
-    });
-
-    window.myAPI.closeTab(destroyViewId, maybeShowViewId);
+    setTabsData(filtered);
+    tabsDataRef.current = [...filtered];
+    !tabsDataRef.current.length && setClickedId(null);
   };
 
   return (

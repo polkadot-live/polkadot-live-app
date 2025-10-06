@@ -32,4 +32,5 @@ export interface TabsProps {
     handleTabClose: (id: number) => void;
   };
   leftButtons?: React.ReactNode;
+  onCloseWindow?: () => void;
 }

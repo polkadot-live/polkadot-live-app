@@ -19,17 +19,14 @@ import type { TabsProps } from './types';
 export const Tabs: React.FC<TabsProps> = ({
   tabsCtx,
   leftButtons,
+  onCloseWindow,
 }: TabsProps) => {
-  const { handleDragStart, handleDragEnd, items, sensors, tabsData } = tabsCtx;
+  const { items, sensors, tabsData } = tabsCtx;
+  const { handleDragStart, handleDragEnd } = tabsCtx;
 
   return (
     <>
-      <Header
-        version={version}
-        onCloseWindow={() => {
-          /* TODO */
-        }}
-      />
+      <Header version={version} onCloseWindow={onCloseWindow} />
       <TabsWrapper>
         {leftButtons && leftButtons}
         <div className="inner">
@@ -45,9 +42,7 @@ export const Tabs: React.FC<TabsProps> = ({
               strategy={horizontalListSortingStrategy}
             >
               {Number(tabsData.length) === 0 && (
-                <div style={{ color: 'var(--text-color-secondary)' }}>
-                  No windows open.
-                </div>
+                <div className="NoTabsOpen">No windows open.</div>
               )}
               {tabsData.map(({ id, label }) => (
                 <Tab
