@@ -1,6 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { useConnections } from '../contexts';
 import { useEffect } from 'react';
 import { useHelp } from '@polkadot-live/ui/contexts';
 import { useTabs } from './contexts';
@@ -33,7 +34,8 @@ export const RouterInner = () => {
 };
 
 export default function App() {
-  const mode = 'dark';
+  const { cacheGet } = useConnections();
+  const mode = cacheGet('mode:dark') ? 'dark' : 'light';
   const { status: helpStatus, definition, closeHelp, setStatus } = useHelp();
 
   return (

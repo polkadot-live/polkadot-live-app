@@ -9,6 +9,7 @@ import PolkadotIcon from '@polkadot-live/ui/svg/polkadotIcon.svg?react';
 import { version } from '../../../../package.json';
 import { Classic } from '@theme-toggles/react';
 import { useSideNav } from '@polkadot-live/ui/contexts';
+import { useConnections } from '../../../contexts';
 import {
   BackgroundIconWrapper,
   BodyInterfaceWrapper,
@@ -22,13 +23,19 @@ const TitlePlaceholder = ({ text }: { text: string }) => (
 
 export const Home = () => {
   const { cacheGet, toggleSetting } = Ctx.useAppSettings();
+  const { cacheGet: getShared, setShared } = useConnections();
   const { appLoading } = Ctx.useBootstrapping();
   const cogMenu = Ctx.useCogMenu();
   const sideNav = useSideNav();
 
-  const darkMode = cacheGet('setting:dark-mode') ? true : false;
+  const darkMode = getShared('mode:dark') ? true : false;
   const sideNavCollapsed = cacheGet('setting:collapse-side-nav');
   const silenceOsNotifications = cacheGet('setting:silence-os-notifications');
+
+  const toggleTheme = () => {
+    setShared('mode:dark', !darkMode);
+    toggleSetting('setting:dark-mode');
+  };
 
   return (
     <>
@@ -36,7 +43,7 @@ export const Home = () => {
         ToggleNode={
           <Classic
             toggled={darkMode}
-            onToggle={() => toggleSetting('setting:dark-mode')}
+            onToggle={() => toggleTheme()}
             className="theme-toggle"
             duration={300}
           />

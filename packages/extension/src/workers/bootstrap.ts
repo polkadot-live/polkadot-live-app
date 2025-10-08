@@ -8,12 +8,16 @@ import {
   disconnectAPIs,
   SubscriptionsController,
 } from '@polkadot-live/core';
+import { initSharedState } from '@polkadot-live/consts/sharedState';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { NodeEndpoint } from '@polkadot-live/types/apis';
 import type { SettingKey } from '@polkadot-live/types/settings';
 import type { Stores } from '../controllers';
-import type { TabData } from '@polkadot-live/types/communication';
+import type { SyncID, TabData } from '@polkadot-live/types/communication';
 
+/** Shared state */
+const SHARED_STATE: Map<SyncID, boolean> = initSharedState();
+/** Tab loading */
 const BACKEND = 'browser';
 let PENDING_TAB_DATA: TabData | null = null;
 let TAB_ID: number | null = null;
@@ -22,8 +26,18 @@ const bootstrap = async () => {
   await DbController.initialize();
 };
 
+const initTheme = async () => {
+  const key = 'mode:dark';
+  const stored = await DbController.get('settings', 'setting:dark-mode');
+  const value = Boolean(stored);
+  SHARED_STATE.set(key, value);
+  const msg = { type: 'sharedState', task: 'set', payload: { key, value } };
+  chrome.runtime.sendMessage(msg);
+};
+
 const initSystems = async () => {
   await Promise.all([
+    initTheme(),
     APIsController.initialize(BACKEND),
     AccountsController.initialize(BACKEND),
   ]);
@@ -113,6 +127,24 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
         case 'settings:set': {
           const { key, value }: { key: SettingKey; value: boolean } = message;
           DbController.set('settings', key, value);
+          return false;
+        }
+      }
+      break;
+    }
+    /**
+     * Handle shared state tasks.
+     */
+    case 'sharedState': {
+      switch (message.task) {
+        case 'get': {
+          sendResponse(JSON.stringify(Array.from(SHARED_STATE.entries())));
+          return true;
+        }
+        case 'relay': {
+          const { payload } = message;
+          const msg = { type: 'sharedState', task: 'set', payload };
+          chrome.runtime.sendMessage(msg);
           return false;
         }
       }
