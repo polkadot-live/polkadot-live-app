@@ -35,7 +35,6 @@ export const TabsWrapper = styled.div`
       background-color: var(--scrollbar-thumb-background-color-hover);
     }
   }
-
   .inner {
     flex: 1;
     display: flex;
@@ -43,6 +42,11 @@ export const TabsWrapper = styled.div`
     column-gap: 0.75rem;
     height: 100%;
     padding: 0 1rem 0 0.75rem;
+  }
+  .NoTabsOpen {
+    color: var(--text-color-secondary);
+    font-size: 1rem;
+    padding-left: 0.25rem;
   }
 `;
 

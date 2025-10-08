@@ -5,22 +5,24 @@ import { MainInterfaceWrapper } from '@polkadot-live/styles/wrappers';
 import { Overlay, Help } from '@polkadot-live/ui/components';
 import { useHelp } from '@polkadot-live/ui/contexts';
 import { useEffect, useState } from 'react';
+import { useTheme } from 'styled-components';
 import { HashRouter, Route, Routes } from 'react-router';
 import { FadeAction } from '@ren/screens/Action';
-import { Tabs } from './screens/Tabs';
-import { Home } from './screens/Home';
 import { FadeImport } from '@ren/screens/Import';
 import { FadeSettings } from './screens/Settings';
 import { FadeOpenGov } from './screens/OpenGov';
-import { useTheme } from 'styled-components';
+import { Home } from './screens/Home';
 import { ToastContainer } from 'react-toastify';
+import { TabsWrapper } from '@ren/screens/Tabs';
 import type { AnyJson } from '@polkadot-live/types/misc';
 
 export const RouterInner = () => {
   const { mode }: AnyJson = useTheme();
   const { status: helpStatus, definition, closeHelp, setStatus } = useHelp();
 
-  /// Return routes for the window being rendered.
+  /**
+   * Return routes for the window being rendered.
+   */
   const addRoutesForWindow = () => {
     const windowId = window.myAPI.getWindowId();
 
@@ -58,7 +60,9 @@ export const RouterInner = () => {
 export const Router = () => {
   const [windowId] = useState<string>(window.myAPI.getWindowId());
 
-  /// Initialize analytics once.
+  /**
+   * Initialize analytics once.
+   */
   useEffect(() => {
     window.myAPI.initAnalytics(
       navigator.userAgent,
@@ -71,7 +75,7 @@ export const Router = () => {
     <HashRouter basename="/">
       {windowId === 'tabs' ? (
         <Routes>
-          <Route path={'/tabs'} element={<Tabs />} />
+          <Route path={'/tabs'} element={<TabsWrapper />} />
         </Routes>
       ) : (
         <RouterInner />

@@ -8,6 +8,7 @@ import { useBootstrapping } from '../Bootstrapping';
 import { useHelp } from '@polkadot-live/ui/contexts';
 import type { CogMenuContextInterface } from './types';
 import type { MenuItemData } from '@polkadot-live/ui/components';
+import type { TabData } from '@polkadot-live/types/communication';
 
 export const CogMenuContext = createContext<
   CogMenuContextInterface | undefined
@@ -32,9 +33,11 @@ export const CogMenuProvider = ({
   /**
    * Open tab page.
    */
-  const onOpenTab = () => {
-    const url = chrome.runtime.getURL('src/tab/index.html');
-    chrome.tabs.create({ url });
+  const onOpenTab = async (route: string, label: string) => {
+    const tabData: TabData = { id: -1, viewId: route, label };
+    const data = { type: 'tabs', task: 'openTabRelay', tabData };
+    await chrome.runtime.sendMessage(data);
+    window.close();
   };
 
   /**
@@ -89,23 +92,23 @@ export const CogMenuProvider = ({
     {
       label: 'Accounts',
       disabled: appLoading,
-      onClick: () => onOpenTab(),
+      onClick: () => onOpenTab('import', 'Accounts'),
     },
     {
       label: 'Extrinsics',
       disabled: appLoading,
-      onClick: () => onOpenTab(),
+      onClick: () => onOpenTab('action', 'Extrinsics'),
     },
     {
       label: 'OpenGov',
       disabled: appLoading,
-      onClick: () => onOpenTab(),
+      onClick: () => onOpenTab('openGov', 'OpenGov'),
     },
     {
       label: 'Settings',
       disabled: appLoading,
       appendSeparator: true,
-      onClick: () => onOpenTab(),
+      onClick: () => onOpenTab('settings', 'Settings'),
     },
     {
       label: 'Disclaimer',

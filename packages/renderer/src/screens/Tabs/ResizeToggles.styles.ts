@@ -23,23 +23,24 @@ export const ToggleGroupRoot = styled(ToggleGroup.Root)`
     justify-content: center;
     margin-left: 1px;
     user-select: none;
-  }
-  .ToggleGroupItem:first-child {
-    margin-left: 0;
-    border-top-left-radius: var(--border-radius);
-    border-bottom-left-radius: var(--border-radius);
-  }
-  .ToggleGroupItem:last-child {
-    border-top-right-radius: var(--border-radius);
-    border-bottom-right-radius: var(--border-radius);
-  }
-  .ToggleGroupItem:hover {
-    background-color: var(--button-background-primary-hover);
-  }
-  .ToggleGroupItem[data-state='on'] {
-    background-color: var(--button-background-primary-hover);
-  }
-  .ToggleGroupItem:focus {
-    position: relative;
+
+    &:first-child {
+      margin-left: 0;
+      border-top-left-radius: var(--border-radius);
+      border-bottom-left-radius: var(--border-radius);
+    }
+    &:last-child {
+      border-top-right-radius: var(--border-radius);
+      border-bottom-right-radius: var(--border-radius);
+    }
+    &:hover {
+      background-color: var(--button-background-primary-hover);
+    }
+    &:focus {
+      position: relative;
+    }
+    &[data-state='on'] {
+      background-color: var(--button-background-primary-hover);
+    }
   }
 `;

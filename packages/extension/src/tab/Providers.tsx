@@ -2,24 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ConnectionsProvider } from '../contexts';
-import { HelpProvider, SideNavProvider } from '@polkadot-live/ui/contexts';
+import { HelpProvider, OverlayProvider } from '@polkadot-live/ui/contexts';
+import { TabsProvider } from './contexts';
 import { withProviders } from '@polkadot-live/ui/hooks';
-import {
-  ApiHealthProvider,
-  AppSettingsProvider,
-  BootstrappingProvider,
-  ChainsProvider,
-  CogMenuProvider,
-} from './contexts';
 import App from './App';
 
 export const Providers = withProviders(
   HelpProvider,
-  AppSettingsProvider,
+  OverlayProvider,
   ConnectionsProvider,
-  SideNavProvider,
-  ApiHealthProvider,
-  ChainsProvider,
-  BootstrappingProvider,
-  CogMenuProvider
+  TabsProvider
 )(App);
