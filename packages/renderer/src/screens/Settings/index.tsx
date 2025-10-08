@@ -17,28 +17,13 @@ import { ItemsColumn } from '../Home/Manage/Wrappers';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { FadeInWrapper } from '@polkadot-live/ui/utils';
 import type { OsPlatform, SettingItem } from '@polkadot-live/types/settings';
+import type { SettingsProps } from './types';
 
 export const FadeSettings = () => {
   // Set up port communication for `settings` window.
   useSettingsMessagePorts();
   useDebug(window.myAPI.getWindowId());
   const { stateLoaded } = useConnections();
-
-  return (
-    <FadeInWrapper show={stateLoaded}>
-      <Settings />
-    </FadeInWrapper>
-  );
-};
-
-export const Settings: React.FC = () => {
-  const { openHelp } = useHelp();
-
-  /**
-   * Accordion state.
-   */
-  const [accordionValue, setAccordionValue] =
-    useState<string>('settings-General');
 
   const [osPlatform, setOsPlatform] = useState<OsPlatform | null>(null);
 
@@ -50,6 +35,22 @@ export const Settings: React.FC = () => {
     initOsPlatform();
   }, []);
 
+  return (
+    <FadeInWrapper show={stateLoaded}>
+      <Settings platform={osPlatform} />
+    </FadeInWrapper>
+  );
+};
+
+export const Settings = ({ platform }: SettingsProps) => {
+  const { openHelp } = useHelp();
+
+  /**
+   * Accordion state.
+   */
+  const [accordionValue, setAccordionValue] =
+    useState<string>('settings-General');
+
   /**
    * Return a map of settings organised by their category.
    */
@@ -57,7 +58,7 @@ export const Settings: React.FC = () => {
     const map = new Map<string, SettingItem[]>();
 
     // Exit early if platform hasn't been set.
-    if (!osPlatform) {
+    if (!platform) {
       return map;
     }
 
@@ -73,7 +74,7 @@ export const Settings: React.FC = () => {
 
     // Populate map.
     for (const setting of SettingsList) {
-      if (!setting.platforms.includes(osPlatform as OsPlatform)) {
+      if (!setting.platforms.includes(platform as OsPlatform)) {
         continue;
       }
 
@@ -149,9 +150,6 @@ export const Settings: React.FC = () => {
             </Accordion.Root>
           </UI.AccordionWrapper>
         </Styles.FlexColumn>
-
-        {/* Workspaces Accordion Item */}
-        {/* <Workspaces /> */}
       </Styles.PadWrapper>
       <UI.LinksFooter openHelp={openHelp} />
     </UI.ScrollableMax>

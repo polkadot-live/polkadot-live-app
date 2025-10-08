@@ -19,13 +19,17 @@ export const Setting = ({ setting, handleSetting }: SettingProps) => {
   const { getSwitchState, handleSwitchToggle } = useSettingFlags();
   const { cacheGet } = useConnections();
 
-  /// Handle a setting switch toggle.
+  /**
+   * Handle a setting switch toggle.
+   */
   const handleSwitchToggleOuter = () => {
     handleSwitchToggle(setting);
     handleSetting(setting);
   };
 
-  /// Handle a setting button click.
+  /**
+   * Handle a setting button click.
+   */
   const handleButtonClick = () => {
     handleSetting(setting);
 
@@ -42,13 +46,17 @@ export const Setting = ({ setting, handleSetting }: SettingProps) => {
     }
   };
 
-  /// Determine if switch should be disabled.
+  /**
+   * Determine if switch should be disabled.
+   */
   const getDisabled = (key: SettingKey): boolean =>
     key === 'setting:import-data' || key === 'setting:export-data'
       ? cacheGet('backup:importing')
       : false;
 
-  /// Get specific flag for import button.
+  /**
+   * Get specific flag for import button.
+   */
   const getImportFlag = ({ key }: SettingItem): boolean =>
     key === 'setting:import-data' && getDisabled(key);
 

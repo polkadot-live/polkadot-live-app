@@ -2,7 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { WorkspaceItem } from '@polkadot-live/types/developerConsole/workspaces';
-import type { SettingItem } from '@polkadot-live/types/settings';
+import type { OsPlatform, SettingItem } from '@polkadot-live/types/settings';
+
+export interface SettingsProps {
+  platform: OsPlatform | null;
+}
 
 export interface SettingProps {
   setting: SettingItem;
