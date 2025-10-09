@@ -24,6 +24,25 @@ export const EmptyWrapper = styled.div`
   }
 `;
 
+export const ItemsColumn = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.25rem;
+
+  > div {
+    background-color: var(--background-primary);
+  }
+  > div:first-of-type {
+    border-top-left-radius: 0.375rem;
+    border-top-right-radius: 0.375rem;
+  }
+  > div:last-of-type {
+    border-bottom-left-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+  }
+`;
+
 export const MaxContainer = styled.div`
   width: 100%;
   max-width: 1024px;

@@ -8,7 +8,6 @@ import * as Styles from '@polkadot-live/styles/wrappers';
 import { useAddresses, useDialogControl } from '@ren/contexts/import';
 import { useState } from 'react';
 import { Address } from './Address';
-import { ItemsColumn } from '../../Home/Manage/Wrappers';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import {
   DialogBulkRename,
@@ -83,7 +82,7 @@ export const Listing = ({ source, setSection }: ManageAccountsProps) => {
                 <UI.TriggerHeader>{title}</UI.TriggerHeader>
               </UI.AccordionTrigger>
               <UI.AccordionContent transparent={true}>
-                <ItemsColumn>
+                <Styles.ItemsColumn>
                   {genericAccounts.length ? (
                     <>
                       {genericAccounts
@@ -105,7 +104,7 @@ export const Listing = ({ source, setSection }: ManageAccountsProps) => {
                       </div>
                     </Styles.EmptyWrapper>
                   )}
-                </ItemsColumn>
+                </Styles.ItemsColumn>
               </UI.AccordionContent>
             </Accordion.Item>
           </Styles.FlexColumn>

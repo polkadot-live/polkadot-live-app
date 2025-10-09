@@ -1,6 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { ConfigSettings } from '@polkadot-live/core';
 import { createContext, useEffect, useRef, useState } from 'react';
 import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import { getDefaultSettings } from '@polkadot-live/consts/settings';
@@ -94,6 +95,32 @@ export const SettingFlagsProvider = ({
   };
 
   /**
+   * Handle a setting action. Send port message to main renderer.
+   */
+  const handleSetting = (setting: SettingItem) => {
+    ConfigSettings.portSettings.postMessage({
+      task: 'setting:execute',
+      data: { setting },
+    });
+  };
+
+  /**
+   * Handle analytics.
+   */
+  const handleAnalytics = (setting: SettingItem) => {
+    switch (setting.key) {
+      case 'setting:export-data': {
+        window.myAPI.umamiEvent('backup-export', null);
+        break;
+      }
+      case 'setting:import-data': {
+        window.myAPI.umamiEvent('backup-import', null);
+        break;
+      }
+    }
+  };
+
+  /**
    * Sync settings with main process on mount.
    */
   useEffect(() => {
@@ -110,7 +137,9 @@ export const SettingFlagsProvider = ({
       value={{
         cacheSet,
         getSwitchState,
+        handleAnalytics,
         handleSwitchToggle,
+        handleSetting,
       }}
     >
       {children}

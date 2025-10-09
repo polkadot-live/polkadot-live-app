@@ -46,11 +46,7 @@ import {
 } from '@ren/contexts/import';
 
 // Settings window contexts.
-import {
-  SettingFlagsProvider,
-  WebsocketServerProvider,
-  WorkspacesProvider,
-} from '@ren/contexts/settings';
+import { SettingFlagsProvider } from '@ren/contexts/settings';
 
 // Actions window contexts.
 import {
@@ -137,9 +133,7 @@ const getProvidersForWindow = () => {
         HelpProvider,
         OverlayProvider,
         ConnectionsProvider,
-        SettingFlagsProvider,
-        WebsocketServerProvider,
-        WorkspacesProvider
+        SettingFlagsProvider
       )(Theme);
     }
     case 'action': {

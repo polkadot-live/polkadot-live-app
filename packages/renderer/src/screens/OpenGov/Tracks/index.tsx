@@ -15,7 +15,6 @@ import {
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { StickyHeadingsRow, TrackRow } from './TrackRow';
 import { renderPlaceholders } from '@polkadot-live/ui/utils';
-import { ItemsColumn } from '../../Home/Manage/Wrappers';
 import type { TracksProps } from '../types';
 
 export const Tracks = ({ setSection }: TracksProps) => {
@@ -118,7 +117,7 @@ export const Tracks = ({ setSection }: TracksProps) => {
                   <>
                     <StickyHeadingsRow />
                     {/* Track Listing */}
-                    <ItemsColumn>
+                    <Styles.ItemsColumn>
                       {tracksMap
                         .get(chainId)!
                         .sort((a, b) =>
@@ -129,7 +128,7 @@ export const Tracks = ({ setSection }: TracksProps) => {
                         .map((track) => (
                           <TrackRow key={track.trackId} track={track} />
                         ))}
-                    </ItemsColumn>
+                    </Styles.ItemsColumn>
                   </>
                 )}
               </div>

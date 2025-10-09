@@ -31,7 +31,6 @@ import {
 } from '@ren/contexts/openGov';
 import { ReferendumRow } from './ReferendumRow';
 import { renderPlaceholders } from '@polkadot-live/ui/utils';
-import { ItemsColumn } from '../../Home/Manage/Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { PuffLoader } from 'react-spinners';
 import { DialogFindReferendum } from './Dialogs';
@@ -198,7 +197,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
             </div>
           </Styles.EmptyWrapper>
         ) : (
-          <ItemsColumn>
+          <Styles.ItemsColumn>
             {tab === 'active' &&
               referenda.map((referendum, i) => (
                 <ReferendumRow
@@ -214,7 +213,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                   info={referendum}
                 />
               ))}
-          </ItemsColumn>
+          </Styles.ItemsColumn>
         )}
       </Styles.FlexColumn>
     );
@@ -227,7 +226,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
         <p>You have not subscribed to any referenda.</p>
       </div>
     ) : (
-      <ItemsColumn>
+      <Styles.ItemsColumn>
         {getActiveReferenda(getSubscribedReferenda()).map((referendum, i) => (
           <ReferendumRow
             key={`${i}_${referendum.refId}_subscribed`}
@@ -235,7 +234,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
             index={i}
           />
         ))}
-      </ItemsColumn>
+      </Styles.ItemsColumn>
     );
 
   // Handle clicking only subscribed button.

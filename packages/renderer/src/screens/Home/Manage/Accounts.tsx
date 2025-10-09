@@ -4,7 +4,7 @@
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 
-import { ItemEntryWrapper, ItemsColumn } from './Wrappers';
+import { ItemEntryWrapper } from './Wrappers';
 import { ButtonText } from '@polkadot-live/ui/kits/buttons';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { NoAccounts } from '../NoAccounts';
@@ -17,7 +17,7 @@ import {
 import { useEffect, useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { FlexColumn } from '@polkadot-live/styles/wrappers';
+import { FlexColumn, ItemsColumn } from '@polkadot-live/styles/wrappers';
 import { getSupportedChains } from '@polkadot-live/consts/chains';
 
 import type { AccountsProps } from './types';

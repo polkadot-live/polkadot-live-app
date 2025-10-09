@@ -81,6 +81,7 @@ export async function findFilesThatShouldBeExcluded() {
     '@polkadot-live/main',
     '@polkadot-live/preload',
     '@polkadot-live/renderer',
+    '@polkadot-live/screens',
     '@polkadot-live/styles',
     '@polkadot-live/types',
     '@polkadot-live/ui',

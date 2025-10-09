@@ -23,8 +23,11 @@ import { ellipsisFn } from '@w3ux/utils';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
-import { FlexColumn, FlexRow } from '@polkadot-live/styles/wrappers';
-import { ItemsColumn } from './Wrappers';
+import {
+  FlexColumn,
+  FlexRow,
+  ItemsColumn,
+} from '@polkadot-live/styles/wrappers';
 import { PermissionRow } from './PermissionRow';
 import { renderToast } from '@polkadot-live/ui/utils';
 import type { AnyFunction } from '@polkadot-live/types/misc';

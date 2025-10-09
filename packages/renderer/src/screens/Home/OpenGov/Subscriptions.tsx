@@ -16,7 +16,6 @@ import { useConnections } from '@ren/contexts/common';
 import { useEffect, useState } from 'react';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { ItemsColumn } from '../Manage/Wrappers';
 import { IntervalRow } from './IntervalRow';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import type { SubscriptionsProps } from './types';
@@ -219,14 +218,14 @@ export const Subscriptions = ({
                       </div>
                     </Style.FlexRow>
                     <UI.AccordionContent transparent={true}>
-                      <ItemsColumn>
+                      <Style.ItemsColumn>
                         {intervalTasks.map((task) => (
                           <IntervalRow
                             key={`${task.referendumId}_${task.action}`}
                             task={task}
                           />
                         ))}
-                      </ItemsColumn>
+                      </Style.ItemsColumn>
                     </UI.AccordionContent>
                   </Accordion.Item>
                 )

@@ -2,5 +2,3 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 export * from './SettingFlags';
-export * from './WebsocketServer';
-export * from './Workspaces';

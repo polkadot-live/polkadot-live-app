@@ -41,6 +41,7 @@ const getAliasConfig = () => {
     const srcUi = resolve(PROJECT_ROOT, 'packages', 'ui', 'src');
     const srcCore = resolve(PROJECT_ROOT, 'packages', 'core', 'src');
     const srcConsts = resolve(PROJECT_ROOT, 'packages', 'consts', 'src');
+    const srcScreens = resolve(PROJECT_ROOT, 'packages', 'screens', 'src');
     const srcStyles = resolve(PROJECT_ROOT, 'packages', 'styles', 'src');
     const srcTypes = resolve(PROJECT_ROOT, 'packages', 'types', 'src');
 
@@ -57,6 +58,7 @@ const getAliasConfig = () => {
       ['@polkadot-live/ui', srcUi],
       ['@polkadot-live/core', srcCore],
       ['@polkadot-live/consts', srcConsts],
+      ['@polkadot-live/screens', srcScreens],
       ['@polkadot-live/styles', srcStyles],
       ['@polkadot-live/types', srcTypes],
     ];
