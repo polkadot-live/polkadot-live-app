@@ -47,7 +47,7 @@ export const SettingsList: SettingItem[] = [
     key: 'setting:silence-os-notifications',
     settingType: 'switch',
     title: 'Silence OS Notifications',
-    platforms: ['darwin', 'win32', 'linux'],
+    platforms: ['chrome', 'darwin', 'win32', 'linux'],
   },
   {
     category: 'General',
@@ -56,7 +56,7 @@ export const SettingsList: SettingItem[] = [
     key: 'setting:enable-polkassembly',
     settingType: 'switch',
     title: 'Enable Polkassembly Data',
-    platforms: ['darwin', 'win32', 'linux'],
+    platforms: ['chrome', 'darwin', 'win32', 'linux'],
   },
   {
     category: 'General',
@@ -74,7 +74,7 @@ export const SettingsList: SettingItem[] = [
     key: 'setting:show-debugging-subscriptions',
     settingType: 'switch',
     title: 'Show Debugging Subscriptions',
-    platforms: ['darwin', 'win32', 'linux'],
+    platforms: ['chrome', 'darwin', 'win32', 'linux'],
   },
   {
     category: 'Subscriptions',
@@ -83,7 +83,7 @@ export const SettingsList: SettingItem[] = [
     key: 'setting:automatic-subscriptions',
     settingType: 'switch',
     title: 'Enable Automatic Subscriptions',
-    platforms: ['darwin', 'win32', 'linux'],
+    platforms: ['chrome', 'darwin', 'win32', 'linux'],
   },
   {
     category: 'Subscriptions',
@@ -92,7 +92,7 @@ export const SettingsList: SettingItem[] = [
     key: 'setting:keep-outdated-events',
     settingType: 'switch',
     title: 'Keep Outdated Events',
-    platforms: ['darwin', 'win32', 'linux'],
+    platforms: ['chrome', 'darwin', 'win32', 'linux'],
   },
   {
     category: 'Extrinsics',
@@ -101,7 +101,7 @@ export const SettingsList: SettingItem[] = [
     key: 'setting:silence-extrinsic-notifications',
     settingType: 'switch',
     title: 'Silence OS Notifications for Extrinsics',
-    platforms: ['darwin', 'win32', 'linux'],
+    platforms: ['chrome', 'darwin', 'win32', 'linux'],
   },
   {
     category: 'Backup',

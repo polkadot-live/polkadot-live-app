@@ -66,6 +66,13 @@ export const Settings = ({
       );
     }
 
+    // Remove any empty categories.
+    for (const [key, value] of map.entries()) {
+      if (!value.length) {
+        map.delete(key);
+      }
+    }
+
     return map;
   };
 

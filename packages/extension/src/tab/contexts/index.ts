@@ -2,3 +2,4 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 export { useTabs, TabsProvider } from './Tabs';
+export { useSettingFlags, SettingFlagsProvider } from './SettingFlags';

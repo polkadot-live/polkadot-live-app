@@ -4,8 +4,9 @@
 import { useConnections } from '../contexts';
 import { useEffect } from 'react';
 import { useHelp } from '@polkadot-live/ui/contexts';
-import { useTabs } from './contexts';
+import { useSettingFlags, useTabs } from './contexts';
 import { Help, Overlay, Tabs } from '@polkadot-live/ui/components';
+import { Settings } from '@polkadot-live/screens';
 import { MainInterfaceWrapper } from '@polkadot-live/styles/wrappers';
 import { ToastContainer } from 'react-toastify';
 import { HashRouter, Route, Routes, useNavigate } from 'react-router';
@@ -23,11 +24,21 @@ export const RouterInner = () => {
     <>
       <Tabs tabsCtx={useTabs()} />
       <Routes>
-        <Route path={'/'} element={null} />;
-        <Route path={'import'} element={<h2>Accounts</h2>} />;
-        <Route path={'settings'} element={<h2>Settings</h2>} />;
-        <Route path={'action'} element={<h2>Extrinsics</h2>} />;
-        <Route path={'openGov'} element={<h2>OpenGov</h2>} />;
+        <Route path={'/'} element={null} />
+        <Route path={'import'} element={<h2>Accounts</h2>} />
+        <Route
+          path={'settings'}
+          element={
+            <Settings
+              platform={'chrome'}
+              connectionsCtx={useConnections()}
+              helpCtx={useHelp()}
+              settingsFlagsCtx={useSettingFlags()}
+            />
+          }
+        />
+        <Route path={'action'} element={<h2>Extrinsics</h2>} />
+        <Route path={'openGov'} element={<h2>OpenGov</h2>} />
       </Routes>
     </>
   );
@@ -39,7 +50,7 @@ export default function App() {
   const { status: helpStatus, definition, closeHelp, setStatus } = useHelp();
 
   return (
-    <MainInterfaceWrapper className={`theme-polkadot theme-${mode}`}>
+    <MainInterfaceWrapper className={`theme-polkadot-relay theme-${mode}`}>
       <Help
         status={helpStatus}
         definition={definition}

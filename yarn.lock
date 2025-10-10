@@ -2319,6 +2319,7 @@ __metadata:
     "@crxjs/vite-plugin": "npm:^2.0.3"
     "@polkadot-live/consts": "workspace:*"
     "@polkadot-live/core": "workspace:*"
+    "@polkadot-live/screens": "workspace:*"
     "@polkadot-live/styles": "workspace:*"
     "@polkadot-live/types": "workspace:*"
     "@polkadot-live/ui": "workspace:*"
