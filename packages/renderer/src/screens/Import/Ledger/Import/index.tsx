@@ -36,7 +36,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ConnectButton } from './Wrappers';
 import { DialogShowAddress } from '../../Addresses/Dialogs';
 import { AddressListFooter, ImportAddressRow } from '../../Wrappers';
-import { InfoCardSteps } from '../../InfoCardSteps';
 import { determineStatusFromCode } from './Utils';
 import { getSelectLedgerNetworkData } from '@polkadot-live/consts/chains';
 import type { ImportProps } from './types';
@@ -343,7 +342,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                           </InfoCard>
                         )}
 
-                      <InfoCardSteps style={{ marginTop: '0.75rem' }}>
+                      <UI.InfoCardSteps style={{ marginTop: '0.75rem' }}>
                         <span>
                           Connect a Ledger device to this computer with a USB
                           cable.
@@ -355,7 +354,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                           Select a network above and click on the <b>Connect</b>{' '}
                           button.
                         </span>
-                      </InfoCardSteps>
+                      </UI.InfoCardSteps>
                     </UI.AccordionContent>
                   </Accordion.Item>
 

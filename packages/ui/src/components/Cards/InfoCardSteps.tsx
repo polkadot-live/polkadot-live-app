@@ -9,11 +9,7 @@ import {
   faCircleChevronRight,
   faCircleDot,
 } from '@fortawesome/free-solid-svg-icons';
-import { InfoCardStepsWrapper } from './Wrappers';
-
-/**
- * TODO: Move component to library.
- */
+import { InfoCardStepsWrapper } from './InfoCardSteps.styles';
 
 export const InfoCardSteps = ({
   children,
