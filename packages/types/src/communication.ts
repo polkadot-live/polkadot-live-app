@@ -93,13 +93,6 @@ export interface IpcTask {
     | 'interval:task:update'
     | 'interval:tasks:import'
     // Settings
-    | 'settings:handle'
-    // Workspaces
-    | 'workspaces:getAll'
-    | 'workspaces:delete'
-    | 'workspaces:launch'
-    // Websockets
-    | 'websockets:server:start'
-    | 'websockets:server:stop';
+    | 'settings:handle';
   data: AnyData;
 }

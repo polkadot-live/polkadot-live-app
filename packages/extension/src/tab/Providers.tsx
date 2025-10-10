@@ -3,13 +3,14 @@
 
 import { ConnectionsProvider } from '../contexts';
 import { HelpProvider, OverlayProvider } from '@polkadot-live/ui/contexts';
-import { TabsProvider } from './contexts';
+import { SettingFlagsProvider, TabsProvider } from './contexts';
 import { withProviders } from '@polkadot-live/ui/hooks';
 import App from './App';
 
 export const Providers = withProviders(
   HelpProvider,
   OverlayProvider,
+  SettingFlagsProvider,
   ConnectionsProvider,
   TabsProvider
 )(App);

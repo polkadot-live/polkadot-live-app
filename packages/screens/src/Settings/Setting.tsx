@@ -5,50 +5,50 @@ import { faInfo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SettingWrapper } from './Wrappers';
 import { EllipsisSpinner, Switch } from '@polkadot-live/ui/components';
-import { useConnections } from '@ren/contexts/common';
-import { useHelp } from '@polkadot-live/ui/contexts';
 import { ButtonMonoInvert } from '@polkadot-live/ui/kits/buttons';
-import { useSettingFlags } from '@ren/contexts/settings';
 import type { SettingProps } from './types';
 import type { SettingItem, SettingKey } from '@polkadot-live/types/settings';
 
-export const Setting = ({ setting, handleSetting }: SettingProps) => {
+export const Setting = ({
+  setting,
+  connectionsCtx,
+  helpCtx,
+  settingsFlagsCtx,
+}: SettingProps) => {
   const { title, settingType, helpKey } = setting;
 
-  const { openHelp } = useHelp();
-  const { getSwitchState, handleSwitchToggle } = useSettingFlags();
-  const { cacheGet } = useConnections();
+  const { cacheGet } = connectionsCtx;
+  const { openHelp } = helpCtx;
+  const { getSwitchState, handleSwitchToggle, handleAnalytics, handleSetting } =
+    settingsFlagsCtx;
 
-  /// Handle a setting switch toggle.
+  /**
+   * Handle a setting switch toggle.
+   */
   const handleSwitchToggleOuter = () => {
     handleSwitchToggle(setting);
     handleSetting(setting);
   };
 
-  /// Handle a setting button click.
+  /**
+   * Handle a setting button click.
+   */
   const handleButtonClick = () => {
     handleSetting(setting);
-
-    // Handle analytics.
-    switch (setting.key) {
-      case 'setting:export-data': {
-        window.myAPI.umamiEvent('backup-export', null);
-        break;
-      }
-      case 'setting:import-data': {
-        window.myAPI.umamiEvent('backup-import', null);
-        break;
-      }
-    }
+    handleAnalytics && handleAnalytics(setting);
   };
 
-  /// Determine if switch should be disabled.
+  /**
+   * Determine if switch should be disabled.
+   */
   const getDisabled = (key: SettingKey): boolean =>
     key === 'setting:import-data' || key === 'setting:export-data'
       ? cacheGet('backup:importing')
       : false;
 
-  /// Get specific flag for import button.
+  /**
+   * Get specific flag for import button.
+   */
   const getImportFlag = ({ key }: SettingItem): boolean =>
     key === 'setting:import-data' && getDisabled(key);
 

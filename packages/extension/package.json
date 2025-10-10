@@ -10,6 +10,7 @@
   "dependencies": {
     "@polkadot-live/consts": "workspace:*",
     "@polkadot-live/core": "workspace:*",
+    "@polkadot-live/screens": "workspace:*",
     "@polkadot-live/styles": "workspace:*",
     "@polkadot-live/types": "workspace:*",
     "@polkadot-live/ui": "workspace:*",

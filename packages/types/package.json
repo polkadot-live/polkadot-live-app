@@ -23,8 +23,7 @@
     "./tx": "./src/tx.ts",
     "./walletConnect": "./src/walletConnect.ts",
     "./chains": "./src/chains/index.ts",
-    "./chains/polkadot": "./src/chains/polkadot.ts",
-    "./developerConsole/workspaces": "./src/developerConsole/workspaces.ts"
+    "./chains/polkadot": "./src/chains/polkadot.ts"
   },
   "scripts": {
     "lint": "eslint --fix ./src",

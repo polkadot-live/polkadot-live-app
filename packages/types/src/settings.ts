@@ -4,7 +4,7 @@
 import type { HelpItemKey } from './help';
 import type { IconProp } from '@fortawesome/fontawesome-svg-core';
 
-export type OsPlatform = 'darwin' | 'linux' | 'win32';
+export type OsPlatform = 'chrome' | 'darwin' | 'linux' | 'win32';
 
 export type SettingKey =
   | 'setting:automatic-subscriptions'

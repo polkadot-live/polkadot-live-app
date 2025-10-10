@@ -10,7 +10,7 @@ import { useState } from 'react';
 import { ButtonText } from '@polkadot-live/ui/kits/buttons';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { ItemEntryWrapper, ItemsColumn } from '../Manage/Wrappers';
+import { ItemEntryWrapper } from '../Manage/Wrappers';
 import { NoOpenGov } from '../NoAccounts';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { NetworksProps } from './types';
@@ -59,7 +59,7 @@ export const Networks = ({ setBreadcrumb, setSection }: NetworksProps) => {
                 {getSortedKeys().length === 0 ? (
                   <NoOpenGov />
                 ) : (
-                  <ItemsColumn>
+                  <Style.ItemsColumn>
                     {getSortedKeys().map((chainId, i) => (
                       <ItemEntryWrapper
                         whileHover={{ scale: 1.01 }}
@@ -86,7 +86,7 @@ export const Networks = ({ setBreadcrumb, setSection }: NetworksProps) => {
                         </div>
                       </ItemEntryWrapper>
                     ))}
-                  </ItemsColumn>
+                  </Style.ItemsColumn>
                 )}
               </UI.AccordionContent>
             </Accordion.Item>

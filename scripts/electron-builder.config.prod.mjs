@@ -28,6 +28,7 @@ export default {
     'packages/renderer/dist',
     'packages/core/dist',
     'packages/ui/dist',
+    'packages/screens/dist',
     'package.json',
     ...(await findFilesThatShouldBeExcluded()),
   ],

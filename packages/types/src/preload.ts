@@ -6,7 +6,6 @@ import type { DismissEvent, EventCallback, NotificationData } from './reporter';
 import type { ExportResult, ImportResult } from './backup';
 import type { IpcTask, RelayPortTask, SyncID, TabData } from './communication';
 import type { IpcRendererEvent } from 'electron';
-import type { WorkspaceItem } from './developerConsole/workspaces';
 import type { AnyData } from './misc';
 import type { SettingKey } from './settings';
 import type { LedgerTask, LedgerTaskResponse } from './ledger';
@@ -29,14 +28,6 @@ export interface PreloadAPI {
   reportStaleEvent: ApiReportStaleEvent;
 
   sendExtrinsicsTaskAsync: (task: IpcTask) => Promise<string | void>;
-
-  sendWorkspaceTask: (task: IpcTask) => void;
-  fetchPersistedWorkspaces: () => Promise<WorkspaceItem[]>;
-
-  sendWebsocketTask: (task: IpcTask) => Promise<boolean>;
-  reportWorkspace: (
-    callback: (_: IpcRendererEvent, serialised: string) => void
-  ) => Electron.IpcRenderer;
 
   exportAppData: () => Promise<ExportResult>;
   importAppData: () => Promise<ImportResult>;

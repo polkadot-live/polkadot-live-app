@@ -1,7 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ConfigSettings } from '@polkadot-live/core';
 import { createContext, useEffect, useRef, useState } from 'react';
 import { createSafeContextHook } from '@polkadot-live/ui/utils';
 import { getDefaultSettings } from '@polkadot-live/consts/settings';
@@ -53,71 +52,20 @@ export const SettingFlagsProvider = ({
    */
   const handleSwitchToggle = (setting: SettingItem) => {
     const { key } = setting;
-    const val = !cacheGet(key);
-    const map = new Map(cacheRef.current).set(key, val);
+    const value = !cacheGet(key);
+    const map = new Map(cacheRef.current).set(key, value);
     setStateWithRef(map, setCache, cacheRef);
 
-    const umamiData = { settingId: '', toggledOn: val };
-
-    switch (key) {
-      case 'setting:docked-window':
-        umamiData.settingId = 'dock-window';
-        break;
-      case 'setting:silence-os-notifications':
-        umamiData.settingId = 'silence-notifications';
-        break;
-      case 'setting:silence-extrinsic-notifications':
-        umamiData.settingId = 'silence-extrinsics-notifications';
-        break;
-      case 'setting:show-all-workspaces':
-        umamiData.settingId = 'all-workspaces';
-        break;
-      case 'setting:show-debugging-subscriptions':
-        umamiData.settingId = 'debugging-subscriptions';
-        break;
-      case 'setting:automatic-subscriptions':
-        umamiData.settingId = 'automatic-subscriptions';
-        break;
-      case 'setting:enable-polkassembly':
-        umamiData.settingId = 'polkassembly-api';
-        break;
-      case 'setting:keep-outdated-events':
-        umamiData.settingId = 'outdated-events';
-        break;
-      case 'setting:hide-dock-icon':
-        umamiData.settingId = 'hide-dock-icon';
-        break;
-    }
-
-    const { settingId, toggledOn } = umamiData;
-    const event = `setting-toggle-${toggledOn ? 'on' : 'off'}`;
-    window.myAPI.umamiEvent(event, { setting: settingId });
+    const msg = { type: 'db', task: 'settings:set', key, value };
+    chrome.runtime.sendMessage(msg);
   };
 
   /**
-   * Handle a setting action. Send port message to main renderer.
+   * Handle a setting action.
+   * @todo Handle setting:show-debugging-subscriptions
    */
   const handleSetting = (setting: SettingItem) => {
-    ConfigSettings.portSettings.postMessage({
-      task: 'setting:execute',
-      data: { setting },
-    });
-  };
-
-  /**
-   * Handle analytics.
-   */
-  const handleAnalytics = (setting: SettingItem) => {
-    switch (setting.key) {
-      case 'setting:export-data': {
-        window.myAPI.umamiEvent('backup-export', null);
-        break;
-      }
-      case 'setting:import-data': {
-        window.myAPI.umamiEvent('backup-import', null);
-        break;
-      }
-    }
+    console.log(setting);
   };
 
   /**
@@ -125,7 +73,10 @@ export const SettingFlagsProvider = ({
    */
   useEffect(() => {
     const sync = async () => {
-      const map = await window.myAPI.getAppSettings();
+      const data = { type: 'db', task: 'settings:getAll' };
+      const ser: string = await chrome.runtime.sendMessage(data);
+      const array: [SettingKey, boolean][] = JSON.parse(ser);
+      const map = new Map<SettingKey, boolean>(array);
       setStateWithRef(map, setCache, cacheRef);
     };
 
@@ -137,7 +88,6 @@ export const SettingFlagsProvider = ({
       value={{
         cacheSet,
         getSwitchState,
-        handleAnalytics,
         handleSwitchToggle,
         handleSetting,
       }}

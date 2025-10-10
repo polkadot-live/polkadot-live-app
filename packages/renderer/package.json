@@ -19,6 +19,7 @@
     "@polkadot-live/consts": "workspace:*",
     "@polkadot-live/core": "workspace:*",
     "@polkadot-live/preload": "workspace:*",
+    "@polkadot-live/screens": "workspace:*",
     "@polkadot-live/styles": "workspace:*",
     "@polkadot-live/ui": "workspace:*"
   },

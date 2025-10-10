@@ -30,6 +30,7 @@ import {
   CaretLeftIcon,
   CaretRightIcon,
 } from '@radix-ui/react-icons';
+import { ItemsColumn } from '@polkadot-live/styles/wrappers';
 import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ConnectButton } from './Wrappers';
@@ -37,7 +38,6 @@ import { DialogShowAddress } from '../../Addresses/Dialogs';
 import { AddressListFooter, ImportAddressRow } from '../../Wrappers';
 import { InfoCardSteps } from '../../InfoCardSteps';
 import { determineStatusFromCode } from './Utils';
-import { ItemsColumn } from '@ren/screens/Home/Manage/Wrappers';
 import { getSelectLedgerNetworkData } from '@polkadot-live/consts/chains';
 import type { ImportProps } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';

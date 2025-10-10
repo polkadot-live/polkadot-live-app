@@ -28,9 +28,7 @@ import { OnlineStatusController } from '@/controller/OnlineStatusController';
 import { NotificationsController } from '@/controller/NotificationsController';
 import { SettingsController } from '@/controller/SettingsController';
 import { SubscriptionsController } from '@/controller/SubscriptionsController';
-import { WebsocketsController } from '@/controller/WebsocketsController';
 import { WindowsController } from '@/controller/WindowsController';
-import { WorkspacesController } from '@/controller/WorkspacesController';
 import { MainDebug } from '@/utils/DebugUtils';
 import { hideDockIcon } from '@/utils/SystemUtils';
 import { menuTemplate } from '@/utils/MenuUtils';
@@ -276,28 +274,6 @@ app.whenReady().then(async () => {
 
   ipcMain.handle('main:clipboard:copy', async (_, text) =>
     clipboard.writeText(text)
-  );
-
-  /**
-   * Websockets
-   */
-
-  ipcMain.handle(
-    'main:task:websockets',
-    async (_, task: IpcTask): Promise<boolean> =>
-      WebsocketsController.process(task)
-  );
-
-  /**
-   * Workspaces
-   */
-
-  ipcMain.on('main:task:workspace', (_, task: IpcTask) =>
-    WorkspacesController.process(task)
-  );
-
-  ipcMain.handle('app:workspaces:fetch', async () =>
-    WorkspacesController.fetchPersistedWorkspaces()
   );
 
   /**

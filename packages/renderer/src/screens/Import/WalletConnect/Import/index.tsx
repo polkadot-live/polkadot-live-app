@@ -13,7 +13,6 @@ import {
   ButtonPrimaryInvert,
   ButtonText,
 } from '@polkadot-live/ui/kits/buttons';
-import { ItemsColumn } from '@ren/screens/Home/Manage/Wrappers';
 import { ChainIcon, InfoCard } from '@polkadot-live/ui/components';
 
 /** Temp */
@@ -233,7 +232,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                         </Styles.FlexColumn>
                       ) : (
                         <>
-                          <ItemsColumn>
+                          <Styles.ItemsColumn>
                             {wcNetworks.map(({ chainId, selected }, i) => (
                               <ImportAddressRow key={i}>
                                 <ChainIcon chainId={chainId} width={18} />
@@ -271,7 +270,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                 </Styles.CheckboxRoot>
                               </ImportAddressRow>
                             ))}
-                          </ItemsColumn>
+                          </Styles.ItemsColumn>
                           <Styles.FlexColumn style={{ marginTop: '0.5rem' }}>
                             <Styles.FlexRow $gap={'0.5rem'}>
                               <InfoCard
@@ -329,7 +328,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                         </InfoCard>
                       ) : (
                         <>
-                          <ItemsColumn>
+                          <Styles.ItemsColumn>
                             {wcFetchedAddresses.map(
                               (
                                 { chainId, encoded, publicKeyHex, selected },
@@ -401,7 +400,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                 </ImportAddressRow>
                               )
                             )}
-                          </ItemsColumn>
+                          </Styles.ItemsColumn>
 
                           <AddressListFooter>
                             <div className="importBtn">
