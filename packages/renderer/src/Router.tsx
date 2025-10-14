@@ -1,6 +1,14 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import {
+  ContextProxyExtrinsics,
+  ContextProxyImport,
+  ContextProxyMain,
+  ContextProxyOpenGov,
+  ContextProxySettings,
+  ContextProxyTabs,
+} from './Proxy';
 import { MainInterfaceWrapper } from '@polkadot-live/styles/wrappers';
 import { Overlay, Help } from '@polkadot-live/ui/components';
 import { useHelp } from '@polkadot-live/ui/contexts';
@@ -28,15 +36,60 @@ export const RouterInner = () => {
 
     switch (windowId) {
       case 'main':
-        return <Route path={'/'} element={<Home />} />;
+        return (
+          <Route
+            path={'/'}
+            element={
+              <ContextProxyMain>
+                <Home />
+              </ContextProxyMain>
+            }
+          />
+        );
       case 'import':
-        return <Route path={'import'} element={<FadeImport />} />;
+        return (
+          <Route
+            path={'import'}
+            element={
+              <ContextProxyImport>
+                <FadeImport />
+              </ContextProxyImport>
+            }
+          />
+        );
       case 'settings':
-        return <Route path={'settings'} element={<FadeSettings />} />;
+        return (
+          <Route
+            path={'settings'}
+            element={
+              <ContextProxySettings>
+                <FadeSettings />
+              </ContextProxySettings>
+            }
+          />
+        );
       case 'action':
-        return <Route path={'action'} element={<FadeAction />} />;
+        return (
+          <Route
+            path={'action'}
+            element={
+              <ContextProxyExtrinsics>
+                <FadeAction />
+              </ContextProxyExtrinsics>
+            }
+          />
+        );
       case 'openGov':
-        return <Route path={'openGov'} element={<FadeOpenGov />} />;
+        return (
+          <Route
+            path={'openGov'}
+            element={
+              <ContextProxyOpenGov>
+                <FadeOpenGov />
+              </ContextProxyOpenGov>
+            }
+          />
+        );
       default:
         throw new Error('Window ID not recognized.');
     }
@@ -75,7 +128,14 @@ export const Router = () => {
     <HashRouter basename="/">
       {windowId === 'tabs' ? (
         <Routes>
-          <Route path={'/tabs'} element={<TabsWrapper />} />
+          <Route
+            path={'/tabs'}
+            element={
+              <ContextProxyTabs>
+                <TabsWrapper />
+              </ContextProxyTabs>
+            }
+          />
         </Routes>
       ) : (
         <RouterInner />

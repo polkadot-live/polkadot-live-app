@@ -9,7 +9,7 @@ import {
   WcError,
 } from '@polkadot-live/core';
 import { createContext, useEffect, useRef } from 'react';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import { createSafeContextHook } from '@polkadot-live/contexts';
 import { decodeAddress, encodeAddress, u8aToHex } from 'dedot/utils';
 import { useConnections } from '@ren/contexts/common';
 import { getSdkError } from '@walletconnect/utils';
@@ -18,7 +18,7 @@ import UniversalProvider from '@walletconnect/universal-provider';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
-import type { WalletConnectContextInterface } from './types';
+import type { WalletConnectContextInterface } from '@polkadot-live/contexts/types/main';
 import type {
   WalletConnectMeta,
   WcFetchedAddress,

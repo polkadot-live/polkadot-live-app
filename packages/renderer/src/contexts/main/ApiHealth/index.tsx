@@ -7,10 +7,10 @@ import {
   SubscriptionsController,
 } from '@polkadot-live/core';
 import { createContext, useEffect, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import { createSafeContextHook } from '@polkadot-live/contexts';
 import type { ApiConnectResult, NodeEndpoint } from '@polkadot-live/types/apis';
 import type { ApiError } from '@polkadot-live/core';
-import type { ApiHealthContextInterface } from './types';
+import type { ApiHealthContextInterface } from '@polkadot-live/contexts/types/main';
 import type { ChainID } from '@polkadot-live/types/chains';
 
 export const ApiHealthContext = createContext<

@@ -5,15 +5,24 @@ import { openDB } from 'idb';
 import { getDefaultSettings } from '@polkadot-live/consts/settings';
 import type { DBSchema, IDBPDatabase } from 'idb';
 import type { AnyData } from '@polkadot-live/types/misc';
+import type {
+  AccountSource,
+  ImportedGenericAccount,
+} from '@polkadot-live/types/accounts';
+import { getSupportedSources } from '@polkadot-live/consts/chains';
 
 interface MyDB extends DBSchema {
+  accounts: {
+    key: AccountSource;
+    value: ImportedGenericAccount[];
+  };
   settings: {
     key: string;
     value: boolean;
   };
 }
 
-export type Stores = 'settings';
+export type Stores = 'settings' | 'accounts';
 
 export class DbController {
   private static DB_NAME = 'PolkadotLiveDB';
@@ -35,9 +44,13 @@ export class DbController {
   static async initialize() {
     this.db = await openDB<MyDB>(this.DB_NAME, 1, {
       upgrade(db) {
-        const store = db.createObjectStore('settings');
+        const accountsStore = db.createObjectStore('accounts');
+        for (const key of getSupportedSources()) {
+          accountsStore.put([], key);
+        }
+        const settingsStore = db.createObjectStore('settings');
         for (const [key, value] of getDefaultSettings().entries()) {
-          store.put(value, key);
+          settingsStore.put(value, key);
         }
       },
     });

@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
-import type { LedgerFeedbackContextInterface } from './types';
+import { createSafeContextHook } from '@polkadot-live/contexts';
+import type { LedgerFeedbackContextInterface } from '@polkadot-live/contexts/types/action';
 import type {
   LedgerErrorMeta,
   LedgerErrorStatusCode,

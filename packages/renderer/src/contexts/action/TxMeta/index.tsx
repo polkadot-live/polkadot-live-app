@@ -5,7 +5,7 @@ import * as wc from '@polkadot-live/consts/walletConnect';
 import { ConfigAction, ExtrinsicError, generateUID } from '@polkadot-live/core';
 import React, { createContext, useEffect, useRef, useState } from 'react';
 import type { AnyJson } from '@polkadot-live/types/misc';
-import type { TxMetaContextInterface } from './types';
+import type { TxMetaContextInterface } from '@polkadot-live/contexts/types/action';
 import type {
   ActionMeta,
   AddressInfo,
@@ -23,7 +23,8 @@ import {
   SignLedgerOverlay,
 } from '@ren/screens/Action/Overlays';
 import { useOverlay } from '@polkadot-live/ui/contexts';
-import { createSafeContextHook, renderToast } from '@polkadot-live/ui/utils';
+import { createSafeContextHook } from '@polkadot-live/contexts';
+import { renderToast } from '@polkadot-live/ui/utils';
 import { WalletConnectModal } from '@walletconnect/modal';
 import { ChainIcon } from '@polkadot-live/ui/components';
 

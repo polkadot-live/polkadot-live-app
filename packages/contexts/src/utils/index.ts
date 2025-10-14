@@ -3,6 +3,7 @@
 
 import { use } from 'react';
 import { ContextError } from '@polkadot-live/core';
+import type { AnyData } from '@polkadot-live/types/misc';
 
 export const createSafeContextHook =
   <T>(Context: React.Context<T | undefined>, name: string) =>
@@ -13,3 +14,13 @@ export const createSafeContextHook =
     }
     return context;
   };
+
+export const buildCache = (
+  entries: Record<string, () => AnyData>
+): Map<string, () => AnyData> => {
+  const cache = new Map<string, () => AnyData>();
+  Object.entries(entries).forEach(([key, value]) => {
+    cache.set(key, value);
+  });
+  return cache;
+};

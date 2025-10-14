@@ -9,15 +9,16 @@
   },
   "dependencies": {
     "@polkadot-live/consts": "workspace:*",
+    "@polkadot-live/contexts": "workspace:*",
     "@polkadot-live/core": "workspace:*",
     "@polkadot-live/screens": "workspace:*",
     "@polkadot-live/styles": "workspace:*",
-    "@polkadot-live/types": "workspace:*",
     "@polkadot-live/ui": "workspace:*",
     "idb": "^8.0.3"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.3",
+    "@polkadot-live/types": "workspace:*",
     "@types/chrome": "^0.1.1",
     "@types/node": "^24.0.15",
     "@vitejs/plugin-react": "^4.7.0",

@@ -9,7 +9,8 @@ import {
   FlexRow,
 } from '@polkadot-live/styles/wrappers';
 import { Cross2Icon } from '@radix-ui/react-icons';
-import { useDialogControl, useRenameHandler } from '@ren/contexts/import';
+import { useDialogControl } from '@polkadot-live/contexts';
+import { useRenameHandler } from '@ren/contexts/import';
 import { useConnections } from '@ren/contexts/common';
 import { useEffect, useState } from 'react';
 import { TooltipRx } from '@polkadot-live/ui/components';

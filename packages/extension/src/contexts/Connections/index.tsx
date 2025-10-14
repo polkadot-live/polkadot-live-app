@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as themeVariables from '@polkadot-live/styles/theme/variables';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import { createSafeContextHook } from '@polkadot-live/contexts';
 import { createContext, useEffect, useRef, useState } from 'react';
 import { initSharedState } from '@polkadot-live/consts/sharedState';
 import { setStateWithRef } from '@w3ux/utils';
@@ -57,6 +57,22 @@ export const ConnectionsProvider = ({
     chrome.runtime.sendMessage(msg);
   };
 
+  /**
+   * Copy to clipboard.
+   */
+  const copyToClipboard = async (text: string) =>
+    await navigator.clipboard.writeText(text);
+
+  /**
+   * Open URL in browser.
+   */
+  const openInBrowser = (uri: string, analytics?: AnyData) => {
+    chrome.tabs.create({ url: uri });
+    if (analytics) {
+      // TODO: Implement
+    }
+  };
+
   useEffect(() => {
     /**
      * Synchronize flags in store.
@@ -89,8 +105,10 @@ export const ConnectionsProvider = ({
     <ConnectionsContext
       value={{
         cacheGet,
+        copyToClipboard,
         getOnlineMode,
         getTheme,
+        openInBrowser,
         setShared,
       }}
     >

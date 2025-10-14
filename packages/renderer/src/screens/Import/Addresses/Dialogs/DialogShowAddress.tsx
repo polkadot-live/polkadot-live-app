@@ -4,7 +4,7 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { useConnections } from '@ren/contexts/common';
-import { useDialogControl } from '@ren/contexts/import';
+import { useDialogControl } from '@polkadot-live/contexts';
 import {
   DialogContent,
   DialogHr,

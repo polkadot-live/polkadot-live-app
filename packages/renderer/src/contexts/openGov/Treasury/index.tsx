@@ -5,7 +5,7 @@ import BigNumber from 'bignumber.js';
 import { StatemintAssets } from '@polkadot-live/consts/treasury';
 import { ConfigOpenGov, formatBlocksToTime } from '@polkadot-live/core';
 import { createContext, useRef, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import { createSafeContextHook } from '@polkadot-live/contexts';
 import { rmCommas } from '@w3ux/utils';
 import { chainCurrency, chainUnits } from '@polkadot-live/consts/chains';
 import type { AnyData } from '@polkadot-live/types/misc';
@@ -14,7 +14,7 @@ import type {
   StatemineTreasuryInfo,
   StatemintTreasuryInfo,
 } from '@polkadot-live/types/treasury';
-import type { TreasuryContextInterface } from './types';
+import type { TreasuryContextInterface } from '@polkadot-live/contexts/types/openGov';
 
 export const TreasuryContext = createContext<
   TreasuryContextInterface | undefined

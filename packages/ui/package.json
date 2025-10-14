@@ -47,6 +47,7 @@
   },
   "dependencies": {
     "@polkadot-live/consts": "workspace:*",
+    "@polkadot-live/contexts": "workspace:*",
     "@polkadot-live/core": "workspace:*",
     "@polkadot-live/styles": "workspace:*",
     "react-svg": "^16.2.0"

@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { MenuItemData, AppFlags } from '@polkadot-live/ui/components';
+import type { AppFlags, MenuItemData } from '@polkadot-live/types/menu';
 
 export interface CogMenuContextInterface {
   getAppFlags: () => AppFlags;

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext, useEffect, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import { createSafeContextHook } from '@polkadot-live/contexts';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ApiConnectResult, NodeEndpoint } from '@polkadot-live/types/apis';
 import type { ApiError } from '@polkadot-live/core';

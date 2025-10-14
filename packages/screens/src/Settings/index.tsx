@@ -8,16 +8,13 @@ import { Setting } from './Setting';
 import { SettingsList } from '@polkadot-live/consts/settings';
 import { useState } from 'react';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
+import { useContextProxy } from '@polkadot-live/contexts';
 import type { OsPlatform, SettingItem } from '@polkadot-live/types/settings';
 import type { SettingsProps } from './types';
 
-export const Settings = ({
-  platform,
-  connectionsCtx,
-  helpCtx,
-  settingsFlagsCtx,
-}: SettingsProps) => {
-  const { openHelp } = helpCtx;
+export const Settings = ({ platform }: SettingsProps) => {
+  const { useCtx } = useContextProxy();
+  const { openHelp } = useCtx('HelpCtx')();
 
   /**
    * Accordion state.
@@ -106,13 +103,7 @@ export const Settings = ({
                       <UI.AccordionContent transparent={true}>
                         <Styles.ItemsColumn>
                           {settings.map((setting, j) => (
-                            <Setting
-                              key={j}
-                              setting={setting}
-                              connectionsCtx={connectionsCtx}
-                              helpCtx={helpCtx}
-                              settingsFlagsCtx={settingsFlagsCtx}
-                            />
+                            <Setting key={j} setting={setting} />
                           ))}
                         </Styles.ItemsColumn>
                       </UI.AccordionContent>

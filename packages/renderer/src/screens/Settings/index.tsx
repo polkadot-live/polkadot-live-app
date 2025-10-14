@@ -7,8 +7,6 @@ import { useDebug } from '@ren/hooks/useDebug';
 import { useSettingsMessagePorts } from '@ren/hooks/useSettingsMessagePorts';
 import { FadeInWrapper } from '@polkadot-live/ui/utils';
 import { Settings } from '@polkadot-live/screens';
-import { useHelp } from '@polkadot-live/ui/contexts';
-import { useSettingFlags } from '@ren/contexts/settings';
 import type { OsPlatform } from '@polkadot-live/types/settings';
 
 export const FadeSettings = () => {
@@ -29,12 +27,7 @@ export const FadeSettings = () => {
 
   return (
     <FadeInWrapper show={stateLoaded}>
-      <Settings
-        connectionsCtx={useConnections()}
-        helpCtx={useHelp()}
-        settingsFlagsCtx={useSettingFlags()}
-        platform={osPlatform}
-      />
+      <Settings platform={osPlatform} />
     </FadeInWrapper>
   );
 };

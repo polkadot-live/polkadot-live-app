@@ -3,7 +3,7 @@
 
 import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { createContext, useEffect, useRef, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import { createSafeContextHook } from '@polkadot-live/contexts';
 import {
   KeyboardSensor,
   PointerSensor,

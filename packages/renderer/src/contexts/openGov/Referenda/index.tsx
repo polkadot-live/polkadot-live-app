@@ -3,12 +3,12 @@
 
 import { ConfigOpenGov } from '@polkadot-live/core';
 import { createContext, useCallback, useEffect, useRef, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import { createSafeContextHook } from '@polkadot-live/contexts';
 import { useConnections } from '@ren/contexts/common';
 import { usePolkassembly } from '../Polkassembly';
 import { setStateWithRef } from '@w3ux/utils';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { ReferendaContextInterface } from './types';
+import type { ReferendaContextInterface } from '@polkadot-live/contexts/types/openGov';
 import type {
   PagedReferenda,
   RefDeciding,

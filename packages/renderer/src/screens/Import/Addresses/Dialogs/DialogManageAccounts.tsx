@@ -14,11 +14,11 @@ import { faBookmark } from '@fortawesome/free-regular-svg-icons';
 import { ellipsisFn } from '@w3ux/utils';
 import { useState } from 'react';
 import { useConnections } from '@ren/contexts/common';
+import { useDialogControl } from '@polkadot-live/contexts';
 import {
   useAccountStatuses,
   useAddHandler,
   useRemoveHandler,
-  useDialogControl,
 } from '@ren/contexts/import';
 
 import type { ChainID } from '@polkadot-live/types/chains';

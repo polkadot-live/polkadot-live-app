@@ -3,7 +3,7 @@
 
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { useConnections } from '@ren/contexts/common';
-import { useDialogControl } from '@ren/contexts/import';
+import { useDialogControl } from '@polkadot-live/contexts';
 import { ActionBtn } from '../Dialogs/Wrappers';
 import { DropdownMenuContent } from '@polkadot-live/styles/wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

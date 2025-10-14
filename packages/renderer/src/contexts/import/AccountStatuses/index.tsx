@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext, useEffect, useRef, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import { createSafeContextHook } from '@polkadot-live/contexts';
 import { getSupportedSources } from '@polkadot-live/consts/chains';
 import { setStateWithRef } from '@w3ux/utils';
 import { useAddresses } from '../Addresses';
@@ -10,7 +10,7 @@ import type {
   AccountSource,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
-import type { AccountStatusesContextInterface } from './types';
+import type { AccountStatusesContextInterface } from '@polkadot-live/contexts/types/import';
 
 export const AccountStatusesContext = createContext<
   AccountStatusesContextInterface | undefined

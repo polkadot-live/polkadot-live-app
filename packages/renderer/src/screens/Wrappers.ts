@@ -3,47 +3,6 @@
 
 import styled from 'styled-components';
 
-// Child window header
-export const HeaderWrapper = styled.div`
-  position: sticky;
-  position: -webkit-sticky;
-  top: 0;
-  z-index: 5;
-  width: 100%;
-
-  background-color: var(--background-surface);
-  border-bottom: 1px solid var(--border-primary-color);
-
-  .content {
-    display: flex;
-    align-items: center;
-    padding: 1rem 1.5rem 0.75rem;
-
-    h3,
-    h4 {
-      font-weight: 600;
-      font-size: 1.1rem;
-      user-select: none;
-    }
-    h4 {
-      display: flex;
-      align-items: center;
-      > span {
-        color: var(--text-color-primary);
-        margin-right: 0%.5rem;
-      }
-      svg {
-        width: 1.1rem;
-        height: 1.1rem;
-        margin-right: 0.6rem;
-        path {
-          fill: var(--text-color-primary);
-        }
-      }
-    }
-  }
-`;
-
 // Action content wrapper
 export const ContentWrapper = styled.div`
   width: 100%;

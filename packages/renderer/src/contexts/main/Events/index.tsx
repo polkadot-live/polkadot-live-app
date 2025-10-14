@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import React, { createContext, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import { createSafeContextHook } from '@polkadot-live/contexts';
 import {
   pushUniqueEvent,
   getEventChainId,
@@ -17,7 +17,7 @@ import type {
   EventsContextInterface,
   EventsState,
   SortedChainEvents,
-} from './types';
+} from '@polkadot-live/contexts/types/main';
 
 export const EventsContext = createContext<EventsContextInterface | undefined>(
   undefined

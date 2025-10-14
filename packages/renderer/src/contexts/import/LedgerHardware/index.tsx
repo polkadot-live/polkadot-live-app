@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext, useRef, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import { createSafeContextHook } from '@polkadot-live/contexts';
 import { decodeAddress, u8aToHex } from 'dedot/utils';
 import { setStateWithRef } from '@w3ux/utils';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -11,7 +11,7 @@ import type {
   LedgerHardwareContextInterface,
   NamedRawLedgerAddress,
   RawLedgerAddress,
-} from './types';
+} from '@polkadot-live/contexts/types/import';
 import type {
   GetAddressMessage,
   LedgerFetchedAddressData,

@@ -12,9 +12,9 @@ import { useConnections } from '@ren/contexts/common';
 import { useManage, useIntervalSubscriptions } from '@ren/contexts/main';
 import type { AnyFunction } from '@polkadot-live/types/misc';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
-import type { IntervalTasksManagerContextInterface } from './types';
+import type { IntervalTasksManagerContextInterface } from '@polkadot-live/contexts/types/main';
 import type { ReactNode } from 'react';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import { createSafeContextHook } from '@polkadot-live/contexts';
 
 export const IntervalTasksManagerContext = createContext<
   IntervalTasksManagerContextInterface | undefined

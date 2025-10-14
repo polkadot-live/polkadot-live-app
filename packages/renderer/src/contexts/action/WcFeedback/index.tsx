@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import { createSafeContextHook } from '@polkadot-live/contexts';
 import type { WalletConnectMeta } from '@polkadot-live/types/walletConnect';
-import type { WcFeedbackContextInterface } from './types';
+import type { WcFeedbackContextInterface } from '@polkadot-live/contexts/types/action';
 
 export const WcFeedbackContext = createContext<
   WcFeedbackContextInterface | undefined

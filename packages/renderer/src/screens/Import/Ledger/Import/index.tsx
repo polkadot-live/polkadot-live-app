@@ -8,13 +8,13 @@ import * as Select from '@radix-ui/react-select';
 import * as Styles from '@polkadot-live/styles/wrappers';
 import * as UI from '@polkadot-live/ui/components';
 
+import { useDialogControl } from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
 import { useConnections } from '@ren/contexts/common';
 import {
   useAddresses,
   useImportHandler,
   useLedgerHardware,
-  useDialogControl,
 } from '@ren/contexts/import';
 
 import { BarLoader } from 'react-spinners';

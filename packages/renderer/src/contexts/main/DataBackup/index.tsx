@@ -4,7 +4,7 @@
 /// Dependencies.
 import * as Core from '@polkadot-live/core';
 import { createContext } from 'react';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import { createSafeContextHook } from '@polkadot-live/contexts';
 import {
   AccountsController,
   IntervalsController,
@@ -22,7 +22,7 @@ import type {
   DataBackupContextInterface,
   ImportFunc,
   RemoveFunc,
-} from './types';
+} from '@polkadot-live/contexts/types/main';
 import type {
   AccountSource,
   ImportedGenericAccount,

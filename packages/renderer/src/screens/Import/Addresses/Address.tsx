@@ -7,9 +7,9 @@ import { HardwareAddress } from '@polkadot-live/ui/components';
 import {
   useAccountStatuses,
   useAddHandler,
-  useDialogControl,
   useRemoveHandler,
 } from '@ren/contexts/import';
+import { useDialogControl } from '@polkadot-live/contexts';
 import { useConnections } from '@ren/contexts/common';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import type { AddressProps } from './types';

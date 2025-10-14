@@ -16,11 +16,8 @@ import {
 import { ChainIcon, InfoCard } from '@polkadot-live/ui/components';
 
 /** Temp */
-import {
-  useAddresses,
-  useDialogControl,
-  useWalletConnectImport,
-} from '@ren/contexts/import';
+import { useDialogControl } from '@polkadot-live/contexts';
+import { useAddresses, useWalletConnectImport } from '@ren/contexts/import';
 import { useConnections } from '@ren/contexts/common';
 import { useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';

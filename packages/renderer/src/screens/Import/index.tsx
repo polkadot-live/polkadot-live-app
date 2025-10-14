@@ -18,6 +18,7 @@ import { useConnections } from '@ren/contexts/common';
 import { useHelp } from '@polkadot-live/ui/contexts';
 import { FadeInWrapper } from '@polkadot-live/ui/utils';
 import type { AccountSource } from '@polkadot-live/types/accounts';
+import type { ImportScreenProps } from './types';
 
 export const FadeImport = () => {
   // Set up port communication for `import` window.
@@ -30,6 +31,25 @@ export const FadeImport = () => {
       <Import />
     </FadeInWrapper>
   );
+};
+
+export const ImportScreen = ({
+  section,
+  source,
+  setSection,
+}: ImportScreenProps) => {
+  switch (source) {
+    case 'ledger':
+      return <ImportLedger setSection={setSection} />;
+    case 'read-only':
+      return <ImportReadOnly setSection={setSection} />;
+    case 'vault':
+      return <ImportVault section={section} setSection={setSection} />;
+    case 'wallet-connect':
+      return <ImportWalletConnect setSection={setSection} />;
+    default:
+      return <p>Source not selected.</p>;
+  }
 };
 
 export const Import: React.FC = () => {
@@ -45,21 +65,6 @@ export const Import: React.FC = () => {
       setSource(null);
     }
   }, [section]);
-
-  const renderImportScreen = () => {
-    switch (source) {
-      case 'ledger':
-        return <ImportLedger setSection={setSection} />;
-      case 'read-only':
-        return <ImportReadOnly setSection={setSection} />;
-      case 'vault':
-        return <ImportVault section={section} setSection={setSection} />;
-      case 'wallet-connect':
-        return <ImportWalletConnect setSection={setSection} />;
-      default:
-        return <p>Source not selected.</p>;
-    }
-  };
 
   return (
     <ModalSection type="carousel" style={{ height: '100%' }}>
@@ -107,7 +112,11 @@ export const Import: React.FC = () => {
           {section === 1 && (
             <UI.ScrollableMax>
               {!getOnlineMode() && <UI.OfflineBanner />}
-              {renderImportScreen()}
+              <ImportScreen
+                source={source}
+                section={section}
+                setSection={setSection}
+              />
               <UI.LinksFooter openHelp={openHelp} />
             </UI.ScrollableMax>
           )}
