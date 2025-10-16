@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { useContextProxy } from '@polkadot-live/contexts';
 import { Home } from './Home';
 import { ImportReadOnly } from './ReadOnly';
+import { ImportVault } from './Vault';
 import {
   ModalMotionTwoSection,
   ModalSection,
@@ -15,7 +16,7 @@ import type { ImportScreenProps } from './types';
 
 export const ImportScreen = ({
   source,
-  //section,
+  section,
   setSection,
 }: ImportScreenProps) => {
   switch (source) {
@@ -24,7 +25,7 @@ export const ImportScreen = ({
     case 'read-only':
       return <ImportReadOnly setSection={setSection} />;
     case 'vault':
-      return <span>ImportVault </span>;
+      return <ImportVault section={section} setSection={setSection} />;
     case 'wallet-connect':
       return <span>ImportWalletConnect</span>;
     default:

@@ -7,7 +7,7 @@ import { Listing } from '../Addresses';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { DialogImportReadOnly } from './Dialogs/DialogImportReadOnly';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
-import type { ManageReadOnlyProps } from '../types';
+import type { ManageReadOnlyProps } from './types';
 
 export const Manage = ({ setSection }: ManageReadOnlyProps) => (
   <Styles.PadWrapper>

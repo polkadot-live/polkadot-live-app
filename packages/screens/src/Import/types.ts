@@ -18,20 +18,6 @@ export interface ImportScreenProps {
   setSection: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export interface ImportVaultProps {
-  section: number;
-  setSection: React.Dispatch<React.SetStateAction<number>>;
-}
-
-export interface VaultSplashProps {
-  setSection: React.Dispatch<React.SetStateAction<number>>;
-}
-
-export interface ManageVaultProps {
-  setSection: React.Dispatch<React.SetStateAction<number>>;
-  section: number;
-}
-
 export interface ImportLedgerProps {
   setSection: React.Dispatch<React.SetStateAction<number>>;
 }
@@ -43,9 +29,5 @@ export interface ImportLedgerManageProps {
 
 export interface LedgerAddressProps {
   genericAccount: ImportedGenericAccount;
-  setSection: React.Dispatch<React.SetStateAction<number>>;
-}
-
-export interface ManageReadOnlyProps {
   setSection: React.Dispatch<React.SetStateAction<number>>;
 }

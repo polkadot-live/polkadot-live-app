@@ -4,3 +4,7 @@
 export interface ImportReadOnlyProps {
   setSection: React.Dispatch<React.SetStateAction<number>>;
 }
+
+export interface ManageReadOnlyProps {
+  setSection: React.Dispatch<React.SetStateAction<number>>;
+}
