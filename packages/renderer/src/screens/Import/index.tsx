@@ -4,14 +4,13 @@
 import * as UI from '@polkadot-live/ui/components';
 import React, { useEffect, useState } from 'react';
 import { Home } from './Home';
+import { ImportReadOnly, ImportVault } from '@polkadot-live/screens';
 import { ImportLedger } from './Ledger';
-import { ImportVault } from './Vault';
+import { ImportWalletConnect } from './WalletConnect';
 import {
   ModalMotionTwoSection,
   ModalSection,
 } from '@polkadot-live/ui/kits/overlay';
-import { ImportReadOnly } from './ReadOnly';
-import { ImportWalletConnect } from './WalletConnect';
 import { useImportMessagePorts } from '@ren/hooks/useImportMessagePorts';
 import { useDebug } from '@ren/hooks/useDebug';
 import { useConnections } from '@ren/contexts/common';
