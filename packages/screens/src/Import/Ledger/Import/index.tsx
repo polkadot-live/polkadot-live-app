@@ -4,32 +4,19 @@
 import * as Accordion from '@radix-ui/react-accordion';
 import * as Checkbox from '@radix-ui/react-checkbox';
 import * as FA from '@fortawesome/free-solid-svg-icons';
+import * as Icons from '@radix-ui/react-icons';
 import * as Select from '@radix-ui/react-select';
 import * as Styles from '@polkadot-live/styles/wrappers';
 import * as UI from '@polkadot-live/ui/components';
 
-import { useDialogControl } from '@polkadot-live/contexts';
+import { useContextProxy } from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
-import { useConnections } from '@ren/contexts/common';
-import {
-  useAddresses,
-  useImportHandler,
-  useLedgerHardware,
-} from '@ren/contexts/import';
-
 import { BarLoader } from 'react-spinners';
 import { ChainIcon, InfoCard } from '@polkadot-live/ui/components';
 import {
   ButtonPrimaryInvert,
   ButtonText,
 } from '@polkadot-live/ui/kits/buttons';
-import {
-  CheckIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-  CaretLeftIcon,
-  CaretRightIcon,
-} from '@radix-ui/react-icons';
 import { ItemsColumn } from '@polkadot-live/styles/wrappers';
 import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -42,17 +29,19 @@ import type { ImportProps } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
 
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
-  const { cacheGet, getTheme } = useConnections();
-  const { handleImportAddress } = useImportHandler();
-  const { isAlreadyImported, getAccounts, getNextNames } = useAddresses();
-  const genericAccounts = getAccounts('ledger');
-
-  const ledger = useLedgerHardware();
-  const { connectedNetwork, selectedAddresses, receivedAddresses } =
-    useLedgerHardware();
+  const { useCtx } = useContextProxy();
+  const { cacheGet, copyToClipboard, getTheme } = useCtx('ConnectionsCtx')();
+  const { handleImportAddress } = useCtx('ImportHandlerCtx')();
 
   const { getShowAddressDialogData, setShowAddressDialogData } =
-    useDialogControl();
+    useCtx('DialogControlCtx')();
+  const { isAlreadyImported, getAccounts, getNextNames } =
+    useCtx('ImportAddressesCtx')();
+  const genericAccounts = getAccounts('ledger');
+
+  const ledger = useCtx('LedgerHardwareCtx')();
+  const { connectedNetwork, selectedAddresses, receivedAddresses } =
+    useCtx('LedgerHardwareCtx')();
 
   /**
    * Accordion state.
@@ -239,7 +228,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                     value={'connect-ledger'}
                   >
                     <UI.AccordionTrigger narrow={true}>
-                      <ChevronDownIcon
+                      <Icons.ChevronDownIcon
                         className="AccordionChevron"
                         aria-hidden
                       />
@@ -256,7 +245,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                           <UI.SelectTrigger $theme={theme} aria-label="Network">
                             <Select.Value placeholder="Select Network" />
                             <Select.Icon className="SelectIcon">
-                              <ChevronDownIcon />
+                              <Icons.ChevronDownIcon />
                             </Select.Icon>
                           </UI.SelectTrigger>
                           <Select.Portal>
@@ -266,7 +255,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                               sideOffset={3}
                             >
                               <Select.ScrollUpButton className="SelectScrollButton">
-                                <ChevronUpIcon />
+                                <Icons.ChevronUpIcon />
                               </Select.ScrollUpButton>
                               <Select.Viewport className="SelectViewport">
                                 <Select.Group>
@@ -291,7 +280,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                 </Select.Group>
                               </Select.Viewport>
                               <Select.ScrollDownButton className="SelectScrollButton">
-                                <ChevronDownIcon />
+                                <Icons.ChevronDownIcon />
                               </Select.ScrollDownButton>
                             </UI.SelectContent>
                           </Select.Portal>
@@ -364,7 +353,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                     value={'import-accounts'}
                   >
                     <UI.AccordionTrigger narrow={true}>
-                      <ChevronDownIcon
+                      <Icons.ChevronDownIcon
                         className="AccordionChevron"
                         aria-hidden
                       />
@@ -409,9 +398,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                           iconFontSize="1rem"
                                           theme={theme}
                                           onCopyClick={async () =>
-                                            await window.myAPI.copyToClipboard(
-                                              address
-                                            )
+                                            await copyToClipboard(address)
                                           }
                                         />
                                       </span>
@@ -447,7 +434,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                         }
                                       >
                                         <Checkbox.Indicator className="CheckboxIndicator">
-                                          <CheckIcon />
+                                          <Icons.CheckIcon />
                                         </Checkbox.Indicator>
                                       </Styles.CheckboxRoot>
                                     )}
@@ -465,14 +452,14 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                               }
                               onClick={() => handlePaginationClick('prev')}
                             >
-                              <CaretLeftIcon />
+                              <Icons.CaretLeftIcon />
                             </button>
                             <button
                               className="pageBtn"
                               disabled={ledger.isFetching}
                               onClick={() => handlePaginationClick('next')}
                             >
-                              <CaretRightIcon />
+                              <Icons.CaretRightIcon />
                             </button>
                             <div className="importBtn">
                               <button

@@ -2,13 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useEffect, useState } from 'react';
-import { useAddresses } from '@ren/contexts/import';
+import { useContextProxy } from '@polkadot-live/contexts';
 import { Manage } from './Manage';
 import { Import } from './Import';
 import type { ImportLedgerProps } from '../types';
 
 export const ImportLedger = ({ setSection }: ImportLedgerProps) => {
-  const { getAccounts } = useAddresses();
+  const { useCtx } = useContextProxy();
+  const { getAccounts } = useCtx('ImportAddressesCtx')();
   const addresses = getAccounts('ledger');
 
   const [showImportUi, setShowImportUi] = useState<boolean>(

@@ -9,6 +9,7 @@ import { crx } from '@crxjs/vite-plugin';
 import { defineConfig } from 'vite';
 import { version } from './package.json';
 import { join, resolve } from 'node:path';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 const PACKAGE_ROOT = __dirname;
 const PROJECT_ROOT = join(PACKAGE_ROOT, '../..');
@@ -24,6 +25,7 @@ export default defineConfig({
     },
   },
   plugins: [
+    nodePolyfills(),
     react(),
     svgr(),
     crx({ manifest }),

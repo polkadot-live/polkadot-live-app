@@ -10,6 +10,7 @@ import {
   DeleteHandlerProvider,
   ImportAddressesProvider,
   ImportHandlerProvider,
+  LedgerHardwareProvider,
   RemoveHandlerProvider,
   RenameHandlerProvider,
   SettingFlagsProvider,
@@ -31,5 +32,6 @@ export const Providers = withProviders(
   RenameHandlerProvider,
   DeleteHandlerProvider,
   DialogControlProvider,
-  TabsProvider
+  TabsProvider,
+  LedgerHardwareProvider
 )(App);

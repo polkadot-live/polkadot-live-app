@@ -8,6 +8,7 @@ export {
 export { useAccountStatuses, AccountStatusesProvider } from './AccountStatuses';
 export { useAddHandler, AddHandlerProvider } from './AddHandler';
 export { useDeleteHandler, DeleteHandlerProvider } from './DeleteHandler';
+export { useLedgerHardware, LedgerHardwareProvider } from './LedgerHardware';
 export { useImportHandler, ImportHandlerProvider } from './ImportHandler';
 export { useRemoveHandler, RemoveHandlerProvider } from './RemoveHandler';
 export { useRenameHandler, RenameHandlerProvider } from './RenameHandler';

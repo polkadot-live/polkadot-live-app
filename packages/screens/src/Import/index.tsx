@@ -7,6 +7,7 @@ import { useContextProxy } from '@polkadot-live/contexts';
 import { Home } from './Home';
 import { ImportReadOnly } from './ReadOnly';
 import { ImportVault } from './Vault';
+import { ImportLedger } from './Ledger';
 import {
   ModalMotionTwoSection,
   ModalSection,
@@ -21,7 +22,7 @@ export const ImportScreen = ({
 }: ImportScreenProps) => {
   switch (source) {
     case 'ledger':
-      return <span>ImportLedger</span>;
+      return <ImportLedger setSection={setSection} />;
     case 'read-only':
       return <ImportReadOnly setSection={setSection} />;
     case 'vault':

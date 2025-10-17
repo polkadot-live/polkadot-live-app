@@ -7,6 +7,7 @@ export * from './CallbackLib';
 export * from './CommonLib';
 export * from './EventsLib';
 export * from './ImportLib';
+export * from './LedgerLib';
 export * from './OpenGovLib';
 export * from './TextLib';
 export * from './TimeLib';

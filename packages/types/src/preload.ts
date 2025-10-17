@@ -8,7 +8,7 @@ import type { IpcTask, RelayPortTask, SyncID, TabData } from './communication';
 import type { IpcRendererEvent } from 'electron';
 import type { AnyData } from './misc';
 import type { SettingKey } from './settings';
-import type { LedgerTask, LedgerTaskResponse } from './ledger';
+import type { LedgerTask, SerLedgerTaskResponse } from './ledger';
 
 export interface PreloadAPI {
   getWindowId: () => string;
@@ -83,7 +83,7 @@ export interface PreloadAPI {
   doLedgerTask: (
     task: LedgerTask,
     serialized: string
-  ) => Promise<LedgerTaskResponse>;
+  ) => Promise<SerLedgerTaskResponse>;
 
   requestImportedAccounts: ApiEmptyRequest;
 

@@ -5,6 +5,7 @@ import { createContext, useRef, useState } from 'react';
 import { createSafeContextHook } from '@polkadot-live/contexts';
 import { decodeAddress, u8aToHex } from 'dedot/utils';
 import { setStateWithRef } from '@w3ux/utils';
+import { getLedgerAddresses, getLedgerTaskResponse } from './utils';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { LedgerMetadata } from '@polkadot-live/types/accounts';
 import type {
@@ -13,11 +14,9 @@ import type {
   RawLedgerAddress,
 } from '@polkadot-live/contexts/types/import';
 import type {
-  GetAddressMessage,
   LedgerFetchedAddressData,
   LedgerResponse,
-  LedgerTask,
-  SerLedgerTaskResponse,
+  LedgerTaskResponse,
 } from '@polkadot-live/types/ledger';
 
 export const LedgerHardwareContext = createContext<
@@ -81,21 +80,14 @@ export const LedgerHardwareProvider = ({
     if (selectedNetworkRef.current !== connectedNetworkRef.current) {
       preConnect();
     }
-
-    const task: LedgerTask = 'get_address';
     const accountIndices = Array.from({ length: 5 }, (_, i) => i).map(
       (i) => i + offset
     );
-
     setIsFetching(true);
 
-    const serData = JSON.stringify({
-      accountIndices,
-      chainId: network,
-    });
-
     // TODO: Handle JSON.parse exception.
-    const response = await window.myAPI.doLedgerTask(task, serData);
+    const result = await getLedgerAddresses(accountIndices, network);
+    const response = getLedgerTaskResponse(result, accountIndices);
     handleLedgerStatusResponse(response);
 
     // Update the connected network state post connection.
@@ -125,10 +117,8 @@ export const LedgerHardwareProvider = ({
    */
   const resetAll = () => {
     clearCaches(true, true, true);
-
     setIsImporting(false);
     setDeviceConnected(false);
-
     setStateWithRef('', setConnectedNetwork, connectedNetworkRef);
     setStateWithRef('', setSelectedNetwork, selectedNetworkRef);
   };
@@ -204,15 +194,21 @@ export const LedgerHardwareProvider = ({
   /**
    * Handle a collection of received Ledger addresses.
    */
-  const handleLedgerStatusResponse = (response: SerLedgerTaskResponse) => {
-    const { ack, statusCode, serData } = response;
+  const handleLedgerStatusResponse = (response: LedgerTaskResponse) => {
+    const { ack, statusCode, payload } = response;
 
     switch (statusCode) {
       /** Handle fetched Ledger addresses. */
       case 'ReceiveAddress': {
-        const { addresses, options }: GetAddressMessage = JSON.parse(serData!);
+        const { addresses, options } = payload!;
         const { accountIndices } = options;
-        const received: LedgerFetchedAddressData[] = JSON.parse(addresses);
+        const received: LedgerFetchedAddressData[] = addresses.map(
+          ({ device, body }) => ({
+            statusCode,
+            device: { id: device.id!, productName: device.productName! },
+            body,
+          })
+        );
 
         // Cache new address list.
         const cache: RawLedgerAddress[] = [];

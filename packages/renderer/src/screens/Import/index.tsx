@@ -4,8 +4,11 @@
 import * as UI from '@polkadot-live/ui/components';
 import React, { useEffect, useState } from 'react';
 import { Home } from './Home';
-import { ImportReadOnly, ImportVault } from '@polkadot-live/screens';
-import { ImportLedger } from './Ledger';
+import {
+  ImportLedger,
+  ImportReadOnly,
+  ImportVault,
+} from '@polkadot-live/screens';
 import { ImportWalletConnect } from './WalletConnect';
 import {
   ModalMotionTwoSection,

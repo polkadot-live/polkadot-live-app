@@ -15,6 +15,7 @@ import {
   useDeleteHandler,
   useImportAddresses,
   useImportHandler,
+  useLedgerHardware,
   useRemoveHandler,
   useRenameHandler,
   useSettingFlags,
@@ -42,6 +43,7 @@ export const ContextProxyTab = ({ children }: ContextProxyProps) => {
         DialogControlCtx: () => useDialogControl(),
         SettingFlagsCtx: () => useSettingFlags(),
         TabsCtx: () => useTabs(),
+        LedgerHardwareCtx: () => useLedgerHardware(),
       }),
     []
   );
