@@ -14,3 +14,8 @@ export { useRemoveHandler, RemoveHandlerProvider } from './RemoveHandler';
 export { useRenameHandler, RenameHandlerProvider } from './RenameHandler';
 export { useSettingFlags, SettingFlagsProvider } from './SettingFlags';
 export { useTabs, TabsProvider } from './Tabs';
+export { useWalletConnect, WalletConnectProvider } from './WalletConnect';
+export {
+  useWalletConnectImport,
+  WalletConnectImportProvider,
+} from './WalletConnectImport';

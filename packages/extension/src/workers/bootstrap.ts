@@ -531,5 +531,36 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
       }
       break;
     }
+    /**
+     * Handle WalletConnect tasks.
+     */
+    case 'walletConnect:relay': {
+      switch (message.task) {
+        case 'closeModal': {
+          chrome.runtime.sendMessage({
+            type: 'walletConnect',
+            task: 'closeModal',
+          });
+          return false;
+        }
+        case 'openModal': {
+          chrome.runtime.sendMessage({
+            type: 'walletConnect',
+            task: 'openModal',
+            payload: message.payload,
+          });
+          return false;
+        }
+        case 'setAddresses': {
+          chrome.runtime.sendMessage({
+            type: 'walletConnect',
+            task: 'setAddresses',
+            payload: message.payload,
+          });
+          return false;
+        }
+      }
+      break;
+    }
   }
 });

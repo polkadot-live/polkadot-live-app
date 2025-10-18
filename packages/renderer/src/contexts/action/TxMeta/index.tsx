@@ -143,7 +143,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         enableExplorer: false,
         explorerRecommendedWalletIds: 'NONE',
         explorerExcludedWalletIds: 'ALL',
-        projectId: wc.WC_PROJECT_ID,
+        projectId: wc.WC_PROJECT_IDS['electron'],
       });
 
       wcModal.current = modal;

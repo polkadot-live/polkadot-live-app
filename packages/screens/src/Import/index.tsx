@@ -8,6 +8,7 @@ import { Home } from './Home';
 import { ImportReadOnly } from './ReadOnly';
 import { ImportVault } from './Vault';
 import { ImportLedger } from './Ledger';
+import { ImportWalletConnect } from './WalletConnect';
 import {
   ModalMotionTwoSection,
   ModalSection,
@@ -28,7 +29,7 @@ export const ImportScreen = ({
     case 'vault':
       return <ImportVault section={section} setSection={setSection} />;
     case 'wallet-connect':
-      return <span>ImportWalletConnect</span>;
+      return <ImportWalletConnect setSection={setSection} />;
     default:
       return <p>Source not selected.</p>;
   }

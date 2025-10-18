@@ -14,24 +14,22 @@ import {
   ButtonText,
 } from '@polkadot-live/ui/kits/buttons';
 import { ChainIcon, InfoCard } from '@polkadot-live/ui/components';
-
-/** Temp */
-import { useDialogControl } from '@polkadot-live/contexts';
-import { useAddresses, useWalletConnectImport } from '@ren/contexts/import';
-import { useConnections } from '@ren/contexts/common';
+import { useContextProxy } from '@polkadot-live/contexts';
 import { useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { WcSessionButton } from './Wrappers';
 import { AddressListFooter, ImportAddressRow } from '../../Wrappers';
 import { DialogShowAddress } from '../../Addresses/Dialogs';
-
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ImportProps } from './types';
 
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
-  const { isAlreadyImported, getAccounts } = useAddresses();
-  const { getOnlineMode, cacheGet, getTheme } = useConnections();
+  const { useCtx } = useContextProxy();
+  const { isAlreadyImported, getAccounts } = useCtx('ImportAddressesCtx')();
   const wcAddresses = getAccounts('wallet-connect');
+
+  const { copyToClipboard, getOnlineMode, cacheGet, getTheme } =
+    useCtx('ConnectionsCtx')();
 
   const theme = getTheme();
   const darkMode = cacheGet('mode:dark');
@@ -51,10 +49,10 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
     setWcFetchedAddresses,
     handleImportProcess,
     setWcNetworks,
-  } = useWalletConnectImport();
+  } = useCtx('WalletConnectImportCtx')();
 
   const { getShowAddressDialogData, setShowAddressDialogData } =
-    useDialogControl();
+    useCtx('DialogControlCtx')();
 
   /**
    * Accordion state.
@@ -351,9 +349,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                           iconFontSize="1rem"
                                           theme={theme}
                                           onCopyClick={async () =>
-                                            await window.myAPI.copyToClipboard(
-                                              encoded
-                                            )
+                                            await copyToClipboard(encoded)
                                           }
                                         />
                                       </span>

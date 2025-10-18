@@ -15,6 +15,8 @@ import {
   RenameHandlerProvider,
   SettingFlagsProvider,
   TabsProvider,
+  WalletConnectProvider,
+  WalletConnectImportProvider,
 } from './contexts';
 import { withProviders } from '@polkadot-live/ui/hooks';
 import App from './App';
@@ -33,5 +35,7 @@ export const Providers = withProviders(
   DeleteHandlerProvider,
   DialogControlProvider,
   TabsProvider,
-  LedgerHardwareProvider
+  LedgerHardwareProvider,
+  WalletConnectProvider,
+  WalletConnectImportProvider
 )(App);

@@ -2,16 +2,18 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as wc from '@polkadot-live/consts/walletConnect';
-import { ConfigImport } from '@polkadot-live/core';
 import { createContext, useEffect, useRef, useState } from 'react';
 import { createSafeContextHook } from '@polkadot-live/contexts';
-import { useAddresses, useImportHandler } from '@ren/contexts/import';
+import { useAddresses } from '../Addresses';
+import { useImportHandler } from '../ImportHandler';
 import { WalletConnectModal } from '@walletconnect/modal';
 import type { WalletConnectImportContextInterface } from '@polkadot-live/contexts/types/import';
 import type {
   WcFetchedAddress,
   WcSelectNetwork,
 } from '@polkadot-live/types/walletConnect';
+import { useWalletConnect } from '../WalletConnect';
+import type { AnyData } from '@polkadot-live/types/misc';
 
 export const WalletConnectImportContext = createContext<
   WalletConnectImportContextInterface | undefined
@@ -27,6 +29,9 @@ export const WalletConnectImportProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { connectWc, disconnectWcSession, fetchAddressesFromExistingSession } =
+    useWalletConnect();
+
   const { isAlreadyImported, getNextNames } = useAddresses();
   const { handleImportAddress } = useImportHandler();
   const [isImporting, setIsImporting] = useState(false);
@@ -47,16 +52,42 @@ export const WalletConnectImportProvider = ({
    * Instantiate modal when component mounts.
    */
   useEffect(() => {
+    const callback = async (message: AnyData) => {
+      switch (message.type) {
+        case 'walletConnect': {
+          switch (message.task) {
+            case 'setAddresses': {
+              const { fetchedAddresses } = message.payload;
+              setWcFetchedAddresses(fetchedAddresses);
+              break;
+            }
+            case 'openModal': {
+              const { uri } = message.payload;
+              await handleOpenCloseWcModal(true, uri);
+              break;
+            }
+            case 'closeModal': {
+              await handleOpenCloseWcModal(false);
+              break;
+            }
+          }
+        }
+      }
+    };
+
     if (!wcModal.current) {
       const modal = new WalletConnectModal({
         enableExplorer: false,
         explorerRecommendedWalletIds: 'NONE',
         explorerExcludedWalletIds: 'ALL',
-        projectId: wc.WC_PROJECT_IDS['electron'],
+        projectId: wc.WC_PROJECT_IDS['browser'],
       });
-
       wcModal.current = modal;
     }
+    chrome.runtime.onMessage.addListener(callback);
+    return () => {
+      chrome.runtime.onMessage.removeListener(callback);
+    };
   }, []);
 
   /**
@@ -73,31 +104,21 @@ export const WalletConnectImportProvider = ({
     const selectedNetworks = wcNetworks.filter(
       ({ selected }) => selected === true
     );
-
-    ConfigImport.portImport.postMessage({
-      task: 'renderer:wc:connect',
-      data: { networks: JSON.stringify(selectedNetworks) },
-    });
+    await connectWc(selectedNetworks);
   };
 
   /**
    * Handle disconnect button click.
    */
   const handleDisconnect = async () => {
-    ConfigImport.portImport.postMessage({
-      task: 'renderer:wc:disconnect',
-      data: null,
-    });
+    await disconnectWcSession();
   };
 
   /**
    * Handle fetch button click.
    */
   const handleFetch = () => {
-    ConfigImport.portImport.postMessage({
-      task: 'renderer:wc:fetch',
-      data: null,
-    });
+    fetchAddressesFromExistingSession();
   };
 
   /**

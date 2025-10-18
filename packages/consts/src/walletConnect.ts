@@ -8,7 +8,10 @@ import type {
   WcSelectNetwork,
 } from '@polkadot-live/types/walletConnect';
 
-export const WC_PROJECT_ID = 'ebded8e9ff244ba8b6d173b6c2885d87';
+export const WC_PROJECT_IDS: Record<'electron' | 'browser', string> = {
+  electron: 'ebded8e9ff244ba8b6d173b6c2885d87',
+  browser: '7a9464141b46d9ed4423d2b69d72f5ed',
+};
 export const WC_RELAY_URL = 'wss://relay.walletconnect.com';
 export const WC_EVENT_ORIGIN = 'https://verify.walletconnect.org';
 

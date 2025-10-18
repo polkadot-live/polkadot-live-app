@@ -3,7 +3,3 @@
 
 export { Import } from './Import';
 export { Settings } from './Settings';
-// TMP
-export { ImportLedger } from './Import/Ledger';
-export { ImportReadOnly } from './Import/ReadOnly';
-export { ImportVault } from './Import/Vault';

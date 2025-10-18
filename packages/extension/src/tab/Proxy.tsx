@@ -20,6 +20,8 @@ import {
   useRenameHandler,
   useSettingFlags,
   useTabs,
+  useWalletConnect,
+  useWalletConnectImport,
 } from './contexts';
 
 interface ContextProxyProps {
@@ -44,6 +46,8 @@ export const ContextProxyTab = ({ children }: ContextProxyProps) => {
         SettingFlagsCtx: () => useSettingFlags(),
         TabsCtx: () => useTabs(),
         LedgerHardwareCtx: () => useLedgerHardware(),
+        WalletConnectCtx: () => useWalletConnect(),
+        WalletConnectImportCtx: () => useWalletConnectImport(),
       }),
     []
   );
