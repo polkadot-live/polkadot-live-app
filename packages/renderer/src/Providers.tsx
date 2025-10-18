@@ -32,12 +32,12 @@ import {
 } from '@ren/contexts/main';
 
 // Import window contexts.
+import { DialogControlProvider } from '@polkadot-live/contexts';
 import {
   AccountStatusesProvider,
   AddressesProvider as ImportAddressesProvider,
   AddHandlerProvider,
   DeleteHandlerProvider,
-  DialogControlProvider,
   ImportHandlerProvider,
   LedgerHardwareProvider,
   RemoveHandlerProvider,

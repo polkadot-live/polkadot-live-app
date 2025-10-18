@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext, useRef, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import { createSafeContextHook } from '@polkadot-live/contexts';
 import { decodeAddress, u8aToHex } from 'dedot/utils';
 import { setStateWithRef } from '@w3ux/utils';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -11,13 +11,13 @@ import type {
   LedgerHardwareContextInterface,
   NamedRawLedgerAddress,
   RawLedgerAddress,
-} from './types';
+} from '@polkadot-live/contexts/types/import';
 import type {
   GetAddressMessage,
   LedgerFetchedAddressData,
   LedgerResponse,
   LedgerTask,
-  LedgerTaskResponse,
+  SerLedgerTaskResponse,
 } from '@polkadot-live/types/ledger';
 
 export const LedgerHardwareContext = createContext<
@@ -204,7 +204,7 @@ export const LedgerHardwareProvider = ({
   /**
    * Handle a collection of received Ledger addresses.
    */
-  const handleLedgerStatusResponse = (response: LedgerTaskResponse) => {
+  const handleLedgerStatusResponse = (response: SerLedgerTaskResponse) => {
     const { ack, statusCode, serData } = response;
 
     switch (statusCode) {

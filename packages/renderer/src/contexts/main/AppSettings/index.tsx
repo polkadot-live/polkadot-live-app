@@ -3,10 +3,10 @@
 
 import { ConfigRenderer } from '@polkadot-live/core';
 import { createContext, useEffect, useRef, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import { createSafeContextHook } from '@polkadot-live/contexts';
 import { getDefaultSettings } from '@polkadot-live/consts/settings';
 import { setStateWithRef } from '@w3ux/utils';
-import type { AppSettingsContextInterface } from './types';
+import type { AppSettingsContextInterface } from '@polkadot-live/contexts/types/main';
 import type { SettingKey } from '@polkadot-live/types/settings';
 
 export const AppSettingsContext = createContext<

@@ -2,5 +2,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 export { useHelp, HelpProvider } from './Help';
-export { useSideNav, SideNavProvider } from './SideNavContext';
 export { useOverlay, OverlayProvider } from './Overlay';
+export { useSideNav, SideNavProvider } from './SideNavContext';

@@ -3,8 +3,8 @@
 
 import { AccountsController } from '@polkadot-live/core';
 import { createContext, useState, useRef, useEffect } from 'react';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
-import type { AddressesContextInterface } from './types';
+import { createSafeContextHook } from '@polkadot-live/contexts';
+import type { AddressesContextInterface } from '@polkadot-live/contexts/types/main';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   AccountSource,

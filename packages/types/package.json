@@ -12,6 +12,7 @@
     "./help": "./src/help.ts",
     "./ledger": "./src/ledger.ts",
     "./legacy": "./src/legacy.ts",
+    "./menu": "./src/menu.ts",
     "./misc": "./src/misc.ts",
     "./openGov": "./src/openGov.ts",
     "./orchestrator": "./src/orchestrator.ts",

@@ -8,6 +8,7 @@ import { MainInterfaceWrapper } from '@polkadot-live/styles/wrappers';
 import { ToastContainer } from 'react-toastify';
 import { Home } from './screens';
 import './App.scss';
+import { ContextProxyMain } from './Proxy';
 
 export default function App() {
   const { status: helpStatus, definition, closeHelp, setStatus } = useHelp();
@@ -23,7 +24,9 @@ export default function App() {
         setStatus={setStatus}
       />
       <ToastContainer stacked />
-      <Home />
+      <ContextProxyMain>
+        <Home />
+      </ContextProxyMain>
     </MainInterfaceWrapper>
   );
 }

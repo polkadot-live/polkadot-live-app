@@ -10,15 +10,6 @@ import type { ReactNode } from 'react';
 
 export type MaybeString = string | null;
 
-export interface HelpContextInterface {
-  openHelp: (d: HelpItemKey) => void;
-  closeHelp: () => void;
-  setStatus: (s: HelpStatus) => void;
-  setDefinition: (d: HelpItemKey) => void;
-  status: HelpStatus;
-  definition: HelpItem | null;
-}
-
 export interface HelpContextProps {
   children: ReactNode;
 }

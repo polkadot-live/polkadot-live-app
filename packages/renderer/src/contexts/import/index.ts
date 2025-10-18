@@ -5,7 +5,6 @@ export * from './AccountStatuses';
 export * from './AddHandler';
 export * from './Addresses';
 export * from './DeleteHandler';
-export * from './DialogControl';
 export * from './ImportHandler';
 export * from './LedgerHardware';
 export * from './RemoveHandler';

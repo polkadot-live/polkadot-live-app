@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext, useState } from 'react';
-import { createSafeContextHook } from '../../utils/react-utils';
-import type { SideNavContextInterface, SideNavProviderProps } from './types';
+import { createSafeContextHook } from '@polkadot-live/contexts';
+import type { SideNavProviderProps } from './types';
+import type { SideNavContextInterface } from '@polkadot-live/contexts/types/common';
 
 const SideNavContext = createContext<SideNavContextInterface | undefined>(
   undefined

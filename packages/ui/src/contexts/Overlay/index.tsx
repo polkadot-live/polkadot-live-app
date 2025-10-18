@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import React, { createContext, useState } from 'react';
-import { createSafeContextHook } from '../../utils/react-utils';
-import type { OverlayContextInterface } from './types';
+import { createSafeContextHook } from '@polkadot-live/contexts';
 import type { AnyJson } from '@polkadot-live/types/misc';
+import type { OverlayContextInterface } from '@polkadot-live/contexts/types/common';
 
 export const OverlayContext = createContext<
   OverlayContextInterface | undefined

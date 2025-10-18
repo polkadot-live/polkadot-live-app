@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import { createSafeContextHook } from '@polkadot-live/contexts';
 import { ConfigImport } from '@polkadot-live/core';
 import { createContext } from 'react';
 import { useAccountStatuses } from '../AccountStatuses';
@@ -10,7 +10,7 @@ import type {
   AccountSource,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
-import type { DeleteHandlerContextInterface } from './types';
+import type { DeleteHandlerContextInterface } from '@polkadot-live/contexts/types/import';
 import type { IpcTask } from '@polkadot-live/types/communication';
 import type { ChainID } from '@polkadot-live/types/chains';
 

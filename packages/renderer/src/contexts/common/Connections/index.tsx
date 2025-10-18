@@ -2,10 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as themeVariables from '@polkadot-live/styles/theme/variables';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import { createSafeContextHook } from '@polkadot-live/contexts';
 import { initSharedState } from '@polkadot-live/consts/sharedState';
 import { createContext, useEffect, useRef, useState } from 'react';
 import { setStateWithRef } from '@w3ux/utils';
+import type { AnyData } from 'packages/types/src';
 import type { ConnectionsContextInterface } from './types';
 import type { IpcRendererEvent } from 'electron';
 import type { SyncID } from '@polkadot-live/types/communication';
@@ -56,6 +57,22 @@ export const ConnectionsProvider = ({
     return cacheGet('mode:dark') ? darkTheme : lightTheme;
   };
 
+  /**
+   * Copy to clipboard.
+   */
+  const copyToClipboard = async (text: string) =>
+    await window.myAPI.copyToClipboard(text);
+
+  /**
+   * Open URL in browser.
+   */
+  const openInBrowser = (uri: string, analytics?: AnyData) => {
+    window.myAPI.openBrowserURL(uri);
+    if (analytics) {
+      window.myAPI.umamiEvent('link-open', { ...analytics });
+    }
+  };
+
   useEffect(() => {
     /**
      * Synchronize flags in store.
@@ -92,8 +109,10 @@ export const ConnectionsProvider = ({
       value={{
         stateLoaded,
         cacheGet,
+        copyToClipboard,
         getOnlineMode,
         getTheme,
+        openInBrowser,
       }}
     >
       {children}

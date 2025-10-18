@@ -2,12 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext } from 'react';
-import { createSafeContextHook, renderToast } from '@polkadot-live/ui/utils';
+import { createSafeContextHook } from '@polkadot-live/contexts';
+import { renderToast } from '@polkadot-live/ui/utils';
 import { useAppSettings } from '../AppSettings';
 import { useBootstrapping } from '../Bootstrapping';
 import { useHelp } from '@polkadot-live/ui/contexts';
 import type { CogMenuContextInterface } from './types';
-import type { MenuItemData } from '@polkadot-live/ui/components';
+import type { MenuItemData } from '@polkadot-live/types/menu';
 import type { TabData } from '@polkadot-live/types/communication';
 
 export const CogMenuContext = createContext<

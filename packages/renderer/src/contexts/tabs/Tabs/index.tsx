@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext, useEffect, useRef, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import { createSafeContextHook } from '@polkadot-live/contexts';
 import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import {
   KeyboardSensor,
@@ -12,7 +12,7 @@ import {
 } from '@dnd-kit/core';
 import type { DragStartEvent, DragEndEvent } from '@dnd-kit/core';
 import type { IpcRendererEvent } from 'electron';
-import type { TabsContextInterface } from './types';
+import type { TabsContextInterface } from '@polkadot-live/contexts/types/tabs';
 import type { TabData } from '@polkadot-live/types/communication';
 
 export const TabsContext = createContext<TabsContextInterface | undefined>(

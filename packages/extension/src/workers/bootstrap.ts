@@ -9,6 +9,11 @@ import {
   SubscriptionsController,
 } from '@polkadot-live/core';
 import { initSharedState } from '@polkadot-live/consts/sharedState';
+import type {
+  AccountSource,
+  EncodedAccount,
+  ImportedGenericAccount,
+} from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { NodeEndpoint } from '@polkadot-live/types/apis';
 import type { SettingKey } from '@polkadot-live/types/settings';
@@ -17,13 +22,34 @@ import type { SyncID, TabData } from '@polkadot-live/types/communication';
 
 /** Shared state */
 const SHARED_STATE: Map<SyncID, boolean> = initSharedState();
+
 /** Tab loading */
 const BACKEND = 'browser';
 let PENDING_TAB_DATA: TabData | null = null;
 let TAB_ID: number | null = null;
 
+/**
+ * Bootstrapping
+ */
 const bootstrap = async () => {
   await DbController.initialize();
+};
+
+const initOnlineMode = async () => {
+  const value = navigator.onLine;
+  SHARED_STATE.set('mode:connected', value);
+  SHARED_STATE.set('mode:online', value);
+
+  await chrome.runtime.sendMessage({
+    type: 'sharedState',
+    task: 'set',
+    payload: { key: 'mode:connected' as SyncID, value },
+  });
+  await chrome.runtime.sendMessage({
+    type: 'sharedState',
+    task: 'set',
+    payload: { key: 'mode:online' as SyncID, value },
+  });
 };
 
 const initTheme = async () => {
@@ -36,6 +62,7 @@ const initTheme = async () => {
 };
 
 const initSystems = async () => {
+  await initOnlineMode();
   await Promise.all([
     initTheme(),
     APIsController.initialize(BACKEND),
@@ -51,6 +78,9 @@ const initSubscriptions = async () => {
   ]);
 };
 
+/**
+ * APIs.
+ */
 const connectApis = async () => {
   if (!navigator.onLine) {
     return false;
@@ -102,6 +132,211 @@ const onEndpointChange = async (chainId: ChainID, endpoint: NodeEndpoint) => {
   SubscriptionsController.syncState();
 };
 
+/**
+ * Accounts.
+ */
+const isAlreadyPersisted = async (publicKeyHex: string): Promise<boolean> => {
+  for (const source of [
+    'ledger',
+    'read-only',
+    'vault',
+    'wallet-connect',
+  ] as AccountSource[]) {
+    const stored = (await DbController.get('accounts', source)) as
+      | ImportedGenericAccount[]
+      | undefined;
+    if ((stored || []).find((a) => a.publicKeyHex === publicKeyHex)) {
+      return true;
+    }
+  }
+  return false;
+};
+
+const persistAccount = async (account: ImportedGenericAccount) => {
+  try {
+    const { publicKeyHex, source } = account;
+    const alreadyExists = await isAlreadyPersisted(publicKeyHex);
+    if (!alreadyExists) {
+      const all = (await DbController.get('accounts', source)) as
+        | ImportedGenericAccount[]
+        | undefined;
+      await DbController.set('accounts', source, [...(all || []), account]);
+    }
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+};
+
+const updateAccount = async (account: ImportedGenericAccount) => {
+  try {
+    const { publicKeyHex, source } = account;
+    const all = (await DbController.get('accounts', source)) as
+      | ImportedGenericAccount[]
+      | undefined;
+    const updated = (all || []).map((a) =>
+      a.publicKeyHex === publicKeyHex ? account : a
+    );
+    await DbController.set('accounts', source, updated);
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+};
+
+const deleteAccount = async (
+  publicKeyHex: string,
+  source: AccountSource
+): Promise<boolean> => {
+  try {
+    const all = (await DbController.get('accounts', source)) as
+      | ImportedGenericAccount[]
+      | undefined;
+    const updated = (all || []).filter((a) => a.publicKeyHex !== publicKeyHex);
+    await DbController.set('accounts', source, updated);
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+};
+
+const handleImportAddress = async (
+  generic: ImportedGenericAccount,
+  encoded: EncodedAccount,
+  fromBackup: boolean
+) => {
+  const relayFlag = (key: string, value: boolean) =>
+    chrome.runtime.sendMessage({
+      type: 'sharedState',
+      task: 'relay',
+      payload: { key, value },
+    });
+
+  const getOnlineMode = () =>
+    Boolean(SHARED_STATE.get('mode:connected')) &&
+    Boolean(SHARED_STATE.get('mode:online'));
+
+  try {
+    relayFlag('account:importing', true);
+    const { address, alias, chainId } = encoded;
+    const { source } = generic;
+    let account = AccountsController.add(encoded, source) || undefined;
+
+    // Unsubscribe all tasks if the account exists and is being re-imported.
+    if (fromBackup && !account) {
+      account = AccountsController.get(chainId, address);
+      if (account) {
+        // Update account name with one in backup file.
+        if (alias !== account.name) {
+          account.name = alias;
+          await AccountsController.set(account);
+        }
+
+        await AccountsController.removeAllSubscriptions(account);
+        const allTasks = SubscriptionsController.getAllSubscriptionsForAccount(
+          account,
+          'disable'
+        );
+
+        for (const task of allTasks) {
+          // TODO: Update task.
+          console.log(task);
+        }
+      }
+    }
+
+    // Return if account already exists and isn't being re-imported.
+    if (!account) {
+      relayFlag('account:importing', false);
+      return;
+    }
+
+    // Sync managed account data if online.
+    if (getOnlineMode()) {
+      const res = await APIsController.getConnectedApiOrThrow(chainId);
+      const api = res.getApi();
+      await AccountsController.syncAccount(account, api);
+    }
+
+    // Subscribe new account to all possible subscriptions if setting enabled.
+    if (account.queryMulti !== null && !fromBackup) {
+      // TODO: Update tasks.
+    }
+    // Add account to address context state.
+    if (!fromBackup) {
+      // TODO: Import address.
+    }
+
+    // Send message back to import window to reset account's processing flag.
+    relayFlag('account:importing', false);
+    chrome.runtime.sendMessage({
+      type: 'rawAccount',
+      task: 'setProcessing',
+      payload: { encoded, generic, status: false, success: true },
+    });
+  } catch (err) {
+    console.error(err);
+    relayFlag('account:importing', false);
+    chrome.runtime.sendMessage({
+      type: 'rawAccount',
+      task: 'setProcessing',
+      payload: { encoded, generic, status: false, success: false },
+    });
+  }
+};
+
+const handleRemoveAddress = async (address: string, chainId: ChainID) => {
+  try {
+    const account = AccountsController.get(chainId, address);
+    if (!account) {
+      console.log('Account could not be fetched, probably not imported yet');
+      return;
+    }
+    // Unsubscribe from all active tasks.
+    await AccountsController.removeAllSubscriptions(account);
+
+    // Remove account from controller and store.
+    AccountsController.remove(chainId, address);
+
+    // React state:
+    // TODO: Remove address from context.
+    // TODO: Update account subscriptions data.
+    // TODO: Transition away from rendering toggles.
+
+    // Disconnect from any API instances that are not currently needed.
+    await disconnectAPIs();
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+const handleRenameAccount = async (enAccount: EncodedAccount) => {
+  const { address, alias: newName, chainId } = enAccount;
+  const account = AccountsController.get(chainId, address);
+  if (account) {
+    // Set new account name and persist new account data to storage.
+    account.name = newName;
+    await AccountsController.set(account);
+
+    // Update cached account name in subscription tasks.
+    const flattened = account.flatten();
+    flattened.name = newName;
+    account.queryMulti?.updateEntryAccountData(chainId, flattened);
+
+    // Update account react state.
+    AccountsController.syncState();
+
+    // TODO: Update subscription task react state.
+  }
+
+  // TODO: Update and return the relevant events.
+  // TODO: Update events React state in main window.
+  // TODO: Update account name in extrinsics window.
+};
+
 bootstrap().then(() => {
   console.log('> Bootstrap complete...');
 });
@@ -128,6 +363,51 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
           const { key, value }: { key: SettingKey; value: boolean } = message;
           DbController.set('settings', key, value);
           return false;
+        }
+      }
+      break;
+    }
+    /**
+     * Handle raw account tasks.
+     */
+    case 'rawAccount': {
+      switch (message.task) {
+        case 'getAllBySource': {
+          const { source }: { source: AccountSource } = message.payload;
+          DbController.get('accounts', source).then((result) =>
+            sendResponse(result)
+          );
+          return true;
+        }
+        case 'delete': {
+          const { publicKeyHex, source } = message.payload;
+          deleteAccount(publicKeyHex, source).then((res) => sendResponse(res));
+          return true;
+        }
+        case 'persist': {
+          const { account } = message.payload;
+          persistAccount(account).then((res) => sendResponse(res));
+          return true;
+        }
+        case 'update': {
+          const { account } = message.payload;
+          updateAccount(account).then((res) => sendResponse(res));
+          return true;
+        }
+        case 'importAddress': {
+          const { encodedAccount, genericAccount } = message.payload;
+          handleImportAddress(genericAccount, encodedAccount, false);
+          return false;
+        }
+        case 'removeAddress': {
+          const { address, chainId } = message.payload;
+          handleRemoveAddress(address, chainId);
+          return false;
+        }
+        case 'renameAccount': {
+          const { account } = message.payload;
+          handleRenameAccount(account).then((res) => sendResponse(res));
+          return true;
         }
       }
       break;
@@ -247,6 +527,37 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
           PENDING_TAB_DATA = null;
           sendResponse(tabData);
           return true;
+        }
+      }
+      break;
+    }
+    /**
+     * Handle WalletConnect tasks.
+     */
+    case 'walletConnect:relay': {
+      switch (message.task) {
+        case 'closeModal': {
+          chrome.runtime.sendMessage({
+            type: 'walletConnect',
+            task: 'closeModal',
+          });
+          return false;
+        }
+        case 'openModal': {
+          chrome.runtime.sendMessage({
+            type: 'walletConnect',
+            task: 'openModal',
+            payload: message.payload,
+          });
+          return false;
+        }
+        case 'setAddresses': {
+          chrome.runtime.sendMessage({
+            type: 'walletConnect',
+            task: 'setAddresses',
+            payload: message.payload,
+          });
+          return false;
         }
       }
       break;

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext } from 'react';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import { createSafeContextHook } from '@polkadot-live/contexts';
 import {
   ConfigRenderer,
   ExtrinsicsController,
@@ -13,7 +13,7 @@ import { decodeAddress, u8aToHex } from 'dedot/utils';
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 import type { HexString } from 'dedot/utils';
 import type { LedgerErrorStatusCode } from '@polkadot-live/types/ledger';
-import type { LedgerSignerContextInterface } from './types';
+import type { LedgerSignerContextInterface } from '@polkadot-live/contexts/types/main';
 
 export const LedgerSignerContext = createContext<
   LedgerSignerContextInterface | undefined

@@ -3,12 +3,12 @@
 
 import { ConfigOpenGov } from '@polkadot-live/core';
 import { createContext, useRef, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import { createSafeContextHook } from '@polkadot-live/contexts';
 import { useConnections } from '../../common/Connections';
 import { setStateWithRef } from '@w3ux/utils';
 import type { Track } from '@polkadot-live/core';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { TracksContextInterface } from './types';
+import type { TracksContextInterface } from '@polkadot-live/contexts/types/openGov';
 
 export const TracksContext = createContext<TracksContextInterface | undefined>(
   undefined

@@ -2,8 +2,22 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ConnectionsProvider } from '../contexts';
+import { DialogControlProvider } from '@polkadot-live/contexts';
 import { HelpProvider, OverlayProvider } from '@polkadot-live/ui/contexts';
-import { SettingFlagsProvider, TabsProvider } from './contexts';
+import {
+  AccountStatusesProvider,
+  AddHandlerProvider,
+  DeleteHandlerProvider,
+  ImportAddressesProvider,
+  ImportHandlerProvider,
+  LedgerHardwareProvider,
+  RemoveHandlerProvider,
+  RenameHandlerProvider,
+  SettingFlagsProvider,
+  TabsProvider,
+  WalletConnectProvider,
+  WalletConnectImportProvider,
+} from './contexts';
 import { withProviders } from '@polkadot-live/ui/hooks';
 import App from './App';
 
@@ -12,5 +26,16 @@ export const Providers = withProviders(
   OverlayProvider,
   SettingFlagsProvider,
   ConnectionsProvider,
-  TabsProvider
+  ImportAddressesProvider,
+  RemoveHandlerProvider,
+  AccountStatusesProvider, // useAddresses, useRemoveHandler
+  AddHandlerProvider, // useAccountStatuses
+  ImportHandlerProvider, // useAccountStatuses
+  RenameHandlerProvider,
+  DeleteHandlerProvider,
+  DialogControlProvider,
+  TabsProvider,
+  LedgerHardwareProvider,
+  WalletConnectProvider,
+  WalletConnectImportProvider
 )(App);

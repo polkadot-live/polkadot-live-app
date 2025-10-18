@@ -6,13 +6,13 @@ import { ConfigRenderer, APIsController } from '@polkadot-live/core';
 import { chainUnits } from '@polkadot-live/consts/chains';
 import { concatU8a, encodeAddress, hexToU8a, stringToU8a } from 'dedot/utils';
 import { createContext } from 'react';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import { createSafeContextHook } from '@polkadot-live/contexts';
 import { planckToUnit } from '@w3ux/utils';
 import { TreasuryAccounts } from '@polkadot-live/consts/treasury';
 
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { DedotClient } from 'dedot';
-import type { TreasuryApiContextInterface } from './types';
+import type { TreasuryApiContextInterface } from '@polkadot-live/contexts/types/main';
 import type {
   CoreTreasuryInfo,
   IpcTreasuryInfo,

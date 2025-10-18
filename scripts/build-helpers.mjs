@@ -77,6 +77,7 @@ export async function findFilesThatShouldBeExcluded() {
   const allFilesToExclude = [];
   const electronPackageNames = [
     '@polkadot-live/consts',
+    '@polkadot-live/contexts',
     '@polkadot-live/core',
     '@polkadot-live/main',
     '@polkadot-live/preload',

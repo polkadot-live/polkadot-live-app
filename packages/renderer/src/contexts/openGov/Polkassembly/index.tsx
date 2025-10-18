@@ -3,13 +3,13 @@
 
 import axios from 'axios';
 import { createContext, useEffect, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import { createSafeContextHook } from '@polkadot-live/contexts';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   PolkassemblyProposal,
   ReferendaInfo,
 } from '@polkadot-live/types/openGov';
-import type { PolkassemblyContextInterface } from './types';
+import type { PolkassemblyContextInterface } from '@polkadot-live/contexts/types/openGov';
 
 export const PolkassemblyContext = createContext<
   PolkassemblyContextInterface | undefined

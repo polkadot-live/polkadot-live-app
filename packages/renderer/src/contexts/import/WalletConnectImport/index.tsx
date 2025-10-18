@@ -4,10 +4,10 @@
 import * as wc from '@polkadot-live/consts/walletConnect';
 import { ConfigImport } from '@polkadot-live/core';
 import { createContext, useEffect, useRef, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import { createSafeContextHook } from '@polkadot-live/contexts';
 import { useAddresses, useImportHandler } from '@ren/contexts/import';
 import { WalletConnectModal } from '@walletconnect/modal';
-import type { WalletConnectImportContextInterface } from './types';
+import type { WalletConnectImportContextInterface } from '@polkadot-live/contexts/types/import';
 import type {
   WcFetchedAddress,
   WcSelectNetwork,
@@ -52,7 +52,7 @@ export const WalletConnectImportProvider = ({
         enableExplorer: false,
         explorerRecommendedWalletIds: 'NONE',
         explorerExcludedWalletIds: 'ALL',
-        projectId: wc.WC_PROJECT_ID,
+        projectId: wc.WC_PROJECT_IDS['electron'],
       });
 
       wcModal.current = modal;

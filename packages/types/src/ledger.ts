@@ -107,6 +107,18 @@ export interface LedgerFetchedAddressData {
 export interface LedgerTaskResponse {
   ack: 'success' | 'failure';
   statusCode: string;
+  payload?: {
+    options: { accountIndices: number[] };
+    addresses: LedgerResult[];
+  };
+  body?: {
+    msg: string;
+  };
+}
+
+export interface SerLedgerTaskResponse {
+  ack: 'success' | 'failure';
+  statusCode: string;
   serData?: string;
 }
 

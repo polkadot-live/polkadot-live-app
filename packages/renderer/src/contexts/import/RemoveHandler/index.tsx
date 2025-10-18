@@ -3,14 +3,14 @@
 
 import { ConfigImport } from '@polkadot-live/core';
 import { createContext } from 'react';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import { createSafeContextHook } from '@polkadot-live/contexts';
 import { useAddresses } from '@ren/contexts/import';
 import type {
   EncodedAccount,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { RemoveHandlerContextInterface } from './types';
+import type { RemoveHandlerContextInterface } from '@polkadot-live/contexts/types/import';
 
 export const RemoveHandlerContext = createContext<
   RemoveHandlerContextInterface | undefined

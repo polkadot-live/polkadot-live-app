@@ -3,10 +3,10 @@
 
 import { ConfigSettings } from '@polkadot-live/core';
 import { createContext, useEffect, useRef, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import { createSafeContextHook } from '@polkadot-live/contexts';
 import { getDefaultSettings } from '@polkadot-live/consts/settings';
 import { setStateWithRef } from '@w3ux/utils';
-import type { SettingFlagsContextInterface } from './types';
+import type { SettingFlagsContextInterface } from '@polkadot-live/contexts/types/settings';
 import type { SettingKey, SettingItem } from '@polkadot-live/types/settings';
 
 export const SettingFlagsContext = createContext<
