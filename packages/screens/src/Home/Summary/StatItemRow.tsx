@@ -4,14 +4,11 @@
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as Styles from '@polkadot-live/styles/wrappers';
 import * as UI from '@polkadot-live/ui/components';
-
-import { useConnections } from '@ren/contexts/common';
-import { useHelp } from '@polkadot-live/ui/contexts';
+import { useContextProxy } from '@polkadot-live/contexts';
 import { ellipsisFn } from '@w3ux/utils';
 import { StatItemRowWrapper } from './Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-import type { FlattenedAccountData, HelpItemKey } from 'packages/types/src';
+import type { FlattenedAccountData, HelpItemKey } from '@polkadot-live/types';
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
 export const StatItemRow = ({
@@ -31,8 +28,9 @@ export const StatItemRow = ({
   icon?: IconDefinition;
   category?: string;
 }) => {
-  const { openHelp } = useHelp();
-  const { getTheme } = useConnections();
+  const { useCtx } = useContextProxy();
+  const { openHelp } = useCtx('HelpCtx')();
+  const { getTheme } = useCtx('ConnectionsCtx')();
   const theme = getTheme();
 
   const mCol =

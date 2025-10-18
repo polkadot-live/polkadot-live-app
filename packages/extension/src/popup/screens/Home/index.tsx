@@ -8,6 +8,7 @@ import * as Themes from '@polkadot-live/styles/theme/variables';
 import PolkadotIcon from '@polkadot-live/ui/svg/polkadotIcon.svg?react';
 import { version } from '../../../../package.json';
 import { Classic } from '@theme-toggles/react';
+import { Summary } from '@polkadot-live/screens';
 import { useSideNav } from '@polkadot-live/ui/contexts';
 import { useConnections } from '../../../contexts';
 import {
@@ -87,7 +88,7 @@ export const Home = () => {
           ) : (
             <ScrollWrapper>
               {/* Summary */}
-              {sideNav.selectedId === 0 && <TitlePlaceholder text="Summary" />}
+              {sideNav.selectedId === 0 && <Summary />}
               {/* Events */}
               {sideNav.selectedId === 1 && <TitlePlaceholder text="Events" />}
               {/* Account Subscriptions */}

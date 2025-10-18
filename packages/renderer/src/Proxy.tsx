@@ -69,6 +69,7 @@ export const ContextProxyMain = ({ children }: ContextProxyProps) => {
         CogMenuCtx: () => main.useCogMenu(),
         WalletConnectCtx: () => main.useWalletConnect(),
         LedgerSigningCtx: () => main.useLedgerSigner(),
+        SummaryCtx: () => main.useSummary(),
       }),
     []
   );

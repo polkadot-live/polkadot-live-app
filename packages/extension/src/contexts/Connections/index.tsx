@@ -7,8 +7,8 @@ import { createContext, useEffect, useRef, useState } from 'react';
 import { initSharedState } from '@polkadot-live/consts/sharedState';
 import { setStateWithRef } from '@w3ux/utils';
 import type { AnyData } from '@polkadot-live/types/misc';
-import type { ConnectionsContextInterface } from './types';
-import type { SyncID } from '@polkadot-live/types/communication';
+import type { SyncID, TabData } from '@polkadot-live/types/communication';
+import type { ConnectionsContextInterface } from '@polkadot-live/contexts/types/common';
 
 export const ConnectionsContext = createContext<
   ConnectionsContextInterface | undefined
@@ -73,6 +73,22 @@ export const ConnectionsProvider = ({
     }
   };
 
+  /**
+   * Open tab.
+   */
+  const openTab = (tab: string) => {
+    const labels: Record<string, string> = {
+      import: 'Accounts',
+      action: 'Extrinsics',
+      openGov: 'OpenGov',
+      settings: 'Settings',
+    };
+    const label = labels[tab];
+    const tabData: TabData = { id: -1, viewId: tab, label };
+    const data = { type: 'tabs', task: 'openTabRelay', tabData };
+    chrome.runtime.sendMessage(data).then(() => window.close());
+  };
+
   useEffect(() => {
     /**
      * Synchronize flags in store.
@@ -104,11 +120,13 @@ export const ConnectionsProvider = ({
   return (
     <ConnectionsContext
       value={{
+        stateLoaded: true,
         cacheGet,
         copyToClipboard,
         getOnlineMode,
         getTheme,
         openInBrowser,
+        openTab,
         setShared,
       }}
     >

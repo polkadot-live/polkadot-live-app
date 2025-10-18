@@ -15,7 +15,7 @@ import { Events } from './Events';
 import { OpenGov } from './OpenGov';
 import { Manage } from './Manage';
 import { Send } from './Send';
-import { Summary } from '@ren/screens/Home/Summary';
+import { Summary } from '@polkadot-live/screens';
 import {
   BackgroundIconWrapper,
   BodyInterfaceWrapper,

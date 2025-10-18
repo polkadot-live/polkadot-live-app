@@ -42,6 +42,7 @@ import type {
   LedgerSignerContextInterface,
   ManageContextInterface,
   SubscriptionsContextInterface,
+  SummaryContextInterface,
   TreasuryApiContextInterface,
   WalletConnectContextInterface,
 } from '../../types/main';
@@ -104,6 +105,7 @@ export interface ContextsMap {
   WalletConnectCtx: () => WalletConnectContextInterface;
   LedgerSigningCtx: () => LedgerSignerContextInterface;
   ManageCtx: () => ManageContextInterface;
+  SummaryCtx: () => SummaryContextInterface;
 
   /** OpenGov */
   TracksCtx: () => TracksContextInterface;

@@ -7,7 +7,7 @@ import { initSharedState } from '@polkadot-live/consts/sharedState';
 import { createContext, useEffect, useRef, useState } from 'react';
 import { setStateWithRef } from '@w3ux/utils';
 import type { AnyData } from 'packages/types/src';
-import type { ConnectionsContextInterface } from './types';
+import type { ConnectionsContextInterface } from '@polkadot-live/contexts/types/common';
 import type { IpcRendererEvent } from 'electron';
 import type { SyncID } from '@polkadot-live/types/communication';
 
@@ -73,6 +73,19 @@ export const ConnectionsProvider = ({
     }
   };
 
+  /**
+   * Open a tab.
+   */
+  const openTab = (
+    tab: string,
+    analytics?: { event: string; data: AnyData | null }
+  ) => {
+    window.myAPI.openWindow(tab);
+    if (analytics) {
+      window.myAPI.umamiEvent('window-open-accounts', null);
+    }
+  };
+
   useEffect(() => {
     /**
      * Synchronize flags in store.
@@ -113,6 +126,10 @@ export const ConnectionsProvider = ({
         getOnlineMode,
         getTheme,
         openInBrowser,
+        openTab,
+        setShared: () => {
+          /* empty */
+        },
       }}
     >
       {children}

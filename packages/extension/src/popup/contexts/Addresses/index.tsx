@@ -1,8 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { AccountsController } from '@polkadot-live/core';
-import { createContext, useState, useRef, useEffect } from 'react';
+import { createContext, useState, useRef } from 'react';
 import { createSafeContextHook } from '@polkadot-live/contexts';
 import type { AddressesContextInterface } from '@polkadot-live/contexts/types/main';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -40,6 +39,20 @@ export const AddressesProvider = ({
     return false;
   };
 
+  const getAllFlattened = async (): Promise<
+    Map<ChainID, FlattenedAccountData[]>
+  > => {
+    const arr: [ChainID, FlattenedAccountData[]][] = JSON.parse(
+      (await chrome.runtime.sendMessage({
+        type: 'managedAccounts',
+        task: 'getAll',
+      })) as string
+    );
+
+    const map = new Map<ChainID, FlattenedAccountData[]>(arr);
+    return map;
+  };
+
   // Saves received address as an imported address.
   const importAddress = async (
     chain: ChainID,
@@ -48,42 +61,29 @@ export const AddressesProvider = ({
     name: string,
     fromBackup = false
   ) => {
-    // Update accounts state.
-    AccountsController.syncState();
-
+    setAddresses(await getAllFlattened());
     if (!fromBackup) {
-      await window.myAPI.sendAccountTask({
-        action: 'account:import',
-        data: { chainId: chain, source, address, name },
-      });
+      // TODO: Show import notification
     }
   };
 
   // Removes an imported address.
   const removeAddress = async (chain: ChainID, address: string) => {
-    // Set address state.
-    AccountsController.syncState();
-
-    // Remove persisted account from store.
-    await window.myAPI.sendAccountTask({
-      action: 'account:remove',
-      data: { address, chainId: chain },
-    });
+    setAddresses(await getAllFlattened());
+    // TODO: Clear an account's subscriptions in database.
+    console.log(`> Remove tasks for ${chain}:${address}`);
   };
 
   // Get current addresses
   const getAddresses = () => {
-    let listAddresses: FlattenedAccountData[] = [];
-
+    let flattened: FlattenedAccountData[] = [];
     for (const accounts of addressesRef.current.values()) {
-      const newItems = accounts
+      const items = accounts
         .map((a) => getAddress(a.address, a.chain))
         .filter((a) => a !== null) as FlattenedAccountData[];
-
-      listAddresses = listAddresses.concat(newItems);
+      flattened = flattened.concat(items);
     }
-
-    return listAddresses;
+    return flattened;
   };
 
   // Gets an imported address along with its Ledger metadata.
@@ -94,12 +94,10 @@ export const AddressesProvider = ({
     if (!addressExists(address, chainId)) {
       return null;
     }
-
     const result: FlattenedAccountData[] = [];
     for (const accounts of addressesRef.current.values()) {
       result.push(...accounts);
     }
-
     return (
       result.find(
         (account) => account.address === address && account.chain === chainId
@@ -118,18 +116,9 @@ export const AddressesProvider = ({
   const getSubscriptionCountForAccount = (
     flattened: FlattenedAccountData
   ): number => {
-    const { address, chain } = flattened;
-    const account = AccountsController.get(chain, address);
-    if (!account) {
-      return 0;
-    }
-
-    const tasks = account.getSubscriptionTasks();
-    if (!tasks) {
-      return 0;
-    }
-
-    return tasks.length;
+    // TODO: Cache subscription counts on mount.
+    console.log(`TODO: Get subscription count ${flattened.name}`);
+    return 0;
   };
 
   /// Get total subscription count.
@@ -140,12 +129,6 @@ export const AddressesProvider = ({
     }
     return count;
   };
-
-  // Cache addresses state setter in controller for updaing UI.
-  useEffect(() => {
-    AccountsController.cachedSetAddresses = setAddresses;
-    AccountsController.cachedAddressesRef = addressesRef;
-  }, []);
 
   return (
     <AddressesContext

@@ -27,6 +27,7 @@ import {
   LedgerSignerProvider,
   ManageProvider,
   SubscriptionsProvider,
+  SummaryProvider,
   TreasuryApiProvider,
   WalletConnectProvider,
 } from '@ren/contexts/main';
@@ -101,7 +102,8 @@ const getProvidersForWindow = () => {
         // Requires useBootstrapping and useHelp.
         CogMenuProvider,
         WalletConnectProvider,
-        LedgerSignerProvider
+        LedgerSignerProvider,
+        SummaryProvider
       )(Theme);
     }
     case 'import': {

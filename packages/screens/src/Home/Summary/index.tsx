@@ -4,114 +4,39 @@
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as FA from '@fortawesome/free-solid-svg-icons';
-
+import { useContextProxy } from '@polkadot-live/contexts';
 import { getReadableAccountSource } from '@polkadot-live/core';
 import { getSupportedSources } from '@polkadot-live/consts/chains';
-import { useEffect, useRef, useState } from 'react';
-import { useSideNav } from '@polkadot-live/ui/contexts';
-import {
-  useAddresses,
-  useEvents,
-  useIntervalSubscriptions,
-} from '@ren/contexts/main';
+import { useState } from 'react';
 import { MainHeading } from '@polkadot-live/ui/components';
 import { FlexColumn, FlexRow } from '@polkadot-live/styles/wrappers';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { SideTriggerButton } from './Wrappers';
 import { OpenViewButton } from './OpenViewButton';
 import { StatItemRow } from './StatItemRow';
-
-import type {
-  AccountSource,
-  ImportedGenericAccount,
-} from '@polkadot-live/types/accounts';
 import type { SummaryAccordionValue } from './types';
-import type { TxStatus } from '@polkadot-live/types/tx';
 
-export const Summary: React.FC = () => {
-  const { setSelectedId } = useSideNav();
-  const { getTotalIntervalSubscriptionCount } = useIntervalSubscriptions();
+export const Summary = () => {
+  const { useCtx } = useContextProxy();
+  const { setSelectedId } = useCtx('SideNavCtx')();
+  const { openTab } = useCtx('ConnectionsCtx')();
+  const { addressMap, extrinsicCounts } = useCtx('SummaryCtx')();
+  const { getTotalIntervalSubscriptionCount } = useCtx(
+    'IntervalSubscriptionsCtx'
+  )();
   const { getEventsCount, getReadableEventCategory, getAllEventCategoryKeys } =
-    useEvents();
-
+    useCtx('EventsCtx')();
   const {
     getAllAccounts,
     getSubscriptionCountForAccount,
     getTotalSubscriptionCount,
-  } = useAddresses();
-
-  /**
-   * Addresses fetched from main process.
-   */
-  const [addressMap, setAddressMap] = useState(
-    new Map<AccountSource, ImportedGenericAccount[]>()
-  );
-  const addressMapRef = useRef<typeof addressMap>(addressMap);
-  const [trigger, setTrigger] = useState<boolean>(false);
-
-  /**
-   * Extrinsic counts.
-   */
-  const [extrinsicCounts, setExtrinsicCounts] = useState(
-    new Map<TxStatus, number>()
-  );
-  const extrinsicCountsRef = useRef(extrinsicCounts);
+  } = useCtx('AddressesCtx')();
 
   /**
    * Utils.
    */
   const getTotalAccounts = () =>
     Array.from(addressMap.values()).reduce((pv, cur) => (pv += cur.length), 0);
-
-  /**
-   * Fetch stored addresss from main when component loads.
-   */
-  useEffect(() => {
-    const fetch = async () => {
-      // Accounts.
-      const serialized = (await window.myAPI.rawAccountTask({
-        action: 'raw-account:getAll',
-        data: null,
-      })) as string;
-
-      const parsedMap = new Map<AccountSource, string>(JSON.parse(serialized));
-      for (const [source, ser] of parsedMap.entries()) {
-        const parsed: ImportedGenericAccount[] = JSON.parse(ser);
-        addressMapRef.current.set(source, parsed);
-      }
-
-      // Extrinsics.
-      const getCount = async (status: TxStatus) =>
-        (await window.myAPI.sendExtrinsicsTaskAsync({
-          action: 'extrinsics:getCount',
-          data: { status },
-        })) || '0';
-
-      const counts = await Promise.all([
-        getCount('pending'),
-        getCount('finalized'),
-      ]);
-
-      extrinsicCountsRef.current.set('pending', Number(counts[0]));
-      extrinsicCountsRef.current.set('finalized', Number(counts[1]));
-
-      // Trigger state update.
-      setTrigger(true);
-    };
-
-    fetch();
-  }, []);
-
-  /**
-   * Trigger to update state.
-   */
-  useEffect(() => {
-    if (trigger) {
-      setAddressMap(addressMapRef.current);
-      setExtrinsicCounts(extrinsicCountsRef.current);
-      setTrigger(false);
-    }
-  }, [trigger]);
 
   /**
    * Accordion state.
@@ -192,10 +117,12 @@ export const Summary: React.FC = () => {
                 </UI.AccordionTrigger>
                 <div className="HeaderContentDropdownWrapper">
                   <SideTriggerButton
-                    onClick={() => {
-                      window.myAPI.openWindow('import');
-                      window.myAPI.umamiEvent('window-open-accounts', null);
-                    }}
+                    onClick={() =>
+                      openTab('import', {
+                        event: 'window-open-accounts',
+                        data: null,
+                      })
+                    }
                   />
                 </div>
               </FlexRow>
@@ -273,10 +200,12 @@ export const Summary: React.FC = () => {
                 </UI.AccordionTrigger>
                 <div className="HeaderContentDropdownWrapper">
                   <SideTriggerButton
-                    onClick={() => {
-                      window.myAPI.openWindow('action');
-                      window.myAPI.umamiEvent('window-open-extrinsics', null);
-                    }}
+                    onClick={() =>
+                      openTab('action', {
+                        event: 'window-open-extrinsics',
+                        data: null,
+                      })
+                    }
                   />
                 </div>
               </FlexRow>

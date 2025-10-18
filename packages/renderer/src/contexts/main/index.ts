@@ -14,5 +14,6 @@ export * from './IntervalTasksManager';
 export * from './LedgerSigner';
 export * from './Manage';
 export * from './Subscriptions';
+export * from './Summary';
 export * from './TreasuryApi';
 export * from './WalletConnect';

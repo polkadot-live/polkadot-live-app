@@ -8,10 +8,12 @@ import {
   disconnectAPIs,
   SubscriptionsController,
 } from '@polkadot-live/core';
+import { getSupportedSources } from '@polkadot-live/consts/chains';
 import { initSharedState } from '@polkadot-live/consts/sharedState';
 import type {
   AccountSource,
   EncodedAccount,
+  FlattenedAccountData,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -133,8 +135,17 @@ const onEndpointChange = async (chainId: ChainID, endpoint: NodeEndpoint) => {
 };
 
 /**
- * Accounts.
+ * Raw Accounts.
  */
+const getAllAccounts = async (): Promise<string> => {
+  const map = new Map<AccountSource, ImportedGenericAccount[]>();
+  for (const source of getSupportedSources()) {
+    const result = await DbController.get('accounts', source);
+    map.set(source, (result as ImportedGenericAccount[]) || []);
+  }
+  return JSON.stringify(Array.from(map.entries()));
+};
+
 const isAlreadyPersisted = async (publicKeyHex: string): Promise<boolean> => {
   for (const source of [
     'ledger',
@@ -379,6 +390,10 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
           );
           return true;
         }
+        case 'getAll': {
+          getAllAccounts().then((result) => sendResponse(result));
+          return true;
+        }
         case 'delete': {
           const { publicKeyHex, source } = message.payload;
           deleteAccount(publicKeyHex, source).then((res) => sendResponse(res));
@@ -407,6 +422,28 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
         case 'renameAccount': {
           const { account } = message.payload;
           handleRenameAccount(account).then((res) => sendResponse(res));
+          return true;
+        }
+      }
+      break;
+    }
+    /**
+     * Handle managed accounts.
+     */
+    case 'managedAccounts': {
+      switch (message.task) {
+        case 'getAll': {
+          sendResponse(AccountsController.getAllFlattenedAccountData());
+          return true;
+        }
+        // TODO: Refactor
+        case 'subscriptionCount': {
+          const { flattened }: { flattened: FlattenedAccountData } = message;
+          const { address, chain } = flattened;
+          const account = AccountsController.get(chain, address);
+          sendResponse(
+            account ? account.getSubscriptionTasks()?.length || 0 : 0
+          );
           return true;
         }
       }

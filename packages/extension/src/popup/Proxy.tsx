@@ -3,11 +3,15 @@
 
 import { useMemo } from 'react';
 import {
+  useAddresses,
   useApiHealth,
   useAppSettings,
   useBootstrapping,
   useChains,
   useCogMenu,
+  useEvents,
+  useIntervalSubscriptions,
+  useSummary,
 } from './contexts';
 import { useConnections } from '../contexts';
 import { useHelp, useSideNav } from '@polkadot-live/ui/contexts';
@@ -23,12 +27,16 @@ export const ContextProxyMain = ({ children }: ContextProxyProps) => {
       buildCache({
         HelpCtx: () => useHelp(),
         ConnectionsCtx: () => useConnections(),
+        AddressesCtx: () => useAddresses(),
         AppSettingsCtx: () => useAppSettings(),
         SideNavCtx: () => useSideNav(),
         ApiHealthCtx: () => useApiHealth(),
         ChainsCtx: () => useChains(),
+        IntervalSubscriptionsCtx: () => useIntervalSubscriptions(),
+        EventsCtx: () => useEvents(),
         BootstrappingCtx: () => useBootstrapping(),
         CogMenuCtx: () => useCogMenu(),
+        SummaryCtx: () => useSummary(),
       }),
     []
   );

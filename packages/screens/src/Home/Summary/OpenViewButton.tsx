@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useConnections } from '@ren/contexts/common';
+import { useContextProxy } from '@polkadot-live/contexts';
 import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { FlexColumn } from '@polkadot-live/styles/wrappers';
@@ -16,7 +16,8 @@ export const OpenViewButton = ({
   umamiEvent,
 }: OpenViewButtonProps) => {
   const [isHovering, setIsHovering] = useState(false);
-  const { cacheGet } = useConnections();
+  const { useCtx } = useContextProxy();
+  const { cacheGet, openTab } = useCtx('ConnectionsCtx')();
   const darkMode = cacheGet('mode:dark');
 
   return (
@@ -26,10 +27,7 @@ export const OpenViewButton = ({
       onMouseLeave={() => setIsHovering(false)}
       whileHover={{ scale: 1.03 }}
       whileTap={{ scale: 0.99 }}
-      onClick={() => {
-        window.myAPI.openWindow(target);
-        window.myAPI.umamiEvent(umamiEvent, null);
-      }}
+      onClick={() => openTab(target, { event: umamiEvent, data: null })}
     >
       <FlexColumn>
         <FontAwesomeIcon className="icon" icon={icon} />

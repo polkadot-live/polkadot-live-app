@@ -12,4 +12,9 @@ export interface ConnectionsContextInterface {
   getTheme: () => typeof themeVariables.darkTheme;
   getOnlineMode: () => boolean;
   openInBrowser: (uri: string, analytics?: AnyData) => void;
+  openTab: (
+    tab: string,
+    analytics?: { event: string; data: AnyData | null }
+  ) => void;
+  setShared: (key: SyncID, value: boolean) => void;
 }

@@ -13,6 +13,7 @@ export * from './IntervalSubscriptions';
 export * from './IntervalTasksManager';
 export * from './LedgerSigner';
 export * from './Manage';
+export * from './Summary';
 export * from './Subscriptions';
 export * from './TreasuryApi';
 export * from './WalletConnect';
