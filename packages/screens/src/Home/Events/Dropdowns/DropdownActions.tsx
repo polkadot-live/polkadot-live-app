@@ -2,17 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { ConfigRenderer } from '@polkadot-live/core';
-import { useBootstrapping } from '@ren/contexts/main';
-import { useConnections } from '@ren/contexts/common';
+import * as FA from '@fortawesome/free-solid-svg-icons';
+import { useContextProxy } from '@polkadot-live/contexts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faCaretDown,
-  faFileContract,
-  faUpRightFromSquare,
-} from '@fortawesome/free-solid-svg-icons';
-import { MenuButton } from '@ren/screens/OpenGov/Dropdowns/Wrappers';
-import { DropdownMenuContent } from '@polkadot-live/styles/wrappers';
+  DropdownMenuContent,
+  MenuButton,
+} from '@polkadot-live/styles/wrappers';
 import type { EventAccountData } from '@polkadot-live/types/reporter';
 import type { AccountSource } from '@polkadot-live/types/accounts';
 import type { ActionMeta } from '@polkadot-live/types/tx';
@@ -23,8 +19,18 @@ export const ActionsDropdown = ({
   txActions,
   uriActions,
 }: ActionsDropdownProps) => {
-  const { isConnecting } = useBootstrapping();
-  const { cacheGet, getTheme, getOnlineMode } = useConnections();
+  const { useCtx } = useContextProxy();
+  const { isConnecting } = useCtx('BootstrappingCtx')();
+  const {
+    cacheGet,
+    getTheme,
+    getOnlineMode,
+    isTabOpen,
+    initExtrinsicMsg,
+    openInBrowser,
+    openTab,
+    relayState,
+  } = useCtx('ConnectionsCtx')();
   const darkMode = cacheGet('mode:dark');
   const isBuildingExtrinsic = cacheGet('extrinsic:building');
   const theme = getTheme();
@@ -37,30 +43,20 @@ export const ActionsDropdown = ({
 
   // Open action window and initialize with the event's tx data.
   const openActionWindow = async (txMeta: ActionMeta, btnLabel: string) => {
-    // Relay building extrinsic flag to app.
-    window.myAPI.relaySharedState('extrinsic:building', true);
+    relayState('extrinsic:building', true);
 
-    const extrinsicsViewOpen = await window.myAPI.isViewOpen('action');
-    if (!extrinsicsViewOpen) {
-      // Relay init task to extrinsics window after its DOM has loaded.
-      window.myAPI.openWindow('action', {
-        windowId: 'action',
-        task: 'action:init',
-        serData: JSON.stringify(txMeta),
-      });
+    // Relay init task to extrinsics window after its DOM has loaded.
+    if (!(await isTabOpen('action'))) {
+      const serData = JSON.stringify(txMeta);
+      const relayData = { windowId: 'action', task: 'action:init', serData };
 
-      // Analytics.
-      window.myAPI.umamiEvent('window-open-extrinsics', {
-        action: `${event.category}-${btnLabel?.toLowerCase()}`,
+      openTab('action', relayData, {
+        event: 'window-open-extrinsics',
+        data: { action: `${event.category}-${btnLabel?.toLowerCase()}` },
       });
     } else {
-      window.myAPI.openWindow('action');
-
-      // Send init task directly to extrinsics window if it's already open.
-      ConfigRenderer.portToAction?.postMessage({
-        task: 'action:init',
-        data: JSON.stringify(txMeta),
-      });
+      openTab('action');
+      initExtrinsicMsg(txMeta);
     }
   };
 
@@ -75,7 +71,7 @@ export const ActionsDropdown = ({
           <div>
             <FontAwesomeIcon
               className="icon"
-              icon={faCaretDown}
+              icon={FA.faCaretDown}
               transform={'grow-0'}
             />
           </div>
@@ -115,7 +111,7 @@ export const ActionsDropdown = ({
                   >
                     <div className="LeftSlot">
                       <FontAwesomeIcon
-                        icon={faFileContract}
+                        icon={FA.faFileContract}
                         transform={'shrink-3'}
                       />
                     </div>
@@ -135,16 +131,13 @@ export const ActionsDropdown = ({
                 <DropdownMenu.Item
                   key={`uri_action_${i}`}
                   className="DropdownMenuItem"
-                  onSelect={() => {
-                    window.myAPI.openBrowserURL(uri);
-                    window.myAPI.umamiEvent('link-open', {
-                      dest: label.toLowerCase(),
-                    });
-                  }}
+                  onSelect={() =>
+                    openInBrowser(uri, { dest: label.toLocaleLowerCase() })
+                  }
                 >
                   <div className="LeftSlot">
                     <FontAwesomeIcon
-                      icon={faUpRightFromSquare}
+                      icon={FA.faUpRightFromSquare}
                       transform={'shrink-5'}
                     />
                   </div>

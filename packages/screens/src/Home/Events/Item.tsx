@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useEffect, useState, memo } from 'react';
-import { useConnections } from '@ren/contexts/common';
-import { useEvents } from '@ren/contexts/main';
+import { useContextProxy } from '@polkadot-live/contexts';
 import { FlexColumn, FlexRow } from '@polkadot-live/styles/wrappers';
 import { AnimatePresence } from 'framer-motion';
 import { EventItem } from './Wrappers';
@@ -27,8 +26,9 @@ export const Item = memo(function Item({ event }: ItemProps) {
   // The state of the event item display.
   const [display, setDisplay] = useState<'in' | 'fade' | 'out'>('in');
 
-  const { getTheme } = useConnections();
-  const { dismissEvent } = useEvents();
+  const { useCtx } = useContextProxy();
+  const { getTheme } = useCtx('ConnectionsCtx')();
+  const { dismissEvent, removeEvent } = useCtx('EventsCtx')();
   const theme = getTheme();
   const { uid, title, subtitle, txActions, uriActions /*, data*/ } = event;
 
@@ -51,13 +51,7 @@ export const Item = memo(function Item({ event }: ItemProps) {
   const handleDismissEvent = async () => {
     setDisplay('fade');
     setTimeout(() => setDisplay('out'), FADE_TRANSITION);
-
-    const result = await window.myAPI.sendEventTaskAsync({
-      action: 'events:remove',
-      data: { event },
-    });
-
-    console.log(`Remove result: ${result}`);
+    await removeEvent(event);
   };
 
   // Once event has faded out, send dismiss meessage to the main process. Dismissing the event

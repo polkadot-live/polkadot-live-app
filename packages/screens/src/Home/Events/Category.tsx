@@ -3,7 +3,6 @@
 
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
-
 import { getEventChainId } from '@polkadot-live/core';
 import { getCategory } from '@polkadot-live/consts/chains';
 import { ChevronDownIcon } from '@radix-ui/react-icons';

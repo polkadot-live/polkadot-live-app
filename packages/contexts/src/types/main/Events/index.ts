@@ -21,6 +21,7 @@ export interface EventsContextInterface {
   getEventsCount: (category?: string) => number;
   getReadableEventCategory: (category: string) => string;
   getAllEventCategoryKeys: () => string[];
+  removeEvent: (event: EventCallback) => Promise<void>;
 }
 
 export type EventsState = Map<ChainID, EventCallback[]>;

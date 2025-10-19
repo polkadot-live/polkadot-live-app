@@ -1,11 +1,13 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import * as themeVariables from '@polkadot-live/styles/theme/variables';
 import { createSafeContextHook } from '@polkadot-live/contexts';
 import { createContext, useEffect, useRef, useState } from 'react';
 import { initSharedState } from '@polkadot-live/consts/sharedState';
 import { setStateWithRef } from '@w3ux/utils';
+import type { ActionMeta } from '@polkadot-live/types/tx';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { SyncID, TabData } from '@polkadot-live/types/communication';
 import type { ConnectionsContextInterface } from '@polkadot-live/contexts/types/common';
@@ -36,6 +38,15 @@ export const ConnectionsProvider = ({
   const cacheGet = (key: SyncID): boolean => Boolean(cacheRef.current.get(key));
 
   /**
+   * Relay shared state.
+   */
+  const relayState = (syncId: SyncID, state: boolean | string) => {
+    const { key, value } = { key: syncId, value: state as boolean };
+    const msg = { type: 'sharedState', task: 'relay', payload: { key, value } };
+    chrome.runtime.sendMessage(msg);
+  };
+
+  /**
    * Return flag indicating whether app is in online or offline mode.
    */
   const getOnlineMode = () =>
@@ -47,14 +58,6 @@ export const ConnectionsProvider = ({
   const getTheme = (): typeof themeVariables.darkTheme => {
     const { darkTheme, lightTheme } = themeVariables;
     return cacheGet('mode:dark') ? darkTheme : lightTheme;
-  };
-
-  /**
-   * Cache a new shared value.
-   */
-  const setShared = (key: SyncID, value: boolean) => {
-    const msg = { type: 'sharedState', task: 'relay', payload: { key, value } };
-    chrome.runtime.sendMessage(msg);
   };
 
   /**
@@ -74,9 +77,30 @@ export const ConnectionsProvider = ({
   };
 
   /**
-   * Open tab.
+   * Checks if a tab is open.
    */
-  const openTab = (tab: string) => {
+  const isTabOpen = async (tab: string) => {
+    const msg = { type: 'tabs', task: 'isTabOpen', tab };
+    return (await chrome.runtime.sendMessage(msg)) as boolean;
+  };
+
+  /**
+   * Message to initialize a transaction in the extrinsics tab.
+   * @todo Move to extrinsics context.
+   */
+  const initExtrinsicMsg = (txMeta: ActionMeta) => {
+    console.log('Todo: Init tx in extrinsics tab');
+  };
+
+  /**
+   * Open tab.
+   * @todo Implement relay mechanism.
+   */
+  const openTab = (
+    tab: string,
+    relayData?: AnyData,
+    analytics?: { event: string; data: AnyData | null }
+  ) => {
     const labels: Record<string, string> = {
       import: 'Accounts',
       action: 'Extrinsics',
@@ -125,9 +149,11 @@ export const ConnectionsProvider = ({
         copyToClipboard,
         getOnlineMode,
         getTheme,
+        initExtrinsicMsg,
+        isTabOpen,
         openInBrowser,
         openTab,
-        setShared,
+        relayState,
       }}
     >
       {children}

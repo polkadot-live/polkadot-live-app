@@ -3,13 +3,15 @@
 
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { useConnections } from '@ren/contexts/common';
-import { DropdownMenuContent } from '@polkadot-live/styles/wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  DropdownMenuContent,
+  MenuButton,
+} from '@polkadot-live/styles/wrappers';
 import {
   faEllipsis,
   faUpRightFromSquare,
 } from '@fortawesome/free-solid-svg-icons';
-import { MenuButton } from './Wrappers';
 import {
   getPolkassemblySubdomain,
   getSubsquareSubdomain,

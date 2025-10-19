@@ -3,7 +3,6 @@
 
 import * as UI from '@polkadot-live/ui/components';
 import * as Ctx from '@ren/contexts/main';
-
 import { version } from '../../../package.json';
 import { ConfigRenderer } from '@polkadot-live/core';
 import { useEffect, useState } from 'react';
@@ -11,11 +10,10 @@ import { useConnections } from '@ren/contexts/common';
 import { useInitIpcHandlers } from '@ren/hooks/useInitIpcHandlers';
 import { useMainMessagePorts } from '@ren/hooks/useMainMessagePorts';
 import { Classic } from '@theme-toggles/react';
-import { Events } from './Events';
 import { OpenGov } from './OpenGov';
 import { Manage } from './Manage';
 import { Send } from './Send';
-import { Summary } from '@polkadot-live/screens';
+import { Events, Summary } from '@polkadot-live/screens';
 import {
   BackgroundIconWrapper,
   BodyInterfaceWrapper,

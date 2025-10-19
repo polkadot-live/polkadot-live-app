@@ -17,6 +17,7 @@ import type {
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { EventCallback } from '@polkadot-live/types/reporter';
 import type { NodeEndpoint } from '@polkadot-live/types/apis';
 import type { SettingKey } from '@polkadot-live/types/settings';
 import type { Stores } from '../controllers';
@@ -27,6 +28,7 @@ const SHARED_STATE: Map<SyncID, boolean> = initSharedState();
 
 /** Tab loading */
 const BACKEND = 'browser';
+let ACTIVE_TABS: TabData[] = [];
 let PENDING_TAB_DATA: TabData | null = null;
 let TAB_ID: number | null = null;
 
@@ -536,10 +538,23 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
      */
     case 'tabs': {
       switch (message.task) {
+        case 'isTabOpen': {
+          const { tab } = message;
+          sendResponse(Boolean(ACTIVE_TABS.find((t) => t.viewId === tab)));
+          return true;
+        }
+        case 'closeTab': {
+          const { tab } = message;
+          ACTIVE_TABS = ACTIVE_TABS.filter((t) => t.viewId !== tab);
+          return false;
+        }
         case 'openTabRelay': {
           const tabData: TabData = message.tabData;
           const route = tabData.viewId;
           const url = chrome.runtime.getURL(`src/tab/index.html#${route}`);
+
+          const isOpen = ACTIVE_TABS.find((t) => t.viewId === route);
+          !isOpen && ACTIVE_TABS.push(tabData);
 
           chrome.tabs.query({}, function (tabs) {
             const cleanUrl = url.split('#')[0];
@@ -563,6 +578,20 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
           const tabData = PENDING_TAB_DATA;
           PENDING_TAB_DATA = null;
           sendResponse(tabData);
+          return true;
+        }
+      }
+      break;
+    }
+    /**
+     * Handle event tasks.
+     */
+    case 'events': {
+      switch (message.task) {
+        case 'remove': {
+          const { event }: { event: EventCallback } = message;
+          console.log(`Todo: Remove event ${event.uid}`);
+          sendResponse(true);
           return true;
         }
       }

@@ -3,8 +3,7 @@
 
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
-
-import { useEvents } from '@ren/contexts/main';
+import { useContextProxy } from '@polkadot-live/contexts';
 import { useState, useMemo } from 'react';
 import { Category } from './Category';
 import { NoEvents } from './NoEvents';
@@ -20,12 +19,12 @@ import {
 import { FlexColumn } from '@polkadot-live/styles/wrappers';
 
 export const Events = () => {
+  const { useCtx } = useContextProxy();
+  const { events, sortAllGroupedEvents, sortAllEvents } = useCtx('EventsCtx')();
+
   /// State for sorting controls.
   const [newestFirst, setNewestFirst] = useState(true);
   const [groupingOn, setGroupingOn] = useState(true);
-
-  /// Get events state.
-  const { events, sortAllGroupedEvents, sortAllEvents } = useEvents();
 
   const sortedGroupedEvents = useMemo(
     () => sortAllGroupedEvents(newestFirst),

@@ -43,6 +43,14 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     setEventsState(map);
   };
 
+  /// Remove event from database.
+  const removeEvent = async (event: EventCallback): Promise<void> => {
+    await window.myAPI.sendEventTaskAsync({
+      action: 'events:remove',
+      data: { event },
+    });
+  };
+
   /// Removes an event item on a specified chain; compares event uid.
   const dismissEvent = ({ who: { data }, uid }: DismissEvent) => {
     setEventsState((prev) => {
@@ -283,6 +291,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
         getEventsCount,
         getReadableEventCategory,
         getAllEventCategoryKeys,
+        removeEvent,
       }}
     >
       {children}

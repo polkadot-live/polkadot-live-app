@@ -4,11 +4,10 @@
 import * as UI from '@polkadot-live/ui/components';
 import * as Ctx from '../../contexts';
 import * as Themes from '@polkadot-live/styles/theme/variables';
-
 import PolkadotIcon from '@polkadot-live/ui/svg/polkadotIcon.svg?react';
 import { version } from '../../../../package.json';
 import { Classic } from '@theme-toggles/react';
-import { Summary } from '@polkadot-live/screens';
+import { Events, Summary } from '@polkadot-live/screens';
 import { useSideNav } from '@polkadot-live/ui/contexts';
 import { useConnections } from '../../../contexts';
 import {
@@ -24,7 +23,7 @@ const TitlePlaceholder = ({ text }: { text: string }) => (
 
 export const Home = () => {
   const { cacheGet, toggleSetting } = Ctx.useAppSettings();
-  const { cacheGet: getShared, setShared } = useConnections();
+  const { cacheGet: getShared, relayState } = useConnections();
   const { appLoading } = Ctx.useBootstrapping();
   const cogMenu = Ctx.useCogMenu();
   const sideNav = useSideNav();
@@ -34,7 +33,7 @@ export const Home = () => {
   const silenceOsNotifications = cacheGet('setting:silence-os-notifications');
 
   const toggleTheme = () => {
-    setShared('mode:dark', !darkMode);
+    relayState('mode:dark', !darkMode);
     toggleSetting('setting:dark-mode');
   };
 
@@ -90,7 +89,7 @@ export const Home = () => {
               {/* Summary */}
               {sideNav.selectedId === 0 && <Summary />}
               {/* Events */}
-              {sideNav.selectedId === 1 && <TitlePlaceholder text="Events" />}
+              {sideNav.selectedId === 1 && <Events />}
               {/* Account Subscriptions */}
               {sideNav.selectedId === 2 && (
                 <TitlePlaceholder text="Account Subscriptions" />
