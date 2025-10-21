@@ -40,6 +40,7 @@ export const AddressesProvider = ({
     return false;
   };
 
+  /// Get all accounts from database.
   const getAllFlattened = async (): Promise<
     Map<ChainID, FlattenedAccountData[]>
   > => {
@@ -54,18 +55,17 @@ export const AddressesProvider = ({
   };
 
   /// Saves received address as an imported address.
-  const importAddress = async () => {
+  const importAddress = async (accountName: string, fromBackup = false) => {
     const state = await getAllFlattened();
     setStateWithRef(state, setAddresses, addressesRef);
+    if (!fromBackup) {
+      console.log(`Todo: ${accountName} notification`);
+    }
   };
 
   /// Removes an imported address.
-  const removeAddress = async (chain: ChainID, address: string) => {
-    const state = await getAllFlattened();
-    setStateWithRef(state, setAddresses, addressesRef);
-
-    // TODO: Clear an account's subscriptions in database.
-    console.log(`> Remove tasks for ${chain}:${address}`);
+  const removeAddress = async () => {
+    /* empty */
   };
 
   /// Get current addresses.

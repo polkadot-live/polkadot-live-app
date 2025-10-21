@@ -219,10 +219,9 @@ const deleteAccount = async (
   source: AccountSource
 ): Promise<boolean> => {
   try {
-    const all = (await DbController.get('accounts', source)) as
-      | ImportedGenericAccount[]
-      | undefined;
-    const updated = (all || []).filter((a) => a.publicKeyHex !== publicKeyHex);
+    const all = ((await DbController.get('accounts', source)) ||
+      []) as ImportedGenericAccount[];
+    const updated = all.filter((a) => a.publicKeyHex !== publicKeyHex);
     await DbController.set('accounts', source, updated);
     return true;
   } catch (error) {
@@ -591,7 +590,11 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
           return true;
         }
         case 'delete': {
-          const { publicKeyHex, source } = message.payload;
+          const {
+            publicKeyHex,
+            source,
+          }: { publicKeyHex: string; source: AccountSource } = message.payload;
+          console.log(`Delete account: ${publicKeyHex}`);
           deleteAccount(publicKeyHex, source).then((res) => sendResponse(res));
           return true;
         }

@@ -182,7 +182,7 @@ export const useMainMessagePorts = () => {
 
       // Show notification.
       if (!fromBackup) {
-        await importAddress(chainId, source, address, alias, fromBackup);
+        await importAddress(alias, fromBackup);
       }
 
       // Send message back to import window to reset account's processing flag.
