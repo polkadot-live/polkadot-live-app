@@ -827,6 +827,12 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
      */
     case 'accountSubscriptions': {
       switch (message.task) {
+        case 'getAll': {
+          const all = SubscriptionsController.getAccountSubscriptions();
+          const ser = JSON.stringify(Array.from(all.entries()));
+          sendResponse(ser);
+          return true;
+        }
         case 'update': {
           const { task }: { task: SubscriptionTask } = message.payload;
           const { chainId, account: flattened } = task;
@@ -862,6 +868,12 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
      */
     case 'chainSubscriptions': {
       switch (message.task) {
+        case 'getAll': {
+          const all = SubscriptionsController.getChainSubscriptions();
+          const ser = JSON.stringify(Array.from(all.entries()));
+          sendResponse(ser);
+          return true;
+        }
         case 'update': {
           const { task }: { task: SubscriptionTask } = message.payload;
           updateChainSubscription(task).then(() =>

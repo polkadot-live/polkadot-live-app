@@ -201,6 +201,30 @@ export const SubscriptionsProvider = ({
   };
 
   useEffect(() => {
+    // Get active subscriptions.
+    const sync = async () => {
+      const parseMap = <K, V>(ser: string) => {
+        const arr: [K, V][] = JSON.parse(ser);
+        return new Map<K, V>(arr);
+      };
+      const results = await Promise.all([
+        chrome.runtime.sendMessage({
+          type: 'accountSubscriptions',
+          task: 'getAll',
+        }),
+        chrome.runtime.sendMessage({
+          type: 'accountSubscriptions',
+          task: 'getAll',
+        }),
+      ]);
+      setAccountSubscriptionsState(
+        parseMap<string, SubscriptionTask[]>(results[0])
+      );
+      setChainSubscriptionsState(
+        parseMap<ChainID, SubscriptionTask[]>(results[1])
+      );
+    };
+
     // Listen for chain subscription state messages.
     const callback = (message: AnyData) => {
       if (message.type === 'subscriptions') {
@@ -228,6 +252,7 @@ export const SubscriptionsProvider = ({
         }
       }
     };
+    sync();
     chrome.runtime.onMessage.addListener(callback);
     return () => {
       chrome.runtime.onMessage.removeListener(callback);

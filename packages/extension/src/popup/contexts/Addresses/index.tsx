@@ -126,6 +126,16 @@ export const AddressesProvider = ({
 
   /// Listen to state messages from background worker.
   useEffect(() => {
+    const sync = async () => {
+      const res = (await chrome.runtime.sendMessage({
+        type: 'managedAccounts',
+        task: 'getAll',
+      })) as string;
+      const arr: [ChainID, FlattenedAccountData[]][] = JSON.parse(res);
+      const map = new Map<ChainID, FlattenedAccountData[]>(arr);
+      setStateWithRef(map, setAddresses, addressesRef);
+    };
+
     const callback = async (message: AnyData) => {
       if (message.type === 'managedAccounts') {
         switch (message.task) {
@@ -137,6 +147,7 @@ export const AddressesProvider = ({
         }
       }
     };
+    sync();
     chrome.runtime.onMessage.addListener(callback);
     return () => {
       chrome.runtime.onMessage.removeListener(callback);
