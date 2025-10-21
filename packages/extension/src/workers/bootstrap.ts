@@ -14,11 +14,11 @@ import {
 import { getSupportedSources } from '@polkadot-live/consts/chains';
 import { initSharedState } from '@polkadot-live/consts/sharedState';
 import type {
-  AccountJson,
   AccountSource,
   EncodedAccount,
   FlattenedAccountData,
   ImportedGenericAccount,
+  StoredAccount,
 } from '@polkadot-live/types/accounts';
 import type { Account } from '@polkadot-live/core';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -72,12 +72,18 @@ const initTheme = async () => {
   chrome.runtime.sendMessage(msg);
 };
 
+const initManagedAccounts = async () => {
+  type T = Map<ChainID, StoredAccount[]>;
+  const fetched = (await DbController.getAllObjects('managedAccounts')) as T;
+  await AccountsController.initialize(BACKEND, fetched);
+};
+
 const initSystems = async () => {
   await initOnlineMode();
   await Promise.all([
     initTheme(),
+    initManagedAccounts(),
     APIsController.initialize(BACKEND),
-    AccountsController.initialize(BACKEND),
   ]);
 };
 
@@ -227,14 +233,26 @@ const deleteAccount = async (
 
 const persistManagedAccount = async (account: Account) => {
   const store = 'managedAccounts';
-  const json = account.toJSON();
+  const json: StoredAccount = account.toJSON();
   const { _address, _chain: key } = json;
 
-  const all = ((await DbController.get(store, key)) || []) as AccountJson[];
-  const updated = all
-    .filter((a) => a._chain !== key && a._address !== _address)
-    .push(json);
+  const stored = ((await DbController.get(store, key)) ||
+    []) as StoredAccount[];
 
+  const updated = [
+    ...stored.filter((a) => a._chain !== key && a._address !== _address),
+    json,
+  ];
+  await DbController.set(store, key, updated);
+};
+
+const removeManagedAccount = async (account: Account) => {
+  const store = 'managedAccounts';
+  const json: StoredAccount = account.toJSON();
+  const { _address, _chain: key } = json;
+  const stored = ((await DbController.get(store, key)) ||
+    []) as StoredAccount[];
+  const updated = stored.filter((a) => a._address !== _address);
   await DbController.set(store, key, updated);
 };
 
@@ -347,6 +365,7 @@ const handleRemoveAddress = async (address: string, chainId: ChainID) => {
     // Unsubscribe from tasks and remove account from controller.
     await AccountsController.removeAllSubscriptions(account);
     AccountsController.remove(chainId, address);
+    await removeManagedAccount(account);
 
     // Sync managed accounts state.
     chrome.runtime.sendMessage({

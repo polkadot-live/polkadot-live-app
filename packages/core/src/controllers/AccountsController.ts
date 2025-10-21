@@ -54,27 +54,51 @@ export class AccountsController {
   /**
    * Injects accounts into class from store.
    */
-  static async initialize(backend: 'browser' | 'electron') {
+  static async initialize(
+    backend: 'browser' | 'electron',
+    fetched?: Map<ChainID, StoredAccount[]>
+  ) {
     this.backend = backend;
-    let serialized = '';
-
-    if (backend === 'electron') {
-      serialized =
-        (await window.myAPI.sendAccountTask({
-          action: 'account:getAll',
-          data: null,
-        })) || '';
-    } else if (backend === 'browser') {
-      // TODO: Get accounts from database.
+    switch (backend) {
+      case 'electron':
+        await this.initElectron();
+        break;
+      case 'browser':
+        this.initBrowser(fetched);
+        break;
     }
+  }
 
-    // Instantiate empty map if no accounts exist.
+  // Initialize accounts from indexedDB.
+  static initBrowser(fetched?: Map<ChainID, StoredAccount[]>) {
+    if (!fetched) {
+      this.accounts = new Map();
+      return;
+    }
+    for (const [chainId, stored] of fetched) {
+      this.accounts.set(
+        chainId,
+        stored.map(
+          ({ _source, _address, _name }) =>
+            new Account(chainId, _source, _address, _name)
+        )
+      );
+    }
+  }
+
+  // Initialize accounts from Electron store.
+  static async initElectron() {
+    const serialized =
+      (await window.myAPI.sendAccountTask({
+        action: 'account:getAll',
+        data: null,
+      })) || '';
+
     if (serialized === '') {
       this.accounts = new Map();
       return;
     }
 
-    // Instantiate accounts.
     const parsed = new Map<ChainID, StoredAccount[]>(JSON.parse(serialized));
     for (const [chain, stored] of parsed) {
       this.accounts.set(

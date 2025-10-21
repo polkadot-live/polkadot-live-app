@@ -6,9 +6,9 @@ import { getDefaultSettings } from '@polkadot-live/consts/settings';
 import { getSupportedSources } from '@polkadot-live/consts/chains';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type {
-  AccountJson,
   AccountSource,
   ImportedGenericAccount,
+  StoredAccount,
 } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { DBSchema, IDBPDatabase } from 'idb';
@@ -29,7 +29,7 @@ interface MyDB extends DBSchema {
   };
   managedAccounts: {
     key: ChainID;
-    value: AccountJson[];
+    value: StoredAccount[];
   };
   settings: {
     key: string;
