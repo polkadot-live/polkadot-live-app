@@ -1,15 +1,16 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { createContext, useState, useRef } from 'react';
+import { createContext, useState, useRef, useEffect } from 'react';
 import { createSafeContextHook } from '@polkadot-live/contexts';
 import type { AddressesContextInterface } from '@polkadot-live/contexts/types/main';
+import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
-  AccountSource,
   FlattenedAccountData,
   FlattenedAccounts,
 } from '@polkadot-live/types/accounts';
+import { setStateWithRef } from '@w3ux/utils';
 
 export const AddressesContext = createContext<
   AddressesContextInterface | undefined
@@ -25,11 +26,11 @@ export const AddressesProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  // Store the currently imported addresses
+  /// Store the currently imported addresses
   const [addresses, setAddresses] = useState<FlattenedAccounts>(new Map());
   const addressesRef = useRef(addresses);
 
-  // Check if an address exists in imported addresses.
+  /// Check if an address exists in imported addresses.
   const addressExists = (address: string, chainId: ChainID) => {
     for (const accounts of addressesRef.current.values()) {
       if (accounts.find((a) => a.address === address && a.chain === chainId)) {
@@ -48,33 +49,26 @@ export const AddressesProvider = ({
         task: 'getAll',
       })) as string
     );
-
     const map = new Map<ChainID, FlattenedAccountData[]>(arr);
     return map;
   };
 
-  // Saves received address as an imported address.
-  const importAddress = async (
-    chain: ChainID,
-    source: AccountSource,
-    address: string,
-    name: string,
-    fromBackup = false
-  ) => {
-    setAddresses(await getAllFlattened());
-    if (!fromBackup) {
-      // TODO: Show import notification
-    }
+  /// Saves received address as an imported address.
+  const importAddress = async () => {
+    const state = await getAllFlattened();
+    setStateWithRef(state, setAddresses, addressesRef);
   };
 
-  // Removes an imported address.
+  /// Removes an imported address.
   const removeAddress = async (chain: ChainID, address: string) => {
-    setAddresses(await getAllFlattened());
+    const state = await getAllFlattened();
+    setStateWithRef(state, setAddresses, addressesRef);
+
     // TODO: Clear an account's subscriptions in database.
     console.log(`> Remove tasks for ${chain}:${address}`);
   };
 
-  // Get current addresses
+  /// Get current addresses.
   const getAddresses = () => {
     let flattened: FlattenedAccountData[] = [];
     for (const accounts of addressesRef.current.values()) {
@@ -86,7 +80,7 @@ export const AddressesProvider = ({
     return flattened;
   };
 
-  // Gets an imported address along with its Ledger metadata.
+  /// Gets an imported address along with its Ledger metadata.
   const getAddress = (address: string, chainId: ChainID) => {
     if (!addresses) {
       return null;
@@ -129,6 +123,25 @@ export const AddressesProvider = ({
     }
     return count;
   };
+
+  /// Listen to state messages from background worker.
+  useEffect(() => {
+    const callback = async (message: AnyData) => {
+      if (message.type === 'managedAccounts') {
+        switch (message.task) {
+          case 'syncState': {
+            const state = await getAllFlattened();
+            setStateWithRef(state, setAddresses, addressesRef);
+            break;
+          }
+        }
+      }
+    };
+    chrome.runtime.onMessage.addListener(callback);
+    return () => {
+      chrome.runtime.onMessage.removeListener(callback);
+    };
+  }, []);
 
   return (
     <AddressesContext

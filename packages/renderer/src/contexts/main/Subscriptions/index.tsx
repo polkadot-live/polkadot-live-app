@@ -1,9 +1,11 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as Core from '@polkadot-live/core';
 import { createContext, useEffect, useState } from 'react';
 import { createSafeContextHook } from '@polkadot-live/contexts';
-import * as Core from '@polkadot-live/core';
+import { useConnections } from '@ren/contexts/common';
+import { renderToast } from '@polkadot-live/ui/utils';
 import {
   AccountsController,
   TaskOrchestrator,
@@ -34,12 +36,14 @@ export const SubscriptionsProvider = ({
 }: {
   children: ReactNode;
 }) => {
-  /// Store received chain subscriptions.
+  const { umamiEvent } = useConnections();
+
+  /// Store chain subscriptions.
   const [chainSubscriptionsState, setChainSubscriptionsState] = useState<
     Map<ChainID, SubscriptionTask[]>
   >(new Map());
 
-  /// Store received account subscriptions (key is account address).
+  /// Store account subscriptions (key is {chainId}:{address}).
   const [accountSubscriptionsState, setAccountSubscriptionsState] = useState<
     Map<string, SubscriptionTask[]>
   >(new Map());
@@ -83,16 +87,12 @@ export const SubscriptionsProvider = ({
   };
 
   /// Get subscription tasks for a specific chain.
-  const getChainSubscriptions = (chainId: ChainID) => {
-    const subscriptions = chainSubscriptionsState.get(chainId);
-    return subscriptions ? subscriptions : [];
-  };
+  const getChainSubscriptions = (chainId: ChainID) =>
+    chainSubscriptionsState.get(chainId) || [];
 
   /// Get subscription tasks for a specific account.
-  const getAccountSubscriptions = (key: string) => {
-    const subscriptions = accountSubscriptionsState.get(key);
-    return subscriptions ? subscriptions : [];
-  };
+  const getAccountSubscriptions = (key: string) =>
+    accountSubscriptionsState.get(key) || [];
 
   /// Return the type of subscription based on its action string.
   const getTaskType = (task: SubscriptionTask): SubscriptionTaskType =>
@@ -237,6 +237,62 @@ export const SubscriptionsProvider = ({
     await Core.tryApiDisconnect(task);
   };
 
+  /// Handle notifications checkbox toggle.
+  const onNotificationToggle = async (
+    checked: boolean,
+    task: SubscriptionTask
+  ) => {
+    if (task.account) {
+      task.enableOsNotifications = checked;
+
+      await window.myAPI.sendSubscriptionTask({
+        action: 'subscriptions:account:update',
+        data: {
+          serAccount: JSON.stringify(task.account!),
+          serTask: JSON.stringify(task),
+        },
+      });
+
+      // Update react state for tasks.
+      SubscriptionsController.updateTaskState(task);
+
+      // Update cached task in account's query multi wrapper.
+      const account = AccountsController.get(
+        task.chainId,
+        task.account.address
+      );
+
+      if (account) {
+        account.queryMulti?.setOsNotificationsFlag(task);
+      }
+    }
+  };
+
+  /// Handle a one-shot click.
+  const onOneShot = async (
+    task: SubscriptionTask,
+    setOneShotProcessing: React.Dispatch<React.SetStateAction<boolean>>,
+    nativeChecked: boolean
+  ) => {
+    setOneShotProcessing(true);
+    task.enableOsNotifications = nativeChecked;
+    const success = await Core.executeOneShot(task);
+
+    if (!success) {
+      setOneShotProcessing(false);
+      renderToast('API timed out.', 'toast-connection', 'error', 'top-right');
+    } else {
+      // Wait some time to avoid the spinner snapping.
+      setTimeout(() => {
+        setOneShotProcessing(false);
+      }, 550);
+
+      // Analytics.
+      const { action, category } = task;
+      umamiEvent && umamiEvent('oneshot-account', { action, category });
+    }
+  };
+
   return (
     <SubscriptionsContext
       value={{
@@ -247,6 +303,8 @@ export const SubscriptionsProvider = ({
         getAccountSubscriptions,
         updateAccountNameInTasks,
         handleQueuedToggle,
+        onOneShot,
+        onNotificationToggle,
         toggleCategoryTasks,
         getTaskType,
       }}

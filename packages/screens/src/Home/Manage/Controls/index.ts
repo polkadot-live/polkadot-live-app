@@ -1,6 +1,5 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-export { Events } from './Events';
-export { Manage } from './Manage';
-export { Summary } from './Summary';
+export * from './NotificationsSwitch';
+export * from './OneShotSwitch';

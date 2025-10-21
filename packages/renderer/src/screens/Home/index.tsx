@@ -11,9 +11,8 @@ import { useInitIpcHandlers } from '@ren/hooks/useInitIpcHandlers';
 import { useMainMessagePorts } from '@ren/hooks/useMainMessagePorts';
 import { Classic } from '@theme-toggles/react';
 import { OpenGov } from './OpenGov';
-import { Manage } from './Manage';
 import { Send } from './Send';
-import { Events, Summary } from '@polkadot-live/screens';
+import { Events, Manage, Summary } from '@polkadot-live/screens';
 import {
   BackgroundIconWrapper,
   BodyInterfaceWrapper,

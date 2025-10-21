@@ -13,6 +13,8 @@ import {
   CogMenuProvider,
   EventsProvider,
   IntervalSubscriptionsProvider,
+  ManageProvider,
+  SubscriptionsProvider,
   SummaryProvider,
 } from './contexts';
 import App from './App';
@@ -25,7 +27,9 @@ export const Providers = withProviders(
   SideNavProvider,
   ApiHealthProvider,
   ChainsProvider,
+  SubscriptionsProvider,
   IntervalSubscriptionsProvider,
+  ManageProvider,
   EventsProvider,
   BootstrappingProvider,
   CogMenuProvider,

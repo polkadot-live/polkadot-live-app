@@ -4,21 +4,8 @@
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import { useEffect, useState } from 'react';
-import { useConnections } from '@ren/contexts/common';
-import {
-  useApiHealth,
-  useAppSettings,
-  useBootstrapping,
-  useManage,
-  useSubscriptions,
-} from '@ren/contexts/main';
-import {
-  executeOneShot,
-  showGroupTooltip,
-  toolTipTextFor,
-  AccountsController,
-  SubscriptionsController,
-} from '@polkadot-live/core';
+import { useContextProxy } from '@polkadot-live/contexts';
+import { showGroupTooltip, toolTipTextFor } from '@polkadot-live/core';
 import { ellipsisFn } from '@w3ux/utils';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
@@ -29,8 +16,6 @@ import {
   ItemsColumn,
 } from '@polkadot-live/styles/wrappers';
 import { PermissionRow } from './PermissionRow';
-import { renderToast } from '@polkadot-live/ui/utils';
-import type { AnyFunction } from '@polkadot-live/types/misc';
 import type { PermissionsProps } from './types';
 import type {
   SubscriptionTask,
@@ -45,31 +30,29 @@ export const Permissions = ({
   typeClicked,
   setSection,
 }: PermissionsProps) => {
-  const { cacheGet: settingsCacheGet } = useAppSettings();
+  const { useCtx } = useContextProxy();
+  const { cacheGet: settingsCacheGet } = useCtx('AppSettingsCtx')();
   const showDebuggingSubscriptions = settingsCacheGet(
     'setting:show-debugging-subscriptions'
   );
 
-  const { hasConnectionIssue } = useApiHealth();
-  const { isConnecting } = useBootstrapping();
-  const { cacheGet, getTheme, getOnlineMode } = useConnections();
-  const { renderedSubscriptions } = useManage();
+  const { hasConnectionIssue } = useCtx('ApiHealthCtx')();
+  const { isConnecting } = useCtx('BootstrappingCtx')();
+  const { cacheGet, getTheme, getOnlineMode } = useCtx('ConnectionsCtx')();
+  const { renderedSubscriptions } = useCtx('ManageCtx')();
   const { handleQueuedToggle, toggleCategoryTasks, getTaskType } =
-    useSubscriptions();
+    useCtx('SubscriptionsCtx')();
 
   const isImportingData = cacheGet('backup:importing');
   const theme = getTheme();
 
-  /**
-   * Return subscription tasks mapped by category.
-   */
+  /// Return subscription tasks mapped by category.
   const getCategorised = (): Map<TaskCategory, SubscriptionTask[]> => {
     const { tasks } = renderedSubscriptions;
     const map = new Map<TaskCategory, SubscriptionTask[]>();
 
     tasks.forEach((t) => {
       const category = t.category;
-
       if (map.has(category)) {
         const cur = map.get(category);
         if (cur !== undefined) {
@@ -81,25 +64,18 @@ export const Permissions = ({
         map.set(category, [{ ...t }]);
       }
     });
-
     return map;
   };
 
-  /**
-   * Categorised tasks state.
-   */
+  /// Categorised tasks state.
   const [categorisedTasks, setCategorisedTasks] = useState(
     new Map<TaskCategory, SubscriptionTask[]>(getCategorised())
   );
 
-  /**
-   * Mechanism to trigger re-caculating the accordion value AFTER the account state is updated.
-   */
+  /// Mechanism to trigger re-caculating the accordion value after the account state is updated.
   const [updateAccordionValue, setUpdateAccordionValue] = useState(false);
 
-  /**
-   * Accordion state.
-   */
+  /// Accordion state.
   const [accordionValueAccounts, setAccordionValueAccounts] = useState<
     string[]
   >([
@@ -114,16 +90,17 @@ export const Permissions = ({
     'Chain',
   ]);
 
-  /**
-   * Go to section zero if show debugging subscriptions setting turned off.
-   */
+  const maybeAccountAddress =
+    categorisedTasks.size > 0
+      ? Array.from(categorisedTasks.values())[0][0].account?.address
+      : null;
+
+  /// Go to section zero if show debugging subscriptions setting turned off.
   useEffect(() => {
     !showDebuggingSubscriptions && setSection(0);
   }, [showDebuggingSubscriptions]);
 
-  /**
-   * Re-cache categorised tasks when subscription data changes.
-   */
+  /// Re-cache categorised tasks when subscription data changes.
   useEffect(() => {
     setCategorisedTasks(getCategorised());
     if (section === 1 && renderedSubscriptions.type == '') {
@@ -133,16 +110,12 @@ export const Permissions = ({
     }
   }, [renderedSubscriptions]);
 
-  /**
-   * Trigger updating the accordion value when a new account is selected.
-   */
+  /// Trigger updating the accordion value when a new account is selected.
   useEffect(() => {
     setUpdateAccordionValue(true);
   }, [selectedAccount]);
 
-  /**
-   * Close disabled subscription groups when loading account subscriptions.
-   */
+  /// Close disabled subscription groups when loading account subscriptions.
   useEffect(() => {
     if (updateAccordionValue) {
       if (typeClicked === 'account') {
@@ -158,16 +131,12 @@ export const Permissions = ({
     }
   }, [updateAccordionValue]);
 
-  /**
-   * Handle a subscription toggle and update rendered subscription state.
-   */
+  /// Handle a subscription toggle and update rendered subscription state.
   const handleToggle = async (task: SubscriptionTask) => {
     await handleQueuedToggle(task);
   };
 
-  /**
-   * Handle toggling a subscription task group switch.
-   */
+  /// Handle toggling a subscription task group switch.
   const handleGroupSwitch = async (category: TaskCategory) => {
     const isOn = getCategoryToggles().get(category) || false;
     await toggleCategoryTasks(category, isOn, renderedSubscriptions);
@@ -193,14 +162,7 @@ export const Permissions = ({
     }
   };
 
-  const maybeAccountAddress =
-    categorisedTasks.size > 0
-      ? Array.from(categorisedTasks.values())[0][0].account?.address
-      : null;
-
-  /**
-   * Map category name to its global toggle state.
-   */
+  /// Map category name to its global toggle state.
   const getCategoryToggles = () => {
     const map = new Map<TaskCategory, boolean>();
 
@@ -210,81 +172,12 @@ export const Permissions = ({
         (acc, task) => (acc ? (task.status === 'enable' ? true : false) : acc),
         true
       );
-
       map.set(category, allToggled);
     }
-
     return map;
   };
 
-  /**
-   * Handle a one-shot event for a subscription task.
-   */
-  const handleOneShot = async (
-    task: SubscriptionTask,
-    setOneShotProcessing: AnyFunction,
-    nativeChecked: boolean
-  ) => {
-    setOneShotProcessing(true);
-    task.enableOsNotifications = nativeChecked;
-    const success = await executeOneShot(task);
-
-    if (!success) {
-      setOneShotProcessing(false);
-      renderToast('API timed out.', 'toast-connection', 'error', 'top-right');
-    } else {
-      // Wait some time to avoid the spinner snapping.
-      setTimeout(() => {
-        setOneShotProcessing(false);
-      }, 550);
-
-      // Analytics.
-      const { action, category } = task;
-      window.myAPI.umamiEvent('oneshot-account', { action, category });
-    }
-  };
-
-  /**
-   * Handle clicking the native checkbox.
-   */
-  const handleNativeCheckbox = async (
-    flag: boolean,
-    task: SubscriptionTask
-  ) => {
-    // Update checkbox state.
-    const checked: boolean = flag;
-
-    if (task.account) {
-      // Update received task.
-      task.enableOsNotifications = checked;
-
-      // Update persisted task data.
-      await window.myAPI.sendSubscriptionTask({
-        action: 'subscriptions:account:update',
-        data: {
-          serAccount: JSON.stringify(task.account!),
-          serTask: JSON.stringify(task),
-        },
-      });
-
-      // Update react state for tasks.
-      SubscriptionsController.updateTaskState(task);
-
-      // Update cached task in account's query multi wrapper.
-      const account = AccountsController.get(
-        task.chainId,
-        task.account.address
-      );
-
-      if (account) {
-        account.queryMulti?.setOsNotificationsFlag(task);
-      }
-    }
-  };
-
-  /**
-   * Utility to determine if a connection issue exists.
-   */
+  /// Utility to determine if a connection issue exists.
   const showConnectionIssue = (): boolean =>
     tasksChainId ? hasConnectionIssue(tasksChainId) : false;
 
@@ -315,7 +208,6 @@ export const Permissions = ({
       </UI.ControlsWrapper>
 
       {!getOnlineMode() && <UI.OfflineBanner rounded={true} />}
-
       {getOnlineMode() && showConnectionIssue() && (
         <UI.OfflineBanner
           rounded={true}
@@ -413,8 +305,6 @@ export const Permissions = ({
                               key={`${category}-${task.action}`}
                               task={task}
                               handleToggle={handleToggle}
-                              handleOneShot={handleOneShot}
-                              handleNativeCheckbox={handleNativeCheckbox}
                               getDisabled={getDisabled}
                               getTaskType={getTaskType}
                             />

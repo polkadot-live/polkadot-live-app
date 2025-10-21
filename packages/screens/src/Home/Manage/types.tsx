@@ -1,7 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AnyFunction } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
 import type {
@@ -35,15 +34,5 @@ export interface PermissionRowProps {
   task: SubscriptionTask;
   getDisabled: (task: SubscriptionTask) => boolean;
   getTaskType: (task: SubscriptionTask) => SubscriptionTaskType;
-  handleOneShot: (
-    task: SubscriptionTask,
-    setOneShotProcessing: AnyFunction,
-    nativeChecked: boolean
-  ) => Promise<void>;
-  handleNativeCheckbox: (
-    flag: boolean,
-    task: SubscriptionTask,
-    setNativeChecked: AnyFunction
-  ) => Promise<void>;
   handleToggle: (task: SubscriptionTask) => Promise<void>;
 }

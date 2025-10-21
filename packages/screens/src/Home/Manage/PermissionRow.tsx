@@ -1,31 +1,25 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { TaskEntryWrapper } from './Wrappers';
-import { Switch, TooltipRx } from '@polkadot-live/ui/components';
+import * as FA from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from 'react';
+import { useContextProxy } from '@polkadot-live/contexts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faInfo,
-  faAnglesDown,
-  faList,
-  faCircleCheck,
-} from '@fortawesome/free-solid-svg-icons';
-import { useConnections } from '@ren/contexts/common';
-import { useHelp } from '@polkadot-live/ui/contexts';
+import { TaskEntryWrapper } from '@polkadot-live/styles/wrappers';
+import { Switch, TooltipRx } from '@polkadot-live/ui/components';
 import { showGroupTooltip, toolTipTextFor } from '@polkadot-live/core';
+import { NotificationsSwitch, OneShotSwitch } from './Controls';
 import type { PermissionRowProps } from './types';
 
 export const PermissionRow = ({
   task,
   handleToggle,
-  handleOneShot,
-  handleNativeCheckbox,
   getDisabled,
   getTaskType,
 }: PermissionRowProps) => {
-  const { openHelp } = useHelp();
-  const { getTheme } = useConnections();
+  const { useCtx } = useContextProxy();
+  const { openHelp } = useCtx('HelpCtx')();
+  const { getTheme } = useCtx('ConnectionsCtx')();
   const theme = getTheme();
 
   const [isToggled, setIsToggled] = useState<boolean>(task.status === 'enable');
@@ -46,83 +40,6 @@ export const PermissionRow = ({
   useEffect(() => {
     setNativeChecked(task.enableOsNotifications);
   }, [task.enableOsNotifications]);
-
-  /// Handle clicking on OS Notifications toggle button.
-  const handleOsNotificationClick = async () => {
-    await handleNativeCheckbox(!nativeChecked, task, setNativeChecked);
-  };
-
-  /// Utility to render the one-shot component.
-  const renderOneShotSwitch = () => (
-    <div className="one-shot-wrapper">
-      {/* One-shot is enabled and not processing. */}
-      {!getDisabled(task) && !oneShotProcessing && (
-        <FontAwesomeIcon
-          className="enabled"
-          icon={faAnglesDown}
-          transform={'grow-3'}
-          onClick={async () =>
-            await handleOneShot(task, setOneShotProcessing, nativeChecked)
-          }
-        />
-      )}
-
-      {/* One-shot is enabled and processing. */}
-      {!getDisabled(task) && oneShotProcessing && (
-        <FontAwesomeIcon
-          className="processing"
-          fade
-          icon={faAnglesDown}
-          transform={'grow-3'}
-        />
-      )}
-
-      {/* One-shot disabled. */}
-      {getDisabled(task) && (
-        <FontAwesomeIcon
-          className="disabled"
-          icon={faAnglesDown}
-          transform={'grow-3'}
-        />
-      )}
-    </div>
-  );
-
-  /// Utility to render the OS notifications switch component.
-  const renderOsNotificationsSwitch = () => (
-    <div
-      className="native-content"
-      onClick={async () =>
-        !getDisabled(task) &&
-        task.status === 'enable' &&
-        handleOsNotificationClick()
-      }
-    >
-      {/* Main icon */}
-      <FontAwesomeIcon
-        className={
-          !getDisabled(task) && task.status === 'enable'
-            ? nativeChecked
-              ? 'checked'
-              : 'unchecked'
-            : 'disabled'
-        }
-        icon={faList}
-        transform={'grow-3'}
-      />
-
-      {/* Check overlay icon when clicked */}
-      {nativeChecked && (
-        <div className="checked-icon-wrapper">
-          <FontAwesomeIcon
-            className={task.status === 'disable' ? 'disable' : ''}
-            icon={faCircleCheck}
-            transform={'shrink-5'}
-          />
-        </div>
-      )}
-    </div>
-  );
 
   /// Utility to render the toggle switch component.
   const renderToggleSwitch = () => (
@@ -149,7 +66,7 @@ export const PermissionRow = ({
                 className="icon-wrapper"
                 onClick={() => openHelp(task.helpKey)}
               >
-                <FontAwesomeIcon icon={faInfo} transform={'shrink-1'} />
+                <FontAwesomeIcon icon={FA.faInfo} transform={'shrink-1'} />
               </div>
               {task.label}
             </h3>
@@ -162,10 +79,24 @@ export const PermissionRow = ({
               {/* One-shot is enabled and not processing. */}
               {!getDisabled(task) && !oneShotProcessing ? (
                 <TooltipRx text={'Get Notification'} theme={theme}>
-                  {renderOneShotSwitch()}
+                  <OneShotSwitch
+                    task={task}
+                    isChecked={nativeChecked}
+                    isProcessing={oneShotProcessing}
+                    isDisabled={getDisabled}
+                    setProcessing={setOneShotProcessing}
+                  />
                 </TooltipRx>
               ) : (
-                <span>{renderOneShotSwitch()}</span>
+                <span>
+                  <OneShotSwitch
+                    task={task}
+                    isChecked={nativeChecked}
+                    isProcessing={oneShotProcessing}
+                    isDisabled={getDisabled}
+                    setProcessing={setOneShotProcessing}
+                  />
+                </span>
               )}
             </>
           )}
@@ -176,12 +107,20 @@ export const PermissionRow = ({
               {!getDisabled(task) ? (
                 <TooltipRx text={'OS Notifications'} theme={theme}>
                   <div className="native-wrapper">
-                    {renderOsNotificationsSwitch()}
+                    <NotificationsSwitch
+                      task={task}
+                      isChecked={nativeChecked}
+                      isDisabled={getDisabled}
+                    />
                   </div>
                 </TooltipRx>
               ) : (
                 <div className="native-wrapper">
-                  {renderOsNotificationsSwitch()}
+                  <NotificationsSwitch
+                    task={task}
+                    isChecked={nativeChecked}
+                    isDisabled={getDisabled}
+                  />
                 </div>
               )}
             </div>

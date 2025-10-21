@@ -15,6 +15,15 @@ export interface SubscriptionsContextInterface {
   chainHasSubscriptions: (chainId: ChainID) => boolean;
   getChainSubscriptions: (a: ChainID) => SubscriptionTask[];
   getAccountSubscriptions: (key: string) => SubscriptionTask[];
+  onOneShot: (
+    task: SubscriptionTask,
+    setOneShotProcessing: React.Dispatch<React.SetStateAction<boolean>>,
+    nativeChecked: boolean
+  ) => Promise<void>;
+  onNotificationToggle: (
+    checked: boolean,
+    task: SubscriptionTask
+  ) => Promise<void>;
   updateAccountNameInTasks: (key: string, newName: string) => void;
   handleQueuedToggle: (task: SubscriptionTask) => Promise<void>;
   toggleCategoryTasks: (

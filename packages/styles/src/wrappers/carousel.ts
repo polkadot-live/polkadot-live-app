@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { motion } from 'framer-motion';
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 
 export const CarouselWrapper = styled(motion.div)`
   position: relative;
@@ -42,25 +42,5 @@ export const CarouselWrapper = styled(motion.div)`
       position: relative;
       overflow: hidden;
     }
-  }
-`;
-
-export const NoAccountsWrapper = styled.div`
-  color: var(--text-color-primary);
-  background-color: var(--background-primary);
-  display: flex;
-  flex-direction: column;
-  row-gap: 1rem;
-  align-items: center;
-  margin: 0.75rem 1rem;
-  padding: 2rem;
-  border-radius: 0.375rem;
-
-  button {
-    z-index: 1;
-    padding: 0.5rem 1.75rem !important;
-  }
-  h4 {
-    text-align: center;
   }
 `;

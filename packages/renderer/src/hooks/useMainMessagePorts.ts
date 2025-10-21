@@ -180,7 +180,7 @@ export const useMainMessagePorts = () => {
         SubscriptionsController.syncAccountSubscriptionsState();
       }
 
-      // Add account to address context state.
+      // Show notification.
       if (!fromBackup) {
         await importAddress(chainId, source, address, alias, fromBackup);
       }
@@ -225,19 +225,14 @@ export const useMainMessagePorts = () => {
   const handleRemoveAddress = async (ev: MessageEvent) => {
     try {
       const { address, chainId } = ev.data.data;
-
-      // Retrieve the account.
       const account = AccountsController.get(chainId, address);
-
       if (!account) {
         console.log('Account could not be fetched, probably not imported yet');
         return;
       }
 
-      // Unsubscribe from all active tasks.
+      // Unsubscribe from tasks and remove account from controller.
       await AccountsController.removeAllSubscriptions(account);
-
-      // Remove account from controller and store.
       AccountsController.remove(chainId, address);
 
       // Remove address from context.

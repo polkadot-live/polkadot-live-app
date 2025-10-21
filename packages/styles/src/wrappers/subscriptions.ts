@@ -1,16 +1,16 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { mixinHelpIcon } from '@polkadot-live/ui/components';
 import { motion } from 'framer-motion';
-import styled from 'styled-components';
+import { css, styled } from 'styled-components';
 
-export const Wrapper = styled.div`
-  width: 100%;
+export const mixinHelpIcon = css`
   display: flex;
-  flex-flow: column wrap;
   align-items: center;
-  height: 100%;
+  justify-content: center;
+  width: 1.6rem;
+  height: 1.5rem;
+  cursor: pointer;
 `;
 
 export const ItemEntryWrapper = styled(motion.div)`

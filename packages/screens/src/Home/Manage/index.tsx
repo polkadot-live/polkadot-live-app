@@ -2,30 +2,30 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useState } from 'react';
-import { useManage } from '@ren/contexts/main';
-import { CarouselWrapper } from '../Wrappers';
+import { useContextProxy } from '@polkadot-live/contexts';
 import { Accounts } from './Accounts';
-import { FlexColumn } from '@polkadot-live/styles/wrappers';
+import {
+  CarouselWrapper,
+  FlexColumn,
+  FlexColumnWrap,
+} from '@polkadot-live/styles/wrappers';
 import { Permissions } from './Permissions';
-import { Wrapper } from './Wrappers';
 import { MainHeading } from '@polkadot-live/ui/components';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ManageProps } from './types';
 import type { SubscriptionTaskType } from '@polkadot-live/types/subscriptions';
 
 export const Manage = ({ addresses }: ManageProps) => {
-  const { setRenderedSubscriptions } = useManage();
-
-  // Store the currently active manage tab.
-  const [section, setSection] = useState<number>(0);
+  const { useCtx } = useContextProxy();
+  const { setRenderedSubscriptions } = useCtx('ManageCtx')();
 
   // Outermost breadcrumb title.
   const [breadcrumb, setBreadcrumb] = useState<string>('');
+  const [section, setSection] = useState<number>(0);
   const [tasksChainId, setTasksChainId] = useState<ChainID | null>(null);
 
   // Whether the user has clicked on an account or chain.
   const [typeClicked, setTypeClicked] = useState<SubscriptionTaskType>('');
-
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
 
   return (
@@ -61,7 +61,7 @@ export const Manage = ({ addresses }: ManageProps) => {
           style={{ height: '100%', padding: '0 1rem' }}
         >
           {/* List of accounts and chains */}
-          <Wrapper>
+          <FlexColumnWrap>
             <Accounts
               addresses={addresses}
               setTasksChainId={setTasksChainId}
@@ -70,7 +70,7 @@ export const Manage = ({ addresses }: ManageProps) => {
               setTypeClicked={setTypeClicked}
               setSelectedAccount={setSelectedAccount}
             />
-          </Wrapper>
+          </FlexColumnWrap>
         </div>
         <div
           className="scrollable"

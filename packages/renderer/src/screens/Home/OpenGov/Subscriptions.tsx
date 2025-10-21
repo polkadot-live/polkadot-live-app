@@ -5,7 +5,6 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as Style from '@polkadot-live/styles/wrappers';
 import { ConfigRenderer, IntervalsController } from '@polkadot-live/core';
-
 import {
   useApiHealth,
   useBootstrapping,

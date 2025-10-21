@@ -3,18 +3,33 @@
 
 import { openDB } from 'idb';
 import { getDefaultSettings } from '@polkadot-live/consts/settings';
-import type { DBSchema, IDBPDatabase } from 'idb';
+import { getSupportedSources } from '@polkadot-live/consts/chains';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type {
+  AccountJson,
   AccountSource,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
-import { getSupportedSources } from '@polkadot-live/consts/chains';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { DBSchema, IDBPDatabase } from 'idb';
+import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 
 interface MyDB extends DBSchema {
   accounts: {
     key: AccountSource;
     value: ImportedGenericAccount[];
+  };
+  accountSubscriptions: {
+    key: string;
+    value: SubscriptionTask[];
+  };
+  chainSubscriptions: {
+    key: string;
+    value: SubscriptionTask;
+  };
+  managedAccounts: {
+    key: ChainID;
+    value: AccountJson[];
   };
   settings: {
     key: string;
@@ -22,7 +37,12 @@ interface MyDB extends DBSchema {
   };
 }
 
-export type Stores = 'settings' | 'accounts';
+export type Stores =
+  | 'accounts'
+  | 'accountSubscriptions'
+  | 'chainSubscriptions'
+  | 'managedAccounts'
+  | 'settings';
 
 export class DbController {
   private static DB_NAME = 'PolkadotLiveDB';
@@ -44,6 +64,10 @@ export class DbController {
   static async initialize() {
     this.db = await openDB<MyDB>(this.DB_NAME, 1, {
       upgrade(db) {
+        db.createObjectStore('accountSubscriptions');
+        db.createObjectStore('chainSubscriptions');
+        db.createObjectStore('managedAccounts');
+
         const accountsStore = db.createObjectStore('accounts');
         for (const key of getSupportedSources()) {
           accountsStore.put([], key);
@@ -71,15 +95,32 @@ export class DbController {
   }
 
   /**
+   * Delete value in database.
+   */
+  static async delete(store: Stores, key: string) {
+    await this.getDb().delete(store, key);
+  }
+
+  /**
    * Get all objects in a store.
    */
-  static async getAll(storeName: Stores) {
+  static async getAll(store: Stores) {
     const map = new Map();
-    let cursor = await this.getDb().transaction(storeName).store.openCursor();
+    let cursor = await this.getDb().transaction(store).store.openCursor();
     while (cursor) {
       map.set(cursor.key, cursor.value);
       cursor = await cursor.continue();
     }
     return JSON.stringify(Array.from(map.entries()));
+  }
+
+  static async getAllObjects(store: Stores): Promise<Map<AnyData, AnyData>> {
+    const map = new Map();
+    let cursor = await this.getDb().transaction(store).store.openCursor();
+    while (cursor) {
+      map.set(cursor.key, cursor.value);
+      cursor = await cursor.continue();
+    }
+    return map;
   }
 }

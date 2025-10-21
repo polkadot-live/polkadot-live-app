@@ -11,6 +11,8 @@ import {
   useCogMenu,
   useEvents,
   useIntervalSubscriptions,
+  useManage,
+  useSubscriptions,
   useSummary,
 } from './contexts';
 import { useConnections } from '../contexts';
@@ -32,7 +34,9 @@ export const ContextProxyMain = ({ children }: ContextProxyProps) => {
         SideNavCtx: () => useSideNav(),
         ApiHealthCtx: () => useApiHealth(),
         ChainsCtx: () => useChains(),
+        SubscriptionsCtx: () => useSubscriptions(),
         IntervalSubscriptionsCtx: () => useIntervalSubscriptions(),
+        ManageCtx: () => useManage(),
         EventsCtx: () => useEvents(),
         BootstrappingCtx: () => useBootstrapping(),
         CogMenuCtx: () => useCogMenu(),

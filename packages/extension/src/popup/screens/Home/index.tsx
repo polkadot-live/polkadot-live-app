@@ -7,7 +7,7 @@ import * as Themes from '@polkadot-live/styles/theme/variables';
 import PolkadotIcon from '@polkadot-live/ui/svg/polkadotIcon.svg?react';
 import { version } from '../../../../package.json';
 import { Classic } from '@theme-toggles/react';
-import { Events, Summary } from '@polkadot-live/screens';
+import { Events, Manage, Summary } from '@polkadot-live/screens';
 import { useSideNav } from '@polkadot-live/ui/contexts';
 import { useConnections } from '../../../contexts';
 import {
@@ -22,6 +22,7 @@ const TitlePlaceholder = ({ text }: { text: string }) => (
 );
 
 export const Home = () => {
+  const { getAddresses } = Ctx.useAddresses();
   const { cacheGet, toggleSetting } = Ctx.useAppSettings();
   const { cacheGet: getShared, relayState } = useConnections();
   const { appLoading } = Ctx.useBootstrapping();
@@ -92,7 +93,7 @@ export const Home = () => {
               {sideNav.selectedId === 1 && <Events />}
               {/* Account Subscriptions */}
               {sideNav.selectedId === 2 && (
-                <TitlePlaceholder text="Account Subscriptions" />
+                <Manage addresses={getAddresses()} />
               )}
               {/* OpenGov Subscriptions */}
               {sideNav.selectedId === 3 && (

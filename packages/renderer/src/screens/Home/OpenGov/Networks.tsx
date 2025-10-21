@@ -8,14 +8,15 @@ import * as Style from '@polkadot-live/styles/wrappers';
 import { useIntervalSubscriptions, useManage } from '@ren/contexts/main';
 import { useState } from 'react';
 import { ButtonText } from '@polkadot-live/ui/kits/buttons';
+import { useConnections } from '@ren/contexts/common';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { ItemEntryWrapper } from '../Manage/Wrappers';
-import { NoOpenGov } from '../NoAccounts';
+import { NoOpenGov } from '@polkadot-live/ui/utils';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { NetworksProps } from './types';
 
 export const Networks = ({ setBreadcrumb, setSection }: NetworksProps) => {
+  const { openTab } = useConnections();
   const { setDynamicIntervalTasks } = useManage();
   const { getIntervalSubscriptionsForChain, getSortedKeys } =
     useIntervalSubscriptions();
@@ -57,11 +58,18 @@ export const Networks = ({ setBreadcrumb, setSection }: NetworksProps) => {
               {/** Content */}
               <UI.AccordionContent transparent={true}>
                 {getSortedKeys().length === 0 ? (
-                  <NoOpenGov />
+                  <NoOpenGov
+                    onClick={() =>
+                      openTab('openGov', undefined, {
+                        event: 'window-open-openGov',
+                        data: null,
+                      })
+                    }
+                  />
                 ) : (
                   <Style.ItemsColumn>
                     {getSortedKeys().map((chainId, i) => (
-                      <ItemEntryWrapper
+                      <Style.ItemEntryWrapper
                         whileHover={{ scale: 1.01 }}
                         whileTap={{ scale: 0.99 }}
                         key={`manage_chain_${i}`}
@@ -84,7 +92,7 @@ export const Networks = ({ setBreadcrumb, setSection }: NetworksProps) => {
                             />
                           </div>
                         </div>
-                      </ItemEntryWrapper>
+                      </Style.ItemEntryWrapper>
                     ))}
                   </Style.ItemsColumn>
                 )}

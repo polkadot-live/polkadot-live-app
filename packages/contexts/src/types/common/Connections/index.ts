@@ -21,4 +21,5 @@ export interface ConnectionsContextInterface {
     analytics?: { event: string; data: AnyData | null }
   ) => void;
   relayState: (syncId: SyncID, state: boolean | string) => void;
+  umamiEvent?: (event: string, data: AnyData) => void;
 }
