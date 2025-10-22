@@ -39,16 +39,13 @@ export const SubscriptionsProvider = ({
     Map<string, SubscriptionTask[]>
   >(new Map());
 
+  const [activeChainMap, setActiveChainMap] = useState<Map<ChainID, boolean>>(
+    new Map()
+  );
+
   // Determine if there are active subscriptions for a network.
-  const chainHasSubscriptions = (chainId: ChainID) => {
-    //(await chrome.runtime.sendMessage({
-    //  type: 'subscriptions',
-    //  task: 'chainHasSubscriptions',
-    //  payload: { chainId },
-    //})) as boolean;
-    console.log(`Todo: ${chainId}`);
-    return false;
-  };
+  const chainHasSubscriptions = (chainId: ChainID) =>
+    activeChainMap.get(chainId) || false;
 
   // Update cached account name for an account's subscription tasks.
   const updateAccountNameInTasks = (key: string, newName: string) => {
@@ -201,30 +198,6 @@ export const SubscriptionsProvider = ({
   };
 
   useEffect(() => {
-    // Get active subscriptions.
-    const sync = async () => {
-      const parseMap = <K, V>(ser: string) => {
-        const arr: [K, V][] = JSON.parse(ser);
-        return new Map<K, V>(arr);
-      };
-      const results = await Promise.all([
-        chrome.runtime.sendMessage({
-          type: 'accountSubscriptions',
-          task: 'getAll',
-        }),
-        chrome.runtime.sendMessage({
-          type: 'accountSubscriptions',
-          task: 'getAll',
-        }),
-      ]);
-      setAccountSubscriptionsState(
-        parseMap<string, SubscriptionTask[]>(results[0])
-      );
-      setChainSubscriptionsState(
-        parseMap<ChainID, SubscriptionTask[]>(results[1])
-      );
-    };
-
     // Listen for chain subscription state messages.
     const callback = (message: AnyData) => {
       if (message.type === 'subscriptions') {
@@ -237,10 +210,20 @@ export const SubscriptionsProvider = ({
             break;
           }
           case 'setAccountSubscriptions': {
-            const { payload }: { payload: string } = message;
-            const array: [string, SubscriptionTask[]][] = JSON.parse(payload);
-            const map = new Map<string, SubscriptionTask[]>(array);
-            setAccountSubscriptionsState(map);
+            const parseMap = <K, V>(map: string) => {
+              const array: [K, V][] = JSON.parse(map);
+              return new Map<K, V>(array);
+            };
+            const {
+              subscriptions,
+              activeChains,
+            }: { subscriptions: string; activeChains: string } =
+              message.payload;
+
+            setAccountSubscriptionsState(
+              parseMap<string, SubscriptionTask[]>(subscriptions)
+            );
+            setActiveChainMap(parseMap<ChainID, boolean>(activeChains));
             break;
           }
           case 'updateAccountName': {
@@ -252,7 +235,6 @@ export const SubscriptionsProvider = ({
         }
       }
     };
-    sync();
     chrome.runtime.onMessage.addListener(callback);
     return () => {
       chrome.runtime.onMessage.removeListener(callback);

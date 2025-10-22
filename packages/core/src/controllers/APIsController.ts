@@ -62,10 +62,6 @@ export class APIsController {
     // Set react state.
     if (this.backend === 'electron') {
       this.cachedSetChains(map);
-    } else if (this.backend === 'browser') {
-      const ser = JSON.stringify(Array.from(map.entries()));
-      const data = { type: 'api', task: 'state:chains', ser };
-      chrome.runtime.sendMessage(data);
     }
   };
 
@@ -78,7 +74,7 @@ export class APIsController {
       // Manually disconnect if system is online (disconnection initiated by user).
       let isOnline: boolean;
       if (this.backend === 'electron') {
-        isOnline = await CommonLib.getOnlineStatus();
+        isOnline = await CommonLib.getOnlineStatus(this.backend);
       } else {
         isOnline = navigator.onLine;
       }

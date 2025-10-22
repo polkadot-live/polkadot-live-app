@@ -2,16 +2,21 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { DbController } from '../controllers';
+import { eventBus } from './eventBus';
 import {
   APIsController,
   AccountsController,
+  BusDispatcher,
   disconnectAPIs,
   SubscriptionsController,
   TaskOrchestrator,
   tryApiDisconnect,
   executeOneShot,
 } from '@polkadot-live/core';
-import { getSupportedSources } from '@polkadot-live/consts/chains';
+import {
+  getSupportedChains,
+  getSupportedSources,
+} from '@polkadot-live/consts/chains';
 import { initSharedState } from '@polkadot-live/consts/sharedState';
 import type {
   AccountSource,
@@ -22,8 +27,11 @@ import type {
 } from '@polkadot-live/types/accounts';
 import type { Account } from '@polkadot-live/core';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { EventCallback } from '@polkadot-live/types/reporter';
-import type { NodeEndpoint } from '@polkadot-live/types/apis';
+import type {
+  EventCallback,
+  NotificationData,
+} from '@polkadot-live/types/reporter';
+import type { FlattenedAPIData, NodeEndpoint } from '@polkadot-live/types/apis';
 import type { SettingKey } from '@polkadot-live/types/settings';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 import type { Stores } from '../controllers';
@@ -38,11 +46,15 @@ let ACTIVE_TABS: TabData[] = [];
 let PENDING_TAB_DATA: TabData | null = null;
 let TAB_ID: number | null = null;
 
+/** Flag set once systems have been initialized once */
+let SYSTEMS_INITIALIZED = false;
+
 /**
  * Bootstrapping
  */
 
 const bootstrap = async () => {
+  BusDispatcher.init(eventBus);
   await DbController.initialize();
 };
 
@@ -73,33 +85,180 @@ const initTheme = async () => {
 };
 
 const initManagedAccounts = async () => {
+  if (SYSTEMS_INITIALIZED) {
+    return;
+  }
   type T = Map<ChainID, StoredAccount[]>;
   const fetched = (await DbController.getAllObjects('managedAccounts')) as T;
   await AccountsController.initialize(BACKEND, fetched);
 };
 
-const initSystems = async () => {
-  await initOnlineMode();
-  await Promise.all([
-    initTheme(),
-    initManagedAccounts(),
-    APIsController.initialize(BACKEND),
-  ]);
+const initAPIs = async () => {
+  if (!SYSTEMS_INITIALIZED) {
+    await APIsController.initialize(BACKEND);
+  }
+  const map = new Map<ChainID, FlattenedAPIData>();
+  APIsController.clients.map((c) => map.set(c.chainId, c.flatten()));
+  chrome.runtime.sendMessage({
+    type: 'api',
+    task: 'state:chains',
+    ser: JSON.stringify(Array.from(map.entries())),
+  });
 };
 
 const initSubscriptions = async () => {
+  if (SYSTEMS_INITIALIZED) {
+    return;
+  }
+  type T = Map<string, SubscriptionTask[]>;
+  const store = 'accountSubscriptions';
+  const active = (await DbController.getAllObjects(store)) as T;
+
   SubscriptionsController.backend = BACKEND;
   await Promise.all([
-    AccountsController.initAccountSubscriptions(),
+    AccountsController.initAccountSubscriptions('browser', active),
     SubscriptionsController.initChainSubscriptions(),
   ]);
 };
+
+const initSystems = async () => {
+  await initOnlineMode();
+  await Promise.all([initTheme(), initManagedAccounts(), initAPIs()]);
+  await connectApis();
+  await initSubscriptions();
+  eventBus.dispatchEvent(new CustomEvent('initSystems:complete'));
+  SYSTEMS_INITIALIZED = true;
+};
+
+// TODO: getAllChainSubscriptions
+// Get active account subscriptions from database and merge with inactive.
+const getAllAccountSubscriptions = async () => {
+  const store = 'accountSubscriptions';
+  const active = (await DbController.getAllObjects(store)) as Map<
+    string,
+    SubscriptionTask[]
+  >;
+
+  const result: typeof active = new Map();
+  for (const [key, tasks] of active.entries()) {
+    const [chainId, address] = key.split(':');
+    const account = AccountsController.get(chainId as ChainID, address);
+    if (account) {
+      result.set(key, SubscriptionsController.mergeActive(account, tasks));
+    }
+  }
+  return result;
+};
+
+/**
+ * Events
+ */
+
+const getAllEvents = async (): Promise<EventCallback[]> => {
+  const map = await DbController.getAllObjects('events');
+  return (map.get('all') || []) as EventCallback[];
+};
+
+const persistEvent = async (event: EventCallback) => {
+  // TODO: Take into account keep outdated events setting.
+  const map = await DbController.getAllObjects('events');
+  const events = (map.get('all') || []) as EventCallback[];
+  const updated = events.filter(({ uid }) => uid !== event.uid);
+  await DbController.set('events', 'all', [...updated, event]);
+};
+
+const removeEvent = async (event: EventCallback) => {
+  const { uid } = event;
+  const map = await DbController.getAllObjects('events');
+  const events = (map.get('all') || []) as EventCallback[];
+  const updated = events.filter((e) => e.uid !== uid);
+  await DbController.set('events', 'all', updated);
+};
+
+/**
+ * Event bus.
+ */
+
+// Set react state after bootstrapping is complete.
+eventBus.addEventListener('initSystems:complete', async () => {
+  // Set subscriptions state.
+  const map = await getAllAccountSubscriptions();
+  const active = await getActiveChains(map);
+  chrome.runtime.sendMessage({
+    type: 'subscriptions',
+    task: 'setAccountSubscriptions',
+    payload: {
+      subscriptions: JSON.stringify(Array.from(map.entries())),
+      activeChains: JSON.stringify(Array.from(active.entries())),
+    },
+  });
+
+  // Set managed accounts state.
+  chrome.runtime.sendMessage({
+    type: 'managedAccounts',
+    task: 'setAccountsState',
+    payload: JSON.stringify(
+      Array.from(AccountsController.getAllFlattenedAccountData().entries())
+    ),
+  });
+
+  // Get events from database and set state.
+  chrome.runtime.sendMessage({
+    type: 'events',
+    task: 'setEventsState',
+    payload: await getAllEvents(),
+  });
+});
+
+eventBus.addEventListener('processEvent', async (e) => {
+  const generateUID = (): string => {
+    const array = new Uint32Array(1);
+    crypto.getRandomValues(array);
+    return array[0].toString(36);
+  };
+  interface I {
+    event: EventCallback;
+    notification: NotificationData | null;
+    isOneShot: boolean;
+  }
+  const { event, notification, isOneShot }: I = (e as CustomEvent).detail;
+  event.uid = generateUID();
+  await persistEvent(event);
+
+  // TODO: Show native notification.
+  if (notification) {
+    console.log(isOneShot);
+  }
+  // Send events to popup to update state.
+  try {
+    chrome.runtime.sendMessage({
+      type: 'events',
+      task: 'newEvent',
+      payload: { event },
+    });
+  } catch (error) {
+    console.error(error); // Thrown if popup not open.
+  }
+});
+
+eventBus.addEventListener('setManagedAccountsState', async () => {
+  chrome.runtime.sendMessage({
+    type: 'managedAccounts',
+    task: 'setAccountsState',
+    payload: JSON.stringify(
+      Array.from(AccountsController.getAllFlattenedAccountData().entries())
+    ),
+  });
+});
 
 /**
  * APIs.
  */
 
 const connectApis = async () => {
+  if (SYSTEMS_INITIALIZED) {
+    return;
+  }
   if (!navigator.onLine) {
     return false;
   }
@@ -233,16 +392,12 @@ const deleteAccount = async (
 const persistManagedAccount = async (account: Account) => {
   const store = 'managedAccounts';
   const json: StoredAccount = account.toJSON();
-  const { _address, _chain: key } = json;
+  const { _address, _chain } = json;
 
-  const stored = ((await DbController.get(store, key)) ||
+  const stored = ((await DbController.get(store, _chain)) ||
     []) as StoredAccount[];
-
-  const updated = [
-    ...stored.filter((a) => a._chain !== key && a._address !== _address),
-    json,
-  ];
-  await DbController.set(store, key, updated);
+  const updated = [...stored.filter((a) => a._address !== _address), json];
+  await DbController.set(store, _chain, updated);
 };
 
 const removeManagedAccount = async (account: Account) => {
@@ -287,17 +442,10 @@ const handleImportAddress = async (
           account.name = alias;
           await AccountsController.set(account);
         }
-
-        await AccountsController.removeAllSubscriptions(account);
-        const allTasks = SubscriptionsController.getAllSubscriptionsForAccount(
-          account,
-          'disable'
-        );
-
-        for (const task of allTasks) {
-          // TODO: Update task.
-          console.log(task);
-        }
+        // Remove subscriptions then update database and state.
+        const fn = SubscriptionsController.buildSubscriptions;
+        await updateAccountSubscriptions(fn(account, 'disable'));
+        await setAccountSubscriptionsState();
       }
     }
 
@@ -319,20 +467,14 @@ const handleImportAddress = async (
       const key = 'setting:automatic-subscriptions';
       const auto = (await DbController.get('settings', key)) as boolean;
       const status = auto ? 'enable' : 'disable';
-      const tasks = SubscriptionsController.getAllSubscriptionsForAccount(
-        account,
-        status
-      );
+      const tasks = SubscriptionsController.buildSubscriptions(account, status);
       await updateAccountSubscriptions(tasks);
       await setAccountSubscriptionsState();
     }
 
     // Update addresses state and show notification.
     if (!fromBackup) {
-      chrome.runtime.sendMessage({
-        type: 'managedAccounts',
-        task: 'syncState',
-      });
+      eventBus.dispatchEvent(new CustomEvent('setManagedAccountsState'));
       // TODO: show import notification.
     }
 
@@ -367,10 +509,7 @@ const handleRemoveAddress = async (address: string, chainId: ChainID) => {
     await removeManagedAccount(account);
 
     // Sync managed accounts state.
-    chrome.runtime.sendMessage({
-      type: 'managedAccounts',
-      task: 'syncState',
-    });
+    eventBus.dispatchEvent(new CustomEvent('setManagedAccountsState'));
 
     const key = `${chainId}:${address}`;
     await DbController.delete('accountSubscriptions', key);
@@ -404,10 +543,7 @@ const handleRenameAccount = async (enAccount: EncodedAccount) => {
     account.queryMulti?.updateEntryAccountData(chainId, flattened);
 
     // Sync managed accounts state.
-    chrome.runtime.sendMessage({
-      type: 'managedAccounts',
-      task: 'syncState',
-    });
+    eventBus.dispatchEvent(new CustomEvent('setManagedAccountsState'));
 
     // Update subscription task react state.
     chrome.runtime.sendMessage({
@@ -514,16 +650,32 @@ const updateAccountSubscription = async (
     : await DbController.set(store, key, [...filtered]);
 };
 
+const getActiveChains = async (map: Map<string, SubscriptionTask[]>) => {
+  const active = new Map<ChainID, boolean>();
+  for (const [key, tasks] of map.entries()) {
+    if (tasks.length) {
+      const chainId = key.split(':')[0] as ChainID;
+      active.set(chainId, true);
+    }
+  }
+  for (const chainId of Object.keys(getSupportedChains()) as ChainID[]) {
+    if (!active.has(chainId)) {
+      active.set(chainId, false);
+    }
+  }
+  return active;
+};
+
 const setAccountSubscriptionsState = async () => {
-  const store = 'accountSubscriptions';
-  const map = (await DbController.getAllObjects(store)) as Map<
-    string,
-    SubscriptionTask[]
-  >;
+  const map = await getAllAccountSubscriptions();
+  const active = await getActiveChains(map);
   chrome.runtime.sendMessage({
     type: 'subscriptions',
     task: 'setAccountSubscriptions',
-    payload: JSON.stringify(Array.from(map.entries())),
+    payload: {
+      subscriptions: JSON.stringify(Array.from(map.entries())),
+      activeChains: JSON.stringify(Array.from(active.entries())),
+    },
   });
 };
 
@@ -683,12 +835,6 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
           });
           return true;
         }
-        case 'initSubscriptions': {
-          initSubscriptions().then(() => {
-            sendResponse(true);
-          });
-          return true;
-        }
         case 'connectApis': {
           connectApis().then((res) => {
             sendResponse(res);
@@ -792,9 +938,8 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
     case 'events': {
       switch (message.task) {
         case 'remove': {
-          const { event }: { event: EventCallback } = message;
-          console.log(`Todo: Remove event ${event.uid}`);
-          sendResponse(true);
+          const { event }: { event: EventCallback } = message.payload;
+          removeEvent(event).then(() => sendResponse(true));
           return true;
         }
       }
@@ -827,12 +972,6 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
      */
     case 'accountSubscriptions': {
       switch (message.task) {
-        case 'getAll': {
-          const all = SubscriptionsController.getAccountSubscriptions();
-          const ser = JSON.stringify(Array.from(all.entries()));
-          sendResponse(ser);
-          return true;
-        }
         case 'update': {
           const { task }: { task: SubscriptionTask } = message.payload;
           const { chainId, account: flattened } = task;
@@ -868,12 +1007,6 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
      */
     case 'chainSubscriptions': {
       switch (message.task) {
-        case 'getAll': {
-          const all = SubscriptionsController.getChainSubscriptions();
-          const ser = JSON.stringify(Array.from(all.entries()));
-          sendResponse(ser);
-          return true;
-        }
         case 'update': {
           const { task }: { task: SubscriptionTask } = message.payload;
           updateChainSubscription(task).then(() =>

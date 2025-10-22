@@ -2,5 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 export { Events } from './Events';
+export { Footer } from './Footer';
 export { Manage } from './Manage';
 export { Summary } from './Summary';

@@ -153,30 +153,47 @@ export class AccountsController {
   /**
    * Fetch and build persisted tasks from the store.
    */
-  static async initAccountSubscriptions() {
-    if (!this.accounts) {
-      return;
-    }
-
-    for (const accounts of this.accounts.values()) {
-      for (const account of accounts) {
-        let stored = '[]';
-        if (this.backend === 'electron') {
-          stored =
-            (await window.myAPI.sendSubscriptionTask({
-              action: 'subscriptions:account:getAll',
-              data: {
-                data: { address: account.address, chainId: account.chain },
-              },
-            })) || '[]';
-        } else if (this.backend === 'browser') {
-          // TODO: Fetch subscriptions from database.
+  static async initAccountSubscriptions(
+    backend: 'electron' | 'browser',
+    active?: Map<string, SubscriptionTask[]>
+  ) {
+    switch (backend) {
+      case 'electron': {
+        if (!this.accounts) {
+          return;
         }
 
-        if (account.queryMulti !== null) {
-          const tasks: SubscriptionTask[] = JSON.parse(stored);
-          await TaskOrchestrator.buildTasks(tasks, account.queryMulti);
+        for (const accounts of this.accounts.values()) {
+          for (const account of accounts) {
+            const stored =
+              (await window.myAPI.sendSubscriptionTask({
+                action: 'subscriptions:account:getAll',
+                data: {
+                  data: { address: account.address, chainId: account.chain },
+                },
+              })) || '[]';
+            if (account.queryMulti !== null) {
+              const tasks: SubscriptionTask[] = JSON.parse(stored);
+              await TaskOrchestrator.buildTasks(tasks, account.queryMulti);
+            }
+          }
         }
+        break;
+      }
+      case 'browser': {
+        if (!active) {
+          return;
+        }
+        for (const [key, tasks] of active.entries()) {
+          if (tasks.length) {
+            const [chainId, address] = key.split(':');
+            const account = this.get(chainId as ChainID, address);
+            if (account && account.queryMulti) {
+              await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
+            }
+          }
+        }
+        break;
       }
     }
   }
@@ -267,14 +284,12 @@ export class AccountsController {
    */
   static getAllFlattenedAccountData = (): FlattenedAccounts => {
     const map: FlattenedAccounts = new Map();
-
     for (const [chain, accounts] of this.accounts) {
       map.set(
         chain,
         accounts.map((a) => a.flatten())
       );
     }
-
     return map;
   };
 

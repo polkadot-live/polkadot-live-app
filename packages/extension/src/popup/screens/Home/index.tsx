@@ -3,11 +3,10 @@
 
 import * as UI from '@polkadot-live/ui/components';
 import * as Ctx from '../../contexts';
-import * as Themes from '@polkadot-live/styles/theme/variables';
 import PolkadotIcon from '@polkadot-live/ui/svg/polkadotIcon.svg?react';
 import { version } from '../../../../package.json';
 import { Classic } from '@theme-toggles/react';
-import { Events, Manage, Summary } from '@polkadot-live/screens';
+import { Events, Footer, Manage, Summary } from '@polkadot-live/screens';
 import { useSideNav } from '@polkadot-live/ui/contexts';
 import { useConnections } from '../../../contexts';
 import {
@@ -105,26 +104,7 @@ export const Home = () => {
           )}
         </BodyInterfaceWrapper>
       </FixedFlexWrapper>
-      <UI.Footer
-        bootstrappingCtx={Ctx.useBootstrapping()}
-        apiHealthCtx={Ctx.useApiHealth()}
-        chainsCtx={Ctx.useChains()}
-        connectionsCtx={{
-          getOnlineMode: () => navigator.onLine,
-          getTheme: () =>
-            cacheGet('setting:dark-mode')
-              ? Themes.darkTheme
-              : Themes.lightTheme,
-          cacheGet: (key) =>
-            key === 'mode:connected' ? navigator.onLine : false,
-        }}
-        intervalSubscriptionsCtx={{
-          chainHasIntervalSubscriptions: () => false, // TODO
-        }}
-        subscriptionsCtx={{
-          chainHasSubscriptions: () => false, // TODO
-        }}
-      />
+      <Footer />
     </>
   );
 };

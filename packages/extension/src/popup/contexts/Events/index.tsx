@@ -49,7 +49,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Remove an event from database.
   const removeEvent = async (event: EventCallback): Promise<void> => {
-    const msg = { type: 'events', task: 'remove', event };
+    const msg = { type: 'events', task: 'remove', payload: { event } };
     await chrome.runtime.sendMessage(msg);
   };
 
@@ -267,22 +267,27 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
   /// Handle event messages.
   useEffect(() => {
     const callback = (message: AnyData) => {
-      if (message.type !== 'events') {
-        return;
-      }
-      switch (message.task) {
-        case 'newEvent': {
-          const { event }: { event: EventCallback } = message;
-          const keepOutdatedEvents = cacheGet('setting:keep-outdated-events');
-          keepOutdatedEvents && removeOutdatedEvents(event);
-          addEvent(event);
-          break;
-        }
-        case 'staleEvent': {
-          const { uid, chainId }: { uid: string; chainId: ChainID } =
-            message.payload;
-          markStaleEvent(uid, chainId);
-          break;
+      if (message.type == 'events') {
+        switch (message.task) {
+          case 'setEventsState': {
+            setEvents(message.payload);
+            break;
+          }
+          case 'newEvent': {
+            const keepOutdatedEvents = cacheGet('setting:keep-outdated-events');
+            console.log(`keepOutdatedEvents: ${keepOutdatedEvents}`);
+            //keepOutdatedEvents && removeOutdatedEvents(event);
+
+            const { event }: { event: EventCallback } = message.payload;
+            addEvent(event);
+            break;
+          }
+          case 'staleEvent': {
+            const { uid, chainId }: { uid: string; chainId: ChainID } =
+              message.payload;
+            markStaleEvent(uid, chainId);
+            break;
+          }
         }
       }
     };

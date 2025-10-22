@@ -12,7 +12,7 @@ import { useMainMessagePorts } from '@ren/hooks/useMainMessagePorts';
 import { Classic } from '@theme-toggles/react';
 import { OpenGov } from './OpenGov';
 import { Send } from './Send';
-import { Events, Manage, Summary } from '@polkadot-live/screens';
+import { Events, Footer, Manage, Summary } from '@polkadot-live/screens';
 import {
   BackgroundIconWrapper,
   BodyInterfaceWrapper,
@@ -236,14 +236,7 @@ export const Home = () => {
           )}
         </BodyInterfaceWrapper>
       </FixedFlexWrapper>
-      <UI.Footer
-        bootstrappingCtx={Ctx.useBootstrapping()}
-        apiHealthCtx={Ctx.useApiHealth()}
-        chainsCtx={Ctx.useChains()}
-        connectionsCtx={useConnections()}
-        intervalSubscriptionsCtx={Ctx.useIntervalSubscriptions()}
-        subscriptionsCtx={Ctx.useSubscriptions()}
-      />
+      <Footer />
     </>
   );
 };

@@ -223,10 +223,9 @@ export class SubscriptionsController {
 
   /**
    * @name getAccountSubscriptions
-   * @summary Return a map of all correctly configured tasks possible for the received accounts.
-   * Active subscriptions need to be included in the array.
+   * @summary Return map of all configured tasks for managed accounts.
    */
-  static getAccountSubscriptions() {
+  static getAccountSubscriptions(): Map<string, SubscriptionTask[]> {
     const result = new Map<string, SubscriptionTask[]>();
 
     for (const accounts of AccountsController.accounts.values()) {
@@ -247,15 +246,29 @@ export class SubscriptionsController {
         result.set(`${a.chain}:${a.address}`, tasks);
       }
     }
-
     return result;
   }
 
   /**
-   * @name enableAllSubscriptionsForAccount
-   * @summary Activate all subscriptions when an account is imported.
+   * @name mergeActive
+   * @summary Merge an account's active subscriptions with inactive.
    */
-  static getAllSubscriptionsForAccount = (
+  static mergeActive = (account: Account, active: SubscriptionTask[]) =>
+    accountTasks
+      .filter((t) => t.chainId === account.chain)
+      .map((t) => this.getTaskArgsForAccount(account, t))
+      .map((t) => {
+        const found = active.find(
+          (a) => a.action === t.action && a.chainId === t.chainId
+        );
+        return found ? found : t;
+      });
+
+  /**
+   * @name buildSubscriptions
+   * @summary Get all subscriptions for an account in a target status.
+   */
+  static buildSubscriptions = (
     account: Account,
     status: 'enable' | 'disable'
   ) =>

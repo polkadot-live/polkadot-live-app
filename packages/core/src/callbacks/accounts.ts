@@ -7,6 +7,7 @@ import { areSortedArraysEqual } from '../library/CommonLib';
 import {
   AccountsController,
   APIsController,
+  BusDispatcher,
   EventsController,
   NotificationsController,
 } from '../controllers';
@@ -21,7 +22,10 @@ import type {
 } from '@polkadot-live/types/subscriptions';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { EventCallback } from '@polkadot-live/types/reporter';
+import type {
+  EventCallback,
+  NotificationData,
+} from '@polkadot-live/types/reporter';
 import type { QueryMultiWrapper } from '../model';
 import type {
   NominationPoolCommission,
@@ -34,6 +38,27 @@ import type {
 } from '@dedot/chaintypes/substrate';
 import type { ClientTypes, DedotClientSet } from '@polkadot-live/types/apis';
 import type { DedotClient } from 'dedot';
+import type { IpcTask } from '@polkadot-live/types/communication';
+
+const handleEvent = async (ipcTask: IpcTask) => {
+  switch (APIsController.backend) {
+    case 'electron': {
+      window.myAPI.sendEventTask(ipcTask);
+      break;
+    }
+    case 'browser': {
+      interface I {
+        event: EventCallback;
+        notification: NotificationData | null;
+        isOneShot: boolean;
+      }
+      const { event, notification, isOneShot }: I = ipcTask.data;
+      const detail = { event, notification, isOneShot };
+      BusDispatcher.dispatch('processEvent', detail);
+      break;
+    }
+  }
+};
 
 /**
  * @name callback_query_timestamp_now
@@ -68,7 +93,7 @@ export const callback_query_timestamp_now = (
 
     // Send event and notification data to main process.
     const event = EventsController.getEvent(entry, cur.toString());
-    window.myAPI.sendEventTask({
+    handleEvent({
       action: 'events:persist',
       data: { event, notification: null, isOneShot: false },
     });
@@ -109,7 +134,7 @@ export const callback_query_babe_currentSlot = (
 
     // Send event and notification data to main process.
     const event = EventsController.getEvent(entry, cur.toString());
-    window.myAPI.sendEventTask({
+    handleEvent({
       action: 'events:persist',
       data: { event, notification: null, isOneShot: false },
     });
@@ -166,7 +191,7 @@ export const callback_account_balance_free = async (
       : null;
 
     // Send event and notification data to main process.
-    window.myAPI.sendEventTask({
+    handleEvent({
       action: 'events:persist',
       data: { event: parsed, notification, isOneShot },
     });
@@ -224,7 +249,7 @@ export const callback_account_balance_frozen = async (
       : null;
 
     // Send event and notification data to main process.
-    window.myAPI.sendEventTask({
+    handleEvent({
       action: 'events:persist',
       data: { event: parsed, notification, isOneShot },
     });
@@ -282,7 +307,7 @@ export const callback_account_balance_reserved = async (
       : null;
 
     // Send event and notification data to main process.
-    window.myAPI.sendEventTask({
+    handleEvent({
       action: 'events:persist',
       data: { event: parsed, notification, isOneShot },
     });
@@ -349,7 +374,7 @@ export const callback_account_balance_spendable = async (
       : null;
 
     // Send event and notification to main process.
-    window.myAPI.sendEventTask({
+    handleEvent({
       action: 'events:persist',
       data: { event: parsed, notification, isOneShot },
     });
@@ -407,7 +432,7 @@ export const callback_nomination_pool_rewards = async (
       ? NotificationsController.getNotification(entry, account, { pending })
       : null;
 
-    window.myAPI.sendEventTask({
+    handleEvent({
       action: 'events:persist',
       data: { event, notification, isOneShot },
     });
@@ -458,7 +483,7 @@ export const callback_nomination_pool_state = async (
       : null;
 
     // Handle notification and events in main process.
-    window.myAPI.sendEventTask({
+    handleEvent({
       action: 'events:persist',
       data: {
         event: EventsController.getEvent(entry, { cur: state, prev: cur }),
@@ -512,7 +537,7 @@ export const callback_nomination_pool_renamed = async (
       : null;
 
     // Handle notification and events in main process.
-    window.myAPI.sendEventTask({
+    handleEvent({
       action: 'events:persist',
       data: {
         event: EventsController.getEvent(entry, { cur: poolName, prev: cur }),
@@ -583,7 +608,7 @@ export const callback_nomination_pool_roles = async (
       : null;
 
     // Handle notification and events in main process.
-    window.myAPI.sendEventTask({
+    handleEvent({
       action: 'events:persist',
       data: {
         event: EventsController.getEvent(entry, { cur: roles, prev: cur }),
@@ -658,7 +683,7 @@ export const callback_nomination_pool_commission = async (
       : null;
 
     // Handle notification and events in main process.
-    window.myAPI.sendEventTask({
+    handleEvent({
       action: 'events:persist',
       data: {
         event: EventsController.getEvent(entry, {
@@ -708,7 +733,7 @@ export const callback_nominating_era_rewards = async (
       era: lastEra.toString(),
     });
 
-    window.myAPI.sendEventTask({
+    handleEvent({
       action: 'events:persist',
       data: { event, notification, isOneShot },
     });
@@ -776,7 +801,7 @@ export const callback_nominating_exposure = async (
       : null;
 
     // Handle notification and events in main process.
-    window.myAPI.sendEventTask({
+    handleEvent({
       action: 'events:persist',
       data: {
         event: EventsController.getEvent(entry, { era, exposed }),
@@ -851,7 +876,7 @@ export const callback_nominating_commission = async (
       : null;
 
     // Handle notification and events in main process.
-    window.myAPI.sendEventTask({
+    handleEvent({
       action: 'events:persist',
       data: {
         event: EventsController.getEvent(entry, { era, hasChanged }),
@@ -926,7 +951,7 @@ export const callback_nominating_nominations = async (
       : null;
 
     // Handle notification and events in main process.
-    window.myAPI.sendEventTask({
+    handleEvent({
       action: 'events:persist',
       data: {
         event: EventsController.getEvent(entry, { era, hasChanged }),
@@ -972,8 +997,16 @@ const getStakingApi = (chainId: ChainID, api: DedotClientSet) => {
  * @name showNotificationFlag
  * @summary Determine if the task should show a native OS notification.
  */
-const getNotificationFlag = (entry: ApiCallEntry, isOneShot: boolean) =>
-  isOneShot
-    ? true
-    : !ConfigRenderer.getAppSeting('setting:silence-os-notifications') &&
-      entry.task.enableOsNotifications;
+const getNotificationFlag = (entry: ApiCallEntry, isOneShot: boolean) => {
+  switch (APIsController.backend) {
+    case 'electron': {
+      return isOneShot
+        ? true
+        : !ConfigRenderer.getAppSeting('setting:silence-os-notifications') &&
+            entry.task.enableOsNotifications;
+    }
+    case 'browser': {
+      return isOneShot ? true : entry.task.enableOsNotifications;
+    }
+  }
+};

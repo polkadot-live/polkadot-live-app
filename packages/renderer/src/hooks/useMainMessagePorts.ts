@@ -116,11 +116,10 @@ export const useMainMessagePorts = () => {
           }
 
           await AccountsController.removeAllSubscriptions(account);
-          const allTasks =
-            SubscriptionsController.getAllSubscriptionsForAccount(
-              account,
-              'disable'
-            );
+          const allTasks = SubscriptionsController.buildSubscriptions(
+            account,
+            'disable'
+          );
 
           for (const task of allTasks) {
             SubscriptionsController.updateTaskState(task);
@@ -153,7 +152,7 @@ export const useMainMessagePorts = () => {
       if (account.queryMulti !== null && !fromBackup) {
         const key = 'setting:automatic-subscriptions';
         const status = ConfigRenderer.getAppSeting(key) ? 'enable' : 'disable';
-        const tasks = SubscriptionsController.getAllSubscriptionsForAccount(
+        const tasks = SubscriptionsController.buildSubscriptions(
           account,
           status
         );
