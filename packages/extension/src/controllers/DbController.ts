@@ -29,8 +29,8 @@ interface MyDB extends DBSchema {
     value: SubscriptionTask;
   };
   events: {
-    key: 'all';
-    value: EventCallback[];
+    key: string;
+    value: EventCallback;
   };
   managedAccounts: {
     key: ChainID;

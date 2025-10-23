@@ -156,24 +156,16 @@ const getAllAccountSubscriptions = async () => {
 
 const getAllEvents = async (): Promise<EventCallback[]> => {
   const map = await DbController.getAllObjects('events');
-  return (map.get('all') || []) as EventCallback[];
+  return Array.from((map as Map<string, EventCallback>).values()).map((e) => e);
 };
 
 const persistEvent = async (event: EventCallback) => {
   // TODO: Take into account keep outdated events setting.
-  const map = await DbController.getAllObjects('events');
-  const events = (map.get('all') || []) as EventCallback[];
-  const updated = events.filter(({ uid }) => uid !== event.uid);
-  await DbController.set('events', 'all', [...updated, event]);
+  await DbController.set('events', event.uid, event);
 };
 
-const removeEvent = async (event: EventCallback) => {
-  const { uid } = event;
-  const map = await DbController.getAllObjects('events');
-  const events = (map.get('all') || []) as EventCallback[];
-  const updated = events.filter((e) => e.uid !== uid);
-  await DbController.set('events', 'all', updated);
-};
+const removeEvent = async (event: EventCallback) =>
+  await DbController.delete('events', event.uid);
 
 /**
  * Event bus.
