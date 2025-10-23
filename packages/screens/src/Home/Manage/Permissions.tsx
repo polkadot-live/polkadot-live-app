@@ -48,27 +48,32 @@ export const Permissions = ({
 
   /// Return subscription tasks mapped by category.
   const getCategorised = (): Map<TaskCategory, SubscriptionTask[]> => {
+    const ordered: TaskCategory[] = [
+      'Balances',
+      'Chain',
+      'Nominating',
+      'Nomination Pools',
+    ];
     const { tasks } = renderedSubscriptions;
     const map = new Map<TaskCategory, SubscriptionTask[]>();
-
-    tasks.forEach((t) => {
-      const category = t.category;
-      if (map.has(category)) {
-        const cur = map.get(category);
-        if (cur !== undefined) {
-          map.set(category, [...cur, { ...t }]);
-        } else {
-          map.set(category, [{ ...t }]);
-        }
-      } else {
-        map.set(category, [{ ...t }]);
+    for (const category of ordered) {
+      map.set(category, []);
+    }
+    for (const task of tasks) {
+      const { category } = task;
+      const cur = map.get(category)!;
+      map.set(category, [...cur, task]);
+    }
+    for (const [key, val] of map.entries()) {
+      if (!val.length) {
+        map.delete(key);
       }
-    });
+    }
     return map;
   };
 
   /// Categorised tasks state.
-  const [categorisedTasks, setCategorisedTasks] = useState(
+  const [categorisedTasks] = useState(
     new Map<TaskCategory, SubscriptionTask[]>(getCategorised())
   );
 
@@ -102,7 +107,6 @@ export const Permissions = ({
 
   /// Re-cache categorised tasks when subscription data changes.
   useEffect(() => {
-    setCategorisedTasks(getCategorised());
     if (section === 1 && renderedSubscriptions.type == '') {
       setSection(0);
     } else if (typeClicked === 'chain') {
@@ -139,7 +143,7 @@ export const Permissions = ({
   /// Handle toggling a subscription task group switch.
   const handleGroupSwitch = async (category: TaskCategory) => {
     const isOn = getCategoryToggles().get(category) || false;
-    await toggleCategoryTasks(category, isOn, renderedSubscriptions);
+    await toggleCategoryTasks(category, isOn);
   };
 
   /**

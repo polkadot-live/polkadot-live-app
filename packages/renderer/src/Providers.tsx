@@ -90,9 +90,9 @@ const getProvidersForWindow = () => {
         ApiHealthProvider,
         TreasuryApiProvider,
         ChainsProvider,
+        ManageProvider,
         SubscriptionsProvider,
         IntervalSubscriptionsProvider,
-        ManageProvider,
         IntervalTasksManagerProvider,
         EventsProvider,
         // Online status relies on other contexts being initialized.

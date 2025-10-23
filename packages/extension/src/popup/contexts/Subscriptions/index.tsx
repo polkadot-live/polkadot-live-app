@@ -4,6 +4,7 @@
 import { createContext, useEffect, useState } from 'react';
 import { createSafeContextHook } from '@polkadot-live/contexts';
 import { renderToast } from '@polkadot-live/ui/utils';
+import { useManage } from '../Manage';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ReactNode } from 'react';
@@ -12,7 +13,6 @@ import type {
   SubscriptionTask,
   SubscriptionTaskType,
   TaskCategory,
-  WrappedSubscriptionTasks,
 } from '@polkadot-live/types/subscriptions';
 
 export const SubscriptionsContext = createContext<
@@ -29,6 +29,8 @@ export const SubscriptionsProvider = ({
 }: {
   children: ReactNode;
 }) => {
+  const { renderedSubscriptions, setRenderedSubscriptions } = useManage();
+
   // Store chain subscriptions.
   const [chainSubscriptionsState, setChainSubscriptionsState] = useState<
     Map<ChainID, SubscriptionTask[]>
@@ -75,16 +77,12 @@ export const SubscriptionsProvider = ({
     task.action.startsWith('subscribe:account') ? 'account' : 'chain';
 
   // Handle toggling on all subscriptions in a category.
-  const toggleCategoryTasks = async (
-    category: TaskCategory,
-    isOn: boolean,
-    rendererdSubscriptions: WrappedSubscriptionTasks
-  ) => {
+  const toggleCategoryTasks = async (category: TaskCategory, isOn: boolean) => {
     // Get all tasks with the target status.
     const targetStatus = isOn ? 'enable' : 'disable';
 
     // Get rendered tasks in the category with target status and invert it.
-    const tasks = rendererdSubscriptions.tasks
+    const tasks = renderedSubscriptions.tasks
       .filter((t) => t.category === category && t.status === targetStatus)
       .map((t) => {
         t.status = t.status === 'enable' ? 'disable' : 'enable';
@@ -98,7 +96,19 @@ export const SubscriptionsProvider = ({
       return;
     }
 
-    switch (getTaskType(tasks[0])) {
+    // Update rendered subscriptions.
+    const cmp = (a: SubscriptionTask, b: SubscriptionTask) =>
+      a.action === b.action && a.chainId === b.chainId;
+
+    const taskType = getTaskType(tasks[0]);
+    setRenderedSubscriptions({
+      type: taskType,
+      tasks: renderedSubscriptions.tasks.map(
+        (a) => tasks.find((b) => cmp(a, b)) || a
+      ),
+    });
+
+    switch (taskType) {
       case 'chain': {
         await chrome.runtime.sendMessage({
           type: 'chainSubscriptions',
@@ -132,6 +142,16 @@ export const SubscriptionsProvider = ({
     const newStatus = task.status === 'enable' ? 'disable' : 'enable';
     task.status = newStatus;
     task.enableOsNotifications = newStatus === 'enable' ? true : false;
+
+    // Update rendered subscriptions.
+    const cmp = (a: SubscriptionTask, b: SubscriptionTask) =>
+      a.action === b.action && a.chainId === b.chainId;
+
+    const taskType = getTaskType(task);
+    setRenderedSubscriptions({
+      type: taskType,
+      tasks: renderedSubscriptions.tasks.map((a) => (cmp(task, a) ? task : a)),
+    });
 
     // Send task and its associated data to backend.
     switch (getTaskType(task)) {

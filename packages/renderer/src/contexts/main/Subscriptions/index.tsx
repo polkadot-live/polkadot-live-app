@@ -5,6 +5,7 @@ import * as Core from '@polkadot-live/core';
 import { createContext, useEffect, useState } from 'react';
 import { createSafeContextHook } from '@polkadot-live/contexts';
 import { useConnections } from '@ren/contexts/common';
+import { useManage } from '@ren/contexts/main/Manage';
 import { renderToast } from '@polkadot-live/ui/utils';
 import {
   AccountsController,
@@ -19,7 +20,6 @@ import type {
   SubscriptionTask,
   SubscriptionTaskType,
   TaskCategory,
-  WrappedSubscriptionTasks,
 } from '@polkadot-live/types/subscriptions';
 
 export const SubscriptionsContext = createContext<
@@ -37,6 +37,7 @@ export const SubscriptionsProvider = ({
   children: ReactNode;
 }) => {
   const { umamiEvent } = useConnections();
+  const { renderedSubscriptions } = useManage();
 
   /// Store chain subscriptions.
   const [chainSubscriptionsState, setChainSubscriptionsState] = useState<
@@ -99,16 +100,12 @@ export const SubscriptionsProvider = ({
     task.action.startsWith('subscribe:account') ? 'account' : 'chain';
 
   /// Handle toggling on all subscriptions in a category.
-  const toggleCategoryTasks = async (
-    category: TaskCategory,
-    isOn: boolean,
-    rendererdSubscriptions: WrappedSubscriptionTasks
-  ) => {
+  const toggleCategoryTasks = async (category: TaskCategory, isOn: boolean) => {
     // Get all tasks with the target status.
     const targetStatus = isOn ? 'enable' : 'disable';
 
     // Get rendered tasks in the category with target status and invert it.
-    const tasks = rendererdSubscriptions.tasks
+    const tasks = renderedSubscriptions.tasks
       .filter((t) => t.category === category && t.status === targetStatus)
       .map((t) => {
         t.status = t.status === 'enable' ? 'disable' : 'enable';

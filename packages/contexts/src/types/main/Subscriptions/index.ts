@@ -6,7 +6,6 @@ import type {
   SubscriptionTask,
   SubscriptionTaskType,
   TaskCategory,
-  WrappedSubscriptionTasks,
 } from '@polkadot-live/types/subscriptions';
 
 export interface SubscriptionsContextInterface {
@@ -26,10 +25,6 @@ export interface SubscriptionsContextInterface {
   ) => Promise<void>;
   updateAccountNameInTasks: (key: string, newName: string) => void;
   handleQueuedToggle: (task: SubscriptionTask) => Promise<void>;
-  toggleCategoryTasks: (
-    c: TaskCategory,
-    i: boolean,
-    s: WrappedSubscriptionTasks
-  ) => Promise<void>;
+  toggleCategoryTasks: (c: TaskCategory, i: boolean) => Promise<void>;
   getTaskType: (t: SubscriptionTask) => SubscriptionTaskType;
 }
