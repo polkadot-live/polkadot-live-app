@@ -31,6 +31,7 @@ import type {
 import type { Account } from '@polkadot-live/core';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
+  EventAccountData,
   EventCallback,
   NotificationData,
 } from '@polkadot-live/types/reporter';
@@ -169,6 +170,32 @@ const persistEvent = async (event: EventCallback) => {
 
 const removeEvent = async (event: EventCallback) =>
   await DbController.delete('events', event.uid);
+
+const updateEventWhoInfo = async (
+  address: string,
+  chainId: ChainID,
+  newName: string
+): Promise<EventCallback[]> => {
+  const cmp = (a: EventAccountData) =>
+    a.address === address && a.chainId === chainId && a.accountName !== newName;
+
+  const updated: EventCallback[] = [];
+  const events = (await DbController.getAllObjects('events')) as Map<
+    string,
+    EventCallback
+  >;
+  for (const [uid, e] of events.entries()) {
+    if (e.who.origin === 'chain') {
+      continue;
+    }
+    if (cmp(e.who.data as EventAccountData)) {
+      (e.who.data as EventAccountData).accountName = newName;
+      await DbController.set('events', uid, e);
+      updated.push(e);
+    }
+  }
+  return updated;
+};
 
 /**
  * Event bus.
@@ -591,8 +618,16 @@ const handleRenameAccount = async (enAccount: EncodedAccount) => {
     });
   }
 
-  // TODO: Update and return the relevant events.
-  // TODO: Update events React state in main window.
+  // Update events in database and react state.
+  chrome.runtime.sendMessage({
+    type: 'events',
+    task: 'updateAccountNames',
+    payload: {
+      chainId,
+      updated: await updateEventWhoInfo(address, chainId, newName),
+    },
+  });
+
   // TODO: Update account name in extrinsics window.
 };
 

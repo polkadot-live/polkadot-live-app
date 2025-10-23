@@ -270,6 +270,14 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
             setEvents(message.payload);
             break;
           }
+          case 'updateAccountNames': {
+            const {
+              chainId,
+              updated,
+            }: { chainId: ChainID; updated: EventCallback[] } = message.payload;
+            updated.length > 0 && updateEventsOnAccountRename(updated, chainId);
+            break;
+          }
           case 'staleEvent': {
             const { uid, chainId }: { uid: string; chainId: ChainID } =
               message.payload;
