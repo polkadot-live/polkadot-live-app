@@ -291,7 +291,7 @@ eventBus.addEventListener('processEvent', async (e) => {
   const notify = isOneShot ? true : silenced ? false : isEnabled;
   if (isOneShot || (updated && notify)) {
     const { body, title, subtitle } = notification;
-    await dispatchNotification(event.uid, title, subtitle || '', body);
+    await dispatchNotification(event.uid, title, body, subtitle);
   }
 
   // Send events to popup to update state.
@@ -540,7 +540,8 @@ const handleImportAddress = async (
     // Update addresses state and show notification.
     if (!fromBackup) {
       eventBus.dispatchEvent(new CustomEvent('setManagedAccountsState'));
-      // TODO: show import notification.
+      const id = `import:${address}`;
+      dispatchNotification(id, 'Account Imported', account.name);
     }
 
     // Send message back to import window to reset account's processing flag.

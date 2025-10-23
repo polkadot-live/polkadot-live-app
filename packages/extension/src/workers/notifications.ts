@@ -4,15 +4,15 @@
 export const dispatchNotification = async (
   id: string,
   title: string,
-  subtitle: string,
-  body: string
+  body: string,
+  subtitle?: string
 ) => {
   await requestNotificationPermission();
   chrome.notifications.create(id, {
     type: 'basic',
     iconUrl: 'public/icon-128.png',
     title,
-    message: `${subtitle} - ${body}`,
+    message: subtitle ? `${subtitle} - ${body}` : body,
   });
 };
 
