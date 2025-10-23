@@ -19,10 +19,6 @@ import { getSupportedChains } from '@polkadot-live/consts/chains';
 import type { AccountsProps } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
-import type {
-  WrappedSubscriptionTasks,
-  SubscriptionTask,
-} from '@polkadot-live/types/subscriptions';
 
 export const Accounts = ({
   addresses,
@@ -112,27 +108,15 @@ export const Accounts = ({
   }, [showDebuggingSubscriptions]);
 
   /**
-   * Utility to copy tasks.
-   */
-  const copyTasks = (tasks: SubscriptionTask[]) =>
-    tasks.map((t) => ({
-      ...t,
-      actionArgs: t.actionArgs ? [...t.actionArgs] : undefined,
-    }));
-
-  /**
    * Set parent subscription tasks state when a chain is clicked.
    */
   const handleClickChain = (chainId: ChainID) => {
-    const tasks = getChainSubscriptions(chainId);
-    const copy = copyTasks(tasks);
-
-    setTasksChainId(chainId);
-    setTypeClicked('chain');
     setRenderedSubscriptions({
       type: 'chain',
-      tasks: copy,
-    } as WrappedSubscriptionTasks);
+      tasks: getChainSubscriptions(chainId),
+    });
+    setTasksChainId(chainId);
+    setTypeClicked('chain');
     setBreadcrumb(chainId);
     setSection(1);
   };
@@ -145,15 +129,10 @@ export const Accounts = ({
     chainId: ChainID,
     accountName: string
   ) => {
-    const tasks = getAccountSubscriptions(`${chainId}:${address}`);
-    const copy = copyTasks(tasks);
-
     setRenderedSubscriptions({
       type: 'account',
-      address,
-      tasks: copy,
-    } as WrappedSubscriptionTasks);
-
+      tasks: getAccountSubscriptions(`${chainId}:${address}`),
+    });
     setTasksChainId(chainId);
     setTypeClicked('account');
     setBreadcrumb(accountName);

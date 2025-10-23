@@ -7,6 +7,7 @@ import { renderToast } from '@polkadot-live/ui/utils';
 import { useManage } from '../Manage';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
 import type { ReactNode } from 'react';
 import type { SubscriptionsContextInterface } from '@polkadot-live/contexts/types/main';
 import type {
@@ -41,13 +42,13 @@ export const SubscriptionsProvider = ({
     Map<string, SubscriptionTask[]>
   >(new Map());
 
-  const [activeChainMap, setActiveChainMap] = useState<Map<ChainID, boolean>>(
+  const [activeChainMap, setActiveChainMap] = useState<Map<ChainID, number>>(
     new Map()
   );
 
   // Determine if there are active subscriptions for a network.
   const chainHasSubscriptions = (chainId: ChainID) =>
-    activeChainMap.get(chainId) || false;
+    Boolean(activeChainMap.get(chainId)) || false;
 
   // Update cached account name for an account's subscription tasks.
   const updateAccountNameInTasks = (key: string, newName: string) => {
@@ -217,6 +218,19 @@ export const SubscriptionsProvider = ({
     }
   };
 
+  /// Get subscription count for address.
+  const getSubscriptionCountForAccount = (
+    flattened: FlattenedAccountData
+  ): number => {
+    const { chain: chainId, address } = flattened;
+    const tasks = accountSubscriptionsState.get(`${chainId}:${address}`) || [];
+    return tasks.reduce((acc, t) => (t.status === 'enable' ? acc + 1 : acc), 0);
+  };
+
+  /// Get total subscription count.
+  const getTotalSubscriptionCount = (): number =>
+    Array.from(activeChainMap.values()).reduce((acc, n) => acc + n, 0);
+
   useEffect(() => {
     // Listen for chain subscription state messages.
     const callback = (message: AnyData) => {
@@ -243,7 +257,7 @@ export const SubscriptionsProvider = ({
             setAccountSubscriptionsState(
               parseMap<string, SubscriptionTask[]>(subscriptions)
             );
-            setActiveChainMap(parseMap<ChainID, boolean>(activeChains));
+            setActiveChainMap(parseMap<ChainID, number>(activeChains));
             break;
           }
           case 'updateAccountName': {
@@ -275,6 +289,8 @@ export const SubscriptionsProvider = ({
         onNotificationToggle,
         toggleCategoryTasks,
         getTaskType,
+        getTotalSubscriptionCount,
+        getSubscriptionCountForAccount,
       }}
     >
       {children}

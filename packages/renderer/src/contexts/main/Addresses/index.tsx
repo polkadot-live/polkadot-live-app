@@ -104,33 +104,6 @@ export const AddressesProvider = ({
       []
     );
 
-  /// Get subscription count for address.
-  const getSubscriptionCountForAccount = (
-    flattened: FlattenedAccountData
-  ): number => {
-    const { address, chain } = flattened;
-    const account = AccountsController.get(chain, address);
-    if (!account) {
-      return 0;
-    }
-
-    const tasks = account.getSubscriptionTasks();
-    if (!tasks) {
-      return 0;
-    }
-
-    return tasks.length;
-  };
-
-  /// Get total subscription count.
-  const getTotalSubscriptionCount = (): number => {
-    let count = 0;
-    for (const flattened of getAllAccounts()) {
-      count += getSubscriptionCountForAccount(flattened);
-    }
-    return count;
-  };
-
   // Cache addresses state setter in controller for updaing UI.
   useEffect(() => {
     AccountsController.cachedSetAddresses = setAddresses;
@@ -147,8 +120,6 @@ export const AddressesProvider = ({
         removeAddress,
         getAddress,
         getAllAccounts,
-        getSubscriptionCountForAccount,
-        getTotalSubscriptionCount,
       }}
     >
       {children}

@@ -73,7 +73,7 @@ export const Permissions = ({
   };
 
   /// Categorised tasks state.
-  const [categorisedTasks] = useState(
+  const [categorisedTasks, setCategorisedTasks] = useState(
     new Map<TaskCategory, SubscriptionTask[]>(getCategorised())
   );
 
@@ -107,6 +107,7 @@ export const Permissions = ({
 
   /// Re-cache categorised tasks when subscription data changes.
   useEffect(() => {
+    setCategorisedTasks(getCategorised());
     if (section === 1 && renderedSubscriptions.type == '') {
       setSection(0);
     } else if (typeClicked === 'chain') {

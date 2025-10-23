@@ -106,24 +106,6 @@ export const AddressesProvider = ({
       []
     );
 
-  /// Get subscription count for address.
-  const getSubscriptionCountForAccount = (
-    flattened: FlattenedAccountData
-  ): number => {
-    // TODO: Cache subscription counts on mount.
-    console.log(`TODO: Get subscription count ${flattened.name}`);
-    return 0;
-  };
-
-  /// Get total subscription count.
-  const getTotalSubscriptionCount = (): number => {
-    let count = 0;
-    for (const flattened of getAllAccounts()) {
-      count += getSubscriptionCountForAccount(flattened);
-    }
-    return count;
-  };
-
   /// Listen to state messages from background worker.
   useEffect(() => {
     const callback = async (message: AnyData) => {
@@ -155,8 +137,6 @@ export const AddressesProvider = ({
         removeAddress,
         getAddress,
         getAllAccounts,
-        getSubscriptionCountForAccount,
-        getTotalSubscriptionCount,
       }}
     >
       {children}

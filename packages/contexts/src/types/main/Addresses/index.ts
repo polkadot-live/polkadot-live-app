@@ -18,6 +18,4 @@ export interface AddressesContextInterface {
   getAllAccounts: () => FlattenedAccountData[];
   importAddress: (accountName: string, fromBackup: boolean) => Promise<void>;
   removeAddress: (chainId: ChainID, address: string) => Promise<void>;
-  getSubscriptionCountForAccount: (flattened: FlattenedAccountData) => number;
-  getTotalSubscriptionCount: () => number;
 }

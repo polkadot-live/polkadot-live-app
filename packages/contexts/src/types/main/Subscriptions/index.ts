@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
 import type {
   SubscriptionTask,
   SubscriptionTaskType,
@@ -27,4 +28,6 @@ export interface SubscriptionsContextInterface {
   handleQueuedToggle: (task: SubscriptionTask) => Promise<void>;
   toggleCategoryTasks: (c: TaskCategory, i: boolean) => Promise<void>;
   getTaskType: (t: SubscriptionTask) => SubscriptionTaskType;
+  getSubscriptionCountForAccount: (flattened: FlattenedAccountData) => number;
+  getTotalSubscriptionCount: () => number;
 }

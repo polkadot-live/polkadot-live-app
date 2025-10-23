@@ -724,16 +724,17 @@ const updateAccountSubscription = async (
 };
 
 const getActiveChains = async (map: Map<string, SubscriptionTask[]>) => {
-  const active = new Map<ChainID, boolean>();
+  const active = new Map<ChainID, number>();
   for (const [key, tasks] of map.entries()) {
-    if (tasks.length) {
-      const chainId = key.split(':')[0] as ChainID;
-      active.set(chainId, true);
-    }
+    const chainId = key.split(':')[0] as ChainID;
+    active.set(
+      chainId,
+      tasks.reduce((acc, t) => (t.status === 'enable' ? acc + 1 : acc), 0)
+    );
   }
   for (const chainId of Object.keys(getSupportedChains()) as ChainID[]) {
     if (!active.has(chainId)) {
-      active.set(chainId, false);
+      active.set(chainId, 0);
     }
   }
   return active;

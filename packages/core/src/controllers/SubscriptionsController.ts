@@ -271,11 +271,21 @@ export class SubscriptionsController {
   static buildSubscriptions = (
     account: Account,
     status: 'enable' | 'disable'
-  ) =>
-    accountTasks
+  ) => {
+    const isNominating = account.nominatingData !== null;
+    const isInPool = account.nominationPoolData !== null;
+
+    return accountTasks
       .filter((t) => t.chainId === account.chain)
       .map((t) => this.getTaskArgsForAccount(account, t))
-      .map((t) => ({ ...t, status }) as SubscriptionTask);
+      .map((t) =>
+        t.category === 'Nominating'
+          ? { ...t, status: isNominating ? status : 'disable' }
+          : t.category === 'Nomination Pools'
+            ? { ...t, status: isInPool ? status : 'disable' }
+            : { ...t, status }
+      );
+  };
 
   /**
    * @name getTaskArgsForAccount

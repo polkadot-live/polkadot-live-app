@@ -4,6 +4,7 @@
 import * as Core from '@polkadot-live/core';
 import { createContext, useEffect, useState } from 'react';
 import { createSafeContextHook } from '@polkadot-live/contexts';
+import { useAddresses } from '@ren/contexts/main';
 import { useConnections } from '@ren/contexts/common';
 import { useManage } from '@ren/contexts/main/Manage';
 import { renderToast } from '@polkadot-live/ui/utils';
@@ -14,6 +15,7 @@ import {
   SubscriptionsController,
 } from '@polkadot-live/core';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
 import type { ReactNode } from 'react';
 import type { SubscriptionsContextInterface } from '@polkadot-live/contexts/types/main';
 import type {
@@ -36,6 +38,7 @@ export const SubscriptionsProvider = ({
 }: {
   children: ReactNode;
 }) => {
+  const { getAllAccounts } = useAddresses();
   const { umamiEvent } = useConnections();
   const { renderedSubscriptions } = useManage();
 
@@ -290,6 +293,33 @@ export const SubscriptionsProvider = ({
     }
   };
 
+  /// Get subscription count for address.
+  const getSubscriptionCountForAccount = (
+    flattened: FlattenedAccountData
+  ): number => {
+    const { address, chain } = flattened;
+    const account = AccountsController.get(chain, address);
+    if (!account) {
+      return 0;
+    }
+
+    const tasks = account.getSubscriptionTasks();
+    if (!tasks) {
+      return 0;
+    }
+
+    return tasks.length;
+  };
+
+  /// Get total subscription count.
+  const getTotalSubscriptionCount = (): number => {
+    let count = 0;
+    for (const flattened of getAllAccounts()) {
+      count += getSubscriptionCountForAccount(flattened);
+    }
+    return count;
+  };
+
   return (
     <SubscriptionsContext
       value={{
@@ -304,6 +334,8 @@ export const SubscriptionsProvider = ({
         onNotificationToggle,
         toggleCategoryTasks,
         getTaskType,
+        getTotalSubscriptionCount,
+        getSubscriptionCountForAccount,
       }}
     >
       {children}
