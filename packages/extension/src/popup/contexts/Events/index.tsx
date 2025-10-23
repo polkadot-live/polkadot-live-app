@@ -19,7 +19,6 @@ import type {
   EventsState,
   SortedChainEvents,
 } from '@polkadot-live/contexts/types/main';
-import { useAppSettings } from '../AppSettings';
 
 export const EventsContext = createContext<EventsContextInterface | undefined>(
   undefined
@@ -28,8 +27,6 @@ export const EventsContext = createContext<EventsContextInterface | undefined>(
 export const useEvents = createSafeContextHook(EventsContext, 'EventsContext');
 
 export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
-  const { cacheGet } = useAppSettings();
-
   /// Store the currently imported events
   const [events, setEventsState] = useState<EventsState>(new Map());
 
@@ -271,15 +268,6 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
         switch (message.task) {
           case 'setEventsState': {
             setEvents(message.payload);
-            break;
-          }
-          case 'newEvent': {
-            const keepOutdatedEvents = cacheGet('setting:keep-outdated-events');
-            console.log(`keepOutdatedEvents: ${keepOutdatedEvents}`);
-            //keepOutdatedEvents && removeOutdatedEvents(event);
-
-            const { event }: { event: EventCallback } = message.payload;
-            addEvent(event);
             break;
           }
           case 'staleEvent': {

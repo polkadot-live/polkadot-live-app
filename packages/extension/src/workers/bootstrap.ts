@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { DbController } from '../controllers';
+import { dispatchNotification } from './notifications';
 import { eventBus } from './eventBus';
 import {
   APIsController,
@@ -12,6 +13,8 @@ import {
   TaskOrchestrator,
   tryApiDisconnect,
   executeOneShot,
+  pushUniqueEvent,
+  doRemoveOutdatedEvents,
 } from '@polkadot-live/core';
 import {
   getSupportedChains,
@@ -210,23 +213,66 @@ eventBus.addEventListener('processEvent', async (e) => {
   };
   interface I {
     event: EventCallback;
-    notification: NotificationData | null;
-    isOneShot: boolean;
+    notification: NotificationData;
+    showNotification: {
+      isOneShot: boolean;
+      isEnabled: boolean;
+    };
   }
-  const { event, notification, isOneShot }: I = (e as CustomEvent).detail;
-  event.uid = generateUID();
-  await persistEvent(event);
+  const { event, notification, showNotification }: I = (e as CustomEvent)
+    .detail;
 
-  // TODO: Show native notification.
-  if (notification) {
-    console.log(isOneShot);
+  // Assign UID to event.
+  const uid = generateUID();
+  event.uid = uid;
+  event.txActions = event.txActions.map((obj) => {
+    obj.txMeta.eventUid = uid;
+    return obj;
+  });
+
+  // Handle outdated events.
+  const keepOutdated = (await DbController.get(
+    'settings',
+    'setting:keep-outdated-events'
+  )) as boolean;
+
+  if (!keepOutdated) {
+    const all = await getAllEvents();
+    const { updated, events } = doRemoveOutdatedEvents(event, all);
+
+    if (updated) {
+      const remove = all.filter((a) => !events.find((b) => b.uid === a.uid));
+      for (const { uid: key } of remove) {
+        await DbController.delete('events', key);
+      }
+    }
   }
+
+  // Persist event if it's unique.
+  const events = await getAllEvents();
+  const { updated } = pushUniqueEvent(event, events);
+  if (updated) {
+    await persistEvent(event);
+  }
+
+  // Show native notification.
+  const { isOneShot, isEnabled } = showNotification;
+  const silenced = (await DbController.get(
+    'settings',
+    'setting:silence-os-notifications'
+  )) as boolean;
+  const notify = isOneShot ? true : silenced ? false : isEnabled;
+  if (isOneShot || (updated && notify)) {
+    const { body, title, subtitle } = notification;
+    await dispatchNotification(event.uid, title, subtitle || '', body);
+  }
+
   // Send events to popup to update state.
   try {
     chrome.runtime.sendMessage({
       type: 'events',
-      task: 'newEvent',
-      payload: { event },
+      task: 'setEventsState',
+      payload: await getAllEvents(),
     });
   } catch (error) {
     console.error(error); // Thrown if popup not open.
