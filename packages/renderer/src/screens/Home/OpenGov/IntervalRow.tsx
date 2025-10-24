@@ -10,7 +10,7 @@ import {
 } from '@ren/contexts/main';
 import { useConnections } from '@ren/contexts/common';
 import { useHelp } from '@polkadot-live/ui/contexts';
-import { TaskEntryWrapper } from '../Manage/Wrappers';
+import { TaskEntryWrapper } from '@polkadot-live/styles/wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
 import { Switch, TooltipRx } from '@polkadot-live/ui/components';

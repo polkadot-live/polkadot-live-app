@@ -50,13 +50,7 @@ export class TaskOrchestrator {
     const backend = APIsController.backend;
     const { chainId } = task;
 
-    let isOnline: boolean;
-    if (backend === 'electron') {
-      isOnline = await getOnlineStatus();
-    } else {
-      isOnline = navigator.onLine;
-    }
-
+    const isOnline: boolean = await getOnlineStatus(backend);
     const isRunnable = !APIsController.getFailedChainIds().includes(chainId);
     this.next(task, wrapper);
 
@@ -78,21 +72,18 @@ export class TaskOrchestrator {
     if (tasks.length === 0) {
       return;
     }
-
     // Insert task in owner account's query multi wrapper.
     for (const task of tasks) {
       this.next(task, wrapper);
     }
-
     // Build query multi API argument.
     await wrapper.build(tasks[0].chainId);
 
     // Run the tasks if the app is in online mode.
-    const isOnline: boolean = await getOnlineStatus();
+    const isOnline: boolean = await getOnlineStatus(APIsController.backend);
     if (!isOnline) {
       return;
     }
-
     const disconnected = APIsController.getFailedChainIds();
     const chainIds = new Set(
       [...new Set(tasks.map(({ chainId }) => chainId))].map((chainId) => ({
@@ -100,7 +91,6 @@ export class TaskOrchestrator {
         isRunnable: !disconnected.includes(chainId),
       }))
     );
-
     for (const { chainId, isRunnable } of chainIds) {
       isRunnable && (await wrapper.run(chainId));
     }

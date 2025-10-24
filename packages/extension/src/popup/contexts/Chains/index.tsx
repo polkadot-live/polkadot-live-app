@@ -106,7 +106,7 @@ export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
         switch (task) {
           case 'state:chains':
           case 'state:onPopupReload': {
-            const { ser }: { ser: string } = message;
+            const { ser }: { ser: string } = message.payload;
             const array: [ChainID, FlattenedAPIData][] = JSON.parse(ser);
             const map = new Map<ChainID, FlattenedAPIData>(array);
             setChains(map);
@@ -114,7 +114,7 @@ export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
             break;
           }
           case 'state:chain': {
-            const { ser }: { ser: string } = message;
+            const { ser }: { ser: string } = message.payload;
             const flattened: FlattenedAPIData = JSON.parse(ser);
             setChains((pv) => new Map(pv).set(flattened.chainId, flattened));
             setUiTrigger(true);

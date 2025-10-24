@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type {
-  AccountSource,
   FlattenedAccountData,
   FlattenedAccounts,
 } from '@polkadot-live/types/accounts';
@@ -17,14 +16,6 @@ export interface AddressesContextInterface {
   ) => FlattenedAccountData | null;
   getAddresses: () => FlattenedAccountData[];
   getAllAccounts: () => FlattenedAccountData[];
-  importAddress: (
-    n: ChainID,
-    s: AccountSource,
-    a: string,
-    b: string,
-    fromBackup: boolean
-  ) => Promise<void>;
+  importAddress: (accountName: string, fromBackup: boolean) => Promise<void>;
   removeAddress: (chainId: ChainID, address: string) => Promise<void>;
-  getSubscriptionCountForAccount: (flattened: FlattenedAccountData) => number;
-  getTotalSubscriptionCount: () => number;
 }

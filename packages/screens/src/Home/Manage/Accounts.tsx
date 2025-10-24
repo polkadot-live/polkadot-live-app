@@ -3,30 +3,22 @@
 
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
-
-import { ItemEntryWrapper } from './Wrappers';
 import { ButtonText } from '@polkadot-live/ui/kits/buttons';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { NoAccounts } from '../NoAccounts';
-import { useConnections } from '@ren/contexts/common';
-import {
-  useAppSettings,
-  useManage,
-  useSubscriptions,
-} from '@ren/contexts/main';
+import { NoAccounts } from '@polkadot-live/ui/utils';
+import { useContextProxy } from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { FlexColumn, ItemsColumn } from '@polkadot-live/styles/wrappers';
+import {
+  FlexColumn,
+  ItemsColumn,
+  ItemEntryWrapper,
+} from '@polkadot-live/styles/wrappers';
 import { getSupportedChains } from '@polkadot-live/consts/chains';
-
 import type { AccountsProps } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
-import type {
-  WrappedSubscriptionTasks,
-  SubscriptionTask,
-} from '@polkadot-live/types/subscriptions';
 
 export const Accounts = ({
   addresses,
@@ -36,17 +28,17 @@ export const Accounts = ({
   setTypeClicked,
   setSelectedAccount,
 }: AccountsProps) => {
-  const { cacheGet } = useAppSettings();
+  const { useCtx } = useContextProxy();
+  const { cacheGet } = useCtx('AppSettingsCtx')();
+  const { getTheme, openTab } = useCtx('ConnectionsCtx')();
+  const { setRenderedSubscriptions } = useCtx('ManageCtx')();
+  const { getChainSubscriptions, getAccountSubscriptions, chainSubscriptions } =
+    useCtx('SubscriptionsCtx')();
+
+  const theme = getTheme();
   const showDebuggingSubscriptions = cacheGet(
     'setting:show-debugging-subscriptions'
   );
-
-  const { setRenderedSubscriptions } = useManage();
-  const { getChainSubscriptions, getAccountSubscriptions, chainSubscriptions } =
-    useSubscriptions();
-
-  const { getTheme } = useConnections();
-  const theme = getTheme();
 
   /**
    * Categorise addresses by their chain ID, sort by name.
@@ -62,7 +54,6 @@ export const Accounts = ({
     // Map addresses to their chain ID.
     for (const address of addresses) {
       const chainId = address.chain;
-
       if (sorted.has(chainId)) {
         sorted.set(chainId, [...sorted.get(chainId)!, { ...address }]);
       } else {
@@ -83,7 +74,6 @@ export const Accounts = ({
     for (const [chainId, chainAddresses] of sorted.entries()) {
       chainAddresses.length === 0 && redundantEntries.push(chainId as ChainID);
     }
-
     redundantEntries.forEach((chainId) => {
       sorted.delete(chainId);
     });
@@ -92,7 +82,6 @@ export const Accounts = ({
     if (sorted.size === 0) {
       sorted.set('Empty', []);
     }
-
     return sorted;
   };
 
@@ -119,27 +108,15 @@ export const Accounts = ({
   }, [showDebuggingSubscriptions]);
 
   /**
-   * Utility to copy tasks.
-   */
-  const copyTasks = (tasks: SubscriptionTask[]) =>
-    tasks.map((t) => ({
-      ...t,
-      actionArgs: t.actionArgs ? [...t.actionArgs] : undefined,
-    }));
-
-  /**
    * Set parent subscription tasks state when a chain is clicked.
    */
   const handleClickChain = (chainId: ChainID) => {
-    const tasks = getChainSubscriptions(chainId);
-    const copy = copyTasks(tasks);
-
-    setTasksChainId(chainId);
-    setTypeClicked('chain');
     setRenderedSubscriptions({
       type: 'chain',
-      tasks: copy,
-    } as WrappedSubscriptionTasks);
+      tasks: getChainSubscriptions(chainId),
+    });
+    setTasksChainId(chainId);
+    setTypeClicked('chain');
     setBreadcrumb(chainId);
     setSection(1);
   };
@@ -152,15 +129,10 @@ export const Accounts = ({
     chainId: ChainID,
     accountName: string
   ) => {
-    const tasks = getAccountSubscriptions(`${chainId}:${address}`);
-    const copy = copyTasks(tasks);
-
     setRenderedSubscriptions({
       type: 'account',
-      address,
-      tasks: copy,
-    } as WrappedSubscriptionTasks);
-
+      tasks: getAccountSubscriptions(`${chainId}:${address}`),
+    });
     setTasksChainId(chainId);
     setTypeClicked('account');
     setBreadcrumb(accountName);
@@ -196,7 +168,14 @@ export const Accounts = ({
 
                   <UI.AccordionContent transparent={true}>
                     {chainId === 'Empty' ? (
-                      <NoAccounts />
+                      <NoAccounts
+                        onClick={() =>
+                          openTab('import', undefined, {
+                            event: 'window-open-accounts',
+                            data: null,
+                          })
+                        }
+                      />
                     ) : (
                       <ItemsColumn>
                         {chainAddresses.map(

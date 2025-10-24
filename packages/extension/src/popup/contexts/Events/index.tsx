@@ -19,7 +19,6 @@ import type {
   EventsState,
   SortedChainEvents,
 } from '@polkadot-live/contexts/types/main';
-import { useAppSettings } from '../AppSettings';
 
 export const EventsContext = createContext<EventsContextInterface | undefined>(
   undefined
@@ -28,15 +27,12 @@ export const EventsContext = createContext<EventsContextInterface | undefined>(
 export const useEvents = createSafeContextHook(EventsContext, 'EventsContext');
 
 export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
-  const { cacheGet } = useAppSettings();
-
   /// Store the currently imported events
   const [events, setEventsState] = useState<EventsState>(new Map());
 
   /// Set events (on event import).
   const setEvents = (newEvents: EventCallback[]) => {
     const map: EventsState = new Map();
-
     for (const event of newEvents) {
       const chainId = getEventChainId(event);
       map.has(chainId)
@@ -49,7 +45,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Remove an event from database.
   const removeEvent = async (event: EventCallback): Promise<void> => {
-    const msg = { type: 'events', task: 'remove', event };
+    const msg = { type: 'events', task: 'remove', payload: { event } };
     await chrome.runtime.sendMessage(msg);
   };
 
@@ -267,22 +263,27 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
   /// Handle event messages.
   useEffect(() => {
     const callback = (message: AnyData) => {
-      if (message.type !== 'events') {
-        return;
-      }
-      switch (message.task) {
-        case 'newEvent': {
-          const { event }: { event: EventCallback } = message;
-          const keepOutdatedEvents = cacheGet('setting:keep-outdated-events');
-          keepOutdatedEvents && removeOutdatedEvents(event);
-          addEvent(event);
-          break;
-        }
-        case 'staleEvent': {
-          const { uid, chainId }: { uid: string; chainId: ChainID } =
-            message.payload;
-          markStaleEvent(uid, chainId);
-          break;
+      if (message.type == 'events') {
+        switch (message.task) {
+          case 'setEventsState': {
+            const { result }: { result: EventCallback[] } = message.payload;
+            setEvents(result);
+            break;
+          }
+          case 'updateAccountNames': {
+            const {
+              chainId,
+              updated,
+            }: { chainId: ChainID; updated: EventCallback[] } = message.payload;
+            updated.length > 0 && updateEventsOnAccountRename(updated, chainId);
+            break;
+          }
+          case 'staleEvent': {
+            const { uid, chainId }: { uid: string; chainId: ChainID } =
+              message.payload;
+            markStaleEvent(uid, chainId);
+            break;
+          }
         }
       }
     };

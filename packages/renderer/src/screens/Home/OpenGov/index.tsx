@@ -3,10 +3,12 @@
 
 import { useManage } from '@ren/contexts/main';
 import { useState } from 'react';
-import { CarouselWrapper } from '../Wrappers';
-import { FlexColumn } from '@polkadot-live/styles/wrappers';
+import {
+  CarouselWrapper,
+  FlexColumn,
+  FlexColumnWrap,
+} from '@polkadot-live/styles/wrappers';
 import { MainHeading } from '@polkadot-live/ui/components';
-import { Wrapper } from '../Manage/Wrappers';
 import { Networks } from './Networks';
 import { Subscriptions } from './Subscriptions';
 
@@ -44,9 +46,9 @@ export const OpenGov = () => {
           className="scrollable"
           style={{ height: '100%', padding: '0 1rem' }}
         >
-          <Wrapper style={{ alignContent: 'start' }}>
+          <FlexColumnWrap style={{ alignContent: 'start' }}>
             <Networks setBreadcrumb={setBreadcrumb} setSection={setSection} />
-          </Wrapper>
+          </FlexColumnWrap>
         </div>
         <div
           className="scrollable"

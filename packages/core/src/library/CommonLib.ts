@@ -76,11 +76,21 @@ export const getInitialChainAccordionValue = (chains: ChainID[]): ChainID =>
  * @name getOnlineStatus
  * @summary Get connection status.
  */
-export const getOnlineStatus = async () =>
-  (await window.myAPI.sendConnectionTaskAsync({
-    action: 'connection:getStatus',
-    data: null,
-  })) || false;
+export const getOnlineStatus = async (backend: 'electron' | 'browser') => {
+  switch (backend) {
+    case 'electron': {
+      return (
+        (await window.myAPI.sendConnectionTaskAsync({
+          action: 'connection:getStatus',
+          data: null,
+        })) || false
+      );
+    }
+    case 'browser': {
+      return navigator.onLine;
+    }
+  }
+};
 
 /**
  * @name waitMs

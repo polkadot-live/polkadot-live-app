@@ -8,7 +8,7 @@ import type {
   IntervalSubscription,
   WrappedSubscriptionTasks,
 } from '@polkadot-live/types/subscriptions';
-import { SubscriptionsController } from '@polkadot-live/core';
+import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ManageContextInterface } from '@polkadot-live/contexts/types/main';
 
@@ -19,24 +19,23 @@ export const ManageContext = createContext<ManageContextInterface | undefined>(
 export const useManage = createSafeContextHook(ManageContext, 'ManageContext');
 
 export const ManageProvider = ({ children }: { children: ReactNode }) => {
-  /// Subscription tasks being rendered under the Manage tab.
+  // Subscription tasks being rendered under the Manage tab.
   const [renderedSubscriptionsState, setRenderedSubscriptionsState] =
     useState<WrappedSubscriptionTasks>({ type: '', tasks: [] });
-
   const [dynamicIntervalTasksState, setDynamicIntervalTasksState] = useState<
     IntervalSubscription[]
   >([]);
 
-  /// Active ChainID for OpenGov subscriptions list.
+  // Active ChainID for OpenGov subscriptions list.
   const [activeChainId, setActiveChainId] = useState<ChainID | null>(null);
   const activeChainRef = useRef<ChainID | null>(null);
 
-  /// Set rendered subscriptions.
+  // Set rendered subscriptions.
   const setRenderedSubscriptions = (wrapped: WrappedSubscriptionTasks) => {
     setRenderedSubscriptionsState({ ...wrapped });
   };
 
-  /// Set intervaled subscriptions with new tasks array.
+  // Set intervaled subscriptions with new tasks array.
   const setDynamicIntervalTasks = (
     tasks: IntervalSubscription[],
     chainId: ChainID
@@ -46,7 +45,7 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
     setDynamicIntervalTasksState([...tasks]);
   };
 
-  /// Update a task in the interval subscriptions state.
+  // Update a task in the interval subscriptions state.
   const tryUpdateDynamicIntervalTask = (task: IntervalSubscription) => {
     setDynamicIntervalTasksState((prev) =>
       prev.map((t) =>
@@ -59,18 +58,17 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
-  /// Add an interval task to state if it should be rendered.
+  // Add an interval task to state if it should be rendered.
   const tryAddIntervalSubscription = (task: IntervalSubscription) => {
     if (activeChainRef.current === task.chainId) {
       setDynamicIntervalTasksState((prev) => [...prev, { ...task }]);
     }
   };
 
-  /// Remove an interval task from state if it should be removed.
+  // Remove an interval task from state if it should be removed.
   const tryRemoveIntervalSubscription = (task: IntervalSubscription) => {
     if (activeChainRef.current === task.chainId) {
       const { action, chainId, referendumId } = task;
-
       setDynamicIntervalTasksState((prev) =>
         prev.filter(
           (t) =>
@@ -84,7 +82,7 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  /// Get dynamic interval subscriptions categorized by referendum ID.
+  // Get dynamic interval subscriptions categorized by referendum ID.
   const getCategorisedDynamicIntervals = (): Map<
     number,
     IntervalSubscription[]
@@ -109,7 +107,6 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
       if (!task.referendumId) {
         continue;
       }
-
       const { referendumId: rid } = task;
       map.has(rid)
         ? map.set(
@@ -125,13 +122,25 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
     for (const [rid, tasks] of map.entries()) {
       tasks.length === 0 && map.delete(rid);
     }
-
     return map;
   };
 
+  // Listen for state messages.
   useEffect(() => {
-    SubscriptionsController.setRenderedSubscriptionsState =
-      setRenderedSubscriptionsState;
+    const callback = (message: AnyData) => {
+      if (message.type === 'subscriptions') {
+        switch (message.task) {
+          case 'clearRenderedSubscriptions': {
+            setRenderedSubscriptions({ type: '', tasks: [] });
+            break;
+          }
+        }
+      }
+    };
+    chrome.runtime.onMessage.addListener(callback);
+    return () => {
+      chrome.runtime.onMessage.removeListener(callback);
+    };
   }, []);
 
   return (

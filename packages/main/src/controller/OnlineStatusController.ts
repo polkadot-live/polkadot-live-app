@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { AppOrchestrator } from '@/orchestrators/AppOrchestrator';
 import http2 from 'http2';
+import { WindowsController } from './WindowsController';
 import type { IpcTask } from '@polkadot-live/types/communication';
 
 export class OnlineStatusController {
@@ -46,10 +46,7 @@ export class OnlineStatusController {
     if (status !== this.onlineStatus) {
       this.onlineStatus = status;
       console.log(`Online status changed to ${status}`);
-
-      await AppOrchestrator.next({
-        task: `app:initialize:${status ? 'online' : 'offline'}`,
-      });
+      status ? await this.initializeOnline() : await this.initializeOffline();
 
       // Re-initialize class if app goes offline to prevent stalling
       // upon calling `isConnected`.
@@ -111,10 +108,7 @@ export class OnlineStatusController {
   static handleSuspend = async () => {
     //this.stopPollLoop();
     this.onlineStatus = false;
-
-    await AppOrchestrator.next({
-      task: 'app:initialize:offline',
-    });
+    await this.initializeOffline();
   };
 
   /**
@@ -125,14 +119,30 @@ export class OnlineStatusController {
   static handleResume = async () => {
     const status = await this.isConnected();
     this.onlineStatus = status;
-
-    // Initialize app in the correct mode.
-    await AppOrchestrator.next({
-      task: `app:initialize:${status ? 'online' : 'offline'}`,
-    });
+    status ? await this.initializeOnline() : await this.initializeOffline();
 
     // Start a new polling interval.
     //this.stopPollLoop();
     await this.initialize();
   };
+
+  /**
+   * @name initializeOffline
+   * @summary Sets the app's state correctly for offline mode.
+   */
+  private static async initializeOffline() {
+    WindowsController.getWindow('menu')?.webContents?.send(
+      'renderer:app:initialize:offline'
+    );
+  }
+
+  /**
+   * @name initializeOnline
+   * @summary Sets the app's state correctly for online mode.
+   */
+  private static async initializeOnline() {
+    WindowsController.getWindow('menu')?.webContents?.send(
+      'renderer:app:initialize:online'
+    );
+  }
 }

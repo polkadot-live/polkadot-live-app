@@ -113,7 +113,7 @@ const postOneShotCallback = async (
   flags: PostCallbackFlags
 ) => {
   await processOneShotPostCallback(api, account, flags);
-  const flattened = account!.flatten();
+  const flattened = account.flatten();
   account.queryMulti?.updateEntryAccountData(account.chain, flattened);
 };
 

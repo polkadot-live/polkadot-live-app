@@ -116,6 +116,13 @@ export const ConnectionsProvider = ({
     }
   };
 
+  /**
+   * Send an analytics event.
+   */
+  const umamiEvent = (event: string, data: AnyData) => {
+    window.myAPI.umamiEvent(event, data);
+  };
+
   useEffect(() => {
     /**
      * Synchronize flags in store.
@@ -160,6 +167,7 @@ export const ConnectionsProvider = ({
         openInBrowser,
         openTab,
         relayState,
+        umamiEvent,
       }}
     >
       {children}

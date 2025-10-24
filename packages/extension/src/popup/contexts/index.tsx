@@ -8,8 +8,10 @@ export { useBootstrapping, BootstrappingProvider } from './Bootstrapping';
 export { useChains, ChainsProvider } from './Chains';
 export { useCogMenu, CogMenuProvider } from './CogMenu';
 export { useEvents, EventsProvider } from './Events';
+export { useManage, ManageProvider } from './Manage';
 export {
   useIntervalSubscriptions,
   IntervalSubscriptionsProvider,
 } from './IntervalSubscriptions';
+export { useSubscriptions, SubscriptionsProvider } from './Subscriptions';
 export { useSummary, SummaryProvider } from './Summary';

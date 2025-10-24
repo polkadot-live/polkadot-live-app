@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 export * from './AccountsController';
+export * from './BusDispatcher';
 export * from './EventsController';
 export * from './ExtrinsicsController';
 export * from './IntervalsController';

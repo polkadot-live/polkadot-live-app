@@ -35,9 +35,13 @@ export class APIsController {
     if (this.backend === 'electron') {
       this.setFailedConnections(new Map(this.failedCache));
     } else {
-      const ser = JSON.stringify(Array.from(this.failedCache.entries()));
-      const data = { type: 'api', task: 'state:failedConnections', ser };
-      chrome.runtime.sendMessage(data);
+      chrome.runtime.sendMessage({
+        type: 'api',
+        task: 'state:failedConnections',
+        payload: {
+          ser: JSON.stringify(Array.from(this.failedCache.entries())),
+        },
+      });
     }
   };
 
@@ -62,10 +66,6 @@ export class APIsController {
     // Set react state.
     if (this.backend === 'electron') {
       this.cachedSetChains(map);
-    } else if (this.backend === 'browser') {
-      const ser = JSON.stringify(Array.from(map.entries()));
-      const data = { type: 'api', task: 'state:chains', ser };
-      chrome.runtime.sendMessage(data);
     }
   };
 
@@ -78,7 +78,7 @@ export class APIsController {
       // Manually disconnect if system is online (disconnection initiated by user).
       let isOnline: boolean;
       if (this.backend === 'electron') {
-        isOnline = await CommonLib.getOnlineStatus();
+        isOnline = await CommonLib.getOnlineStatus(this.backend);
       } else {
         isOnline = navigator.onLine;
       }
@@ -333,8 +333,8 @@ export class APIsController {
       this.setUiTrigger(true);
     } else if (this.backend === 'browser') {
       const ser = JSON.stringify(client.flatten());
-      const data = { type: 'api', task: 'state:chain', ser };
-      chrome.runtime.sendMessage(data);
+      const msg = { type: 'api', task: 'state:chain', payload: { ser } };
+      chrome.runtime.sendMessage(msg);
     }
   };
 
@@ -345,7 +345,7 @@ export class APIsController {
     const map = new Map<ChainID, FlattenedAPIData>();
     this.clients.map((client) => map.set(client.chainId, client.flatten()));
     const ser = JSON.stringify(Array.from(map.entries()));
-    const data = { type: 'api', task: 'state:onPopupReload', ser };
-    chrome.runtime.sendMessage(data);
+    const msg = { type: 'api', task: 'state:onPopupReload', payload: { ser } };
+    chrome.runtime.sendMessage(msg);
   };
 }

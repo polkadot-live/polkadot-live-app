@@ -1,9 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as UI from '..';
+import * as UI from '@polkadot-live/ui/components';
 import * as Accordion from '@radix-ui/react-accordion';
 import * as FA from '@fortawesome/free-solid-svg-icons';
+import { useContextProxy } from '@polkadot-live/contexts';
 import {
   FlexColumn,
   FlexRow,
@@ -19,24 +20,21 @@ import { PuffLoader } from 'react-spinners';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import type { EcosystemID } from '@polkadot-live/types/chains';
 import type { FlattenedAPIData } from '@polkadot-live/types/apis';
-import type { FooterProps } from './types';
 
-export const Footer = ({
-  apiHealthCtx,
-  bootstrappingCtx,
-  chainsCtx,
-  connectionsCtx,
-  intervalSubscriptionsCtx,
-  subscriptionsCtx,
-}: FooterProps) => {
+export const Footer = () => {
+  const { useCtx } = useContextProxy();
+  const { appLoading, isConnecting, isAborting } = useCtx('BootstrappingCtx')();
+  const { onDisconnectClick, setWorkingEndpoint } = useCtx('ChainsCtx')();
+  const { getOnlineMode, getTheme, cacheGet } = useCtx('ConnectionsCtx')();
+  const { chainHasSubscriptions } = useCtx('SubscriptionsCtx')();
+
   const { hasConnectionIssue, failedConnections, onEndpointChange } =
-    apiHealthCtx;
-  const { appLoading, isConnecting, isAborting } = bootstrappingCtx;
-  const { chains, isWorking } = chainsCtx;
-  const { onConnectClick, onDisconnectClick, setWorkingEndpoint } = chainsCtx;
-  const { getOnlineMode, getTheme, cacheGet } = connectionsCtx;
-  const { chainHasIntervalSubscriptions } = intervalSubscriptionsCtx;
-  const { chainHasSubscriptions } = subscriptionsCtx;
+    useCtx('ApiHealthCtx')();
+  const { chains, isWorking, onConnectClick, showWorkingSpinner } =
+    useCtx('ChainsCtx')();
+  const { chainHasIntervalSubscriptions } = useCtx(
+    'IntervalSubscriptionsCtx'
+  )();
 
   const numFailed = failedConnections.size;
   const isConnected = getOnlineMode();
@@ -133,7 +131,7 @@ export const Footer = ({
             <FlexRow $gap={'0.7rem'} className="TopHeading">
               <FontAwesomeIcon icon={FA.faGlobe} transform={'shrink-1'} />
               <h3>Networks</h3>
-              {chainsCtx.showWorkingSpinner() && (
+              {showWorkingSpinner() && (
                 <div className="Spinner">
                   <PuffLoader size={16} color={'var(--text-color-primary)'} />
                 </div>

@@ -409,10 +409,8 @@ export class QueryMultiWrapper {
     if (!this.actionExists(chainId, action)) {
       console.log("🟠 API call doesn't exist.");
     } else {
-      // Remove action from query multi map.
+      // Remove action from query multi map and unsub.
       const entry = this.subscriptions.get(chainId)!;
-
-      // Unsubscribe from current query multi.
       entry.unsub();
 
       // Remove task from entry.
@@ -423,7 +421,6 @@ export class QueryMultiWrapper {
 
       // Update chain's query multi entry.
       this.subscriptions.set(chainId, updated);
-
       if (updated.callEntries.length === 0) {
         this.subscriptions.delete(chainId);
       }

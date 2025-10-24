@@ -71,7 +71,7 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
       if (message.type !== 'tabs' && message.type !== 'openTab') {
         return;
       }
-      const { tabData }: { tabData: TabData } = message;
+      const { tabData }: { tabData: TabData } = message.payload;
       addTab(tabData);
     };
 

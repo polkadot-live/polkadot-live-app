@@ -116,11 +116,10 @@ export const useMainMessagePorts = () => {
           }
 
           await AccountsController.removeAllSubscriptions(account);
-          const allTasks =
-            SubscriptionsController.getAllSubscriptionsForAccount(
-              account,
-              'disable'
-            );
+          const allTasks = SubscriptionsController.buildSubscriptions(
+            account,
+            'disable'
+          );
 
           for (const task of allTasks) {
             SubscriptionsController.updateTaskState(task);
@@ -153,7 +152,7 @@ export const useMainMessagePorts = () => {
       if (account.queryMulti !== null && !fromBackup) {
         const key = 'setting:automatic-subscriptions';
         const status = ConfigRenderer.getAppSeting(key) ? 'enable' : 'disable';
-        const tasks = SubscriptionsController.getAllSubscriptionsForAccount(
+        const tasks = SubscriptionsController.buildSubscriptions(
           account,
           status
         );
@@ -180,9 +179,9 @@ export const useMainMessagePorts = () => {
         SubscriptionsController.syncAccountSubscriptionsState();
       }
 
-      // Add account to address context state.
+      // Show notification.
       if (!fromBackup) {
-        await importAddress(chainId, source, address, alias, fromBackup);
+        await importAddress(alias, fromBackup);
       }
 
       // Send message back to import window to reset account's processing flag.
@@ -225,19 +224,14 @@ export const useMainMessagePorts = () => {
   const handleRemoveAddress = async (ev: MessageEvent) => {
     try {
       const { address, chainId } = ev.data.data;
-
-      // Retrieve the account.
       const account = AccountsController.get(chainId, address);
-
       if (!account) {
         console.log('Account could not be fetched, probably not imported yet');
         return;
       }
 
-      // Unsubscribe from all active tasks.
+      // Unsubscribe from tasks and remove account from controller.
       await AccountsController.removeAllSubscriptions(account);
-
-      // Remove account from controller and store.
       AccountsController.remove(chainId, address);
 
       // Remove address from context.

@@ -26,11 +26,9 @@ export const Summary = () => {
   )();
   const { getEventsCount, getReadableEventCategory, getAllEventCategoryKeys } =
     useCtx('EventsCtx')();
-  const {
-    getAllAccounts,
-    getSubscriptionCountForAccount,
-    getTotalSubscriptionCount,
-  } = useCtx('AddressesCtx')();
+  const { getAllAccounts } = useCtx('AddressesCtx')();
+  const { getSubscriptionCountForAccount, getTotalSubscriptionCount } =
+    useCtx('SubscriptionsCtx')();
 
   /**
    * Utils.

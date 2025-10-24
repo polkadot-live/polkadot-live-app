@@ -109,7 +109,7 @@ export const ConnectionsProvider = ({
     };
     const label = labels[tab];
     const tabData: TabData = { id: -1, viewId: tab, label };
-    const data = { type: 'tabs', task: 'openTabRelay', tabData };
+    const data = { type: 'tabs', task: 'openTabRelay', payload: { tabData } };
     chrome.runtime.sendMessage(data).then(() => window.close());
   };
 
