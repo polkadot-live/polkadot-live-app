@@ -7,7 +7,6 @@ export * from './Cards';
 export * from './ChainIcon';
 export * from './CheckboxRx';
 export * from './CopyButton';
-export * from './Common';
 export * from './DragClose';
 export * from './Footers';
 export * from './Hardware';

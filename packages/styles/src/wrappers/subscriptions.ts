@@ -2,16 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { motion } from 'framer-motion';
-import { css, styled } from 'styled-components';
-
-export const mixinHelpIcon = css`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.6rem;
-  height: 1.5rem;
-  cursor: pointer;
-`;
+import { styled } from 'styled-components';
+import { mixinHelpIcon } from './mixins';
 
 export const ItemEntryWrapper = styled(motion.div)`
   width: 100%;

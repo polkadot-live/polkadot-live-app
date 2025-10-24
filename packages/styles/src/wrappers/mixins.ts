@@ -3,7 +3,6 @@
 
 import { css } from 'styled-components';
 
-// TODO: Move to styles package.
 export const mixinHelpIcon = css`
   display: flex;
   align-items: center;

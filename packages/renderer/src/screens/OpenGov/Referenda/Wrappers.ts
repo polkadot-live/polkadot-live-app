@@ -3,7 +3,7 @@
 
 import * as Tabs from '@radix-ui/react-tabs';
 import styled from 'styled-components';
-import { mixinHelpIcon } from '@polkadot-live/ui/components';
+import { mixinHelpIcon } from '@polkadot-live/styles/wrappers';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { RefStatus } from '@polkadot-live/types/openGov';
 

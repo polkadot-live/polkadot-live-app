@@ -9,5 +9,6 @@ export * from './dropdown';
 export * from './flex';
 export * from './grid';
 export * from './layout';
+export * from './mixins';
 export * from './scroll';
 export * from './subscriptions';
