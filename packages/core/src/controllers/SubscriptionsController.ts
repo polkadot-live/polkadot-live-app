@@ -56,8 +56,6 @@ export class SubscriptionsController {
     if (this.backend === 'electron') {
       this.syncChainSubscriptionsState();
       this.syncAccountSubscriptionsState();
-    } else {
-      // TODO: Sync React state for extension.
     }
   };
 
@@ -93,8 +91,6 @@ export class SubscriptionsController {
         return prev.set(key, val);
       });
       this.updateRendererdTask(task);
-    } else if (this.backend === 'browser') {
-      // TODO: Update React account task state.
     }
   };
 
@@ -107,8 +103,6 @@ export class SubscriptionsController {
         return prev.set(key, val);
       });
       this.updateRendererdTask(task);
-    } else if (this.backend === 'browser') {
-      // TODO: Update React chain tasks state.
     }
   };
 
@@ -132,10 +126,7 @@ export class SubscriptionsController {
           action: 'subscriptions:chain:getAll',
           data: null,
         })) || '';
-    } else {
-      // TODO: Get chain tasks from database.
     }
-
     // Subscribe to tasks.
     await TaskOrchestrator.buildTasks(
       serialized !== '' ? JSON.parse(serialized) : [],
@@ -160,7 +151,6 @@ export class SubscriptionsController {
     const tasks = this.chainSubscriptions
       .getSubscriptionTasks()
       .filter((task) => task.chainId === chainId);
-
     await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions);
   }
 
@@ -188,7 +178,6 @@ export class SubscriptionsController {
    */
   static getChainSubscriptions() {
     const activeTasks = this.chainSubscriptions.getSubscriptionTasks();
-
     // TODO: Populate inactive tasks with their correct arguments.
     // No chain API calls so far require arguments.
 
@@ -209,15 +198,12 @@ export class SubscriptionsController {
 
     for (const task of allTasks) {
       let updated = [task];
-
       const current = map.get(task.chainId);
       if (current) {
         updated = [...current, task];
       }
-
       map.set(task.chainId, updated);
     }
-
     return map;
   }
 
@@ -242,7 +228,6 @@ export class SubscriptionsController {
                 (next) => next.action === t.action && next.chainId === t.chainId
               ) || t
           );
-
         result.set(`${a.chain}:${a.address}`, tasks);
       }
     }

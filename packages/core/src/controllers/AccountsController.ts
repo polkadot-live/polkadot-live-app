@@ -30,30 +30,22 @@ export class AccountsController {
   static backend: 'browser' | 'electron';
   static accounts: ImportedAccounts = new Map();
 
-  /**
-   * React state.
-   */
+  // React state.
   static cachedSetAddresses: React.Dispatch<
     React.SetStateAction<FlattenedAccounts>
   >;
   static cachedAddressesRef: React.RefObject<FlattenedAccounts>;
 
-  /**
-   * Sync react state with managed account data in controller.
-   */
+  // Sync react state with managed account data in controller.
   static syncState = () => {
     const data = this.getAllFlattenedAccountData();
     if (this.backend === 'electron') {
       this.cachedSetAddresses(data);
       this.cachedAddressesRef.current = data;
-    } else if (this.backend === 'browser') {
-      // TODO: Sync state in frontend.
     }
   };
 
-  /**
-   * Injects accounts into class from store.
-   */
+  // Injects accounts into class from store.
   static async initialize(
     backend: 'browser' | 'electron',
     fetched?: Map<ChainID, StoredAccount[]>
@@ -98,7 +90,6 @@ export class AccountsController {
       this.accounts = new Map();
       return;
     }
-
     const parsed = new Map<ChainID, StoredAccount[]>(JSON.parse(serialized));
     for (const [chain, stored] of parsed) {
       this.accounts.set(
@@ -111,17 +102,12 @@ export class AccountsController {
     }
   }
 
-  /**
-   * Get chain IDs of managed accounts.
-   */
+  // Get chain IDs of managed accounts.
   static getManagedChains = (): ChainID[] => Array.from(this.accounts.keys());
 
-  /**
-   * Sync live data for all managed accounts.
-   */
+  // Sync live data for all managed accounts.
   static syncAllAccounts = async (api: DedotClientSet, chainId: ChainID) => {
     let promises = [this.syncAllBalances(api, chainId)];
-
     if (getStakingChains().includes(chainId)) {
       promises = [
         ...promises,
@@ -129,16 +115,12 @@ export class AccountsController {
         this.syncAllNominationPoolData(api as DedotStakingClient, chainId),
       ];
     }
-
     await Promise.all(promises);
   };
 
-  /**
-   * Sync live data for a single managed account.
-   */
+  // Sync live data for a single managed account.
   static syncAccount = async (account: Account, api: DedotClientSet) => {
     let promises = [this.syncBalance(account, api)];
-
     if (getStakingChains().includes(account.chain)) {
       promises = [
         ...promises,
@@ -146,13 +128,10 @@ export class AccountsController {
         this.syncNominatingData(account, api as DedotStakingClient),
       ];
     }
-
     await Promise.all(promises);
   };
 
-  /**
-   * Fetch and build persisted tasks from the store.
-   */
+  // Fetch and build persisted tasks from the store.
   static async initAccountSubscriptions(
     backend: 'electron' | 'browser',
     active?: Map<string, SubscriptionTask[]>
@@ -162,7 +141,6 @@ export class AccountsController {
         if (!this.accounts) {
           return;
         }
-
         for (const accounts of this.accounts.values()) {
           for (const account of accounts) {
             const stored =
@@ -198,14 +176,11 @@ export class AccountsController {
     }
   }
 
-  /**
-   * Handle account subscription tasks.
-   */
+  // Handle account subscription tasks.
   static subscribeTask = async (task: SubscriptionTask) => {
     if (!task.account?.address) {
       return;
     }
-
     const { address, chain } = task.account;
     const account = this.get(chain, address);
 
@@ -216,31 +191,24 @@ export class AccountsController {
     }
   };
 
-  /**
-   * Same as `subscribeAccounts` but for a specific chain.
-   */
+  // Same as `subscribeAccounts` but for a specific chain.
   static async subscribeAccountsForChain(chainId: ChainID) {
-    // Get accounts for provided chain ID.
     const chainAccounts = this.accounts.get(chainId);
     if (!chainAccounts) {
       return;
     }
-
-    // Resubscribe to the each account's persisted tasks.
+    // Resubscribe to the each account's tasks.
     for (const account of chainAccounts) {
       const tasks = (account.getSubscriptionTasks() || []).filter(
         (t) => t.chainId === chainId
       );
-
       if (tasks.length && account.queryMulti) {
         await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
       }
     }
   }
 
-  /**
-   * Unsubscribe from all active tasks. Called when an imported account is removed.
-   */
+  // Unsubscribe from all active tasks. Called when an imported account is removed.
   static async removeAllSubscriptions(account: Account) {
     // Get all active tasks and set their status to `disable`.
     const tasks = account.getSubscriptionTasks()?.map(
@@ -266,22 +234,16 @@ export class AccountsController {
               serTask: JSON.stringify(task),
             },
           });
-        } else if (this.backend === 'browser') {
-          // TODO: Update task in database.
         }
       }
     }
   }
 
-  /**
-   * Gets an account from the `accounts` property.
-   */
+  // Gets an account from the `accounts` property.
   static get = (chain: ChainID, address?: string): Account | undefined =>
     this.accounts.get(chain)?.find((a) => a.address === address);
 
-  /**
-   * Gets all essential account data (flattened) for ease of use.
-   */
+  // Gets all essential account data (flattened) for ease of use.
   static getAllFlattenedAccountData = (): FlattenedAccounts => {
     const map: FlattenedAccounts = new Map();
     for (const [chain, accounts] of this.accounts) {
@@ -293,9 +255,7 @@ export class AccountsController {
     return map;
   };
 
-  /**
-   * Updates an Account in the `accounts` property and store.
-   */
+  // Updates an Account in the `accounts` property and store.
   static set = async (account: Account) => {
     const chainId = account.chain;
 
@@ -305,20 +265,15 @@ export class AccountsController {
         .get(chainId)
         ?.map((a) => (a.address === account.address ? account : a)) || []
     );
-
     if (this.backend === 'electron') {
       await window.myAPI.sendAccountTask({
         action: 'account:updateAll',
         data: { accounts: this.serializeAccounts() },
       });
-    } else if (this.backend === 'browser') {
-      // TODO: Update accounts in database.
     }
   };
 
-  /**
-   * Adds a managed account. Fails if the account already exists.
-   */
+  // Adds a managed account. Fails if the account already exists.
   static add = (
     enAccount: EncodedAccount,
     source: AccountSource
@@ -337,23 +292,18 @@ export class AccountsController {
     return account;
   };
 
-  /**
-   * Removes a managed account and updates store.
-   */
+  // Removes a managed account and updates store.
   static remove = (chainId: ChainID, address: string) => {
     if (this.accountExists(chainId, address)) {
       const filtered = this.accounts
         .get(chainId)!
         .filter((a) => a.address !== address);
-
       this.accounts.set(chainId, filtered);
       this.updateStore();
     }
   };
 
-  /**
-   * Utility to update accounts in store.
-   */
+  // Utility to update accounts in store.
   private static updateStore = () => {
     if (this.backend === 'electron') {
       window.myAPI
@@ -364,36 +314,27 @@ export class AccountsController {
         .then(() => {
           console.log('🆕 Accounts updated');
         });
-    } else if (this.backend === 'browser') {
-      // TODO: Update accounts in database.
     }
   };
 
-  /**
-   * Utility to check whether an account exists.
-   */
+  // Utility to check whether an account exists.
   private static accountExists = (chain: ChainID, address: string): boolean => {
     for (const accounts of this.accounts.values()) {
       if (accounts.find((a) => a.address === address && a.chain === chain)) {
         return true;
       }
     }
-
     return false;
   };
 
-  /**
-   * Serialize imported accounts for Electron store.
-   * Note: Account implements toJSON method for serializing account data correctly.
-   */
+  // Serialize imported accounts for Electron store.
+  // Note: Account implements toJSON method for serializing account data correctly.
   private static serializeAccounts = () => {
     const serialized = JSON.stringify(Array.from(this.accounts.entries()));
     return serialized;
   };
 
-  /**
-   * Set up-to-date balances for all managed accounts.
-   */
+  // Sync live balances for all managed accounts.
   private static syncAllBalances = async (
     api: DedotClientSet,
     chainId: ChainID
@@ -405,9 +346,7 @@ export class AccountsController {
     }
   };
 
-  /**
-   * Set up-to-date balance for a single managed account.
-   */
+  // Sync live balances for a single managed account.
   private static syncBalance = async (
     account: Account,
     api: DedotClientSet
@@ -424,9 +363,7 @@ export class AccountsController {
     await this.set(account);
   };
 
-  /**
-   * Set up-to-date nominating data for all managed accounts.
-   */
+  // Sync live nominating data for all managed accounts.
   private static syncAllNominatingData = async (
     api: DedotStakingClient,
     chainId: ChainID
@@ -438,29 +375,23 @@ export class AccountsController {
     }
   };
 
-  /**
-   * Set up-to-date nominating data for a single managed accounts.
-   */
+  // Sync live nominating data for a single managed accounts.
   private static syncNominatingData = async (
     account: Account,
     api: DedotStakingClient
   ) => {
     try {
       const maybeNominatingData = await getAccountNominatingData(api, account);
-
       account.nominatingData = maybeNominatingData
         ? { ...maybeNominatingData }
         : null;
-
       await this.set(account);
     } catch (err) {
       console.error(err);
     }
   };
 
-  /**
-   * Set up-to-date nomination pool data for all managed accounts.
-   */
+  // Sync live nomination pool data for all managed accounts.
   private static syncAllNominationPoolData = async (
     api: DedotStakingClient,
     chainId: ChainID
@@ -474,9 +405,7 @@ export class AccountsController {
     }
   };
 
-  /**
-   * Set up-to-date nomination pool data for a single managed accounts.
-   */
+  // Sync live nomination pool data for a single managed accounts.
   private static syncNominationPoolData = async (
     account: Account,
     api: DedotStakingClient

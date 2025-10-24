@@ -926,7 +926,7 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
           return false;
         }
         case 'openTabRelay': {
-          const tabData: TabData = message.tabData;
+          const { tabData }: { tabData: TabData } = message.payload;
           const route = tabData.viewId;
           const url = chrome.runtime.getURL(`src/tab/index.html#${route}`);
 
