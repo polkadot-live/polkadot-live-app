@@ -112,8 +112,8 @@ export const AddressesProvider = ({
       if (message.type === 'managedAccounts') {
         switch (message.task) {
           case 'setAccountsState': {
-            const { payload: p }: { payload: string } = message;
-            const array: [ChainID, FlattenedAccountData[]][] = JSON.parse(p);
+            const { ser }: { ser: string } = message.payload;
+            const array: [ChainID, FlattenedAccountData[]][] = JSON.parse(ser);
             const map = new Map<ChainID, FlattenedAccountData[]>(array);
             setStateWithRef(map, setAddresses, addressesRef);
             break;

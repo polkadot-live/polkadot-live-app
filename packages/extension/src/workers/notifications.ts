@@ -12,7 +12,7 @@ export const dispatchNotification = async (
     type: 'basic',
     iconUrl: 'public/icon-128.png',
     title,
-    message: subtitle ? `${subtitle} - ${body}` : body,
+    message: subtitle ? `${subtitle}: ${body}` : body,
   });
 };
 

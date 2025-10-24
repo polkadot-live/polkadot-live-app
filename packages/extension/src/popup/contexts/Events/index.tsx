@@ -33,7 +33,6 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
   /// Set events (on event import).
   const setEvents = (newEvents: EventCallback[]) => {
     const map: EventsState = new Map();
-
     for (const event of newEvents) {
       const chainId = getEventChainId(event);
       map.has(chainId)
@@ -267,7 +266,8 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
       if (message.type == 'events') {
         switch (message.task) {
           case 'setEventsState': {
-            setEvents(message.payload);
+            const { result }: { result: EventCallback[] } = message.payload;
+            setEvents(result);
             break;
           }
           case 'updateAccountNames': {

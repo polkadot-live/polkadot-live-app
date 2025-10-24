@@ -4,6 +4,7 @@
 import { DbController } from '../controllers';
 import { dispatchNotification } from './notifications';
 import { eventBus } from './eventBus';
+import { sendChromeMessage } from './utils';
 import {
   APIsController,
   AccountsController,
@@ -67,15 +68,13 @@ const initOnlineMode = async () => {
   SHARED_STATE.set('mode:connected', value);
   SHARED_STATE.set('mode:online', value);
 
-  await chrome.runtime.sendMessage({
-    type: 'sharedState',
-    task: 'set',
-    payload: { key: 'mode:connected' as SyncID, value },
+  await sendChromeMessage('sharedState', 'set', {
+    key: 'mode:connected' as SyncID,
+    value,
   });
-  await chrome.runtime.sendMessage({
-    type: 'sharedState',
-    task: 'set',
-    payload: { key: 'mode:online' as SyncID, value },
+  await sendChromeMessage('sharedState', 'set', {
+    key: 'mode:online' as SyncID,
+    value,
   });
 };
 
@@ -84,8 +83,7 @@ const initTheme = async () => {
   const stored = await DbController.get('settings', 'setting:dark-mode');
   const value = Boolean(stored);
   SHARED_STATE.set(key, value);
-  const msg = { type: 'sharedState', task: 'set', payload: { key, value } };
-  chrome.runtime.sendMessage(msg);
+  sendChromeMessage('sharedState', 'set', { key, value });
 };
 
 const initManagedAccounts = async () => {
@@ -103,9 +101,7 @@ const initAPIs = async () => {
   }
   const map = new Map<ChainID, FlattenedAPIData>();
   APIsController.clients.map((c) => map.set(c.chainId, c.flatten()));
-  chrome.runtime.sendMessage({
-    type: 'api',
-    task: 'state:chains',
+  sendChromeMessage('api', 'state:chains', {
     ser: JSON.stringify(Array.from(map.entries())),
   });
 };
@@ -206,29 +202,20 @@ eventBus.addEventListener('initSystems:complete', async () => {
   // Set subscriptions state.
   const map = await getAllAccountSubscriptions();
   const active = await getActiveChains(map);
-  chrome.runtime.sendMessage({
-    type: 'subscriptions',
-    task: 'setAccountSubscriptions',
-    payload: {
-      subscriptions: JSON.stringify(Array.from(map.entries())),
-      activeChains: JSON.stringify(Array.from(active.entries())),
-    },
-  });
 
+  sendChromeMessage('subscriptions', 'setAccountSubscriptions', {
+    subscriptions: JSON.stringify(Array.from(map.entries())),
+    activeChains: JSON.stringify(Array.from(active.entries())),
+  });
   // Set managed accounts state.
-  chrome.runtime.sendMessage({
-    type: 'managedAccounts',
-    task: 'setAccountsState',
-    payload: JSON.stringify(
+  sendChromeMessage('managedAccounts', 'setAccountsState', {
+    ser: JSON.stringify(
       Array.from(AccountsController.getAllFlattenedAccountData().entries())
     ),
   });
-
-  // Get events from database and set state.
-  chrome.runtime.sendMessage({
-    type: 'events',
-    task: 'setEventsState',
-    payload: await getAllEvents(),
+  // Set events state.
+  sendChromeMessage('events', 'setEventsState', {
+    result: await getAllEvents(),
   });
 });
 
@@ -294,23 +281,15 @@ eventBus.addEventListener('processEvent', async (e) => {
     await dispatchNotification(event.uid, title, body, subtitle);
   }
 
-  // Send events to popup to update state.
-  try {
-    chrome.runtime.sendMessage({
-      type: 'events',
-      task: 'setEventsState',
-      payload: await getAllEvents(),
-    });
-  } catch (error) {
-    console.error(error); // Thrown if popup not open.
-  }
+  // Set events state.
+  sendChromeMessage('events', 'setEventsState', {
+    result: await getAllEvents(),
+  });
 });
 
 eventBus.addEventListener('setManagedAccountsState', async () => {
-  chrome.runtime.sendMessage({
-    type: 'managedAccounts',
-    task: 'setAccountsState',
-    payload: JSON.stringify(
+  sendChromeMessage('managedAccounts', 'setAccountsState', {
+    ser: JSON.stringify(
       Array.from(AccountsController.getAllFlattenedAccountData().entries())
     ),
   });
@@ -481,11 +460,7 @@ const handleImportAddress = async (
   fromBackup: boolean
 ) => {
   const relayFlag = (key: string, value: boolean) =>
-    chrome.runtime.sendMessage({
-      type: 'sharedState',
-      task: 'relay',
-      payload: { key, value },
-    });
+    sendChromeMessage('sharedState', 'relay', { key, value });
 
   const getOnlineMode = () =>
     Boolean(SHARED_STATE.get('mode:connected')) &&
@@ -546,19 +521,13 @@ const handleImportAddress = async (
 
     // Send message back to import window to reset account's processing flag.
     relayFlag('account:importing', false);
-    chrome.runtime.sendMessage({
-      type: 'rawAccount',
-      task: 'setProcessing',
-      payload: { encoded, generic, status: false, success: true },
-    });
+    const payload = { encoded, generic, status: false, success: true };
+    sendChromeMessage('rawAccount', 'setProcessing', payload);
   } catch (err) {
     console.error(err);
     relayFlag('account:importing', false);
-    chrome.runtime.sendMessage({
-      type: 'rawAccount',
-      task: 'setProcessing',
-      payload: { encoded, generic, status: false, success: false },
-    });
+    const payload = { encoded, generic, status: false, success: false };
+    sendChromeMessage('rawAccount', 'setProcessing', payload);
   }
 };
 
@@ -582,10 +551,7 @@ const handleRemoveAddress = async (address: string, chainId: ChainID) => {
     await setAccountSubscriptionsState();
 
     // Transition away from rendering toggles.
-    chrome.runtime.sendMessage({
-      type: 'subscriptions',
-      task: 'clearRenderedSubscriptions',
-    });
+    sendChromeMessage('subscriptions', 'clearRenderedSubscriptions');
 
     // Disconnect from any API instances that are not currently needed.
     await disconnectAPIs();
@@ -612,21 +578,15 @@ const handleRenameAccount = async (enAccount: EncodedAccount) => {
     eventBus.dispatchEvent(new CustomEvent('setManagedAccountsState'));
 
     // Update subscription task react state.
-    chrome.runtime.sendMessage({
-      type: 'subscriptions',
-      task: 'updateAccountName',
-      payload: { key: `${chainId}:${address}`, newName },
+    sendChromeMessage('subscriptions', 'updateAccountName', {
+      key: `${chainId}:${address}`,
+      newName,
     });
   }
-
   // Update events in database and react state.
-  chrome.runtime.sendMessage({
-    type: 'events',
-    task: 'updateAccountNames',
-    payload: {
-      chainId,
-      updated: await updateEventWhoInfo(address, chainId, newName),
-    },
+  sendChromeMessage('events', 'updateAccountNames', {
+    chainId,
+    updated: await updateEventWhoInfo(address, chainId, newName),
   });
 
   // TODO: Update account name in extrinsics window.
@@ -681,10 +641,8 @@ const setChainSubscriptionsState = async () => {
       : map.set(chainId, [task]);
   }
 
-  chrome.runtime.sendMessage({
-    type: 'subscriptions',
-    task: 'setChainSubscriptions',
-    payload: JSON.stringify(Array.from(map.entries())),
+  sendChromeMessage('subscriptions', 'setChainSubscriptions', {
+    ser: JSON.stringify(Array.from(map.entries())),
   });
 };
 
@@ -744,13 +702,9 @@ const getActiveChains = async (map: Map<string, SubscriptionTask[]>) => {
 const setAccountSubscriptionsState = async () => {
   const map = await getAllAccountSubscriptions();
   const active = await getActiveChains(map);
-  chrome.runtime.sendMessage({
-    type: 'subscriptions',
-    task: 'setAccountSubscriptions',
-    payload: {
-      subscriptions: JSON.stringify(Array.from(map.entries())),
-      activeChains: JSON.stringify(Array.from(active.entries())),
-    },
+  sendChromeMessage('subscriptions', 'setAccountSubscriptions', {
+    subscriptions: JSON.stringify(Array.from(map.entries())),
+    activeChains: JSON.stringify(Array.from(active.entries())),
   });
 };
 
@@ -892,8 +846,7 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
         }
         case 'relay': {
           const { payload } = message;
-          const msg = { type: 'sharedState', task: 'set', payload };
-          chrome.runtime.sendMessage(msg);
+          sendChromeMessage('sharedState', 'set', payload);
           return false;
         }
       }
@@ -987,8 +940,7 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
             );
             if (foundTab) {
               TAB_ID && chrome.tabs.update(TAB_ID, { active: true });
-              const data = { type: 'tabs', task: 'openTab', tabData };
-              chrome.runtime.sendMessage(data);
+              sendChromeMessage('tabs', 'openTab', { tabData });
             } else {
               PENDING_TAB_DATA = tabData;
               chrome.tabs.create({ url }).then((tab) => {
@@ -1120,26 +1072,15 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
     case 'walletConnect:relay': {
       switch (message.task) {
         case 'closeModal': {
-          chrome.runtime.sendMessage({
-            type: 'walletConnect',
-            task: 'closeModal',
-          });
+          sendChromeMessage('walletConnect', 'closeModal');
           return false;
         }
         case 'openModal': {
-          chrome.runtime.sendMessage({
-            type: 'walletConnect',
-            task: 'openModal',
-            payload: message.payload,
-          });
+          sendChromeMessage('walletConnect', 'openModal', message.payload);
           return false;
         }
         case 'setAddresses': {
-          chrome.runtime.sendMessage({
-            type: 'walletConnect',
-            task: 'setAddresses',
-            payload: message.payload,
-          });
+          sendChromeMessage('walletConnect', 'setAddresses', message.payload);
           return false;
         }
       }
