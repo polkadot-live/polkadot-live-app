@@ -4,7 +4,6 @@
 import * as Utils from '../library/OpenGovLib';
 import BigNumber from 'bignumber.js';
 import { rmCommas } from '@w3ux/utils';
-import { ConfigRenderer } from '../config';
 import { formatBlocksToTime } from '../library/TimeLib';
 import {
   APIsController,
@@ -110,24 +109,18 @@ const oneShot_openGov_referendumVotes = async (
     .decimalPlaces(1)
     .toString();
 
-  const event = EventsController.getIntervalEvent(task, {
-    percentAyes,
-    percentNays,
-  });
-
-  const notification = getNotificationFlag(task, policy)
-    ? NotificationsController.getIntervalNotification(task, {
-        percentAyes,
-        percentNays,
-      })
-    : null;
-
   window.myAPI.sendEventTask({
     action: 'events:persist',
     data: {
-      event,
-      notification,
-      isOneShot: policy === 'one-shot',
+      event: EventsController.getIntervalEvent(task, {
+        percentAyes,
+        percentNays,
+      }),
+      notification: NotificationsController.getIntervalNotification(task, {
+        percentAyes,
+        percentNays,
+      }),
+      showNotification: getNotificationFlags(task, policy),
     },
   });
 
@@ -204,21 +197,15 @@ const oneShot_openGov_decisionPeriod = async (
     notificationData.body = `Ends in ${formattedTime}.`;
   }
 
-  const event = EventsController.getIntervalEvent(task, {
-    formattedTime,
-    subtext: notificationData.body,
-  });
-
-  const notification = getNotificationFlag(task, policy)
-    ? notificationData
-    : null;
-
   window.myAPI.sendEventTask({
     action: 'events:persist',
     data: {
-      event,
-      notification,
-      isOneShot: policy === 'one-shot',
+      event: EventsController.getIntervalEvent(task, {
+        formattedTime,
+        subtext: notificationData.body,
+      }),
+      notification: notificationData,
+      showNotification: getNotificationFlags(task, policy),
     },
   });
 
@@ -286,25 +273,18 @@ const oneShot_openGov_thresholds = async (
     .toFixed(2)
     .toString();
 
-  const event = EventsController.getIntervalEvent(task, {
-    formattedApp,
-    formattedSup,
-  });
-
-  // Render native OS notification if enabled.
-  const notification = getNotificationFlag(task, policy)
-    ? NotificationsController.getIntervalNotification(task, {
-        formattedApp,
-        formattedSup,
-      })
-    : null;
-
   window.myAPI.sendEventTask({
     action: 'events:persist',
     data: {
-      event,
-      notification,
-      isOneShot: policy === 'one-shot',
+      event: EventsController.getIntervalEvent(task, {
+        formattedApp,
+        formattedSup,
+      }),
+      notification: NotificationsController.getIntervalNotification(task, {
+        formattedApp,
+        formattedSup,
+      }),
+      showNotification: getNotificationFlags(task, policy),
     },
   });
 
@@ -315,12 +295,10 @@ const oneShot_openGov_thresholds = async (
  * @name getNotificationFlag
  * @summary Returns `true` if a notification should be rendered, `false` otherwise.
  */
-const getNotificationFlag = (
+const getNotificationFlags = (
   task: IntervalSubscription,
   policy: NotificationPolicy
-) =>
-  policy === 'one-shot'
-    ? true
-    : policy !== 'none' &&
-      !ConfigRenderer.getAppSeting('setting:silence-os-notifications') &&
-      task.enableOsNotifications;
+): { isOneShot: boolean; isEnabled: boolean } => ({
+  isOneShot: policy === 'one-shot',
+  isEnabled: task.enableOsNotifications,
+});

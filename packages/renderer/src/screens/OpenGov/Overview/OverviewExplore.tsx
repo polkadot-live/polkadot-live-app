@@ -69,7 +69,10 @@ export const OverviewExplore: React.FC<OverviewExploreProps> = ({
             <h4>Polkadot</h4>
           </NetworkHeader>
           <NetworkHeader style={{ borderTopRightRadius: '0.375rem' }}>
-            <UI.ChainIcon chainId="Kusama Relay" style={{ width: '1.75rem' }} />
+            <UI.ChainIcon
+              chainId="Kusama Asset Hub"
+              style={{ width: '1.75rem' }}
+            />
             <h4>Kusama</h4>
           </NetworkHeader>
         </Styles.FlexRow>
@@ -88,7 +91,7 @@ export const OverviewExplore: React.FC<OverviewExploreProps> = ({
           <UI.NavCardThin
             title={'Referenda'}
             styleLogoCont={{ opacity: '0.8' }}
-            onClick={() => handleOpenReferenda('Kusama Relay')}
+            onClick={() => handleOpenReferenda('Kusama Asset Hub')}
             childrenLogo={
               <FontAwesomeIcon icon={faFilePen} transform={'grow-3'} />
             }
@@ -106,7 +109,7 @@ export const OverviewExplore: React.FC<OverviewExploreProps> = ({
           />
           <UI.NavCardThin
             title={'Tracks'}
-            onClick={() => handleOpenTracks('Kusama Relay')}
+            onClick={() => handleOpenTracks('Kusama Asset Hub')}
             childrenLogo={
               <FontAwesomeIcon icon={faList} transform={'grow-2'} />
             }

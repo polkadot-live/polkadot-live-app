@@ -2,20 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { PalletReferendaReferendumStatus as PolkadotRefStatus } from '@dedot/chaintypes/polkadot';
-import type { PalletReferendaReferendumStatus as KusamaRefStatus } from '@dedot/chaintypes/kusama';
-import type { PalletReferendaReferendumStatus as WestendRefStatus } from '@dedot/chaintypes/westend';
-import type { PalletReferendaReferendumStatus } from '@dedot/chaintypes/westend-asset-hub';
+import type { PalletReferendaReferendumStatus as KusamaRefStatus } from '@dedot/chaintypes/kusama-asset-hub';
 
 export type RefInQueue = RefOngoing; // inQueue: true
 export type RefPreparing = RefOngoing; // deciding: null
 export type RefConfirming = RefOngoing; // deciding.confirming = <string>
 export type RefDeciding = RefOngoing; // deciding.confirming = null;
 
-export type ReferendumStatus =
-  | PolkadotRefStatus
-  | KusamaRefStatus
-  | WestendRefStatus
-  | PalletReferendaReferendumStatus;
+export type ReferendumStatus = PolkadotRefStatus | KusamaRefStatus;
 
 export interface PagedReferenda {
   page: number;

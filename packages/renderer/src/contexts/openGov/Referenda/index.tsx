@@ -71,7 +71,7 @@ export const ReferendaProvider = ({
   const [trackFilter, setTrackFilter] = useState(
     new Map<ChainID, string | null>([
       ['Polkadot Relay', null],
-      ['Kusama Relay', null],
+      ['Kusama Asset Hub', null],
     ])
   );
   const trackFilterRef = useRef(trackFilter);

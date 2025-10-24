@@ -19,16 +19,13 @@ import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
 export const checkValidAddress = (address: string): boolean => {
   for (const { prefix } of ChainList.values()) {
     const result = checkAddress(address, prefix);
-
     if (result !== null) {
       const [isValid] = result;
-
       if (isValid) {
         return true;
       }
     }
   }
-
   return false;
 };
 

@@ -8,7 +8,7 @@ export const getChainIdColor = (chainId: ChainID): string => {
     case 'Polkadot Relay': {
       return '#e63081';
     }
-    case 'Kusama Relay': {
+    case 'Kusama Asset Hub': {
       return 'rgb(133, 113, 177)';
     }
     default: {

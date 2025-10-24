@@ -323,12 +323,12 @@ const SubscanSubdomainMap = new Map<ChainID, string>([
 
 const SubsquareSubdomainMap = new Map<ChainID, string>([
   ['Polkadot Relay', 'polkadot'],
-  ['Kusama Relay', 'kusama'],
+  ['Kusama Asset Hub', 'kusama'],
 ]);
 
 const PolkassemblySubdomainMap = new Map<ChainID, string>([
   ['Polkadot Relay', 'polkadot'],
-  ['Kusama Relay', 'kusama'],
+  ['Kusama Asset Hub', 'kusama'],
 ]);
 
 export const getPolkassemblySubdomain = (chainId: ChainID): string =>
@@ -368,15 +368,17 @@ export const getSelectLedgerNetworkData = (): LedgerSelectNetworkData[] => [
  * Get an array of supported chains.
  */
 export const getSupportedChains = (): Record<ChainID, Chain> => {
-  const unsupported: ChainID[] = ['Paseo Relay', 'Westend Relay'];
+  const unsupported: ChainID[] = [
+    'Kusama Relay',
+    'Paseo Relay',
+    'Westend Relay',
+  ];
   const record = {} as Record<ChainID, Chain>;
-
   for (const [cid, chain] of Array.from(ChainList.entries())) {
     if (!unsupported.includes(cid)) {
       record[cid] = chain;
     }
   }
-
   return record;
 };
 
@@ -384,7 +386,7 @@ export const getSupportedChains = (): Record<ChainID, Chain> => {
  * Get chain IDs that support send screen transfers.
  */
 export const getSendChains = (): ChainID[] => [
-  'Kusama Relay',
+  'Kusama Asset Hub',
   'Westend Asset Hub',
 ];
 
@@ -393,7 +395,7 @@ export const getSendChains = (): ChainID[] => [
  */
 export const getStakingChains = (): ChainID[] => [
   'Polkadot Relay',
-  'Kusama Relay',
+  'Kusama Asset Hub',
   'Paseo Asset Hub',
   'Westend Asset Hub',
 ];
@@ -413,7 +415,7 @@ export const getSupportedSources = (): AccountSource[] => [
  */
 export const getSupportedLedgerChains = (): ChainID[] => [
   'Polkadot Relay',
-  'Kusama Relay',
+  'Kusama Asset Hub',
 ];
 
 /**

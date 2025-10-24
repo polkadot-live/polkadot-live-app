@@ -51,7 +51,7 @@ export const DialogSelectAccount = ({
   });
 
   const ChainPrefix = new Map<ChainID, number>([
-    ['Kusama Relay', 2],
+    ['Kusama Asset Hub', 2],
     ['Westend Asset Hub', 42],
   ]);
 
@@ -75,13 +75,11 @@ export const DialogSelectAccount = ({
 
       if (result !== null) {
         const [isValid] = result;
-
         if (isValid) {
           return true;
         }
       }
     }
-
     return false;
   };
 
