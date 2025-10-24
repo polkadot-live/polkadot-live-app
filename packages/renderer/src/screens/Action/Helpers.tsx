@@ -23,7 +23,7 @@ import type {
  * @name truncateDecimalPlaces
  * @summary Truncate a number represented as a string.
  */
-export const truncateDecimalPlaces = (value: string, places = 4): string => {
+export const truncateDecimalPlaces = (value: string, places = 6): string => {
   const decimalIndex = value.indexOf('.');
 
   return value.indexOf('.') === -1 || value.length - decimalIndex - 1 <= places

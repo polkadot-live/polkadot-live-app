@@ -20,7 +20,6 @@ export const renameAccountInStore = async (
     action: 'raw-account:update',
     data: { serialized: JSON.stringify(genericAccount) },
   };
-
   await window.myAPI.rawAccountTask(ipcTask);
 };
 

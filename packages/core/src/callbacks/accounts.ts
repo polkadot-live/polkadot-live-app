@@ -969,8 +969,8 @@ const getStakingApi = (chainId: ChainID, api: DedotClientSet) => {
   switch (chainId) {
     case 'Polkadot Relay':
       return api as DedotClient<ClientTypes['polkadot']>;
-    case 'Kusama Relay':
-      return api as DedotClient<ClientTypes['kusama']>;
+    case 'Kusama Asset Hub':
+      return api as DedotClient<ClientTypes['statemine']>;
     case 'Paseo Asset Hub':
       return api as DedotClient<ClientTypes['asset-hub-paseo']>;
     case 'Westend Asset Hub':

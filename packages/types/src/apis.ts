@@ -63,7 +63,7 @@ export type DedotClientSet =
  */
 export type DedotStakingClient =
   | DedotClient<PolkadotApi>
-  | DedotClient<KusamaApi>
+  | DedotClient<KusamaAssetHubApi>
   | DedotClient<PaseoAssetHubApi>
   | DedotClient<WestendAssetHubApi>;
 
@@ -72,7 +72,7 @@ export type DedotStakingClient =
  */
 export type DedotOpenGovClient =
   | DedotClient<PolkadotApi>
-  | DedotClient<KusamaApi>;
+  | DedotClient<KusamaAssetHubApi>;
 
 /**
  * Mapping from ID to type

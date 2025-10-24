@@ -60,8 +60,8 @@ export const TreasuryApiProvider = ({
           postTreasuryInfo({ coreTreasuryInfo, statemintTreasuryInfo });
           break;
         }
-        case 'Kusama Relay': {
-          const castApi = api as DedotClient<ClientTypes['kusama']>;
+        case 'Kusama Asset Hub': {
+          const castApi = api as DedotClient<ClientTypes['statemine']>;
           const [coreTreasuryInfo, statemineTreasuryInfo] = await Promise.all([
             fetchCoreTreasuryInfo(castApi, chainId),
             fetchStatemineTreasuryInfo(),

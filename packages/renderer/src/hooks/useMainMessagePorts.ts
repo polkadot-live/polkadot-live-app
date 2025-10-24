@@ -452,7 +452,9 @@ export const useMainMessagePorts = () => {
 
           allReferenda.push({ refId, refStatus: 'TimedOut', info });
         } else if (storage.type === 'Ongoing') {
-          const serRef = Core.serializeReferendumInfo(storage.value);
+          const serRef = Core.serializeReferendumInfo(
+            storage.value as OG.ReferendumStatus
+          );
 
           // In Queue
           if (serRef.inQueue) {
@@ -508,8 +510,8 @@ export const useMainMessagePorts = () => {
           await fetchProcessReferenda(api);
           break;
         }
-        case 'Kusama Relay': {
-          const api = client.api as DedotClient<ClientTypes['kusama']>;
+        case 'Kusama Asset Hub': {
+          const api = client.api as DedotClient<ClientTypes['statemine']>;
           await fetchProcessReferenda(api);
           break;
         }

@@ -98,7 +98,7 @@ export const IntervalSubscriptionsProvider = ({
 
   /// Get sorted keys to render chain IDs in a certain order.
   const getSortedKeys = () => {
-    const order: ChainID[] = ['Polkadot Relay', 'Kusama Relay'];
+    const order: ChainID[] = ['Polkadot Relay', 'Kusama Asset Hub'];
     const result: ChainID[] = [];
 
     for (const chainId of order) {

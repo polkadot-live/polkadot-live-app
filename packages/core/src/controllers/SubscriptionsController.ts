@@ -296,7 +296,6 @@ export class SubscriptionsController {
         const actionArgs = account.nominationPoolData
           ? [account.nominationPoolData.poolRewardAddress]
           : undefined;
-
         return { ...task, actionArgs } as SubscriptionTask;
       }
       case 'subscribe:account:nominationPools:state':
@@ -306,7 +305,6 @@ export class SubscriptionsController {
         const actionArgs = account.nominationPoolData
           ? [account.nominationPoolData.poolId]
           : undefined;
-
         return { ...task, actionArgs } as SubscriptionTask;
       }
       default: {
