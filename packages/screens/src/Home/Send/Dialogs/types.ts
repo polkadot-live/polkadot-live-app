@@ -1,8 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { SendAccount } from '@polkadot-live/types/accounts';
-import type { SendRecipient } from '../types';
+import type { SendAccount, SendRecipient } from '@polkadot-live/types/accounts';
 
 export interface DialogSelectAccountProps {
   accounts: SendAccount[];

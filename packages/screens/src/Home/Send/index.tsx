@@ -5,14 +5,14 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import { FlexColumn, FlexRow } from '@polkadot-live/styles/wrappers';
-
 import { chainCurrency, PreRelease } from '@polkadot-live/consts/chains';
 import { MainHeading } from '@polkadot-live/ui/components';
-import { useConnections } from '@ren/contexts/common';
+import { useContextProxy } from '@polkadot-live/contexts';
 import { useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ActionButton, InputWrapper } from './Wrappers';
+import { DialogSelectAccount } from './Dialogs';
 import { formatDecimal, getBalanceText } from '@polkadot-live/core';
 import {
   AccountNameWithTooltip,
@@ -23,13 +23,14 @@ import {
   ProgressBar,
   TriggerContent,
 } from './SendHelpers';
+import type { SendAccordionValue, SendProps } from './types';
 
-import { useSendNative } from '@ren/hooks/useSendNative';
-import { DialogSelectAccount } from './Dialogs';
-import type { SendAccordionValue } from './types';
+export const Send = ({ useSendNative }: SendProps) => {
+  const { useCtx } = useContextProxy();
+  const { copyToClipboard, getOnlineMode, getTheme } =
+    useCtx('ConnectionsCtx')();
+  const theme = getTheme();
 
-export const Send: React.FC = () => {
-  const { getOnlineMode } = useConnections();
   const {
     fetchingSpendable,
     progress,
@@ -52,12 +53,7 @@ export const Send: React.FC = () => {
     setRecipientFilter,
     setSender,
   } = useSendNative();
-
-  /**
-   * Addresses fetched from main process.
-   */
-  const { getTheme } = useConnections();
-  const theme = getTheme();
+  const emptySenders = senderAccounts.length === 0;
 
   /**
    * Accordion state.
@@ -85,14 +81,6 @@ export const Send: React.FC = () => {
       }
     }
   };
-
-  /**
-   * Handle copy to clickboard.
-   */
-  const handleClipboardCopy = async (text: string) =>
-    await window.myAPI.copyToClipboard(text);
-
-  const emptySenders = senderAccounts.length === 0;
 
   return (
     <FlexColumn style={{ padding: '2rem 1rem' }}>
@@ -186,7 +174,7 @@ export const Send: React.FC = () => {
                               <UI.CopyButton
                                 theme={theme}
                                 onCopyClick={async () =>
-                                  await handleClipboardCopy(sender.address)
+                                  copyToClipboard(sender.address)
                                 }
                               />
                             </>
@@ -247,7 +235,7 @@ export const Send: React.FC = () => {
                             <UI.CopyButton
                               theme={theme}
                               onCopyClick={async () =>
-                                await handleClipboardCopy(receiver.address)
+                                copyToClipboard(receiver.address)
                               }
                             />
                           </>
@@ -330,9 +318,10 @@ export const Send: React.FC = () => {
                         '-'
                       ) : (
                         <AccountNameWithTooltip
-                          theme={theme}
-                          address={sender.address}
                           accountName={sender.alias}
+                          address={sender.address}
+                          copyToClipboard={copyToClipboard}
+                          theme={theme}
                         />
                       )}
                     </InfoPanel>
@@ -343,12 +332,13 @@ export const Send: React.FC = () => {
                         '-'
                       ) : (
                         <AccountNameWithTooltip
-                          theme={theme}
-                          address={receiver.address}
                           accountName={
                             receiver.accountName ||
                             ellipsisFn(receiver.address, 5)
                           }
+                          address={receiver.address}
+                          copyToClipboard={copyToClipboard}
+                          theme={theme}
                         />
                       )}
                     </InfoPanel>

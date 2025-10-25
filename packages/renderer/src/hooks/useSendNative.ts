@@ -9,7 +9,6 @@ import {
 import { chainUnits, getSendChains } from '@polkadot-live/consts/chains';
 import { ellipsisFn, unitToPlanck } from '@w3ux/utils';
 import { useEffect, useState } from 'react';
-
 import type {
   ActionMeta,
   ExTransferKeepAliveData,
@@ -18,37 +17,15 @@ import type {
   AccountSource,
   ImportedGenericAccount,
   SendAccount,
+  SendRecipient,
 } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { SendRecipient } from '@ren/screens/Home/Send/types';
 import type { ChangeEvent } from 'react';
+import type { SendNativeHookInterface } from '@polkadot-live/contexts/types/main';
 
 const TOKEN_TRANSFER_LIMIT = 100;
 
-interface SendNativeHook {
-  fetchingSpendable: boolean;
-  progress: number;
-  receiver: SendRecipient | null;
-  recipientAccounts: SendAccount[];
-  sendAmount: string;
-  sender: SendAccount | null;
-  senderAccounts: SendAccount[];
-  spendable: bigint | null;
-  summaryComplete: boolean;
-  validAmount: boolean;
-  handleProceedClick: () => Promise<void>;
-  handleResetClick: () => void;
-  handleSendAmountBlur: () => void;
-  handleSendAmountChange: (event: ChangeEvent<HTMLInputElement>) => void;
-  handleSendAmountFocus: () => void;
-  handleSenderChange: (senderAccount: SendAccount) => void;
-  proceedDisabled: () => boolean;
-  setReceiver: React.Dispatch<React.SetStateAction<SendRecipient | null>>;
-  setRecipientFilter: React.Dispatch<React.SetStateAction<string>>;
-  setSender: React.Dispatch<React.SetStateAction<SendAccount | null>>;
-}
-
-export const useSendNative = (): SendNativeHook => {
+export const useSendNative = (): SendNativeHookInterface => {
   /**
    * Addresses fetched from main process.
    */
@@ -86,7 +63,6 @@ export const useSendNative = (): SendNativeHook => {
 
       result = result.concat(filtered);
     }
-
     return result.sort((a, b) => a.alias.localeCompare(b.alias));
   };
 
@@ -125,12 +101,11 @@ export const useSendNative = (): SendNativeHook => {
 
   const [progress, setProgress] = useState(0);
   const [sendAmount, setSendAmount] = useState<string>('0');
+  const [summaryComplete, setSummaryComplete] = useState(false);
 
   const [fetchingSpendable, setFetchingSpendable] = useState(false);
   const [spendable, setSpendable] = useState<bigint | null>(null);
   const [validAmount, setValidAmount] = useState(true);
-
-  const [summaryComplete, setSummaryComplete] = useState(false);
 
   /**
    * Handle proceed click.
@@ -139,12 +114,10 @@ export const useSendNative = (): SendNativeHook => {
     if (!(sender && receiver)) {
       return;
     }
-
     // NOTE: Disable Polkadot transfers in pre-releases.
     if (!getSendChains().includes(sender.chainId)) {
       return;
     }
-
     setSummaryComplete(true);
 
     // Data for action meta.
@@ -244,7 +217,6 @@ export const useSendNative = (): SendNativeHook => {
     if (!decimalPart) {
       return integerPart;
     }
-
     const truncatedDecimal = decimalPart.slice(0, decimals);
     return `${integerPart}.${truncatedDecimal}`;
   };
@@ -260,7 +232,6 @@ export const useSendNative = (): SendNativeHook => {
     if (cleaned.startsWith('.')) {
       cleaned = '0' + cleaned;
     }
-
     // Ensure empty string returns "0"
     return cleaned || '0';
   };
@@ -308,7 +279,6 @@ export const useSendNative = (): SendNativeHook => {
       setValidAmount(spendable >= amountAsPlanck);
       return;
     }
-
     setValidAmount(false);
   };
 
@@ -461,7 +431,6 @@ export const useSendNative = (): SendNativeHook => {
     if (!updateRecipients) {
       return;
     }
-
     const accounts = getRecipientAccounts();
     sender === null
       ? setRecipientAccounts(accounts)

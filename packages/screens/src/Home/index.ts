@@ -4,4 +4,5 @@
 export { Events } from './Events';
 export { Footer } from './Footer';
 export { Manage } from './Manage';
+export { Send } from './Send';
 export { Summary } from './Summary';

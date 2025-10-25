@@ -4,15 +4,13 @@
 import * as Select from '@radix-ui/react-select';
 import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/styles/wrappers';
-
-import { useConnections } from '@ren/contexts/common';
+import { useContextProxy } from '@polkadot-live/contexts';
 import { ellipsisFn } from '@w3ux/utils';
 import { PuffLoader } from 'react-spinners';
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 import { NextStepArrowWrapper, ProgressBarWrapper } from './Wrappers';
-
 import type {
   AccountNameWithTooltipProps,
   AddressWithTooltipProps,
@@ -40,6 +38,7 @@ export const AccountNameWithTooltip = ({
   theme,
   address,
   accountName,
+  copyToClipboard,
 }: AccountNameWithTooltipProps) => (
   <Styles.FlexRow $gap={'0.75rem'}>
     <UI.TooltipRx theme={theme} text={ellipsisFn(address, 12)}>
@@ -48,10 +47,7 @@ export const AccountNameWithTooltip = ({
       </span>
     </UI.TooltipRx>
     <span style={{ cursor: 'default' }}>{accountName}</span>
-    <UI.CopyButton
-      theme={theme}
-      onCopyClick={async () => await window.myAPI.copyToClipboard(address)}
-    />
+    <UI.CopyButton theme={theme} onCopyClick={() => copyToClipboard(address)} />
   </Styles.FlexRow>
 );
 
@@ -61,7 +57,6 @@ export const AccountNameWithTooltip = ({
  */
 export const ProgressBar = ({ value, max }: { value: number; max: number }) => {
   const percentage = (value / max) * 100;
-
   return (
     <ProgressBarWrapper>
       <div className="progress-fill" style={{ width: `${percentage}%` }} />
@@ -171,7 +166,8 @@ export const SelectBox = ({
   disabled = false,
   onValueChange,
 }: SelectBoxProps) => {
-  const { getTheme } = useConnections();
+  const { useCtx } = useContextProxy();
+  const { getTheme } = useCtx('ConnectionsCtx')();
   const theme = getTheme();
 
   return (

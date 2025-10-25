@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { AnyData } from '@polkadot-live/types/misc';
-import type { ChainID } from '@polkadot-live/types/chains';
+import type { SendNativeHookInterface } from '@polkadot-live/contexts/types/main';
 
 export interface AddressWithTooltipProps {
   theme: AnyData;
@@ -13,6 +13,11 @@ export interface AccountNameWithTooltipProps {
   theme: AnyData;
   address: string;
   accountName: string;
+  copyToClipboard: (text: string) => Promise<void>;
+}
+
+export interface SendProps {
+  useSendNative: () => SendNativeHookInterface;
 }
 
 export type SendAccordionValue =
@@ -27,11 +32,4 @@ export interface SelectBoxProps {
   placeholder: string;
   disabled?: boolean;
   onValueChange: (val: string) => void;
-}
-
-export interface SendRecipient {
-  address: string;
-  accountName: string | null;
-  chainId: ChainID;
-  managed: boolean;
 }

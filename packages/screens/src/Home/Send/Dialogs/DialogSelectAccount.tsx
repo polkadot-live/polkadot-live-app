@@ -5,7 +5,7 @@ import * as Dialog from '@radix-ui/react-dialog';
 import * as Styles from '@polkadot-live/styles/wrappers';
 import * as Icons from '@radix-ui/react-icons';
 
-import { useConnections } from '@ren/contexts/common';
+import { useContextProxy } from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
 import { checkAddress } from '@polkadot/util-crypto';
 import { getReadableAccountSource } from '@polkadot-live/core';
@@ -25,8 +25,7 @@ import {
 import type { DialogSelectAccountProps } from './types';
 import type { ChangeEvent } from 'react';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { SendRecipient } from '../types';
-import type { SendAccount } from '@polkadot-live/types/accounts';
+import type { SendAccount, SendRecipient } from '@polkadot-live/types/accounts';
 
 export const DialogSelectAccount = ({
   accounts,
@@ -38,7 +37,8 @@ export const DialogSelectAccount = ({
   handleSenderChange,
   setRecipientFilter,
 }: DialogSelectAccountProps) => {
-  const { getTheme, getOnlineMode } = useConnections();
+  const { useCtx } = useContextProxy();
+  const { getTheme, getOnlineMode } = useCtx('ConnectionsCtx')();
   const theme = getTheme();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -65,14 +65,12 @@ export const DialogSelectAccount = ({
     } else {
       targetChain = (inputVal as SendAccount).chainId;
     }
-
     const targetPrefixes: number[] = targetChain
       ? [ChainPrefix.get(targetChain!)!]
       : [...ChainPrefix.values()];
 
     for (const prefix of targetPrefixes) {
       const result = checkAddress(inputVal.address, prefix);
-
       if (result !== null) {
         const [isValid] = result;
         if (isValid) {

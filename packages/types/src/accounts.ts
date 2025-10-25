@@ -131,6 +131,13 @@ export interface SendAccount extends EncodedAccount {
   source: AccountSource;
 }
 
+export interface SendRecipient {
+  address: string;
+  accountName: string | null;
+  chainId: ChainID;
+  managed: boolean;
+}
+
 export interface ImportedGenericAccount {
   accountName: string;
   encodedAccounts: Record<ChainID, EncodedAccount>;

@@ -9,10 +9,10 @@ import { useEffect, useState } from 'react';
 import { useConnections } from '@ren/contexts/common';
 import { useInitIpcHandlers } from '@ren/hooks/useInitIpcHandlers';
 import { useMainMessagePorts } from '@ren/hooks/useMainMessagePorts';
+import { useSendNative } from '@ren/hooks/useSendNative';
 import { Classic } from '@theme-toggles/react';
 import { OpenGov } from './OpenGov';
-import { Send } from './Send';
-import { Events, Footer, Manage, Summary } from '@polkadot-live/screens';
+import { Events, Footer, Manage, Send, Summary } from '@polkadot-live/screens';
 import {
   BackgroundIconWrapper,
   BodyInterfaceWrapper,
@@ -231,7 +231,9 @@ export const Home = () => {
               {sideNav.selectedId === 3 && <OpenGov />}
 
               {/* Send */}
-              {sideNav.selectedId === 4 && <Send />}
+              {sideNav.selectedId === 4 && (
+                <Send useSendNative={useSendNative} />
+              )}
             </ScrollWrapper>
           )}
         </BodyInterfaceWrapper>
