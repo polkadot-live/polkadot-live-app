@@ -4,12 +4,16 @@
 import * as UI from '@polkadot-live/ui/components';
 import * as Ctx from '@ren/contexts/main';
 import { version } from '../../../package.json';
-import { ConfigRenderer } from '@polkadot-live/core';
+import {
+  ConfigRenderer,
+  initExtrinsicElectron,
+  fetchSendAccountsElectron,
+} from '@polkadot-live/core';
 import { useEffect, useState } from 'react';
 import { useConnections } from '@ren/contexts/common';
 import { useInitIpcHandlers } from '@ren/hooks/useInitIpcHandlers';
 import { useMainMessagePorts } from '@ren/hooks/useMainMessagePorts';
-import { useSendNative } from '@ren/hooks/useSendNative';
+import { useSendNative } from '@polkadot-live/contexts';
 import { Classic } from '@theme-toggles/react';
 import { OpenGov } from './OpenGov';
 import { Events, Footer, Manage, Send, Summary } from '@polkadot-live/screens';
@@ -232,7 +236,11 @@ export const Home = () => {
 
               {/* Send */}
               {sideNav.selectedId === 4 && (
-                <Send useSendNative={useSendNative} />
+                <Send
+                  useSendNative={useSendNative}
+                  initExtrinsic={initExtrinsicElectron}
+                  fetchSendAccounts={fetchSendAccountsElectron}
+                />
               )}
             </ScrollWrapper>
           )}

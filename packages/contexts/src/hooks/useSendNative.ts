@@ -1,11 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import {
-  ConfigRenderer,
-  formatDecimal,
-  getSpendableBalance,
-} from '@polkadot-live/core';
+import { formatDecimal, getSpendableBalance } from '@polkadot-live/core';
 import { chainUnits, getSendChains } from '@polkadot-live/consts/chains';
 import { ellipsisFn, unitToPlanck } from '@w3ux/utils';
 import { useEffect, useState } from 'react';
@@ -15,7 +11,6 @@ import type {
 } from '@polkadot-live/types/tx';
 import type {
   AccountSource,
-  ImportedGenericAccount,
   SendAccount,
   SendRecipient,
 } from '@polkadot-live/types/accounts';
@@ -25,7 +20,10 @@ import type { SendNativeHookInterface } from '@polkadot-live/contexts/types/main
 
 const TOKEN_TRANSFER_LIMIT = 100;
 
-export const useSendNative = (): SendNativeHookInterface => {
+export const useSendNative = (
+  initExtrinsic: (meta: ActionMeta) => Promise<void>,
+  fetchSendAccounts: () => Promise<Map<AccountSource, SendAccount[]>>
+): SendNativeHookInterface => {
   /**
    * Addresses fetched from main process.
    */
@@ -145,8 +143,8 @@ export const useSendNative = (): SendNativeHookInterface => {
       sendAmount: sendAmountPlanck,
     };
 
-    // Action meta.
-    const actionMeta: ActionMeta = {
+    // Initialize extrinsic.
+    await initExtrinsic({
       accountName: senderObj.alias,
       source: senderObj.source,
       action: 'balances_transferKeepAlive',
@@ -157,33 +155,7 @@ export const useSendNative = (): SendNativeHookInterface => {
       data: JSON.stringify(balanceData),
       args: [recipientObj.address, sendAmountPlanck],
       ledgerMeta: senderObj.ledgerMeta,
-    };
-
-    // Send extrinsic to action window.
-    window.myAPI.relaySharedState('extrinsic:building', true);
-    const extrinsicsViewOpen = await window.myAPI.isViewOpen('action');
-
-    if (!extrinsicsViewOpen) {
-      // Relay init task to extrinsics window after its DOM has loaded.
-      window.myAPI.openWindow('action', {
-        windowId: 'action',
-        task: 'action:init',
-        serData: JSON.stringify(actionMeta),
-      });
-
-      // Analytics.
-      window.myAPI.umamiEvent('window-open-extrinsics', {
-        action: `send-transfer-keep-alive`,
-      });
-    } else {
-      window.myAPI.openWindow('action');
-
-      // Send init task directly to extrinsics window if it's already open.
-      ConfigRenderer.portToAction?.postMessage({
-        task: 'action:init',
-        data: JSON.stringify(actionMeta),
-      });
-    }
+    });
   };
 
   /**
@@ -320,33 +292,13 @@ export const useSendNative = (): SendNativeHookInterface => {
    */
   useEffect(() => {
     const fetch = async () => {
-      const serialized = (await window.myAPI.rawAccountTask({
-        action: 'raw-account:getAll',
-        data: null,
-      })) as string;
-
-      const parsedMap = new Map<AccountSource, string>(JSON.parse(serialized));
-      const map = new Map<AccountSource, SendAccount[]>();
-
-      for (const [source, ser] of parsedMap.entries()) {
-        const parsed: ImportedGenericAccount[] = JSON.parse(ser);
-        const addresses = parsed
-          .map(({ encodedAccounts }) =>
-            Object.values(encodedAccounts).map((en) => en)
-          )
-          .flat();
-
-        const accounts = addresses.map((en) => ({ ...en, source }));
-        map.set(source, accounts);
-      }
-
+      const map = await fetchSendAccounts();
       setAddressMap(map);
 
       // Set sender and receiver accounts.
       setSenderAccounts(getSenderAccounts(map));
       setRecipientAccounts(getRecipientAccounts(map));
     };
-
     fetch();
   }, []);
 
@@ -362,7 +314,6 @@ export const useSendNative = (): SendNativeHookInterface => {
    */
   useEffect(() => {
     let conditions = 0;
-
     sender && (conditions += 1);
     receiver && (conditions += 1);
     sendAmount !== '0' && sendAmount !== '' && validAmount && (conditions += 1);

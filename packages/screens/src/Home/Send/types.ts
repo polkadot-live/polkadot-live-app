@@ -1,6 +1,11 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import type {
+  AccountSource,
+  ActionMeta,
+  SendAccount,
+} from '@polkadot-live/types';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { SendNativeHookInterface } from '@polkadot-live/contexts/types/main';
 
@@ -17,7 +22,12 @@ export interface AccountNameWithTooltipProps {
 }
 
 export interface SendProps {
-  useSendNative: () => SendNativeHookInterface;
+  useSendNative: (
+    initExtrinsic: (meta: ActionMeta) => Promise<void>,
+    fetchSendAccounts: () => Promise<Map<AccountSource, SendAccount[]>>
+  ) => SendNativeHookInterface;
+  initExtrinsic: (meta: ActionMeta) => Promise<void>;
+  fetchSendAccounts: () => Promise<Map<AccountSource, SendAccount[]>>;
 }
 
 export type SendAccordionValue =

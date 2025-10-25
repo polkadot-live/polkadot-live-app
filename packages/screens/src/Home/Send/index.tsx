@@ -25,7 +25,11 @@ import {
 } from './SendHelpers';
 import type { SendAccordionValue, SendProps } from './types';
 
-export const Send = ({ useSendNative }: SendProps) => {
+export const Send = ({
+  useSendNative,
+  initExtrinsic,
+  fetchSendAccounts,
+}: SendProps) => {
   const { useCtx } = useContextProxy();
   const { copyToClipboard, getOnlineMode, getTheme } =
     useCtx('ConnectionsCtx')();
@@ -52,7 +56,7 @@ export const Send = ({ useSendNative }: SendProps) => {
     setReceiver,
     setRecipientFilter,
     setSender,
-  } = useSendNative();
+  } = useSendNative(initExtrinsic, fetchSendAccounts);
   const emptySenders = senderAccounts.length === 0;
 
   /**

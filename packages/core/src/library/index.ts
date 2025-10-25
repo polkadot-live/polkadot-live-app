@@ -6,6 +6,7 @@ export * from './ApiLib';
 export * from './CallbackLib';
 export * from './CommonLib';
 export * from './EventsLib';
+export * from './ExtrinsicsLib';
 export * from './ImportLib';
 export * from './LedgerLib';
 export * from './OpenGovLib';
