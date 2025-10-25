@@ -55,7 +55,22 @@ export const initExtrinsicElectron = async (meta: ActionMeta) => {
  * @summary Fetches send accounts state for browser environment.
  */
 export const fetchSendAccountsBrowser = async () => {
-  /* empty */
+  const msg = { type: 'rawAccount', task: 'getAll' };
+  const ser = await chrome.runtime.sendMessage(msg);
+  const arr: [AccountSource, ImportedGenericAccount[]][] = JSON.parse(ser);
+  const rec = new Map<AccountSource, ImportedGenericAccount[]>(arr);
+  const map = new Map<AccountSource, SendAccount[]>();
+
+  for (const [source, genericAccounts] of rec.entries()) {
+    const addresses = genericAccounts
+      .map(({ encodedAccounts }) =>
+        Object.values(encodedAccounts).map((en) => en)
+      )
+      .flat();
+    const accounts = addresses.map((en) => ({ ...en, source }));
+    map.set(source, accounts);
+  }
+  return map;
 };
 
 /**

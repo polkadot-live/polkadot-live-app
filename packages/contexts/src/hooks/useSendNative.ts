@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { formatDecimal, getSpendableBalance } from '@polkadot-live/core';
+import { formatDecimal } from '@polkadot-live/core';
 import { chainUnits, getSendChains } from '@polkadot-live/consts/chains';
 import { ellipsisFn, unitToPlanck } from '@w3ux/utils';
 import { useEffect, useState } from 'react';
@@ -22,7 +22,8 @@ const TOKEN_TRANSFER_LIMIT = 100;
 
 export const useSendNative = (
   initExtrinsic: (meta: ActionMeta) => Promise<void>,
-  fetchSendAccounts: () => Promise<Map<AccountSource, SendAccount[]>>
+  fetchSendAccounts: () => Promise<Map<AccountSource, SendAccount[]>>,
+  getSpendableBalance: (address: string, chainId: ChainID) => Promise<string>
 ): SendNativeHookInterface => {
   /**
    * Addresses fetched from main process.
@@ -351,11 +352,10 @@ export const useSendNative = (
       if (sender === null) {
         return;
       }
-
       const { address, chainId } = sender;
       setFetchingSpendable(true);
       getSpendableBalance(address, chainId).then((result) => {
-        setSpendable(result);
+        setSpendable(BigInt(result || '0'));
         setFetchingSpendable(false);
       });
     };
@@ -364,7 +364,6 @@ export const useSendNative = (
     if (sender !== null) {
       setSendAmount('0');
       setValidAmount(true);
-
       setReceiver(null);
       setRecipientFilter('');
       getSpendable();

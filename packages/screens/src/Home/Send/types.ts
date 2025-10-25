@@ -7,6 +7,7 @@ import type {
   SendAccount,
 } from '@polkadot-live/types';
 import type { AnyData } from '@polkadot-live/types/misc';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { SendNativeHookInterface } from '@polkadot-live/contexts/types/main';
 
 export interface AddressWithTooltipProps {
@@ -24,10 +25,12 @@ export interface AccountNameWithTooltipProps {
 export interface SendProps {
   useSendNative: (
     initExtrinsic: (meta: ActionMeta) => Promise<void>,
-    fetchSendAccounts: () => Promise<Map<AccountSource, SendAccount[]>>
+    fetchSendAccounts: () => Promise<Map<AccountSource, SendAccount[]>>,
+    getSpendableBalance: (address: string, chainId: ChainID) => Promise<string>
   ) => SendNativeHookInterface;
   initExtrinsic: (meta: ActionMeta) => Promise<void>;
   fetchSendAccounts: () => Promise<Map<AccountSource, SendAccount[]>>;
+  getSpendableBalance: (address: string, chainId: ChainID) => Promise<string>;
 }
 
 export type SendAccordionValue =

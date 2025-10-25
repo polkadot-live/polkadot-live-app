@@ -6,9 +6,15 @@ import * as Ctx from '../../contexts';
 import PolkadotIcon from '@polkadot-live/ui/svg/polkadotIcon.svg?react';
 import { version } from '../../../../package.json';
 import { Classic } from '@theme-toggles/react';
-import { Events, Footer, Manage, Summary } from '@polkadot-live/screens';
+import { Events, Footer, Manage, Send, Summary } from '@polkadot-live/screens';
 import { useSideNav } from '@polkadot-live/ui/contexts';
 import { useConnections } from '../../../contexts';
+import { useSendNative } from '@polkadot-live/contexts';
+import {
+  initExtrinsicBrowser,
+  fetchSendAccountsBrowser,
+  getSpendableBalanceBrowser,
+} from '@polkadot-live/core';
 import {
   BackgroundIconWrapper,
   BodyInterfaceWrapper,
@@ -99,7 +105,14 @@ export const Home = () => {
                 <TitlePlaceholder text="OpenGov Subscriptions" />
               )}
               {/* Send */}
-              {sideNav.selectedId === 4 && <TitlePlaceholder text="Send" />}
+              {sideNav.selectedId === 4 && (
+                <Send
+                  useSendNative={useSendNative}
+                  fetchSendAccounts={fetchSendAccountsBrowser}
+                  initExtrinsic={initExtrinsicBrowser}
+                  getSpendableBalance={getSpendableBalanceBrowser}
+                />
+              )}
             </ScrollWrapper>
           )}
         </BodyInterfaceWrapper>

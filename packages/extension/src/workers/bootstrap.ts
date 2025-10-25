@@ -16,6 +16,7 @@ import {
   executeOneShot,
   pushUniqueEvent,
   doRemoveOutdatedEvents,
+  getBalance,
 } from '@polkadot-live/core';
 import {
   getSupportedChains,
@@ -364,6 +365,19 @@ const getAllAccounts = async (): Promise<string> => {
     map.set(source, (result as ImportedGenericAccount[]) || []);
   }
   return JSON.stringify(Array.from(map.entries()));
+};
+
+const handleGetSpendableBalance = async (
+  address: string,
+  chainId: ChainID
+): Promise<bigint> => {
+  const api = (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
+  const ed = api.consts.balances.existentialDeposit;
+  const balance = await getBalance(api, address, chainId);
+  const { free } = balance;
+
+  const max = (a: bigint, b: bigint): bigint => (a > b ? a : b);
+  return max(free - ed, 0n);
 };
 
 const isAlreadyPersisted = async (publicKeyHex: string): Promise<boolean> => {
@@ -759,6 +773,10 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
      */
     case 'rawAccount': {
       switch (message.task) {
+        case 'getAll': {
+          getAllAccounts().then((result) => sendResponse(result));
+          return true;
+        }
         case 'getAllBySource': {
           const { source }: { source: AccountSource } = message.payload;
           DbController.get('accounts', source).then((result) =>
@@ -766,8 +784,12 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
           );
           return true;
         }
-        case 'getAll': {
-          getAllAccounts().then((result) => sendResponse(result));
+        case 'getSpendableBalance': {
+          const { address, chainId }: { address: string; chainId: ChainID } =
+            message.payload;
+          handleGetSpendableBalance(address, chainId).then((res) =>
+            sendResponse(res.toString())
+          );
           return true;
         }
         case 'delete': {

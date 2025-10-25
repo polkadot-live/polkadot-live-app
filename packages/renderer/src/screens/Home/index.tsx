@@ -8,6 +8,7 @@ import {
   ConfigRenderer,
   initExtrinsicElectron,
   fetchSendAccountsElectron,
+  getSpendableBalanceElectron,
 } from '@polkadot-live/core';
 import { useEffect, useState } from 'react';
 import { useConnections } from '@ren/contexts/common';
@@ -240,6 +241,7 @@ export const Home = () => {
                   useSendNative={useSendNative}
                   initExtrinsic={initExtrinsicElectron}
                   fetchSendAccounts={fetchSendAccountsElectron}
+                  getSpendableBalance={getSpendableBalanceElectron}
                 />
               )}
             </ScrollWrapper>

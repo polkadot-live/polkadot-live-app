@@ -29,6 +29,7 @@ export const Send = ({
   useSendNative,
   initExtrinsic,
   fetchSendAccounts,
+  getSpendableBalance,
 }: SendProps) => {
   const { useCtx } = useContextProxy();
   const { copyToClipboard, getOnlineMode, getTheme } =
@@ -56,7 +57,7 @@ export const Send = ({
     setReceiver,
     setRecipientFilter,
     setSender,
-  } = useSendNative(initExtrinsic, fetchSendAccounts);
+  } = useSendNative(initExtrinsic, fetchSendAccounts, getSpendableBalance);
   const emptySenders = senderAccounts.length === 0;
 
   /**

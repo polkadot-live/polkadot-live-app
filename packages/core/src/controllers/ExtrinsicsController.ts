@@ -13,7 +13,7 @@ import { ExtraSignedExtension } from 'dedot';
 import {
   getAddressNonce,
   getNominationPoolRewards,
-  getSpendableBalance,
+  getSpendableBalanceElectron,
 } from '../library/AccountsLib';
 
 import type { AnyData } from '@polkadot-live/types/misc';
@@ -125,7 +125,9 @@ export class ExtrinsicsController {
         }
 
         const sendAmount: bigint = args[1];
-        const spendable = await getSpendableBalance(from, chainId);
+        const spendable = BigInt(
+          await getSpendableBalanceElectron(from, chainId)
+        );
         const fee = BigInt(estimatedFee);
 
         // NOTE: Limit send amount to 100 tokens in pre-releases.
@@ -142,7 +144,9 @@ export class ExtrinsicsController {
       }
       case 'nominationPools_pendingRewards_withdraw':
       case 'nominationPools_pendingRewards_bond': {
-        const spendable = await getSpendableBalance(from, chainId);
+        const spendable = BigInt(
+          await getSpendableBalanceElectron(from, chainId)
+        );
         const fee = BigInt(estimatedFee);
 
         // Check sufficient balance.
