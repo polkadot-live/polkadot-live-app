@@ -3,8 +3,7 @@
 
 import * as Dialog from '@radix-ui/react-dialog';
 import * as Styles from '@polkadot-live/styles/wrappers';
-import { useConnections } from '@ren/contexts/common';
-import { useTxMeta } from '@ren/contexts/action';
+import { useContextProxy } from '@polkadot-live/contexts';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import type { DialogDeleteExtrinsicProps } from './types';
 
@@ -13,8 +12,9 @@ export const DialogDeleteExtrinsic = ({
   info,
   setDialogOpen,
 }: DialogDeleteExtrinsicProps) => {
-  const { removeExtrinsic } = useTxMeta();
-  const { getTheme } = useConnections();
+  const { useCtx } = useContextProxy();
+  const { removeExtrinsic } = useCtx('TxMetaCtx')();
+  const { getTheme } = useCtx('ConnectionsCtx')();
   const theme = getTheme();
 
   const onDeleteClick = async () => {

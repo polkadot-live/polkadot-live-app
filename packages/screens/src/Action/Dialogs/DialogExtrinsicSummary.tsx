@@ -3,10 +3,9 @@
 
 import * as Dialog from '@radix-ui/react-dialog';
 import * as Styles from '@polkadot-live/styles/wrappers';
-
 import { chainCurrency, chainUnits } from '@polkadot-live/consts/chains';
 import { formatDecimal } from '@polkadot-live/core';
-import { useConnections } from '@ren/contexts/common';
+import { useContextProxy } from '@polkadot-live/contexts';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTableList } from '@fortawesome/free-solid-svg-icons';
@@ -23,7 +22,8 @@ export const DialogExtrinsicSummary = ({
   setDialogOpen,
   renderTrigger = true,
 }: DialogExtrinsicSummaryProps) => {
-  const { getTheme } = useConnections();
+  const { useCtx } = useContextProxy();
+  const { copyToClipboard, getTheme } = useCtx('ConnectionsCtx')();
   const theme = getTheme();
 
   /**
@@ -41,7 +41,7 @@ export const DialogExtrinsicSummary = ({
         <CopyButton
           iconFontSize={'0.95rem'}
           theme={theme}
-          onCopyClick={async () => await window.myAPI.copyToClipboard(address)}
+          onCopyClick={async () => copyToClipboard(address)}
         />
       </span>
     </div>

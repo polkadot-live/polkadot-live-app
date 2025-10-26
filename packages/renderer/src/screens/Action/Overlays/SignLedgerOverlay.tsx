@@ -25,7 +25,7 @@ interface LedgerSignOverlayProps {
 }
 
 export const SignLedgerOverlay = ({ info }: LedgerSignOverlayProps) => {
-  const { cacheGet } = useConnections();
+  const { cacheGet, relayState } = useConnections();
   const isBuildingExtrinsic = cacheGet('extrinsic:building');
   const { setDisableClose, setStatus: setOverlayStatus } = useOverlay();
   const {
@@ -50,7 +50,7 @@ export const SignLedgerOverlay = ({ info }: LedgerSignOverlayProps) => {
    */
   const handleSign = () => {
     setIsSigning(true);
-    window.myAPI.relaySharedState('extrinsic:building', true);
+    relayState('extrinsic:building', true);
 
     ConfigAction.portAction.postMessage({
       task: 'renderer:ledger:sign',

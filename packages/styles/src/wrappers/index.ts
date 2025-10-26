@@ -10,5 +10,6 @@ export * from './flex';
 export * from './grid';
 export * from './layout';
 export * from './mixins';
+export * from './pagination';
 export * from './scroll';
 export * from './subscriptions';

@@ -4,7 +4,6 @@
 export * from './AccordionRx';
 export * from './ActionItem';
 export * from './Cards';
-export * from './ChainIcon';
 export * from './CheckboxRx';
 export * from './CopyButton';
 export * from './DragClose';
@@ -12,6 +11,7 @@ export * from './Footers';
 export * from './Hardware';
 export * from './Header';
 export * from './Help';
+export * from './Icons';
 export * from './Identicon';
 export * from './Menu';
 export * from './OfflineBanner';

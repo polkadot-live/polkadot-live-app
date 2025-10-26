@@ -3,18 +3,13 @@
 
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import * as FA from '@fortawesome/free-solid-svg-icons';
-
 import { useState } from 'react';
-import { useConnections } from '@ren/contexts/common';
+import { useContextProxy } from '@polkadot-live/contexts';
 import { DropdownMenuContent } from '@polkadot-live/styles/wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconButton } from './Wrappers';
-import { useTxMeta } from '@ren/contexts/action';
 import type { ExtrinsicDropdownMenuProps } from './types';
 
-/**
- * Dropdown menu component for extrinsic items.
- */
 export const ExtrinsicDropdownMenu = ({
   isBuilt,
   txStatus,
@@ -25,8 +20,9 @@ export const ExtrinsicDropdownMenu = ({
   onSummaryClick,
   onBlockExplorerClick,
 }: ExtrinsicDropdownMenuProps) => {
-  const { showMockUI } = useTxMeta();
-  const { cacheGet, getTheme, getOnlineMode } = useConnections();
+  const { useCtx } = useContextProxy();
+  const { showMockUI } = useCtx('TxMetaCtx')();
+  const { cacheGet, getTheme, getOnlineMode } = useCtx('ConnectionsCtx')();
   const isBuildingExtrinsic = cacheGet('extrinsic:building');
   const theme = getTheme();
 

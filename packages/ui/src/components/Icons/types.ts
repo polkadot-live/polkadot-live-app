@@ -2,17 +2,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { AnyData } from '@polkadot-live/types/misc';
-import type { ExtrinsicInfo } from 'packages/types/src';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
-export interface ExtrinsicItemContentProps {
-  info: ExtrinsicInfo;
-  onClickSummary: () => void;
-}
-
-export interface SubmitProps {
-  info: ExtrinsicInfo;
-  valid: boolean;
+export interface ChainIconProps {
+  chainId: ChainID;
+  className?: string;
+  fill?: string;
+  style?: React.CSSProperties;
+  width?: number;
 }
 
 export interface TriggerRightIconProps {

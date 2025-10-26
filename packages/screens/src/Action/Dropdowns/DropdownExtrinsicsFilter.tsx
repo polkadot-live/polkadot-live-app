@@ -3,21 +3,20 @@
 
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import * as FA from '@fortawesome/free-solid-svg-icons';
-
 import {
   DropdownMenuContent,
   FlexColumn,
   FlexRow,
 } from '@polkadot-live/styles/wrappers';
-import { useConnections } from '@ren/contexts/common';
-import { useTxMeta } from '@ren/contexts/action';
+import { useContextProxy } from '@polkadot-live/contexts';
 import { CheckboxRx, TooltipRx } from '@polkadot-live/ui/components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FilterButton } from './Wrappers';
 
 export const DropdownExtrinsicsFilter = () => {
-  const { getSortedFilterOptions, setFilterOption } = useTxMeta();
-  const { getTheme } = useConnections();
+  const { useCtx } = useContextProxy();
+  const { getSortedFilterOptions, setFilterOption } = useCtx('TxMetaCtx')();
+  const { getTheme } = useCtx('ConnectionsCtx')();
   const theme = getTheme();
 
   const renderFilterMark = (): boolean =>
