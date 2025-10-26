@@ -14,13 +14,9 @@ import { InfoCard } from '@polkadot-live/ui/components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { PuffLoader } from 'react-spinners';
 import { WcOverlayWrapper } from './Wrappers';
-import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
+import type { SignWcOverlayProps } from './types';
 
-interface WcSignOverlayProps {
-  info: ExtrinsicInfo;
-}
-
-export const WcSignOverlay = ({ info }: WcSignOverlayProps) => {
+export const SignWcOverlay = ({ info }: SignWcOverlayProps) => {
   const { cacheGet } = useConnections();
   const isBuildingExtrinsic = cacheGet('extrinsic:building');
   const { message: wcFeedback, clearFeedback } = useWcFeedback();

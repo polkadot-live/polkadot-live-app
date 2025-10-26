@@ -18,8 +18,9 @@ import {
 } from '@polkadot-live/ui/components';
 import { ButtonPrimary, ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
 import type { Html5Qrcode } from 'html5-qrcode';
+import type { SignVaultOverlayProps } from './types';
 
-export const SignOverlay = ({ from, txId }: { from: string; txId: string }) => {
+export const SignVaultOverlay = ({ from, txId }: SignVaultOverlayProps) => {
   const { getTxPayload, setTxSignature, getGenesisHash, submitTx } =
     useTxMeta();
   const { setStatus: setOverlayStatus } = useOverlay();

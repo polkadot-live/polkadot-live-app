@@ -18,13 +18,9 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import LedgerLogoSVG from '@w3ux/extension-assets/Ledger.svg?react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import type { ExtrinsicInfo } from '@polkadot-live/types';
+import type { SignLedgerOverlayProps } from './types';
 
-interface LedgerSignOverlayProps {
-  info: ExtrinsicInfo;
-}
-
-export const SignLedgerOverlay = ({ info }: LedgerSignOverlayProps) => {
+export const SignLedgerOverlay = ({ info }: SignLedgerOverlayProps) => {
   const { cacheGet, relayState } = useConnections();
   const isBuildingExtrinsic = cacheGet('extrinsic:building');
   const { setDisableClose, setStatus: setOverlayStatus } = useOverlay();

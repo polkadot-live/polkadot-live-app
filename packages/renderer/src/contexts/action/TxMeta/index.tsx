@@ -18,9 +18,9 @@ import type {
 } from '@polkadot-live/types/tx';
 import { setStateWithRef } from '@w3ux/utils';
 import {
-  SignOverlay,
-  WcSignOverlay,
   SignLedgerOverlay,
+  SignVaultOverlay,
+  SignWcOverlay,
 } from '@ren/screens/Action/Overlays';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { createSafeContextHook } from '@polkadot-live/contexts';
@@ -394,9 +394,11 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   const getOverlayComponent = (info: ExtrinsicInfo) => {
     switch (info.actionMeta.source) {
       case 'vault':
-        return <SignOverlay txId={info.txId} from={info.actionMeta.from} />;
+        return (
+          <SignVaultOverlay txId={info.txId} from={info.actionMeta.from} />
+        );
       case 'wallet-connect':
-        return <WcSignOverlay info={info} />;
+        return <SignWcOverlay info={info} />;
       case 'ledger':
         return <SignLedgerOverlay info={info} />;
       default:
