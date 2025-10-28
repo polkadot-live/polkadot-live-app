@@ -1261,6 +1261,17 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
     /**
      * Handle WalletConnect tasks.
      */
+    case 'walletConnect': {
+      switch (message.task) {
+        case 'getTxData': {
+          const { txId }: { txId: string } = message.payload;
+          const result = ExtrinsicsController.getTransactionPayload(txId);
+          sendResponse(result?.payload || null);
+          return true;
+        }
+      }
+      break;
+    }
     case 'walletConnect:relay': {
       switch (message.task) {
         case 'closeModal': {

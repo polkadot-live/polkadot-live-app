@@ -21,3 +21,5 @@ export {
   useWalletConnectImport,
   WalletConnectImportProvider,
 } from './WalletConnectImport';
+export { useWcFeedback, WcFeedbackProvider } from './WcFeedback';
+export { useWcVerifier, WcVerifierProvider } from './WcVerifier';

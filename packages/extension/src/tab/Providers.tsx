@@ -19,6 +19,8 @@ import {
   TxMetaProvider,
   WalletConnectProvider,
   WalletConnectImportProvider,
+  WcFeedbackProvider,
+  WcVerifierProvider,
 } from './contexts';
 import { withProviders } from '@polkadot-live/ui/hooks';
 import App from './App';
@@ -38,8 +40,10 @@ export const Providers = withProviders(
   DialogControlProvider,
   TabsProvider,
   LedgerHardwareProvider,
+  WcFeedbackProvider,
   WalletConnectProvider,
   WalletConnectImportProvider,
+  WcVerifierProvider,
   LedgerFeedbackProvider,
   TxMetaProvider
 )(App);

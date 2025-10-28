@@ -11,6 +11,5 @@ export interface SignWcOverlayProps {
   info: ExtrinsicInfo;
 }
 export interface SignVaultOverlayProps {
-  from: string;
-  txId: string;
+  info: ExtrinsicInfo;
 }

@@ -23,7 +23,11 @@ import { createSafeContextHook } from '@polkadot-live/contexts';
 import { renderToast } from '@polkadot-live/ui/utils';
 import { WalletConnectModal } from '@walletconnect/modal';
 import { ChainIcon } from '@polkadot-live/ui/components';
-import { SignLedgerOverlay } from '../../screens';
+import {
+  SignLedgerOverlay,
+  SignVaultOverlay,
+  SignWcOverlay,
+} from '../../screens';
 
 const PAGINATION_ITEMS_PER_PAGE = 10;
 
@@ -187,6 +191,9 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
             const { txId, status }: { txId: string; status: TxStatus } =
               message.payload;
 
+            if ((['finalized', 'error'] as TxStatus[]).includes(status)) {
+              relayState('extrinsic:building', false);
+            }
             if (status === 'finalized') {
               const { txHash }: { txHash: `0x${string}` } = message.payload;
               setTxHash(txId, txHash);
@@ -441,9 +448,9 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   const getOverlayComponent = (info: ExtrinsicInfo) => {
     switch (info.actionMeta.source) {
       case 'vault':
-        return <h1>Vault Sign Overlay</h1>;
+        return <SignVaultOverlay info={info} />;
       case 'wallet-connect':
-        return <h1>WalletConnect Sign Overlay</h1>;
+        return <SignWcOverlay info={info} />;
       case 'ledger':
         return <SignLedgerOverlay info={info} />;
       default:
@@ -539,7 +546,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       if (txStatus === 'error' || txStatus === 'finalized') {
         relayState('extrinsic:building', false);
       }
-      // Update tx status in store.
       await updateStoreInfo(info);
     } catch (err) {
       console.error(err);
@@ -559,7 +565,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       console.error(new ExtrinsicError('DynamicInfoUndefined'));
       return;
     }
-    // Set cache flag to update extrinsic state.
     info.dynamicInfo.txSignature = s;
     setUpdateCache(true);
   };

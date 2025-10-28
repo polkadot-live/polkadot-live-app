@@ -24,6 +24,8 @@ import {
   useTxMeta,
   useWalletConnect,
   useWalletConnectImport,
+  useWcFeedback,
+  useWcVerifier,
 } from './contexts';
 
 interface ContextProxyProps {
@@ -48,8 +50,10 @@ export const ContextProxyTab = ({ children }: ContextProxyProps) => {
         SettingFlagsCtx: () => useSettingFlags(),
         TabsCtx: () => useTabs(),
         LedgerHardwareCtx: () => useLedgerHardware(),
+        WcFeedbackCtx: () => useWcFeedback(),
         WalletConnectCtx: () => useWalletConnect(),
         WalletConnectImportCtx: () => useWalletConnectImport(),
+        WcVerifierCtx: () => useWcVerifier(),
         LedgerFeedbackCtx: () => useLedgerFeedback(),
         TxMetaCtx: () => useTxMeta(),
       }),
