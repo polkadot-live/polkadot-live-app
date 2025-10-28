@@ -28,6 +28,7 @@ import {
   SignVaultOverlay,
   SignWcOverlay,
 } from '../../screens';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 const PAGINATION_ITEMS_PER_PAGE = 10;
 
@@ -209,6 +210,11 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
           case 'tryInitTx': {
             const { actionMeta }: { actionMeta: ActionMeta } = message.payload;
             initTx(actionMeta);
+            break;
+          }
+          case 'updateAccountNames': {
+            const { address, chainId, newName } = message.payload;
+            updateAccountName(address, chainId, newName);
             break;
           }
         }
@@ -663,16 +669,22 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   /**
    * Update an account name assocated with an address.
    */
-  const updateAccountName = async (address: string, accountName: string) => {
+  const updateAccountName = async (
+    address: string,
+    chainId: ChainID,
+    accountName: string
+  ) => {
+    const updatedInfos: ExtrinsicInfo[] = [];
+
     // Update extrinsics state in actionMeta.
     for (const [txId, info] of Array.from(extrinsicsRef.current.entries())) {
-      let updateStore = false;
-
       if (info.actionMeta.action === 'balances_transferKeepAlive') {
         // Check signer and recipient account names.
+        const { from, chainId: nextChainId } = info.actionMeta;
+        const updateSigner = from === address && nextChainId === chainId;
         const data: ExTransferKeepAliveData = info.actionMeta.data;
-        const updateSigner = info.actionMeta.from === address;
-        const updateRecipient = data.recipientAddress === address;
+        const updateRecipient =
+          data.recipientAddress === address && nextChainId === chainId;
 
         if (updateSigner) {
           info.actionMeta.accountName = accountName;
@@ -681,22 +693,20 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
           info.actionMeta.data.recipientAccountName = accountName;
         }
         if (updateSigner || updateRecipient) {
-          extrinsicsRef.current.set(txId, { ...info });
-          updateStore = true;
+          extrinsicsRef.current.set(txId, info);
+          updatedInfos.push(info);
         }
       } else if (info.actionMeta.from === address) {
         // Update signer account name.
         info.actionMeta.accountName = accountName;
-        extrinsicsRef.current.set(txId, { ...info });
-        updateStore = true;
-      }
-
-      // Update data in store.
-      if (updateStore) {
-        await updateStoreInfo(info);
+        extrinsicsRef.current.set(txId, info);
+        updatedInfos.push(info);
       }
     }
-
+    // Update store.
+    for (const i of updatedInfos) {
+      await updateStoreInfo(i);
+    }
     // Update addresses info state.
     setAddressesInfo((prev) => {
       const updated = prev.map((i) => {

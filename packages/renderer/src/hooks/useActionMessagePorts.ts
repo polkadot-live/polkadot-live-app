@@ -68,8 +68,8 @@ export const useActionMessagePorts = () => {
       newName: string;
     }
 
-    const { address, newName }: Target = ev.data.data;
-    await updateAccountName(address, newName);
+    const { address, chainId, newName }: Target = ev.data.data;
+    await updateAccountName(address, chainId, newName);
   };
 
   /**

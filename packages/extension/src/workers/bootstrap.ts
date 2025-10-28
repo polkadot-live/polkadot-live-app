@@ -653,7 +653,9 @@ const handleRenameAccount = async (enAccount: EncodedAccount) => {
     updated: await updateEventWhoInfo(address, chainId, newName),
   });
 
-  // TODO: Update account name in extrinsics window.
+  // Update account name in extrinsics window.
+  const payload = { address, chainId, newName };
+  sendChromeMessage('extrinsics', 'updateAccountNames', payload);
 };
 
 /**
