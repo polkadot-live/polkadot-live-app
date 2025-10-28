@@ -9,11 +9,10 @@ import { useEffect } from 'react';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { useWcFeedback, useWcVerifier } from '@ren/contexts/action';
 import { ButtonPrimary, ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
-import { FlexRow } from '@polkadot-live/styles/wrappers';
+import { FlexRow, WcOverlayWrapper } from '@polkadot-live/styles/wrappers';
 import { InfoCard } from '@polkadot-live/ui/components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { PuffLoader } from 'react-spinners';
-import { WcOverlayWrapper } from './Wrappers';
 import type { SignWcOverlayProps } from './types';
 
 export const SignWcOverlay = ({ info }: SignWcOverlayProps) => {

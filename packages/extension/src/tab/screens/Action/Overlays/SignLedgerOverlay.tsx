@@ -7,8 +7,11 @@ import { useLedgerFeedback } from '../../../contexts';
 import { useEffect } from 'react';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { ButtonPrimary, ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
-import { FlexColumn, FlexRow } from '@polkadot-live/styles/wrappers';
-import { LedgerOverlayWrapper } from './Wrappers';
+import {
+  LedgerOverlayWrapper,
+  FlexColumn,
+  FlexRow,
+} from '@polkadot-live/styles/wrappers';
 import { PuffLoader } from 'react-spinners';
 import {
   faChevronRight,
