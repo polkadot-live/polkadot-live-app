@@ -111,9 +111,10 @@ const initManagedAccounts = async () => {
 };
 
 const initAPIs = async () => {
-  if (!SYSTEMS_INITIALIZED) {
-    await APIsController.initialize(BACKEND);
+  if (SYSTEMS_INITIALIZED) {
+    return;
   }
+  await APIsController.initialize(BACKEND);
   const map = new Map<ChainID, FlattenedAPIData>();
   APIsController.clients.map((c) => map.set(c.chainId, c.flatten()));
   sendChromeMessage('api', 'state:chains', {
@@ -1066,7 +1067,12 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
           return true;
         }
         case 'disconnectApis': {
-          disconnectAPIs().then(() => sendResponse(true));
+          // Don't disconnect from unused APIs when popup reloaded.
+          if (SYSTEMS_INITIALIZED) {
+            sendResponse(true);
+          } else {
+            disconnectAPIs().then(() => sendResponse(true));
+          }
           return true;
         }
         case 'closeApis': {

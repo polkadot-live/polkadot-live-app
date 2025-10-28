@@ -85,7 +85,6 @@ export const ConnectionsProvider = ({
 
   /**
    * Message to initialize a transaction in the extrinsics tab.
-   * @todo Move to extrinsics context.
    */
   const initExtrinsicMsg = (txMeta: ActionMeta) => {
     relayState('extrinsic:building', true);
