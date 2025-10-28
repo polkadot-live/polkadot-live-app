@@ -55,12 +55,10 @@ export const ExtrinsicItemContent = ({
               </span>
             </FlexRow>
           </div>
-
           <ResponsiveRow $smGap="1.25rem" $smWidth="600px">
             <p style={{ flex: 1 }}>
               Transfer {fmtAmount} to account <b>{recipientAccountName}</b>.
             </p>
-
             <FlexRow>
               {renderSummaryButton()}
               <Signer
@@ -81,7 +79,6 @@ export const ExtrinsicItemContent = ({
         <ExtrinsicItemContentWrapper>
           <ResponsiveRow $smGap="1.25rem" $smWidth="600px">
             <p style={{ flex: 1 }}>Compound {fmtAmount}.</p>
-
             <FlexRow>
               {renderSummaryButton()}
               <Signer
@@ -102,7 +99,6 @@ export const ExtrinsicItemContent = ({
         <ExtrinsicItemContentWrapper>
           <ResponsiveRow $smGap="1.25rem" $smWidth="600px">
             <p style={{ flex: 1 }}>Claim {fmtAmount}.</p>
-
             <FlexRow>
               {renderSummaryButton()}
               <Signer

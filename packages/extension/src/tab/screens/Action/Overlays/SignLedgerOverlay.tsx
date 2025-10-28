@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as UI from '@polkadot-live/ui/components';
-import { useConnections } from '@ren/contexts/common';
+import { useConnections } from '../../../../contexts';
+import { useLedgerFeedback } from '../../../contexts';
 import { useEffect } from 'react';
-import { useLedgerFeedback } from '@ren/contexts/action';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { ButtonPrimary, ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
 import { FlexColumn, FlexRow } from '@polkadot-live/styles/wrappers';
@@ -26,15 +26,13 @@ export const SignLedgerOverlay = ({ info }: SignLedgerOverlayProps) => {
   const {
     isSigning,
     message: ledgerFeedback,
-    clearFeedback,
     handleLedgerTask,
     handleSign,
+    clearFeedback,
   } = useLedgerFeedback();
 
   useEffect(() => {
     setDisableClose(true);
-
-    // Clear generic app cache in main process when overlay closed.
     return () => {
       clearFeedback();
       handleLedgerTask('close_polkadot', '');

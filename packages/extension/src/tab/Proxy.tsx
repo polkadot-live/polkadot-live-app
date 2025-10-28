@@ -15,11 +15,13 @@ import {
   useDeleteHandler,
   useImportAddresses,
   useImportHandler,
+  useLedgerFeedback,
   useLedgerHardware,
   useRemoveHandler,
   useRenameHandler,
   useSettingFlags,
   useTabs,
+  useTxMeta,
   useWalletConnect,
   useWalletConnectImport,
 } from './contexts';
@@ -48,6 +50,8 @@ export const ContextProxyTab = ({ children }: ContextProxyProps) => {
         LedgerHardwareCtx: () => useLedgerHardware(),
         WalletConnectCtx: () => useWalletConnect(),
         WalletConnectImportCtx: () => useWalletConnectImport(),
+        LedgerFeedbackCtx: () => useLedgerFeedback(),
+        TxMetaCtx: () => useTxMeta(),
       }),
     []
   );

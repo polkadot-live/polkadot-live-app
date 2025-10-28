@@ -3,7 +3,7 @@
 
 import * as $ from '@dedot/shape';
 import { ConfigRenderer } from '../config';
-import { APIsController } from '../controllers/APIsController';
+import { APIsController, BusDispatcher } from '../controllers';
 import { ChainList, chainUnits } from '@polkadot-live/consts/chains';
 import { unitToPlanck } from '@w3ux/utils';
 import { concatU8a, hexToU8a, u8aToHex } from 'dedot/utils';
@@ -15,7 +15,6 @@ import {
   getNominationPoolRewards,
   getSpendableBalanceElectron,
 } from '../library/AccountsLib';
-
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { HexString } from 'dedot/utils';
 import type {
@@ -35,7 +34,7 @@ interface VerifyExtrinsicResult {
 
 export class ExtrinsicsController {
   private static txPayloads = new Map<string, CachedExtrinsicData>();
-
+  static backend: 'browser' | 'electron';
   /**
    * Get a payload object (currently required by WalletConnect)
    */
@@ -81,7 +80,7 @@ export class ExtrinsicsController {
   };
 
   /**
-   * Instantiates a new tx based on the received extrinsic data.
+   * Instantiates a new tx based on the received extrinsic data. (electron)
    */
   static new = async (info: ExtrinsicInfo) => {
     try {
@@ -180,7 +179,6 @@ export class ExtrinsicsController {
     try {
       const { txId, actionMeta } = info;
       const { chainId, from, source } = info.actionMeta;
-
       const api = (
         await APIsController.getConnectedApiOrThrow(chainId)
       ).getApi();
@@ -236,7 +234,6 @@ export class ExtrinsicsController {
       } else {
         const extra = new ExtraSignedExtension(api, { signerAddress: from });
         await extra.init();
-
         rawPayload = extra.toRawPayload(tx.callHex);
         const payload = extra.toPayload(tx.callHex);
         this.txPayloads.set(txId, { ...cached, rawPayload, extra, payload });
@@ -249,22 +246,18 @@ export class ExtrinsicsController {
       if (!verifyResult.isValid) {
         this.handleTxError(verifyResult.reason || 'Reason unknown.');
       }
-
       const genesisHash = api.genesisHash;
       const nonce = await getAddressNonce(api, from);
       const prefix = $.compactU32.encode(tx.callLength);
       // Prefixed raw payload for Vault.
       const prefixedRawPayload = concatU8a(prefix, hexToU8a(rawPayload.data));
 
-      ConfigRenderer.portToAction?.postMessage({
-        task: 'action:tx:report:data',
-        data: {
-          accountNonce: nonce,
-          genesisHash,
-          txId,
-          txPayload: prefixedRawPayload,
-        },
-      });
+      return {
+        accountNonce: nonce,
+        genesisHash,
+        txId,
+        txPayload: prefixedRawPayload,
+      };
     } catch (err) {
       console.log(err);
       this.handleTxError('An error occurred.');
@@ -279,20 +272,29 @@ export class ExtrinsicsController {
   };
 
   /**
-   * Utility for getting silence settings.
+   * Utility for showing a notification.
    */
-  static silenceOsNotifications = async (): Promise<boolean> => {
-    const map = await window.myAPI.getAppSettings();
-    return (
-      Boolean(map.get('setting:silence-os-notifications')) ||
-      Boolean(map.get('setting:silence-extrinsic-notifications'))
-    );
+  static showNotification = (title: string, body: string) => {
+    switch (this.backend) {
+      case 'browser': {
+        BusDispatcher.dispatch('showNotification', { title, body });
+        break;
+      }
+      case 'electron': {
+        window.myAPI.showNotification({ title, body });
+        break;
+      }
+    }
   };
 
   /**
    * Mock submitting a transaction.
    */
-  static mockSubmit = (info: ExtrinsicInfo, interval = 3000) => {
+  static mockSubmit = (
+    info: ExtrinsicInfo,
+    silence: boolean,
+    interval = 3000
+  ) => {
     let mockStatus: TxStatus = 'submitted';
     this.postTxStatus(mockStatus, info);
 
@@ -301,38 +303,25 @@ export class ExtrinsicsController {
         case 'submitted': {
           mockStatus = 'in_block';
           this.postTxStatus('submitted', info, true);
-
-          if (!(await this.silenceOsNotifications())) {
-            window.myAPI.showNotification({
-              title: 'Transaction Submitted',
-              body: 'Transaction has been submitted and is processing.',
-            });
-          }
-
+          !silence &&
+            this.showNotification(
+              'Transaction Submitted',
+              'Transaction has been submitted and is processing.'
+            );
           break;
         }
         case 'in_block': {
           mockStatus = 'finalized';
           this.postTxStatus('in_block', info, true);
-
-          if (!(await this.silenceOsNotifications())) {
-            window.myAPI.showNotification({
-              title: 'In Block',
-              body: 'Transaction is in block.',
-            });
-          }
+          !silence &&
+            this.showNotification('In Block', 'Transaction is in block.');
           break;
         }
         case 'finalized': {
           clearInterval(intervalId);
           this.postTxStatus(mockStatus, info, true);
-
-          if (!(await this.silenceOsNotifications())) {
-            window.myAPI.showNotification({
-              title: 'Finalized',
-              body: 'Transaction was finalised.',
-            });
-          }
+          !silence &&
+            this.showNotification('Finalized', 'Transaction was finalised.');
           break;
         }
       }
@@ -342,7 +331,7 @@ export class ExtrinsicsController {
   /**
    * Handles sending a signed transaction.
    */
-  static submit = async (info: ExtrinsicInfo) => {
+  static submit = async (info: ExtrinsicInfo, silence: boolean) => {
     const { txId } = info;
     const { from, chainId } = info.actionMeta;
 
@@ -352,7 +341,6 @@ export class ExtrinsicsController {
       } else if (!info.dynamicInfo.txSignature) {
         throw new ExtrinsicError('SignatureUndefined');
       }
-
       const api = (
         await APIsController.getConnectedApiOrThrow(chainId)
       ).getApi();
@@ -370,42 +358,28 @@ export class ExtrinsicsController {
         signature: $Signature.tryDecode(txSignature),
         extra: extra!.data,
       });
-
       const unsub = await tx.send(async ({ status, txHash }) => {
         switch (status.type) {
           case 'Broadcasting': {
             this.postTxStatus('submitted', info);
-
-            if (!(await this.silenceOsNotifications())) {
-              window.myAPI.showNotification({
-                title: 'Transaction Submitted',
-                body: 'Transaction has been submitted and is processing.',
-              });
-            }
+            !silence &&
+              this.showNotification(
+                'Transaction Submitted',
+                'Transaction has been submitted and is processing.'
+              );
             break;
           }
           case 'BestChainBlockIncluded': {
             this.postTxStatus('in_block', info);
-
-            if (!(await this.silenceOsNotifications())) {
-              window.myAPI.showNotification({
-                title: 'In Block',
-                body: 'Transaction is in block.',
-              });
-            }
+            !silence &&
+              this.showNotification('In Block', 'Transaction is in block.');
             break;
           }
           case 'Finalized': {
             info.txHash = txHash;
             this.postTxStatus('finalized', info);
-
-            if (!(await this.silenceOsNotifications())) {
-              window.myAPI.showNotification({
-                title: 'Finalized',
-                body: 'Transaction was finalised.',
-              });
-            }
-
+            !silence &&
+              this.showNotification('Finalized', 'Transaction was finalised.');
             unsub();
             break;
           }
@@ -432,19 +406,27 @@ export class ExtrinsicsController {
       actionMeta: { eventUid, chainId },
     } = info;
 
-    // Report status in actions window.
-    ConfigRenderer.portToAction?.postMessage({
-      task: 'action:tx:report:status',
-      data: txHash ? { status, txId, txHash } : { status, txId },
-    });
-
-    if (eventUid) {
-      // Mark event as stale if status is finalized.
-      if (status === 'finalized' && !isMock) {
-        window.myAPI.sendEventTask({
-          action: 'events:makeStale',
-          data: { uid: eventUid, chainId },
+    switch (this.backend) {
+      case 'browser': {
+        BusDispatcher.dispatch('handleTxStatus', { info, status, isMock });
+        break;
+      }
+      case 'electron': {
+        // Report status in actions window.
+        ConfigRenderer.portToAction?.postMessage({
+          task: 'action:tx:report:status',
+          data: txHash ? { status, txId, txHash } : { status, txId },
         });
+        if (eventUid) {
+          // Mark event as stale if status is finalized.
+          if (status === 'finalized' && !isMock) {
+            window.myAPI.sendEventTask({
+              action: 'events:makeStale',
+              data: { uid: eventUid, chainId },
+            });
+          }
+        }
+        break;
       }
     }
   };
@@ -454,9 +436,22 @@ export class ExtrinsicsController {
    * @summary Render toast error and stop building extrinsic in extrinsics renderer.
    */
   private static handleTxError = (message: string) => {
-    ConfigRenderer.portToAction?.postMessage({
-      task: 'action:tx:invalid',
-      data: { message },
-    });
+    switch (this.backend) {
+      case 'browser': {
+        chrome.runtime.sendMessage({
+          type: 'extrinsics',
+          task: 'txError',
+          payload: { message },
+        });
+        break;
+      }
+      case 'electron': {
+        ConfigRenderer.portToAction?.postMessage({
+          task: 'action:tx:invalid',
+          data: { message },
+        });
+        break;
+      }
+    }
   };
 }

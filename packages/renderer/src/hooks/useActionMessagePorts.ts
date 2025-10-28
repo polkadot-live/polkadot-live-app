@@ -118,7 +118,6 @@ export const useActionMessagePorts = () => {
       const { txHash }: { txHash: `0x${string}` } = ev.data.data;
       setTxHash(txId, txHash);
     }
-
     // Also updates store with transaction hash.
     await updateTxStatus(txId, status);
   };

@@ -11,7 +11,6 @@ import { useSideNav } from '@polkadot-live/ui/contexts';
 import { useConnections } from '../../../contexts';
 import { useSendNative } from '@polkadot-live/contexts';
 import {
-  initExtrinsicBrowser,
   fetchSendAccountsBrowser,
   getSpendableBalanceBrowser,
 } from '@polkadot-live/core';
@@ -109,7 +108,14 @@ export const Home = () => {
                 <Send
                   useSendNative={useSendNative}
                   fetchSendAccounts={fetchSendAccountsBrowser}
-                  initExtrinsic={initExtrinsicBrowser}
+                  initExtrinsic={async (actionMeta) => {
+                    relayState('extrinsic:building', true);
+                    chrome.runtime.sendMessage({
+                      type: 'extrinsics',
+                      task: 'initTxRelay',
+                      payload: { actionMeta },
+                    });
+                  }}
                   getSpendableBalance={getSpendableBalanceBrowser}
                 />
               )}

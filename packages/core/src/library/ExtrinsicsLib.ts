@@ -10,15 +10,6 @@ import type {
 import type { ActionMeta } from '@polkadot-live/types/tx';
 
 /**
- * @name initExtrinsicBrowser
- * @summary Browser implementation of initializing an extrinsic.
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const initExtrinsicBrowser = async (meta: ActionMeta) => {
-  /* empty */
-};
-
-/**
  * @name initExtrinsicElectron
  * @summary Electron implementation of initializing an extrinsic.
  */

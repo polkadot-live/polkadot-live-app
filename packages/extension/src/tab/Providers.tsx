@@ -10,11 +10,13 @@ import {
   DeleteHandlerProvider,
   ImportAddressesProvider,
   ImportHandlerProvider,
+  LedgerFeedbackProvider,
   LedgerHardwareProvider,
   RemoveHandlerProvider,
   RenameHandlerProvider,
   SettingFlagsProvider,
   TabsProvider,
+  TxMetaProvider,
   WalletConnectProvider,
   WalletConnectImportProvider,
 } from './contexts';
@@ -37,5 +39,7 @@ export const Providers = withProviders(
   TabsProvider,
   LedgerHardwareProvider,
   WalletConnectProvider,
-  WalletConnectImportProvider
+  WalletConnectImportProvider,
+  LedgerFeedbackProvider,
+  TxMetaProvider
 )(App);

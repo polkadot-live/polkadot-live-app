@@ -11,6 +11,7 @@ import {
 import { createContext, useEffect, useRef } from 'react';
 import { createSafeContextHook } from '@polkadot-live/contexts';
 import { decodeAddress, encodeAddress, u8aToHex } from 'dedot/utils';
+import { useAppSettings } from '@ren/contexts/main/AppSettings';
 import { useConnections } from '@ren/contexts/common';
 import { getSdkError } from '@walletconnect/utils';
 import UniversalProvider from '@walletconnect/universal-provider';
@@ -39,6 +40,7 @@ export const WalletConnectProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { cacheGet: getSetting } = useAppSettings();
   const { cacheGet, getOnlineMode } = useConnections();
   const isConnected = cacheGet('mode:connected');
   const onlineMode = cacheGet('mode:online');
@@ -443,7 +445,10 @@ export const WalletConnectProvider = ({
       // Attach signature to info and submit transaction.
       wcTxSignMap.current.delete(txId);
       info.dynamicInfo.txSignature = result.signature;
-      ExtrinsicsController.submit(info);
+      const silence =
+        getSetting('setting:silence-os-notifications') ||
+        getSetting('setting:silence-extrinsic-notifications');
+      ExtrinsicsController.submit(info, silence);
 
       // Close overlay in extrinsics window.
       ConfigRenderer.portToAction?.postMessage({

@@ -100,12 +100,10 @@ export const executeLedgerTask = async (
       if (!result.success) {
         return serializeTaskResponse(handleLedgerTaskError(result.error!));
       }
-
       result = await signLedgerPayload(chainId, index, rawPayload, proof);
       if (!result.success) {
         return serializeTaskResponse(handleLedgerTaskError(result.error!));
       }
-
       return {
         ack: 'success',
         statusCode: 'LedgerSign',

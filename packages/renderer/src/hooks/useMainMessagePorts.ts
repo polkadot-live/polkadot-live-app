@@ -56,6 +56,7 @@ import type {
 
 export const useMainMessagePorts = () => {
   /// Main renderer contexts.
+  const { cacheGet } = useAppSettings();
   const { importAddress, removeAddress } = useAddresses();
   const { updateEventsOnAccountRename } = useEvents();
   const { syncOpenGovWindow } = useBootstrapping();
@@ -338,7 +339,14 @@ export const useMainMessagePorts = () => {
    */
   const handleTxBuild = async (ev: MessageEvent) => {
     const info: ExtrinsicInfo = JSON.parse(ev.data.data);
-    await ExtrinsicsController.build(info);
+    const result = await ExtrinsicsController.build(info);
+    if (result) {
+      const { accountNonce, genesisHash, txId, txPayload } = result;
+      ConfigRenderer.portToAction?.postMessage({
+        task: 'action:tx:report:data',
+        data: { accountNonce, genesisHash, txId, txPayload },
+      });
+    }
   };
 
   /**
@@ -348,7 +356,10 @@ export const useMainMessagePorts = () => {
   const handleTxVaultSubmit = (ev: MessageEvent) => {
     const { info: serialized } = ev.data.data;
     const info: ExtrinsicInfo = JSON.parse(serialized);
-    ExtrinsicsController.submit(info);
+    const silence =
+      cacheGet('setting:silence-os-notifications') ||
+      cacheGet('setting:silence-extrinsic-notifications');
+    ExtrinsicsController.submit(info, silence);
   };
 
   /**
@@ -358,7 +369,10 @@ export const useMainMessagePorts = () => {
   const handleTxMockSubmit = (ev: MessageEvent) => {
     const { info: serialized } = ev.data.data;
     const info: ExtrinsicInfo = JSON.parse(serialized);
-    ExtrinsicsController.mockSubmit(info);
+    const silence =
+      cacheGet('setting:silence-os-notifications') ||
+      cacheGet('setting:silence-extrinsic-notifications');
+    ExtrinsicsController.mockSubmit(info, silence);
   };
 
   /**

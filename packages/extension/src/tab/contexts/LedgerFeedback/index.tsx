@@ -1,8 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ConfigAction } from '@polkadot-live/core';
-import { useConnections } from '@ren/contexts/common';
+import { useConnections } from '../../../contexts';
 import { createContext, useState } from 'react';
 import { createSafeContextHook } from '@polkadot-live/contexts';
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
@@ -11,8 +10,9 @@ import type {
   LedgerErrorMeta,
   LedgerErrorStatusCode,
   LedgerFeedbackMessage,
-  LedgerTask,
+  LedgerTaskResponse,
 } from '@polkadot-live/types/ledger';
+import { useOverlay } from '@polkadot-live/ui/contexts';
 
 export const LedgerFeedbackContext = createContext<
   LedgerFeedbackContextInterface | undefined
@@ -28,6 +28,7 @@ export const LedgerFeedbackProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { setDisableClose, setStatus: setOverlayStatus } = useOverlay();
   const { relayState } = useConnections();
   const [message, setMessage] = useState<LedgerFeedbackMessage | null>(null);
   const [isSigning, setIsSigning] = useState(false);
@@ -81,8 +82,9 @@ export const LedgerFeedbackProvider = ({
   /**
    * Send IPC ledger task.
    */
-  const handleLedgerTask = (task: LedgerTask, payload: string) =>
-    window.myAPI.doLedgerTask(task, payload);
+  const handleLedgerTask = () => {
+    /* empty */
+  };
 
   /**
    * Initiate Ledger sign task.
@@ -90,11 +92,26 @@ export const LedgerFeedbackProvider = ({
   const handleSign = (info: ExtrinsicInfo) => {
     setIsSigning(true);
     relayState('extrinsic:building', true);
-
-    ConfigAction.portAction.postMessage({
-      task: 'renderer:ledger:sign',
-      data: { info: JSON.stringify(info) },
-    });
+    chrome.runtime
+      .sendMessage({
+        type: 'extrinsics',
+        task: 'ledgerSignSubmit',
+        payload: { info },
+      })
+      .then((result: LedgerTaskResponse) => {
+        setIsSigning(false);
+        const { ack, statusCode } = result;
+        if (ack === 'success') {
+          setDisableClose(false);
+          setOverlayStatus(0);
+        } else {
+          relayState('extrinsic:building', false);
+          setMessage({
+            kind: 'error',
+            text: getLedgerMessage(statusCode as LedgerErrorStatusCode),
+          });
+        }
+      });
   };
 
   return (
