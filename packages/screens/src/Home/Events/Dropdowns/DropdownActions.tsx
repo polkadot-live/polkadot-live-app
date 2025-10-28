@@ -20,17 +20,9 @@ export const ActionsDropdown = ({
   uriActions,
 }: ActionsDropdownProps) => {
   const { useCtx } = useContextProxy();
+  const { cacheGet, getTheme, getOnlineMode, initExtrinsicMsg, openInBrowser } =
+    useCtx('ConnectionsCtx')();
   const { isConnecting } = useCtx('BootstrappingCtx')();
-  const {
-    cacheGet,
-    getTheme,
-    getOnlineMode,
-    isTabOpen,
-    initExtrinsicMsg,
-    openInBrowser,
-    openTab,
-    relayState,
-  } = useCtx('ConnectionsCtx')();
   const darkMode = cacheGet('mode:dark');
   const isBuildingExtrinsic = cacheGet('extrinsic:building');
   const theme = getTheme();
@@ -42,22 +34,8 @@ export const ActionsDropdown = ({
       : null;
 
   // Open action window and initialize with the event's tx data.
-  const openActionWindow = async (txMeta: ActionMeta, btnLabel: string) => {
-    relayState('extrinsic:building', true);
-
-    // Relay init task to extrinsics window after its DOM has loaded.
-    if (!(await isTabOpen('action'))) {
-      const serData = JSON.stringify(txMeta);
-      const relayData = { windowId: 'action', task: 'action:init', serData };
-
-      openTab('action', relayData, {
-        event: 'window-open-extrinsics',
-        data: { action: `${event.category}-${btnLabel?.toLowerCase()}` },
-      });
-    } else {
-      openTab('action');
-      initExtrinsicMsg(txMeta);
-    }
+  const openActionWindow = async (txMeta: ActionMeta) => {
+    initExtrinsicMsg(txMeta);
   };
 
   return (
@@ -106,7 +84,7 @@ export const ActionsDropdown = ({
                       (getOnlineMode() && isConnecting)
                     }
                     onSelect={() => {
-                      openActionWindow(txMeta, label);
+                      openActionWindow(txMeta);
                     }}
                   >
                     <div className="LeftSlot">

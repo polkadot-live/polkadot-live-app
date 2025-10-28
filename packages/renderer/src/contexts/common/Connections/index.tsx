@@ -92,9 +92,19 @@ export const ConnectionsProvider = ({
    * @todo Move to extrinsics context.
    */
   const initExtrinsicMsg = (txMeta: ActionMeta) => {
-    ConfigRenderer.portToAction?.postMessage({
-      task: 'action:init',
-      data: JSON.stringify(txMeta),
+    relayState('extrinsic:building', true);
+    isTabOpen('action').then((isOpen) => {
+      if (isOpen) {
+        openTab('action');
+        ConfigRenderer.portToAction?.postMessage({
+          task: 'action:init',
+          data: JSON.stringify(txMeta),
+        });
+      } else {
+        const serData = JSON.stringify(txMeta);
+        const relayData = { windowId: 'action', task: 'action:init', serData };
+        openTab('action', relayData);
+      }
     });
   };
 
