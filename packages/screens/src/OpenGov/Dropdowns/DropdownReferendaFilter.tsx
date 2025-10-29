@@ -5,17 +5,17 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as Styles from '@polkadot-live/styles/wrappers';
 import { CheckboxRx, TooltipRx } from '@polkadot-live/ui/components';
-import { useConnections } from '@ren/contexts/common';
-import { usePolkassembly, useReferenda } from '@ren/contexts/openGov';
+import { useContextProxy } from '@polkadot-live/contexts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { DropdownReferendaFilterProps } from './types';
 
 export const DropdownReferendaFilter = ({
   tab,
 }: DropdownReferendaFilterProps) => {
-  const { getSortedFilterOptions, setFilterOption } = useReferenda();
-  const { fetchingMetadata } = usePolkassembly();
-  const { getTheme } = useConnections();
+  const { useCtx } = useContextProxy();
+  const { getSortedFilterOptions, setFilterOption } = useCtx('ReferendaCtx')();
+  const { fetchingMetadata } = useCtx('PolkassemblyCtx')();
+  const { getTheme } = useCtx('ConnectionsCtx')();
   const theme = getTheme();
 
   const renderFilterMark = (): boolean =>
@@ -39,7 +39,6 @@ export const DropdownReferendaFilter = ({
                   icon={FA.faCircleExclamation}
                 />
               )}
-
               <FontAwesomeIcon icon={FA.faFilter} transform={'shrink-2'} />
             </button>
           </TooltipRx>

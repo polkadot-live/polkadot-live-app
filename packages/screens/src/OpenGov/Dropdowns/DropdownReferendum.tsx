@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { useConnections } from '@ren/contexts/common';
+import { useContextProxy } from '@polkadot-live/contexts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   DropdownMenuContent,
@@ -25,24 +25,21 @@ export const ReferendumDropdownMenu = ({
   chainId,
   referendum,
 }: ReferendumDropdownMenuProps) => {
-  const { cacheGet, getTheme } = useConnections();
+  const { useCtx } = useContextProxy();
+  const { cacheGet, getTheme, openInBrowser } = useCtx('ConnectionsCtx')();
   const darkMode = cacheGet('mode:dark');
   const theme = getTheme();
 
   const onPolkassemblyClick = () => {
     const { refId } = referendum;
     const uriPolkassembly = `https://${getPolkassemblySubdomain(chainId)}.polkassembly.io/referenda/${refId}`;
-    window.myAPI.openBrowserURL(uriPolkassembly);
-    window.myAPI.umamiEvent('link-open', {
-      dest: 'polkassembly',
-    });
+    openInBrowser(uriPolkassembly, { dest: 'polkassembly' });
   };
 
   const onSubsquareClick = () => {
     const { refId } = referendum;
     const uriSubsquare = `https://${getSubsquareSubdomain(chainId)}.subsquare.io/referenda/${refId}`;
-    window.myAPI.openBrowserURL(uriSubsquare);
-    window.myAPI.umamiEvent('link-open', { dest: 'subsquare' });
+    openInBrowser(uriSubsquare, { dest: 'subsquare' });
   };
 
   return (

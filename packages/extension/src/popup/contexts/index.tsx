@@ -13,5 +13,9 @@ export {
   useIntervalSubscriptions,
   IntervalSubscriptionsProvider,
 } from './IntervalSubscriptions';
+export {
+  useIntervalTasksManager,
+  IntervalTasksManagerProvider,
+} from './IntervalTasksManager';
 export { useSubscriptions, SubscriptionsProvider } from './Subscriptions';
 export { useSummary, SummaryProvider } from './Summary';

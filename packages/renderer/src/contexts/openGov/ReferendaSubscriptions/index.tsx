@@ -187,13 +187,11 @@ export const ReferendaSubscriptionsProvider = ({
     setSubscriptions((prev) => {
       const { action, chainId, referendumId } = task;
       const cloned = new Map(prev);
-
       const updated = cloned
         .get(chainId)!
         .map((t) =>
           t.action === action && t.referendumId === referendumId ? task : t
         );
-
       cloned.set(chainId, updated);
       return cloned;
     });

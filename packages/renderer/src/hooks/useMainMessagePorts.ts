@@ -390,13 +390,11 @@ export const useMainMessagePorts = () => {
    */
   const handleGetTracks = async (ev: MessageEvent) => {
     const { chainId } = ev.data.data;
-
     try {
       const { api } = await APIsController.getConnectedApiOrThrow(chainId);
       if (!api) {
         throw Error('api is null');
       }
-
       type T = [number, PalletReferendaTrackDetails][];
       const tracks = api.consts.referenda.tracks;
       const serialized = Core.getSerializedTracks(tracks as T);

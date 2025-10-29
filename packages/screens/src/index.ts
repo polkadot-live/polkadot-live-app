@@ -10,4 +10,5 @@ export { Summary } from './Home';
 
 export { Action } from './Action';
 export { Import } from './Import';
+export { OpenGov } from './OpenGov';
 export { Settings } from './Settings';

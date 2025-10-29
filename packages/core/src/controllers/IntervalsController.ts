@@ -70,7 +70,6 @@ export class IntervalsController {
       if (task.status === 'disable') {
         continue;
       }
-
       const { chainId } = task;
       if (this.subscriptions.has(chainId)) {
         const current = this.subscriptions.get(chainId)!;
@@ -79,7 +78,6 @@ export class IntervalsController {
         this.subscriptions.set(chainId, [{ ...task }]);
       }
     }
-
     // Restart interval.
     isOnline && this.initClock();
   }
@@ -94,7 +92,6 @@ export class IntervalsController {
   ) {
     console.log('Insert interval subscription:');
     console.log(subscription);
-
     // Stop interval.
     this.stopInterval();
 
@@ -105,7 +102,6 @@ export class IntervalsController {
     } else {
       this.subscriptions.set(chainId, [{ ...subscription }]);
     }
-
     // Restart interval after updating cached tasks.
     isOnline && this.initClock();
   }
@@ -126,19 +122,16 @@ export class IntervalsController {
       if (!this.subscriptions.has(task.chainId)) {
         continue;
       }
-
       const { chainId, action, referendumId } = task;
       const updated = this.subscriptions
         .get(chainId)!
         .filter(
           (t) => !(t.action === action && t.referendumId === referendumId)
         );
-
       updated.length !== 0
         ? this.subscriptions.set(chainId, updated)
         : this.subscriptions.delete(chainId);
     }
-
     if (isOnline && this.hasActiveSubscriptions()) {
       this.initClock();
     }
@@ -162,7 +155,6 @@ export class IntervalsController {
     if (!this.subscriptions.has(chainId)) {
       return;
     }
-
     const updated = this.subscriptions
       .get(chainId)!
       .filter((t) => !(t.action === action && t.referendumId === referendumId));
@@ -185,17 +177,14 @@ export class IntervalsController {
     if (task.status === 'disable') {
       return;
     }
-
     // Stop interval.
     this.stopInterval();
-
     const { chainId, action, referendumId } = task;
     const updated = this.subscriptions
       .get(chainId)!
       .map((t) =>
         t.action === action && t.referendumId === referendumId ? task : t
       );
-
     this.subscriptions.set(chainId, updated);
 
     // Restart interval.
@@ -217,7 +206,6 @@ export class IntervalsController {
     if (!this.hasActiveSubscriptions()) {
       return;
     }
-
     // Seconds until next period synched with clock.
     const seconds = secondsUntilNextMinute(this.tickDuration);
     console.log(`Seconds to wait: ${seconds}`);

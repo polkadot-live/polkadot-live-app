@@ -1,16 +1,12 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import {
-  ConfigRenderer,
-  executeIntervaledOneShot,
-  IntervalsController,
-} from '@polkadot-live/core';
 import { createSafeContextHook } from '@polkadot-live/contexts';
+import { executeIntervaledOneShot } from '@polkadot-live/core';
 import { Flip, toast } from 'react-toastify';
 import { createContext } from 'react';
-import { useConnections } from '@ren/contexts/common';
-import { useManage, useIntervalSubscriptions } from '@ren/contexts/main';
+import { useConnections } from '../../../contexts';
+import { useManage, useIntervalSubscriptions } from '../../contexts';
 import { intervalDurationsConfig } from '@polkadot-live/consts/subscriptions/interval';
 import type { AnyFunction } from '@polkadot-live/types/misc';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
@@ -39,43 +35,36 @@ export const IntervalTasksManagerProvider = ({
 
   /// Utility to update an interval task.
   const updateIntervalTask = (task: IntervalSubscription) => {
-    ConfigRenderer.portToOpenGov?.postMessage({
-      task: 'openGov:task:update',
-      data: {
-        serialized: JSON.stringify(task),
-      },
-    });
-    window.myAPI.sendIntervalTask({
-      action: 'interval:task:update',
-      data: { serialized: JSON.stringify(task) },
+    console.log(task);
+    // TODO: Relay mechanism for updating openGov view state.
+
+    chrome.runtime.sendMessage({
+      type: 'intervalSubscriptions',
+      task: 'update',
+      payload: { task },
     });
   };
 
   /// Utility to handle an analytics event.
-  const handleIntervalAnalytics = (task: IntervalSubscription) => {
-    const { action, category, status } = task;
-    const event = `subscription-interval-${status === 'enable' ? 'on' : 'off'}`;
-    window.myAPI.umamiEvent(event, { action, category });
+  const handleIntervalAnalytics = () => {
+    /* empty */
   };
 
   /// Handle toggling an interval subscription.
   const handleIntervalToggle = async (task: IntervalSubscription) => {
-    // Invert task status.
-    const newStatus = task.status === 'enable' ? 'disable' : 'enable';
-    task.status = newStatus;
+    const status = task.status === 'enable' ? 'disable' : 'enable';
+    task.status = status;
 
     // Handle task in intervals controller.
-    newStatus === 'enable'
-      ? IntervalsController.insertSubscription(task, getOnlineMode())
-      : IntervalsController.removeSubscription(task, getOnlineMode());
-
-    // Update main renderer state.
+    await chrome.runtime.sendMessage({
+      type: 'intervalSubscriptions',
+      task: status === 'enable' ? 'insertSubscription' : 'removeSubscription',
+      payload: { task, onlineMode: getOnlineMode() },
+    });
+    // Update store and renderer state.
     updateIntervalSubscription(task);
     tryUpdateDynamicIntervalTask(task);
-
-    // Update store and main renderer state.
     updateIntervalTask(task);
-    handleIntervalAnalytics(task);
   };
 
   /// Handle clicking os notifications toggle for interval subscriptions.
@@ -86,14 +75,9 @@ export const IntervalTasksManagerProvider = ({
     const checked: boolean = flag;
     task.enableOsNotifications = checked;
 
-    // Update task data in intervals controller.
-    IntervalsController.updateSubscription(task);
-
-    // Update main renderer state.
+    // Update store and renderer state.
     updateIntervalSubscription(task);
     tryUpdateDynamicIntervalTask(task);
-
-    // Update OpenGov renderer state.
     updateIntervalTask(task);
   };
 
@@ -101,27 +85,19 @@ export const IntervalTasksManagerProvider = ({
   const handleRemoveIntervalSubscription = async (
     task: IntervalSubscription
   ) => {
-    // Remove task from interval controller.
-    task.status === 'enable' &&
-      IntervalsController.removeSubscription(task, getOnlineMode());
+    // Remove task from store and controller.
+    chrome.runtime.sendMessage({
+      type: 'intervalSubscriptions',
+      task: 'remove',
+      payload: { task, onlineMode: getOnlineMode() },
+    });
 
-    // Set status to disable.
+    // Set status to disable and update state.
     task.status = 'disable';
-
-    // Remove task from necessary React state.
     tryRemoveIntervalSubscription(task);
     removeIntervalSubscription(task);
 
-    // Remove task from store.
-    await window.myAPI.sendIntervalTask({
-      action: 'interval:task:remove',
-      data: { serialized: JSON.stringify(task) },
-    });
-    // Send message to OpenGov window to update its subscription state.
-    ConfigRenderer.portToOpenGov?.postMessage({
-      task: 'openGov:task:removed',
-      data: { serialized: JSON.stringify(task) },
-    });
+    // TODO: Send message to OpenGov window to update its subscription state.
   };
 
   /// Handle setting a new interval duration for the subscription.
@@ -144,8 +120,7 @@ export const IntervalTasksManagerProvider = ({
       updateIntervalSubscription(task);
       tryUpdateDynamicIntervalTask(task);
 
-      // Update controller, state and store.
-      IntervalsController.updateSubscription(task);
+      // Update store and view state.
       updateIntervalTask(task);
     }
   };
@@ -160,9 +135,10 @@ export const IntervalTasksManagerProvider = ({
       task,
       'one-shot'
     );
-
     if (!success) {
       setOneShotProcessing(false);
+
+      // Render error alert.
       toast.error(message ? message : 'Error', {
         position: 'bottom-center',
         autoClose: 3000,
@@ -181,20 +157,28 @@ export const IntervalTasksManagerProvider = ({
       setTimeout(() => {
         setOneShotProcessing(false);
       }, 550);
-
-      // Analytics.
-      const { action, category } = task;
-      window.myAPI.umamiEvent('oneshot-interval', { action, category });
     }
   };
 
   /// Insert multiple subscriptions.
-  const insertSubscriptions = (tasks: IntervalSubscription[]) =>
-    IntervalsController.insertSubscriptions(tasks, getOnlineMode());
+  const insertSubscriptions = (tasks: IntervalSubscription[]) => {
+    const onlineMode = getOnlineMode();
+    chrome.runtime.sendMessage({
+      type: 'intervalSubscriptions',
+      task: 'insertSubscriptions',
+      payload: { tasks, onlineMode },
+    });
+  };
 
   /// Remove multiple subscriptions.
-  const removeSubscriptions = (tasks: IntervalSubscription[]) =>
-    IntervalsController.removeSubscriptions(tasks, getOnlineMode());
+  const removeSubscriptions = (tasks: IntervalSubscription[]) => {
+    const onlineMode = getOnlineMode();
+    chrome.runtime.sendMessage({
+      type: 'intervalSubscriptions',
+      task: 'removeSubscriptions',
+      payload: { tasks, onlineMode },
+    });
+  };
 
   return (
     <IntervalTasksManagerContext

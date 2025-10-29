@@ -30,7 +30,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
     handleRemoveIntervalSubscription,
     handleChangeIntervalDuration,
     handleIntervalOneShot,
-  } = useCtx('IntervalTaskManageCtx')();
+  } = useCtx('IntervalTaskManagerCtx')();
 
   const [isToggled, setIsToggled] = useState<boolean>(task.status === 'enable');
   const [oneShotProcessing, setOneShotProcessing] = useState(false);

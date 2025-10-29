@@ -6,7 +6,14 @@ import * as Ctx from '../../contexts';
 import PolkadotIcon from '@polkadot-live/ui/svg/polkadotIcon.svg?react';
 import { version } from '../../../../package.json';
 import { Classic } from '@theme-toggles/react';
-import { Events, Footer, Manage, Send, Summary } from '@polkadot-live/screens';
+import {
+  Events,
+  Footer,
+  OpenGovHome,
+  Manage,
+  Send,
+  Summary,
+} from '@polkadot-live/screens';
 import { useSideNav } from '@polkadot-live/ui/contexts';
 import { useConnections } from '../../../contexts';
 import { useSendNative } from '@polkadot-live/contexts';
@@ -20,10 +27,6 @@ import {
   FixedFlexWrapper,
   ScrollWrapper,
 } from '@polkadot-live/styles/wrappers';
-
-const TitlePlaceholder = ({ text }: { text: string }) => (
-  <h1 style={{ padding: '2rem', textAlign: 'center' }}>{text}</h1>
-);
 
 export const Home = () => {
   const { getAddresses } = Ctx.useAddresses();
@@ -100,9 +103,7 @@ export const Home = () => {
                 <Manage addresses={getAddresses()} />
               )}
               {/* OpenGov Subscriptions */}
-              {sideNav.selectedId === 3 && (
-                <TitlePlaceholder text="OpenGov Subscriptions" />
-              )}
+              {sideNav.selectedId === 3 && <OpenGovHome />}
               {/* Send */}
               {sideNav.selectedId === 4 && (
                 <Send

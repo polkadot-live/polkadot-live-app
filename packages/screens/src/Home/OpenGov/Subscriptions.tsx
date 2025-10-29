@@ -26,7 +26,7 @@ export const Subscriptions = ({
     handleIntervalAnalytics,
     updateIntervalTask,
     removeSubscriptions,
-  } = useCtx('IntervalTaskManageCtx')();
+  } = useCtx('IntervalTaskManagerCtx')();
   const {
     activeChainId,
     dynamicIntervalTasksState,

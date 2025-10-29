@@ -20,6 +20,7 @@ import {
   ExtrinsicsController,
   LedgerTxError,
   handleLedgerTaskError,
+  IntervalsController,
 } from '@polkadot-live/core';
 import {
   getSupportedChains,
@@ -50,7 +51,10 @@ import type { FlattenedAPIData, NodeEndpoint } from '@polkadot-live/types/apis';
 import type { HexString } from 'dedot/utils';
 import type { LedgerTaskResponse } from '@polkadot-live/types/ledger';
 import type { SettingKey } from '@polkadot-live/types/settings';
-import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
+import type {
+  IntervalSubscription,
+  SubscriptionTask,
+} from '@polkadot-live/types/subscriptions';
 import type { Stores } from '../controllers';
 import type { SyncID, TabData } from '@polkadot-live/types/communication';
 
@@ -917,6 +921,43 @@ const isMainTabOpen = async (): Promise<chrome.tabs.Tab | undefined> => {
   return tabs.find((tab) => tab.url?.split('#')[0] === url);
 };
 
+/**
+ * Interval Subscriptions
+ */
+const compare = (
+  left: IntervalSubscription,
+  right: IntervalSubscription
+): boolean =>
+  left.action === right.action &&
+  left.chainId === right.chainId &&
+  left.referendumId === right.referendumId
+    ? true
+    : false;
+
+const handleUpdateIntervalSubscription = async (task: IntervalSubscription) => {
+  const { chainId } = task;
+  const store: Stores = 'intervalSubscriptions';
+  const all = (await DbController.get(store, chainId)) as
+    | IntervalSubscription[]
+    | undefined;
+  if (all) {
+    const updated = all.map((t) => (compare(task, t) ? task : t));
+    await DbController.set(store, chainId, updated);
+  }
+};
+
+const handleRemoveIntervalSubscription = async (task: IntervalSubscription) => {
+  const { chainId } = task;
+  const store: Stores = 'intervalSubscriptions';
+  const all = (await DbController.get(store, chainId)) as
+    | IntervalSubscription[]
+    | undefined;
+  if (all) {
+    const updated = all.filter((t) => !compare(task, t));
+    await DbController.set(store, chainId, updated);
+  }
+};
+
 chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
   switch (message.type) {
     /**
@@ -1392,6 +1433,66 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
           return true;
         }
       }
+      break;
+    }
+    case 'intervalSubscriptions': {
+      switch (message.task) {
+        case 'insertSubscription': {
+          const {
+            task,
+            onlineMode,
+          }: { task: IntervalSubscription; onlineMode: boolean } =
+            message.payload;
+          IntervalsController.insertSubscription(task, onlineMode);
+          return false;
+        }
+        case 'insertSubscriptions': {
+          const {
+            tasks,
+            onlineMode,
+          }: { tasks: IntervalSubscription[]; onlineMode: boolean } =
+            message.payload;
+          IntervalsController.insertSubscriptions(tasks, onlineMode);
+          return false;
+        }
+        case 'remove': {
+          const {
+            task,
+            onlineMode,
+          }: { task: IntervalSubscription; onlineMode: boolean } =
+            message.payload;
+          task.status === 'enable' &&
+            IntervalsController.removeSubscription(task, onlineMode);
+          handleRemoveIntervalSubscription(task);
+          return false;
+        }
+        case 'removeSubscription': {
+          const {
+            task,
+            onlineMode,
+          }: { task: IntervalSubscription; onlineMode: boolean } =
+            message.payload;
+          IntervalsController.removeSubscription(task, onlineMode);
+          return false;
+        }
+        case 'removeSubscriptions': {
+          const {
+            tasks,
+            onlineMode,
+          }: { tasks: IntervalSubscription[]; onlineMode: boolean } =
+            message.payload;
+          IntervalsController.removeSubscriptions(tasks, onlineMode);
+          return false;
+        }
+        case 'update': {
+          const { task }: { task: IntervalSubscription } = message.payload;
+          handleUpdateIntervalSubscription(task).then(() =>
+            IntervalsController.updateSubscription(task)
+          );
+          return false;
+        }
+      }
+      break;
     }
   }
 });
