@@ -6,11 +6,11 @@ import {
   AccountsController,
   APIsController,
   ConfigRenderer,
+  ExtrinsicsController,
   SubscriptionsController,
   IntervalsController,
   getOnlineStatus,
 } from '@polkadot-live/core';
-
 import React, { createContext, useEffect, useRef, useState } from 'react';
 import { createSafeContextHook } from '@polkadot-live/contexts';
 import { setStateWithRef } from '@w3ux/utils';
@@ -77,6 +77,7 @@ export const BootstrappingProvider = ({
    */
   const initSystems = async () => {
     const backend = 'electron';
+    ExtrinsicsController.backend = backend;
     SubscriptionsController.backend = backend;
 
     await initSmoldot();
@@ -85,7 +86,7 @@ export const BootstrappingProvider = ({
       AccountsController.initialize(backend),
     ]);
     await Promise.all([
-      AccountsController.initAccountSubscriptions('electron'),
+      AccountsController.initAccountSubscriptions(backend),
       SubscriptionsController.initChainSubscriptions(),
     ]);
   };

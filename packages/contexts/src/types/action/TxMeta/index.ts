@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { AnyJson } from '@polkadot-live/types/misc';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   ActionMeta,
   AddressInfo,
@@ -41,6 +42,10 @@ export interface TxMetaContextInterface {
   setTxSignature: (txId: string, s: AnyJson) => void;
   submitTx: (txId: string) => void;
   submitMockTx: (txId: string) => void;
-  updateAccountName: (address: string, accountName: string) => Promise<void>;
+  updateAccountName: (
+    address: string,
+    chainId: ChainID,
+    accountName: string
+  ) => Promise<void>;
   updateTxStatus: (txId: string, txStatus: TxStatus) => Promise<void>;
 }

@@ -1,6 +1,5 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
-/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import * as themeVariables from '@polkadot-live/styles/theme/variables';
 import { createSafeContextHook } from '@polkadot-live/contexts';
@@ -86,21 +85,20 @@ export const ConnectionsProvider = ({
 
   /**
    * Message to initialize a transaction in the extrinsics tab.
-   * @todo Move to extrinsics context.
    */
   const initExtrinsicMsg = (txMeta: ActionMeta) => {
-    console.log('Todo: Init tx in extrinsics tab');
+    relayState('extrinsic:building', true);
+    chrome.runtime.sendMessage({
+      type: 'extrinsics',
+      task: 'initTxRelay',
+      payload: { actionMeta: txMeta },
+    });
   };
 
   /**
    * Open tab.
-   * @todo Implement relay mechanism.
    */
-  const openTab = (
-    tab: string,
-    relayData?: AnyData,
-    analytics?: { event: string; data: AnyData | null }
-  ) => {
+  const openTab = (tab: string) => {
     const labels: Record<string, string> = {
       import: 'Accounts',
       action: 'Extrinsics',

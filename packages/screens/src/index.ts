@@ -4,6 +4,9 @@
 export { Events } from './Home';
 export { Footer } from './Home';
 export { Manage } from './Home';
+export { Send } from './Home';
 export { Summary } from './Home';
+
+export { Action } from './Action';
 export { Import } from './Import';
 export { Settings } from './Settings';

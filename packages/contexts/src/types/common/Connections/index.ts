@@ -12,7 +12,7 @@ export interface ConnectionsContextInterface {
   copyToClipboard: (text: string) => Promise<void>;
   getTheme: () => typeof themeVariables.darkTheme;
   getOnlineMode: () => boolean;
-  initExtrinsicMsg: (txMeta: ActionMeta) => void;
+  initExtrinsicMsg: (txMeta: ActionMeta, relayData?: AnyData) => void;
   isTabOpen: (tab: string) => Promise<boolean>;
   openInBrowser: (uri: string, analytics?: AnyData) => void;
   openTab: (

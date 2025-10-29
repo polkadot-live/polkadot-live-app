@@ -121,7 +121,6 @@ export class EventsController {
           uid,
           chainId
         );
-
         return;
       }
     }
@@ -373,12 +372,10 @@ export class EventsController {
    */
   private static persistStaleEvent(uid: string) {
     const stored = this.getEventsFromStore();
-
     const updated = stored.map((e) => {
       e.uid === uid && (e.stale = true);
       return e;
     });
-
     this.persistEventsToStore(updated);
   }
 
@@ -390,7 +387,6 @@ export class EventsController {
     const stored = (store as Record<string, AnyJson>).get(
       this.storeKey
     ) as string;
-
     return !stored ? [] : JSON.parse(stored);
   };
 

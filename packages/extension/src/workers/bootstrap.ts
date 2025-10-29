@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { DbController } from '../controllers';
+import { DbController, LedgerController } from '../controllers';
 import { dispatchNotification } from './notifications';
 import { eventBus } from './eventBus';
 import { sendChromeMessage } from './utils';
@@ -16,12 +16,17 @@ import {
   executeOneShot,
   pushUniqueEvent,
   doRemoveOutdatedEvents,
+  getBalance,
+  ExtrinsicsController,
+  LedgerTxError,
+  handleLedgerTaskError,
 } from '@polkadot-live/core';
 import {
   getSupportedChains,
   getSupportedSources,
 } from '@polkadot-live/consts/chains';
 import { initSharedState } from '@polkadot-live/consts/sharedState';
+import { decodeAddress, hexToU8a, u8aToHex } from 'dedot/utils';
 import type {
   AccountSource,
   EncodedAccount,
@@ -36,7 +41,14 @@ import type {
   EventCallback,
   NotificationData,
 } from '@polkadot-live/types/reporter';
+import type {
+  ActionMeta,
+  ExtrinsicInfo,
+  TxStatus,
+} from '@polkadot-live/types/tx';
 import type { FlattenedAPIData, NodeEndpoint } from '@polkadot-live/types/apis';
+import type { HexString } from 'dedot/utils';
+import type { LedgerTaskResponse } from '@polkadot-live/types/ledger';
 import type { SettingKey } from '@polkadot-live/types/settings';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 import type { Stores } from '../controllers';
@@ -49,10 +61,13 @@ const SHARED_STATE: Map<SyncID, boolean> = initSharedState();
 const BACKEND = 'browser';
 let ACTIVE_TABS: TabData[] = [];
 let PENDING_TAB_DATA: TabData | null = null;
-let TAB_ID: number | null = null;
+let BROWSER_TAB_ID: number | null = null;
 
 /** Flag set once systems have been initialized once */
 let SYSTEMS_INITIALIZED = false;
+
+/** Pending tx metadata to process in extrinsics view */
+let PENDING_ACTION_METADATA: ActionMeta | null = null;
 
 /**
  * Bootstrapping
@@ -96,9 +111,10 @@ const initManagedAccounts = async () => {
 };
 
 const initAPIs = async () => {
-  if (!SYSTEMS_INITIALIZED) {
-    await APIsController.initialize(BACKEND);
+  if (SYSTEMS_INITIALIZED) {
+    return;
   }
+  await APIsController.initialize(BACKEND);
   const map = new Map<ChainID, FlattenedAPIData>();
   APIsController.clients.map((c) => map.set(c.chainId, c.flatten()));
   sendChromeMessage('api', 'state:chains', {
@@ -114,6 +130,7 @@ const initSubscriptions = async () => {
   const store = 'accountSubscriptions';
   const active = (await DbController.getAllObjects(store)) as T;
 
+  ExtrinsicsController.backend = BACKEND;
   SubscriptionsController.backend = BACKEND;
   await Promise.all([
     AccountsController.initAccountSubscriptions('browser', active),
@@ -196,6 +213,41 @@ const updateEventWhoInfo = async (
 /**
  * Event bus.
  */
+
+eventBus.addEventListener('showNotification', (e) => {
+  const { title, body }: { title: string; body: string } = (e as CustomEvent)
+    .detail;
+  dispatchNotification(Date.now().toString(), title, body);
+});
+
+eventBus.addEventListener('handleTxStatus', async (e) => {
+  interface I {
+    info: ExtrinsicInfo;
+    status: TxStatus;
+    isMock: boolean;
+  }
+  const { info, status, isMock }: I = (e as CustomEvent).detail;
+  const { txId, txHash, actionMeta } = info;
+  const { eventUid, chainId } = actionMeta;
+
+  sendChromeMessage(
+    'extrinsics',
+    'reportTxStatus',
+    txHash ? { status, txId, txHash } : { status, txId }
+  );
+
+  if (eventUid && status === 'finalized' && !isMock) {
+    const event = (await DbController.get('events', eventUid)) as
+      | EventCallback
+      | undefined;
+
+    if (event) {
+      event.stale = true;
+      await DbController.set('events', eventUid, event);
+      sendChromeMessage('events', 'staleEvent', { uid: event.uid, chainId });
+    }
+  }
+});
 
 // Set react state after bootstrapping is complete.
 eventBus.addEventListener('initSystems:complete', async () => {
@@ -364,6 +416,19 @@ const getAllAccounts = async (): Promise<string> => {
     map.set(source, (result as ImportedGenericAccount[]) || []);
   }
   return JSON.stringify(Array.from(map.entries()));
+};
+
+const handleGetSpendableBalance = async (
+  address: string,
+  chainId: ChainID
+): Promise<bigint> => {
+  const api = (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
+  const ed = api.consts.balances.existentialDeposit;
+  const balance = await getBalance(api, address, chainId);
+  const { free } = balance;
+
+  const max = (a: bigint, b: bigint): bigint => (a > b ? a : b);
+  return max(free - ed, 0n);
 };
 
 const isAlreadyPersisted = async (publicKeyHex: string): Promise<boolean> => {
@@ -589,7 +654,9 @@ const handleRenameAccount = async (enAccount: EncodedAccount) => {
     updated: await updateEventWhoInfo(address, chainId, newName),
   });
 
-  // TODO: Update account name in extrinsics window.
+  // Update account name in extrinsics window.
+  const payload = { address, chainId, newName };
+  sendChromeMessage('extrinsics', 'updateAccountNames', payload);
 };
 
 /**
@@ -724,9 +791,131 @@ const onNotificationToggle = async (task: SubscriptionTask) => {
   await setAccountSubscriptionsState();
 };
 
+/**
+ * Extrinsics.
+ */
+
+const updateExtrinsic = async (info: ExtrinsicInfo) => {
+  const { txId } = info;
+  await DbController.set('extrinsics', txId, info);
+};
+
+const removeExtrinsic = async (txId: string) => {
+  ExtrinsicsController.deleteTx(txId);
+  await DbController.delete('extrinsics', txId);
+};
+
+const getAllExtrinsics = async () => {
+  const all = (await DbController.getAllObjects('extrinsics')) as Map<
+    string,
+    ExtrinsicInfo
+  >;
+  return Array.from(all.values()).map((e) => e);
+};
+
+const handleGetEstimatedFee = async (info: ExtrinsicInfo): Promise<string> =>
+  (await ExtrinsicsController.getEstimatedFee(info)).toString();
+
+const handlePersistExtrinsic = async (info: ExtrinsicInfo) => {
+  await DbController.set('extrinsics', info.txId, info);
+};
+
+const handleBuildExtrinsic = async (info: ExtrinsicInfo) => {
+  const result = await ExtrinsicsController.build(info);
+  if (result) {
+    const { accountNonce, genesisHash, txPayload } = result;
+    return { accountNonce, genesisHash, txPayload };
+  } else {
+    return null;
+  }
+};
+
+const handleSubmitExtrinsic = async (info: ExtrinsicInfo) => {
+  const results = (await Promise.all([
+    DbController.get('settings', 'setting:silence-os-notifications'),
+    DbController.get('settings', 'setting:silence-extrinsic-notifications'),
+  ])) as boolean[];
+  ExtrinsicsController.submit(info, results.some(Boolean));
+};
+
+const handleSubmitMockExtrinsic = async (info: ExtrinsicInfo) => {
+  const results = (await Promise.all([
+    DbController.get('settings', 'setting:silence-os-notifications'),
+    DbController.get('settings', 'setting:silence-extrinsic-notifications'),
+  ])) as boolean[];
+  ExtrinsicsController.mockSubmit(info, results.some(Boolean));
+};
+
+const getAccountLedgerMeta = async (chainId: ChainID, from: string) => {
+  const publicKeyHex = u8aToHex(decodeAddress(from));
+  const accounts = (await DbController.get(
+    'accounts',
+    'ledger'
+  )) as ImportedGenericAccount[];
+  const account = accounts.find((a) => a.publicKeyHex === publicKeyHex);
+  const result = account
+    ? account.encodedAccounts[chainId].ledgerMeta
+    : undefined;
+  return result;
+};
+
+const handleLedgerSignSubmit = async (
+  info: ExtrinsicInfo
+): Promise<LedgerTaskResponse> => {
+  try {
+    const { chainId, from } = info.actionMeta;
+    const meta = await getAccountLedgerMeta(chainId, from);
+    if (!meta) {
+      throw new Error('AccountLedgerMetaNotFound');
+    }
+    info.actionMeta.ledgerMeta = meta;
+    const { txId, dynamicInfo } = info;
+    if (!dynamicInfo) {
+      throw new LedgerTxError('TxDynamicInfoUndefined');
+    }
+    const txData = ExtrinsicsController.getTransactionPayload(txId);
+    if (!txData) {
+      throw new LedgerTxError('TxDataUndefined');
+    }
+    const { proof, rawPayload } = txData;
+    if (!(proof && rawPayload)) {
+      throw new LedgerTxError('TxPayloadsUndefined');
+    }
+    const { app } = await LedgerController.initialize();
+    const { accountIndex: index } = meta;
+    const txBlob = hexToU8a(rawPayload.data);
+    const res = await LedgerController.signPayload(app, index, txBlob, proof);
+
+    if (!res.success) {
+      return handleLedgerTaskError(res.error!);
+    }
+    dynamicInfo.txSignature = res.results! as HexString;
+
+    const settings = (await Promise.all([
+      DbController.get('settings', 'setting:silence-os-notifications'),
+      DbController.get('settings', 'setting:silence-extrinsic-notifications'),
+    ])) as boolean[];
+    ExtrinsicsController.submit(info, settings.some(Boolean));
+
+    return { ack: 'success', statusCode: 'LedgerSign' };
+  } catch (error) {
+    return handleLedgerTaskError(error as Error);
+  }
+};
+
 bootstrap().then(() => {
   console.log('> Bootstrap complete...');
 });
+
+/**
+ * Utils
+ */
+
+const isMainTabOpen = async (): Promise<chrome.tabs.Tab | undefined> => {
+  const url = chrome.runtime.getURL('src/tab/index.html');
+  const tabs = await chrome.tabs.query({});
+  return tabs.find((tab) => tab.url?.split('#')[0] === url);
+};
 
 chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
   switch (message.type) {
@@ -759,6 +948,10 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
      */
     case 'rawAccount': {
       switch (message.task) {
+        case 'getAll': {
+          getAllAccounts().then((result) => sendResponse(result));
+          return true;
+        }
         case 'getAllBySource': {
           const { source }: { source: AccountSource } = message.payload;
           DbController.get('accounts', source).then((result) =>
@@ -766,8 +959,12 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
           );
           return true;
         }
-        case 'getAll': {
-          getAllAccounts().then((result) => sendResponse(result));
+        case 'getSpendableBalance': {
+          const { address, chainId }: { address: string; chainId: ChainID } =
+            message.payload;
+          handleGetSpendableBalance(address, chainId).then((res) =>
+            sendResponse(res.toString())
+          );
           return true;
         }
         case 'delete': {
@@ -870,7 +1067,12 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
           return true;
         }
         case 'disconnectApis': {
-          disconnectAPIs().then(() => sendResponse(true));
+          // Don't disconnect from unused APIs when popup reloaded.
+          if (SYSTEMS_INITIALIZED) {
+            sendResponse(true);
+          } else {
+            disconnectAPIs().then(() => sendResponse(true));
+          }
           return true;
         }
         case 'closeApis': {
@@ -927,24 +1129,22 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
         }
         case 'openTabRelay': {
           const { tabData }: { tabData: TabData } = message.payload;
-          const route = tabData.viewId;
-          const url = chrome.runtime.getURL(`src/tab/index.html#${route}`);
+          const { viewId } = tabData;
 
-          const isOpen = ACTIVE_TABS.find((t) => t.viewId === route);
-          !isOpen && ACTIVE_TABS.push(tabData);
+          isMainTabOpen().then((tab) => {
+            const browserTabOpen = Boolean(tab);
+            browserTabOpen && (BROWSER_TAB_ID = tab?.id || null);
+            const url = chrome.runtime.getURL(`src/tab/index.html#${viewId}`);
 
-          chrome.tabs.query({}, function (tabs) {
-            const cleanUrl = url.split('#')[0];
-            const foundTab = tabs.find(
-              (tab) => tab.url?.split('#')[0] === cleanUrl
-            );
-            if (foundTab) {
-              TAB_ID && chrome.tabs.update(TAB_ID, { active: true });
+            if (browserTabOpen) {
+              BROWSER_TAB_ID &&
+                chrome.tabs.update(BROWSER_TAB_ID, { active: true });
               sendChromeMessage('tabs', 'openTab', { tabData });
             } else {
+              ACTIVE_TABS = [];
               PENDING_TAB_DATA = tabData;
-              chrome.tabs.create({ url }).then((tab) => {
-                TAB_ID = tab.id || null;
+              chrome.tabs.create({ url }).then((newTab) => {
+                BROWSER_TAB_ID = newTab.id || null;
               });
             }
           });
@@ -1069,6 +1269,17 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
     /**
      * Handle WalletConnect tasks.
      */
+    case 'walletConnect': {
+      switch (message.task) {
+        case 'getTxData': {
+          const { txId }: { txId: string } = message.payload;
+          const result = ExtrinsicsController.getTransactionPayload(txId);
+          sendResponse(result?.payload || null);
+          return true;
+        }
+      }
+      break;
+    }
     case 'walletConnect:relay': {
       switch (message.task) {
         case 'closeModal': {
@@ -1085,6 +1296,102 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
         }
       }
       break;
+    }
+    /**
+     * Handle extrinsics tasks.
+     */
+    case 'extrinsics': {
+      switch (message.task) {
+        case 'buildExtrinsic': {
+          const { info }: { info: ExtrinsicInfo } = message.payload;
+          handleBuildExtrinsic(info).then((res) => sendResponse(res));
+          return true;
+        }
+        case 'dispatchNotification': {
+          const { title, body }: { title: string; body: string } =
+            message.payload;
+          dispatchNotification(Date.now().toString(), title, body);
+          return false;
+        }
+        case 'getAll': {
+          getAllExtrinsics().then((res) => sendResponse(res));
+          return true;
+        }
+        case 'getEstimatedFee': {
+          const { info }: { info: ExtrinsicInfo } = message.payload;
+          handleGetEstimatedFee(info).then((res) => sendResponse(res));
+          return true;
+        }
+        case 'persist': {
+          const { info }: { info: ExtrinsicInfo } = message.payload;
+          handlePersistExtrinsic(info);
+          return false;
+        }
+        case 'update': {
+          const { info }: { info: ExtrinsicInfo } = message.payload;
+          updateExtrinsic(info);
+          return false;
+        }
+        case 'remove': {
+          const { txId }: { txId: string } = message.payload;
+          removeExtrinsic(txId);
+          return false;
+        }
+        case 'initTxRelay': {
+          // Cache action meta and fetch from extrinsics window when open.
+          const { actionMeta }: { actionMeta: ActionMeta } = message.payload;
+          const tabData: TabData = {
+            id: -1,
+            viewId: 'action',
+            label: 'Extrinsics',
+          };
+          const { viewId } = tabData;
+
+          isMainTabOpen().then((tab) => {
+            const browserTabOpen = Boolean(tab);
+            browserTabOpen && (BROWSER_TAB_ID = tab?.id || null);
+            const url = chrome.runtime.getURL(`src/tab/index.html#${viewId}`);
+
+            if (browserTabOpen) {
+              BROWSER_TAB_ID &&
+                chrome.tabs.update(BROWSER_TAB_ID, { active: true });
+              sendChromeMessage('tabs', 'openTab', { tabData });
+              sendChromeMessage('extrinsics', 'tryInitTx', { actionMeta });
+            } else {
+              ACTIVE_TABS = [];
+              PENDING_TAB_DATA = tabData;
+              PENDING_ACTION_METADATA = actionMeta;
+              chrome.tabs.create({ url }).then((newTab) => {
+                BROWSER_TAB_ID = newTab.id || null;
+              });
+            }
+          });
+          return false;
+        }
+        case 'initTx': {
+          const actionMeta = PENDING_ACTION_METADATA;
+          PENDING_ACTION_METADATA = null;
+          sendResponse(actionMeta);
+          return true;
+        }
+        case 'submit': {
+          const { info }: { info: ExtrinsicInfo } = message.payload;
+          handleSubmitExtrinsic(info);
+          return false;
+        }
+        case 'submitMock': {
+          const { info }: { info: ExtrinsicInfo } = message.payload;
+          handleSubmitMockExtrinsic(info);
+          return false;
+        }
+        case 'ledgerSignSubmit': {
+          const { info }: { info: ExtrinsicInfo } = message.payload;
+          handleLedgerSignSubmit(info).then((result: LedgerTaskResponse) =>
+            sendResponse(result)
+          );
+          return true;
+        }
+      }
     }
   }
 });

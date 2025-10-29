@@ -5,8 +5,6 @@ import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/styles/wrappers';
 import * as Tabs from '@radix-ui/react-tabs';
 import * as Wrappers from './Wrappers';
-import { HistoryRow } from './HistoryRow';
-import { DropdownReferendaFilter } from '../Dropdowns';
 
 import {
   ControlsWrapper,
@@ -31,7 +29,9 @@ import {
 } from '@ren/contexts/openGov';
 import { ReferendumRow } from './ReferendumRow';
 import { renderPlaceholders } from '@polkadot-live/ui/utils';
+import { DropdownReferendaFilter } from '../Dropdowns';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { HistoryRow } from './HistoryRow';
 import { PuffLoader } from 'react-spinners';
 import { DialogFindReferendum } from './Dialogs';
 import type { ReferendaProps } from '../types';
@@ -144,7 +144,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
 
     return (
       <Styles.FlexColumn style={{ marginTop: '1rem' }}>
-        <Wrappers.PaginationRow>
+        <Styles.PaginationRow>
           <Styles.FlexRow $gap={'0.75rem'} style={{ flex: 1 }}>
             <button
               className={`btn ${fetchingMetadata && 'fetching'}`}
@@ -188,7 +188,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
             <DialogFindReferendum tab={tab} />
             <DropdownReferendaFilter tab={tab} />
           </Styles.FlexRow>
-        </Wrappers.PaginationRow>
+        </Styles.PaginationRow>
 
         {referenda.length === 0 ? (
           <Styles.EmptyWrapper>
@@ -267,7 +267,9 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
 
   return (
     <UI.ScrollableMax>
-      {!getOnlineMode() && <UI.OfflineBanner />}
+      {!getOnlineMode() && (
+        <UI.OfflineBanner rounded={true} marginTop={'1rem'} />
+      )}
       <Styles.PadWrapper>
         <Styles.FlexColumn $rowGap={'1.5rem'}>
           <section>

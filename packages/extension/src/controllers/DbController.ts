@@ -13,6 +13,7 @@ import type {
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { DBSchema, IDBPDatabase } from 'idb';
 import type { EventCallback } from '@polkadot-live/types/reporter';
+import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 
 interface MyDB extends DBSchema {
@@ -32,6 +33,10 @@ interface MyDB extends DBSchema {
     key: string;
     value: EventCallback;
   };
+  extrinsics: {
+    key: string;
+    value: ExtrinsicInfo;
+  };
   managedAccounts: {
     key: ChainID;
     value: StoredAccount[];
@@ -47,6 +52,7 @@ export type Stores =
   | 'accountSubscriptions'
   | 'chainSubscriptions'
   | 'events'
+  | 'extrinsics'
   | 'managedAccounts'
   | 'settings';
 
@@ -73,6 +79,7 @@ export class DbController {
         db.createObjectStore('accountSubscriptions');
         db.createObjectStore('chainSubscriptions');
         db.createObjectStore('events');
+        db.createObjectStore('extrinsics');
         db.createObjectStore('managedAccounts');
 
         const accountsStore = db.createObjectStore('accounts');

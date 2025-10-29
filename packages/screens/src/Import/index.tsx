@@ -79,7 +79,9 @@ export const Import = () => {
           }}
         >
           <UI.ScrollableMax>
-            {!getOnlineMode() && <UI.OfflineBanner />}
+            {!getOnlineMode() && (
+              <UI.OfflineBanner rounded={true} marginTop={'1rem'} />
+            )}
             <Home setSection={setSection} setSource={setSource} />
             <UI.LinksFooter openHelp={openHelp} />
           </UI.ScrollableMax>
@@ -95,7 +97,9 @@ export const Import = () => {
         >
           {section === 1 && (
             <UI.ScrollableMax>
-              {!getOnlineMode() && <UI.OfflineBanner />}
+              {!getOnlineMode() && (
+                <UI.OfflineBanner rounded={true} marginTop={'1rem'} />
+              )}
               <ImportScreen
                 source={source}
                 section={section}

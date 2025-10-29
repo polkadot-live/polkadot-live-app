@@ -4,15 +4,20 @@
 import * as UI from '@polkadot-live/ui/components';
 import * as Ctx from '@ren/contexts/main';
 import { version } from '../../../package.json';
-import { ConfigRenderer } from '@polkadot-live/core';
+import {
+  ConfigRenderer,
+  initExtrinsicElectron,
+  fetchSendAccountsElectron,
+  getSpendableBalanceElectron,
+} from '@polkadot-live/core';
 import { useEffect, useState } from 'react';
 import { useConnections } from '@ren/contexts/common';
 import { useInitIpcHandlers } from '@ren/hooks/useInitIpcHandlers';
 import { useMainMessagePorts } from '@ren/hooks/useMainMessagePorts';
+import { useSendNative } from '@polkadot-live/contexts';
 import { Classic } from '@theme-toggles/react';
 import { OpenGov } from './OpenGov';
-import { Send } from './Send';
-import { Events, Footer, Manage, Summary } from '@polkadot-live/screens';
+import { Events, Footer, Manage, Send, Summary } from '@polkadot-live/screens';
 import {
   BackgroundIconWrapper,
   BodyInterfaceWrapper,
@@ -231,7 +236,14 @@ export const Home = () => {
               {sideNav.selectedId === 3 && <OpenGov />}
 
               {/* Send */}
-              {sideNav.selectedId === 4 && <Send />}
+              {sideNav.selectedId === 4 && (
+                <Send
+                  useSendNative={useSendNative}
+                  initExtrinsic={initExtrinsicElectron}
+                  fetchSendAccounts={fetchSendAccountsElectron}
+                  getSpendableBalance={getSpendableBalanceElectron}
+                />
+              )}
             </ScrollWrapper>
           )}
         </BodyInterfaceWrapper>
