@@ -244,7 +244,7 @@ export class ExtrinsicsController {
       console.log(`> Extrinsic is valid: ${JSON.stringify(verifyResult)}`);
 
       if (!verifyResult.isValid) {
-        this.handleTxError(verifyResult.reason || 'Reason unknown.');
+        throw new Error(verifyResult.reason || 'Reason unknown.');
       }
       const genesisHash = api.genesisHash;
       const nonce = await getAddressNonce(api, from);
@@ -260,7 +260,7 @@ export class ExtrinsicsController {
       };
     } catch (err) {
       console.log(err);
-      this.handleTxError('An error occurred.');
+      this.handleTxError((err as Error).message);
     }
   };
 
