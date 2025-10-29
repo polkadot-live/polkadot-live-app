@@ -267,7 +267,9 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
 
   return (
     <UI.ScrollableMax>
-      {!getOnlineMode() && <UI.OfflineBanner />}
+      {!getOnlineMode() && (
+        <UI.OfflineBanner rounded={true} marginTop={'1rem'} />
+      )}
       <Styles.PadWrapper>
         <Styles.FlexColumn $rowGap={'1.5rem'}>
           <section>

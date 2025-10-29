@@ -79,7 +79,9 @@ export const OpenGov: React.FC = () => {
           style={{ height: '100%' }}
         >
           <UI.ScrollableMax>
-            {!getOnlineMode() && <UI.OfflineBanner />}
+            {!getOnlineMode() && (
+              <UI.OfflineBanner rounded={true} marginTop={'1rem'} />
+            )}
             <Styles.PadWrapper>
               <Overview
                 setSection={setSection}

@@ -49,7 +49,9 @@ export const Tracks = ({ setSection }: TracksProps) => {
 
   return (
     <UI.ScrollableMax>
-      {!getOnlineMode() && <UI.OfflineBanner />}
+      {!getOnlineMode() && (
+        <UI.OfflineBanner rounded={true} marginTop={'1rem'} />
+      )}
       <Styles.PadWrapper>
         <Styles.FlexColumn $rowGap={'0.75rem'}>
           <section>

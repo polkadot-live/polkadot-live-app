@@ -106,7 +106,9 @@ export const Action = () => {
 
   return (
     <UI.ScrollableMax>
-      {!getOnlineMode() && <UI.OfflineBanner />}
+      {!getOnlineMode() && (
+        <UI.OfflineBanner rounded={true} marginTop={'1rem'} />
+      )}
       <Styles.PadWrapper>
         {isBuildingExtrinsic && (
           <BarLoader
