@@ -3,30 +3,23 @@
 
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useRef, useState } from 'react';
-import {
-  useApiHealth,
-  useBootstrapping,
-  useIntervalTasksManager,
-} from '@ren/contexts/main';
-import { useConnections } from '@ren/contexts/common';
-import { useHelp } from '@polkadot-live/ui/contexts';
+import { useContextProxy } from '@polkadot-live/contexts';
 import { TaskEntryWrapper } from '@polkadot-live/styles/wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
 import { Switch, TooltipRx } from '@polkadot-live/ui/components';
-import {
-  IntervalsController,
-  getShortIntervalLabel,
-} from '@polkadot-live/core';
+import { getShortIntervalLabel } from '@polkadot-live/core';
+import { intervalDurationsConfig } from '@polkadot-live/consts/subscriptions/interval';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { IntervalRowProps } from './types';
 
 export const IntervalRow = ({ task }: IntervalRowProps) => {
-  const { openHelp } = useHelp();
-  const { failedConnections, hasConnectionIssue } = useApiHealth();
-  const { isConnecting } = useBootstrapping();
+  const { useCtx } = useContextProxy();
+  const { openHelp } = useCtx('HelpCtx')();
+  const { failedConnections, hasConnectionIssue } = useCtx('ApiHealthCtx')();
+  const { isConnecting } = useCtx('BootstrappingCtx')();
 
-  const { cacheGet, getOnlineMode, getTheme } = useConnections();
+  const { cacheGet, getOnlineMode, getTheme } = useCtx('ConnectionsCtx')();
   const isImportingData = cacheGet('backup:importing');
   const isOnlineMode = getOnlineMode();
   const theme = getTheme();
@@ -37,7 +30,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
     handleRemoveIntervalSubscription,
     handleChangeIntervalDuration,
     handleIntervalOneShot,
-  } = useIntervalTasksManager();
+  } = useCtx('IntervalTaskManageCtx')();
 
   const [isToggled, setIsToggled] = useState<boolean>(task.status === 'enable');
   const [oneShotProcessing, setOneShotProcessing] = useState(false);
@@ -126,7 +119,6 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
           }
         />
       )}
-
       {/* One-shot is enabled and processing */}
       {!isDisabled && oneShotProcessing && (
         <FontAwesomeIcon
@@ -136,7 +128,6 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
           transform={'grow-3'}
         />
       )}
-
       {/* One-shot disabled */}
       {isDisabled && (
         <FontAwesomeIcon
@@ -241,13 +232,11 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
                     handleChangeIntervalDuration(e, task, setIntervalSetting)
                   }
                 >
-                  {IntervalsController.durations.map(
-                    ({ label, ticksToWait }, i) => (
-                      <option key={`interval_setting_${i}`} value={ticksToWait}>
-                        {label}
-                      </option>
-                    )
-                  )}
+                  {intervalDurationsConfig.map(({ label, ticksToWait }, i) => (
+                    <option key={`interval_setting_${i}`} value={ticksToWait}>
+                      {label}
+                    </option>
+                  ))}
                 </select>
                 <div className="close">
                   <FontAwesomeIcon
@@ -280,7 +269,6 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
                   icon={FA.faList}
                   transform={'grow-3'}
                 />
-
                 {/* Check overlay icon when clicked */}
                 {nativeChecked && (
                   <div className="checked-icon-wrapper">

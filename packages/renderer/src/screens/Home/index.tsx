@@ -16,8 +16,14 @@ import { useInitIpcHandlers } from '@ren/hooks/useInitIpcHandlers';
 import { useMainMessagePorts } from '@ren/hooks/useMainMessagePorts';
 import { useSendNative } from '@polkadot-live/contexts';
 import { Classic } from '@theme-toggles/react';
-import { OpenGov } from './OpenGov';
-import { Events, Footer, Manage, Send, Summary } from '@polkadot-live/screens';
+import {
+  Events,
+  Footer,
+  Manage,
+  OpenGovHome,
+  Send,
+  Summary,
+} from '@polkadot-live/screens';
 import {
   BackgroundIconWrapper,
   BodyInterfaceWrapper,
@@ -233,7 +239,7 @@ export const Home = () => {
               )}
 
               {/* OpenGov Subscriptions */}
-              {sideNav.selectedId === 3 && <OpenGov />}
+              {sideNav.selectedId === 3 && <OpenGovHome />}
 
               {/* Send */}
               {sideNav.selectedId === 4 && (

@@ -4,11 +4,9 @@
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as Style from '@polkadot-live/styles/wrappers';
-
-import { useIntervalSubscriptions, useManage } from '@ren/contexts/main';
+import { useContextProxy } from '@polkadot-live/contexts';
 import { useState } from 'react';
 import { ButtonText } from '@polkadot-live/ui/kits/buttons';
-import { useConnections } from '@ren/contexts/common';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { NoOpenGov } from '@polkadot-live/ui/utils';
@@ -16,10 +14,12 @@ import type { ChainID } from '@polkadot-live/types/chains';
 import type { NetworksProps } from './types';
 
 export const Networks = ({ setBreadcrumb, setSection }: NetworksProps) => {
-  const { openTab } = useConnections();
-  const { setDynamicIntervalTasks } = useManage();
-  const { getIntervalSubscriptionsForChain, getSortedKeys } =
-    useIntervalSubscriptions();
+  const { useCtx } = useContextProxy();
+  const { openTab } = useCtx('ConnectionsCtx')();
+  const { setDynamicIntervalTasks } = useCtx('ManageCtx')();
+  const { getIntervalSubscriptionsForChain, getSortedKeys } = useCtx(
+    'IntervalSubscriptionsCtx'
+  )();
 
   /**
    * Accordion state.
@@ -31,7 +31,6 @@ export const Networks = ({ setBreadcrumb, setSection }: NetworksProps) => {
    */
   const handleClickOpenGovChain = (chainId: ChainID) => {
     const tasks = getIntervalSubscriptionsForChain(chainId);
-
     setDynamicIntervalTasks(tasks, chainId);
     setBreadcrumb(`${chainId} OpenGov`);
     setSection(1);
