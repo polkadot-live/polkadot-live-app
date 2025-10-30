@@ -214,7 +214,6 @@ export class APIsController {
     if (client === null) {
       throw new ApiError('CouldNotGetConnectedApi');
     }
-
     return client;
   };
 

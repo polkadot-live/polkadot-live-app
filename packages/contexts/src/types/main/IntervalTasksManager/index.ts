@@ -5,6 +5,7 @@ import type { AnyFunction } from '@polkadot-live/types/misc';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 
 export interface IntervalTasksManagerContextInterface {
+  insertSubscriptions: (tasks: IntervalSubscription[]) => void;
   handleIntervalToggle: (task: IntervalSubscription) => Promise<void>;
   handleIntervalNativeCheckbox: (
     task: IntervalSubscription,
@@ -22,4 +23,7 @@ export interface IntervalTasksManagerContextInterface {
     task: IntervalSubscription,
     setOneShotProcessing: AnyFunction
   ) => Promise<void>;
+  handleIntervalAnalytics: (task: IntervalSubscription) => void;
+  removeSubscriptions: (tasks: IntervalSubscription[]) => void;
+  updateIntervalTask: (task: IntervalSubscription) => void;
 }

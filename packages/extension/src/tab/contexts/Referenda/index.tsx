@@ -1,14 +1,14 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ConfigOpenGov } from '@polkadot-live/core';
 import { createContext, useCallback, useEffect, useRef, useState } from 'react';
 import { createSafeContextHook } from '@polkadot-live/contexts';
-import { useConnections } from '@ren/contexts/common';
-import { usePolkassembly } from '@ren/contexts/openGov';
+import { useConnections } from '../../../contexts';
+import { usePolkassembly } from '../Polkassembly';
 import { setStateWithRef } from '@w3ux/utils';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ReferendaContextInterface } from '@polkadot-live/contexts/types/openGov';
+import type { SettingKey } from '@polkadot-live/types/settings';
 import type {
   PagedReferenda,
   RefDeciding,
@@ -88,7 +88,6 @@ export const ReferendaProvider = ({
       { filter: 'Preparing', label: 'Preparing', selected: true },
       { filter: 'Queueing', label: 'Queueing', selected: true },
     ];
-
     return tab === 'active'
       ? ongoing
       : ongoing.concat([
@@ -239,10 +238,19 @@ export const ReferendaProvider = ({
     // Fetch referenda if cached data doesn't exist for the chain.
     if (getOnlineMode() && !referendaMap.has(chainId)) {
       setFetchingReferenda(true);
-      ConfigOpenGov.portOpenGov.postMessage({
-        task: 'openGov:referenda:get',
-        data: { chainId },
-      });
+      chrome.runtime
+        .sendMessage({
+          type: 'openGov',
+          task: 'fetchReferenda',
+          payload: { chainId },
+        })
+        .then((result: ReferendaInfo[] | null) => {
+          if (result !== null) {
+            receiveReferendaData(result);
+          } else {
+            // TODO: Error notification.
+          }
+        });
     }
   };
 
@@ -250,10 +258,19 @@ export const ReferendaProvider = ({
   const refetchReferenda = () => {
     setFetchingReferenda(true);
     clearProposals(activeReferendaChainId);
-    ConfigOpenGov.portOpenGov.postMessage({
-      task: 'openGov:referenda:get',
-      data: { chainId: activeReferendaChainId },
-    });
+    chrome.runtime
+      .sendMessage({
+        type: 'openGov',
+        task: 'fetchReferenda',
+        payload: { chainId: activeReferendaChainId },
+      })
+      .then((result: ReferendaInfo[] | null) => {
+        if (result !== null) {
+          receiveReferendaData(result);
+        } else {
+          // TODO: Error notification.
+        }
+      });
   };
 
   // Set state after receiving referenda data from main renderer.
@@ -264,8 +281,12 @@ export const ReferendaProvider = ({
 
   // Fetch paged referenda metadata if necessary.
   const fetchFromPolkassembly = async (referenda: ReferendaInfo[]) => {
-    const map = await window.myAPI.getAppSettings();
-    const flag = Boolean(map.get('setting:enable-polkassembly'));
+    const flag = (await chrome.runtime.sendMessage({
+      type: 'db',
+      task: 'settings:get',
+      store: 'settings',
+      key: 'setting:enable-polkassembly' as SettingKey,
+    })) as boolean;
     setUsePolkassemblyApi(flag);
 
     // Fetch proposal metadata if Polkassembly enabled.
@@ -306,7 +327,6 @@ export const ReferendaProvider = ({
     const selected = historyStatusFilters
       .filter((f) => f.selected)
       .map((f) => f.filter);
-
     return (referendaMap.get(activeReferendaChainRef.current) || [])
       .filter((r) => selected.includes(r.refStatus))
       .sort((a, b) => b.refId - a.refId);
@@ -385,7 +405,6 @@ export const ReferendaProvider = ({
         if (fetchingReferenda) {
           setFetchingReferenda(false);
         }
-
         setFetchingMetadata(false);
         setRefTrigger(false);
       }
@@ -430,7 +449,6 @@ export const ReferendaProvider = ({
       setHistoryStatusFilters((pv) =>
         pv.map((f) => ({ ...f, selected: true }))
       );
-
       setRefTrigger(true);
     };
     execute();

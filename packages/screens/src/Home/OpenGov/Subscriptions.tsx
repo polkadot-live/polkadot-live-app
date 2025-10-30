@@ -4,14 +4,7 @@
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as Style from '@polkadot-live/styles/wrappers';
-import { ConfigRenderer, IntervalsController } from '@polkadot-live/core';
-import {
-  useApiHealth,
-  useBootstrapping,
-  useIntervalSubscriptions,
-  useManage,
-} from '@ren/contexts/main';
-import { useConnections } from '@ren/contexts/common';
+import { useContextProxy } from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
@@ -23,17 +16,23 @@ export const Subscriptions = ({
   breadcrumb,
   setSection,
 }: SubscriptionsProps) => {
-  const { isConnecting } = useBootstrapping();
-  const { hasConnectionIssue } = useApiHealth();
-  const { cacheGet, getOnlineMode } = useConnections();
-  const { updateIntervalSubscription } = useIntervalSubscriptions();
-
+  const { useCtx } = useContextProxy();
+  const { isConnecting } = useCtx('BootstrappingCtx')();
+  const { hasConnectionIssue } = useCtx('ApiHealthCtx')();
+  const { cacheGet, getOnlineMode } = useCtx('ConnectionsCtx')();
+  const { updateIntervalSubscription } = useCtx('IntervalSubscriptionsCtx')();
+  const {
+    insertSubscriptions,
+    handleIntervalAnalytics,
+    updateIntervalTask,
+    removeSubscriptions,
+  } = useCtx('IntervalTaskManagerCtx')();
   const {
     activeChainId,
     dynamicIntervalTasksState,
     tryUpdateDynamicIntervalTask,
     getCategorisedDynamicIntervals,
-  } = useManage();
+  } = useCtx('ManageCtx')();
 
   const [accordionValueIntervals, setAccordionValueIntervals] = useState<
     string[]
@@ -84,7 +83,6 @@ export const Subscriptions = ({
 
       map.set(referendumId, allToggled);
     }
-
     return map;
   };
 
@@ -110,34 +108,18 @@ export const Subscriptions = ({
     if (tasks.length === 0) {
       return;
     }
-
     // Update managed tasks in intervals controller.
     tasks[0].status === 'enable'
-      ? IntervalsController.insertSubscriptions(tasks, getOnlineMode())
-      : IntervalsController.removeSubscriptions(tasks, getOnlineMode());
+      ? insertSubscriptions(tasks)
+      : removeSubscriptions(tasks);
 
     // Update React and store state.
     for (const task of tasks) {
       updateIntervalSubscription({ ...task });
       tryUpdateDynamicIntervalTask({ ...task });
-
-      ConfigRenderer.portToOpenGov?.postMessage({
-        task: 'openGov:task:update',
-        data: {
-          serialized: JSON.stringify(task),
-        },
-      });
-
-      await window.myAPI.sendIntervalTask({
-        action: 'interval:task:update',
-        data: { serialized: JSON.stringify(task) },
-      });
+      updateIntervalTask(task);
+      handleIntervalAnalytics(task);
     }
-
-    // Analytics.
-    const event = `subscriptions-interval-category-${targetStatus === 'enable' ? 'off' : 'on'}`;
-    const { category, chainId } = tasks[0];
-    window.myAPI.umamiEvent(event, { category, chainId });
   };
 
   /**
@@ -161,7 +143,6 @@ export const Subscriptions = ({
       </UI.ControlsWrapper>
 
       {!getOnlineMode() && <UI.OfflineBanner rounded={true} />}
-
       {getOnlineMode() && showConnectionIssue() && (
         <UI.OfflineBanner
           rounded={true}

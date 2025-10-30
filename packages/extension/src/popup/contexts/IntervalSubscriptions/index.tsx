@@ -1,11 +1,13 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import { createSafeContextHook } from '@polkadot-live/contexts';
+//import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { IntervalSubscriptionsContextInterface } from '@polkadot-live/contexts/types/main';
+import { useManage } from '../Manage';
 
 export const IntervalSubscriptionsContext = createContext<
   IntervalSubscriptionsContextInterface | undefined
@@ -21,6 +23,9 @@ export const IntervalSubscriptionsProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { tryAddIntervalSubscription, tryRemoveIntervalSubscription } =
+    useManage();
+
   /// Active interval subscriptions.
   const [subscriptions, setSubscriptions] = useState<
     Map<ChainID, IntervalSubscription[]>
@@ -50,6 +55,7 @@ export const IntervalSubscriptionsProvider = ({
 
   /// Remove an interval subscription from the context state.
   const removeIntervalSubscription = (task: IntervalSubscription) => {
+    tryRemoveIntervalSubscription(task);
     setSubscriptions((prev) => {
       // NOTE: Relies on referendum ID to filter task for now.
       const { chainId, action, referendumId } = task;
@@ -105,6 +111,20 @@ export const IntervalSubscriptionsProvider = ({
         acc + tasks.filter((task) => task.status === 'enable').length,
       0
     );
+
+  useEffect(() => {
+    chrome.runtime
+      .sendMessage({
+        type: 'intervalSubscriptions',
+        task: 'getAll',
+      })
+      .then((result: IntervalSubscription[]) => {
+        for (const t of result) {
+          addIntervalSubscription(t);
+          tryAddIntervalSubscription(t);
+        }
+      });
+  }, []);
 
   return (
     <IntervalSubscriptionsContext

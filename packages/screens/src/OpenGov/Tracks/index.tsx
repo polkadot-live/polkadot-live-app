@@ -3,10 +3,7 @@
 
 import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/styles/wrappers';
-import { ConfigOpenGov } from '@polkadot-live/core';
-import { useConnections } from '@ren/contexts/common';
-import { useHelp } from '@polkadot-live/ui/contexts';
-import { useTracks } from '@ren/contexts/openGov';
+import { useContextProxy } from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
 import {
   faArrowDownShortWide,
@@ -18,32 +15,25 @@ import { renderPlaceholders } from '@polkadot-live/ui/utils';
 import type { TracksProps } from '../types';
 
 export const Tracks = ({ setSection }: TracksProps) => {
-  const { getOnlineMode } = useConnections();
-  const { openHelp } = useHelp();
+  const { useCtx } = useContextProxy();
+  const { getOnlineMode } = useCtx('ConnectionsCtx')();
+  const { openHelp } = useCtx('HelpCtx')();
 
   const {
     activeChainId: chainId,
     fetchingTracks,
     tracksMap,
-    setFetchingTracks,
-  } = useTracks();
+    requestTracks,
+  } = useCtx('TracksCtx')();
 
   // Controls state.
   const [sortIdAscending, setSortIdAscending] = useState(true);
   const hasFetched = tracksMap.has(chainId);
 
-  /// Re-fetch tracks if app goes online from offline mode.
+  // Re-fetch tracks if app goes online from offline mode.
   useEffect(() => {
     if (getOnlineMode() && !hasFetched) {
-      setFetchingTracks(true);
-
-      // Request tracks data from main renderer.
-      ConfigOpenGov.portOpenGov.postMessage({
-        task: 'openGov:tracks:get',
-        data: {
-          chainId,
-        },
-      });
+      requestTracks(chainId);
     }
   }, [getOnlineMode()]);
 

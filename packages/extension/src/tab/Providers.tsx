@@ -12,10 +12,16 @@ import {
   ImportHandlerProvider,
   LedgerFeedbackProvider,
   LedgerHardwareProvider,
+  PolkassemblyProvider,
+  ReferendaProvider,
+  ReferendaSubscriptionsProvider,
   RemoveHandlerProvider,
   RenameHandlerProvider,
   SettingFlagsProvider,
   TabsProvider,
+  TaskHandlerProvider,
+  TracksProvider,
+  TreasuryProvider,
   TxMetaProvider,
   WalletConnectProvider,
   WalletConnectImportProvider,
@@ -30,6 +36,7 @@ export const Providers = withProviders(
   OverlayProvider,
   SettingFlagsProvider,
   ConnectionsProvider,
+  TracksProvider,
   ImportAddressesProvider,
   RemoveHandlerProvider,
   AccountStatusesProvider, // useAddresses, useRemoveHandler
@@ -45,5 +52,10 @@ export const Providers = withProviders(
   WalletConnectImportProvider,
   WcVerifierProvider,
   LedgerFeedbackProvider,
-  TxMetaProvider
+  TxMetaProvider,
+  TreasuryProvider,
+  PolkassemblyProvider,
+  ReferendaProvider,
+  ReferendaSubscriptionsProvider,
+  TaskHandlerProvider
 )(App);

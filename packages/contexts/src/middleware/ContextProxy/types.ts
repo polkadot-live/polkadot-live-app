@@ -97,7 +97,7 @@ export interface ContextsMap {
   ChainsCtx: () => ChainsContextInterface;
   SubscriptionsCtx: () => SubscriptionsContextInterface;
   IntervalSubscriptionsCtx: () => IntervalSubscriptionsContextInterface;
-  IntervalTaskManageCtx: () => IntervalTasksManagerContextInterface;
+  IntervalTaskManagerCtx: () => IntervalTasksManagerContextInterface;
   EventsCtx: () => EventsContextInterface;
   BootstrappingCtx: () => BootstrappingInterface;
   DataBackupCtx: () => DataBackupContextInterface;
@@ -112,7 +112,7 @@ export interface ContextsMap {
   TreasuryCtx: () => TreasuryContextInterface;
   PolkassemblyCtx: () => PolkassemblyContextInterface;
   ReferendaCtx: () => ReferendaContextInterface;
-  referendasubscriptionsCtx: () => ReferendaSubscriptionsContextInterface;
+  ReferendaSubscriptionsCtx: () => ReferendaSubscriptionsContextInterface;
   TaskHandlerCtx: () => TaskHandlerContextInterface;
 
   /** Settings */

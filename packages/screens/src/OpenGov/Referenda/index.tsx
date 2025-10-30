@@ -5,7 +5,6 @@ import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/styles/wrappers';
 import * as Tabs from '@radix-ui/react-tabs';
 import * as Wrappers from './Wrappers';
-
 import {
   ControlsWrapper,
   SortControlButton,
@@ -18,15 +17,8 @@ import {
   faCaretRight,
   faEllipsis,
 } from '@fortawesome/free-solid-svg-icons';
-import { useConnections } from '@ren/contexts/common';
-import { useHelp } from '@polkadot-live/ui/contexts';
+import { useContextProxy } from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
-import {
-  usePolkassembly,
-  useReferenda,
-  useReferendaSubscriptions,
-  useTracks,
-} from '@ren/contexts/openGov';
 import { ReferendumRow } from './ReferendumRow';
 import { renderPlaceholders } from '@polkadot-live/ui/utils';
 import { DropdownReferendaFilter } from '../Dropdowns';
@@ -37,7 +29,8 @@ import { DialogFindReferendum } from './Dialogs';
 import type { ReferendaProps } from '../types';
 
 export const Referenda = ({ setSection }: ReferendaProps) => {
-  const { getTheme, getOnlineMode } = useConnections();
+  const { useCtx } = useContextProxy();
+  const { getTheme, getOnlineMode } = useCtx('ConnectionsCtx')();
   const theme = getTheme();
 
   const {
@@ -57,13 +50,14 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     setTabVal,
     showPageEllipsis,
     updateTrackFilter,
-  } = useReferenda();
+  } = useCtx('ReferendaCtx')();
 
-  const { openHelp } = useHelp();
-  const { fetchingMetadata } = usePolkassembly();
-  const { fetchingTracks, getOrderedTracks } = useTracks();
-  const { isSubscribedToReferendum, isNotSubscribedToAny } =
-    useReferendaSubscriptions();
+  const { openHelp } = useCtx('HelpCtx')();
+  const { fetchingMetadata } = useCtx('PolkassemblyCtx')();
+  const { fetchingTracks, getOrderedTracks } = useCtx('TracksCtx')();
+  const { isSubscribedToReferendum, isNotSubscribedToAny } = useCtx(
+    'ReferendaSubscriptionsCtx'
+  )();
 
   // Flag to display referenda with active subscriptions.
   const [onlySubscribed, setOnlySubscribed] = useState(false);
@@ -99,7 +93,6 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     if (fetchingMetadata) {
       return;
     }
-
     const { page, pageCount } =
       tab === 'active' ? activePagedReferenda : historyPagedReferenda;
 
@@ -383,7 +376,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                                 <Styles.FlexRow
                                   role="button"
                                   onClick={() => onTrackClick(null)}
-                                  className="container"
+                                  className="filterContainer"
                                   $gap={'0.75rem'}
                                 >
                                   <p
@@ -401,7 +394,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                                     onClick={() =>
                                       onTrackClick(String(t.trackId))
                                     }
-                                    className="container"
+                                    className="filterContainer"
                                     key={t.trackName}
                                   >
                                     <p

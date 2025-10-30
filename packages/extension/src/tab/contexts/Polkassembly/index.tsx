@@ -10,6 +10,7 @@ import type {
   ReferendaInfo,
 } from '@polkadot-live/types/openGov';
 import type { PolkassemblyContextInterface } from '@polkadot-live/contexts/types/openGov';
+import type { SettingKey } from '@polkadot-live/types/settings';
 
 export const PolkassemblyContext = createContext<
   PolkassemblyContextInterface | undefined
@@ -30,8 +31,12 @@ export const PolkassemblyProvider = ({
 
   useEffect(() => {
     const fetchSetting = async () => {
-      const map = await window.myAPI.getAppSettings();
-      const flag = Boolean(map.get('setting:enable-polkassembly'));
+      const flag = (await chrome.runtime.sendMessage({
+        type: 'db',
+        task: 'settings:get',
+        store: 'settings',
+        key: 'setting:enable-polkassembly' as SettingKey,
+      })) as boolean;
       setUsePolkassemblyApi(flag);
     };
     fetchSetting();
@@ -51,19 +56,16 @@ export const PolkassemblyProvider = ({
     const filtered = referenda.filter(
       ({ refId }) => !cachedIds.includes(refId)
     );
-
     // Exit early if there's no data to fetch.
     if (filtered.length === 0) {
       return;
     }
-
     setFetchingMetadata(true);
 
     // Create Axios instance with base URL to Polkassembly API.
     const axiosApi = axios.create({
       baseURL: `https://api.polkassembly.io/api/v1/`,
     });
-
     // Header requires `polkadot` or `kusama`.
     const network = chainId === 'Polkadot Relay' ? 'polkadot' : 'kusama';
 
@@ -86,7 +88,6 @@ export const PolkassemblyProvider = ({
       const { post_id, status, title } = response.data;
       fetched.push({ title, postId: post_id, status });
     }
-
     // Append fetched proposals to existing cached data.
     setProposalsMap((pv) => pv.set(chainId, [...cached, ...fetched]));
   };

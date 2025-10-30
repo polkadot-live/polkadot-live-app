@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Dialog from '@radix-ui/react-dialog';
-import { useConnections } from '@ren/contexts/common';
-import { usePolkassembly, useReferenda } from '@ren/contexts/openGov';
+import { useContextProxy } from '@polkadot-live/contexts';
 import { useState } from 'react';
 import {
   FlexColumn,
@@ -21,13 +20,14 @@ import type { AnyData } from '@polkadot-live/types/misc';
 import type { DialogFindReferendumProps } from './types';
 
 export const DialogFindReferendum = ({ tab }: DialogFindReferendumProps) => {
-  const { getTheme } = useConnections();
+  const { useCtx } = useContextProxy();
+  const { getTheme } = useCtx('ConnectionsCtx')();
   const theme = getTheme();
 
   const { getActiveReferenda, getHistoryReferenda, getItemsPerPage, setPage } =
-    useReferenda();
-  const { fetchingMetadata } = usePolkassembly();
+    useCtx('ReferendaCtx')();
 
+  const { fetchingMetadata } = useCtx('PolkassemblyCtx')();
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [inputVal, setInputVal] = useState<number | null>(null);
 

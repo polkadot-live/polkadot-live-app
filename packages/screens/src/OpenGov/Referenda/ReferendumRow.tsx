@@ -9,16 +9,9 @@ import {
   TitleWithOrigin,
 } from './Wrappers';
 import { renderOrigin } from '@polkadot-live/core';
-import { useConnections } from '@ren/contexts/common';
-import { useHelp } from '@polkadot-live/ui/contexts';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  usePolkassembly,
-  useReferenda,
-  useReferendaSubscriptions,
-  useTaskHandler,
-} from '@ren/contexts/openGov';
 import { useState } from 'react';
+import { useContextProxy } from '@polkadot-live/contexts';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { motion } from 'framer-motion';
 import { TooltipRx } from '@polkadot-live/ui/components';
 import {
@@ -31,26 +24,28 @@ import type { RefStatus } from '@polkadot-live/types/openGov';
 import type { ReferendumRowProps } from '../types';
 
 export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
-  const { openHelp } = useHelp();
-  const { cacheGet, getOnlineMode, getTheme } = useConnections();
+  const { useCtx } = useContextProxy();
+  const { openHelp } = useCtx('HelpCtx')();
+  const { cacheGet, getOnlineMode, getTheme } = useCtx('ConnectionsCtx')();
 
   const darkMode = cacheGet('mode:dark');
   const isOnline = getOnlineMode();
   const theme = getTheme();
 
   const { refId, refStatus } = referendum;
-  const { activeReferendaChainId: chainId } = useReferenda();
-  const { isSubscribedToTask, allSubscriptionsAdded } =
-    useReferendaSubscriptions();
+  const { activeReferendaChainId: chainId } = useCtx('ReferendaCtx')();
+  const { isSubscribedToTask, allSubscriptionsAdded } = useCtx(
+    'ReferendaSubscriptionsCtx'
+  )();
 
   const {
     addIntervalSubscription,
     addAllIntervalSubscriptions,
     removeAllIntervalSubscriptions,
     removeIntervalSubscription,
-  } = useTaskHandler();
+  } = useCtx('TaskHandlerCtx')();
 
-  const { getProposal, usePolkassemblyApi } = usePolkassembly();
+  const { getProposal, usePolkassemblyApi } = useCtx('PolkassemblyCtx')();
   const proposalData = getProposal(chainId, refId);
   const { title } = proposalData || { title: '' };
 

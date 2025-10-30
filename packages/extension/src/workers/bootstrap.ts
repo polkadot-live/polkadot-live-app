@@ -5,6 +5,7 @@ import { DbController, LedgerController } from '../controllers';
 import { dispatchNotification } from './notifications';
 import { eventBus } from './eventBus';
 import { sendChromeMessage } from './utils';
+import type { Account } from '@polkadot-live/core';
 import {
   APIsController,
   AccountsController,
@@ -20,6 +21,13 @@ import {
   ExtrinsicsController,
   LedgerTxError,
   handleLedgerTaskError,
+  IntervalsController,
+  fetchCoreTreasuryInfo,
+  fetchStatemineTreasuryInfo,
+  fetchStatemintTreasuryInfo,
+  getSerializedTracks,
+  fetchProcessReferenda,
+  executeIntervaledOneShot,
 } from '@polkadot-live/core';
 import {
   getSupportedChains,
@@ -34,7 +42,6 @@ import type {
   ImportedGenericAccount,
   StoredAccount,
 } from '@polkadot-live/types/accounts';
-import type { Account } from '@polkadot-live/core';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   EventAccountData,
@@ -46,13 +53,24 @@ import type {
   ExtrinsicInfo,
   TxStatus,
 } from '@polkadot-live/types/tx';
-import type { FlattenedAPIData, NodeEndpoint } from '@polkadot-live/types/apis';
+import type {
+  ClientTypes,
+  FlattenedAPIData,
+  NodeEndpoint,
+} from '@polkadot-live/types/apis';
+import type { DedotClient } from 'dedot';
 import type { HexString } from 'dedot/utils';
 import type { LedgerTaskResponse } from '@polkadot-live/types/ledger';
 import type { SettingKey } from '@polkadot-live/types/settings';
-import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
+import type {
+  IntervalSubscription,
+  SubscriptionTask,
+} from '@polkadot-live/types/subscriptions';
 import type { Stores } from '../controllers';
 import type { SyncID, TabData } from '@polkadot-live/types/communication';
+import type { SerIpcTreasuryInfo } from '@polkadot-live/types/treasury';
+import type { PalletReferendaTrackDetails } from '@dedot/chaintypes/substrate';
+import type { ReferendaInfo } from '@polkadot-live/types/openGov';
 
 /** Shared state */
 const SHARED_STATE: Map<SyncID, boolean> = initSharedState();
@@ -138,11 +156,18 @@ const initSubscriptions = async () => {
   ]);
 };
 
+const initIntervalSubscriptions = async () => {
+  const tasks = await handleGetAllIntervalTasks();
+  const isOnline = navigator.onLine;
+  IntervalsController.insertSubscriptions(tasks, isOnline);
+};
+
 const initSystems = async () => {
   await initOnlineMode();
   await Promise.all([initTheme(), initManagedAccounts(), initAPIs()]);
   await connectApis();
   await initSubscriptions();
+  initIntervalSubscriptions();
   eventBus.dispatchEvent(new CustomEvent('initSystems:complete'));
   SYSTEMS_INITIALIZED = true;
 };
@@ -305,7 +330,6 @@ eventBus.addEventListener('processEvent', async (e) => {
   if (!keepOutdated) {
     const all = await getAllEvents();
     const { updated, events } = doRemoveOutdatedEvents(event, all);
-
     if (updated) {
       const remove = all.filter((a) => !events.find((b) => b.uid === a.uid));
       for (const { uid: key } of remove) {
@@ -917,6 +941,192 @@ const isMainTabOpen = async (): Promise<chrome.tabs.Tab | undefined> => {
   return tabs.find((tab) => tab.url?.split('#')[0] === url);
 };
 
+/**
+ * Interval Subscriptions
+ */
+
+const compare = (
+  left: IntervalSubscription,
+  right: IntervalSubscription
+): boolean =>
+  left.action === right.action &&
+  left.chainId === right.chainId &&
+  left.referendumId === right.referendumId
+    ? true
+    : false;
+
+const handleGetAllIntervalTasks = async (): Promise<IntervalSubscription[]> => {
+  let tasks: IntervalSubscription[] = [];
+  const store = 'intervalSubscriptions';
+  const chainIds: ChainID[] = ['Polkadot Relay', 'Kusama Asset Hub'];
+  for (const key of chainIds) {
+    const fetched =
+      ((await DbController.get(store, key)) as
+        | IntervalSubscription[]
+        | undefined) || [];
+    tasks = tasks.concat(fetched);
+  }
+  return tasks;
+};
+
+const handleAddIntervalSubscriptions = async (
+  tasks: IntervalSubscription[],
+  onlineMode: boolean
+) => {
+  for (const task of tasks) {
+    await handleAddIntervalSubscription(task, onlineMode);
+  }
+};
+
+const handleRemoveIntervalSubscriptions = async (
+  tasks: IntervalSubscription[],
+  onlineMode: boolean
+) => {
+  for (const task of tasks) {
+    IntervalsController.removeSubscription(task, onlineMode);
+    await handleRemoveIntervalSubscription(task);
+  }
+};
+
+const handleAddIntervalSubscription = async (
+  task: IntervalSubscription,
+  onlineMode: boolean
+) => {
+  // Add task to interval controller and update popup state.
+  IntervalsController.insertSubscription(task, onlineMode);
+
+  // Persist task to store.
+  const { chainId } = task;
+  const store = 'intervalSubscriptions';
+  const all =
+    ((await DbController.get(store, chainId)) as
+      | IntervalSubscription[]
+      | undefined) || [];
+  const updated = all.filter((t) => !compare(task, t));
+  await DbController.set(store, chainId, [...updated, task]);
+};
+
+const handleUpdateIntervalSubscription = async (task: IntervalSubscription) => {
+  const { chainId } = task;
+  const store: Stores = 'intervalSubscriptions';
+  const all = (await DbController.get(store, chainId)) as
+    | IntervalSubscription[]
+    | undefined;
+  if (all) {
+    const updated = all.map((t) => (compare(task, t) ? task : t));
+    await DbController.set(store, chainId, updated);
+  }
+};
+
+const handleRemoveIntervalSubscription = async (task: IntervalSubscription) => {
+  const { chainId } = task;
+  const store: Stores = 'intervalSubscriptions';
+  const all = (await DbController.get(store, chainId)) as
+    | IntervalSubscription[]
+    | undefined;
+  if (all) {
+    const updated = all.filter((t) => !compare(task, t));
+    await DbController.set(store, chainId, updated);
+  }
+};
+
+/**
+ * Treasury
+ */
+
+export const handleInitTreasury = async (
+  chainId: ChainID
+): Promise<SerIpcTreasuryInfo | null> => {
+  try {
+    const api = (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
+    switch (chainId) {
+      case 'Polkadot Relay': {
+        const castApi = api as DedotClient<ClientTypes['polkadot']>;
+        const [coreTreasuryInfo, statemintTreasuryInfo] = await Promise.all([
+          fetchCoreTreasuryInfo(castApi, chainId),
+          fetchStatemintTreasuryInfo(),
+        ]);
+        // Return serialized.
+        const { usdcBalance, usdtBalance, dotBalance } = statemintTreasuryInfo;
+        return {
+          coreTreasuryInfo,
+          serStatemintTreasuryInfo: {
+            usdcBalance: usdcBalance.toString(),
+            usdtBalance: usdtBalance.toString(),
+            dotBalance: dotBalance.toString(),
+          },
+        };
+      }
+      case 'Kusama Asset Hub': {
+        const castApi = api as DedotClient<ClientTypes['statemine']>;
+        const [coreTreasuryInfo, statemineTreasuryInfo] = await Promise.all([
+          fetchCoreTreasuryInfo(castApi, chainId),
+          fetchStatemineTreasuryInfo(),
+        ]);
+        // Return serialized.
+        const { ksmBalance } = statemineTreasuryInfo;
+        return {
+          coreTreasuryInfo,
+          serStatemineTreasuryInfo: {
+            ksmBalance: ksmBalance.toString(),
+          },
+        };
+      }
+    }
+    return null;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+};
+
+export const handleFetchTracks = async (chainId: ChainID) => {
+  try {
+    const { api } = await APIsController.getConnectedApiOrThrow(chainId);
+    if (!api) {
+      throw Error('api is null');
+    }
+    type T = [number, PalletReferendaTrackDetails][];
+    const tracks = api.consts.referenda.tracks;
+    return getSerializedTracks(tracks as T);
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+};
+
+/**
+ * Referenda
+ */
+
+const handleFetchReferenda = async (
+  chainId: ChainID
+): Promise<ReferendaInfo[] | null> => {
+  try {
+    const client = await APIsController.getConnectedApiOrThrow(chainId);
+    if (!client.api) {
+      return null;
+    }
+    let referenda: ReferendaInfo[] = [];
+    switch (chainId) {
+      case 'Polkadot Relay': {
+        const api = client.api as DedotClient<ClientTypes['polkadot']>;
+        referenda = await fetchProcessReferenda(api);
+        break;
+      }
+      case 'Kusama Asset Hub': {
+        const api = client.api as DedotClient<ClientTypes['statemine']>;
+        referenda = await fetchProcessReferenda(api);
+        break;
+      }
+    }
+    return referenda;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+};
+
 chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
   switch (message.type) {
     /**
@@ -1263,6 +1473,13 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
           executeOneShot(task).then((success) => sendResponse(success));
           return true;
         }
+        case 'executeInterval': {
+          const { task }: { task: IntervalSubscription } = message.payload;
+          executeIntervaledOneShot(task, 'one-shot').then((result) =>
+            sendResponse(result)
+          );
+          return true;
+        }
       }
       break;
     }
@@ -1392,6 +1609,136 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
           return true;
         }
       }
+      break;
+    }
+    /**
+     * Handle interval subscription tasks.
+     */
+    case 'intervalSubscriptions': {
+      switch (message.task) {
+        case 'add': {
+          const {
+            task,
+            onlineMode,
+          }: { task: IntervalSubscription; onlineMode: boolean } =
+            message.payload;
+          handleAddIntervalSubscription(task, onlineMode);
+          return false;
+        }
+        case 'addMulti': {
+          const {
+            tasks,
+            onlineMode,
+          }: { tasks: IntervalSubscription[]; onlineMode: boolean } =
+            message.payload;
+          handleAddIntervalSubscriptions(tasks, onlineMode);
+          return false;
+        }
+        case 'getAll': {
+          handleGetAllIntervalTasks().then((result: IntervalSubscription[]) =>
+            sendResponse(result)
+          );
+          return true;
+        }
+        case 'removeMulti': {
+          const {
+            tasks,
+            onlineMode,
+          }: { tasks: IntervalSubscription[]; onlineMode: boolean } =
+            message.payload;
+          handleRemoveIntervalSubscriptions(tasks, onlineMode);
+          return false;
+        }
+        case 'delete': {
+          const {
+            task,
+            onlineMode,
+          }: { task: IntervalSubscription; onlineMode: boolean } =
+            message.payload;
+
+          IntervalsController.removeSubscription(task, onlineMode);
+          handleRemoveIntervalSubscription(task);
+          return false;
+        }
+        case 'insertSubscription': {
+          const {
+            task,
+            onlineMode,
+          }: { task: IntervalSubscription; onlineMode: boolean } =
+            message.payload;
+          IntervalsController.insertSubscription(task, onlineMode);
+          return false;
+        }
+        case 'insertSubscriptions': {
+          const {
+            tasks,
+            onlineMode,
+          }: { tasks: IntervalSubscription[]; onlineMode: boolean } =
+            message.payload;
+          IntervalsController.insertSubscriptions(tasks, onlineMode);
+          return false;
+        }
+        case 'remove': {
+          const {
+            task,
+            onlineMode,
+          }: { task: IntervalSubscription; onlineMode: boolean } =
+            message.payload;
+          task.status === 'enable' &&
+            IntervalsController.removeSubscription(task, onlineMode);
+          handleRemoveIntervalSubscription(task);
+          return false;
+        }
+        case 'removeSubscription': {
+          const {
+            task,
+            onlineMode,
+          }: { task: IntervalSubscription; onlineMode: boolean } =
+            message.payload;
+          IntervalsController.removeSubscription(task, onlineMode);
+          return false;
+        }
+        case 'removeSubscriptions': {
+          const {
+            tasks,
+            onlineMode,
+          }: { tasks: IntervalSubscription[]; onlineMode: boolean } =
+            message.payload;
+          IntervalsController.removeSubscriptions(tasks, onlineMode);
+          return false;
+        }
+        case 'update': {
+          const { task }: { task: IntervalSubscription } = message.payload;
+          handleUpdateIntervalSubscription(task).then(() =>
+            IntervalsController.updateSubscription(task)
+          );
+          return false;
+        }
+      }
+      break;
+    }
+    /**
+     * Handle treasury tasks.
+     */
+    case 'openGov': {
+      switch (message.task) {
+        case 'fetchTracks': {
+          const { chainId }: { chainId: ChainID } = message.payload;
+          handleFetchTracks(chainId).then((result) => sendResponse(result));
+          return true;
+        }
+        case 'fetchReferenda': {
+          const { chainId }: { chainId: ChainID } = message.payload;
+          handleFetchReferenda(chainId).then((result) => sendResponse(result));
+          return true;
+        }
+        case 'initTreasury': {
+          const { chainId }: { chainId: ChainID } = message.payload;
+          handleInitTreasury(chainId).then((result) => sendResponse(result));
+          return true;
+        }
+      }
+      break;
     }
   }
 });

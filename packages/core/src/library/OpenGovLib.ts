@@ -4,19 +4,108 @@
 import BigNumber from 'bignumber.js';
 import { Track } from '../model';
 import type {
+  RefApproved,
+  RefCancelled,
+  RefConfirming,
   RefDeciding,
   ReferendaInfo,
   ReferendumStatus,
+  RefKilled,
   RefOngoing,
+  RefPreparing,
+  RefRejected,
   RefStatus,
+  RefTimedOut,
   SerializedPalletReferendaCurve,
   SerializedTrackItem,
 } from '@polkadot-live/types/openGov';
-import type { DedotClientSet } from '@polkadot-live/types/apis';
+import type {
+  DedotClientSet,
+  DedotOpenGovClient,
+} from '@polkadot-live/types/apis';
 import type {
   PalletReferendaCurve,
   PalletReferendaTrackDetails,
 } from '@dedot/chaintypes/substrate';
+
+/**
+ * @name fetchProcessReferenda
+ * @summary Use API to fetch and parse a network's OpenGov referenda.
+ */
+export const fetchProcessReferenda = async (
+  api: DedotOpenGovClient
+): Promise<ReferendaInfo[]> => {
+  // Populate referenda map.
+  const results = await api.query.referenda.referendumInfoFor.entries();
+  const allReferenda: ReferendaInfo[] = [];
+
+  for (const [refId, storage] of results) {
+    if (storage !== undefined) {
+      if (storage.type === 'Approved') {
+        const info: RefApproved = {
+          block: storage.value[0].toString(),
+          who: storage.value[1] ? String(storage.value[1].who.raw) : null,
+          amount: storage.value[1] ? storage.value[1].amount.toString() : null,
+        };
+
+        allReferenda.push({ refId, refStatus: 'Approved', info });
+      } else if (storage.type === 'Cancelled') {
+        const info: RefCancelled = {
+          block: storage.value[0].toString(),
+          who: storage.value[1] ? String(storage.value[1].who.raw) : null,
+          amount: storage.value[1] ? storage.value[1].amount.toString() : null,
+        };
+
+        allReferenda.push({ refId, refStatus: 'Cancelled', info });
+      } else if (storage.type === 'Rejected') {
+        const info: RefRejected = {
+          block: storage.value[0].toString(),
+          who: storage.value[1] ? String(storage.value[1].who.raw) : null,
+          amount: storage.value[1] ? storage.value[1].amount.toString() : null,
+        };
+
+        allReferenda.push({ refId, refStatus: 'Rejected', info });
+      } else if (storage.type === 'TimedOut') {
+        const info: RefTimedOut = {
+          block: storage.value[0].toString(),
+          who: storage.value[1] ? String(storage.value[1].who.raw) : null,
+          amount: storage.value[1] ? storage.value[1].amount.toString() : null,
+        };
+
+        allReferenda.push({ refId, refStatus: 'TimedOut', info });
+      } else if (storage.type === 'Ongoing') {
+        const serRef = serializeReferendumInfo(
+          storage.value as ReferendumStatus
+        );
+
+        // In Queue
+        if (serRef.inQueue) {
+          const info = serRef as RefOngoing;
+          allReferenda.push({ refId, refStatus: 'Queueing', info });
+        }
+        // Preparing
+        else if (serRef.deciding === null) {
+          const info = serRef as RefPreparing;
+          allReferenda.push({ refId, refStatus: 'Preparing', info });
+        }
+        // Deciding
+        else if (serRef.deciding.confirming === null) {
+          const info = serRef as RefDeciding;
+          allReferenda.push({ refId, refStatus: 'Deciding', info });
+        }
+        // Confirming
+        else if (serRef.deciding.confirming !== null) {
+          const info = serRef as RefConfirming;
+          allReferenda.push({ refId, refStatus: 'Confirming', info });
+        }
+      } else if (storage.type === 'Killed') {
+        const info: RefKilled = { block: storage.value.toString() };
+        allReferenda.push({ refId, refStatus: 'Killed', info });
+      }
+    }
+  }
+  return allReferenda;
+};
 
 /**
  * @name serializeCurve

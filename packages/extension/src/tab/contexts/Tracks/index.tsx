@@ -1,14 +1,14 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ConfigOpenGov } from '@polkadot-live/core';
 import { createContext, useRef, useState } from 'react';
 import { createSafeContextHook } from '@polkadot-live/contexts';
-import { useConnections } from '../../common/Connections';
+import { useConnections } from '../../..//contexts';
 import { setStateWithRef } from '@w3ux/utils';
-import type { Track } from '@polkadot-live/core';
+import { getTracks, type Track } from '@polkadot-live/core';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { TracksContextInterface } from '@polkadot-live/contexts/types/openGov';
+import type { SerializedTrackItem } from '@polkadot-live/types/openGov';
 
 export const TracksContext = createContext<TracksContextInterface | undefined>(
   undefined
@@ -24,14 +24,29 @@ export const TracksProvider = ({ children }: { children: React.ReactNode }) => {
   const [activeChainId, setActiveChainId] = useState<ChainID>('Polkadot Relay');
   const activeChainIdRef = useRef<ChainID>(activeChainId);
 
+  const handleFetchTracks = (chainId: ChainID) => {
+    setFetchingTracks(true);
+    chrome.runtime
+      .sendMessage({
+        type: 'openGov',
+        task: 'fetchTracks',
+        payload: { chainId },
+      })
+      .then((result: SerializedTrackItem[] | null) => {
+        if (result !== null) {
+          const parsed = getTracks(result);
+          receiveTracksData(parsed, chainId);
+        } else {
+          // TODO: UI error notification.
+          setFetchingTracks(false);
+        }
+      });
+  };
+
   // Initiate fetching tracks.
   const fetchTracksData = (chainId: ChainID) => {
     if (getOnlineMode() && !tracksMap.has(chainId)) {
-      setFetchingTracks(true);
-      ConfigOpenGov.portOpenGov.postMessage({
-        task: 'openGov:tracks:get',
-        data: { chainId },
-      });
+      handleFetchTracks(chainId);
     }
   };
 
@@ -55,11 +70,7 @@ export const TracksProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Request tracks.
   const requestTracks = (chainId: ChainID) => {
-    setFetchingTracks(true);
-    ConfigOpenGov.portOpenGov.postMessage({
-      task: 'openGov:tracks:get',
-      data: { chainId },
-    });
+    handleFetchTracks(chainId);
   };
 
   return (

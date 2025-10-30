@@ -12,3 +12,4 @@ export * from './LedgerLib';
 export * from './OpenGovLib';
 export * from './TextLib';
 export * from './TimeLib';
+export * from './TreasuryLib';

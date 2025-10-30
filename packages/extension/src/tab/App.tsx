@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { useHelp } from '@polkadot-live/ui/contexts';
 import { useTabs } from './contexts';
 import { Help, Overlay, Tabs } from '@polkadot-live/ui/components';
-import { Action, Import, Settings } from '@polkadot-live/screens';
+import { Action, Import, OpenGov, Settings } from '@polkadot-live/screens';
 import { MainInterfaceWrapper } from '@polkadot-live/styles/wrappers';
 import { ToastContainer } from 'react-toastify';
 import { HashRouter, Route, Routes, useNavigate } from 'react-router';
@@ -29,7 +29,7 @@ export const RouterInner = () => {
         <Route path={'import'} element={<Import />} />
         <Route path={'settings'} element={<Settings platform={'chrome'} />} />
         <Route path={'action'} element={<Action />} />
-        <Route path={'openGov'} element={<h2>OpenGov</h2>} />
+        <Route path={'openGov'} element={<OpenGov />} />
       </Routes>
     </ContextProxyTab>
   );

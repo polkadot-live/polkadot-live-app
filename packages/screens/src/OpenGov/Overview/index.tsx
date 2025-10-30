@@ -11,10 +11,7 @@ export const Overview: React.FC<OverviewProps> = ({
   setSectionContent,
 }: OverviewProps) => (
   <Styles.FlexColumn $rowGap={'2rem'}>
-    {/** Treasury Stats */}
     <OverviewTreasury />
-
-    {/** Explore Grid */}
     <OverviewExplore
       setSection={setSection}
       setSectionContent={setSectionContent}

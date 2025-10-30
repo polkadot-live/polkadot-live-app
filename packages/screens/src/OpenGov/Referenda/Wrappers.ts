@@ -297,8 +297,10 @@ export const TracksFilterList = styled.div<{ $chainId?: ChainID }>`
   overflow-x: auto;
   white-space: nowrap;
 
-  .container {
+  .filterContainer {
     user-select: none;
+    height: inherit !important;
+    flex-direction: row !important;
     > p {
       margin: 0;
       font-size: 1.08rem;

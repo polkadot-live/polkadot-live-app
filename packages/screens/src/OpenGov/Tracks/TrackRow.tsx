@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useState } from 'react';
+import { useContextProxy } from '@polkadot-live/contexts';
 import { StickyHeading, TrackItem } from './Wrappers';
 import { formatChainUnits, formatBlocksToTime } from '@polkadot-live/core';
 import { motion } from 'framer-motion';
@@ -12,15 +13,14 @@ import {
   faHashtag,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useHelp } from '@polkadot-live/ui/contexts';
-import { useTracks } from '@ren/contexts/openGov';
 import { FlexRow } from '@polkadot-live/styles/wrappers';
 import type { HelpItemKey } from '@polkadot-live/types/help';
 import type { TrackRowProps } from '../types';
 
 // Re-use track item component for header alignment.
 export const StickyHeadingsRow = () => {
-  const { openHelp } = useHelp();
+  const { useCtx } = useContextProxy();
+  const { openHelp } = useCtx('HelpCtx')();
 
   return (
     <TrackItem
@@ -79,11 +79,11 @@ export const StickyHeadingsRow = () => {
 };
 
 export const TrackRow = ({ track }: TrackRowProps) => {
+  const { useCtx } = useContextProxy();
+  const { openHelp } = useCtx('HelpCtx')();
+  const { activeChainId: chainId } = useCtx('TracksCtx')();
+
   const [expanded, setExpanded] = useState(false);
-
-  const { openHelp } = useHelp();
-  const { activeChainId: chainId } = useTracks();
-
   const expandVariants = {
     open: { height: 'auto' },
     closed: { height: 0 },

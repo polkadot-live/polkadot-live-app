@@ -1,8 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import { createSafeContextHook } from '@polkadot-live/contexts';
+import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { ReferendaSubscriptionsContextInterface } from '@polkadot-live/contexts/types/openGov';
@@ -22,24 +23,22 @@ export const ReferendaSubscriptionsProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  /// Cached referenda subscriptions.
+  // Cached referenda subscriptions.
   const [subscriptions, setSubscriptions] = useState<
     Map<ChainID, IntervalSubscription[]>
   >(new Map());
 
-  /// Map to identify added subscriptions for individual referenda.
-  /// Key is referendum ID, value is array of subscription tasks.
+  // Map to identify added subscriptions for individual referenda.
+  // Key is referendum ID, value is array of subscription tasks.
   type ActiveTasksForChain = Map<number, string[]>;
   type ActiveTasks = Map<ChainID, ActiveTasksForChain>;
   const [activeTasksMap, setActiveTasksMap] = useState<ActiveTasks>(new Map());
 
-  /// Add a task to the context.
+  // Add a task to the context.
   const addReferendaSubscription = (task: IntervalSubscription) => {
-    // Update subscriptions map.
     setSubscriptions((prev) => {
       const { chainId } = { ...task };
       const cloned = new Map(prev);
-
       cloned.has(chainId)
         ? cloned.set(chainId, [...cloned.get(chainId)!, { ...task }])
         : cloned.set(chainId, [{ ...task }]);
@@ -52,33 +51,27 @@ export const ReferendaSubscriptionsProvider = ({
       const { chainId, referendumId, action } = { ...task };
       const key = referendumId!;
       const cloned = new Map(prev);
-
       if (cloned.has(chainId)) {
         const chainItems = cloned.get(chainId)!;
-
         chainItems.has(key)
           ? chainItems.set(key, [...chainItems.get(key)!, action])
           : chainItems.set(key, [action] as string[]);
-
         cloned.set(chainId, chainItems);
       } else {
         cloned.set(chainId, new Map([[key, [action]]]));
       }
-
       return cloned;
     });
   };
 
-  /// Remove a task from the context.
+  // Remove a task from the context.
   const removeReferendaSubscription = (task: IntervalSubscription) => {
     // Update subscriptions map.
     setSubscriptions((prev) => {
       const { chainId, action, referendumId } = task;
       const cloned = new Map(prev);
-
       if (cloned.has(chainId)) {
         const cached = cloned.get(chainId)!;
-
         cached.length === 1
           ? cloned.delete(chainId)
           : cloned.set(
@@ -91,7 +84,6 @@ export const ReferendaSubscriptionsProvider = ({
                 )
             );
       }
-
       return cloned;
     });
 
@@ -103,7 +95,6 @@ export const ReferendaSubscriptionsProvider = ({
 
       if (cloned.has(chainId)) {
         const chainItems = cloned.get(chainId)!;
-
         if (chainItems.has(key)) {
           const cached = chainItems.get(key)!;
           cached.length === 1
@@ -112,28 +103,24 @@ export const ReferendaSubscriptionsProvider = ({
                 key,
                 cached.filter((a) => a !== action)
               );
-
           chainItems.size
             ? cloned.set(chainId, chainItems)
             : cloned.delete(chainId);
         }
       }
-
       return cloned;
     });
   };
 
-  /// Check if a task has been added for a referendum.
+  // Check if a task has been added for a referendum.
   const isSubscribedToTask = (
     referendum: ReferendaInfo,
     task: IntervalSubscription
   ) => {
     const { refId } = referendum;
     const { chainId, action } = task;
-
     if (activeTasksMap.has(chainId)) {
       const chainItems = activeTasksMap.get(chainId)!;
-
       if (chainItems.has(refId)) {
         const items = chainItems.get(refId)!;
         if (items.includes(action)) {
@@ -141,11 +128,10 @@ export const ReferendaSubscriptionsProvider = ({
         }
       }
     }
-
     return false;
   };
 
-  /// Check if a referendum has added subscription tasks.
+  // Check if a referendum has added subscription tasks.
   const isSubscribedToReferendum = (
     chainId: ChainID,
     referendum: ReferendaInfo
@@ -154,7 +140,7 @@ export const ReferendaSubscriptionsProvider = ({
       ? activeTasksMap.get(chainId)!.has(referendum.refId)
       : false;
 
-  /// Check if referendum has all its subscriptions added.
+  // Check if referendum has all its subscriptions added.
   const allSubscriptionsAdded = (
     chainId: ChainID,
     referendum: ReferendaInfo
@@ -162,27 +148,24 @@ export const ReferendaSubscriptionsProvider = ({
     if (!activeTasksMap.has(chainId)) {
       return false;
     }
-
     const chainItems = activeTasksMap.get(chainId)!;
     const { refId } = referendum;
     if (!chainItems.has(Number(refId))) {
       return false;
     }
-
     const MAX_SUBSCRIPTIONS: number = (
       ['Preparing', 'Queueing'] as RefStatus[]
     ).includes(referendum.refStatus)
       ? 1
       : 3;
-
     return chainItems.get(refId)!.length === MAX_SUBSCRIPTIONS ? true : false;
   };
 
-  /// Check if any subscriptions have been added for a given chain.
+  // Check if any subscriptions have been added for a given chain.
   const isNotSubscribedToAny = (chainId: ChainID) =>
     !activeTasksMap.has(chainId);
 
-  /// Update data of a managed task.
+  // Update data of a managed task.
   const updateReferendaSubscription = (task: IntervalSubscription) => {
     setSubscriptions((prev) => {
       const { action, chainId, referendumId } = task;
@@ -196,6 +179,44 @@ export const ReferendaSubscriptionsProvider = ({
       return cloned;
     });
   };
+
+  // Fetch interval subscriptions from store and initialize state on mount.
+  useEffect(() => {
+    chrome.runtime
+      .sendMessage({
+        type: 'intervalSubscriptions',
+        task: 'getAll',
+      })
+      .then((result: IntervalSubscription[]) => {
+        for (const task of result) {
+          addReferendaSubscription(task);
+        }
+      });
+  }, []);
+
+  // Listen for messages from popup.
+  useEffect(() => {
+    const callback = (message: AnyData) => {
+      if (message.type === 'intervalSubscriptions') {
+        switch (message.task) {
+          case 'syncIntervalSubscriptionUpdate': {
+            const { task }: { task: IntervalSubscription } = message.payload;
+            updateReferendaSubscription(task);
+            break;
+          }
+          case 'syncIntervalSubscriptionRemove': {
+            const { task }: { task: IntervalSubscription } = message.payload;
+            removeReferendaSubscription(task);
+            break;
+          }
+        }
+      }
+    };
+    chrome.runtime.onMessage.addListener(callback);
+    return () => {
+      chrome.runtime.onMessage.removeListener(callback);
+    };
+  }, []);
 
   return (
     <ReferendaSubscriptionsContext

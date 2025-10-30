@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilePen, faList } from '@fortawesome/free-solid-svg-icons';
 import { NetworkHeader } from '../Wrappers';
 import { useEffect } from 'react';
-import { useTracks, useReferenda } from '@ren/contexts/openGov';
+import { useContextProxy } from '@polkadot-live/contexts';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { OverviewExploreProps } from './types';
 
@@ -16,8 +16,9 @@ export const OverviewExplore: React.FC<OverviewExploreProps> = ({
   setSectionContent,
 }: OverviewExploreProps) => {
   // Tracks and referenda contexts.
-  const { fetchTracksData, updateActiveTracksChain } = useTracks();
-  const { fetchReferendaData, setPage, setTabVal } = useReferenda();
+  const { useCtx } = useContextProxy();
+  const { fetchTracksData, updateActiveTracksChain } = useCtx('TracksCtx')();
+  const { fetchReferendaData, setPage, setTabVal } = useCtx('ReferendaCtx')();
 
   // Open origins and tracks information.
   const handleOpenTracks = (chainId: ChainID) => {
@@ -52,7 +53,6 @@ export const OverviewExplore: React.FC<OverviewExploreProps> = ({
         }
       });
     };
-
     applyBorders();
   }, []);
 
