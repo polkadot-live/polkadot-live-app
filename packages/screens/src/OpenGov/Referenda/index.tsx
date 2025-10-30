@@ -376,7 +376,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                                 <Styles.FlexRow
                                   role="button"
                                   onClick={() => onTrackClick(null)}
-                                  className="container"
+                                  className="filterContainer"
                                   $gap={'0.75rem'}
                                 >
                                   <p
@@ -394,7 +394,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                                     onClick={() =>
                                       onTrackClick(String(t.trackId))
                                     }
-                                    className="container"
+                                    className="filterContainer"
                                     key={t.trackName}
                                   >
                                     <p

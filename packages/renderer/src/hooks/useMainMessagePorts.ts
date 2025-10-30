@@ -45,14 +45,11 @@ import type {
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { ClientTypes } from '@polkadot-live/types/apis';
 import type { DedotClient } from 'dedot';
 import type { PalletReferendaTrackDetails } from '@dedot/chaintypes/substrate';
 import type { SettingItem } from '@polkadot-live/types/settings';
 import type { WcSelectNetwork } from '@polkadot-live/types/walletConnect';
-import type {
-  ClientTypes,
-  DedotOpenGovClient,
-} from '@polkadot-live/types/apis';
 
 export const useMainMessagePorts = () => {
   /// Main renderer contexts.
@@ -413,96 +410,6 @@ export const useMainMessagePorts = () => {
   };
 
   /**
-   * @name fetchProcessReferenda
-   * @summary Use API to fetch and parse a network's OpenGov referenda.
-   */
-  const fetchProcessReferenda = async (api: DedotOpenGovClient) => {
-    // Populate referenda map.
-    const results = await api.query.referenda.referendumInfoFor.entries();
-    const allReferenda: OG.ReferendaInfo[] = [];
-
-    for (const [refId, storage] of results) {
-      if (storage !== undefined) {
-        if (storage.type === 'Approved') {
-          const info: OG.RefApproved = {
-            block: storage.value[0].toString(),
-            who: storage.value[1] ? String(storage.value[1].who.raw) : null,
-            amount: storage.value[1]
-              ? storage.value[1].amount.toString()
-              : null,
-          };
-
-          allReferenda.push({ refId, refStatus: 'Approved', info });
-        } else if (storage.type === 'Cancelled') {
-          const info: OG.RefCancelled = {
-            block: storage.value[0].toString(),
-            who: storage.value[1] ? String(storage.value[1].who.raw) : null,
-            amount: storage.value[1]
-              ? storage.value[1].amount.toString()
-              : null,
-          };
-
-          allReferenda.push({ refId, refStatus: 'Cancelled', info });
-        } else if (storage.type === 'Rejected') {
-          const info: OG.RefRejected = {
-            block: storage.value[0].toString(),
-            who: storage.value[1] ? String(storage.value[1].who.raw) : null,
-            amount: storage.value[1]
-              ? storage.value[1].amount.toString()
-              : null,
-          };
-
-          allReferenda.push({ refId, refStatus: 'Rejected', info });
-        } else if (storage.type === 'TimedOut') {
-          const info: OG.RefTimedOut = {
-            block: storage.value[0].toString(),
-            who: storage.value[1] ? String(storage.value[1].who.raw) : null,
-            amount: storage.value[1]
-              ? storage.value[1].amount.toString()
-              : null,
-          };
-
-          allReferenda.push({ refId, refStatus: 'TimedOut', info });
-        } else if (storage.type === 'Ongoing') {
-          const serRef = Core.serializeReferendumInfo(
-            storage.value as OG.ReferendumStatus
-          );
-
-          // In Queue
-          if (serRef.inQueue) {
-            const info = serRef as OG.RefOngoing;
-            allReferenda.push({ refId, refStatus: 'Queueing', info });
-          }
-          // Preparing
-          else if (serRef.deciding === null) {
-            const info = serRef as OG.RefPreparing;
-            allReferenda.push({ refId, refStatus: 'Preparing', info });
-          }
-          // Deciding
-          else if (serRef.deciding.confirming === null) {
-            const info = serRef as OG.RefDeciding;
-            allReferenda.push({ refId, refStatus: 'Deciding', info });
-          }
-          // Confirming
-          else if (serRef.deciding.confirming !== null) {
-            const info = serRef as OG.RefConfirming;
-            allReferenda.push({ refId, refStatus: 'Confirming', info });
-          }
-        } else if (storage.type === 'Killed') {
-          const info: OG.RefKilled = { block: storage.value.toString() };
-          allReferenda.push({ refId, refStatus: 'Killed', info });
-        }
-      }
-    }
-
-    // Serialize data before sending to open gov window.
-    ConfigRenderer.portToOpenGov?.postMessage({
-      task: 'openGov:referenda:receive',
-      data: { json: JSON.stringify(allReferenda) },
-    });
-  };
-
-  /**
    * @name handleGetReferenda
    * @summary Cast an API to get a network's OpenGov referenda.
    */
@@ -515,19 +422,23 @@ export const useMainMessagePorts = () => {
       if (!client.api) {
         return;
       }
-
+      let referenda: OG.ReferendaInfo[] = [];
       switch (chainId) {
         case 'Polkadot Relay': {
           const api = client.api as DedotClient<ClientTypes['polkadot']>;
-          await fetchProcessReferenda(api);
+          referenda = await Core.fetchProcessReferenda(api);
           break;
         }
         case 'Kusama Asset Hub': {
           const api = client.api as DedotClient<ClientTypes['statemine']>;
-          await fetchProcessReferenda(api);
+          referenda = await Core.fetchProcessReferenda(api);
           break;
         }
       }
+      ConfigRenderer.portToOpenGov?.postMessage({
+        task: 'openGov:referenda:receive',
+        data: { json: JSON.stringify(referenda) },
+      });
     } catch (e) {
       console.error(e);
       ConfigRenderer.portToOpenGov?.postMessage({

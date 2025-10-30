@@ -5,8 +5,6 @@ import { checkAccountWithProperties } from '../library/AccountsLib';
 import { areSortedArraysEqual } from '../library/CommonLib';
 import {
   AccountsController,
-  APIsController,
-  BusDispatcher,
   EventsController,
   NotificationsController,
 } from '../controllers';
@@ -14,6 +12,7 @@ import {
   getAccountNominatingData,
   getEraRewards,
 } from '../library/AccountsLib/nominating';
+import { getApiOrThrow, handleEvent } from './utils';
 import { u8aToString, u8aUnwrapBytes } from '@polkadot/util';
 import type {
   ApiCallEntry,
@@ -21,10 +20,7 @@ import type {
 } from '@polkadot-live/types/subscriptions';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type {
-  EventCallback,
-  NotificationData,
-} from '@polkadot-live/types/reporter';
+import type { EventCallback } from '@polkadot-live/types/reporter';
 import type { QueryMultiWrapper } from '../model';
 import type {
   NominationPoolCommission,
@@ -37,30 +33,6 @@ import type {
 } from '@dedot/chaintypes/substrate';
 import type { ClientTypes, DedotClientSet } from '@polkadot-live/types/apis';
 import type { DedotClient } from 'dedot';
-import type { IpcTask } from '@polkadot-live/types/communication';
-
-const handleEvent = async (ipcTask: IpcTask) => {
-  switch (APIsController.backend) {
-    case 'electron': {
-      window.myAPI.sendEventTask(ipcTask);
-      break;
-    }
-    case 'browser': {
-      interface I {
-        event: EventCallback;
-        notification: NotificationData | null;
-        showNotification: {
-          isOneShot: boolean;
-          isEnabled: boolean;
-        };
-      }
-      const { event, notification, showNotification }: I = ipcTask.data;
-      const detail = { event, notification, showNotification };
-      BusDispatcher.dispatch('processEvent', detail);
-      break;
-    }
-  }
-};
 
 /**
  * @name callback_query_timestamp_now
@@ -953,13 +925,6 @@ export const callback_nominating_nominations = async (
     return false;
   }
 };
-
-/**
- * @name getApiOrThrow
- * @summary Get an API instance of throw.
- */
-const getApiOrThrow = async (chainId: ChainID) =>
-  (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
 
 /**
  * @name getStakingApi

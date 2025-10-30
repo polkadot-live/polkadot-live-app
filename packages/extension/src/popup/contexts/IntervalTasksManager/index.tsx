@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createSafeContextHook } from '@polkadot-live/contexts';
-import { executeIntervaledOneShot } from '@polkadot-live/core';
 import { Flip, toast } from 'react-toastify';
 import { createContext } from 'react';
 import { useConnections } from '../../../contexts';
@@ -11,6 +10,7 @@ import { intervalDurationsConfig } from '@polkadot-live/consts/subscriptions/int
 import type { AnyFunction } from '@polkadot-live/types/misc';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { IntervalTasksManagerContextInterface } from '@polkadot-live/contexts/types/main';
+import type { OneShotReturn } from '@polkadot-live/types/openGov';
 import type { ReactNode } from 'react';
 
 export const IntervalTasksManagerContext = createContext<
@@ -35,9 +35,15 @@ export const IntervalTasksManagerProvider = ({
 
   /// Utility to update an interval task.
   const updateIntervalTask = (task: IntervalSubscription) => {
-    console.log(task);
-    // TODO: Relay mechanism for updating openGov view state.
-
+    try {
+      chrome.runtime.sendMessage({
+        type: 'intervalSubscriptions',
+        task: 'syncIntervalSubscriptionUpdate',
+        payload: { task },
+      });
+    } catch (error) {
+      console.error(error);
+    }
     chrome.runtime.sendMessage({
       type: 'intervalSubscriptions',
       task: 'update',
@@ -97,7 +103,15 @@ export const IntervalTasksManagerProvider = ({
     tryRemoveIntervalSubscription(task);
     removeIntervalSubscription(task);
 
-    // TODO: Send message to OpenGov window to update its subscription state.
+    try {
+      chrome.runtime.sendMessage({
+        type: 'intervalSubscriptions',
+        task: 'syncIntervalSubscriptionRemove',
+        payload: { task },
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   /// Handle setting a new interval duration for the subscription.
@@ -131,10 +145,12 @@ export const IntervalTasksManagerProvider = ({
     setOneShotProcessing: AnyFunction
   ) => {
     setOneShotProcessing(true);
-    const { success, message } = await executeIntervaledOneShot(
-      task,
-      'one-shot'
-    );
+    const { success, message } = (await chrome.runtime.sendMessage({
+      type: 'oneShot',
+      task: 'executeInterval',
+      payload: { task },
+    })) as OneShotReturn;
+
     if (!success) {
       setOneShotProcessing(false);
 
