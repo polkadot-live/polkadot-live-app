@@ -61,7 +61,7 @@ import type {
 import type { DedotClient } from 'dedot';
 import type { HexString } from 'dedot/utils';
 import type { LedgerTaskResponse } from '@polkadot-live/types/ledger';
-import type { SettingKey } from '@polkadot-live/types/settings';
+import type { SettingItem, SettingKey } from '@polkadot-live/types/settings';
 import type {
   IntervalSubscription,
   SubscriptionTask,
@@ -140,7 +140,7 @@ const initAPIs = async () => {
   });
 };
 
-const initSubscriptions = async () => {
+const initAccountSubscriptions = async () => {
   if (SYSTEMS_INITIALIZED) {
     return;
   }
@@ -150,10 +150,21 @@ const initSubscriptions = async () => {
 
   ExtrinsicsController.backend = BACKEND;
   SubscriptionsController.backend = BACKEND;
-  await Promise.all([
-    AccountsController.initAccountSubscriptions('browser', active),
-    SubscriptionsController.initChainSubscriptions(),
-  ]);
+  await AccountsController.initAccountSubscriptions('browser', active);
+};
+
+const initChainSubscriptions = async () => {
+  if (SYSTEMS_INITIALIZED) {
+    return;
+  }
+  const store: Stores = 'chainSubscriptions';
+  const fetched = (await DbController.getAllObjects(store)) as Map<
+    string,
+    SubscriptionTask
+  >;
+  const tasks = Array.from(fetched.values()).map((t) => t);
+  const queryMulti = SubscriptionsController.chainSubscriptions;
+  await TaskOrchestrator.buildTasks(tasks, queryMulti);
 };
 
 const initIntervalSubscriptions = async () => {
@@ -166,13 +177,40 @@ const initSystems = async () => {
   await initOnlineMode();
   await Promise.all([initTheme(), initManagedAccounts(), initAPIs()]);
   await connectApis();
-  await initSubscriptions();
+  await initAccountSubscriptions();
+  await initChainSubscriptions();
   initIntervalSubscriptions();
   eventBus.dispatchEvent(new CustomEvent('initSystems:complete'));
   SYSTEMS_INITIALIZED = true;
 };
 
-// TODO: getAllChainSubscriptions
+// Get a full map of chain subscription tasks.
+const getAllChainSubscriptions = async (): Promise<
+  Map<ChainID, SubscriptionTask[]>
+> => {
+  const store: Stores = 'chainSubscriptions';
+  const map = new Map<ChainID, SubscriptionTask[]>();
+  const fetched = (await DbController.getAllObjects(store)) as Map<
+    ChainID,
+    SubscriptionTask
+  >;
+  for (const chainId of [
+    'Polkadot Relay',
+    'Kusama Relay',
+    'Paseo Relay',
+  ] as ChainID[]) {
+    map.set(chainId, []);
+  }
+  for (const task of fetched.values()) {
+    const { chainId } = task;
+    map.set(chainId, [...map.get(chainId)!, task]);
+  }
+  for (const [key, value] of map.entries()) {
+    map.set(key, SubscriptionsController.mergeActiveChainTasks(value, key));
+  }
+  return map;
+};
+
 // Get active account subscriptions from database and merge with inactive.
 const getAllAccountSubscriptions = async () => {
   const store = 'accountSubscriptions';
@@ -180,7 +218,6 @@ const getAllAccountSubscriptions = async () => {
     string,
     SubscriptionTask[]
   >;
-
   const result: typeof active = new Map();
   for (const [key, tasks] of active.entries()) {
     const [chainId, address] = key.split(':');
@@ -719,21 +756,9 @@ const subscribeChainTask = async (task: SubscriptionTask) => {
 };
 
 const setChainSubscriptionsState = async () => {
-  const map = new Map<ChainID, SubscriptionTask[]>();
-  const all = (await DbController.getAllObjects('chainSubscriptions')) as Map<
-    string,
-    SubscriptionTask
-  >;
-
-  for (const task of all.values()) {
-    const { chainId } = task;
-    map.has(chainId)
-      ? map.set(chainId, [...map.get(chainId)!, task])
-      : map.set(chainId, [task]);
-  }
-
+  const fetched = await getAllChainSubscriptions();
   sendChromeMessage('subscriptions', 'setChainSubscriptions', {
-    ser: JSON.stringify(Array.from(map.entries())),
+    ser: JSON.stringify(Array.from(fetched.entries())),
   });
 };
 
@@ -1127,11 +1152,41 @@ const handleFetchReferenda = async (
   }
 };
 
+const handleDebuggingSubscriptions = async (setting: SettingItem) => {
+  if (setting.enabled) {
+    return;
+  }
+  // Unsubscribe from any active debugging subscriptions.
+  for (const tasks of SubscriptionsController.getChainSubscriptions().values()) {
+    const active = tasks
+      .filter((t) => t.status === 'enable')
+      .map((t) => ({ ...t, status: 'disable' }) as SubscriptionTask);
+    if (active.length === 0) {
+      continue;
+    }
+    await updateChainSubscriptions(active);
+    await setChainSubscriptionsState();
+  }
+};
+
 chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
   switch (message.type) {
     /**
      * Handle database tasks.
      */
+    case 'settings': {
+      switch (message.task) {
+        case 'handleSetting': {
+          const { setting }: { setting: SettingItem } = message.payload;
+          if (setting.key === 'setting:show-debugging-subscriptions') {
+            handleDebuggingSubscriptions(setting);
+            return;
+          }
+          return false;
+        }
+      }
+      break;
+    }
     case 'db': {
       switch (message.task) {
         case 'settings:get': {
@@ -1444,6 +1499,12 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
      */
     case 'chainSubscriptions': {
       switch (message.task) {
+        case 'getAll': {
+          getAllChainSubscriptions().then((result) => {
+            sendResponse(JSON.stringify(Array.from(result.entries())));
+          });
+          return true;
+        }
         case 'update': {
           const { task }: { task: SubscriptionTask } = message.payload;
           updateChainSubscription(task).then(() =>

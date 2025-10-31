@@ -65,7 +65,11 @@ export const SettingFlagsProvider = ({
    * @todo Handle setting:show-debugging-subscriptions
    */
   const handleSetting = (setting: SettingItem) => {
-    console.log(setting);
+    chrome.runtime.sendMessage({
+      type: 'settings',
+      task: 'handleSetting',
+      payload: { setting },
+    });
   };
 
   /**

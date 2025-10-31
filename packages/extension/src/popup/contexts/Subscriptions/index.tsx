@@ -231,8 +231,22 @@ export const SubscriptionsProvider = ({
   const getTotalSubscriptionCount = (): number =>
     Array.from(activeChainMap.values()).reduce((acc, n) => acc + n, 0);
 
+  // Fetch and set chain subscription state on component mount.
   useEffect(() => {
-    // Listen for chain subscription state messages.
+    chrome.runtime
+      .sendMessage({ type: 'chainSubscriptions', task: 'getAll' })
+      .then((result: string) => {
+        const parseMap = <K, V>(map: string) => {
+          const array: [K, V][] = JSON.parse(map);
+          return new Map<K, V>(array);
+        };
+        const parsed = parseMap<ChainID, SubscriptionTask[]>(result);
+        setChainSubscriptionsState(parsed);
+      });
+  }, []);
+
+  // Listen for chain subscription state messages.
+  useEffect(() => {
     const callback = (message: AnyData) => {
       if (message.type === 'subscriptions') {
         switch (message.task) {

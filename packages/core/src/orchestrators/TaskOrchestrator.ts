@@ -106,8 +106,10 @@ export class TaskOrchestrator {
       case 'Polkadot Relay':
       case 'Polkadot Asset Hub':
       case 'Polkadot People':
+      case 'Kusama Relay':
       case 'Kusama Asset Hub':
       case 'Kusama People':
+      case 'Paseo Relay':
       case 'Paseo Asset Hub':
       case 'Paseo People':
       case 'Westend Asset Hub':

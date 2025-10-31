@@ -64,14 +64,12 @@ export const SubscriptionsProvider = ({
     if (!accounts) {
       return false;
     }
-
     for (const acc of accounts) {
       const tasks = acc.getSubscriptionTasks();
       if (tasks && tasks.length > 0) {
         return true;
       }
     }
-
     return false;
   };
 
@@ -244,7 +242,6 @@ export const SubscriptionsProvider = ({
   ) => {
     if (task.account) {
       task.enableOsNotifications = checked;
-
       await window.myAPI.sendSubscriptionTask({
         action: 'subscriptions:account:update',
         data: {
@@ -252,7 +249,6 @@ export const SubscriptionsProvider = ({
           serTask: JSON.stringify(task),
         },
       });
-
       // Update react state for tasks.
       SubscriptionsController.updateTaskState(task);
 
@@ -261,7 +257,6 @@ export const SubscriptionsProvider = ({
         task.chainId,
         task.account.address
       );
-
       if (account) {
         account.queryMulti?.setOsNotificationsFlag(task);
       }
