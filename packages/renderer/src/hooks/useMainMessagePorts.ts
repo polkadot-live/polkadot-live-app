@@ -1,9 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-/// Dependencies.
+import * as MainCtx from '@ren/contexts/main';
 import * as Core from '@polkadot-live/core';
-import { WC_EVENT_ORIGIN } from '@polkadot-live/consts/walletConnect';
 import {
   ConfigRenderer,
   disconnectAPIs,
@@ -15,52 +14,39 @@ import {
   TaskOrchestrator,
 } from '@polkadot-live/core';
 import { useEffect } from 'react';
-
-/// Main window contexts.
+import { WC_EVENT_ORIGIN } from '@polkadot-live/consts/walletConnect';
 import { useConnections } from '@ren/contexts/common';
-import {
-  useAddresses,
-  useAppSettings,
-  useBootstrapping,
-  useDataBackup,
-  useEvents,
-  useIntervalSubscriptions,
-  useLedgerSigner,
-  useManage,
-  useSubscriptions,
-  useTreasuryApi,
-  useWalletConnect,
-} from '@ren/contexts/main';
 
-/// Types.
 import type * as OG from '@polkadot-live/types/openGov';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { ClientTypes } from '@polkadot-live/types/apis';
+import type { DedotClient } from 'dedot';
 import type { EventCallback } from '@polkadot-live/types/reporter';
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
-import type {
-  IntervalSubscription,
-  SubscriptionTask,
-} from '@polkadot-live/types/subscriptions';
 import type {
   EncodedAccount,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
-import type { ChainID } from '@polkadot-live/types/chains';
-import type { ClientTypes } from '@polkadot-live/types/apis';
-import type { DedotClient } from 'dedot';
+import type {
+  IntervalSubscription,
+  SubscriptionTask,
+} from '@polkadot-live/types/subscriptions';
 import type { PalletReferendaTrackDetails } from '@dedot/chaintypes/substrate';
 import type { SettingItem } from '@polkadot-live/types/settings';
 import type { WcSelectNetwork } from '@polkadot-live/types/walletConnect';
 
 export const useMainMessagePorts = () => {
-  /// Main renderer contexts.
-  const { cacheGet } = useAppSettings();
-  const { importAddress, removeAddress } = useAddresses();
-  const { updateEventsOnAccountRename } = useEvents();
-  const { syncOpenGovWindow } = useBootstrapping();
-  const { exportDataToBackup, importDataFromBackup } = useDataBackup();
   const { getOnlineMode } = useConnections();
-  const { ledgerSignSubmit } = useLedgerSigner();
-  const { handleInitTreasury } = useTreasuryApi();
+  const { cacheGet, toggleSetting } = MainCtx.useAppSettings();
+  const { importAddress, removeAddress } = MainCtx.useAddresses();
+  const { syncOpenGovWindow } = MainCtx.useBootstrapping();
+  const { exportDataToBackup, importDataFromBackup } = MainCtx.useDataBackup();
+  const { updateEventsOnAccountRename } = MainCtx.useEvents();
+  const { ledgerSignSubmit } = MainCtx.useLedgerSigner();
+  const { handleInitTreasury } = MainCtx.useTreasuryApi();
+  const { updateAccountNameInTasks } = MainCtx.useSubscriptions();
+  const { addIntervalSubscription, removeIntervalSubscription } =
+    MainCtx.useIntervalSubscriptions();
 
   const {
     connectWc,
@@ -73,18 +59,12 @@ export const useMainMessagePorts = () => {
     wcSignExtrinsic,
     updateWcTxSignMap,
     verifySigningAccount,
-  } = useWalletConnect();
-
+  } = MainCtx.useWalletConnect();
   const {
     setRenderedSubscriptions,
     tryAddIntervalSubscription,
     tryRemoveIntervalSubscription,
-  } = useManage();
-
-  const { toggleSetting } = useAppSettings();
-  const { updateAccountNameInTasks } = useSubscriptions();
-  const { addIntervalSubscription, removeIntervalSubscription } =
-    useIntervalSubscriptions();
+  } = MainCtx.useManage();
 
   /**
    * @name handleImportAddress
@@ -121,7 +101,6 @@ export const useMainMessagePorts = () => {
 
           for (const task of allTasks) {
             SubscriptionsController.updateTaskState(task);
-
             await window.myAPI.sendSubscriptionTask({
               action: 'subscriptions:account:update',
               data: {
@@ -154,7 +133,6 @@ export const useMainMessagePorts = () => {
           account,
           status
         );
-
         // Update persisted state and React state for tasks.
         for (const task of tasks) {
           await window.myAPI.sendSubscriptionTask({
@@ -167,12 +145,10 @@ export const useMainMessagePorts = () => {
 
           SubscriptionsController.updateTaskState(task);
         }
-
         // Subscribe to tasks if app setting enabled.
         if (!fromBackup && account.queryMulti !== null) {
           await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
         }
-
         // Update React subscriptions state.
         SubscriptionsController.syncAccountSubscriptionsState();
       }

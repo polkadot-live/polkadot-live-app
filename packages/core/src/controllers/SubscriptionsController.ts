@@ -115,23 +115,23 @@ export class SubscriptionsController {
 
   /**
    * @name initChainSubscriptions
-   * @summary Fetch and build persisted chain subscription tasks from store.
+   * @summary Fetch and build persisted chain subscription tasks from store. (electron)
    */
   static async initChainSubscriptions() {
-    let serialized = '';
     if (this.backend === 'electron') {
       // Send IPC message to get chain tasks from store.
-      serialized =
+      const serialized =
         (await window.myAPI.sendSubscriptionTask({
           action: 'subscriptions:chain:getAll',
           data: null,
-        })) || '';
+        })) || '[]';
+
+      // Subscribe to tasks.
+      await TaskOrchestrator.buildTasks(
+        JSON.parse(serialized),
+        this.chainSubscriptions
+      );
     }
-    // Subscribe to tasks.
-    await TaskOrchestrator.buildTasks(
-      serialized !== '' ? JSON.parse(serialized) : [],
-      this.chainSubscriptions
-    );
   }
 
   /**
@@ -180,22 +180,27 @@ export class SubscriptionsController {
     const activeTasks = this.chainSubscriptions.getSubscriptionTasks();
     // TODO: Populate inactive tasks with their correct arguments.
     // No chain API calls so far require arguments.
+    const supportedChains: ChainID[] = [
+      'Polkadot Relay',
+      'Kusama Relay',
+      'Paseo Relay',
+    ];
 
     // Merge active tasks into default tasks array.
+    const filtered = chainTasks.filter((t) =>
+      supportedChains.includes(t.chainId)
+    );
     const allTasks = activeTasks
-      ? chainTasks.map((t) => {
-          for (const active of activeTasks) {
-            if (active.action === t.action && active.chainId === t.chainId) {
-              return active;
-            }
-          }
-          return t;
+      ? filtered.map((t) => {
+          const found = activeTasks.find(
+            (a) => t.action === a.action && t.chainId === a.chainId
+          );
+          return found ? found : t;
         })
-      : chainTasks;
+      : filtered;
 
     // Construct map from tasks array.
     const map = new Map<ChainID, SubscriptionTask[]>();
-
     for (const task of allTasks) {
       let updated = [task];
       const current = map.get(task.chainId);
@@ -248,6 +253,21 @@ export class SubscriptionsController {
         );
         return found ? found : t;
       });
+
+  static mergeActiveChainTasks = (
+    active: SubscriptionTask[],
+    chainId: ChainID
+  ): SubscriptionTask[] =>
+    !active.length
+      ? chainTasks.filter((t) => t.chainId === chainId)
+      : chainTasks
+          .filter((t) => t.chainId === chainId)
+          .map((t) => {
+            const found = active.find(
+              (a) => a.action === t.action && a.chainId === t.chainId
+            );
+            return found ? found : t;
+          });
 
   /**
    * @name buildSubscriptions
