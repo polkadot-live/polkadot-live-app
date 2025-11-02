@@ -3,6 +3,7 @@
 
 import { APIsController, getBalance } from '@polkadot-live/core';
 import { DbController } from '../../controllers';
+import { decodeAddress, u8aToHex } from 'dedot/utils';
 import { getSupportedSources } from '@polkadot-live/consts/chains';
 import type {
   AccountSource,
@@ -30,4 +31,17 @@ export const handleGetSpendableBalance = async (
 
   const max = (a: bigint, b: bigint): bigint => (a > b ? a : b);
   return max(free - ed, 0n);
+};
+
+export const getAccountLedgerMeta = async (chainId: ChainID, from: string) => {
+  const publicKeyHex = u8aToHex(decodeAddress(from));
+  const accounts = (await DbController.get(
+    'accounts',
+    'ledger'
+  )) as ImportedGenericAccount[];
+  const account = accounts.find((a) => a.publicKeyHex === publicKeyHex);
+  const result = account
+    ? account.encodedAccounts[chainId].ledgerMeta
+    : undefined;
+  return result;
 };
