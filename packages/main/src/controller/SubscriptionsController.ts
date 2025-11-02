@@ -135,7 +135,6 @@ export class SubscriptionsController {
         map.set(`${_chain}:${_address}`, ser_tasks);
       }
     }
-
     return JSON.stringify(Array.from(map.entries()));
   }
 

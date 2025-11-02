@@ -7,6 +7,15 @@ import { getDefaultSettings } from '@polkadot-live/consts/settings';
 import { setStateWithRef } from '@w3ux/utils';
 import type { SettingFlagsContextInterface } from './types';
 import type { SettingKey, SettingItem } from '@polkadot-live/types/settings';
+import {
+  getNewFileHandle,
+  isFileSystemAccessApiSupported,
+  readFile,
+  verifyPermission,
+  writeFile,
+} from './fileSystem';
+import { useConnections } from '../../../contexts';
+import { renderToast } from '@polkadot-live/ui/utils';
 
 export const SettingFlagsContext = createContext<
   SettingFlagsContextInterface | undefined
@@ -22,6 +31,7 @@ export const SettingFlagsProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { relayState, getOnlineMode } = useConnections();
   const [cache, setCache] = useState(getDefaultSettings());
   const cacheRef = useRef(cache);
 
@@ -62,14 +72,76 @@ export const SettingFlagsProvider = ({
 
   /**
    * Handle a setting action.
-   * @todo Handle setting:show-debugging-subscriptions
    */
   const handleSetting = (setting: SettingItem) => {
-    chrome.runtime.sendMessage({
-      type: 'settings',
-      task: 'handleSetting',
-      payload: { setting },
-    });
+    switch (setting.key) {
+      case 'setting:import-data': {
+        const run = async () => {
+          const toastId = 'import-data';
+          try {
+            if (!isFileSystemAccessApiSupported()) {
+              renderToast('File Access Not Supported', toastId, 'error');
+              return;
+            }
+            const contents = await readFile();
+            relayState('backup:importing', true);
+            const result = (await chrome.runtime.sendMessage({
+              type: 'dataBackup',
+              task: 'importData',
+              payload: { contents, isOnline: getOnlineMode() },
+            })) as boolean;
+
+            relayState('backup:importing', false);
+            result
+              ? renderToast('Import Successful', toastId, 'success')
+              : renderToast('Import Failed', toastId, 'error');
+          } catch (err) {
+            console.error(err);
+            relayState('backup:importing', false);
+          }
+        };
+        run();
+        break;
+      }
+      case 'setting:export-data': {
+        const run = async () => {
+          const toastId = 'export-data';
+          try {
+            if (!isFileSystemAccessApiSupported()) {
+              renderToast('File Access Not Supported', toastId, 'error');
+              return;
+            }
+            const contents = (await chrome.runtime.sendMessage({
+              type: 'dataBackup',
+              task: 'exportData',
+            })) as string;
+
+            const handle = await getNewFileHandle();
+            const isVerified = await verifyPermission(handle, 'readwrite');
+            if (isVerified) {
+              await writeFile(handle, contents);
+              renderToast('Export Successfuly', toastId, 'success');
+            } else {
+              renderToast('Permissions Not Granted.', toastId, 'error');
+            }
+          } catch (err) {
+            console.error(err);
+            (err as Error).name !== 'AbortError' &&
+              renderToast('Export Failed', toastId, 'error');
+          }
+        };
+        run();
+        break;
+      }
+      default: {
+        chrome.runtime.sendMessage({
+          type: 'settings',
+          task: 'handleSetting',
+          payload: { setting },
+        });
+        break;
+      }
+    }
   };
 
   /**

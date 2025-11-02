@@ -42,19 +42,16 @@ export const Settings = ({ platform }: SettingsProps) => {
     ]) {
       map.set(category, []);
     }
-
     // Populate map.
     for (const setting of SettingsList) {
       if (!setting.platforms.includes(platform as OsPlatform)) {
         continue;
       }
-
       const category = setting.category;
       map.has(category)
         ? map.set(category, [...map.get(category)!, { ...setting }])
         : map.set(category, [{ ...setting }]);
     }
-
     // Sort by label.
     for (const [category, settings] of map.entries()) {
       map.set(
@@ -62,14 +59,12 @@ export const Settings = ({ platform }: SettingsProps) => {
         settings.sort((a, b) => a.title.localeCompare(b.title))
       );
     }
-
     // Remove any empty categories.
     for (const [key, value] of map.entries()) {
       if (!value.length) {
         map.delete(key);
       }
     }
-
     return map;
   };
 

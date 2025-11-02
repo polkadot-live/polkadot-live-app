@@ -2401,6 +2401,7 @@ __metadata:
     "@polkadot-live/ui": "workspace:*"
     "@types/chrome": "npm:^0.1.1"
     "@types/node": "npm:^24.0.15"
+    "@types/wicg-file-system-access": "npm:^2023.10.7"
     "@vitejs/plugin-react": "npm:^4.7.0"
     buffer: "npm:^6.0.3"
     idb: "npm:^8.0.3"
@@ -4737,6 +4738,13 @@ __metadata:
   version: 1.0.10
   resolution: "@types/w3c-web-usb@npm:1.0.10"
   checksum: 3df5733a334c5fd22ef3fa1e97a70c029542591058d11905d1304c26bab8705d975168818b5b7ec21fef5591cdea776dbdb31d4c04aa433e7fe7d61dd7ebdecf
+  languageName: node
+  linkType: hard
+
+"@types/wicg-file-system-access@npm:^2023.10.7":
+  version: 2023.10.7
+  resolution: "@types/wicg-file-system-access@npm:2023.10.7"
+  checksum: 0890a4aa2c4f07b29fd545299fdaa2a63e2211294722c88375c1682826f8f45d77b9354348b2d800336c8e15d009005905a689588b507d02c7c8c5bd58f3906c
   languageName: node
   linkType: hard
 

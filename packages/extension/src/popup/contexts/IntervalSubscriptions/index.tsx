@@ -3,7 +3,7 @@
 
 import { createContext, useEffect, useState } from 'react';
 import { createSafeContextHook } from '@polkadot-live/contexts';
-//import type { AnyData } from '@polkadot-live/types/misc';
+import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { IntervalSubscriptionsContextInterface } from '@polkadot-live/contexts/types/main';
@@ -112,6 +112,7 @@ export const IntervalSubscriptionsProvider = ({
       0
     );
 
+  // Get subscriptions from database and set state on mount.
   useEffect(() => {
     chrome.runtime
       .sendMessage({
@@ -124,6 +125,33 @@ export const IntervalSubscriptionsProvider = ({
           tryAddIntervalSubscription(t);
         }
       });
+  }, []);
+
+  // Listen for state syncing messages.
+  useEffect(() => {
+    const callback = (message: AnyData) => {
+      if (message.type === 'intervalSubscriptions') {
+        switch (message.task) {
+          case 'import:setSubscriptions': {
+            const { tasks }: { tasks: IntervalSubscription[] } =
+              message.payload;
+            const map = new Map<ChainID, IntervalSubscription[]>();
+            for (const task of tasks) {
+              const { chainId } = task;
+              map.has(chainId)
+                ? map.set(chainId, [...map.get(chainId)!, task])
+                : map.set(chainId, [task]);
+            }
+            setSubscriptions(map);
+            break;
+          }
+        }
+      }
+    };
+    chrome.runtime.onMessage.addListener(callback);
+    return () => {
+      chrome.runtime.onMessage.removeListener(callback);
+    };
   }, []);
 
   return (

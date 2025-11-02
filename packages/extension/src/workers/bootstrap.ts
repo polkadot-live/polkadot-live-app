@@ -1,11 +1,38 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { version } from '../../package.json';
 import { DbController, LedgerController } from '../controllers';
+import {
+  deleteAccount,
+  getAllAccounts,
+  handleGetSpendableBalance,
+  persistAccount,
+  updateAccount,
+} from './accounts';
+import { handleImportData } from './backup';
+import {
+  getAllEvents,
+  persistEvent,
+  removeEvent,
+  updateEventWhoInfo,
+} from './events';
+import {
+  handlePersistExtrinsic,
+  removeExtrinsic,
+  updateExtrinsic,
+} from './extrinsics';
+import {
+  handleAddIntervalSubscription,
+  handleAddIntervalSubscriptions,
+  handleGetAllIntervalTasks,
+  handleRemoveIntervalSubscription,
+  handleRemoveIntervalSubscriptions,
+  handleUpdateIntervalSubscription,
+} from './intervals';
 import { dispatchNotification } from './notifications';
 import { eventBus } from './eventBus';
 import { sendChromeMessage } from './utils';
-import type { Account } from '@polkadot-live/core';
 import {
   APIsController,
   AccountsController,
@@ -17,7 +44,6 @@ import {
   executeOneShot,
   pushUniqueEvent,
   doRemoveOutdatedEvents,
-  getBalance,
   ExtrinsicsController,
   LedgerTxError,
   handleLedgerTaskError,
@@ -29,12 +55,10 @@ import {
   fetchProcessReferenda,
   executeIntervaledOneShot,
 } from '@polkadot-live/core';
-import {
-  getSupportedChains,
-  getSupportedSources,
-} from '@polkadot-live/consts/chains';
+import { getSupportedChains } from '@polkadot-live/consts/chains';
 import { initSharedState } from '@polkadot-live/consts/sharedState';
 import { decodeAddress, hexToU8a, u8aToHex } from 'dedot/utils';
+import type { Account } from '@polkadot-live/core';
 import type {
   AccountSource,
   EncodedAccount,
@@ -44,7 +68,6 @@ import type {
 } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
-  EventAccountData,
   EventCallback,
   NotificationData,
 } from '@polkadot-live/types/reporter';
@@ -230,52 +253,8 @@ const getAllAccountSubscriptions = async () => {
 };
 
 /**
- * Events
- */
-
-const getAllEvents = async (): Promise<EventCallback[]> => {
-  const map = await DbController.getAllObjects('events');
-  return Array.from((map as Map<string, EventCallback>).values()).map((e) => e);
-};
-
-const persistEvent = async (event: EventCallback) => {
-  // TODO: Take into account keep outdated events setting.
-  await DbController.set('events', event.uid, event);
-};
-
-const removeEvent = async (event: EventCallback) =>
-  await DbController.delete('events', event.uid);
-
-const updateEventWhoInfo = async (
-  address: string,
-  chainId: ChainID,
-  newName: string
-): Promise<EventCallback[]> => {
-  const cmp = (a: EventAccountData) =>
-    a.address === address && a.chainId === chainId && a.accountName !== newName;
-
-  const updated: EventCallback[] = [];
-  const events = (await DbController.getAllObjects('events')) as Map<
-    string,
-    EventCallback
-  >;
-  for (const [uid, e] of events.entries()) {
-    if (e.who.origin === 'chain') {
-      continue;
-    }
-    if (cmp(e.who.data as EventAccountData)) {
-      (e.who.data as EventAccountData).accountName = newName;
-      await DbController.set('events', uid, e);
-      updated.push(e);
-    }
-  }
-  return updated;
-};
-
-/**
  * Event bus.
  */
-
 eventBus.addEventListener('showNotification', (e) => {
   const { title, body }: { title: string; body: string } = (e as CustomEvent)
     .detail;
@@ -411,7 +390,6 @@ eventBus.addEventListener('setManagedAccountsState', async () => {
 /**
  * APIs.
  */
-
 const connectApis = async () => {
   if (SYSTEMS_INITIALIZED) {
     return;
@@ -467,98 +445,8 @@ const onEndpointChange = async (chainId: ChainID, endpoint: NodeEndpoint) => {
 };
 
 /**
- * Raw accounts.
+ * Managed accounts.
  */
-
-const getAllAccounts = async (): Promise<string> => {
-  const map = new Map<AccountSource, ImportedGenericAccount[]>();
-  for (const source of getSupportedSources()) {
-    const result = await DbController.get('accounts', source);
-    map.set(source, (result as ImportedGenericAccount[]) || []);
-  }
-  return JSON.stringify(Array.from(map.entries()));
-};
-
-const handleGetSpendableBalance = async (
-  address: string,
-  chainId: ChainID
-): Promise<bigint> => {
-  const api = (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
-  const ed = api.consts.balances.existentialDeposit;
-  const balance = await getBalance(api, address, chainId);
-  const { free } = balance;
-
-  const max = (a: bigint, b: bigint): bigint => (a > b ? a : b);
-  return max(free - ed, 0n);
-};
-
-const isAlreadyPersisted = async (publicKeyHex: string): Promise<boolean> => {
-  for (const source of [
-    'ledger',
-    'read-only',
-    'vault',
-    'wallet-connect',
-  ] as AccountSource[]) {
-    const stored = (await DbController.get('accounts', source)) as
-      | ImportedGenericAccount[]
-      | undefined;
-    if ((stored || []).find((a) => a.publicKeyHex === publicKeyHex)) {
-      return true;
-    }
-  }
-  return false;
-};
-
-const persistAccount = async (account: ImportedGenericAccount) => {
-  try {
-    const { publicKeyHex, source } = account;
-    const alreadyExists = await isAlreadyPersisted(publicKeyHex);
-    if (!alreadyExists) {
-      const all = (await DbController.get('accounts', source)) as
-        | ImportedGenericAccount[]
-        | undefined;
-      await DbController.set('accounts', source, [...(all || []), account]);
-    }
-    return true;
-  } catch (error) {
-    console.error(error);
-    return false;
-  }
-};
-
-const updateAccount = async (account: ImportedGenericAccount) => {
-  try {
-    const { publicKeyHex, source } = account;
-    const all = (await DbController.get('accounts', source)) as
-      | ImportedGenericAccount[]
-      | undefined;
-    const updated = (all || []).map((a) =>
-      a.publicKeyHex === publicKeyHex ? account : a
-    );
-    await DbController.set('accounts', source, updated);
-    return true;
-  } catch (error) {
-    console.error(error);
-    return false;
-  }
-};
-
-const deleteAccount = async (
-  publicKeyHex: string,
-  source: AccountSource
-): Promise<boolean> => {
-  try {
-    const all = ((await DbController.get('accounts', source)) ||
-      []) as ImportedGenericAccount[];
-    const updated = all.filter((a) => a.publicKeyHex !== publicKeyHex);
-    await DbController.set('accounts', source, updated);
-    return true;
-  } catch (error) {
-    console.error(error);
-    return false;
-  }
-};
-
 const persistManagedAccount = async (account: Account) => {
   const store = 'managedAccounts';
   const json: StoredAccount = account.toJSON();
@@ -583,14 +471,11 @@ const removeManagedAccount = async (account: Account) => {
 const handleImportAddress = async (
   generic: ImportedGenericAccount,
   encoded: EncodedAccount,
+  onlineMode: boolean,
   fromBackup: boolean
 ) => {
   const relayFlag = (key: string, value: boolean) =>
     sendChromeMessage('sharedState', 'relay', { key, value });
-
-  const getOnlineMode = () =>
-    Boolean(SHARED_STATE.get('mode:connected')) &&
-    Boolean(SHARED_STATE.get('mode:online'));
 
   try {
     relayFlag('account:importing', true);
@@ -622,14 +507,14 @@ const handleImportAddress = async (
     }
 
     // Sync managed account data if online.
-    if (getOnlineMode()) {
+    if (onlineMode) {
       const res = await APIsController.getConnectedApiOrThrow(chainId);
       const api = res.getApi();
       await AccountsController.syncAccount(account, api);
     }
 
     // Subscribe new account to all possible subscriptions if setting enabled.
-    if (account.queryMulti !== null && !fromBackup) {
+    if (account.queryMulti && !fromBackup) {
       const key = 'setting:automatic-subscriptions';
       const auto = (await DbController.get('settings', key)) as boolean;
       const status = auto ? 'enable' : 'disable';
@@ -723,7 +608,6 @@ const handleRenameAccount = async (enAccount: EncodedAccount) => {
 /**
  * Chain subscriptions.
  */
-
 const updateChainSubscriptions = async (tasks: SubscriptionTask[]) => {
   // Update database.
   for (const task of tasks) {
@@ -843,17 +727,6 @@ const onNotificationToggle = async (task: SubscriptionTask) => {
 /**
  * Extrinsics.
  */
-
-const updateExtrinsic = async (info: ExtrinsicInfo) => {
-  const { txId } = info;
-  await DbController.set('extrinsics', txId, info);
-};
-
-const removeExtrinsic = async (txId: string) => {
-  ExtrinsicsController.deleteTx(txId);
-  await DbController.delete('extrinsics', txId);
-};
-
 const getAllExtrinsics = async () => {
   const all = (await DbController.getAllObjects('extrinsics')) as Map<
     string,
@@ -864,10 +737,6 @@ const getAllExtrinsics = async () => {
 
 const handleGetEstimatedFee = async (info: ExtrinsicInfo): Promise<string> =>
   (await ExtrinsicsController.getEstimatedFee(info)).toString();
-
-const handlePersistExtrinsic = async (info: ExtrinsicInfo) => {
-  await DbController.set('extrinsics', info.txId, info);
-};
 
 const handleBuildExtrinsic = async (info: ExtrinsicInfo) => {
   const result = await ExtrinsicsController.build(info);
@@ -959,7 +828,6 @@ bootstrap().then(() => {
 /**
  * Utils
  */
-
 const isMainTabOpen = async (): Promise<chrome.tabs.Tab | undefined> => {
   const url = chrome.runtime.getURL('src/tab/index.html');
   const tabs = await chrome.tabs.query({});
@@ -967,98 +835,8 @@ const isMainTabOpen = async (): Promise<chrome.tabs.Tab | undefined> => {
 };
 
 /**
- * Interval Subscriptions
- */
-
-const compare = (
-  left: IntervalSubscription,
-  right: IntervalSubscription
-): boolean =>
-  left.action === right.action &&
-  left.chainId === right.chainId &&
-  left.referendumId === right.referendumId
-    ? true
-    : false;
-
-const handleGetAllIntervalTasks = async (): Promise<IntervalSubscription[]> => {
-  let tasks: IntervalSubscription[] = [];
-  const store = 'intervalSubscriptions';
-  const chainIds: ChainID[] = ['Polkadot Relay', 'Kusama Asset Hub'];
-  for (const key of chainIds) {
-    const fetched =
-      ((await DbController.get(store, key)) as
-        | IntervalSubscription[]
-        | undefined) || [];
-    tasks = tasks.concat(fetched);
-  }
-  return tasks;
-};
-
-const handleAddIntervalSubscriptions = async (
-  tasks: IntervalSubscription[],
-  onlineMode: boolean
-) => {
-  for (const task of tasks) {
-    await handleAddIntervalSubscription(task, onlineMode);
-  }
-};
-
-const handleRemoveIntervalSubscriptions = async (
-  tasks: IntervalSubscription[],
-  onlineMode: boolean
-) => {
-  for (const task of tasks) {
-    IntervalsController.removeSubscription(task, onlineMode);
-    await handleRemoveIntervalSubscription(task);
-  }
-};
-
-const handleAddIntervalSubscription = async (
-  task: IntervalSubscription,
-  onlineMode: boolean
-) => {
-  // Add task to interval controller and update popup state.
-  IntervalsController.insertSubscription(task, onlineMode);
-
-  // Persist task to store.
-  const { chainId } = task;
-  const store = 'intervalSubscriptions';
-  const all =
-    ((await DbController.get(store, chainId)) as
-      | IntervalSubscription[]
-      | undefined) || [];
-  const updated = all.filter((t) => !compare(task, t));
-  await DbController.set(store, chainId, [...updated, task]);
-};
-
-const handleUpdateIntervalSubscription = async (task: IntervalSubscription) => {
-  const { chainId } = task;
-  const store: Stores = 'intervalSubscriptions';
-  const all = (await DbController.get(store, chainId)) as
-    | IntervalSubscription[]
-    | undefined;
-  if (all) {
-    const updated = all.map((t) => (compare(task, t) ? task : t));
-    await DbController.set(store, chainId, updated);
-  }
-};
-
-const handleRemoveIntervalSubscription = async (task: IntervalSubscription) => {
-  const { chainId } = task;
-  const store: Stores = 'intervalSubscriptions';
-  const all = (await DbController.get(store, chainId)) as
-    | IntervalSubscription[]
-    | undefined;
-  if (all) {
-    const updated = all.filter((t) => !compare(task, t));
-    await DbController.set(store, chainId, updated);
-  }
-};
-
-/**
  * Treasury
  */
-
 export const handleInitTreasury = async (
   chainId: ChainID
 ): Promise<SerIpcTreasuryInfo | null> => {
@@ -1123,7 +901,6 @@ export const handleFetchTracks = async (chainId: ChainID) => {
 /**
  * Referenda
  */
-
 const handleFetchReferenda = async (
   chainId: ChainID
 ): Promise<ReferendaInfo[] | null> => {
@@ -1169,8 +946,74 @@ const handleDebuggingSubscriptions = async (setting: SettingItem) => {
   }
 };
 
+/**
+ * Data Backup
+ */
+const getExportData = async (): Promise<string> => {
+  const map = new Map<string, string>();
+
+  const getSerEvents = async () => {
+    type M = Map<string, EventCallback>;
+    const fetched = (await DbController.getAllObjects('events')) as M;
+    return JSON.stringify(
+      Array.from(fetched.values()).filter((e) => e.category !== 'debugging')
+    );
+  };
+  const getSerExtrinsics = async () => {
+    type M = Map<string, ExtrinsicInfo>;
+    const fetched = (await DbController.getAllObjects('extrinsics')) as M;
+    return JSON.stringify(Array.from(fetched.values()));
+  };
+  const getSerIntervals = async () => {
+    type M = Map<ChainID, IntervalSubscription[]>;
+    const store = 'intervalSubscriptions';
+    const fetched = (await DbController.getAllObjects(store)) as M;
+    return JSON.stringify(Array.from(fetched.values()).flat());
+  };
+
+  map.set('version', version);
+  map.set('addresses', await DbController.getAll('accounts'));
+  map.set('accountTasks', await DbController.getAll('accountSubscriptions'));
+  map.set('events', await getSerEvents());
+  map.set('extrinsics', await getSerExtrinsics());
+  map.set('intervals', await getSerIntervals());
+
+  return JSON.stringify(Array.from(map));
+};
+
 chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
   switch (message.type) {
+    /**
+     * Handle data backup tasks.
+     */
+    case 'dataBackup': {
+      switch (message.task) {
+        case 'exportData': {
+          getExportData().then((result) => sendResponse(result));
+          return true;
+        }
+        case 'importData': {
+          const {
+            contents,
+            isOnline,
+          }: { contents: string; isOnline: boolean } = message.payload;
+          // TMP: Provide function pointers until refactor.
+          handleImportData(
+            contents,
+            isOnline,
+            handleImportAddress,
+            handleRemoveAddress,
+            updateAccountSubscription,
+            setAccountSubscriptionsState,
+            subscribeAccountTask
+          ).then(() => {
+            sendResponse(true);
+          });
+          return true;
+        }
+      }
+      break;
+    }
     /**
      * Handle database tasks.
      */
@@ -1237,7 +1080,6 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
             publicKeyHex,
             source,
           }: { publicKeyHex: string; source: AccountSource } = message.payload;
-          console.log(`Delete account: ${publicKeyHex}`);
           deleteAccount(publicKeyHex, source).then((res) => sendResponse(res));
           return true;
         }
@@ -1253,7 +1095,10 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
         }
         case 'importAddress': {
           const { encodedAccount, genericAccount } = message.payload;
-          handleImportAddress(genericAccount, encodedAccount, false);
+          const isOnline =
+            Boolean(SHARED_STATE.get('mode:connected')) &&
+            Boolean(SHARED_STATE.get('mode:online'));
+          handleImportAddress(genericAccount, encodedAccount, isOnline, false);
           return false;
         }
         case 'removeAddress': {

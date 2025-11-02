@@ -1,6 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { APIsController } from './APIsController';
+import { BusDispatcher } from './BusDispatcher';
 import { executeIntervaledOneShot } from '../callbacks/intervaled';
 import { secondsUntilNextMinute } from '../library/TimeLib';
 import { intervalDurationsConfig } from '@polkadot-live/consts/subscriptions/interval';
@@ -32,7 +34,6 @@ export class IntervalsController {
     if (this.subscriptions.size === 0) {
       return false;
     }
-
     for (const items of this.subscriptions.values()) {
       for (const { status } of items) {
         if (status === 'enable') {
@@ -40,7 +41,6 @@ export class IntervalsController {
         }
       }
     }
-
     return false;
   };
 
@@ -323,10 +323,18 @@ export class IntervalsController {
       }
 
       // Render a single OS notification.
-      window.myAPI.showNotification({
-        title: 'Polkadot Live',
-        body: `Processed ${onTasks.length} new events.`,
-      });
+      const title = 'Polkadot Live';
+      const body = `Processed ${onTasks.length} new events.`;
+      switch (APIsController.backend) {
+        case 'browser': {
+          BusDispatcher.dispatch('showNotification', { title, body });
+          break;
+        }
+        case 'electron': {
+          window.myAPI.showNotification({ title, body });
+          break;
+        }
+      }
     }
 
     // Handle remaining tasks not requiring an OS notification.

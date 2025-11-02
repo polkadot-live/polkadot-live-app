@@ -25,7 +25,6 @@ export const getAddressNameMap = () => {
       }
     }
   }
-
   return addressNameMap;
 };
 
