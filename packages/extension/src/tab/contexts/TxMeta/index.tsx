@@ -264,6 +264,29 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   /**
+   * Listen for new extrinsics data from backup import.
+   */
+  useEffect(() => {
+    const callback = (message: AnyData) => {
+      if (message.type === 'extrinsics') {
+        switch (message.task) {
+          case 'import:setExtrinsics': {
+            const { ser }: { ser: string } = message.payload;
+            const arr: [string, ExtrinsicInfo][] = JSON.parse(ser);
+            const map = new Map<string, ExtrinsicInfo>(arr);
+            extrinsicsRef.current = map;
+            setUpdateCache(true);
+          }
+        }
+      }
+    };
+    chrome.runtime.onMessage.addListener(callback);
+    return () => {
+      chrome.runtime.onMessage.removeListener(callback);
+    };
+  }, []);
+
+  /**
    * Mechanism to update the extrinsics map when its reference is updated.
    */
   useEffect(() => {

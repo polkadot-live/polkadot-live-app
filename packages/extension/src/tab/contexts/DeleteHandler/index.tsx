@@ -72,7 +72,6 @@ export const DeleteHandlerProvider = ({
    * Send address data to main window to process removal.
    */
   const postToMain = (address: string, chainId: ChainID) => {
-    console.log(`Delete ${address}:${chainId}`);
     chrome.runtime.sendMessage({
       type: 'rawAccount',
       task: 'removeAddress',

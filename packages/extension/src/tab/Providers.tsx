@@ -34,8 +34,8 @@ import App from './App';
 export const Providers = withProviders(
   HelpProvider,
   OverlayProvider,
-  SettingFlagsProvider,
   ConnectionsProvider,
+  SettingFlagsProvider,
   TracksProvider,
   ImportAddressesProvider,
   RemoveHandlerProvider,

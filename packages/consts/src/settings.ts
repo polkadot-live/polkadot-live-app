@@ -112,7 +112,7 @@ export const SettingsList: SettingItem[] = [
     key: 'setting:import-data',
     settingType: 'button',
     title: 'Import Data',
-    platforms: ['darwin', 'win32', 'linux'],
+    platforms: ['chrome', 'darwin', 'win32', 'linux'],
   },
   {
     category: 'Backup',
@@ -123,6 +123,6 @@ export const SettingsList: SettingItem[] = [
     key: 'setting:export-data',
     settingType: 'button',
     title: 'Export Data',
-    platforms: ['darwin', 'win32', 'linux'],
+    platforms: ['chrome', 'darwin', 'win32', 'linux'],
   },
 ];

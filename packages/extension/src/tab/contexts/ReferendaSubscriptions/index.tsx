@@ -199,6 +199,15 @@ export const ReferendaSubscriptionsProvider = ({
     const callback = (message: AnyData) => {
       if (message.type === 'intervalSubscriptions') {
         switch (message.task) {
+          case 'import:setSubscriptions': {
+            const { tasks }: { tasks: IntervalSubscription[] } =
+              message.payload;
+            for (const task of tasks) {
+              removeReferendaSubscription(task);
+              task.status === 'enable' && addReferendaSubscription(task);
+            }
+            break;
+          }
           case 'syncIntervalSubscriptionUpdate': {
             const { task }: { task: IntervalSubscription } = message.payload;
             updateReferendaSubscription(task);
