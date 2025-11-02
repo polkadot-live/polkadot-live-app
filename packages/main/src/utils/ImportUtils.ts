@@ -10,7 +10,7 @@ import type { ExtrinsicInfo, TxActionUid } from '@polkadot-live/types/tx';
 
 /**
  * @name getAddressNameMap
- * @summary Get map with address as key and name as value.
+ * @summary Get map with <chainId:address> as key and name as value.
  */
 export const getAddressNameMap = () => {
   const addressNameMap = new Map<string, string>();
@@ -19,9 +19,9 @@ export const getAddressNameMap = () => {
 
   for (const ser of parsedMap.values()) {
     const genericAccounts: ImportedGenericAccount[] = JSON.parse(ser);
-    for (const { encodedAccounts } of genericAccounts) {
-      for (const { address, alias } of Object.values(encodedAccounts)) {
-        addressNameMap.set(address, alias);
+    for (const { encodedAccounts: encoded } of genericAccounts) {
+      for (const { address, chainId, alias } of Object.values(encoded)) {
+        addressNameMap.set(`${chainId}:${address}`, alias);
       }
     }
   }

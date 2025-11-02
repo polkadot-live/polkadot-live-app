@@ -270,7 +270,6 @@ export const DataBackupProvider = ({
     if (!s_events) {
       return;
     }
-
     // Send serialized events to main for processing.
     const updated = (await window.myAPI.sendEventTaskAsync({
       action: 'events:import',

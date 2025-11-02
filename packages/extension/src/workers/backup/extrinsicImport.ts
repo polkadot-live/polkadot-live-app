@@ -33,11 +33,10 @@ export const importExtrinsicsData = async (contents: string) => {
     // Update transfer extrinsic data if necessary.
     if (action === 'balances_transferKeepAlive') {
       type T = ExTransferKeepAliveData;
-      const { chainId: cid } = info.actionMeta;
       const { recipientAccountName, recipientAddress }: T =
         info.actionMeta.data;
 
-      const cur = addressNameMap.get(`${cid}:${recipientAddress}`);
+      const cur = addressNameMap.get(`${chainId}:${recipientAddress}`);
       if (cur && cur !== recipientAccountName) {
         info.actionMeta.data.recipientAccountName = cur;
         persist = true;
