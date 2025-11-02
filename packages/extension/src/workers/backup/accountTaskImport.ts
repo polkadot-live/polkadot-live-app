@@ -2,7 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { AccountsController, getFromBackupFile } from '@polkadot-live/core';
-import type { Account } from '@polkadot-live/core';
+import {
+  setAccountSubscriptionsState,
+  subscribeAccountTask,
+  updateAccountSubscription,
+} from '../subscriptions';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 
@@ -15,15 +19,7 @@ export const updateTaskEntries = () => {
   }
 };
 
-export const importAccountTaskData = async (
-  contents: string,
-  updateAccountSubscription: (
-    account: Account,
-    task: SubscriptionTask
-  ) => Promise<void>,
-  setAccountSubscriptionsState: () => Promise<void>,
-  subscribeAccountTask: (task: SubscriptionTask) => Promise<void>
-) => {
+export const importAccountTaskData = async (contents: string) => {
   const serTasks = getFromBackupFile('accountTasks', contents);
   if (!serTasks) {
     return;

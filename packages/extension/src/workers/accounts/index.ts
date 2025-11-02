@@ -3,4 +3,5 @@
 
 export * from './accountQueries';
 export * from './accountStorage';
+export * from './handlers';
 export * from './utils';

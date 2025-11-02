@@ -18,3 +18,9 @@ export const sendChromeMessage = async <T>(
     console.error(err);
   }
 };
+
+export const isMainTabOpen = async (): Promise<chrome.tabs.Tab | undefined> => {
+  const url = chrome.runtime.getURL('src/tab/index.html');
+  const tabs = await chrome.tabs.query({});
+  return tabs.find((tab) => tab.url?.split('#')[0] === url);
+};
