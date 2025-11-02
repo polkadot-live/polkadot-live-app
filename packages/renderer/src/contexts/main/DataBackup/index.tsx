@@ -177,7 +177,6 @@ export const DataBackupProvider = ({
     if (!s_addresses) {
       return;
     }
-
     const p_array: [AccountSource, string][] = JSON.parse(s_addresses);
     const p_map = new Map<AccountSource, string>(p_array);
     const importWindowOpen = await window.myAPI.isViewOpen('import');
@@ -197,13 +196,11 @@ export const DataBackupProvider = ({
             genericAccount.encodedAccounts[chainId].isImported = false;
           }
         }
-
         // Persist or update generic account in Electron store.
         await window.myAPI.rawAccountTask({
           action: 'raw-account:import',
           data: { serialized: JSON.stringify(genericAccount) },
         });
-
         // Add address and its status to import window's state.
         importWindowOpen &&
           Core.postToImport('import:account:add', {
@@ -228,19 +225,10 @@ export const DataBackupProvider = ({
             const data = { data: { data: { address, chainId } } };
             await handleRemoveAddress(new MessageEvent('message', data));
           }
-
           // Update state in import view.
           Core.postToImport('import:address:update', { genericAccount });
-
-          // TODO: Remove
-          // Update managed account names.
-          //const account = AccountsController.get(chainId, publicKeyHex);
-          //if (account) {
-          //  await AccountsController.set(account);
-          //}
         }
       }
-
       // Update account list state.
       AccountsController.syncState();
     }
@@ -270,7 +258,6 @@ export const DataBackupProvider = ({
     if (!s_events) {
       return;
     }
-
     // Send serialized events to main for processing.
     const updated = (await window.myAPI.sendEventTaskAsync({
       action: 'events:import',

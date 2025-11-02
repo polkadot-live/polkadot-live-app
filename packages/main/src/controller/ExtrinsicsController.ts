@@ -89,7 +89,7 @@ export class ExtrinsicsController {
 
     // Get stored extrinsics and sync account names with import data.
     const stored = this.getExtrinsicsFromStore().map((info) => {
-      const { action, accountName, from } = info.actionMeta;
+      const { action, accountName, chainId, from } = info.actionMeta;
 
       // Update transfer extrinsic data if necessary.
       if (action === 'balances_transferKeepAlive') {
@@ -98,18 +98,16 @@ export class ExtrinsicsController {
           recipientAddress,
         }: ExTransferKeepAliveData = info.actionMeta.data;
 
-        const latest = addressNameMap.get(recipientAddress);
-        if (latest !== undefined && latest !== recipientAccountName) {
-          info.actionMeta.data.recipientAccountName = latest;
+        const cur = addressNameMap.get(`${chainId}:${recipientAddress}`);
+        if (cur && cur !== recipientAccountName) {
+          info.actionMeta.data.recipientAccountName = cur;
         }
       }
-
       // Update sender account name if necessary.
-      const latest = addressNameMap.get(from);
-      if (latest !== undefined && latest !== accountName) {
-        info.actionMeta.accountName = latest;
+      const cur = addressNameMap.get(`${chainId}:${from}`);
+      if (cur && cur !== accountName) {
+        info.actionMeta.accountName = cur;
       }
-
       return info;
     });
 
