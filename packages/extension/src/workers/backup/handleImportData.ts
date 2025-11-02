@@ -6,6 +6,7 @@ import { importAddressData } from './addressImport';
 import { importEventData } from './eventImport';
 import { importExtrinsicsData } from './extrinsicImport';
 import { importIntervalData } from './intervalImport';
+import { sendChromeMessage } from '../utils';
 import type { Account } from '@polkadot-live/core';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
@@ -32,20 +33,28 @@ export const handleImportData = async (
   setAccountSubscriptionsState: () => Promise<void>,
   subscribeAccountTask: (task: SubscriptionTask) => Promise<void>
 ) => {
-  await importAddressData(
-    contents,
-    isOnline,
-    handleImportAddress,
-    handleRemoveAddress
-  );
-  updateTaskEntries();
-  await importAccountTaskData(
-    contents,
-    updateAccountSubscription,
-    setAccountSubscriptionsState,
-    subscribeAccountTask
-  );
-  await importEventData(contents);
-  await importIntervalData(contents, isOnline);
-  await importExtrinsicsData(contents);
+  try {
+    await importAddressData(
+      contents,
+      isOnline,
+      handleImportAddress,
+      handleRemoveAddress
+    );
+    updateTaskEntries();
+    await importAccountTaskData(
+      contents,
+      updateAccountSubscription,
+      setAccountSubscriptionsState,
+      subscribeAccountTask
+    );
+    await importEventData(contents);
+    await importIntervalData(contents, isOnline);
+    await importExtrinsicsData(contents);
+  } catch (err) {
+    console.error(err);
+    sendChromeMessage('sharedState', 'relay', {
+      key: 'backup:importing',
+      value: false,
+    });
+  }
 };

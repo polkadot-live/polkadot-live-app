@@ -37,18 +37,18 @@ export const ReferendaSubscriptionsProvider = ({
   // Add a task to the context.
   const addReferendaSubscription = (task: IntervalSubscription) => {
     setSubscriptions((prev) => {
-      const { chainId } = { ...task };
+      const { chainId } = task;
       const cloned = new Map(prev);
       cloned.has(chainId)
-        ? cloned.set(chainId, [...cloned.get(chainId)!, { ...task }])
-        : cloned.set(chainId, [{ ...task }]);
+        ? cloned.set(chainId, [...cloned.get(chainId)!, task])
+        : cloned.set(chainId, [task]);
 
       return cloned;
     });
 
     // Update active tasks map.
     setActiveTasksMap((prev) => {
-      const { chainId, referendumId, action } = { ...task };
+      const { chainId, referendumId, action } = task;
       const key = referendumId!;
       const cloned = new Map(prev);
       if (cloned.has(chainId)) {
@@ -168,13 +168,16 @@ export const ReferendaSubscriptionsProvider = ({
   // Update data of a managed task.
   const updateReferendaSubscription = (task: IntervalSubscription) => {
     setSubscriptions((prev) => {
-      const { action, chainId, referendumId } = task;
+      const { action, chainId, referendumId: refId } = task;
       const cloned = new Map(prev);
+
+      if (!cloned.has(chainId)) {
+        cloned.set(chainId, []);
+      }
       const updated = cloned
         .get(chainId)!
-        .map((t) =>
-          t.action === action && t.referendumId === referendumId ? task : t
-        );
+        .filter((t) => !(t.action === action && t.referendumId === refId))
+        .concat([task]);
       cloned.set(chainId, updated);
       return cloned;
     });
