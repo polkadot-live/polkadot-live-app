@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext, useState } from 'react';
-import { createSafeContextHook } from '../../utils';
+import { createSafeContextHook } from '../../../utils';
 import type {
   DialogBulkRenameData,
   DialogManageAccountData,

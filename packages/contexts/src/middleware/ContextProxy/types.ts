@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { DialogControlContextInterface } from '../../import/DialogControl/types';
+import type { DialogControlContextInterface } from '../../context/import/DialogControl/types';
 import type { SettingFlagsContextInterface } from '../../types/settings';
 import type { TabsContextInterface } from '../../types/tabs';
 
