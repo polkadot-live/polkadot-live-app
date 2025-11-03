@@ -5,11 +5,18 @@ import { ConnectionsProvider } from '../contexts';
 import { HelpProvider, SideNavProvider } from '@polkadot-live/ui/contexts';
 import { withProviders } from '@polkadot-live/ui/hooks';
 import {
+  AddressesProvider,
   ApiHealthProvider,
   AppSettingsProvider,
   BootstrappingProvider,
   ChainsProvider,
   CogMenuProvider,
+  EventsProvider,
+  IntervalSubscriptionsProvider,
+  IntervalTasksManagerProvider,
+  ManageProvider,
+  SubscriptionsProvider,
+  SummaryProvider,
 } from './contexts';
 import App from './App';
 
@@ -17,9 +24,16 @@ export const Providers = withProviders(
   HelpProvider,
   AppSettingsProvider,
   ConnectionsProvider,
+  AddressesProvider,
   SideNavProvider,
   ApiHealthProvider,
   ChainsProvider,
+  ManageProvider,
+  SubscriptionsProvider,
+  IntervalSubscriptionsProvider,
+  IntervalTasksManagerProvider,
+  EventsProvider,
   BootstrappingProvider,
-  CogMenuProvider
+  CogMenuProvider,
+  SummaryProvider
 )(App);

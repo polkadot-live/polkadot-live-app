@@ -53,6 +53,15 @@ export const TracksProvider = ({ children }: { children: React.ReactNode }) => {
     return tracksMap.get(chainId)!.sort((a, b) => a.trackId - b.trackId);
   };
 
+  // Request tracks.
+  const requestTracks = (chainId: ChainID) => {
+    setFetchingTracks(true);
+    ConfigOpenGov.portOpenGov.postMessage({
+      task: 'openGov:tracks:get',
+      data: { chainId },
+    });
+  };
+
   return (
     <TracksContext
       value={{
@@ -62,6 +71,7 @@ export const TracksProvider = ({ children }: { children: React.ReactNode }) => {
         fetchTracksData,
         getOrderedTracks,
         receiveTracksData,
+        requestTracks,
         setFetchingTracks,
         updateActiveTracksChain,
       }}

@@ -31,7 +31,6 @@ export const IntervalSubscriptionsProvider = ({
     setSubscriptions((prev) => {
       const { chainId } = task;
       const cloned = new Map(prev);
-
       cloned.has(chainId)
         ? cloned.set(chainId, [...cloned.get(chainId)!, { ...task }])
         : cloned.set(chainId, [{ ...task }]);
@@ -56,13 +55,11 @@ export const IntervalSubscriptionsProvider = ({
       // NOTE: Relies on referendum ID to filter task for now.
       const { chainId, action, referendumId } = task;
       const cloned = new Map(prev);
-
       const updated = cloned
         .get(chainId)!
         .filter(
           (t) => !(t.action === action && t.referendumId === referendumId)
         );
-
       updated.length ? cloned.set(chainId, updated) : cloned.delete(chainId);
       return cloned;
     });
@@ -73,13 +70,11 @@ export const IntervalSubscriptionsProvider = ({
     setSubscriptions((prev) => {
       const { action, chainId, referendumId } = task;
       const cloned = new Map(prev);
-
       const updated = cloned
         .get(chainId)!
         .map((t) =>
           t.action === action && t.referendumId === referendumId ? task : t
         );
-
       cloned.set(chainId, updated);
       return cloned;
     });
@@ -88,23 +83,19 @@ export const IntervalSubscriptionsProvider = ({
   /// Get interval subscriptions for a specific chain.
   const getIntervalSubscriptionsForChain = (chainId: ChainID) => {
     const tasks = subscriptions.get(chainId);
-
     if (!tasks) {
       throw new Error(`No interval subscription state for ${chainId}`);
     }
-
     return tasks;
   };
 
   /// Get sorted keys to render chain IDs in a certain order.
   const getSortedKeys = () => {
-    const order: ChainID[] = ['Polkadot Relay', 'Kusama Relay'];
+    const order: ChainID[] = ['Polkadot Relay', 'Kusama Asset Hub'];
     const result: ChainID[] = [];
-
     for (const chainId of order) {
       subscriptions.has(chainId) && result.push(chainId);
     }
-
     return result;
   };
 

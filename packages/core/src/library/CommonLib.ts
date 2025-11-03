@@ -1,8 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { ChainID } from '@polkadot-live/types/chains';
-
 /**
  * @name arraysAreEqual
  * @summary Returns `true` if the two passed arrays are equal, `false` otherwise.
@@ -62,25 +60,24 @@ export const generateUID = (): string => {
 };
 
 /**
- * @name getInitialChainAccordionValue
- * @summary Returns an initial chain ID in preferential order.
- */
-export const getInitialChainAccordionValue = (chains: ChainID[]): ChainID =>
-  chains.includes('Polkadot Relay')
-    ? 'Polkadot Relay'
-    : chains.includes('Kusama Relay')
-      ? 'Kusama Relay'
-      : 'Westend Relay';
-
-/**
  * @name getOnlineStatus
  * @summary Get connection status.
  */
-export const getOnlineStatus = async () =>
-  (await window.myAPI.sendConnectionTaskAsync({
-    action: 'connection:getStatus',
-    data: null,
-  })) || false;
+export const getOnlineStatus = async (backend: 'electron' | 'browser') => {
+  switch (backend) {
+    case 'electron': {
+      return (
+        (await window.myAPI.sendConnectionTaskAsync({
+          action: 'connection:getStatus',
+          data: null,
+        })) || false
+      );
+    }
+    case 'browser': {
+      return navigator.onLine;
+    }
+  }
+};
 
 /**
  * @name waitMs

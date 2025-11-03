@@ -29,3 +29,16 @@ export interface StatemintTreasuryInfo {
 export interface StatemineTreasuryInfo {
   ksmBalance: bigint;
 }
+
+// Serialized versions.
+export interface SerIpcTreasuryInfo {
+  coreTreasuryInfo: CoreTreasuryInfo;
+  serStatemintTreasuryInfo?: {
+    usdcBalance: string;
+    usdtBalance: string;
+    dotBalance: string;
+  };
+  serStatemineTreasuryInfo?: {
+    ksmBalance: string;
+  };
+}

@@ -5,7 +5,7 @@ import { ConfigOpenGov } from '@polkadot-live/core';
 import { createContext, useCallback, useEffect, useRef, useState } from 'react';
 import { createSafeContextHook } from '@polkadot-live/contexts';
 import { useConnections } from '@ren/contexts/common';
-import { usePolkassembly } from '../Polkassembly';
+import { usePolkassembly } from '@ren/contexts/openGov';
 import { setStateWithRef } from '@w3ux/utils';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ReferendaContextInterface } from '@polkadot-live/contexts/types/openGov';
@@ -71,7 +71,7 @@ export const ReferendaProvider = ({
   const [trackFilter, setTrackFilter] = useState(
     new Map<ChainID, string | null>([
       ['Polkadot Relay', null],
-      ['Kusama Relay', null],
+      ['Kusama Asset Hub', null],
     ])
   );
   const trackFilterRef = useRef(trackFilter);

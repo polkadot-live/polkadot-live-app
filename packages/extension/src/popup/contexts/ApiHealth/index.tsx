@@ -56,11 +56,17 @@ export const ApiHealthProvider = ({
   useEffect(() => {
     const callback = (message: AnyData) => {
       const { type, task } = message;
-      if (type === 'api' && task === 'state:failedConnections') {
-        const { ser }: { ser: string } = message;
-        const array: [ChainID, ApiConnectResult<ApiError>][] = JSON.parse(ser);
-        const map = new Map<ChainID, ApiConnectResult<ApiError>>(array);
-        setFailedConnections(map);
+      if (type === 'api') {
+        switch (task) {
+          case 'state:failedConnections': {
+            const { ser }: { ser: string } = message.payload;
+            const array: [ChainID, ApiConnectResult<ApiError>][] =
+              JSON.parse(ser);
+            const map = new Map<ChainID, ApiConnectResult<ApiError>>(array);
+            setFailedConnections(map);
+            break;
+          }
+        }
       }
     };
     chrome.runtime.onMessage.addListener(callback);

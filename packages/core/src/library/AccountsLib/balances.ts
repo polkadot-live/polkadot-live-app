@@ -50,15 +50,25 @@ export const getBalance = async (
  * @name getSpendableBalance
  * @summary Return an account's spendable balance as a big number.
  */
-export const getSpendableBalance = async (
+export const getSpendableBalanceBrowser = async (
   address: string,
   chainId: ChainID
-): Promise<bigint> => {
+): Promise<string> =>
+  await chrome.runtime.sendMessage({
+    type: 'rawAccount',
+    task: 'getSpendableBalance',
+    payload: { address, chainId },
+  });
+
+export const getSpendableBalanceElectron = async (
+  address: string,
+  chainId: ChainID
+): Promise<string> => {
   const api = (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
   const ed = api.consts.balances.existentialDeposit;
   const balance = await getBalance(api, address, chainId);
   const { free } = balance;
 
   const max = (a: bigint, b: bigint): bigint => (a > b ? a : b);
-  return max(free - ed, 0n);
+  return max(free - ed, 0n).toString();
 };

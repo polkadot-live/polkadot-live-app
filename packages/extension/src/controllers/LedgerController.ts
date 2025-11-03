@@ -5,8 +5,11 @@ import { Buffer } from 'buffer';
 import TransportWebHID from '@ledgerhq/hw-transport-webhid';
 import { withTimeout } from '@w3ux/utils';
 import { PolkadotGenericApp } from '@zondax/ledger-substrate';
+import { u8aToHex } from 'dedot/utils';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { GenericeResponseAddress } from '@zondax/ledger-substrate/dist/common';
+import type { HexString } from 'dedot/utils';
+import type { LedgerTaskResult } from '@polkadot-live/types/ledger';
 import type { ResponseVersion } from '@zondax/ledger-js';
 
 export class LedgerController {
@@ -73,14 +76,25 @@ export class LedgerController {
     index: number,
     payload: Uint8Array,
     txMetadata: Uint8Array
-  ) => {
-    await this.ensureOpen();
-    const bip42Path = `m/44'/354'/${index}'/${0}'/${0}'`;
-    const toSign = Buffer.from(payload);
-    const buff = Buffer.from(txMetadata);
-    const result = await app.signWithMetadataEd25519(bip42Path, toSign, buff);
-    await this.ensureClosed();
-    return result;
+  ): Promise<LedgerTaskResult> => {
+    try {
+      await this.ensureOpen();
+      const bip42Path = `m/44'/354'/${index}'/${0}'/${0}'`;
+      const toSign = Buffer.from(payload);
+      const buff = Buffer.from(txMetadata);
+      const { signature: sig } = await app.signWithMetadataEd25519(
+        bip42Path,
+        toSign,
+        buff
+      );
+      const signatureHex: HexString = u8aToHex(
+        new Uint8Array(sig.buffer, sig.byteOffset, sig.byteLength)
+      );
+      await this.ensureClosed();
+      return { success: true, results: signatureHex };
+    } catch (error) {
+      return { success: false, error: error as Error };
+    }
   };
 
   // Reset ledger on unmount.

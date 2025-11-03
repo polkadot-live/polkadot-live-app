@@ -68,22 +68,33 @@ export const AccountStatusesProvider = ({
 
     // Handle status updates.
     const callback = async (message: AnyData) => {
-      if (message.type !== 'rawAccount' && message.task !== 'setProcessing') {
-        return;
-      }
-      interface I {
-        encoded: EncodedAccount;
-        generic: ImportedGenericAccount;
-        status: boolean;
-        success: boolean;
-      }
-      const { generic, encoded, status, success }: I = message.payload;
-      const { address, chainId } = encoded;
-      setStatusForAccount(`${chainId}:${address}`, generic.source, status);
+      switch (message.type) {
+        case 'rawAccount': {
+          switch (message.task) {
+            case 'setProcessing': {
+              interface I {
+                encoded: EncodedAccount;
+                generic: ImportedGenericAccount;
+                status: boolean;
+                success: boolean;
+              }
+              const { generic, encoded, status, success }: I = message.payload;
+              const { address, chainId } = encoded;
+              setStatusForAccount(
+                `${chainId}:${address}`,
+                generic.source,
+                status
+              );
 
-      if (!success) {
-        await handleRemoveAddress(encoded, generic);
-        renderToast('Account import error', 'import-error', 'error');
+              if (!success) {
+                await handleRemoveAddress(encoded, generic);
+                renderToast('Account import error', 'import-error', 'error');
+              }
+              break;
+            }
+          }
+          break;
+        }
       }
     };
 

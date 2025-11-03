@@ -29,10 +29,15 @@ export default defineManifest({
     service_worker: 'src/background.ts',
     type: 'module',
   },
-  host_permissions: ['http://localhost/*', 'https://localhost/*'],
+  host_permissions: [
+    'https://api.polkassembly.io/*',
+    'http://localhost/*',
+    'https://localhost/*',
+  ],
   permissions: [
     'activeTab',
     'management',
+    'notifications',
     'storage',
     'tabs',
     'unlimitedStorage',

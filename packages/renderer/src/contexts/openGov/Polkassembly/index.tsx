@@ -34,7 +34,6 @@ export const PolkassemblyProvider = ({
       const flag = Boolean(map.get('setting:enable-polkassembly'));
       setUsePolkassemblyApi(flag);
     };
-
     fetchSetting();
   }, []);
 

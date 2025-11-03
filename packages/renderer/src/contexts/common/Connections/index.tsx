@@ -2,12 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as themeVariables from '@polkadot-live/styles/theme/variables';
+import { ConfigRenderer } from '@polkadot-live/core';
 import { createSafeContextHook } from '@polkadot-live/contexts';
 import { initSharedState } from '@polkadot-live/consts/sharedState';
 import { createContext, useEffect, useRef, useState } from 'react';
 import { setStateWithRef } from '@w3ux/utils';
-import type { AnyData } from 'packages/types/src';
-import type { ConnectionsContextInterface } from './types';
+import type { AnyData } from '@polkadot-live/types/misc';
+import type { ActionMeta } from '@polkadot-live/types/tx';
+import type { ConnectionsContextInterface } from '@polkadot-live/contexts/types/common';
 import type { IpcRendererEvent } from 'electron';
 import type { SyncID } from '@polkadot-live/types/communication';
 
@@ -44,6 +46,13 @@ export const ConnectionsProvider = ({
   const cacheGet = (key: SyncID): boolean => Boolean(cacheRef.current.get(key));
 
   /**
+   * Relay shared state.
+   */
+  const relayState = (syncId: SyncID, state: boolean | string) => {
+    window.myAPI.relaySharedState(syncId, state);
+  };
+
+  /**
    * Return flag indicating whether app is in online or offline mode.
    */
   const getOnlineMode = () =>
@@ -71,6 +80,56 @@ export const ConnectionsProvider = ({
     if (analytics) {
       window.myAPI.umamiEvent('link-open', { ...analytics });
     }
+  };
+
+  /**
+   * Checks if a tab is open.
+   */
+  const isTabOpen = async (tab: string) => await window.myAPI.isViewOpen(tab);
+
+  /**
+   * Message to initialize a transaction in the extrinsics tab.
+   */
+  const initExtrinsicMsg = (txMeta: ActionMeta) => {
+    relayState('extrinsic:building', true);
+    isTabOpen('action').then((isOpen) => {
+      if (isOpen) {
+        openTab('action');
+        ConfigRenderer.portToAction?.postMessage({
+          task: 'action:init',
+          data: JSON.stringify(txMeta),
+        });
+      } else {
+        const serData = JSON.stringify(txMeta);
+        const relayData = { windowId: 'action', task: 'action:init', serData };
+        openTab('action', relayData);
+      }
+    });
+  };
+
+  /**
+   * Open a tab.
+   */
+  const openTab = (
+    tab: string,
+    relayData?: AnyData, // electron
+    analytics?: { event: string; data: AnyData | null }
+  ) => {
+    relayData
+      ? window.myAPI.openWindow(tab, relayData)
+      : window.myAPI.openWindow(tab);
+
+    if (analytics) {
+      const { event, data } = analytics;
+      window.myAPI.umamiEvent(event, data);
+    }
+  };
+
+  /**
+   * Send an analytics event.
+   */
+  const umamiEvent = (event: string, data: AnyData) => {
+    window.myAPI.umamiEvent(event, data);
   };
 
   useEffect(() => {
@@ -112,7 +171,12 @@ export const ConnectionsProvider = ({
         copyToClipboard,
         getOnlineMode,
         getTheme,
+        initExtrinsicMsg,
+        isTabOpen,
         openInBrowser,
+        openTab,
+        relayState,
+        umamiEvent,
       }}
     >
       {children}

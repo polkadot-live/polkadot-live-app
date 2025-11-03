@@ -19,16 +19,13 @@ import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
 export const checkValidAddress = (address: string): boolean => {
   for (const { prefix } of ChainList.values()) {
     const result = checkAddress(address, prefix);
-
     if (result !== null) {
       const [isValid] = result;
-
       if (isValid) {
         return true;
       }
     }
   }
-
   return false;
 };
 
@@ -76,7 +73,6 @@ export const checkAccountWithProperties = (
   // Iterate properties and return false if any are undefined or null.
   for (const key of properties) {
     const result = getProperty(account, key);
-
     if (result === null || result === undefined) {
       throw new Error('checkAccountWithProperties: Account data not found');
     }

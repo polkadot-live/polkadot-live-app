@@ -1,9 +1,13 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as Core from '@polkadot-live/core';
 import { createContext, useEffect, useState } from 'react';
 import { createSafeContextHook } from '@polkadot-live/contexts';
-import * as Core from '@polkadot-live/core';
+import { useAddresses } from '@ren/contexts/main';
+import { useConnections } from '@ren/contexts/common';
+import { useManage } from '@ren/contexts/main/Manage';
+import { renderToast } from '@polkadot-live/ui/utils';
 import {
   AccountsController,
   TaskOrchestrator,
@@ -11,13 +15,13 @@ import {
   SubscriptionsController,
 } from '@polkadot-live/core';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
 import type { ReactNode } from 'react';
 import type { SubscriptionsContextInterface } from '@polkadot-live/contexts/types/main';
 import type {
   SubscriptionTask,
   SubscriptionTaskType,
   TaskCategory,
-  WrappedSubscriptionTasks,
 } from '@polkadot-live/types/subscriptions';
 
 export const SubscriptionsContext = createContext<
@@ -34,12 +38,16 @@ export const SubscriptionsProvider = ({
 }: {
   children: ReactNode;
 }) => {
-  /// Store received chain subscriptions.
+  const { getAllAccounts } = useAddresses();
+  const { umamiEvent } = useConnections();
+  const { renderedSubscriptions } = useManage();
+
+  /// Store chain subscriptions.
   const [chainSubscriptionsState, setChainSubscriptionsState] = useState<
     Map<ChainID, SubscriptionTask[]>
   >(new Map());
 
-  /// Store received account subscriptions (key is account address).
+  /// Store account subscriptions (key is {chainId}:{address}).
   const [accountSubscriptionsState, setAccountSubscriptionsState] = useState<
     Map<string, SubscriptionTask[]>
   >(new Map());
@@ -56,14 +64,12 @@ export const SubscriptionsProvider = ({
     if (!accounts) {
       return false;
     }
-
     for (const acc of accounts) {
       const tasks = acc.getSubscriptionTasks();
       if (tasks && tasks.length > 0) {
         return true;
       }
     }
-
     return false;
   };
 
@@ -83,32 +89,24 @@ export const SubscriptionsProvider = ({
   };
 
   /// Get subscription tasks for a specific chain.
-  const getChainSubscriptions = (chainId: ChainID) => {
-    const subscriptions = chainSubscriptionsState.get(chainId);
-    return subscriptions ? subscriptions : [];
-  };
+  const getChainSubscriptions = (chainId: ChainID) =>
+    chainSubscriptionsState.get(chainId) || [];
 
   /// Get subscription tasks for a specific account.
-  const getAccountSubscriptions = (key: string) => {
-    const subscriptions = accountSubscriptionsState.get(key);
-    return subscriptions ? subscriptions : [];
-  };
+  const getAccountSubscriptions = (key: string) =>
+    accountSubscriptionsState.get(key) || [];
 
   /// Return the type of subscription based on its action string.
   const getTaskType = (task: SubscriptionTask): SubscriptionTaskType =>
     task.action.startsWith('subscribe:account') ? 'account' : 'chain';
 
   /// Handle toggling on all subscriptions in a category.
-  const toggleCategoryTasks = async (
-    category: TaskCategory,
-    isOn: boolean,
-    rendererdSubscriptions: WrappedSubscriptionTasks
-  ) => {
+  const toggleCategoryTasks = async (category: TaskCategory, isOn: boolean) => {
     // Get all tasks with the target status.
     const targetStatus = isOn ? 'enable' : 'disable';
 
     // Get rendered tasks in the category with target status and invert it.
-    const tasks = rendererdSubscriptions.tasks
+    const tasks = renderedSubscriptions.tasks
       .filter((t) => t.category === category && t.status === targetStatus)
       .map((t) => {
         t.status = t.status === 'enable' ? 'disable' : 'enable';
@@ -237,6 +235,86 @@ export const SubscriptionsProvider = ({
     await Core.tryApiDisconnect(task);
   };
 
+  /// Handle notifications checkbox toggle.
+  const onNotificationToggle = async (
+    checked: boolean,
+    task: SubscriptionTask
+  ) => {
+    if (task.account) {
+      task.enableOsNotifications = checked;
+      await window.myAPI.sendSubscriptionTask({
+        action: 'subscriptions:account:update',
+        data: {
+          serAccount: JSON.stringify(task.account!),
+          serTask: JSON.stringify(task),
+        },
+      });
+      // Update react state for tasks.
+      SubscriptionsController.updateTaskState(task);
+
+      // Update cached task in account's query multi wrapper.
+      const account = AccountsController.get(
+        task.chainId,
+        task.account.address
+      );
+      if (account) {
+        account.queryMulti?.setOsNotificationsFlag(task);
+      }
+    }
+  };
+
+  /// Handle a one-shot click.
+  const onOneShot = async (
+    task: SubscriptionTask,
+    setOneShotProcessing: React.Dispatch<React.SetStateAction<boolean>>,
+    nativeChecked: boolean
+  ) => {
+    setOneShotProcessing(true);
+    task.enableOsNotifications = nativeChecked;
+    const success = await Core.executeOneShot(task);
+
+    if (!success) {
+      setOneShotProcessing(false);
+      renderToast('API timed out.', 'toast-connection', 'error', 'top-right');
+    } else {
+      // Wait some time to avoid the spinner snapping.
+      setTimeout(() => {
+        setOneShotProcessing(false);
+      }, 550);
+
+      // Analytics.
+      const { action, category } = task;
+      umamiEvent && umamiEvent('oneshot-account', { action, category });
+    }
+  };
+
+  /// Get subscription count for address.
+  const getSubscriptionCountForAccount = (
+    flattened: FlattenedAccountData
+  ): number => {
+    const { address, chain } = flattened;
+    const account = AccountsController.get(chain, address);
+    if (!account) {
+      return 0;
+    }
+
+    const tasks = account.getSubscriptionTasks();
+    if (!tasks) {
+      return 0;
+    }
+
+    return tasks.length;
+  };
+
+  /// Get total subscription count.
+  const getTotalSubscriptionCount = (): number => {
+    let count = 0;
+    for (const flattened of getAllAccounts()) {
+      count += getSubscriptionCountForAccount(flattened);
+    }
+    return count;
+  };
+
   return (
     <SubscriptionsContext
       value={{
@@ -247,8 +325,12 @@ export const SubscriptionsProvider = ({
         getAccountSubscriptions,
         updateAccountNameInTasks,
         handleQueuedToggle,
+        onOneShot,
+        onNotificationToggle,
         toggleCategoryTasks,
         getTaskType,
+        getTotalSubscriptionCount,
+        getSubscriptionCountForAccount,
       }}
     >
       {children}

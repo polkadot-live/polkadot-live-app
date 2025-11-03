@@ -24,7 +24,6 @@ export const executeOneShot = async (
   if (APIsController.getFailedChainIds().includes(chainId)) {
     return false;
   }
-
   const client = await APIsController.getConnectedApi(chainId);
   if (!client || !client.api) {
     return false;
@@ -35,7 +34,6 @@ export const executeOneShot = async (
   if (task.action === 'subscribe:account:nominating:pendingPayouts') {
     return await oneShot_nominating_era_rewards(task);
   }
-
   // Handle tasks requiring account.
   const account = getTaskAccount(task);
   if (!account) {
@@ -113,7 +111,7 @@ const postOneShotCallback = async (
   flags: PostCallbackFlags
 ) => {
   await processOneShotPostCallback(api, account, flags);
-  const flattened = account!.flatten();
+  const flattened = account.flatten();
   account.queryMulti?.updateEntryAccountData(account.chain, flattened);
 };
 

@@ -17,13 +17,15 @@ const OfflineBannerWrapper = styled(FlexRow)`
 export const OfflineBanner = ({
   rounded = false,
   text,
+  marginTop,
 }: {
   rounded?: boolean;
   text?: string;
+  marginTop?: string;
 }) => (
   <OfflineBannerWrapper
     $gap={'0.75rem'}
-    style={rounded ? { borderRadius: '0.375rem' } : undefined}
+    style={{ borderRadius: rounded ? '0.375rem' : undefined, marginTop }}
   >
     <FontAwesomeIcon icon={faCircleExclamation} transform={'grow-1'} />
     <span>{text || 'Currently offline.'}</span>

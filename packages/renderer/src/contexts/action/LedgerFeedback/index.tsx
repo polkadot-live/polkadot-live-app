@@ -1,13 +1,17 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { ConfigAction } from '@polkadot-live/core';
+import { useConnections } from '@ren/contexts/common';
 import { createContext, useState } from 'react';
 import { createSafeContextHook } from '@polkadot-live/contexts';
+import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 import type { LedgerFeedbackContextInterface } from '@polkadot-live/contexts/types/action';
 import type {
   LedgerErrorMeta,
   LedgerErrorStatusCode,
   LedgerFeedbackMessage,
+  LedgerTask,
 } from '@polkadot-live/types/ledger';
 
 export const LedgerFeedbackContext = createContext<
@@ -24,6 +28,7 @@ export const LedgerFeedbackProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { relayState } = useConnections();
   const [message, setMessage] = useState<LedgerFeedbackMessage | null>(null);
   const [isSigning, setIsSigning] = useState(false);
 
@@ -73,12 +78,33 @@ export const LedgerFeedbackProvider = ({
     });
   };
 
+  /**
+   * Send IPC ledger task.
+   */
+  const handleLedgerTask = (task: LedgerTask, payload: string) =>
+    window.myAPI.doLedgerTask(task, payload);
+
+  /**
+   * Initiate Ledger sign task.
+   */
+  const handleSign = (info: ExtrinsicInfo) => {
+    setIsSigning(true);
+    relayState('extrinsic:building', true);
+
+    ConfigAction.portAction.postMessage({
+      task: 'renderer:ledger:sign',
+      data: { info: JSON.stringify(info) },
+    });
+  };
+
   return (
     <LedgerFeedbackContext
       value={{
         message,
         isSigning,
         clearFeedback,
+        handleLedgerTask,
+        handleSign,
         resolveMessage,
         setIsSigning,
       }}

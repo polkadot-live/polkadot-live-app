@@ -49,6 +49,14 @@ export const MaxContainer = styled.div`
   margin: 0 auto;
 `;
 
+export const FlexColumnWrap = styled.div`
+  width: 100%;
+  display: flex;
+  flex-flow: column wrap;
+  align-items: center;
+  height: 100%;
+`;
+
 export const FlexColumn = styled.div<{ $columnGap?: string; $rowGap?: string }>`
   display: flex;
   flex-direction: column;

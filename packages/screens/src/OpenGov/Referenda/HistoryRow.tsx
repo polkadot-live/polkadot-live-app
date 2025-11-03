@@ -1,0 +1,72 @@
+// Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
+// SPDX-License-Identifier: GPL-3.0-only
+
+import * as Wrappers from './Wrappers';
+import { renderOrigin } from '@polkadot-live/core';
+import { useContextProxy } from '@polkadot-live/contexts';
+import { FlexRow } from '@polkadot-live/styles/wrappers';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHashtag } from '@fortawesome/free-solid-svg-icons';
+import { ReferendumDropdownMenu } from '../Dropdowns';
+import type * as OG from '@polkadot-live/types/openGov';
+
+interface HistoryRowProps {
+  info: OG.ReferendaInfo;
+}
+
+export const HistoryRow = ({ info }: HistoryRowProps) => {
+  const { useCtx } = useContextProxy();
+  const { usePolkassemblyApi, getProposal } = useCtx('PolkassemblyCtx')();
+  const { activeReferendaChainId: chainId } = useCtx('ReferendaCtx')();
+  const proposalData = getProposal(chainId, info.refId);
+  const { title } = proposalData || { title: '' };
+
+  return (
+    <Wrappers.ReferendumRowWrapper>
+      <FlexRow>
+        <div className="RefID">
+          <FontAwesomeIcon icon={faHashtag} transform={'shrink-5'} />
+          {info.refId}
+        </div>
+
+        {usePolkassemblyApi ? (
+          <Wrappers.TitleWithOrigin $direction="row">
+            <FlexRow style={{ width: '100%' }}>
+              <div style={{ width: '80px', minWidth: '80px' }}>
+                <Wrappers.RefStatusBadge
+                  style={{ width: 'fit-content' }}
+                  $status={info.refStatus}
+                >
+                  {info.refStatus}
+                </Wrappers.RefStatusBadge>
+              </div>
+              <h4 style={{ width: '100%' }} className="text-ellipsis">
+                {title !== '' ? title : 'No Title'}
+              </h4>
+              <div>
+                <ReferendumDropdownMenu chainId={chainId} referendum={info} />
+              </div>
+            </FlexRow>
+          </Wrappers.TitleWithOrigin>
+        ) : (
+          <FlexRow style={{ width: '100%', minWidth: 0 }}>
+            <div style={{ width: '76px', minWidth: '76px' }}>
+              <Wrappers.RefStatusBadge
+                style={{ width: 'fit-content' }}
+                $status={info.refStatus}
+              >
+                {info.refStatus}
+              </Wrappers.RefStatusBadge>
+            </div>
+            <h4 style={{ width: '100%' }} className="text-ellipsis">
+              {renderOrigin(info)}
+            </h4>
+            <div>
+              <ReferendumDropdownMenu chainId={chainId} referendum={info} />
+            </div>
+          </FlexRow>
+        )}
+      </FlexRow>
+    </Wrappers.ReferendumRowWrapper>
+  );
+};

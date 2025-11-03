@@ -8,9 +8,9 @@ import { createContext, useRef, useState } from 'react';
 import { createSafeContextHook } from '@polkadot-live/contexts';
 import { rmCommas } from '@w3ux/utils';
 import { chainCurrency, chainUnits } from '@polkadot-live/consts/chains';
-import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
+  IpcTreasuryInfo,
   StatemineTreasuryInfo,
   StatemintTreasuryInfo,
 } from '@polkadot-live/types/treasury';
@@ -43,10 +43,8 @@ export const TreasuryProvider = ({
     new BigNumber(0)
   );
 
-  // Next burn amount.
+  // Next burn amount and to be awarded at the end of the spend period.
   const [treasuryNextBurn, setTreasuryNextBurn] = useState(new BigNumber(0));
-
-  // To be awarded at the end of the spend period.
   const [toBeAwarded, setToBeAwarded] = useState(new BigNumber(0));
 
   // Spend period.
@@ -71,7 +69,6 @@ export const TreasuryProvider = ({
     if (dataCachedRef.current && chainId === treasuryChainId) {
       return;
     }
-
     setFetchingTreasuryData(true);
     setTreasuryChainId(chainId);
 
@@ -85,7 +82,6 @@ export const TreasuryProvider = ({
   // Re-fetch treasury stats.
   const refetchStats = () => {
     setFetchingTreasuryData(true);
-
     ConfigOpenGov.portOpenGov.postMessage({
       task: 'openGov:treasury:init',
       data: { chainId: treasuryChainId },
@@ -93,7 +89,7 @@ export const TreasuryProvider = ({
   };
 
   // Setter for treasury public key.
-  const setTreasuryData = (data: AnyData) => {
+  const setTreasuryData = (data: IpcTreasuryInfo) => {
     const {
       freeBalance,
       nextBurn,

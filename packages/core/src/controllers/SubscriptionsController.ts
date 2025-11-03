@@ -56,8 +56,6 @@ export class SubscriptionsController {
     if (this.backend === 'electron') {
       this.syncChainSubscriptionsState();
       this.syncAccountSubscriptionsState();
-    } else {
-      // TODO: Sync React state for extension.
     }
   };
 
@@ -93,8 +91,6 @@ export class SubscriptionsController {
         return prev.set(key, val);
       });
       this.updateRendererdTask(task);
-    } else if (this.backend === 'browser') {
-      // TODO: Update React account task state.
     }
   };
 
@@ -107,8 +103,6 @@ export class SubscriptionsController {
         return prev.set(key, val);
       });
       this.updateRendererdTask(task);
-    } else if (this.backend === 'browser') {
-      // TODO: Update React chain tasks state.
     }
   };
 
@@ -121,26 +115,23 @@ export class SubscriptionsController {
 
   /**
    * @name initChainSubscriptions
-   * @summary Fetch and build persisted chain subscription tasks from store.
+   * @summary Fetch and build persisted chain subscription tasks from store. (electron)
    */
   static async initChainSubscriptions() {
-    let serialized = '';
     if (this.backend === 'electron') {
       // Send IPC message to get chain tasks from store.
-      serialized =
+      const serialized =
         (await window.myAPI.sendSubscriptionTask({
           action: 'subscriptions:chain:getAll',
           data: null,
-        })) || '';
-    } else {
-      // TODO: Get chain tasks from database.
-    }
+        })) || '[]';
 
-    // Subscribe to tasks.
-    await TaskOrchestrator.buildTasks(
-      serialized !== '' ? JSON.parse(serialized) : [],
-      this.chainSubscriptions
-    );
+      // Subscribe to tasks.
+      await TaskOrchestrator.buildTasks(
+        JSON.parse(serialized),
+        this.chainSubscriptions
+      );
+    }
   }
 
   /**
@@ -160,7 +151,6 @@ export class SubscriptionsController {
     const tasks = this.chainSubscriptions
       .getSubscriptionTasks()
       .filter((task) => task.chainId === chainId);
-
     await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions);
   }
 
@@ -188,45 +178,45 @@ export class SubscriptionsController {
    */
   static getChainSubscriptions() {
     const activeTasks = this.chainSubscriptions.getSubscriptionTasks();
-
     // TODO: Populate inactive tasks with their correct arguments.
     // No chain API calls so far require arguments.
+    const supportedChains: ChainID[] = [
+      'Polkadot Relay',
+      'Kusama Relay',
+      'Paseo Relay',
+    ];
 
     // Merge active tasks into default tasks array.
+    const filtered = chainTasks.filter((t) =>
+      supportedChains.includes(t.chainId)
+    );
     const allTasks = activeTasks
-      ? chainTasks.map((t) => {
-          for (const active of activeTasks) {
-            if (active.action === t.action && active.chainId === t.chainId) {
-              return active;
-            }
-          }
-          return t;
+      ? filtered.map((t) => {
+          const found = activeTasks.find(
+            (a) => t.action === a.action && t.chainId === a.chainId
+          );
+          return found ? found : t;
         })
-      : chainTasks;
+      : filtered;
 
     // Construct map from tasks array.
     const map = new Map<ChainID, SubscriptionTask[]>();
-
     for (const task of allTasks) {
       let updated = [task];
-
       const current = map.get(task.chainId);
       if (current) {
         updated = [...current, task];
       }
-
       map.set(task.chainId, updated);
     }
-
     return map;
   }
 
   /**
    * @name getAccountSubscriptions
-   * @summary Return a map of all correctly configured tasks possible for the received accounts.
-   * Active subscriptions need to be included in the array.
+   * @summary Return map of all configured tasks for managed accounts.
    */
-  static getAccountSubscriptions() {
+  static getAccountSubscriptions(): Map<string, SubscriptionTask[]> {
     const result = new Map<string, SubscriptionTask[]>();
 
     for (const accounts of AccountsController.accounts.values()) {
@@ -243,26 +233,64 @@ export class SubscriptionsController {
                 (next) => next.action === t.action && next.chainId === t.chainId
               ) || t
           );
-
         result.set(`${a.chain}:${a.address}`, tasks);
       }
     }
-
     return result;
   }
 
   /**
-   * @name enableAllSubscriptionsForAccount
-   * @summary Activate all subscriptions when an account is imported.
+   * @name mergeActive
+   * @summary Merge an account's active subscriptions with inactive.
    */
-  static getAllSubscriptionsForAccount = (
-    account: Account,
-    status: 'enable' | 'disable'
-  ) =>
+  static mergeActive = (account: Account, active: SubscriptionTask[]) =>
     accountTasks
       .filter((t) => t.chainId === account.chain)
       .map((t) => this.getTaskArgsForAccount(account, t))
-      .map((t) => ({ ...t, status }) as SubscriptionTask);
+      .map((t) => {
+        const found = active.find(
+          (a) => a.action === t.action && a.chainId === t.chainId
+        );
+        return found ? found : t;
+      });
+
+  static mergeActiveChainTasks = (
+    active: SubscriptionTask[],
+    chainId: ChainID
+  ): SubscriptionTask[] =>
+    !active.length
+      ? chainTasks.filter((t) => t.chainId === chainId)
+      : chainTasks
+          .filter((t) => t.chainId === chainId)
+          .map((t) => {
+            const found = active.find(
+              (a) => a.action === t.action && a.chainId === t.chainId
+            );
+            return found ? found : t;
+          });
+
+  /**
+   * @name buildSubscriptions
+   * @summary Get all subscriptions for an account in a target status.
+   */
+  static buildSubscriptions = (
+    account: Account,
+    status: 'enable' | 'disable'
+  ) => {
+    const isNominating = account.nominatingData !== null;
+    const isInPool = account.nominationPoolData !== null;
+
+    return accountTasks
+      .filter((t) => t.chainId === account.chain)
+      .map((t) => this.getTaskArgsForAccount(account, t))
+      .map((t) =>
+        t.category === 'Nominating'
+          ? { ...t, status: isNominating ? status : 'disable' }
+          : t.category === 'Nomination Pools'
+            ? { ...t, status: isInPool ? status : 'disable' }
+            : { ...t, status }
+      );
+  };
 
   /**
    * @name getTaskArgsForAccount
@@ -288,7 +316,6 @@ export class SubscriptionsController {
         const actionArgs = account.nominationPoolData
           ? [account.nominationPoolData.poolRewardAddress]
           : undefined;
-
         return { ...task, actionArgs } as SubscriptionTask;
       }
       case 'subscribe:account:nominationPools:state':
@@ -298,7 +325,6 @@ export class SubscriptionsController {
         const actionArgs = account.nominationPoolData
           ? [account.nominationPoolData.poolId]
           : undefined;
-
         return { ...task, actionArgs } as SubscriptionTask;
       }
       default: {

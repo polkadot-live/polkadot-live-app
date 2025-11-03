@@ -3,7 +3,7 @@
 
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
-import { mixinHelpIcon } from '@polkadot-live/ui/components';
+import { mixinHelpIcon } from '@polkadot-live/styles/wrappers';
 
 export const SettingWrapper = styled(motion.div)`
   position: relative;

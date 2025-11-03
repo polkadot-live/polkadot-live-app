@@ -6,15 +6,16 @@ import {
   executeIntervaledOneShot,
   IntervalsController,
 } from '@polkadot-live/core';
+import { createSafeContextHook } from '@polkadot-live/contexts';
 import { Flip, toast } from 'react-toastify';
 import { createContext } from 'react';
 import { useConnections } from '@ren/contexts/common';
 import { useManage, useIntervalSubscriptions } from '@ren/contexts/main';
+import { intervalDurationsConfig } from '@polkadot-live/consts/subscriptions/interval';
 import type { AnyFunction } from '@polkadot-live/types/misc';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { IntervalTasksManagerContextInterface } from '@polkadot-live/contexts/types/main';
 import type { ReactNode } from 'react';
-import { createSafeContextHook } from '@polkadot-live/contexts';
 
 export const IntervalTasksManagerContext = createContext<
   IntervalTasksManagerContextInterface | undefined
@@ -36,6 +37,27 @@ export const IntervalTasksManagerProvider = ({
   const { tryUpdateDynamicIntervalTask, tryRemoveIntervalSubscription } =
     useManage();
 
+  /// Utility to update an interval task.
+  const updateIntervalTask = (task: IntervalSubscription) => {
+    ConfigRenderer.portToOpenGov?.postMessage({
+      task: 'openGov:task:update',
+      data: {
+        serialized: JSON.stringify(task),
+      },
+    });
+    window.myAPI.sendIntervalTask({
+      action: 'interval:task:update',
+      data: { serialized: JSON.stringify(task) },
+    });
+  };
+
+  /// Utility to handle an analytics event.
+  const handleIntervalAnalytics = (task: IntervalSubscription) => {
+    const { action, category, status } = task;
+    const event = `subscription-interval-${status === 'enable' ? 'on' : 'off'}`;
+    window.myAPI.umamiEvent(event, { action, category });
+  };
+
   /// Handle toggling an interval subscription.
   const handleIntervalToggle = async (task: IntervalSubscription) => {
     // Invert task status.
@@ -51,24 +73,9 @@ export const IntervalTasksManagerProvider = ({
     updateIntervalSubscription(task);
     tryUpdateDynamicIntervalTask(task);
 
-    // Update OpenGov renderer state.
-    ConfigRenderer.portToOpenGov?.postMessage({
-      task: 'openGov:task:update',
-      data: {
-        serialized: JSON.stringify(task),
-      },
-    });
-
-    // Update persisted task in store.
-    await window.myAPI.sendIntervalTask({
-      action: 'interval:task:update',
-      data: { serialized: JSON.stringify(task) },
-    });
-
-    // Analytics.
-    const { action, category } = task;
-    const event = `subscription-interval-${newStatus === 'enable' ? 'on' : 'off'}`;
-    window.myAPI.umamiEvent(event, { action, category });
+    // Update store and main renderer state.
+    updateIntervalTask(task);
+    handleIntervalAnalytics(task);
   };
 
   /// Handle clicking os notifications toggle for interval subscriptions.
@@ -87,18 +94,7 @@ export const IntervalTasksManagerProvider = ({
     tryUpdateDynamicIntervalTask(task);
 
     // Update OpenGov renderer state.
-    ConfigRenderer.portToOpenGov?.postMessage({
-      task: 'openGov:task:update',
-      data: {
-        serialized: JSON.stringify(task),
-      },
-    });
-
-    // Update persisted task in store.
-    await window.myAPI.sendIntervalTask({
-      action: 'interval:task:update',
-      data: { serialized: JSON.stringify(task) },
-    });
+    updateIntervalTask(task);
   };
 
   /// Handle removing an interval subscription.
@@ -121,7 +117,6 @@ export const IntervalTasksManagerProvider = ({
       action: 'interval:task:remove',
       data: { serialized: JSON.stringify(task) },
     });
-
     // Send message to OpenGov window to update its subscription state.
     ConfigRenderer.portToOpenGov?.postMessage({
       task: 'openGov:task:removed',
@@ -136,7 +131,7 @@ export const IntervalTasksManagerProvider = ({
     setIntervalSetting: (ticksToWait: number) => void
   ) => {
     const newSetting: number = parseInt(event.target.value);
-    const settingObj = IntervalsController.durations.find(
+    const settingObj = intervalDurationsConfig.find(
       (setting) => setting.ticksToWait === newSetting
     );
 
@@ -149,22 +144,9 @@ export const IntervalTasksManagerProvider = ({
       updateIntervalSubscription(task);
       tryUpdateDynamicIntervalTask(task);
 
-      // Update managed task in intervals controller.
+      // Update controller, state and store.
       IntervalsController.updateSubscription(task);
-
-      // Update state in OpenGov window.
-      ConfigRenderer.portToOpenGov?.postMessage({
-        task: 'openGov:task:update',
-        data: {
-          serialized: JSON.stringify(task),
-        },
-      });
-
-      // Update persisted task in store.
-      await window.myAPI.sendIntervalTask({
-        action: 'interval:task:update',
-        data: { serialized: JSON.stringify(task) },
-      });
+      updateIntervalTask(task);
     }
   };
 
@@ -181,8 +163,6 @@ export const IntervalTasksManagerProvider = ({
 
     if (!success) {
       setOneShotProcessing(false);
-
-      // Render error alert.
       toast.error(message ? message : 'Error', {
         position: 'bottom-center',
         autoClose: 3000,
@@ -208,14 +188,26 @@ export const IntervalTasksManagerProvider = ({
     }
   };
 
+  /// Insert multiple subscriptions.
+  const insertSubscriptions = (tasks: IntervalSubscription[]) =>
+    IntervalsController.insertSubscriptions(tasks, getOnlineMode());
+
+  /// Remove multiple subscriptions.
+  const removeSubscriptions = (tasks: IntervalSubscription[]) =>
+    IntervalsController.removeSubscriptions(tasks, getOnlineMode());
+
   return (
     <IntervalTasksManagerContext
       value={{
+        insertSubscriptions,
         handleIntervalToggle,
         handleIntervalNativeCheckbox,
         handleRemoveIntervalSubscription,
         handleChangeIntervalDuration,
         handleIntervalOneShot,
+        handleIntervalAnalytics,
+        removeSubscriptions,
+        updateIntervalTask,
       }}
     >
       {children}

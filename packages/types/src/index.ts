@@ -10,7 +10,6 @@ export * from './ledger';
 export * from './legacy';
 export * from './misc';
 export * from './openGov';
-export * from './orchestrator';
 export * from './preload';
 export * from './reporter';
 export * from './settings';

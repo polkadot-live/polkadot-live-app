@@ -10,13 +10,23 @@ import {
   DeleteHandlerProvider,
   ImportAddressesProvider,
   ImportHandlerProvider,
+  LedgerFeedbackProvider,
   LedgerHardwareProvider,
+  PolkassemblyProvider,
+  ReferendaProvider,
+  ReferendaSubscriptionsProvider,
   RemoveHandlerProvider,
   RenameHandlerProvider,
   SettingFlagsProvider,
   TabsProvider,
+  TaskHandlerProvider,
+  TracksProvider,
+  TreasuryProvider,
+  TxMetaProvider,
   WalletConnectProvider,
   WalletConnectImportProvider,
+  WcFeedbackProvider,
+  WcVerifierProvider,
 } from './contexts';
 import { withProviders } from '@polkadot-live/ui/hooks';
 import App from './App';
@@ -24,8 +34,9 @@ import App from './App';
 export const Providers = withProviders(
   HelpProvider,
   OverlayProvider,
-  SettingFlagsProvider,
   ConnectionsProvider,
+  SettingFlagsProvider,
+  TracksProvider,
   ImportAddressesProvider,
   RemoveHandlerProvider,
   AccountStatusesProvider, // useAddresses, useRemoveHandler
@@ -36,6 +47,15 @@ export const Providers = withProviders(
   DialogControlProvider,
   TabsProvider,
   LedgerHardwareProvider,
+  WcFeedbackProvider,
   WalletConnectProvider,
-  WalletConnectImportProvider
+  WalletConnectImportProvider,
+  WcVerifierProvider,
+  LedgerFeedbackProvider,
+  TxMetaProvider,
+  TreasuryProvider,
+  PolkassemblyProvider,
+  ReferendaProvider,
+  ReferendaSubscriptionsProvider,
+  TaskHandlerProvider
 )(App);

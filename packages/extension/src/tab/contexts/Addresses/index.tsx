@@ -10,6 +10,7 @@ import type {
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
 import type { AddressesContextInterface } from '@polkadot-live/contexts/types/import';
+import type { AnyData } from '@polkadot-live/types/misc';
 
 export const AddressesContext = createContext<
   AddressesContextInterface | undefined
@@ -61,6 +62,30 @@ export const AddressesProvider = ({
       setStateWithRef(map, setGenericAccounts, genericAccountsRef);
     };
     fetchAccounts();
+  }, []);
+
+  /**
+   * Listen for state syncing messages.
+   */
+  useEffect(() => {
+    const callback = (message: AnyData) => {
+      if (message.type === 'rawAccount') {
+        switch (message.task) {
+          case 'import:setAccounts': {
+            const { ser }: { ser: string } = message.payload;
+            const arr: [AccountSource, ImportedGenericAccount[]][] =
+              JSON.parse(ser);
+            const map = new Map<AccountSource, ImportedGenericAccount[]>(arr);
+            setStateWithRef(map, setGenericAccounts, genericAccountsRef);
+            break;
+          }
+        }
+      }
+    };
+    chrome.runtime.onMessage.addListener(callback);
+    return () => {
+      chrome.runtime.onMessage.removeListener(callback);
+    };
   }, []);
 
   /**

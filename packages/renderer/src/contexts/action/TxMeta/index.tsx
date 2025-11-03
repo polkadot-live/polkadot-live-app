@@ -18,15 +18,17 @@ import type {
 } from '@polkadot-live/types/tx';
 import { setStateWithRef } from '@w3ux/utils';
 import {
-  SignOverlay,
-  WcSignOverlay,
   SignLedgerOverlay,
+  SignVaultOverlay,
+  SignWcOverlay,
 } from '@ren/screens/Action/Overlays';
+import { useConnections } from '@ren/contexts/common';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { createSafeContextHook } from '@polkadot-live/contexts';
 import { renderToast } from '@polkadot-live/ui/utils';
 import { WalletConnectModal } from '@walletconnect/modal';
 import { ChainIcon } from '@polkadot-live/ui/components';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 const PAGINATION_ITEMS_PER_PAGE = 10;
 
@@ -38,6 +40,7 @@ export const useTxMeta = createSafeContextHook(TxMetaContext, 'TxMetaContext');
 
 export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   const { openOverlayWith } = useOverlay();
+  const { relayState } = useConnections();
 
   /**
    * Collection of active extrinsics.
@@ -291,13 +294,12 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (alreadyExists !== undefined) {
       // Relay building extrinsic flag to app.
-      window.myAPI.relaySharedState('extrinsic:building', false);
+      relayState('extrinsic:building', false);
       renderToast(
         'Extrinsic already added.',
         `toast-already-exists-${String(Date.now())}`,
         'error'
       );
-
       return;
     }
 
@@ -331,7 +333,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         data: JSON.stringify(info),
       });
     } catch (err) {
-      window.myAPI.relaySharedState('extrinsic:building', false);
+      relayState('extrinsic:building', false);
       console.error(err);
     }
   };
@@ -345,7 +347,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       if (!info) {
         throw new ExtrinsicError('ExtrinsicNotFound');
       }
-
       info.estimatedFee = estimatedFee;
       setUpdateCache(true);
 
@@ -354,7 +355,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         action: 'extrinsics:persist',
         data: { serialized: JSON.stringify(info) },
       });
-
       renderToast(
         'Extrinsic added.',
         `toast-added-${String(Date.now())}`,
@@ -363,8 +363,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (err) {
       console.error(err);
     } finally {
-      // Relay building extrinsic flag to app.
-      window.myAPI.relaySharedState('extrinsic:building', false);
+      relayState('extrinsic:building', false);
     }
   };
 
@@ -378,10 +377,9 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       if (!info) {
         throw new ExtrinsicError('ExtrinsicNotFound');
       }
+      relayState('extrinsic:building', true);
 
       // Relay building extrinsic flag to app.
-      window.myAPI.relaySharedState('extrinsic:building', true);
-
       ConfigAction.portAction.postMessage({
         task: 'renderer:tx:build',
         data: JSON.stringify(info),
@@ -394,9 +392,11 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   const getOverlayComponent = (info: ExtrinsicInfo) => {
     switch (info.actionMeta.source) {
       case 'vault':
-        return <SignOverlay txId={info.txId} from={info.actionMeta.from} />;
+        return (
+          <SignVaultOverlay txId={info.txId} from={info.actionMeta.from} />
+        );
       case 'wallet-connect':
-        return <WcSignOverlay info={info} />;
+        return <SignWcOverlay info={info} />;
       case 'ledger':
         return <SignLedgerOverlay info={info} />;
       default:
@@ -423,7 +423,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (err) {
       console.error(err);
     } finally {
-      window.myAPI.relaySharedState('extrinsic:building', false);
+      relayState('extrinsic:building', false);
     }
   };
 
@@ -431,7 +431,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
    * Render an error notification if an extrinsic is not valid for submission.
    */
   const notifyInvalidExtrinsic = (message: string) => {
-    window.myAPI.relaySharedState('extrinsic:building', false);
+    relayState('extrinsic:building', false);
     const text = `Invalid extrinsic - ${message}`;
     renderToast(text, `invalid-extrinsic-${String(Date.now())}`, 'error');
   };
@@ -440,8 +440,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
    * Send a completed and signed extrinsic to main renderer for submission.
    */
   const submitTx = (txId: string) => {
-    window.myAPI.relaySharedState('extrinsic:building', true);
-
+    relayState('extrinsic:building', true);
     try {
       const info = extrinsicsRef.current.get(txId);
       if (!info) {
@@ -461,7 +460,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       });
     } catch (err) {
       console.error(err);
-      window.myAPI.relaySharedState('extrinsic:building', false);
+      relayState('extrinsic:building', false);
     }
   };
 
@@ -469,8 +468,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
    * Submit a mock extrinsic.
    */
   const submitMockTx = (txId: string) => {
-    window.myAPI.relaySharedState('extrinsic:building', true);
-
+    relayState('extrinsic:building', true);
     const info = extrinsicsRef.current.get(txId);
     if (!info) {
       throw new ExtrinsicError('ExtrinsicNotFound');
@@ -492,14 +490,12 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       if (!info) {
         throw new ExtrinsicError('ExtrinsicNotFound');
       }
-
       info.txStatus = txStatus;
       setUpdateCache(true);
 
       if (txStatus === 'error' || txStatus === 'finalized') {
-        window.myAPI.relaySharedState('extrinsic:building', false);
+        relayState('extrinsic:building', false);
       }
-
       // Update tx status in store.
       await updateStoreInfo(info);
     } catch (err) {
@@ -631,16 +627,22 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   /**
    * Update an account name assocated with an address.
    */
-  const updateAccountName = async (address: string, accountName: string) => {
+  const updateAccountName = async (
+    address: string,
+    chainId: ChainID,
+    accountName: string
+  ) => {
+    const updatedInfos: ExtrinsicInfo[] = [];
+
     // Update extrinsics state in actionMeta.
     for (const [txId, info] of Array.from(extrinsicsRef.current.entries())) {
-      let updateStore = false;
-
       if (info.actionMeta.action === 'balances_transferKeepAlive') {
         // Check signer and recipient account names.
+        const { from, chainId: nextChainId } = info.actionMeta;
+        const updateSigner = from === address && nextChainId === chainId;
         const data: ExTransferKeepAliveData = info.actionMeta.data;
-        const updateSigner = info.actionMeta.from === address;
-        const updateRecipient = data.recipientAddress === address;
+        const updateRecipient =
+          data.recipientAddress === address && nextChainId === chainId;
 
         if (updateSigner) {
           info.actionMeta.accountName = accountName;
@@ -649,22 +651,20 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
           info.actionMeta.data.recipientAccountName = accountName;
         }
         if (updateSigner || updateRecipient) {
-          extrinsicsRef.current.set(txId, { ...info });
-          updateStore = true;
+          extrinsicsRef.current.set(txId, info);
+          updatedInfos.push(info);
         }
       } else if (info.actionMeta.from === address) {
         // Update signer account name.
         info.actionMeta.accountName = accountName;
-        extrinsicsRef.current.set(txId, { ...info });
-        updateStore = true;
-      }
-
-      // Update data in store.
-      if (updateStore) {
-        await updateStoreInfo(info);
+        extrinsicsRef.current.set(txId, info);
+        updatedInfos.push(info);
       }
     }
-
+    // Update store.
+    for (const i of updatedInfos) {
+      await updateStoreInfo(i);
+    }
     // Update addresses info state.
     setAddressesInfo((prev) => {
       const updated = prev.map((i) => {

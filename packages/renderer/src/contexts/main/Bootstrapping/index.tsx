@@ -6,11 +6,11 @@ import {
   AccountsController,
   APIsController,
   ConfigRenderer,
+  ExtrinsicsController,
   SubscriptionsController,
   IntervalsController,
   getOnlineStatus,
 } from '@polkadot-live/core';
-
 import React, { createContext, useEffect, useRef, useState } from 'react';
 import { createSafeContextHook } from '@polkadot-live/contexts';
 import { setStateWithRef } from '@w3ux/utils';
@@ -77,6 +77,7 @@ export const BootstrappingProvider = ({
    */
   const initSystems = async () => {
     const backend = 'electron';
+    ExtrinsicsController.backend = backend;
     SubscriptionsController.backend = backend;
 
     await initSmoldot();
@@ -85,7 +86,7 @@ export const BootstrappingProvider = ({
       AccountsController.initialize(backend),
     ]);
     await Promise.all([
-      AccountsController.initAccountSubscriptions(),
+      AccountsController.initAccountSubscriptions(backend),
       SubscriptionsController.initChainSubscriptions(),
     ]);
   };
@@ -94,7 +95,7 @@ export const BootstrappingProvider = ({
    * Connect APIs and restore systems.
    */
   const connectAPIs = async () => {
-    const isOnline = await getOnlineStatus();
+    const isOnline = await getOnlineStatus('electron');
     if (isOnline) {
       const chainIds = Array.from(AccountsController.accounts.keys());
       await Promise.all(chainIds.map((c) => startApi(c)));
@@ -150,7 +151,7 @@ export const BootstrappingProvider = ({
     IntervalsController.stopInterval();
 
     // Report online status to renderers.
-    const isOnline = await getOnlineStatus();
+    const isOnline = await getOnlineStatus('electron');
     window.myAPI.relaySharedState('mode:connected', isOnline);
     window.myAPI.relaySharedState('mode:online', false);
 
@@ -189,7 +190,7 @@ export const BootstrappingProvider = ({
       await handleInitializeAppOffline();
     } else {
       // Report online status to renderers.
-      const isOnline = await getOnlineStatus();
+      const isOnline = await getOnlineStatus('electron');
       window.myAPI.relaySharedState('mode:connected', isOnline);
       window.myAPI.relaySharedState('mode:online', isOnline);
     }
@@ -204,7 +205,7 @@ export const BootstrappingProvider = ({
     const tasks: IntervalSubscription[] = JSON.parse(serialized);
 
     // Insert subscriptions and start interval if online.
-    const isOnline = await getOnlineStatus();
+    const isOnline = await getOnlineStatus('electron');
     IntervalsController.insertSubscriptions(tasks, isOnline);
 
     // Add tasks to React state in main window.

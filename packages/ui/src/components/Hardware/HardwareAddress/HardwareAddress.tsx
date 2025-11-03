@@ -7,7 +7,7 @@ import { EllipsisSpinner } from '../../Spinners';
 import { ActionBtn, HardwareAddressWrapper } from './Wrapper';
 import { TooltipRx } from '../../TooltipRx';
 import { FlexColumn, FlexRow } from '@polkadot-live/styles/wrappers';
-import { ChainIcon } from '../../ChainIcon';
+import { ChainIcon } from '../../Icons';
 import { CopyButton } from '../../CopyButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ViewAddressIcon } from '../../ViewAddressIcon';

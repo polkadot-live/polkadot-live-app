@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { store } from '@/main';
-import { AppOrchestrator } from '@/orchestrators/AppOrchestrator';
+import { NotificationsController } from './NotificationsController';
+import { SubscriptionsController } from './SubscriptionsController';
 import type { AnyData } from '@polkadot-live/types/misc';
-import type { AccountSource } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IpcTask } from '@polkadot-live/types/communication';
 
@@ -38,22 +38,8 @@ export class AccountsController {
    * @summary Import a new account from an address.
    */
   private static async import(task: IpcTask) {
-    const {
-      chainId,
-      source,
-      address,
-      name,
-    }: {
-      chainId: ChainID;
-      source: AccountSource;
-      address: string;
-      name: string;
-    } = task.data;
-
-    await AppOrchestrator.next({
-      task: 'app:account:import',
-      data: { chainId, source, address, name },
-    });
+    const { accountName }: { accountName: string } = task.data;
+    NotificationsController.showNotification('Account Imported', accountName);
   }
 
   /**
@@ -63,11 +49,7 @@ export class AccountsController {
   private static async remove(task: IpcTask) {
     const { address, chainId }: { address: string; chainId: ChainID } =
       task.data;
-
-    await AppOrchestrator.next({
-      task: 'app:account:remove',
-      data: { address, chainId },
-    });
+    SubscriptionsController.clearAccountTasksInStore(address, chainId);
   }
 
   /**

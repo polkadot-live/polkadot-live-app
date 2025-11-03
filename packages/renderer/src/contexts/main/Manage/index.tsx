@@ -12,15 +12,12 @@ import { SubscriptionsController } from '@polkadot-live/core';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ManageContextInterface } from '@polkadot-live/contexts/types/main';
 
-// Manage context.
 export const ManageContext = createContext<ManageContextInterface | undefined>(
   undefined
 );
 
-// Hook to manage context.
 export const useManage = createSafeContextHook(ManageContext, 'ManageContext');
 
-// Manage context provider.
 export const ManageProvider = ({ children }: { children: ReactNode }) => {
   /// Subscription tasks being rendered under the Manage tab.
   const [renderedSubscriptionsState, setRenderedSubscriptionsState] =

@@ -71,7 +71,7 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
       if (message.type !== 'tabs' && message.type !== 'openTab') {
         return;
       }
-      const { tabData }: { tabData: TabData } = message;
+      const { tabData }: { tabData: TabData } = message.payload;
       addTab(tabData);
     };
 
@@ -137,6 +137,7 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
    */
   const handleTabClose = (id: number) => {
     const itemIndex = items.indexOf(id);
+    const tabData = tabsData.find((t) => t.id === id);
     const filtered = tabsData.filter((t) => t.id !== id);
 
     // Get index of next tab to show.
@@ -159,6 +160,12 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
     setTabsData(filtered);
     tabsDataRef.current = [...filtered];
     !tabsDataRef.current.length && setClickedId(null);
+
+    // Remove active tab in background worker.
+    if (tabData) {
+      const msg = { type: 'tabs', task: 'closeTab', tab: tabData.viewId };
+      chrome.runtime.sendMessage(msg);
+    }
   };
 
   return (

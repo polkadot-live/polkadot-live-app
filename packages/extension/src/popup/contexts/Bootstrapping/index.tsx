@@ -39,11 +39,6 @@ export const BootstrappingProvider = ({
     await chrome.runtime.sendMessage(data);
   };
 
-  const initSubscriptions = async () => {
-    const data = { type: 'bootstrap', task: 'initSubscriptions' };
-    await chrome.runtime.sendMessage(data);
-  };
-
   /**
    * Connect APIs and restore systems.
    */
@@ -69,11 +64,8 @@ export const BootstrappingProvider = ({
     if (refAppInitialized.current) {
       return;
     }
-
     setAppLoading(true);
-    await Promise.all([initSystems(), initSubscriptions()]);
-    const initTasks: (() => Promise<AnyData>)[] = [connectAPIs, disconnectAPIs];
-
+    const initTasks: (() => Promise<AnyData>)[] = [initSystems, disconnectAPIs];
     for (const task of initTasks) {
       if (!refAborted.current) {
         await task();

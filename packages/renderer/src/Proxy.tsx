@@ -62,13 +62,14 @@ export const ContextProxyMain = ({ children }: ContextProxyProps) => {
         SubscriptionsCtx: () => main.useSubscriptions(),
         IntervalSubscriptionsCtx: () => main.useIntervalSubscriptions(),
         ManageCtx: () => main.useManage(),
-        IntervalTaskManageCtx: () => main.useIntervalTasksManager(),
+        IntervalTaskManagerCtx: () => main.useIntervalTasksManager(),
         EventsCtx: () => main.useEvents(),
         BootstrappingCtx: () => main.useBootstrapping(),
         DataBackupCtx: () => main.useDataBackup(),
         CogMenuCtx: () => main.useCogMenu(),
         WalletConnectCtx: () => main.useWalletConnect(),
         LedgerSigningCtx: () => main.useLedgerSigner(),
+        SummaryCtx: () => main.useSummary(),
       }),
     []
   );

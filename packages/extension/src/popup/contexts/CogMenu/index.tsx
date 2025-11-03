@@ -36,7 +36,7 @@ export const CogMenuProvider = ({
    */
   const onOpenTab = async (route: string, label: string) => {
     const tabData: TabData = { id: -1, viewId: route, label };
-    const data = { type: 'tabs', task: 'openTabRelay', tabData };
+    const data = { type: 'tabs', task: 'openTabRelay', payload: { tabData } };
     await chrome.runtime.sendMessage(data);
     window.close();
   };

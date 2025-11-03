@@ -66,6 +66,36 @@ export class NotificationsController {
   }
 
   /**
+   * @name getChainNotification
+   * @summary Return notification data based on a chain subscription.
+   */
+  static getChainNotification(entry: ApiCallEntry, miscData?: AnyData) {
+    switch (entry.task.action) {
+      case 'subscribe:chain:currentSlot': {
+        const { slot }: { slot: string } = miscData;
+        return {
+          title: entry.task.chainId,
+          body: slot,
+          subtitle: 'Current Slot',
+        };
+      }
+      case 'subscribe:chain:timestamp': {
+        const { timestamp }: { timestamp: string } = miscData;
+        return {
+          title: entry.task.chainId,
+          body: timestamp,
+          subtitle: 'Timestamp',
+        };
+      }
+      default: {
+        throw new Error(
+          `getChainNotification: Not implemented for ${entry.task.action}`
+        );
+      }
+    }
+  }
+
+  /**
    * @name getNotification
    * @summary Return notification data based on the received entry.
    */

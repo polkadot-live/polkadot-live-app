@@ -3,13 +3,24 @@
 
 import * as UI from '@polkadot-live/ui/components';
 import * as Ctx from '../../contexts';
-import * as Themes from '@polkadot-live/styles/theme/variables';
-
 import PolkadotIcon from '@polkadot-live/ui/svg/polkadotIcon.svg?react';
 import { version } from '../../../../package.json';
 import { Classic } from '@theme-toggles/react';
+import {
+  Events,
+  Footer,
+  OpenGovHome,
+  Manage,
+  Send,
+  Summary,
+} from '@polkadot-live/screens';
 import { useSideNav } from '@polkadot-live/ui/contexts';
 import { useConnections } from '../../../contexts';
+import { useSendNative } from '@polkadot-live/contexts';
+import {
+  fetchSendAccountsBrowser,
+  getSpendableBalanceBrowser,
+} from '@polkadot-live/core';
 import {
   BackgroundIconWrapper,
   BodyInterfaceWrapper,
@@ -17,13 +28,10 @@ import {
   ScrollWrapper,
 } from '@polkadot-live/styles/wrappers';
 
-const TitlePlaceholder = ({ text }: { text: string }) => (
-  <h1 style={{ padding: '2rem', textAlign: 'center' }}>{text}</h1>
-);
-
 export const Home = () => {
+  const { getAddresses } = Ctx.useAddresses();
   const { cacheGet, toggleSetting } = Ctx.useAppSettings();
-  const { cacheGet: getShared, setShared } = useConnections();
+  const { cacheGet: getShared, relayState } = useConnections();
   const { appLoading } = Ctx.useBootstrapping();
   const cogMenu = Ctx.useCogMenu();
   const sideNav = useSideNav();
@@ -33,7 +41,7 @@ export const Home = () => {
   const silenceOsNotifications = cacheGet('setting:silence-os-notifications');
 
   const toggleTheme = () => {
-    setShared('mode:dark', !darkMode);
+    relayState('mode:dark', !darkMode);
     toggleSetting('setting:dark-mode');
   };
 
@@ -87,43 +95,36 @@ export const Home = () => {
           ) : (
             <ScrollWrapper>
               {/* Summary */}
-              {sideNav.selectedId === 0 && <TitlePlaceholder text="Summary" />}
+              {sideNav.selectedId === 0 && <Summary />}
               {/* Events */}
-              {sideNav.selectedId === 1 && <TitlePlaceholder text="Events" />}
+              {sideNav.selectedId === 1 && <Events />}
               {/* Account Subscriptions */}
               {sideNav.selectedId === 2 && (
-                <TitlePlaceholder text="Account Subscriptions" />
+                <Manage addresses={getAddresses()} />
               )}
               {/* OpenGov Subscriptions */}
-              {sideNav.selectedId === 3 && (
-                <TitlePlaceholder text="OpenGov Subscriptions" />
-              )}
+              {sideNav.selectedId === 3 && <OpenGovHome />}
               {/* Send */}
-              {sideNav.selectedId === 4 && <TitlePlaceholder text="Send" />}
+              {sideNav.selectedId === 4 && (
+                <Send
+                  useSendNative={useSendNative}
+                  fetchSendAccounts={fetchSendAccountsBrowser}
+                  initExtrinsic={async (actionMeta) => {
+                    relayState('extrinsic:building', true);
+                    chrome.runtime.sendMessage({
+                      type: 'extrinsics',
+                      task: 'initTxRelay',
+                      payload: { actionMeta },
+                    });
+                  }}
+                  getSpendableBalance={getSpendableBalanceBrowser}
+                />
+              )}
             </ScrollWrapper>
           )}
         </BodyInterfaceWrapper>
       </FixedFlexWrapper>
-      <UI.Footer
-        bootstrappingCtx={Ctx.useBootstrapping()}
-        apiHealthCtx={Ctx.useApiHealth()}
-        chainsCtx={Ctx.useChains()}
-        connectionsCtx={{
-          getOnlineMode: () => navigator.onLine,
-          getTheme: () =>
-            cacheGet('setting:dark-mode')
-              ? Themes.darkTheme
-              : Themes.lightTheme,
-          cacheGet: (key) =>
-            key === 'mode:connected' ? navigator.onLine : false,
-        }}
-        intervalSubscriptionsCtx={{
-          chainHasIntervalSubscriptions: () => false, // TODO
-        }}
-        subscriptionsCtx={{
-          chainHasSubscriptions: () => false, // TODO
-        }}
-      />
+      <Footer />
     </>
   );
 };

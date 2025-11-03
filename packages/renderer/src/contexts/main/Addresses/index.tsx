@@ -7,7 +7,6 @@ import { createSafeContextHook } from '@polkadot-live/contexts';
 import type { AddressesContextInterface } from '@polkadot-live/contexts/types/main';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
-  AccountSource,
   FlattenedAccountData,
   FlattenedAccounts,
 } from '@polkadot-live/types/accounts';
@@ -41,32 +40,18 @@ export const AddressesProvider = ({
   };
 
   // Saves received address as an imported address.
-  const importAddress = async (
-    chain: ChainID,
-    source: AccountSource,
-    address: string,
-    name: string,
-    fromBackup = false
-  ) => {
-    // Update accounts state.
+  const importAddress = async (accountName: string, fromBackup = false) => {
     AccountsController.syncState();
-
     if (!fromBackup) {
       await window.myAPI.sendAccountTask({
         action: 'account:import',
-        data: {
-          chainId: chain,
-          source,
-          address,
-          name,
-        },
+        data: { accountName },
       });
     }
   };
 
   // Removes an imported address.
   const removeAddress = async (chain: ChainID, address: string) => {
-    // Set address state.
     AccountsController.syncState();
 
     // Remove persisted account from store.
@@ -119,31 +104,6 @@ export const AddressesProvider = ({
       []
     );
 
-  /// Get subscription count for address.
-  const getSubscriptionCountForAccount = (
-    flattened: FlattenedAccountData
-  ): number => {
-    const { address, chain } = flattened;
-    const account = AccountsController.get(chain, address);
-    if (!account) {
-      return 0;
-    }
-
-    const tasks = account.getSubscriptionTasks();
-    if (!tasks) {
-      return 0;
-    }
-
-    return tasks.length;
-  };
-
-  /// Get total subscription count.
-  const getTotalSubscriptionCount = (): number =>
-    getAllAccounts().reduce(
-      (acc, flattened) => acc + getSubscriptionCountForAccount(flattened),
-      0
-    );
-
   // Cache addresses state setter in controller for updaing UI.
   useEffect(() => {
     AccountsController.cachedSetAddresses = setAddresses;
@@ -160,8 +120,6 @@ export const AddressesProvider = ({
         removeAddress,
         getAddress,
         getAllAccounts,
-        getSubscriptionCountForAccount,
-        getTotalSubscriptionCount,
       }}
     >
       {children}

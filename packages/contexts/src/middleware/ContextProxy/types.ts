@@ -42,6 +42,7 @@ import type {
   LedgerSignerContextInterface,
   ManageContextInterface,
   SubscriptionsContextInterface,
+  SummaryContextInterface,
   TreasuryApiContextInterface,
   WalletConnectContextInterface,
 } from '../../types/main';
@@ -96,7 +97,7 @@ export interface ContextsMap {
   ChainsCtx: () => ChainsContextInterface;
   SubscriptionsCtx: () => SubscriptionsContextInterface;
   IntervalSubscriptionsCtx: () => IntervalSubscriptionsContextInterface;
-  IntervalTaskManageCtx: () => IntervalTasksManagerContextInterface;
+  IntervalTaskManagerCtx: () => IntervalTasksManagerContextInterface;
   EventsCtx: () => EventsContextInterface;
   BootstrappingCtx: () => BootstrappingInterface;
   DataBackupCtx: () => DataBackupContextInterface;
@@ -104,13 +105,14 @@ export interface ContextsMap {
   WalletConnectCtx: () => WalletConnectContextInterface;
   LedgerSigningCtx: () => LedgerSignerContextInterface;
   ManageCtx: () => ManageContextInterface;
+  SummaryCtx: () => SummaryContextInterface;
 
   /** OpenGov */
   TracksCtx: () => TracksContextInterface;
   TreasuryCtx: () => TreasuryContextInterface;
   PolkassemblyCtx: () => PolkassemblyContextInterface;
   ReferendaCtx: () => ReferendaContextInterface;
-  referendasubscriptionsCtx: () => ReferendaSubscriptionsContextInterface;
+  ReferendaSubscriptionsCtx: () => ReferendaSubscriptionsContextInterface;
   TaskHandlerCtx: () => TaskHandlerContextInterface;
 
   /** Settings */
