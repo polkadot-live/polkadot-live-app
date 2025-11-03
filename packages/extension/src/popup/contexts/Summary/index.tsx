@@ -8,7 +8,7 @@ import type {
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
 import type { SummaryContextInterface } from '@polkadot-live/contexts/types/main';
-import type { TxStatus } from '@polkadot-live/types/tx';
+import type { ExtrinsicInfo, TxStatus } from '@polkadot-live/types/tx';
 
 export const SummaryContext = createContext<
   SummaryContextInterface | undefined
@@ -33,11 +33,6 @@ export const SummaryProvider = ({
   const addressMapRef = useRef<typeof addressMap>(addressMap);
 
   /**
-   * TODO: Remove
-   */
-  const [trigger, setTrigger] = useState<boolean>(false);
-
-  /**
    * Extrinsic counts.
    */
   const [extrinsicCounts, setExtrinsicCounts] = useState(
@@ -50,37 +45,36 @@ export const SummaryProvider = ({
    */
   useEffect(() => {
     const fetch = async () => {
-      const result = (await chrome.runtime.sendMessage({
-        type: 'rawAccount',
-        task: 'getAll',
-      })) as string;
+      const [r1, r2] = await Promise.all([
+        chrome.runtime.sendMessage({
+          type: 'rawAccount',
+          task: 'getAll',
+        }),
+        chrome.runtime.sendMessage({
+          type: 'extrinsics',
+          task: 'getAll',
+        }),
+      ]);
 
       type T = [AccountSource, ImportedGenericAccount[]][];
-      const arr: T = JSON.parse(result);
+      const arr: T = JSON.parse(r1 as string);
       const map = new Map<AccountSource, ImportedGenericAccount[]>(arr);
       addressMapRef.current = map;
 
-      // TODO: Extrinsics.
-      extrinsicCountsRef.current.set('pending', 0);
-      extrinsicCountsRef.current.set('finalized', 0);
+      // Extrinsics.
+      const getTxCount = (extrinsics: ExtrinsicInfo[], status?: TxStatus) =>
+        status
+          ? extrinsics.filter((info) => info.txStatus === status).length
+          : extrinsics.length;
+      extrinsicCountsRef.current.set('pending', getTxCount(r2, 'pending'));
+      extrinsicCountsRef.current.set('finalized', getTxCount(r2, 'finalized'));
 
-      // Trigger state update.
-      setTrigger(true);
-    };
-
-    fetch();
-  }, []);
-
-  /**
-   * Trigger to update state.
-   */
-  useEffect(() => {
-    if (trigger) {
+      // state update.
       setAddressMap(addressMapRef.current);
       setExtrinsicCounts(extrinsicCountsRef.current);
-      setTrigger(false);
-    }
-  }, [trigger]);
+    };
+    fetch();
+  }, []);
 
   return (
     <SummaryContext
