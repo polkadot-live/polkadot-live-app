@@ -8,12 +8,12 @@ import {
 import { createContext } from 'react';
 import {
   createSafeContextHook,
+  useAccountStatuses,
   useAddresses,
   useConnections,
 } from '@polkadot-live/contexts';
 import { renderToast } from '@polkadot-live/ui/utils';
 import { decodeAddress, encodeAddress, u8aToHex } from 'dedot/utils';
-import { useAccountStatuses } from '../AccountStatuses';
 import type {
   AccountSource,
   EncodedAccount,

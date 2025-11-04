@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import {
+  AccountStatusesProvider,
   AddressesProvider as ImportAddressesProvider,
   ConnectionsProvider,
   DialogControlProvider,
@@ -10,7 +11,6 @@ import {
 } from '@polkadot-live/contexts';
 import { HelpProvider, OverlayProvider } from '@polkadot-live/ui/contexts';
 import {
-  AccountStatusesProvider,
   AddHandlerProvider,
   DeleteHandlerProvider,
   ImportHandlerProvider,

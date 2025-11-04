@@ -7,16 +7,14 @@ import {
   useAddresses,
   useRemoveHandler,
 } from '@polkadot-live/contexts';
+import { getAccountStatusesAdapter } from '../../../adaptors/accountStatuses';
 import { getSupportedSources } from '@polkadot-live/consts/chains';
 import { setStateWithRef } from '@w3ux/utils';
-import { renderToast } from '@polkadot-live/ui/utils';
+import type { AccountStatusesContextInterface } from '@polkadot-live/contexts/types/import';
 import type {
   AccountSource,
-  EncodedAccount,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
-import type { AccountStatusesContextInterface } from '@polkadot-live/contexts/types/import';
-import type { AnyData } from '@polkadot-live/types/misc';
 
 export const AccountStatusesContext = createContext<
   AccountStatusesContextInterface | undefined
@@ -41,6 +39,7 @@ export const AccountStatusesProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const adaptor = getAccountStatusesAdapter();
   const { getAccounts } = useAddresses();
   const { handleRemoveAddress } = useRemoveHandler();
 
@@ -67,43 +66,15 @@ export const AccountStatusesProvider = ({
       }
       outer.set(source, map);
     }
-
-    // Handle status updates.
-    const callback = async (message: AnyData) => {
-      switch (message.type) {
-        case 'rawAccount': {
-          switch (message.task) {
-            case 'setProcessing': {
-              interface I {
-                encoded: EncodedAccount;
-                generic: ImportedGenericAccount;
-                status: boolean;
-                success: boolean;
-              }
-              const { generic, encoded, status, success }: I = message.payload;
-              const { address, chainId } = encoded;
-              setStatusForAccount(
-                `${chainId}:${address}`,
-                generic.source,
-                status
-              );
-
-              if (!success) {
-                await handleRemoveAddress(encoded, generic);
-                renderToast('Account import error', 'import-error', 'error');
-              }
-              break;
-            }
-          }
-          break;
-        }
-      }
-    };
-
     setStateWithRef(outer, setStatusMap, statusMapRef);
-    chrome.runtime.onMessage.addListener(callback);
+
+    // Set up message listener for extension.
+    const removeListener = adaptor.listenOnMount(
+      setStatusForAccount,
+      handleRemoveAddress
+    );
     return () => {
-      chrome.runtime.onMessage.removeListener(callback);
+      removeListener && removeListener();
     };
   }, []);
 
@@ -135,7 +106,6 @@ export const AccountStatusesProvider = ({
     if (!sourceMap) {
       return;
     }
-
     sourceMap.delete(key);
     const map = new Map(statusMap).set(source, sourceMap);
     setStateWithRef(map, setStatusMap, statusMapRef);

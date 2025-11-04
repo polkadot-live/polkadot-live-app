@@ -2,12 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ConfigImport } from '@polkadot-live/core';
+import { useImportHandler, useWalletConnectImport } from '@ren/contexts/import';
 import {
   useAccountStatuses,
-  useImportHandler,
-  useWalletConnectImport,
-} from '@ren/contexts/import';
-import {
   useAddresses as useImportAddresses,
   useRemoveHandler,
 } from '@polkadot-live/contexts';

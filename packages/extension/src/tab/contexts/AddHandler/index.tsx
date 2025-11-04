@@ -3,11 +3,11 @@
 
 import {
   createSafeContextHook,
+  useAccountStatuses,
   useAddresses,
   useConnections,
 } from '@polkadot-live/contexts';
 import { createContext } from 'react';
-import { useAccountStatuses } from '../AccountStatuses';
 import type { AddHandlerContextInterface } from '@polkadot-live/contexts/types/import';
 import type {
   EncodedAccount,

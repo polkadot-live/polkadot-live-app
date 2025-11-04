@@ -9,12 +9,12 @@ import {
 import { createContext } from 'react';
 import {
   createSafeContextHook,
+  useAccountStatuses,
   useAddresses,
   useConnections,
 } from '@polkadot-live/contexts';
 import { renderToast } from '@polkadot-live/ui/utils';
 import { decodeAddress, encodeAddress, u8aToHex } from 'dedot/utils';
-import { useAccountStatuses } from '@ren/contexts/import';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ImportHandlerContextInterface } from '@polkadot-live/contexts/types/import';
 import type {
