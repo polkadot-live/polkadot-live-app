@@ -19,6 +19,7 @@ import {
   useDeleteHandler,
   useImportHandler,
   useRemoveHandler,
+  useRenameHandler,
   useSettingFlags,
   useDialogControl,
 } from '@polkadot-live/contexts';
@@ -125,7 +126,7 @@ export const ContextProxyImport = ({ children }: ContextProxyProps) => {
         ImportHandlerCtx: () => useImportHandler(),
         AddHandlerCtx: () => useAddHandler(),
         DeleteHandlerCtx: () => useDeleteHandler(),
-        RenameHandlerCtx: () => imports.useRenameHandler(),
+        RenameHandlerCtx: () => useRenameHandler(),
         LedgerHardwareCtx: () => imports.useLedgerHardware(),
         WalletConnectImportCtx: () => imports.useWalletConnectImport(),
       }),

@@ -2,5 +2,4 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 export * from './LedgerHardware';
-export * from './RenameHandler';
 export * from './WalletConnectImport';

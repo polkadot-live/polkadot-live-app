@@ -14,6 +14,7 @@ import {
   useDialogControl,
   useImportHandler,
   useRemoveHandler,
+  useRenameHandler,
   useSettingFlags,
 } from '@polkadot-live/contexts';
 import {
@@ -22,7 +23,6 @@ import {
   usePolkassembly,
   useReferenda,
   useReferendaSubscriptions,
-  useRenameHandler,
   useTabs,
   useTaskHandler,
   useTracks,

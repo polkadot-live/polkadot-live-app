@@ -41,11 +41,11 @@ import {
   DialogControlProvider,
   ImportHandlerProvider,
   RemoveHandlerProvider,
+  RenameHandlerProvider,
   SettingFlagsProvider,
 } from '@polkadot-live/contexts';
 import {
   LedgerHardwareProvider,
-  RenameHandlerProvider,
   WalletConnectImportProvider,
 } from '@ren/contexts/import';
 

@@ -9,7 +9,6 @@ export {
   useReferendaSubscriptions,
   ReferendaSubscriptionsProvider,
 } from './ReferendaSubscriptions';
-export { useRenameHandler, RenameHandlerProvider } from './RenameHandler';
 export { useTabs, TabsProvider } from './Tabs';
 export { useTaskHandler, TaskHandlerProvider } from './TaskHandler';
 export { useTracks, TracksProvider } from './Tracks';

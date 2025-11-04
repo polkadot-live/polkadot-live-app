@@ -8,3 +8,4 @@ export { useDialogControl, DialogControlProvider } from './DialogControl';
 export { useDeleteHandler, DeleteHandlerProvider } from './DeleteHandler';
 export { useImportHandler, ImportHandlerProvider } from './ImportHandler';
 export { useRemoveHandler, RemoveHandlerProvider } from './RemoveHandler';
+export { useRenameHandler, RenameHandlerProvider } from './RenameHandler';

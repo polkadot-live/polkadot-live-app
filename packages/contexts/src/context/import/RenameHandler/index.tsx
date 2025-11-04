@@ -1,11 +1,12 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { postRenameAccount, renameAccountInStore } from '@polkadot-live/core';
 import { createContext } from 'react';
 import { renderToast, validateAccountName } from '@polkadot-live/ui/utils';
-import { createSafeContextHook, useAddresses } from '@polkadot-live/contexts';
-import type { RenameHandlerContextInterface } from '@polkadot-live/contexts/types/import';
+import { createSafeContextHook } from '../../../utils';
+import { useAddresses } from '../Addresses';
+import { getRenameHandlerAdapter } from '../../../adaptors/renameHandler';
+import type { RenameHandlerContextInterface } from '../../../types/import';
 import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';
 
 export const RenameHandlerContext = createContext<
@@ -22,6 +23,7 @@ export const RenameHandlerProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const adaptor = getRenameHandlerAdapter();
   const { handleAddressImport, isUniqueAccountName } = useAddresses();
 
   /**
@@ -31,18 +33,7 @@ export const RenameHandlerProvider = ({
     updatedAccount: ImportedGenericAccount,
     originalAccount: ImportedGenericAccount
   ) => {
-    await renameAccountInStore(updatedAccount);
-
-    // Update encoded account names in main renderer.
-    const { encodedAccounts: updatedEncoded } = updatedAccount;
-    for (const encodedAccount of Object.values(updatedEncoded)) {
-      const { chainId, alias } = encodedAccount;
-      if (alias !== originalAccount.encodedAccounts[chainId].alias) {
-        postRenameAccount(encodedAccount);
-      }
-    }
-
-    // Update import window address state.
+    await adaptor.handleRename(updatedAccount, originalAccount);
     handleAddressImport(updatedAccount);
   };
 
@@ -55,7 +46,6 @@ export const RenameHandlerProvider = ({
       renderToast('Bad account name.', `toast-${trimmed}`, 'error');
       return false;
     }
-
     // Handle duplicate account name.
     if (!isUniqueAccountName(trimmed)) {
       renderToast(
@@ -65,7 +55,6 @@ export const RenameHandlerProvider = ({
       );
       return false;
     }
-
     return true;
   };
 
