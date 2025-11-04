@@ -5,6 +5,7 @@ export * from './accountStatuses';
 export * from './addHandler';
 export * from './addresses';
 export * from './connections';
+export * from './deleteHandler';
 export * from './importHandler';
 export * from './removeHandler';
 export * from './settingFlags';

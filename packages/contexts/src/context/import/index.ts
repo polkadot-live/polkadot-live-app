@@ -5,5 +5,6 @@ export { useAddresses, AddressesProvider } from './Addresses';
 export { useAddHandler, AddHandlerProvider } from './AddHandler';
 export { useAccountStatuses, AccountStatusesProvider } from './AccountStatuses';
 export { useDialogControl, DialogControlProvider } from './DialogControl';
+export { useDeleteHandler, DeleteHandlerProvider } from './DeleteHandler';
 export { useImportHandler, ImportHandlerProvider } from './ImportHandler';
 export { useRemoveHandler, RemoveHandlerProvider } from './RemoveHandler';

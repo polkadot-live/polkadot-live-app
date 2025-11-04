@@ -1,19 +1,16 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import {
-  createSafeContextHook,
-  useAccountStatuses,
-  useAddresses,
-} from '@polkadot-live/contexts';
-import { ConfigImport } from '@polkadot-live/core';
+import { useAccountStatuses } from '../AccountStatuses';
+import { useAddresses } from '../Addresses';
+import { createSafeContextHook } from '../../../utils';
 import { createContext } from 'react';
+import { getDeleteHandlerAdapter } from '../../../adaptors';
 import type {
   AccountSource,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
-import type { DeleteHandlerContextInterface } from '@polkadot-live/contexts/types/import';
-import type { IpcTask } from '@polkadot-live/types/communication';
+import type { DeleteHandlerContextInterface } from '../../../types/import';
 import type { ChainID } from '@polkadot-live/types/chains';
 
 export const DeleteHandlerContext = createContext<
@@ -30,6 +27,7 @@ export const DeleteHandlerProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const adaptor = getDeleteHandlerAdapter();
   const { deleteAccountStatus } = useAccountStatuses();
   const { handleAddressDelete } = useAddresses();
 
@@ -49,11 +47,9 @@ export const DeleteHandlerProvider = ({
       if (!goBack) {
         goBack = handleAddressDelete(genericAccount);
       }
-
       // Delete in main renderer.
       postToMain(address, chainId);
     }
-
     // Delete all account data from store.
     await removeFromStore(source, publicKeyHex);
     return goBack;
@@ -62,27 +58,14 @@ export const DeleteHandlerProvider = ({
   /**
    * Remove generic account from store.
    */
-  const removeFromStore = async (
-    source: AccountSource,
-    publicKeyHex: string
-  ) => {
-    const ipcTask: IpcTask = {
-      action: 'raw-account:delete',
-      data: { publicKeyHex, source },
-    };
-
-    await window.myAPI.rawAccountTask(ipcTask);
-  };
+  const removeFromStore = async (source: AccountSource, publicKeyHex: string) =>
+    await adaptor.removeFromStore(source, publicKeyHex);
 
   /**
    * Send address data to main window to process removal.
    */
-  const postToMain = (address: string, chainId: ChainID) => {
-    ConfigImport.portImport.postMessage({
-      task: 'renderer:address:delete',
-      data: { address, chainId },
-    });
-  };
+  const postToMain = (address: string, chainId: ChainID) =>
+    adaptor.postToMain(address, chainId);
 
   return (
     <DeleteHandlerContext

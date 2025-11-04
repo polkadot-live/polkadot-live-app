@@ -37,13 +37,13 @@ import {
   AddressesProvider as ImportAddressesProvider,
   AddHandlerProvider,
   ConnectionsProvider,
+  DeleteHandlerProvider,
   DialogControlProvider,
   ImportHandlerProvider,
   RemoveHandlerProvider,
   SettingFlagsProvider,
 } from '@polkadot-live/contexts';
 import {
-  DeleteHandlerProvider,
   LedgerHardwareProvider,
   RenameHandlerProvider,
   WalletConnectImportProvider,

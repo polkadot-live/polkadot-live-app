@@ -6,6 +6,7 @@ import {
   AddressesProvider as ImportAddressesProvider,
   AddHandlerProvider,
   ConnectionsProvider,
+  DeleteHandlerProvider,
   DialogControlProvider,
   ImportHandlerProvider,
   RemoveHandlerProvider,
@@ -13,7 +14,6 @@ import {
 } from '@polkadot-live/contexts';
 import { HelpProvider, OverlayProvider } from '@polkadot-live/ui/contexts';
 import {
-  DeleteHandlerProvider,
   LedgerFeedbackProvider,
   LedgerHardwareProvider,
   PolkassemblyProvider,
