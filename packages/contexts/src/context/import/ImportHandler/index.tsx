@@ -1,28 +1,26 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ConfigImport } from '@polkadot-live/core';
 import {
   getSupportedChains,
   getSupportedLedgerChains,
 } from '@polkadot-live/consts/chains';
 import { createContext } from 'react';
-import {
-  createSafeContextHook,
-  useAccountStatuses,
-  useAddresses,
-  useConnections,
-} from '@polkadot-live/contexts';
-import { renderToast } from '@polkadot-live/ui/utils';
+import { createSafeContextHook } from '../../../utils';
+import { useAccountStatuses } from '../AccountStatuses';
+import { useAddresses } from '../Addresses';
+import { useConnections } from '../../common';
 import { decodeAddress, encodeAddress, u8aToHex } from 'dedot/utils';
-import type { ChainID } from '@polkadot-live/types/chains';
-import type { ImportHandlerContextInterface } from '@polkadot-live/contexts/types/import';
+import { getImportHandlerAdapter } from '../../../adaptors';
+import { renderToast } from '@polkadot-live/ui/utils';
 import type {
   AccountSource,
   EncodedAccount,
   ImportedGenericAccount,
   LedgerMetadata,
 } from '@polkadot-live/types/accounts';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { ImportHandlerContextInterface } from '../../../types/import';
 
 export const ImportHandlerContext = createContext<
   ImportHandlerContextInterface | undefined
@@ -38,6 +36,7 @@ export const ImportHandlerProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const adaptor = getImportHandlerAdapter();
   const { getOnlineMode } = useConnections();
   const { setStatusForAccount } = useAccountStatuses();
   const { handleAddressImport, getDefaultName } = useAddresses();
@@ -102,7 +101,6 @@ export const ImportHandlerProvider = ({
     )) {
       setStatusForAccount(`${chainId}:${address}`, source, isImported);
     }
-
     // Update addresses state and references.
     handleAddressImport(genericAccount);
   };
@@ -150,12 +148,8 @@ export const ImportHandlerProvider = ({
   /**
    * Persist generic account to store.
    */
-  const persist = async (genericAccount: ImportedGenericAccount) => {
-    await window.myAPI.rawAccountTask({
-      action: 'raw-account:persist',
-      data: { serialized: JSON.stringify(genericAccount) },
-    });
-  };
+  const persist = async (genericAccount: ImportedGenericAccount) =>
+    await adaptor.persist(genericAccount);
 
   /**
    * Add address to main renderer.
@@ -163,15 +157,7 @@ export const ImportHandlerProvider = ({
   const postToMain = (
     genericAccount: ImportedGenericAccount,
     encodedAccount: EncodedAccount
-  ) => {
-    ConfigImport.portImport.postMessage({
-      task: 'renderer:address:import',
-      data: {
-        serEncodedAccount: JSON.stringify(genericAccount),
-        serGenericAccount: JSON.stringify(encodedAccount),
-      },
-    });
-  };
+  ) => adaptor.postToMain(genericAccount, encodedAccount);
 
   return (
     <ImportHandlerContext

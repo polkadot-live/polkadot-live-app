@@ -2,15 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext, useEffect, useRef, useState } from 'react';
-import {
-  createSafeContextHook,
-  useAddresses,
-  useRemoveHandler,
-} from '@polkadot-live/contexts';
+import { createSafeContextHook } from '../../../utils';
+import { useAddresses } from '../Addresses';
+import { useRemoveHandler } from '../RemoveHandler';
 import { getAccountStatusesAdapter } from '../../../adaptors/accountStatuses';
 import { getSupportedSources } from '@polkadot-live/consts/chains';
 import { setStateWithRef } from '@w3ux/utils';
-import type { AccountStatusesContextInterface } from '@polkadot-live/contexts/types/import';
+import type { AccountStatusesContextInterface } from '../../../types/import';
 import type {
   AccountSource,
   ImportedGenericAccount,

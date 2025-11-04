@@ -5,7 +5,6 @@ export { useAddHandler, AddHandlerProvider } from './AddHandler';
 export { useDeleteHandler, DeleteHandlerProvider } from './DeleteHandler';
 export { useLedgerFeedback, LedgerFeedbackProvider } from './LedgerFeedback';
 export { useLedgerHardware, LedgerHardwareProvider } from './LedgerHardware';
-export { useImportHandler, ImportHandlerProvider } from './ImportHandler';
 export { usePolkassembly, PolkassemblyProvider } from './Polkassembly';
 export { useReferenda, ReferendaProvider } from './Referenda';
 export {

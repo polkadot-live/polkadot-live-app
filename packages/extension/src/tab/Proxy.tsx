@@ -10,13 +10,13 @@ import {
   useAddresses as useImportAddresses,
   useConnections,
   useDialogControl,
+  useImportHandler,
   useRemoveHandler,
   useSettingFlags,
 } from '@polkadot-live/contexts';
 import {
   useAddHandler,
   useDeleteHandler,
-  useImportHandler,
   useLedgerFeedback,
   useLedgerHardware,
   usePolkassembly,
