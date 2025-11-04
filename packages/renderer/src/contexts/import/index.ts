@@ -6,6 +6,5 @@ export * from './AddHandler';
 export * from './DeleteHandler';
 export * from './ImportHandler';
 export * from './LedgerHardware';
-export * from './RemoveHandler';
 export * from './RenameHandler';
 export * from './WalletConnectImport';

@@ -9,6 +9,7 @@ import {
   useAddresses as useImportAddresses,
   useConnections,
   useDialogControl,
+  useRemoveHandler,
   useSettingFlags,
 } from '@polkadot-live/contexts';
 import {
@@ -21,7 +22,6 @@ import {
   usePolkassembly,
   useReferenda,
   useReferendaSubscriptions,
-  useRemoveHandler,
   useRenameHandler,
   useTabs,
   useTaskHandler,

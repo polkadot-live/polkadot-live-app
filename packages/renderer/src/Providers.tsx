@@ -36,6 +36,7 @@ import {
   AddressesProvider as ImportAddressesProvider,
   ConnectionsProvider,
   DialogControlProvider,
+  RemoveHandlerProvider,
   SettingFlagsProvider,
 } from '@polkadot-live/contexts';
 import {
@@ -44,7 +45,6 @@ import {
   DeleteHandlerProvider,
   ImportHandlerProvider,
   LedgerHardwareProvider,
-  RemoveHandlerProvider,
   RenameHandlerProvider,
   WalletConnectImportProvider,
 } from '@ren/contexts/import';
@@ -112,14 +112,14 @@ const getProvidersForWindow = () => {
         OverlayProvider,
         ConnectionsProvider,
         ImportAddressesProvider,
+        // Requires useAddresses
+        RemoveHandlerProvider,
         AccountStatusesProvider,
         DialogControlProvider,
         // Requires useAccountStatuses + useAddresses
         ImportHandlerProvider,
         // Requires useAccountStatuses + useAddresses
         AddHandlerProvider,
-        // Requires useAddresses
-        RemoveHandlerProvider,
         // Requires useAccountStatuses + useAddresses
         DeleteHandlerProvider,
         // Requires useAddresses

@@ -4,8 +4,9 @@
 import {
   AddressesProvider as ImportAddressesProvider,
   ConnectionsProvider,
-  SettingFlagsProvider,
   DialogControlProvider,
+  RemoveHandlerProvider,
+  SettingFlagsProvider,
 } from '@polkadot-live/contexts';
 import { HelpProvider, OverlayProvider } from '@polkadot-live/ui/contexts';
 import {
@@ -18,7 +19,6 @@ import {
   PolkassemblyProvider,
   ReferendaProvider,
   ReferendaSubscriptionsProvider,
-  RemoveHandlerProvider,
   RenameHandlerProvider,
   TabsProvider,
   TaskHandlerProvider,

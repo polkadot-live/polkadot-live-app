@@ -3,3 +3,4 @@
 
 export { useAddresses, AddressesProvider } from './Addresses';
 export { useDialogControl, DialogControlProvider } from './DialogControl';
+export { useRemoveHandler, RemoveHandlerProvider } from './RemoveHandler';

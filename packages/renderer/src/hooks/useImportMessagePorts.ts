@@ -2,15 +2,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ConfigImport } from '@polkadot-live/core';
-
-/// Import window contexts.
 import {
   useAccountStatuses,
   useImportHandler,
-  useRemoveHandler,
   useWalletConnectImport,
 } from '@ren/contexts/import';
-import { useAddresses as useImportAddresses } from '@polkadot-live/contexts';
+import {
+  useAddresses as useImportAddresses,
+  useRemoveHandler,
+} from '@polkadot-live/contexts';
 import { useEffect } from 'react';
 import { renderToast } from '@polkadot-live/ui/utils';
 import type {

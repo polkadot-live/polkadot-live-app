@@ -13,7 +13,6 @@ export {
   useReferendaSubscriptions,
   ReferendaSubscriptionsProvider,
 } from './ReferendaSubscriptions';
-export { useRemoveHandler, RemoveHandlerProvider } from './RemoveHandler';
 export { useRenameHandler, RenameHandlerProvider } from './RenameHandler';
 export { useTabs, TabsProvider } from './Tabs';
 export { useTaskHandler, TaskHandlerProvider } from './TaskHandler';

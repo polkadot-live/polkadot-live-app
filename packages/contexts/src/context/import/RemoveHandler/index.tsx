@@ -1,15 +1,16 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ConfigImport } from '@polkadot-live/core';
 import { createContext } from 'react';
-import { createSafeContextHook, useAddresses } from '@polkadot-live/contexts';
+import { createSafeContextHook } from '../../../utils';
+import { getRemoveHandlerAdapter } from '../../../adaptors/removeHandler';
+import { useAddresses } from '../Addresses';
 import type {
   EncodedAccount,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { RemoveHandlerContextInterface } from '@polkadot-live/contexts/types/import';
+import type { RemoveHandlerContextInterface } from '../../../types/import';
 
 export const RemoveHandlerContext = createContext<
   RemoveHandlerContextInterface | undefined
@@ -25,6 +26,7 @@ export const RemoveHandlerProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const adaptor = getRemoveHandlerAdapter();
   const { handleAddressUpdate } = useAddresses();
 
   /**
@@ -49,20 +51,14 @@ export const RemoveHandlerProvider = ({
    * Update address in store.
    */
   const updateAddressInStore = async (account: ImportedGenericAccount) => {
-    await window.myAPI.rawAccountTask({
-      action: 'raw-account:update',
-      data: { serialized: JSON.stringify(account) },
-    });
+    await adaptor.updateAddressInStore(account);
   };
 
   /**
-   * Send address data to main window to process removal.
+   * Send address data to background worker or main process to process removal.
    */
   const postToMain = (address: string, chainId: ChainID) => {
-    ConfigImport.portImport.postMessage({
-      task: 'renderer:address:remove',
-      data: { address, chainId },
-    });
+    adaptor.postToMain(address, chainId);
   };
 
   return (
