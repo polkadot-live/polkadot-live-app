@@ -5,7 +5,6 @@ import * as main from '@ren/contexts/main';
 import * as tabs from '@ren/contexts/tabs';
 import * as imports from '@ren/contexts/import';
 import * as extrinsics from '@ren/contexts/action';
-import * as openGov from '@ren/contexts/openGov';
 
 import { useMemo } from 'react';
 import { useHelp, useOverlay, useSideNav } from '@polkadot-live/ui/contexts';
@@ -25,6 +24,7 @@ import {
   useRemoveHandler,
   useRenameHandler,
   useSettingFlags,
+  useTaskHandler,
   useTracks,
   useTreasury,
 } from '@polkadot-live/contexts';
@@ -104,7 +104,7 @@ export const ContextProxyOpenGov = ({ children }: ContextProxyProps) => {
         TreasuryCtx: () => useTreasury(),
         PolkassemblyCtx: () => usePolkassembly(),
         ReferendaCtx: () => useReferenda(),
-        TaskHandlerCtx: () => openGov.useTaskHandler(),
+        TaskHandlerCtx: () => useTaskHandler(),
         ReferendaSubscriptionsCtx: () => useReferendaSubscriptions(),
       }),
     []

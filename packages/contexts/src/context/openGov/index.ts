@@ -7,5 +7,6 @@ export {
   useReferendaSubscriptions,
   ReferendaSubscriptionsProvider,
 } from './ReferendaSubscriptions';
+export { useTaskHandler, TaskHandlerProvider } from './TaskHandler';
 export { useTracks, TracksProvider } from './Tracks';
 export { useTreasury, TreasuryProvider } from './Treasury';

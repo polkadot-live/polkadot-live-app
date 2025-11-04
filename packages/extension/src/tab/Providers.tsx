@@ -15,6 +15,7 @@ import {
   RemoveHandlerProvider,
   RenameHandlerProvider,
   SettingFlagsProvider,
+  TaskHandlerProvider,
   TracksProvider,
   TreasuryProvider,
 } from '@polkadot-live/contexts';
@@ -23,7 +24,6 @@ import {
   LedgerFeedbackProvider,
   LedgerHardwareProvider,
   TabsProvider,
-  TaskHandlerProvider,
   TxMetaProvider,
   WalletConnectProvider,
   WalletConnectImportProvider,

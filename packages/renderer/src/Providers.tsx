@@ -46,6 +46,7 @@ import {
   RemoveHandlerProvider,
   RenameHandlerProvider,
   SettingFlagsProvider,
+  TaskHandlerProvider,
   TracksProvider,
   TreasuryProvider,
 } from '@polkadot-live/contexts';
@@ -61,9 +62,6 @@ import {
   TxMetaProvider,
   WcVerifierProvider,
 } from '@ren/contexts/action';
-
-// OpenGov window contexts.
-import { TaskHandlerProvider } from '@ren/contexts/openGov';
 
 // Other imports.
 import { Theme } from './Theme';
