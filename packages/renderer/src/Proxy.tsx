@@ -1,11 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as common from '@ren/contexts/common';
 import * as main from '@ren/contexts/main';
 import * as tabs from '@ren/contexts/tabs';
 import * as imports from '@ren/contexts/import';
-import * as settings from '@ren/contexts/settings';
 import * as extrinsics from '@ren/contexts/action';
 import * as openGov from '@ren/contexts/openGov';
 
@@ -14,6 +12,8 @@ import { useHelp, useOverlay, useSideNav } from '@polkadot-live/ui/contexts';
 import {
   buildCache,
   ContextProxyProvider,
+  useConnections,
+  useSettingFlags,
   useDialogControl,
 } from '@polkadot-live/contexts';
 
@@ -30,7 +30,7 @@ export const ContextProxyExtrinsics = ({ children }: ContextProxyProps) => {
       buildCache({
         HelpCtx: () => useHelp(),
         OverlayCtx: () => useOverlay(),
-        ConnectionsCtx: () => common.useConnections(),
+        ConnectionsCtx: () => useConnections(),
         TxMetaCtx: () => extrinsics.useTxMeta(),
         WcVerifierCtx: () => extrinsics.useWcVerifier(),
         LedgerFeedbackCtx: () => extrinsics.useLedgerFeedback(),
@@ -52,7 +52,7 @@ export const ContextProxyMain = ({ children }: ContextProxyProps) => {
       buildCache({
         HelpCtx: () => useHelp(),
         OverlayCtx: () => useOverlay(),
-        ConnectionsCtx: () => common.useConnections(),
+        ConnectionsCtx: () => useConnections(),
         AddressesCtx: () => main.useAddresses(),
         AppSettingsCtx: () => main.useAppSettings(),
         SideNavCtx: () => useSideNav(),
@@ -87,7 +87,7 @@ export const ContextProxyOpenGov = ({ children }: ContextProxyProps) => {
       buildCache({
         HelpCtx: () => useHelp(),
         OverlayCtx: () => useOverlay(),
-        ConnectionsCtx: () => common.useConnections(),
+        ConnectionsCtx: () => useConnections(),
         TracksCtx: () => openGov.useTracks(),
         TreasuryCtx: () => openGov.useTreasury(),
         PolkassemblyCtx: () => openGov.usePolkassembly(),
@@ -111,7 +111,7 @@ export const ContextProxyImport = ({ children }: ContextProxyProps) => {
       buildCache({
         HelpCtx: () => useHelp(),
         OverlayCtx: () => useOverlay(),
-        ConnectionsCtx: () => common.useConnections(),
+        ConnectionsCtx: () => useConnections(),
         ImportAddressesCtx: () => imports.useAddresses(),
         AccountStatusesCtx: () => imports.useAccountStatuses(),
         DialogControlCtx: () => useDialogControl(),
@@ -139,8 +139,8 @@ export const ContextProxySettings = ({ children }: ContextProxyProps) => {
       buildCache({
         HelpCtx: () => useHelp(),
         OverlayCtx: () => useOverlay(),
-        ConnectionsCtx: () => common.useConnections(),
-        SettingFlagsCtx: () => settings.useSettingFlags(),
+        ConnectionsCtx: () => useConnections(),
+        SettingFlagsCtx: () => useSettingFlags(),
       }),
     []
   );
@@ -156,7 +156,7 @@ export const ContextProxyTabs = ({ children }: ContextProxyProps) => {
   const cache = useMemo(
     () =>
       buildCache({
-        ConnectionsCtx: () => common.useConnections(),
+        ConnectionsCtx: () => useConnections(),
         TabsCtx: () => tabs.useTabs(),
       }),
     []

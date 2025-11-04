@@ -15,7 +15,7 @@ import {
 } from '@polkadot-live/core';
 import { useEffect } from 'react';
 import { WC_EVENT_ORIGIN } from '@polkadot-live/consts/walletConnect';
-import { useConnections } from '@ren/contexts/common';
+import { useConnections } from '@polkadot-live/contexts';
 
 import type * as OG from '@polkadot-live/types/openGov';
 import type { ChainID } from '@polkadot-live/types/chains';

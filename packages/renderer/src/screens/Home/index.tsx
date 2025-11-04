@@ -11,10 +11,9 @@ import {
   getSpendableBalanceElectron,
 } from '@polkadot-live/core';
 import { useEffect, useState } from 'react';
-import { useConnections } from '@ren/contexts/common';
 import { useInitIpcHandlers } from '@ren/hooks/useInitIpcHandlers';
 import { useMainMessagePorts } from '@ren/hooks/useMainMessagePorts';
-import { useSendNative } from '@polkadot-live/contexts';
+import { useSendNative, useConnections } from '@polkadot-live/contexts';
 import { Classic } from '@theme-toggles/react';
 import {
   Events,

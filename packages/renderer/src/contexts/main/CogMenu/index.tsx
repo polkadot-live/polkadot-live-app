@@ -3,10 +3,9 @@
 
 import { ConfigRenderer } from '@polkadot-live/core';
 import { createContext } from 'react';
-import { createSafeContextHook } from '@polkadot-live/contexts';
+import { createSafeContextHook, useConnections } from '@polkadot-live/contexts';
 import { useAppSettings, useBootstrapping } from '@ren/contexts/main';
 import { useHelp } from '@polkadot-live/ui/contexts';
-import { useConnections } from '@ren/contexts/common';
 import { Flip, toast } from 'react-toastify';
 import type { CogMenuContextInterface } from '@polkadot-live/contexts/types/main';
 import type { MenuItemData } from '@polkadot-live/types/menu';

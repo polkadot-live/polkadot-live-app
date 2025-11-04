@@ -3,7 +3,7 @@
 
 import { ConfigAction } from '@polkadot-live/core';
 import { useEffect } from 'react';
-import { useConnections } from '@ren/contexts/common';
+import { useConnections } from '@polkadot-live/contexts';
 import {
   useLedgerFeedback,
   useTxMeta,

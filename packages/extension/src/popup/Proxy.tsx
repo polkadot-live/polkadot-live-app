@@ -16,9 +16,12 @@ import {
   useSubscriptions,
   useSummary,
 } from './contexts';
-import { useConnections } from '../contexts';
 import { useHelp, useSideNav } from '@polkadot-live/ui/contexts';
-import { buildCache, ContextProxyProvider } from '@polkadot-live/contexts';
+import {
+  buildCache,
+  ContextProxyProvider,
+  useConnections,
+} from '@polkadot-live/contexts';
 
 interface ContextProxyProps {
   children: React.ReactNode;

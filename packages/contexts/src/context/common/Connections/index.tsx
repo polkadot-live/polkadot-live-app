@@ -2,14 +2,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as themeVariables from '@polkadot-live/styles/theme/variables';
-import { createSafeContextHook } from '@polkadot-live/contexts';
+import { createSafeContextHook } from '../../../utils';
 import { createContext, useEffect, useRef, useState } from 'react';
+import { getConnectionsAdapter } from '../../../adaptors/connections';
 import { initSharedState } from '@polkadot-live/consts/sharedState';
 import { setStateWithRef } from '@w3ux/utils';
 import type { ActionMeta } from '@polkadot-live/types/tx';
 import type { AnyData } from '@polkadot-live/types/misc';
-import type { SyncID, TabData } from '@polkadot-live/types/communication';
-import type { ConnectionsContextInterface } from '@polkadot-live/contexts/types/common';
+import type { ConnectionsContextInterface } from '../../../types/common';
+import type { SyncID } from '@polkadot-live/types/communication';
 
 export const ConnectionsContext = createContext<
   ConnectionsContextInterface | undefined
@@ -25,9 +26,12 @@ export const ConnectionsProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const adaptor = getConnectionsAdapter();
+
   /**
    * Cache to control rendering logic only.
    */
+  const [stateLoaded, setStateLoaded] = useState(false);
   const [cache, setCache] = useState(initSharedState());
   const cacheRef = useRef(cache);
 
@@ -39,11 +43,8 @@ export const ConnectionsProvider = ({
   /**
    * Relay shared state.
    */
-  const relayState = (syncId: SyncID, state: boolean | string) => {
-    const { key, value } = { key: syncId, value: state as boolean };
-    const msg = { type: 'sharedState', task: 'relay', payload: { key, value } };
-    chrome.runtime.sendMessage(msg);
-  };
+  const relayState = (syncId: SyncID, state: boolean | string) =>
+    adaptor.relayState(syncId, state);
 
   /**
    * Return flag indicating whether app is in online or offline mode.
@@ -63,86 +64,55 @@ export const ConnectionsProvider = ({
    * Copy to clipboard.
    */
   const copyToClipboard = async (text: string) =>
-    await navigator.clipboard.writeText(text);
+    await adaptor.copyToClipboard(text);
 
   /**
    * Open URL in browser.
    */
-  const openInBrowser = (uri: string, analytics?: AnyData) => {
-    chrome.tabs.create({ url: uri });
-    if (analytics) {
-      // TODO: Implement
-    }
-  };
+  const openInBrowser = (uri: string, analytics?: AnyData) =>
+    adaptor.openInBrowser(uri, analytics);
 
   /**
    * Checks if a tab is open.
    */
-  const isTabOpen = async (tab: string) => {
-    const msg = { type: 'tabs', task: 'isTabOpen', tab };
-    return (await chrome.runtime.sendMessage(msg)) as boolean;
-  };
+  const isTabOpen = async (tab: string) => await adaptor.isTabOpen(tab);
 
   /**
    * Message to initialize a transaction in the extrinsics tab.
    */
   const initExtrinsicMsg = (txMeta: ActionMeta) => {
-    relayState('extrinsic:building', true);
-    chrome.runtime.sendMessage({
-      type: 'extrinsics',
-      task: 'initTxRelay',
-      payload: { actionMeta: txMeta },
-    });
+    adaptor.relayState('extrinsic:building', true);
+    adaptor.initAction(txMeta);
   };
 
   /**
    * Open tab.
    */
-  const openTab = (tab: string) => {
-    const labels: Record<string, string> = {
-      import: 'Accounts',
-      action: 'Extrinsics',
-      openGov: 'OpenGov',
-      settings: 'Settings',
-    };
-    const label = labels[tab];
-    const tabData: TabData = { id: -1, viewId: tab, label };
-    const data = { type: 'tabs', task: 'openTabRelay', payload: { tabData } };
-    chrome.runtime.sendMessage(data).then(() => window.close());
-  };
+  const openTab = (
+    tab: string,
+    relayData?: AnyData, // electron
+    analytics?: { event: string; data: AnyData | null }
+  ) => adaptor.openTab(tab, relayData, analytics);
 
   useEffect(() => {
-    /**
-     * Synchronize flags in store.
-     */
+    // Synchronize with stored flags.
     const sync = async () => {
-      const msg = { type: 'sharedState', task: 'get' };
-      const ser = await chrome.runtime.sendMessage(msg);
-      const array: [SyncID, boolean][] = JSON.parse(ser);
-      const map = new Map<SyncID, boolean>(array);
+      const map = await adaptor.getSharedStateOnMount();
       setStateWithRef(map, setCache, cacheRef);
     };
 
     // Listen for shared state syncing.
-    const callback = (message: AnyData) => {
-      if (message.type === 'sharedState' && message.task === 'set') {
-        const { key, value }: { key: SyncID; value: boolean } = message.payload;
-        const map = new Map(cacheRef.current).set(key, value);
-        setStateWithRef(map, setCache, cacheRef);
-      }
-    };
-
-    sync();
-    chrome.runtime.onMessage.addListener(callback);
+    const removeListener = adaptor.listenSharedStateOnMount(setCache, cacheRef);
+    sync().then(() => setStateLoaded(true));
     return () => {
-      chrome.runtime.onMessage.removeListener(callback);
+      removeListener && removeListener();
     };
   }, []);
 
   return (
     <ConnectionsContext
       value={{
-        stateLoaded: true,
+        stateLoaded,
         cacheGet,
         copyToClipboard,
         getOnlineMode,

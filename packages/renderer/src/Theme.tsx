@@ -5,7 +5,7 @@ import { setStateWithRef } from '@w3ux/utils';
 import { Router } from './Router';
 import { useEffect, useRef, useState } from 'react';
 import { ThemeProvider } from 'styled-components';
-import { useConnections } from './contexts/common';
+import { useConnections } from '@polkadot-live/contexts';
 
 export const Theme = () => {
   const { cacheGet } = useConnections();

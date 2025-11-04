@@ -3,8 +3,7 @@
 
 import { createContext } from 'react';
 import { renderToast } from '@polkadot-live/ui/utils';
-import { createSafeContextHook } from '@polkadot-live/contexts';
-import { useConnections } from '../../../contexts';
+import { createSafeContextHook, useConnections } from '@polkadot-live/contexts';
 import { useReferendaSubscriptions } from '../ReferendaSubscriptions';
 import type { ReferendaInfo } from '@polkadot-live/types/openGov';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';

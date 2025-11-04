@@ -1,10 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { createSafeContextHook } from '@polkadot-live/contexts';
+import { createSafeContextHook, useConnections } from '@polkadot-live/contexts';
 import { Flip, toast } from 'react-toastify';
 import { createContext } from 'react';
-import { useConnections } from '../../../contexts';
 import { useManage, useIntervalSubscriptions } from '../../contexts';
 import { intervalDurationsConfig } from '@polkadot-live/consts/subscriptions/interval';
 import type { AnyFunction } from '@polkadot-live/types/misc';

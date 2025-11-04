@@ -15,7 +15,7 @@
     "resolveJsonModule": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "allowSyntheticDefaultImports": true,
-    "types": ["node", "electron", "vite-plugin-svgr/client", "vitest/globals"],
+    "types": ["node", "chrome", "electron", "wicg-file-system-access", "vite-plugin-svgr/client", "vitest/globals"],
     "removeComments": true,
     "rootDir": "."
   }

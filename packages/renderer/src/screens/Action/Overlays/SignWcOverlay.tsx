@@ -4,7 +4,7 @@
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import WalletConnectSVG from '@w3ux/extension-assets/WalletConnect.svg?react';
 import { ConfigAction } from '@polkadot-live/core';
-import { useConnections } from '@ren/contexts/common';
+import { useConnections } from '@polkadot-live/contexts';
 import { useEffect } from 'react';
 import { useOverlay } from '@polkadot-live/ui/contexts';
 import { useWcFeedback, useWcVerifier } from '@ren/contexts/action';

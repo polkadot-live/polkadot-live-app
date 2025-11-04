@@ -2,12 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useMemo } from 'react';
-import { useConnections } from '../contexts';
 import { useHelp, useOverlay } from '@polkadot-live/ui/contexts';
 import {
   buildCache,
   ContextProxyProvider,
+  useConnections,
   useDialogControl,
+  useSettingFlags,
 } from '@polkadot-live/contexts';
 import {
   useAccountStatuses,
@@ -22,7 +23,6 @@ import {
   useReferendaSubscriptions,
   useRemoveHandler,
   useRenameHandler,
-  useSettingFlags,
   useTabs,
   useTaskHandler,
   useTracks,

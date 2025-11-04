@@ -2,10 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ConfigImport } from '@polkadot-live/core';
-import { createSafeContextHook } from '@polkadot-live/contexts';
+import { createSafeContextHook, useConnections } from '@polkadot-live/contexts';
 import { createContext } from 'react';
 import { useAccountStatuses, useAddresses } from '@ren/contexts/import';
-import { useConnections } from '@ren/contexts/common';
 import type { AddHandlerContextInterface } from '@polkadot-live/contexts/types/import';
 import type {
   EncodedAccount,

@@ -2374,6 +2374,7 @@ __metadata:
     "@polkadot-live/core": "workspace:*"
     "@polkadot-live/styles": "workspace:*"
     "@polkadot-live/types": "workspace:*"
+    "@types/wicg-file-system-access": "npm:^2023.10.7"
   languageName: unknown
   linkType: soft
 
@@ -2401,7 +2402,6 @@ __metadata:
     "@polkadot-live/ui": "workspace:*"
     "@types/chrome": "npm:^0.1.1"
     "@types/node": "npm:^24.0.15"
-    "@types/wicg-file-system-access": "npm:^2023.10.7"
     "@vitejs/plugin-react": "npm:^4.7.0"
     buffer: "npm:^6.0.3"
     idb: "npm:^8.0.3"

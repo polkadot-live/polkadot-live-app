@@ -5,7 +5,7 @@ import * as FA from '@fortawesome/free-solid-svg-icons';
 import WalletConnectSVG from '@w3ux/extension-assets/WalletConnect.svg?react';
 import { useEffect } from 'react';
 import { useOverlay } from '@polkadot-live/ui/contexts';
-import { useConnections } from '../../../../contexts';
+import { useConnections } from '@polkadot-live/contexts';
 import {
   useWalletConnect,
   useWcFeedback,

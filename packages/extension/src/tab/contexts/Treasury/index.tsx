@@ -4,9 +4,8 @@
 import BigNumber from 'bignumber.js';
 import { StatemintAssets } from '@polkadot-live/consts/treasury';
 import { formatBlocksToTime } from '@polkadot-live/core';
-import { useConnections } from '../../../contexts';
 import { createContext, useEffect, useRef, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/contexts';
+import { createSafeContextHook, useConnections } from '@polkadot-live/contexts';
 import { rmCommas } from '@w3ux/utils';
 import { chainCurrency, chainUnits } from '@polkadot-live/consts/chains';
 import { renderToast } from '@polkadot-live/ui/utils';

@@ -4,7 +4,7 @@
 /// Dependencies.
 import * as Core from '@polkadot-live/core';
 import { createContext } from 'react';
-import { createSafeContextHook } from '@polkadot-live/contexts';
+import { createSafeContextHook, useConnections } from '@polkadot-live/contexts';
 import {
   AccountsController,
   IntervalsController,
@@ -12,7 +12,6 @@ import {
 } from '@polkadot-live/core';
 
 /// Main window contexts.
-import { useConnections } from '@ren/contexts/common';
 import { useEvents } from '@ren/contexts/main';
 import { useManage } from '../Manage';
 import { useIntervalSubscriptions } from '../IntervalSubscriptions';

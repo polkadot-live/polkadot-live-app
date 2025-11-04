@@ -17,9 +17,8 @@ import type {
   TxStatus,
 } from '@polkadot-live/types/tx';
 import { setStateWithRef } from '@w3ux/utils';
-import { useConnections } from '../../../contexts';
 import { useOverlay } from '@polkadot-live/ui/contexts';
-import { createSafeContextHook } from '@polkadot-live/contexts';
+import { createSafeContextHook, useConnections } from '@polkadot-live/contexts';
 import { renderToast } from '@polkadot-live/ui/utils';
 import { WalletConnectModal } from '@walletconnect/modal';
 import { ChainIcon } from '@polkadot-live/ui/components';

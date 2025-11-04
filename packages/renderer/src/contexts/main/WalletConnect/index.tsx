@@ -9,10 +9,9 @@ import {
   WcError,
 } from '@polkadot-live/core';
 import { createContext, useEffect, useRef } from 'react';
-import { createSafeContextHook } from '@polkadot-live/contexts';
+import { createSafeContextHook, useConnections } from '@polkadot-live/contexts';
 import { decodeAddress, encodeAddress, u8aToHex } from 'dedot/utils';
 import { useAppSettings } from '@ren/contexts/main/AppSettings';
-import { useConnections } from '@ren/contexts/common';
 import { getSdkError } from '@walletconnect/utils';
 import UniversalProvider from '@walletconnect/universal-provider';
 

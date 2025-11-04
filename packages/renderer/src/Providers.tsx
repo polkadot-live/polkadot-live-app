@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 // General contexts.
-import { ConnectionsProvider } from '@ren/contexts/common';
 import {
   HelpProvider,
   OverlayProvider,
@@ -33,7 +32,11 @@ import {
 } from '@ren/contexts/main';
 
 // Import window contexts.
-import { DialogControlProvider } from '@polkadot-live/contexts';
+import {
+  ConnectionsProvider,
+  DialogControlProvider,
+  SettingFlagsProvider,
+} from '@polkadot-live/contexts';
 import {
   AccountStatusesProvider,
   AddressesProvider as ImportAddressesProvider,
@@ -45,9 +48,6 @@ import {
   RenameHandlerProvider,
   WalletConnectImportProvider,
 } from '@ren/contexts/import';
-
-// Settings window contexts.
-import { SettingFlagsProvider } from '@ren/contexts/settings';
 
 // Actions window contexts.
 import {

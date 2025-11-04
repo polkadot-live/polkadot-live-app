@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext, useCallback, useEffect, useRef, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/contexts';
-import { useConnections } from '../../../contexts';
+import { createSafeContextHook, useConnections } from '@polkadot-live/contexts';
 import { usePolkassembly } from '../Polkassembly';
 import { setStateWithRef } from '@w3ux/utils';
 import type { ChainID } from '@polkadot-live/types/chains';

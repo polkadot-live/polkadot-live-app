@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useConnections } from '../contexts';
+import { useConnections } from '@polkadot-live/contexts';
 import { useEffect } from 'react';
 import { useHelp } from '@polkadot-live/ui/contexts';
 import { useTabs } from './contexts';

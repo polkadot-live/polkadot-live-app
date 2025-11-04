@@ -15,8 +15,7 @@ import {
   Summary,
 } from '@polkadot-live/screens';
 import { useSideNav } from '@polkadot-live/ui/contexts';
-import { useConnections } from '../../../contexts';
-import { useSendNative } from '@polkadot-live/contexts';
+import { useConnections, useSendNative } from '@polkadot-live/contexts';
 import {
   fetchSendAccountsBrowser,
   getSpendableBalanceBrowser,

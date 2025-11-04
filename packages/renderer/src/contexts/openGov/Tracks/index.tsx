@@ -3,8 +3,7 @@
 
 import { ConfigOpenGov } from '@polkadot-live/core';
 import { createContext, useRef, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/contexts';
-import { useConnections } from '../../common/Connections';
+import { createSafeContextHook, useConnections } from '@polkadot-live/contexts';
 import { setStateWithRef } from '@w3ux/utils';
 import type { Track } from '@polkadot-live/core';
 import type { ChainID } from '@polkadot-live/types/chains';
