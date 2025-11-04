@@ -13,6 +13,7 @@ import {
   useDeleteHandler,
   useDialogControl,
   useImportHandler,
+  usePolkassembly,
   useRemoveHandler,
   useRenameHandler,
   useSettingFlags,
@@ -22,7 +23,6 @@ import {
 import {
   useLedgerFeedback,
   useLedgerHardware,
-  usePolkassembly,
   useReferenda,
   useReferendaSubscriptions,
   useTabs,

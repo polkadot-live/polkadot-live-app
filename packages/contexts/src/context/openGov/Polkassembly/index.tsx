@@ -3,14 +3,14 @@
 
 import axios from 'axios';
 import { createContext, useEffect, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/contexts';
+import { createSafeContextHook } from '../../../utils';
+import { getPolkassemblyAdapter } from './adaptors';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   PolkassemblyProposal,
   ReferendaInfo,
 } from '@polkadot-live/types/openGov';
-import type { PolkassemblyContextInterface } from '@polkadot-live/contexts/types/openGov';
-import type { SettingKey } from '@polkadot-live/types/settings';
+import type { PolkassemblyContextInterface } from '../../../types/openGov';
 
 export const PolkassemblyContext = createContext<
   PolkassemblyContextInterface | undefined
@@ -26,17 +26,13 @@ export const PolkassemblyProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const adaptor = getPolkassemblyAdapter();
   const [usePolkassemblyApi, setUsePolkassemblyApi] = useState<boolean>(false);
   const [fetchingMetadata, setFetchingMetadata] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchSetting = async () => {
-      const flag = (await chrome.runtime.sendMessage({
-        type: 'db',
-        task: 'settings:get',
-        store: 'settings',
-        key: 'setting:enable-polkassembly' as SettingKey,
-      })) as boolean;
+      const flag = await adaptor.fetchSetting();
       setUsePolkassemblyApi(flag);
     };
     fetchSetting();
@@ -56,10 +52,12 @@ export const PolkassemblyProvider = ({
     const filtered = referenda.filter(
       ({ refId }) => !cachedIds.includes(refId)
     );
+
     // Exit early if there's no data to fetch.
     if (filtered.length === 0) {
       return;
     }
+
     setFetchingMetadata(true);
 
     // Create Axios instance with base URL to Polkassembly API.

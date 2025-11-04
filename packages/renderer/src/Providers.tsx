@@ -40,6 +40,7 @@ import {
   DeleteHandlerProvider,
   DialogControlProvider,
   ImportHandlerProvider,
+  PolkassemblyProvider,
   RemoveHandlerProvider,
   RenameHandlerProvider,
   SettingFlagsProvider,
@@ -61,7 +62,6 @@ import {
 
 // OpenGov window contexts.
 import {
-  PolkassemblyProvider,
   ReferendaProvider,
   ReferendaSubscriptionsProvider,
   TaskHandlerProvider,

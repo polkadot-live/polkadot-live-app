@@ -3,7 +3,6 @@
 
 export { useLedgerFeedback, LedgerFeedbackProvider } from './LedgerFeedback';
 export { useLedgerHardware, LedgerHardwareProvider } from './LedgerHardware';
-export { usePolkassembly, PolkassemblyProvider } from './Polkassembly';
 export { useReferenda, ReferendaProvider } from './Referenda';
 export {
   useReferendaSubscriptions,
