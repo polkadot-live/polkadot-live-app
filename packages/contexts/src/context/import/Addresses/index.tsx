@@ -2,24 +2,20 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext, useEffect, useRef, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/contexts';
+import { createSafeContextHook } from '../../../utils';
+import { getImportAddressesAdapter } from '../../../adaptors/addresses';
 import { getSupportedSources } from '@polkadot-live/consts/chains';
 import { setStateWithRef } from '@w3ux/utils';
 import type {
   AccountSource,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
-import type { AddressesContextInterface } from '@polkadot-live/contexts/types/import';
-import type { AnyData } from '@polkadot-live/types/misc';
+import type { AddressesContextInterface } from '../../../types/import';
 
 export const AddressesContext = createContext<
   AddressesContextInterface | undefined
 >(undefined);
 
-/**
- * @name useAddresses
- * @summary Manages state of addresses for the `import` child window.
- */
 export const useAddresses = createSafeContextHook(
   AddressesContext,
   'AddressesContext'
@@ -30,6 +26,8 @@ export const AddressesProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const adaptor = getImportAddressesAdapter();
+
   /**
    * Generic accounts map and reference.
    */
@@ -43,50 +41,6 @@ export const AddressesProvider = ({
    */
   const getAccounts = (source: AccountSource): ImportedGenericAccount[] =>
     genericAccountsRef.current.get(source) || [];
-
-  /**
-   * Fetch stored accounts when component mounts.
-   */
-  useEffect(() => {
-    const fetchAccounts = async () => {
-      const map = new Map<AccountSource, ImportedGenericAccount[]>();
-      for (const source of getSupportedSources()) {
-        const result: ImportedGenericAccount[] | undefined =
-          await chrome.runtime.sendMessage({
-            type: 'rawAccount',
-            task: 'getAllBySource',
-            payload: { source },
-          });
-        map.set(source, result || []);
-      }
-      setStateWithRef(map, setGenericAccounts, genericAccountsRef);
-    };
-    fetchAccounts();
-  }, []);
-
-  /**
-   * Listen for state syncing messages.
-   */
-  useEffect(() => {
-    const callback = (message: AnyData) => {
-      if (message.type === 'rawAccount') {
-        switch (message.task) {
-          case 'import:setAccounts': {
-            const { ser }: { ser: string } = message.payload;
-            const arr: [AccountSource, ImportedGenericAccount[]][] =
-              JSON.parse(ser);
-            const map = new Map<AccountSource, ImportedGenericAccount[]>(arr);
-            setStateWithRef(map, setGenericAccounts, genericAccountsRef);
-            break;
-          }
-        }
-      }
-    };
-    chrome.runtime.onMessage.addListener(callback);
-    return () => {
-      chrome.runtime.onMessage.removeListener(callback);
-    };
-  }, []);
 
   /**
    * Check if an address has already been imported.
@@ -205,6 +159,30 @@ export const AddressesProvider = ({
 
     return accountNames;
   };
+
+  /**
+   * Fetch stored accounts when component mounts.
+   */
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      const map = await adaptor.fetchOnMount();
+      setStateWithRef(map, setGenericAccounts, genericAccountsRef);
+    };
+    fetchAccounts();
+  }, []);
+
+  /**
+   * Listen for state syncing messages.
+   */
+  useEffect(() => {
+    const removeListener = adaptor.listenOnMount(
+      setGenericAccounts,
+      genericAccountsRef
+    );
+    return () => {
+      removeListener && removeListener();
+    };
+  }, []);
 
   return (
     <AddressesContext

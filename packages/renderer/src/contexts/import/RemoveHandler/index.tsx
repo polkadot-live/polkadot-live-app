@@ -3,8 +3,7 @@
 
 import { ConfigImport } from '@polkadot-live/core';
 import { createContext } from 'react';
-import { createSafeContextHook } from '@polkadot-live/contexts';
-import { useAddresses } from '@ren/contexts/import';
+import { createSafeContextHook, useAddresses } from '@polkadot-live/contexts';
 import type {
   EncodedAccount,
   ImportedGenericAccount,

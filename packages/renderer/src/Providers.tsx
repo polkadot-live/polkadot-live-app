@@ -33,13 +33,13 @@ import {
 
 // Import window contexts.
 import {
+  AddressesProvider as ImportAddressesProvider,
   ConnectionsProvider,
   DialogControlProvider,
   SettingFlagsProvider,
 } from '@polkadot-live/contexts';
 import {
   AccountStatusesProvider,
-  AddressesProvider as ImportAddressesProvider,
   AddHandlerProvider,
   DeleteHandlerProvider,
   ImportHandlerProvider,

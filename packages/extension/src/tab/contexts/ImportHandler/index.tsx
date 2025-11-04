@@ -6,11 +6,14 @@ import {
   getSupportedLedgerChains,
 } from '@polkadot-live/consts/chains';
 import { createContext } from 'react';
-import { createSafeContextHook, useConnections } from '@polkadot-live/contexts';
+import {
+  createSafeContextHook,
+  useAddresses,
+  useConnections,
+} from '@polkadot-live/contexts';
 import { renderToast } from '@polkadot-live/ui/utils';
 import { decodeAddress, encodeAddress, u8aToHex } from 'dedot/utils';
 import { useAccountStatuses } from '../AccountStatuses';
-import { useAddresses } from '../Addresses';
 import type {
   AccountSource,
   EncodedAccount,

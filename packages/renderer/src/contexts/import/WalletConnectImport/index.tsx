@@ -4,8 +4,8 @@
 import * as wc from '@polkadot-live/consts/walletConnect';
 import { ConfigImport } from '@polkadot-live/core';
 import { createContext, useEffect, useRef, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/contexts';
-import { useAddresses, useImportHandler } from '@ren/contexts/import';
+import { createSafeContextHook, useAddresses } from '@polkadot-live/contexts';
+import { useImportHandler } from '@ren/contexts/import';
 import { WalletConnectModal } from '@walletconnect/modal';
 import type { WalletConnectImportContextInterface } from '@polkadot-live/contexts/types/import';
 import type {

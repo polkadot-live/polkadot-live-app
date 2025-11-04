@@ -1,10 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { createSafeContextHook } from '@polkadot-live/contexts';
+import { useAddresses, createSafeContextHook } from '@polkadot-live/contexts';
 import { createContext } from 'react';
 import { useAccountStatuses } from '../AccountStatuses';
-import { useAddresses } from '../Addresses';
 import type {
   AccountSource,
   ImportedGenericAccount,

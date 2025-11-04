@@ -12,6 +12,7 @@ import { useHelp, useOverlay, useSideNav } from '@polkadot-live/ui/contexts';
 import {
   buildCache,
   ContextProxyProvider,
+  useAddresses as useImportAddresses,
   useConnections,
   useSettingFlags,
   useDialogControl,
@@ -112,7 +113,7 @@ export const ContextProxyImport = ({ children }: ContextProxyProps) => {
         HelpCtx: () => useHelp(),
         OverlayCtx: () => useOverlay(),
         ConnectionsCtx: () => useConnections(),
-        ImportAddressesCtx: () => imports.useAddresses(),
+        ImportAddressesCtx: () => useImportAddresses(),
         AccountStatusesCtx: () => imports.useAccountStatuses(),
         DialogControlCtx: () => useDialogControl(),
         ImportHandlerCtx: () => imports.useImportHandler(),

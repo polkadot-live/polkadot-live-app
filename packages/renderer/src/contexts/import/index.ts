@@ -3,7 +3,6 @@
 
 export * from './AccountStatuses';
 export * from './AddHandler';
-export * from './Addresses';
 export * from './DeleteHandler';
 export * from './ImportHandler';
 export * from './LedgerHardware';

@@ -6,6 +6,7 @@ import { useHelp, useOverlay } from '@polkadot-live/ui/contexts';
 import {
   buildCache,
   ContextProxyProvider,
+  useAddresses as useImportAddresses,
   useConnections,
   useDialogControl,
   useSettingFlags,
@@ -14,7 +15,6 @@ import {
   useAccountStatuses,
   useAddHandler,
   useDeleteHandler,
-  useImportAddresses,
   useImportHandler,
   useLedgerFeedback,
   useLedgerHardware,

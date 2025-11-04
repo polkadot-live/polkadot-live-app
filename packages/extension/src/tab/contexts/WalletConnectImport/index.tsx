@@ -3,8 +3,7 @@
 
 import * as wc from '@polkadot-live/consts/walletConnect';
 import { createContext, useEffect, useRef, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/contexts';
-import { useAddresses } from '../Addresses';
+import { createSafeContextHook, useAddresses } from '@polkadot-live/contexts';
 import { useImportHandler } from '../ImportHandler';
 import { WalletConnectModal } from '@walletconnect/modal';
 import type { WalletConnectImportContextInterface } from '@polkadot-live/contexts/types/import';

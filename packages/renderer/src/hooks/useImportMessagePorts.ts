@@ -6,11 +6,11 @@ import { ConfigImport } from '@polkadot-live/core';
 /// Import window contexts.
 import {
   useAccountStatuses,
-  useAddresses,
   useImportHandler,
   useRemoveHandler,
   useWalletConnectImport,
 } from '@ren/contexts/import';
+import { useAddresses as useImportAddresses } from '@polkadot-live/contexts';
 import { useEffect } from 'react';
 import { renderToast } from '@polkadot-live/ui/utils';
 import type {
@@ -23,7 +23,7 @@ import type { WcFetchedAddress } from '@polkadot-live/types/walletConnect';
 export const useImportMessagePorts = () => {
   const { handleImportAddressFromBackup } = useImportHandler();
   const { setStatusForAccount } = useAccountStatuses();
-  const { handleAddressImport } = useAddresses();
+  const { handleAddressImport } = useImportAddresses();
   const { handleRemoveAddress } = useRemoveHandler();
   const { setWcFetchedAddresses, handleOpenCloseWcModal } =
     useWalletConnectImport();

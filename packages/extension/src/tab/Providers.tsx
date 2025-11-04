@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import {
+  AddressesProvider as ImportAddressesProvider,
   ConnectionsProvider,
   SettingFlagsProvider,
   DialogControlProvider,
@@ -11,7 +12,6 @@ import {
   AccountStatusesProvider,
   AddHandlerProvider,
   DeleteHandlerProvider,
-  ImportAddressesProvider,
   ImportHandlerProvider,
   LedgerFeedbackProvider,
   LedgerHardwareProvider,

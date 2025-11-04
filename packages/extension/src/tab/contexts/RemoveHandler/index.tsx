@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext } from 'react';
-import { createSafeContextHook } from '@polkadot-live/contexts';
-import { useAddresses } from '../Addresses';
+import { createSafeContextHook, useAddresses } from '@polkadot-live/contexts';
 import type {
   EncodedAccount,
   ImportedGenericAccount,
