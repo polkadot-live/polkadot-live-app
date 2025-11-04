@@ -2,3 +2,4 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 export { useTracks, TracksProvider } from './Tracks';
+export { useTreasury, TreasuryProvider } from './Treasury';

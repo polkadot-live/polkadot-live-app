@@ -17,6 +17,7 @@ import {
   useRenameHandler,
   useSettingFlags,
   useTracks,
+  useTreasury,
 } from '@polkadot-live/contexts';
 import {
   useLedgerFeedback,
@@ -26,7 +27,6 @@ import {
   useReferendaSubscriptions,
   useTabs,
   useTaskHandler,
-  useTreasury,
   useTxMeta,
   useWalletConnect,
   useWalletConnectImport,

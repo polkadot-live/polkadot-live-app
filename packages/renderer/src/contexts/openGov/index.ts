@@ -5,4 +5,3 @@ export * from './Polkassembly';
 export * from './Referenda';
 export * from './ReferendaSubscriptions';
 export * from './TaskHandler';
-export * from './Treasury';

@@ -23,6 +23,7 @@ import {
   useRenameHandler,
   useSettingFlags,
   useTracks,
+  useTreasury,
 } from '@polkadot-live/contexts';
 
 interface ContextProxyProps {
@@ -97,7 +98,7 @@ export const ContextProxyOpenGov = ({ children }: ContextProxyProps) => {
         OverlayCtx: () => useOverlay(),
         ConnectionsCtx: () => useConnections(),
         TracksCtx: () => useTracks(),
-        TreasuryCtx: () => openGov.useTreasury(),
+        TreasuryCtx: () => useTreasury(),
         PolkassemblyCtx: () => openGov.usePolkassembly(),
         ReferendaCtx: () => openGov.useReferenda(),
         TaskHandlerCtx: () => openGov.useTaskHandler(),
