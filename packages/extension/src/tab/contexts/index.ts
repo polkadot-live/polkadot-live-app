@@ -11,7 +11,6 @@ export {
 } from './ReferendaSubscriptions';
 export { useTabs, TabsProvider } from './Tabs';
 export { useTaskHandler, TaskHandlerProvider } from './TaskHandler';
-export { useTracks, TracksProvider } from './Tracks';
 export { useTreasury, TreasuryProvider } from './Treasury';
 export { useTxMeta, TxMetaProvider } from './TxMeta';
 export { useWalletConnect, WalletConnectProvider } from './WalletConnect';

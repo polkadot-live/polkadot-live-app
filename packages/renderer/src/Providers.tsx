@@ -43,6 +43,7 @@ import {
   RemoveHandlerProvider,
   RenameHandlerProvider,
   SettingFlagsProvider,
+  TracksProvider,
 } from '@polkadot-live/contexts';
 import {
   LedgerHardwareProvider,
@@ -63,7 +64,6 @@ import {
   ReferendaProvider,
   ReferendaSubscriptionsProvider,
   TaskHandlerProvider,
-  TracksProvider,
   TreasuryProvider,
 } from '@ren/contexts/openGov';
 

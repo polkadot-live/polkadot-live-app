@@ -17,11 +17,12 @@ import {
   useAddresses as useImportAddresses,
   useConnections,
   useDeleteHandler,
+  useDialogControl,
   useImportHandler,
   useRemoveHandler,
   useRenameHandler,
   useSettingFlags,
-  useDialogControl,
+  useTracks,
 } from '@polkadot-live/contexts';
 
 interface ContextProxyProps {
@@ -95,7 +96,7 @@ export const ContextProxyOpenGov = ({ children }: ContextProxyProps) => {
         HelpCtx: () => useHelp(),
         OverlayCtx: () => useOverlay(),
         ConnectionsCtx: () => useConnections(),
-        TracksCtx: () => openGov.useTracks(),
+        TracksCtx: () => useTracks(),
         TreasuryCtx: () => openGov.useTreasury(),
         PolkassemblyCtx: () => openGov.usePolkassembly(),
         ReferendaCtx: () => openGov.useReferenda(),

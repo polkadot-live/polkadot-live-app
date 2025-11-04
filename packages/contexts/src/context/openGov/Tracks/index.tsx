@@ -1,13 +1,14 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ConfigOpenGov } from '@polkadot-live/core';
 import { createContext, useRef, useState } from 'react';
-import { createSafeContextHook, useConnections } from '@polkadot-live/contexts';
+import { createSafeContextHook } from '../../../utils';
+import { useConnections } from '../../common';
 import { setStateWithRef } from '@w3ux/utils';
-import type { Track } from '@polkadot-live/core';
+import { getTracksAdapter } from './adaptors';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { TracksContextInterface } from '@polkadot-live/contexts/types/openGov';
+import type { Track } from '@polkadot-live/core';
+import type { TracksContextInterface } from '../../../types/openGov';
 
 export const TracksContext = createContext<TracksContextInterface | undefined>(
   undefined
@@ -16,6 +17,7 @@ export const TracksContext = createContext<TracksContextInterface | undefined>(
 export const useTracks = createSafeContextHook(TracksContext, 'TracksContext');
 
 export const TracksProvider = ({ children }: { children: React.ReactNode }) => {
+  const adaptor = getTracksAdapter();
   const { getOnlineMode } = useConnections();
 
   const [tracksMap, setTracksMap] = useState(new Map<ChainID, Track[]>());
@@ -26,11 +28,7 @@ export const TracksProvider = ({ children }: { children: React.ReactNode }) => {
   // Initiate fetching tracks.
   const fetchTracksData = (chainId: ChainID) => {
     if (getOnlineMode() && !tracksMap.has(chainId)) {
-      setFetchingTracks(true);
-      ConfigOpenGov.portOpenGov.postMessage({
-        task: 'openGov:tracks:get',
-        data: { chainId },
-      });
+      requestTracks(chainId);
     }
   };
 
@@ -54,11 +52,7 @@ export const TracksProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Request tracks.
   const requestTracks = (chainId: ChainID) => {
-    setFetchingTracks(true);
-    ConfigOpenGov.portOpenGov.postMessage({
-      task: 'openGov:tracks:get',
-      data: { chainId },
-    });
+    adaptor.requestTracks(chainId, setFetchingTracks, receiveTracksData);
   };
 
   return (

@@ -12,6 +12,7 @@ import {
   RemoveHandlerProvider,
   RenameHandlerProvider,
   SettingFlagsProvider,
+  TracksProvider,
 } from '@polkadot-live/contexts';
 import { HelpProvider, OverlayProvider } from '@polkadot-live/ui/contexts';
 import {
@@ -22,7 +23,6 @@ import {
   ReferendaSubscriptionsProvider,
   TabsProvider,
   TaskHandlerProvider,
-  TracksProvider,
   TreasuryProvider,
   TxMetaProvider,
   WalletConnectProvider,
