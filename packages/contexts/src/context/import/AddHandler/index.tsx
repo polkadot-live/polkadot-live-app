@@ -6,7 +6,7 @@ import { useAccountStatuses } from '../AccountStatuses';
 import { useAddresses } from '../Addresses';
 import { useConnections } from '../../common';
 import { createContext } from 'react';
-import { getAddHandlerAdapter } from '../../../adaptors';
+import { getAddHandlerAdapter } from './adaptors';
 import type { AddHandlerContextInterface } from '../../../types/import';
 import type {
   EncodedAccount,

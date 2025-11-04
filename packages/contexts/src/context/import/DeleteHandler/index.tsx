@@ -5,7 +5,7 @@ import { useAccountStatuses } from '../AccountStatuses';
 import { useAddresses } from '../Addresses';
 import { createSafeContextHook } from '../../../utils';
 import { createContext } from 'react';
-import { getDeleteHandlerAdapter } from '../../../adaptors';
+import { getDeleteHandlerAdapter } from './adaptors';
 import type {
   AccountSource,
   ImportedGenericAccount,

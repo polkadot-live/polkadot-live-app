@@ -3,7 +3,7 @@
 
 import { createContext, useEffect, useRef, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
-import { getImportAddressesAdapter } from '../../../adaptors/addresses';
+import { getImportAddressesAdapter } from './adaptors';
 import { getSupportedSources } from '@polkadot-live/consts/chains';
 import { setStateWithRef } from '@w3ux/utils';
 import type {

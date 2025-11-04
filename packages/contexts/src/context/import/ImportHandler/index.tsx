@@ -11,7 +11,7 @@ import { useAccountStatuses } from '../AccountStatuses';
 import { useAddresses } from '../Addresses';
 import { useConnections } from '../../common';
 import { decodeAddress, encodeAddress, u8aToHex } from 'dedot/utils';
-import { getImportHandlerAdapter } from '../../../adaptors';
+import { getImportHandlerAdapter } from './adaptors';
 import { renderToast } from '@polkadot-live/ui/utils';
 import type {
   AccountSource,

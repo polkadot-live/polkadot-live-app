@@ -6,7 +6,7 @@ import { createSafeContextHook } from '../../../utils';
 import { getDefaultSettings } from '@polkadot-live/consts/settings';
 import { setStateWithRef } from '@w3ux/utils';
 import { useConnections } from '../../common';
-import { getSettingFlagsAdapter } from '../../../adaptors';
+import { getSettingFlagsAdapter } from './adaptors';
 import type { SettingKey, SettingItem } from '@polkadot-live/types/settings';
 import type { SettingFlagsContextInterface } from '../../../types/settings';
 

@@ -5,7 +5,7 @@ import { createContext, useEffect, useRef, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
 import { useAddresses } from '../Addresses';
 import { useRemoveHandler } from '../RemoveHandler';
-import { getAccountStatusesAdapter } from '../../../adaptors/accountStatuses';
+import { getAccountStatusesAdapter } from './adaptors';
 import { getSupportedSources } from '@polkadot-live/consts/chains';
 import { setStateWithRef } from '@w3ux/utils';
 import type { AccountStatusesContextInterface } from '../../../types/import';

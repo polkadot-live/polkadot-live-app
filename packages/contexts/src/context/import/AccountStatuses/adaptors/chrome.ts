@@ -6,8 +6,8 @@ import type {
   EncodedAccount,
   ImportedGenericAccount,
 } from '@polkadot-live/types';
-import type { AccountStatusesAdaptor } from './types';
 import { renderToast } from '@polkadot-live/ui/utils';
+import type { AccountStatusesAdaptor } from './types';
 
 export const chromeAdapter: AccountStatusesAdaptor = {
   listenOnMount: (setStatusForAccount, handleRemoveAddress) => {

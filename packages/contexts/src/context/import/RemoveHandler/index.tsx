@@ -3,7 +3,7 @@
 
 import { createContext } from 'react';
 import { createSafeContextHook } from '../../../utils';
-import { getRemoveHandlerAdapter } from '../../../adaptors/removeHandler';
+import { getRemoveHandlerAdapter } from './adaptors';
 import { useAddresses } from '../Addresses';
 import type {
   EncodedAccount,

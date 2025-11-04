@@ -4,7 +4,7 @@
 import * as themeVariables from '@polkadot-live/styles/theme/variables';
 import { createSafeContextHook } from '../../../utils';
 import { createContext, useEffect, useRef, useState } from 'react';
-import { getConnectionsAdapter } from '../../../adaptors/connections';
+import { getConnectionsAdapter } from './adaptors';
 import { initSharedState } from '@polkadot-live/consts/sharedState';
 import { setStateWithRef } from '@w3ux/utils';
 import type { ActionMeta } from '@polkadot-live/types/tx';
