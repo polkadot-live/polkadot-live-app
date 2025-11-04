@@ -14,6 +14,7 @@ import {
   useDialogControl,
   useImportHandler,
   usePolkassembly,
+  useReferenda,
   useRemoveHandler,
   useRenameHandler,
   useSettingFlags,
@@ -23,7 +24,6 @@ import {
 import {
   useLedgerFeedback,
   useLedgerHardware,
-  useReferenda,
   useReferendaSubscriptions,
   useTabs,
   useTaskHandler,

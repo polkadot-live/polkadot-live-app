@@ -10,6 +10,7 @@ import {
   DialogControlProvider,
   ImportHandlerProvider,
   PolkassemblyProvider,
+  ReferendaProvider,
   RemoveHandlerProvider,
   RenameHandlerProvider,
   SettingFlagsProvider,
@@ -20,7 +21,6 @@ import { HelpProvider, OverlayProvider } from '@polkadot-live/ui/contexts';
 import {
   LedgerFeedbackProvider,
   LedgerHardwareProvider,
-  ReferendaProvider,
   ReferendaSubscriptionsProvider,
   TabsProvider,
   TaskHandlerProvider,

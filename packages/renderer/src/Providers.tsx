@@ -41,6 +41,7 @@ import {
   DialogControlProvider,
   ImportHandlerProvider,
   PolkassemblyProvider,
+  ReferendaProvider,
   RemoveHandlerProvider,
   RenameHandlerProvider,
   SettingFlagsProvider,
@@ -62,7 +63,6 @@ import {
 
 // OpenGov window contexts.
 import {
-  ReferendaProvider,
   ReferendaSubscriptionsProvider,
   TaskHandlerProvider,
 } from '@ren/contexts/openGov';

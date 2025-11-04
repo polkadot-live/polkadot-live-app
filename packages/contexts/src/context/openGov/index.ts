@@ -2,5 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 export { usePolkassembly, PolkassemblyProvider } from './Polkassembly';
+export { useReferenda, ReferendaProvider } from './Referenda';
 export { useTracks, TracksProvider } from './Tracks';
 export { useTreasury, TreasuryProvider } from './Treasury';
