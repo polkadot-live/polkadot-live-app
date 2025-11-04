@@ -1,15 +1,13 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ConfigImport } from '@polkadot-live/core';
-import {
-  createSafeContextHook,
-  useAccountStatuses,
-  useAddresses,
-  useConnections,
-} from '@polkadot-live/contexts';
+import { createSafeContextHook } from '../../../utils';
+import { useAccountStatuses } from '../AccountStatuses';
+import { useAddresses } from '../Addresses';
+import { useConnections } from '../../common';
 import { createContext } from 'react';
-import type { AddHandlerContextInterface } from '@polkadot-live/contexts/types/import';
+import { getAddHandlerAdapter } from '../../../adaptors';
+import type { AddHandlerContextInterface } from '../../../types/import';
 import type {
   EncodedAccount,
   ImportedGenericAccount,
@@ -29,6 +27,7 @@ export const AddHandlerProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const adaptor = getAddHandlerAdapter();
   const { getOnlineMode } = useConnections();
   const { setStatusForAccount } = useAccountStatuses();
   const { handleAddressUpdate } = useAddresses();
@@ -77,10 +76,7 @@ export const AddHandlerProvider = ({
    * Update address in store.
    */
   const updateAddressInStore = async (account: ImportedGenericAccount) => {
-    await window.myAPI.rawAccountTask({
-      action: 'raw-account:update',
-      data: { serialized: JSON.stringify(account) },
-    });
+    await adaptor.updateAddressInStore(account);
   };
 
   /**
@@ -90,13 +86,7 @@ export const AddHandlerProvider = ({
     encodedAccount: EncodedAccount,
     genericAccount: ImportedGenericAccount
   ) => {
-    ConfigImport.portImport.postMessage({
-      task: 'renderer:address:import',
-      data: {
-        serEncodedAccount: JSON.stringify(encodedAccount),
-        serGenericAccount: JSON.stringify(genericAccount),
-      },
-    });
+    adaptor.postToMain(encodedAccount, genericAccount);
   };
 
   return (

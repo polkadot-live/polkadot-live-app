@@ -8,6 +8,7 @@ import {
   ContextProxyProvider,
   useAccountStatuses,
   useAddresses as useImportAddresses,
+  useAddHandler,
   useConnections,
   useDialogControl,
   useImportHandler,
@@ -15,7 +16,6 @@ import {
   useSettingFlags,
 } from '@polkadot-live/contexts';
 import {
-  useAddHandler,
   useDeleteHandler,
   useLedgerFeedback,
   useLedgerHardware,

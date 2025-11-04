@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 export * from './accountStatuses';
+export * from './addHandler';
 export * from './addresses';
 export * from './connections';
 export * from './importHandler';

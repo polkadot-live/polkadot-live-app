@@ -35,6 +35,7 @@ import {
 import {
   AccountStatusesProvider,
   AddressesProvider as ImportAddressesProvider,
+  AddHandlerProvider,
   ConnectionsProvider,
   DialogControlProvider,
   ImportHandlerProvider,
@@ -42,7 +43,6 @@ import {
   SettingFlagsProvider,
 } from '@polkadot-live/contexts';
 import {
-  AddHandlerProvider,
   DeleteHandlerProvider,
   LedgerHardwareProvider,
   RenameHandlerProvider,
