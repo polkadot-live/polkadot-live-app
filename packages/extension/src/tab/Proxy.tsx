@@ -15,6 +15,7 @@ import {
   useImportHandler,
   usePolkassembly,
   useReferenda,
+  useReferendaSubscriptions,
   useRemoveHandler,
   useRenameHandler,
   useSettingFlags,
@@ -24,7 +25,6 @@ import {
 import {
   useLedgerFeedback,
   useLedgerHardware,
-  useReferendaSubscriptions,
   useTabs,
   useTaskHandler,
   useTxMeta,

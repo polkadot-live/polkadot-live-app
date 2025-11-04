@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext, useEffect, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/contexts';
-import type { AnyData } from '@polkadot-live/types/misc';
+import { createSafeContextHook } from '../../../utils';
+import { getReferendaSubscriptionsAdapter } from './adaptors';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
-import type { ReferendaSubscriptionsContextInterface } from '@polkadot-live/contexts/types/openGov';
+import type { ReferendaSubscriptionsContextInterface } from '../../../types/openGov';
 import type { ReferendaInfo, RefStatus } from '@polkadot-live/types/openGov';
 
 export const ReferendaSubscriptionsContext = createContext<
@@ -23,6 +23,8 @@ export const ReferendaSubscriptionsProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const adaptor = getReferendaSubscriptionsAdapter();
+
   // Cached referenda subscriptions.
   const [subscriptions, setSubscriptions] = useState<
     Map<ChainID, IntervalSubscription[]>
@@ -170,7 +172,6 @@ export const ReferendaSubscriptionsProvider = ({
     setSubscriptions((prev) => {
       const { action, chainId, referendumId: refId } = task;
       const cloned = new Map(prev);
-
       if (!cloned.has(chainId)) {
         cloned.set(chainId, []);
       }
@@ -185,48 +186,24 @@ export const ReferendaSubscriptionsProvider = ({
 
   // Fetch interval subscriptions from store and initialize state on mount.
   useEffect(() => {
-    chrome.runtime
-      .sendMessage({
-        type: 'intervalSubscriptions',
-        task: 'getAll',
-      })
-      .then((result: IntervalSubscription[]) => {
+    adaptor.fetchOnMount().then((result) => {
+      if (result) {
         for (const task of result) {
           addReferendaSubscription(task);
         }
-      });
+      }
+    });
   }, []);
 
   // Listen for messages from popup.
   useEffect(() => {
-    const callback = (message: AnyData) => {
-      if (message.type === 'intervalSubscriptions') {
-        switch (message.task) {
-          case 'import:setSubscriptions': {
-            const { tasks }: { tasks: IntervalSubscription[] } =
-              message.payload;
-            for (const task of tasks) {
-              removeReferendaSubscription(task);
-              task.status === 'enable' && addReferendaSubscription(task);
-            }
-            break;
-          }
-          case 'syncIntervalSubscriptionUpdate': {
-            const { task }: { task: IntervalSubscription } = message.payload;
-            updateReferendaSubscription(task);
-            break;
-          }
-          case 'syncIntervalSubscriptionRemove': {
-            const { task }: { task: IntervalSubscription } = message.payload;
-            removeReferendaSubscription(task);
-            break;
-          }
-        }
-      }
-    };
-    chrome.runtime.onMessage.addListener(callback);
+    const removeListener = adaptor.listenOnMount(
+      addReferendaSubscription,
+      removeReferendaSubscription,
+      updateReferendaSubscription
+    );
     return () => {
-      chrome.runtime.onMessage.removeListener(callback);
+      removeListener && removeListener();
     };
   }, []);
 

@@ -3,10 +3,6 @@
 
 export { useLedgerFeedback, LedgerFeedbackProvider } from './LedgerFeedback';
 export { useLedgerHardware, LedgerHardwareProvider } from './LedgerHardware';
-export {
-  useReferendaSubscriptions,
-  ReferendaSubscriptionsProvider,
-} from './ReferendaSubscriptions';
 export { useTabs, TabsProvider } from './Tabs';
 export { useTaskHandler, TaskHandlerProvider } from './TaskHandler';
 export { useTxMeta, TxMetaProvider } from './TxMeta';

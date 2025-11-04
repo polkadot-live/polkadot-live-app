@@ -3,5 +3,9 @@
 
 export { usePolkassembly, PolkassemblyProvider } from './Polkassembly';
 export { useReferenda, ReferendaProvider } from './Referenda';
+export {
+  useReferendaSubscriptions,
+  ReferendaSubscriptionsProvider,
+} from './ReferendaSubscriptions';
 export { useTracks, TracksProvider } from './Tracks';
 export { useTreasury, TreasuryProvider } from './Treasury';

@@ -11,6 +11,7 @@ import {
   ImportHandlerProvider,
   PolkassemblyProvider,
   ReferendaProvider,
+  ReferendaSubscriptionsProvider,
   RemoveHandlerProvider,
   RenameHandlerProvider,
   SettingFlagsProvider,
@@ -21,7 +22,6 @@ import { HelpProvider, OverlayProvider } from '@polkadot-live/ui/contexts';
 import {
   LedgerFeedbackProvider,
   LedgerHardwareProvider,
-  ReferendaSubscriptionsProvider,
   TabsProvider,
   TaskHandlerProvider,
   TxMetaProvider,

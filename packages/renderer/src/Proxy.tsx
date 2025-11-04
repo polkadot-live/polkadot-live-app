@@ -21,6 +21,7 @@ import {
   useImportHandler,
   usePolkassembly,
   useReferenda,
+  useReferendaSubscriptions,
   useRemoveHandler,
   useRenameHandler,
   useSettingFlags,
@@ -104,7 +105,7 @@ export const ContextProxyOpenGov = ({ children }: ContextProxyProps) => {
         PolkassemblyCtx: () => usePolkassembly(),
         ReferendaCtx: () => useReferenda(),
         TaskHandlerCtx: () => openGov.useTaskHandler(),
-        ReferendaSubscriptionsCtx: () => openGov.useReferendaSubscriptions(),
+        ReferendaSubscriptionsCtx: () => useReferendaSubscriptions(),
       }),
     []
   );

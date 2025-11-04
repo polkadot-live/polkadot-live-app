@@ -42,6 +42,7 @@ import {
   ImportHandlerProvider,
   PolkassemblyProvider,
   ReferendaProvider,
+  ReferendaSubscriptionsProvider,
   RemoveHandlerProvider,
   RenameHandlerProvider,
   SettingFlagsProvider,
@@ -62,10 +63,7 @@ import {
 } from '@ren/contexts/action';
 
 // OpenGov window contexts.
-import {
-  ReferendaSubscriptionsProvider,
-  TaskHandlerProvider,
-} from '@ren/contexts/openGov';
+import { TaskHandlerProvider } from '@ren/contexts/openGov';
 
 // Other imports.
 import { Theme } from './Theme';
