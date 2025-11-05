@@ -5,3 +5,4 @@ export { useAddresses, AddressesProvider } from './Addresses';
 export { useAppSettings, AppSettingsProvider } from './AppSettings';
 export { useApiHealth, ApiHealthProvider } from './ApiHealth';
 export { useChains, ChainsProvider } from './Chains';
+export { useManage, ManageProvider } from './Manage';

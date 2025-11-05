@@ -4,7 +4,6 @@
 export { useBootstrapping, BootstrappingProvider } from './Bootstrapping';
 export { useCogMenu, CogMenuProvider } from './CogMenu';
 export { useEvents, EventsProvider } from './Events';
-export { useManage, ManageProvider } from './Manage';
 export {
   useIntervalSubscriptions,
   IntervalSubscriptionsProvider,

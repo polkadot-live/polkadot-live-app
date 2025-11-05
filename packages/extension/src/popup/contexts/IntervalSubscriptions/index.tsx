@@ -2,12 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext, useEffect, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/contexts';
+import { createSafeContextHook, useManage } from '@polkadot-live/contexts';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { IntervalSubscriptionsContextInterface } from '@polkadot-live/contexts/types/main';
-import { useManage } from '../Manage';
 
 export const IntervalSubscriptionsContext = createContext<
   IntervalSubscriptionsContextInterface | undefined

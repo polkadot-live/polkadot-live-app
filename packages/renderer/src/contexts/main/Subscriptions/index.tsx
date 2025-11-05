@@ -7,8 +7,8 @@ import {
   createSafeContextHook,
   useAddresses,
   useConnections,
+  useManage,
 } from '@polkadot-live/contexts';
-import { useManage } from '@ren/contexts/main/Manage';
 import { renderToast } from '@polkadot-live/ui/utils';
 import {
   AccountsController,

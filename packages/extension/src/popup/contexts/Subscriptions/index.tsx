@@ -2,9 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext, useEffect, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/contexts';
+import { createSafeContextHook, useManage } from '@polkadot-live/contexts';
 import { renderToast } from '@polkadot-live/ui/utils';
-import { useManage } from '../Manage';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAccountData } from '@polkadot-live/types/accounts';

@@ -19,6 +19,7 @@ import {
   useAddresses,
   useAppSettings,
   useConnections,
+  useManage,
 } from '@polkadot-live/contexts';
 
 import type * as OG from '@polkadot-live/types/openGov';
@@ -68,7 +69,7 @@ export const useMainMessagePorts = () => {
     setRenderedSubscriptions,
     tryAddIntervalSubscription,
     tryRemoveIntervalSubscription,
-  } = MainCtx.useManage();
+  } = useManage();
 
   /**
    * @name handleImportAddress

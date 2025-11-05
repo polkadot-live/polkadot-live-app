@@ -2,15 +2,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useState, createContext, useRef, useEffect } from 'react';
-import { createSafeContextHook } from '@polkadot-live/contexts';
-import type { ReactNode } from 'react';
+import { createSafeContextHook } from '../../../utils';
+import { getManageAdapter } from './adaptors';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   IntervalSubscription,
   WrappedSubscriptionTasks,
 } from '@polkadot-live/types/subscriptions';
-import type { AnyData } from '@polkadot-live/types/misc';
-import type { ChainID } from '@polkadot-live/types/chains';
-import type { ManageContextInterface } from '@polkadot-live/contexts/types/main';
+import type { ManageContextInterface } from '../../../types/main';
+import type { ReactNode } from 'react';
 
 export const ManageContext = createContext<ManageContextInterface | undefined>(
   undefined
@@ -19,6 +19,8 @@ export const ManageContext = createContext<ManageContextInterface | undefined>(
 export const useManage = createSafeContextHook(ManageContext, 'ManageContext');
 
 export const ManageProvider = ({ children }: { children: ReactNode }) => {
+  const adaptor = getManageAdapter();
+
   // Subscription tasks being rendered under the Manage tab.
   const [renderedSubscriptionsState, setRenderedSubscriptionsState] =
     useState<WrappedSubscriptionTasks>({ type: '', tasks: [] });
@@ -96,12 +98,10 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
         .sort((a, b) => a - b)
         .reverse()
     );
-
     // Insert IDs as map keys in order.
     for (const rid of referendumIds) {
       map.set(rid, []);
     }
-
     // Insert subscriptions into map.
     for (const task of dynamicIntervalTasksState) {
       if (!task.referendumId) {
@@ -117,7 +117,6 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
           )
         : map.set(rid, [{ ...task }]);
     }
-
     // Remove any empty keys in the map.
     for (const [rid, tasks] of map.entries()) {
       tasks.length === 0 && map.delete(rid);
@@ -127,19 +126,9 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
 
   // Listen for state messages.
   useEffect(() => {
-    const callback = (message: AnyData) => {
-      if (message.type === 'subscriptions') {
-        switch (message.task) {
-          case 'clearRenderedSubscriptions': {
-            setRenderedSubscriptions({ type: '', tasks: [] });
-            break;
-          }
-        }
-      }
-    };
-    chrome.runtime.onMessage.addListener(callback);
+    const removeListener = adaptor.onMount(setRenderedSubscriptionsState);
     return () => {
-      chrome.runtime.onMessage.removeListener(callback);
+      removeListener && removeListener();
     };
   }, []);
 

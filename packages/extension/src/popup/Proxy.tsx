@@ -8,7 +8,6 @@ import {
   useEvents,
   useIntervalSubscriptions,
   useIntervalTasksManager,
-  useManage,
   useSubscriptions,
   useSummary,
 } from './contexts';
@@ -21,6 +20,7 @@ import {
   useAppSettings,
   useChains,
   useConnections,
+  useManage,
 } from '@polkadot-live/contexts';
 
 interface ContextProxyProps {
