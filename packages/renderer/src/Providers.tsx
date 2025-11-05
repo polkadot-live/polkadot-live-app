@@ -10,7 +10,6 @@ import {
 
 // Main window contexts.
 import {
-  ApiHealthProvider,
   BootstrappingProvider,
   ChainsProvider,
   CogMenuProvider,
@@ -30,6 +29,7 @@ import {
 import {
   AddressesProvider,
   AppSettingsProvider,
+  ApiHealthProvider,
   AccountStatusesProvider,
   ImportAddressesProvider,
   AddHandlerProvider,

@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext, useEffect, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/contexts';
-import type { AnyData } from '@polkadot-live/types/misc';
+import { createSafeContextHook } from '../../../utils';
+import { getApiHealthAdapter } from './adaptors';
 import type { ApiConnectResult, NodeEndpoint } from '@polkadot-live/types/apis';
 import type { ApiError } from '@polkadot-live/core';
-import type { ApiHealthContextInterface } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { ApiHealthContextInterface } from '../../../types/main';
 
 export const ApiHealthContext = createContext<
   ApiHealthContextInterface | undefined
@@ -23,6 +23,7 @@ export const ApiHealthProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const adaptor = getApiHealthAdapter();
   const [failedConnections, setFailedConnections] = useState(
     new Map<ChainID, ApiConnectResult<ApiError>>()
   );
@@ -36,42 +37,22 @@ export const ApiHealthProvider = ({
   /**
    * Attempt connecting to a chain API.
    */
-  const startApi = async (chainId: ChainID) => {
-    const data = { type: 'api', task: 'startApi', chainId };
-    await chrome.runtime.sendMessage(data);
-  };
+  const startApi = async (chainId: ChainID) =>
+    await adaptor.startApi(chainId, failedConnections);
 
   /**
    * Handle settings a new chain RPC endpoint.
    */
-  const onEndpointChange = async (chainId: ChainID, endpoint: NodeEndpoint) => {
-    const meta = { chainId, endpoint };
-    const data = { type: 'api', task: 'endpointChange', meta };
-    await chrome.runtime.sendMessage(data);
-  };
+  const onEndpointChange = async (chainId: ChainID, endpoint: NodeEndpoint) =>
+    await adaptor.onEndpointChange(chainId, endpoint);
 
   /**
    * Listen for react state tasks from background worker.
    */
   useEffect(() => {
-    const callback = (message: AnyData) => {
-      const { type, task } = message;
-      if (type === 'api') {
-        switch (task) {
-          case 'state:failedConnections': {
-            const { ser }: { ser: string } = message.payload;
-            const array: [ChainID, ApiConnectResult<ApiError>][] =
-              JSON.parse(ser);
-            const map = new Map<ChainID, ApiConnectResult<ApiError>>(array);
-            setFailedConnections(map);
-            break;
-          }
-        }
-      }
-    };
-    chrome.runtime.onMessage.addListener(callback);
+    const removeListener = adaptor.onMount(setFailedConnections);
     return () => {
-      chrome.runtime.onMessage.removeListener(callback);
+      removeListener && removeListener();
     };
   }, []);
 
