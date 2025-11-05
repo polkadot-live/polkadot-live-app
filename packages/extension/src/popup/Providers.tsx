@@ -5,13 +5,13 @@ import {
   AddressesProvider,
   ApiHealthProvider,
   AppSettingsProvider,
+  ChainsProvider,
   ConnectionsProvider,
 } from '@polkadot-live/contexts';
 import { HelpProvider, SideNavProvider } from '@polkadot-live/ui/contexts';
 import { withProviders } from '@polkadot-live/ui/hooks';
 import {
   BootstrappingProvider,
-  ChainsProvider,
   CogMenuProvider,
   EventsProvider,
   IntervalSubscriptionsProvider,

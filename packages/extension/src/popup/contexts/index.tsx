@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 export { useBootstrapping, BootstrappingProvider } from './Bootstrapping';
-export { useChains, ChainsProvider } from './Chains';
 export { useCogMenu, CogMenuProvider } from './CogMenu';
 export { useEvents, EventsProvider } from './Events';
 export { useManage, ManageProvider } from './Manage';

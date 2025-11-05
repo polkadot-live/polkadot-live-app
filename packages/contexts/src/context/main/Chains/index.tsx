@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import React, { createContext, useEffect, useState } from 'react';
-import { createSafeContextHook, useApiHealth } from '@polkadot-live/contexts';
-import { APIsController } from '@polkadot-live/core';
+import { createSafeContextHook } from '../../../utils';
+import { useApiHealth } from '../ApiHealth';
 import { ChainList } from '@polkadot-live/consts/chains';
-import type { ChainsContextInterface } from '@polkadot-live/contexts/types/main';
+import { getChainsAdapter } from './adaptors';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { ChainsContextInterface } from '../../../types/main';
 import type { FlattenedAPIData } from '@polkadot-live/types/apis';
 
 export const ChainsContext = createContext<ChainsContextInterface | undefined>(
@@ -16,6 +17,7 @@ export const ChainsContext = createContext<ChainsContextInterface | undefined>(
 export const useChains = createSafeContextHook(ChainsContext, 'ChainsContext');
 
 export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
+  const adaptor = getChainsAdapter();
   const { startApi } = useApiHealth();
   const [uiTrigger, setUiTrigger] = useState(false);
 
@@ -70,7 +72,7 @@ export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
    */
   const onDisconnectClick = async (chainId: ChainID) => {
     setWorkingDisconnects((pv) => new Map(pv).set(chainId, true));
-    await APIsController.close(chainId);
+    await adaptor.onDisconnectApi(chainId);
     setWorkingDisconnects((pv) => new Map(pv).set(chainId, false));
   };
 
@@ -91,11 +93,20 @@ export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
   }, [uiTrigger]);
 
   /**
-   * Cache chain state setter in controller for updaing UI.
+   * Handle mounting.
    */
   useEffect(() => {
-    APIsController.cachedSetChains = setChains;
-    APIsController.setUiTrigger = setUiTrigger;
+    adaptor.onMount();
+  }, []);
+
+  /**
+   * Listen for react state tasks from background worker.
+   */
+  useEffect(() => {
+    const removeListener = adaptor.listenOnMount(setChains, setUiTrigger);
+    return () => {
+      removeListener && removeListener();
+    };
   }, []);
 
   return (

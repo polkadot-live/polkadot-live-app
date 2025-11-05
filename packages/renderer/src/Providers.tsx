@@ -11,7 +11,6 @@ import {
 // Main window contexts.
 import {
   BootstrappingProvider,
-  ChainsProvider,
   CogMenuProvider,
   DataBackupProvider,
   EventsProvider,
@@ -33,6 +32,7 @@ import {
   AccountStatusesProvider,
   ImportAddressesProvider,
   AddHandlerProvider,
+  ChainsProvider,
   ConnectionsProvider,
   DeleteHandlerProvider,
   DialogControlProvider,

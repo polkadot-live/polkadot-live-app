@@ -4,7 +4,6 @@
 import { useMemo } from 'react';
 import {
   useBootstrapping,
-  useChains,
   useCogMenu,
   useEvents,
   useIntervalSubscriptions,
@@ -20,6 +19,7 @@ import {
   useAddresses,
   useApiHealth,
   useAppSettings,
+  useChains,
   useConnections,
 } from '@polkadot-live/contexts';
 
