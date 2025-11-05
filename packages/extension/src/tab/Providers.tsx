@@ -3,7 +3,7 @@
 
 import {
   AccountStatusesProvider,
-  AddressesProvider as ImportAddressesProvider,
+  ImportAddressesProvider,
   AddHandlerProvider,
   ConnectionsProvider,
   DeleteHandlerProvider,
@@ -41,7 +41,7 @@ export const Providers = withProviders(
   TracksProvider,
   ImportAddressesProvider,
   RemoveHandlerProvider,
-  AccountStatusesProvider, // useAddresses, useRemoveHandler
+  AccountStatusesProvider, // useImportAddresses, useRemoveHandler
   AddHandlerProvider, // useAccountStatuses
   ImportHandlerProvider, // useAccountStatuses
   RenameHandlerProvider,

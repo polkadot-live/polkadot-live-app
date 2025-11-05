@@ -11,6 +11,15 @@ export const chromeAdapter: TabsAdaptor = {
     tab && addTab(tab);
   },
 
+  onCloseTab: (closeViewId) => {
+    const msg = { type: 'tabs', task: 'closeTab', tab: closeViewId };
+    chrome.runtime.sendMessage(msg);
+  },
+
+  onClickTab: () => {
+    /* empty */
+  },
+
   listenOnMount: (addTab) => {
     const callback = (message: AnyData) => {
       if (message.type !== 'tabs' && message.type !== 'openTab') {

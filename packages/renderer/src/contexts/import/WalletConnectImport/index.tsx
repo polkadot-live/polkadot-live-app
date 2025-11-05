@@ -6,7 +6,7 @@ import { ConfigImport } from '@polkadot-live/core';
 import { createContext, useEffect, useRef, useState } from 'react';
 import {
   createSafeContextHook,
-  useAddresses,
+  useImportAddresses,
   useImportHandler,
 } from '@polkadot-live/contexts';
 import { WalletConnectModal } from '@walletconnect/modal';
@@ -30,7 +30,7 @@ export const WalletConnectImportProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { isAlreadyImported, getNextNames } = useAddresses();
+  const { isAlreadyImported, getNextNames } = useImportAddresses();
   const { handleImportAddress } = useImportHandler();
   const [isImporting, setIsImporting] = useState(false);
 

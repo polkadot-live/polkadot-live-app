@@ -7,7 +7,7 @@ import {
   buildCache,
   ContextProxyProvider,
   useAccountStatuses,
-  useAddresses as useImportAddresses,
+  useImportAddresses,
   useAddHandler,
   useConnections,
   useDeleteHandler,

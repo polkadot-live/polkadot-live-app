@@ -3,8 +3,11 @@
 
 import * as Core from '@polkadot-live/core';
 import { createContext, useEffect, useState } from 'react';
-import { createSafeContextHook, useConnections } from '@polkadot-live/contexts';
-import { useAddresses } from '@ren/contexts/main';
+import {
+  createSafeContextHook,
+  useAddresses,
+  useConnections,
+} from '@polkadot-live/contexts';
 import { useManage } from '@ren/contexts/main/Manage';
 import { renderToast } from '@polkadot-live/ui/utils';
 import {

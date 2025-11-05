@@ -57,7 +57,7 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   /**
-   * Open tab callback.
+   * Check pending tabs on mount (chrome).
    */
   useEffect(() => {
     const sync = async () => {
@@ -67,7 +67,7 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   /**
-   * Listen for messages (chrome).
+   * Listen for messages.
    */
   useEffect(() => {
     const removeListener = adaptor.listenOnMount(addTab);
@@ -124,6 +124,8 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
    */
   const handleTabClick = (id: number) => {
     setClickedId(id);
+    const { viewId } = tabsData.find((t) => t.id === id)!;
+    adaptor.onClickTab(viewId);
   };
 
   /**
@@ -155,10 +157,8 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
     tabsDataRef.current = [...filtered];
     !tabsDataRef.current.length && setClickedId(null);
 
-    // Remove active tab in background worker.
     if (tabData) {
-      const msg = { type: 'tabs', task: 'closeTab', tab: tabData.viewId };
-      chrome.runtime.sendMessage(msg);
+      adaptor.onCloseTab(tabData.viewId, maybeShowViewId || null);
     }
   };
 

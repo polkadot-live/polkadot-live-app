@@ -16,6 +16,7 @@ import {
 } from '@polkadot-live/screens';
 import { useSideNav } from '@polkadot-live/ui/contexts';
 import {
+  useAddresses,
   useConnections,
   useAppSettings,
   useSendNative,
@@ -32,7 +33,7 @@ import {
 } from '@polkadot-live/styles/wrappers';
 
 export const Home = () => {
-  const { getAddresses } = Ctx.useAddresses();
+  const { getAddresses } = useAddresses();
   const { cacheGet, toggleSetting } = useAppSettings();
   const { cacheGet: getShared, relayState } = useConnections();
   const { appLoading } = Ctx.useBootstrapping();

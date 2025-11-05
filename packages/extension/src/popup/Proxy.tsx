@@ -3,7 +3,6 @@
 
 import { useMemo } from 'react';
 import {
-  useAddresses,
   useApiHealth,
   useBootstrapping,
   useChains,
@@ -19,6 +18,7 @@ import { useHelp, useSideNav } from '@polkadot-live/ui/contexts';
 import {
   buildCache,
   ContextProxyProvider,
+  useAddresses,
   useAppSettings,
   useConnections,
 } from '@polkadot-live/contexts';

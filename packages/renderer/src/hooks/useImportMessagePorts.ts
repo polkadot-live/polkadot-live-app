@@ -5,7 +5,7 @@ import { ConfigImport } from '@polkadot-live/core';
 import { useWalletConnectImport } from '@ren/contexts/import';
 import {
   useAccountStatuses,
-  useAddresses as useImportAddresses,
+  useImportAddresses,
   useImportHandler,
   useRemoveHandler,
 } from '@polkadot-live/contexts';

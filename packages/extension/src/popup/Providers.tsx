@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import {
+  AddressesProvider,
   AppSettingsProvider,
   ConnectionsProvider,
 } from '@polkadot-live/contexts';
 import { HelpProvider, SideNavProvider } from '@polkadot-live/ui/contexts';
 import { withProviders } from '@polkadot-live/ui/hooks';
 import {
-  AddressesProvider,
   ApiHealthProvider,
   BootstrappingProvider,
   ChainsProvider,

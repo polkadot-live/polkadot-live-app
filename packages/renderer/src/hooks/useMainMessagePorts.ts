@@ -15,7 +15,11 @@ import {
 } from '@polkadot-live/core';
 import { useEffect } from 'react';
 import { WC_EVENT_ORIGIN } from '@polkadot-live/consts/walletConnect';
-import { useAppSettings, useConnections } from '@polkadot-live/contexts';
+import {
+  useAddresses,
+  useAppSettings,
+  useConnections,
+} from '@polkadot-live/contexts';
 
 import type * as OG from '@polkadot-live/types/openGov';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -38,7 +42,7 @@ import type { WcSelectNetwork } from '@polkadot-live/types/walletConnect';
 export const useMainMessagePorts = () => {
   const { getOnlineMode } = useConnections();
   const { cacheGet, toggleSetting } = useAppSettings();
-  const { importAddress, removeAddress } = MainCtx.useAddresses();
+  const { importAddress, removeAddress } = useAddresses();
   const { syncOpenGovWindow } = MainCtx.useBootstrapping();
   const { exportDataToBackup, importDataFromBackup } = MainCtx.useDataBackup();
   const { updateEventsOnAccountRename } = MainCtx.useEvents();

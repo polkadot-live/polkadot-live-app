@@ -14,9 +14,10 @@ import { useEffect, useState } from 'react';
 import { useInitIpcHandlers } from '@ren/hooks/useInitIpcHandlers';
 import { useMainMessagePorts } from '@ren/hooks/useMainMessagePorts';
 import {
-  useSendNative,
-  useConnections,
+  useAddresses,
   useAppSettings,
+  useConnections,
+  useSendNative,
 } from '@polkadot-live/contexts';
 import { Classic } from '@theme-toggles/react';
 import {
@@ -46,7 +47,7 @@ export const Home = () => {
   // Set up app initialization and online/offline switching handlers.
   useInitIpcHandlers();
 
-  const { getAddresses } = Ctx.useAddresses();
+  const { getAddresses } = useAddresses();
   const { addEvent, markStaleEvent, removeOutdatedEvents } = Ctx.useEvents();
   const { openHelp } = useHelp();
 

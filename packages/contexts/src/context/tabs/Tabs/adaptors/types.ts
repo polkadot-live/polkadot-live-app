@@ -5,5 +5,7 @@ import type { TabData } from '@polkadot-live/types';
 
 export interface TabsAdaptor {
   onMount: (addTab: (tab: TabData) => void) => Promise<void>;
+  onCloseTab: (closeViewId: string, showViewId: string | null) => void;
+  onClickTab: (viewId: string) => void;
   listenOnMount: (addTab: (tab: TabData) => void) => (() => void) | null;
 }

@@ -5,7 +5,7 @@ import * as wc from '@polkadot-live/consts/walletConnect';
 import { createContext, useEffect, useRef, useState } from 'react';
 import {
   createSafeContextHook,
-  useAddresses,
+  useImportAddresses,
   useImportHandler,
 } from '@polkadot-live/contexts';
 import { WalletConnectModal } from '@walletconnect/modal';
@@ -34,7 +34,7 @@ export const WalletConnectImportProvider = ({
   const { connectWc, disconnectWcSession, fetchAddressesFromExistingSession } =
     useWalletConnect();
 
-  const { isAlreadyImported, getNextNames } = useAddresses();
+  const { isAlreadyImported, getNextNames } = useImportAddresses();
   const { handleImportAddress } = useImportHandler();
   const [isImporting, setIsImporting] = useState(false);
 
