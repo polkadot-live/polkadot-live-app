@@ -3,6 +3,7 @@
 
 export * from './common';
 export * from './import';
+export * from './main';
 export * from './openGov';
 export * from './settings';
 export * from './tabs';

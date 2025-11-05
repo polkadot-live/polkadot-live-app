@@ -3,7 +3,6 @@
 
 export * from './Addresses';
 export * from './ApiHealth';
-export * from './AppSettings';
 export * from './Bootstrapping';
 export * from './Chains';
 export * from './CogMenu';

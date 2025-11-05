@@ -2,9 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext } from 'react';
-import { createSafeContextHook } from '@polkadot-live/contexts';
+import { createSafeContextHook, useAppSettings } from '@polkadot-live/contexts';
 import { renderToast } from '@polkadot-live/ui/utils';
-import { useAppSettings } from '../AppSettings';
 import { useBootstrapping } from '../Bootstrapping';
 import { useHelp } from '@polkadot-live/ui/contexts';
 import type { CogMenuContextInterface } from './types';

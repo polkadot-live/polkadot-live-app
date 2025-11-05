@@ -13,7 +13,11 @@ import {
 import { useEffect, useState } from 'react';
 import { useInitIpcHandlers } from '@ren/hooks/useInitIpcHandlers';
 import { useMainMessagePorts } from '@ren/hooks/useMainMessagePorts';
-import { useSendNative, useConnections } from '@polkadot-live/contexts';
+import {
+  useSendNative,
+  useConnections,
+  useAppSettings,
+} from '@polkadot-live/contexts';
 import { Classic } from '@theme-toggles/react';
 import {
   Events,
@@ -49,7 +53,7 @@ export const Home = () => {
   const { cacheGet: getSharedState } = useConnections();
   const darkMode = getSharedState('mode:dark');
 
-  const { cacheGet, toggleSetting } = Ctx.useAppSettings();
+  const { cacheGet, toggleSetting } = useAppSettings();
   const dockToggled = cacheGet('setting:docked-window');
   const sideNavCollapsed = cacheGet('setting:collapse-side-nav');
   const silenceOsNotifications = cacheGet('setting:silence-os-notifications');
