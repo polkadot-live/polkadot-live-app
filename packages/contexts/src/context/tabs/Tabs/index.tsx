@@ -3,17 +3,17 @@
 
 import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { createContext, useEffect, useRef, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/contexts';
+import { createSafeContextHook } from '../../../utils';
+import { getTabsAdapter } from './adaptors';
 import {
   KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
-import type { AnyData } from '@polkadot-live/types/misc';
 import type { DragStartEvent, DragEndEvent } from '@dnd-kit/core';
-import type { TabsContextInterface } from './types';
 import type { TabData } from '@polkadot-live/types/communication';
+import type { TabsContextInterface } from '../../../types/tabs';
 
 export const TabsContext = createContext<TabsContextInterface | undefined>(
   undefined
@@ -22,6 +22,7 @@ export const TabsContext = createContext<TabsContextInterface | undefined>(
 export const useTabs = createSafeContextHook(TabsContext, 'TabsContext');
 
 export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
+  const adaptor = getTabsAdapter();
   const [activeId, setActiveId] = useState<number | null>(null);
   const [clickedId, setClickedId] = useState<number | null>(null);
   const [items, setItems] = useState<number[]>([]);
@@ -59,26 +60,19 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
    * Open tab callback.
    */
   useEffect(() => {
-    // Get the requested tab from background worker on mount.
     const sync = async () => {
-      const data = { type: 'tabs', task: 'syncTabs' };
-      const tab: null | TabData = await chrome.runtime.sendMessage(data);
-      tab && addTab(tab);
+      await adaptor.onMount(addTab);
     };
-
-    // Handle receiving a new request to open a tab.
-    const callback = (message: AnyData) => {
-      if (message.type !== 'tabs' && message.type !== 'openTab') {
-        return;
-      }
-      const { tabData }: { tabData: TabData } = message.payload;
-      addTab(tabData);
-    };
-
     sync();
-    chrome.runtime.onMessage.addListener(callback);
+  }, []);
+
+  /**
+   * Listen for messages (chrome).
+   */
+  useEffect(() => {
+    const removeListener = adaptor.listenOnMount(addTab);
     return () => {
-      chrome.runtime.onMessage.removeListener(callback);
+      removeListener && removeListener();
     };
   }, []);
 

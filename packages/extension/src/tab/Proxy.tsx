@@ -19,6 +19,7 @@ import {
   useRemoveHandler,
   useRenameHandler,
   useSettingFlags,
+  useTabs,
   useTaskHandler,
   useTracks,
   useTreasury,
@@ -26,7 +27,6 @@ import {
 import {
   useLedgerFeedback,
   useLedgerHardware,
-  useTabs,
   useTxMeta,
   useWalletConnect,
   useWalletConnectImport,

@@ -3,7 +3,6 @@
 
 export { useLedgerFeedback, LedgerFeedbackProvider } from './LedgerFeedback';
 export { useLedgerHardware, LedgerHardwareProvider } from './LedgerHardware';
-export { useTabs, TabsProvider } from './Tabs';
 export { useTxMeta, TxMetaProvider } from './TxMeta';
 export { useWalletConnect, WalletConnectProvider } from './WalletConnect';
 export {

@@ -8,9 +8,6 @@ import {
   SideNavProvider,
 } from '@polkadot-live/ui/contexts';
 
-// Tabs contexts.
-import { TabsProvider } from '@ren/contexts/tabs';
-
 // Main window contexts.
 import {
   AddressesProvider,
@@ -46,6 +43,7 @@ import {
   RemoveHandlerProvider,
   RenameHandlerProvider,
   SettingFlagsProvider,
+  TabsProvider,
   TaskHandlerProvider,
   TracksProvider,
   TreasuryProvider,

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useDebug } from '@ren/hooks/useDebug';
-import { useTabs } from '@ren/contexts/tabs';
+import { useTabs } from '@polkadot-live/contexts';
 import { Tabs } from '@polkadot-live/ui/components';
 import { ResizeToggles } from './ResizeToggles';
 

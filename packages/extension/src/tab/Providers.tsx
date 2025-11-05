@@ -15,6 +15,7 @@ import {
   RemoveHandlerProvider,
   RenameHandlerProvider,
   SettingFlagsProvider,
+  TabsProvider,
   TaskHandlerProvider,
   TracksProvider,
   TreasuryProvider,
@@ -23,7 +24,6 @@ import { HelpProvider, OverlayProvider } from '@polkadot-live/ui/contexts';
 import {
   LedgerFeedbackProvider,
   LedgerHardwareProvider,
-  TabsProvider,
   TxMetaProvider,
   WalletConnectProvider,
   WalletConnectImportProvider,

@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as main from '@ren/contexts/main';
-import * as tabs from '@ren/contexts/tabs';
 import * as imports from '@ren/contexts/import';
 import * as extrinsics from '@ren/contexts/action';
 
@@ -24,6 +23,7 @@ import {
   useRemoveHandler,
   useRenameHandler,
   useSettingFlags,
+  useTabs,
   useTaskHandler,
   useTracks,
   useTreasury,
@@ -169,7 +169,7 @@ export const ContextProxyTabs = ({ children }: ContextProxyProps) => {
     () =>
       buildCache({
         ConnectionsCtx: () => useConnections(),
-        TabsCtx: () => tabs.useTabs(),
+        TabsCtx: () => useTabs(),
       }),
     []
   );
