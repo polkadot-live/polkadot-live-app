@@ -16,10 +16,10 @@ import {
   createSafeContextHook,
   useApiHealth,
   useConnections,
+  useIntervalSubscriptions,
 } from '@polkadot-live/contexts';
 import { setStateWithRef } from '@w3ux/utils';
 import { startWithWorker } from 'dedot/smoldot/with-worker';
-import { useIntervalSubscriptions } from '@ren/contexts/main';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { BootstrappingInterface } from '@polkadot-live/contexts/types/main';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';

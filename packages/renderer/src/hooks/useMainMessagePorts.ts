@@ -19,6 +19,7 @@ import {
   useAddresses,
   useAppSettings,
   useConnections,
+  useIntervalSubscriptions,
   useManage,
   useSubscriptions,
 } from '@polkadot-live/contexts';
@@ -52,7 +53,7 @@ export const useMainMessagePorts = () => {
   const { ledgerSignSubmit } = MainCtx.useLedgerSigner();
   const { handleInitTreasury } = MainCtx.useTreasuryApi();
   const { addIntervalSubscription, removeIntervalSubscription } =
-    MainCtx.useIntervalSubscriptions();
+    useIntervalSubscriptions();
 
   const {
     connectWc,

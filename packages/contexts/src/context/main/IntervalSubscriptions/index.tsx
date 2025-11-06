@@ -1,11 +1,13 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { createContext, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/contexts';
+import { createContext, useEffect, useState } from 'react';
+import { createSafeContextHook } from '../../../utils';
+import { useManage } from '../Manage';
+import { getIntervalSubscriptionsAdapter } from './adaptors';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
-import type { IntervalSubscriptionsContextInterface } from '@polkadot-live/contexts/types/main';
+import type { IntervalSubscriptionsContextInterface } from '../../../types/main';
 
 export const IntervalSubscriptionsContext = createContext<
   IntervalSubscriptionsContextInterface | undefined
@@ -21,6 +23,10 @@ export const IntervalSubscriptionsProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const adapter = getIntervalSubscriptionsAdapter();
+  const { tryAddIntervalSubscription, tryRemoveIntervalSubscription } =
+    useManage();
+
   /// Active interval subscriptions.
   const [subscriptions, setSubscriptions] = useState<
     Map<ChainID, IntervalSubscription[]>
@@ -34,7 +40,6 @@ export const IntervalSubscriptionsProvider = ({
       cloned.has(chainId)
         ? cloned.set(chainId, [...cloned.get(chainId)!, { ...task }])
         : cloned.set(chainId, [{ ...task }]);
-
       return cloned;
     });
   };
@@ -51,6 +56,7 @@ export const IntervalSubscriptionsProvider = ({
 
   /// Remove an interval subscription from the context state.
   const removeIntervalSubscription = (task: IntervalSubscription) => {
+    adapter.onRemoveInterval(task, tryRemoveIntervalSubscription);
     setSubscriptions((prev) => {
       // NOTE: Relies on referendum ID to filter task for now.
       const { chainId, action, referendumId } = task;
@@ -106,6 +112,19 @@ export const IntervalSubscriptionsProvider = ({
         acc + tasks.filter((task) => task.status === 'enable').length,
       0
     );
+
+  // Get subscriptions from database and set state on mount.
+  useEffect(() => {
+    adapter.onMount(addIntervalSubscription, tryAddIntervalSubscription);
+  }, []);
+
+  // Listen for state syncing messages.
+  useEffect(() => {
+    const removeListener = adapter.listenOnMount(setSubscriptions);
+    return () => {
+      removeListener && removeListener();
+    };
+  }, []);
 
   return (
     <IntervalSubscriptionsContext

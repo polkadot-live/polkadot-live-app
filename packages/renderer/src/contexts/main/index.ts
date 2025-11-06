@@ -5,7 +5,6 @@ export * from './Bootstrapping';
 export * from './CogMenu';
 export * from './DataBackup';
 export * from './Events';
-export * from './IntervalSubscriptions';
 export * from './IntervalTasksManager';
 export * from './LedgerSigner';
 export * from './Summary';

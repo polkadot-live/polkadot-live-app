@@ -5,10 +5,6 @@ export { useBootstrapping, BootstrappingProvider } from './Bootstrapping';
 export { useCogMenu, CogMenuProvider } from './CogMenu';
 export { useEvents, EventsProvider } from './Events';
 export {
-  useIntervalSubscriptions,
-  IntervalSubscriptionsProvider,
-} from './IntervalSubscriptions';
-export {
   useIntervalTasksManager,
   IntervalTasksManagerProvider,
 } from './IntervalTasksManager';

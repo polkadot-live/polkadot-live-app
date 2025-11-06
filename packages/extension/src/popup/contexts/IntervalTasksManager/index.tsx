@@ -4,11 +4,11 @@
 import {
   createSafeContextHook,
   useConnections,
+  useIntervalSubscriptions,
   useManage,
 } from '@polkadot-live/contexts';
 import { Flip, toast } from 'react-toastify';
 import { createContext } from 'react';
-import { useIntervalSubscriptions } from '../../contexts';
 import { intervalDurationsConfig } from '@polkadot-live/consts/subscriptions/interval';
 import type { AnyFunction } from '@polkadot-live/types/misc';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';

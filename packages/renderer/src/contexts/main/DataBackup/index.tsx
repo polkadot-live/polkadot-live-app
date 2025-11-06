@@ -7,6 +7,7 @@ import { createContext } from 'react';
 import {
   createSafeContextHook,
   useConnections,
+  useIntervalSubscriptions,
   useManage,
 } from '@polkadot-live/contexts';
 import {
@@ -15,8 +16,6 @@ import {
   SubscriptionsController,
 } from '@polkadot-live/core';
 import { useEvents } from '@ren/contexts/main';
-import { useIntervalSubscriptions } from '../IntervalSubscriptions';
-
 import type {
   DataBackupContextInterface,
   ImportFunc,
