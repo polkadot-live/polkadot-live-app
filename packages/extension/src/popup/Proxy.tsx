@@ -6,7 +6,6 @@ import {
   useBootstrapping,
   useCogMenu,
   useEvents,
-  useIntervalTasksManager,
   useSummary,
 } from './contexts';
 import { useHelp, useSideNav } from '@polkadot-live/ui/contexts';
@@ -19,6 +18,7 @@ import {
   useChains,
   useConnections,
   useIntervalSubscriptions,
+  useIntervalTasksManager,
   useManage,
   useSubscriptions,
 } from '@polkadot-live/contexts';

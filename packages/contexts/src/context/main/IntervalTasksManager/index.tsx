@@ -1,19 +1,17 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import {
-  createSafeContextHook,
-  useConnections,
-  useIntervalSubscriptions,
-  useManage,
-} from '@polkadot-live/contexts';
-import { Flip, toast } from 'react-toastify';
+import { createSafeContextHook } from '../../../utils';
+import { useConnections } from '../../common';
+import { useIntervalSubscriptions } from '../IntervalSubscriptions';
+import { useManage } from '../Manage';
 import { createContext } from 'react';
+import { getIntervalTaskManagerAdapter } from './adaptors';
 import { intervalDurationsConfig } from '@polkadot-live/consts/subscriptions/interval';
+import { renderToast } from '@polkadot-live/ui/utils';
 import type { AnyFunction } from '@polkadot-live/types/misc';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
-import type { IntervalTasksManagerContextInterface } from '@polkadot-live/contexts/types/main';
-import type { OneShotReturn } from '@polkadot-live/types/openGov';
+import type { IntervalTasksManagerContextInterface } from '../../../types/main';
 import type { ReactNode } from 'react';
 
 export const IntervalTasksManagerContext = createContext<
@@ -30,59 +28,44 @@ export const IntervalTasksManagerProvider = ({
 }: {
   children: ReactNode;
 }) => {
+  const adapter = getIntervalTaskManagerAdapter();
   const { getOnlineMode } = useConnections();
   const { updateIntervalSubscription, removeIntervalSubscription } =
     useIntervalSubscriptions();
   const { tryUpdateDynamicIntervalTask, tryRemoveIntervalSubscription } =
     useManage();
 
-  /// Utility to update an interval task.
+  // Utility to update an interval task.
   const updateIntervalTask = (task: IntervalSubscription) => {
-    try {
-      chrome.runtime.sendMessage({
-        type: 'intervalSubscriptions',
-        task: 'syncIntervalSubscriptionUpdate',
-        payload: { task },
-      });
-    } catch (error) {
-      console.error(error);
-    }
-    chrome.runtime.sendMessage({
-      type: 'intervalSubscriptions',
-      task: 'update',
-      payload: { task },
-    });
+    adapter.updateTask(task);
   };
 
-  /// Utility to handle an analytics event.
-  const handleIntervalAnalytics = () => {
-    /* empty */
+  // Utility to handle an analytics event.
+  const handleIntervalAnalytics = (task: IntervalSubscription) => {
+    adapter.handleAnalytics(task);
   };
 
-  /// Handle toggling an interval subscription.
+  // Handle toggling an interval subscription.
   const handleIntervalToggle = async (task: IntervalSubscription) => {
     const status = task.status === 'enable' ? 'disable' : 'enable';
     task.status = status;
-
     // Handle task in intervals controller.
-    await chrome.runtime.sendMessage({
-      type: 'intervalSubscriptions',
-      task: status === 'enable' ? 'insertSubscription' : 'removeSubscription',
-      payload: { task, onlineMode: getOnlineMode() },
-    });
+    adapter.handleToggleSubscription(task, getOnlineMode());
+
     // Update store and renderer state.
     updateIntervalSubscription(task);
     tryUpdateDynamicIntervalTask(task);
     updateIntervalTask(task);
   };
 
-  /// Handle clicking os notifications toggle for interval subscriptions.
+  // Handle clicking os notifications toggle for interval subscriptions.
   const handleIntervalNativeCheckbox = async (
     task: IntervalSubscription,
     flag: boolean
   ) => {
     const checked: boolean = flag;
     task.enableOsNotifications = checked;
+    adapter.onUpdateSubscription(task);
 
     // Update store and renderer state.
     updateIntervalSubscription(task);
@@ -90,34 +73,21 @@ export const IntervalTasksManagerProvider = ({
     updateIntervalTask(task);
   };
 
-  /// Handle removing an interval subscription.
+  // Handle removing an interval subscription.
   const handleRemoveIntervalSubscription = async (
     task: IntervalSubscription
   ) => {
-    // Remove task from store and controller.
-    chrome.runtime.sendMessage({
-      type: 'intervalSubscriptions',
-      task: 'remove',
-      payload: { task, onlineMode: getOnlineMode() },
-    });
-
+    adapter.onRemoveSubscription(task, getOnlineMode());
     // Set status to disable and update state.
     task.status = 'disable';
     tryRemoveIntervalSubscription(task);
     removeIntervalSubscription(task);
 
-    try {
-      chrome.runtime.sendMessage({
-        type: 'intervalSubscriptions',
-        task: 'syncIntervalSubscriptionRemove',
-        payload: { task },
-      });
-    } catch (error) {
-      console.error(error);
-    }
+    // Remove task from store and controller.
+    adapter.handleRemoveSubscription(task, getOnlineMode());
   };
 
-  /// Handle setting a new interval duration for the subscription.
+  // Handle setting a new interval duration for the subscription.
   const handleChangeIntervalDuration = async (
     event: React.ChangeEvent<HTMLSelectElement>,
     task: IntervalSubscription,
@@ -127,7 +97,6 @@ export const IntervalTasksManagerProvider = ({
     const settingObj = intervalDurationsConfig.find(
       (setting) => setting.ticksToWait === newSetting
     );
-
     if (settingObj) {
       // TODO: call useEffect in row component.
       setIntervalSetting(newSetting);
@@ -138,39 +107,21 @@ export const IntervalTasksManagerProvider = ({
       tryUpdateDynamicIntervalTask(task);
 
       // Update store and view state.
+      adapter.onUpdateSubscription(task);
       updateIntervalTask(task);
     }
   };
 
-  /// Handle a one-shot event for a subscription task.
+  // Handle a one-shot event for a subscription task.
   const handleIntervalOneShot = async (
     task: IntervalSubscription,
     setOneShotProcessing: AnyFunction
   ) => {
     setOneShotProcessing(true);
-    const { success, message } = (await chrome.runtime.sendMessage({
-      type: 'oneShot',
-      task: 'executeInterval',
-      payload: { task },
-    })) as OneShotReturn;
-
+    const { success, message } = await adapter.executeOneShot(task);
     if (!success) {
       setOneShotProcessing(false);
-
-      // Render error alert.
-      toast.error(message ? message : 'Error', {
-        position: 'bottom-center',
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        closeButton: false,
-        pauseOnHover: false,
-        draggable: false,
-        progress: undefined,
-        theme: 'dark',
-        transition: Flip,
-        toastId: 'toast-connection',
-      });
+      renderToast(message || 'Error', 'toast-error', 'error', 'bottom-center');
     } else {
       // Wait some time to avoid the spinner snapping.
       setTimeout(() => {
@@ -179,24 +130,14 @@ export const IntervalTasksManagerProvider = ({
     }
   };
 
-  /// Insert multiple subscriptions.
+  // Insert multiple subscriptions.
   const insertSubscriptions = (tasks: IntervalSubscription[]) => {
-    const onlineMode = getOnlineMode();
-    chrome.runtime.sendMessage({
-      type: 'intervalSubscriptions',
-      task: 'insertSubscriptions',
-      payload: { tasks, onlineMode },
-    });
+    adapter.onInsertSubscriptions(tasks, getOnlineMode());
   };
 
-  /// Remove multiple subscriptions.
+  // Remove multiple subscriptions.
   const removeSubscriptions = (tasks: IntervalSubscription[]) => {
-    const onlineMode = getOnlineMode();
-    chrome.runtime.sendMessage({
-      type: 'intervalSubscriptions',
-      task: 'removeSubscriptions',
-      payload: { tasks, onlineMode },
-    });
+    adapter.onRemoveSubscriptions(tasks, getOnlineMode());
   };
 
   return (

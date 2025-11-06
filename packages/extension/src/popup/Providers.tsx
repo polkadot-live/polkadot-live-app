@@ -8,6 +8,7 @@ import {
   ChainsProvider,
   ConnectionsProvider,
   IntervalSubscriptionsProvider,
+  IntervalTasksManagerProvider,
   ManageProvider,
   SubscriptionsProvider,
 } from '@polkadot-live/contexts';
@@ -17,7 +18,6 @@ import {
   BootstrappingProvider,
   CogMenuProvider,
   EventsProvider,
-  IntervalTasksManagerProvider,
   SummaryProvider,
 } from './contexts';
 import App from './App';

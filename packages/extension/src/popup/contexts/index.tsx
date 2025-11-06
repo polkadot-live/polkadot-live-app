@@ -4,8 +4,4 @@
 export { useBootstrapping, BootstrappingProvider } from './Bootstrapping';
 export { useCogMenu, CogMenuProvider } from './CogMenu';
 export { useEvents, EventsProvider } from './Events';
-export {
-  useIntervalTasksManager,
-  IntervalTasksManagerProvider,
-} from './IntervalTasksManager';
 export { useSummary, SummaryProvider } from './Summary';
