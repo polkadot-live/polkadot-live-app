@@ -2,12 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useMemo } from 'react';
-import {
-  useBootstrapping,
-  useCogMenu,
-  useEvents,
-  useSummary,
-} from './contexts';
+import { useBootstrapping, useCogMenu, useSummary } from './contexts';
 import { useHelp, useSideNav } from '@polkadot-live/ui/contexts';
 import {
   buildCache,
@@ -17,6 +12,7 @@ import {
   useAppSettings,
   useChains,
   useConnections,
+  useEvents,
   useIntervalSubscriptions,
   useIntervalTasksManager,
   useManage,

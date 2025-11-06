@@ -3,5 +3,4 @@
 
 export { useBootstrapping, BootstrappingProvider } from './Bootstrapping';
 export { useCogMenu, CogMenuProvider } from './CogMenu';
-export { useEvents, EventsProvider } from './Events';
 export { useSummary, SummaryProvider } from './Summary';

@@ -7,6 +7,7 @@ import {
   AppSettingsProvider,
   ChainsProvider,
   ConnectionsProvider,
+  EventsProvider,
   IntervalSubscriptionsProvider,
   IntervalTasksManagerProvider,
   ManageProvider,
@@ -17,7 +18,6 @@ import { withProviders } from '@polkadot-live/ui/hooks';
 import {
   BootstrappingProvider,
   CogMenuProvider,
-  EventsProvider,
   SummaryProvider,
 } from './contexts';
 import App from './App';

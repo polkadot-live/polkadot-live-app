@@ -19,6 +19,7 @@ import {
   useAddresses,
   useAppSettings,
   useConnections,
+  useEvents,
   useIntervalSubscriptions,
   useManage,
   useSubscriptions,
@@ -49,7 +50,7 @@ export const useMainMessagePorts = () => {
   const { updateAccountNameInTasks } = useSubscriptions();
   const { syncOpenGovWindow } = MainCtx.useBootstrapping();
   const { exportDataToBackup, importDataFromBackup } = MainCtx.useDataBackup();
-  const { updateEventsOnAccountRename } = MainCtx.useEvents();
+  const { updateEventsOnAccountRename } = useEvents();
   const { ledgerSignSubmit } = MainCtx.useLedgerSigner();
   const { handleInitTreasury } = MainCtx.useTreasuryApi();
   const { addIntervalSubscription, removeIntervalSubscription } =

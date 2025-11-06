@@ -17,6 +17,7 @@ import {
   useAddresses,
   useAppSettings,
   useConnections,
+  useEvents,
   useSendNative,
 } from '@polkadot-live/contexts';
 import { Classic } from '@theme-toggles/react';
@@ -48,7 +49,7 @@ export const Home = () => {
   useInitIpcHandlers();
 
   const { getAddresses } = useAddresses();
-  const { addEvent, markStaleEvent, removeOutdatedEvents } = Ctx.useEvents();
+  const { addEvent, markStaleEvent, removeOutdatedEvents } = useEvents();
   const { openHelp } = useHelp();
 
   const { cacheGet: getSharedState } = useConnections();

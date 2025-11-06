@@ -5,6 +5,7 @@ export { useAddresses, AddressesProvider } from './Addresses';
 export { useAppSettings, AppSettingsProvider } from './AppSettings';
 export { useApiHealth, ApiHealthProvider } from './ApiHealth';
 export { useChains, ChainsProvider } from './Chains';
+export { useEvents, EventsProvider } from './Events';
 export {
   useIntervalSubscriptions,
   IntervalSubscriptionsProvider,

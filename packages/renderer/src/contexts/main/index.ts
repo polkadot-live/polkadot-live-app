@@ -4,7 +4,6 @@
 export * from './Bootstrapping';
 export * from './CogMenu';
 export * from './DataBackup';
-export * from './Events';
 export * from './LedgerSigner';
 export * from './Summary';
 export * from './TreasuryApi';
