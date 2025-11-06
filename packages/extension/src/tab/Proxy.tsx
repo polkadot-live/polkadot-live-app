@@ -23,6 +23,7 @@ import {
   useTaskHandler,
   useTracks,
   useTreasury,
+  useWcFeedback,
 } from '@polkadot-live/contexts';
 import {
   useLedgerFeedback,
@@ -30,7 +31,6 @@ import {
   useTxMeta,
   useWalletConnect,
   useWalletConnectImport,
-  useWcFeedback,
   useWcVerifier,
 } from './contexts';
 

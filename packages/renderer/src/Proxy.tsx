@@ -37,6 +37,7 @@ import {
   useTaskHandler,
   useTracks,
   useTreasury,
+  useWcFeedback,
 } from '@polkadot-live/contexts';
 
 interface ContextProxyProps {
@@ -56,7 +57,7 @@ export const ContextProxyExtrinsics = ({ children }: ContextProxyProps) => {
         TxMetaCtx: () => extrinsics.useTxMeta(),
         WcVerifierCtx: () => extrinsics.useWcVerifier(),
         LedgerFeedbackCtx: () => extrinsics.useLedgerFeedback(),
-        WcFeedbackCtx: () => extrinsics.useWcFeedback(),
+        WcFeedbackCtx: () => useWcFeedback(),
       }),
     []
   );

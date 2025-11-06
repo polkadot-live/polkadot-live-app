@@ -326,7 +326,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       if (!info) {
         throw new ExtrinsicError('ExtrinsicNotFound');
       }
-
       ConfigAction.portAction.postMessage({
         task: 'renderer:tx:init',
         data: JSON.stringify(info),
@@ -415,7 +414,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       if (!info) {
         throw new ExtrinsicError('ExtrinsicNotFound');
       }
-
       info.dynamicInfo = dynamicInfo;
       setUpdateCache(true);
       openOverlayWith(getOverlayComponent(info), 'small', true);
@@ -495,7 +493,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       if (txStatus === 'error' || txStatus === 'finalized') {
         relayState('extrinsic:building', false);
       }
-      // Update tx status in store.
       await updateStoreInfo(info);
     } catch (err) {
       console.error(err);
@@ -532,7 +529,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     if (!info.dynamicInfo) {
       return null;
     }
-
     return info.dynamicInfo.txPayload;
   };
 
@@ -549,7 +545,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       console.error(new ExtrinsicError('DynamicInfoUndefined'));
       return null;
     }
-
     return info.dynamicInfo.genesisHash;
   };
 
@@ -566,28 +561,23 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         task: 'renderer:tx:delete',
         data: { txId },
       });
-
       // Remove extrinsic from store.
       await window.myAPI.sendExtrinsicsTaskAsync({
         action: 'extrinsics:remove',
         data: { txId },
       });
-
       // Remove address info if there are no more extrinsics for the address.
       const found = Array.from(extrinsicsRef.current.values()).find(
         ({ actionMeta: { from } }) => from === fromAddress
       );
-
       if (!found) {
         // Update cached address state.
         setAddressesInfo((prev) =>
           prev.filter(({ address }) => address !== fromAddress)
         );
-
         // Display all extrinsics.
         setStateWithRef('all', setSelectedFilter, selectedFilterRef);
       }
-
       renderToast('Extrinsic removed.', `toast-remove-${txId}`, 'success');
       setUpdateCache(true);
     }
@@ -605,7 +595,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         ({ actionMeta: { from } }) => from === selectedFilterRef.current
       );
     }
-
     // Apply selected filters.
     const selected = filterOptions
       .filter((f) => f.selected)
@@ -673,10 +662,8 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
           return { ...i };
         }
       });
-
       return updated;
     });
-
     setUpdateCache(true);
   };
 
@@ -685,15 +672,12 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
    */
   const getCategoryTitle = (info: ExtrinsicInfo): string => {
     switch (info.actionMeta.pallet) {
-      case 'nominationPools': {
+      case 'nominationPools':
         return 'Nomination Pools';
-      }
-      case 'balances': {
+      case 'balances':
         return 'Balances';
-      }
-      default: {
+      default:
         return 'Unknown.';
-      }
     }
   };
 
@@ -721,7 +705,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       parseExtrinsicData(info.actionMeta);
       map.set(info.txId, info);
     }
-
     extrinsicsRef.current = map;
     setUpdateCache(true);
   };
@@ -735,7 +718,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       if (!info) {
         throw new ExtrinsicError('ExtrinsicNotFound');
       }
-
       info.txHash = txHash;
       extrinsicsRef.current.set(txId, info);
       setUpdateCache(true);

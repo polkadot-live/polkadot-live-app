@@ -47,6 +47,7 @@ import {
   TaskHandlerProvider,
   TracksProvider,
   TreasuryProvider,
+  WcFeedbackProvider,
 } from '@polkadot-live/contexts';
 import {
   LedgerHardwareProvider,
@@ -56,7 +57,6 @@ import {
 // Actions window contexts.
 import {
   LedgerFeedbackProvider,
-  WcFeedbackProvider,
   TxMetaProvider,
   WcVerifierProvider,
 } from '@ren/contexts/action';

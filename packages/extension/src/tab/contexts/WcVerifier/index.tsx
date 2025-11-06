@@ -1,10 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { createSafeContextHook } from '@polkadot-live/contexts';
+import { createSafeContextHook, useWcFeedback } from '@polkadot-live/contexts';
 import { createContext, useState } from 'react';
 import { useWalletConnect } from '../WalletConnect';
-import { useWcFeedback } from '../WcFeedback';
 import { WcError } from '@polkadot-live/core';
 import { handleWcError } from '../utils';
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';

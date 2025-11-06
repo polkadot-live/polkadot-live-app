@@ -5,12 +5,8 @@ import * as FA from '@fortawesome/free-solid-svg-icons';
 import WalletConnectSVG from '@w3ux/extension-assets/WalletConnect.svg?react';
 import { useEffect } from 'react';
 import { useOverlay } from '@polkadot-live/ui/contexts';
-import { useConnections } from '@polkadot-live/contexts';
-import {
-  useWalletConnect,
-  useWcFeedback,
-  useWcVerifier,
-} from '../../../contexts';
+import { useConnections, useWcFeedback } from '@polkadot-live/contexts';
+import { useWalletConnect, useWcVerifier } from '../../../contexts';
 import { ButtonPrimary, ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
 import { FlexRow, WcOverlayWrapper } from '@polkadot-live/styles/wrappers';
 import { InfoCard } from '@polkadot-live/ui/components';

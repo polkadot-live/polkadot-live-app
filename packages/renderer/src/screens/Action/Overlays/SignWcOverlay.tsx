@@ -4,10 +4,10 @@
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import WalletConnectSVG from '@w3ux/extension-assets/WalletConnect.svg?react';
 import { ConfigAction } from '@polkadot-live/core';
-import { useConnections } from '@polkadot-live/contexts';
+import { useConnections, useWcFeedback } from '@polkadot-live/contexts';
 import { useEffect } from 'react';
 import { useOverlay } from '@polkadot-live/ui/contexts';
-import { useWcFeedback, useWcVerifier } from '@ren/contexts/action';
+import { useWcVerifier } from '@ren/contexts/action';
 import { ButtonPrimary, ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
 import { FlexRow, WcOverlayWrapper } from '@polkadot-live/styles/wrappers';
 import { InfoCard } from '@polkadot-live/ui/components';

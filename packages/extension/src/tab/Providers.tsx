@@ -19,6 +19,7 @@ import {
   TaskHandlerProvider,
   TracksProvider,
   TreasuryProvider,
+  WcFeedbackProvider,
 } from '@polkadot-live/contexts';
 import { HelpProvider, OverlayProvider } from '@polkadot-live/ui/contexts';
 import {
@@ -27,7 +28,6 @@ import {
   TxMetaProvider,
   WalletConnectProvider,
   WalletConnectImportProvider,
-  WcFeedbackProvider,
   WcVerifierProvider,
 } from './contexts';
 import { withProviders } from '@polkadot-live/ui/hooks';

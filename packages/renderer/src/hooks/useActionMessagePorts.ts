@@ -3,11 +3,10 @@
 
 import { ConfigAction } from '@polkadot-live/core';
 import { useEffect } from 'react';
-import { useConnections } from '@polkadot-live/contexts';
+import { useConnections, useWcFeedback } from '@polkadot-live/contexts';
 import {
   useLedgerFeedback,
   useTxMeta,
-  useWcFeedback,
   useWcVerifier,
 } from '@ren/contexts/action';
 import { useOverlay } from '@polkadot-live/ui/contexts';

@@ -6,11 +6,14 @@ import UniversalProvider from '@walletconnect/universal-provider';
 import { ChainList } from '@polkadot-live/consts/chains';
 import { WcError } from '@polkadot-live/core';
 import { createContext, useEffect, useRef } from 'react';
-import { createSafeContextHook, useConnections } from '@polkadot-live/contexts';
+import {
+  createSafeContextHook,
+  useConnections,
+  useWcFeedback,
+} from '@polkadot-live/contexts';
 import { decodeAddress, encodeAddress, u8aToHex } from 'dedot/utils';
 import { getSdkError } from '@walletconnect/utils';
 import { renderToast } from '@polkadot-live/ui/utils';
-import { useWcFeedback } from '../WcFeedback';
 import { handleWcError } from '../utils';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
