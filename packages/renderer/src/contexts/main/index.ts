@@ -8,7 +8,6 @@ export * from './Events';
 export * from './IntervalSubscriptions';
 export * from './IntervalTasksManager';
 export * from './LedgerSigner';
-export * from './Subscriptions';
 export * from './Summary';
 export * from './TreasuryApi';
 export * from './WalletConnect';

@@ -20,6 +20,7 @@ import {
   useAppSettings,
   useConnections,
   useManage,
+  useSubscriptions,
 } from '@polkadot-live/contexts';
 
 import type * as OG from '@polkadot-live/types/openGov';
@@ -44,12 +45,12 @@ export const useMainMessagePorts = () => {
   const { getOnlineMode } = useConnections();
   const { cacheGet, toggleSetting } = useAppSettings();
   const { importAddress, removeAddress } = useAddresses();
+  const { updateAccountNameInTasks } = useSubscriptions();
   const { syncOpenGovWindow } = MainCtx.useBootstrapping();
   const { exportDataToBackup, importDataFromBackup } = MainCtx.useDataBackup();
   const { updateEventsOnAccountRename } = MainCtx.useEvents();
   const { ledgerSignSubmit } = MainCtx.useLedgerSigner();
   const { handleInitTreasury } = MainCtx.useTreasuryApi();
-  const { updateAccountNameInTasks } = MainCtx.useSubscriptions();
   const { addIntervalSubscription, removeIntervalSubscription } =
     MainCtx.useIntervalSubscriptions();
 
