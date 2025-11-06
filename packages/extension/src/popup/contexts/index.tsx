@@ -3,4 +3,3 @@
 
 export { useBootstrapping, BootstrappingProvider } from './Bootstrapping';
 export { useCogMenu, CogMenuProvider } from './CogMenu';
-export { useSummary, SummaryProvider } from './Summary';

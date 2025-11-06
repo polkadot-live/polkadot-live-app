@@ -12,14 +12,11 @@ import {
   IntervalTasksManagerProvider,
   ManageProvider,
   SubscriptionsProvider,
+  SummaryProvider,
 } from '@polkadot-live/contexts';
 import { HelpProvider, SideNavProvider } from '@polkadot-live/ui/contexts';
 import { withProviders } from '@polkadot-live/ui/hooks';
-import {
-  BootstrappingProvider,
-  CogMenuProvider,
-  SummaryProvider,
-} from './contexts';
+import { BootstrappingProvider, CogMenuProvider } from './contexts';
 import App from './App';
 
 export const Providers = withProviders(

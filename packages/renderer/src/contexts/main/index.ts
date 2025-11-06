@@ -5,6 +5,5 @@ export * from './Bootstrapping';
 export * from './CogMenu';
 export * from './DataBackup';
 export * from './LedgerSigner';
-export * from './Summary';
 export * from './TreasuryApi';
 export * from './WalletConnect';

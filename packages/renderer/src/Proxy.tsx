@@ -32,6 +32,7 @@ import {
   useRenameHandler,
   useSettingFlags,
   useSubscriptions,
+  useSummary,
   useTabs,
   useTaskHandler,
   useTracks,
@@ -90,7 +91,7 @@ export const ContextProxyMain = ({ children }: ContextProxyProps) => {
         CogMenuCtx: () => main.useCogMenu(),
         WalletConnectCtx: () => main.useWalletConnect(),
         LedgerSigningCtx: () => main.useLedgerSigner(),
-        SummaryCtx: () => main.useSummary(),
+        SummaryCtx: () => useSummary(),
       }),
     []
   );

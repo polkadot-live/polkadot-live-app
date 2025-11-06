@@ -14,7 +14,6 @@ import {
   CogMenuProvider,
   DataBackupProvider,
   LedgerSignerProvider,
-  SummaryProvider,
   TreasuryApiProvider,
   WalletConnectProvider,
 } from '@ren/contexts/main';
@@ -43,6 +42,7 @@ import {
   RenameHandlerProvider,
   SettingFlagsProvider,
   SubscriptionsProvider,
+  SummaryProvider,
   TabsProvider,
   TaskHandlerProvider,
   TracksProvider,
