@@ -18,6 +18,9 @@ import {
   WalletConnectProvider,
 } from '@ren/contexts/main';
 
+// Actions window contexts.
+import { TxMetaProvider, WcVerifierProvider } from '@ren/contexts/action';
+
 // Import window contexts.
 import {
   AddressesProvider,
@@ -34,6 +37,7 @@ import {
   ImportHandlerProvider,
   IntervalSubscriptionsProvider,
   IntervalTasksManagerProvider,
+  LedgerFeedbackProvider,
   ManageProvider,
   PolkassemblyProvider,
   ReferendaProvider,
@@ -53,13 +57,6 @@ import {
   LedgerHardwareProvider,
   WalletConnectImportProvider,
 } from '@ren/contexts/import';
-
-// Actions window contexts.
-import {
-  LedgerFeedbackProvider,
-  TxMetaProvider,
-  WcVerifierProvider,
-} from '@ren/contexts/action';
 
 // Other imports.
 import { Theme } from './Theme';

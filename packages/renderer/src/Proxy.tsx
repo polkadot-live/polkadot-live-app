@@ -24,6 +24,7 @@ import {
   useImportHandler,
   useIntervalSubscriptions,
   useIntervalTasksManager,
+  useLedgerFeedback,
   useManage,
   usePolkassembly,
   useReferenda,
@@ -56,7 +57,7 @@ export const ContextProxyExtrinsics = ({ children }: ContextProxyProps) => {
         ConnectionsCtx: () => useConnections(),
         TxMetaCtx: () => extrinsics.useTxMeta(),
         WcVerifierCtx: () => extrinsics.useWcVerifier(),
-        LedgerFeedbackCtx: () => extrinsics.useLedgerFeedback(),
+        LedgerFeedbackCtx: () => useLedgerFeedback(),
         WcFeedbackCtx: () => useWcFeedback(),
       }),
     []
