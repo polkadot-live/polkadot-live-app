@@ -22,8 +22,11 @@ import {
   SignVaultOverlay,
   SignWcOverlay,
 } from '@ren/screens/Action/Overlays';
-import { useOverlay } from '@polkadot-live/ui/contexts';
-import { createSafeContextHook, useConnections } from '@polkadot-live/contexts';
+import {
+  createSafeContextHook,
+  useConnections,
+  useOverlay,
+} from '@polkadot-live/contexts';
 import { renderToast } from '@polkadot-live/ui/utils';
 import { WalletConnectModal } from '@walletconnect/modal';
 import { ChainIcon } from '@polkadot-live/ui/components';

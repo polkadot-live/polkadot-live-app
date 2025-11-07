@@ -14,12 +14,12 @@ import {
   Send,
   Summary,
 } from '@polkadot-live/screens';
-import { useSideNav } from '@polkadot-live/ui/contexts';
 import {
   useAddresses,
   useConnections,
   useAppSettings,
   useSendNative,
+  useSideNav,
 } from '@polkadot-live/contexts';
 import {
   fetchSendAccountsBrowser,

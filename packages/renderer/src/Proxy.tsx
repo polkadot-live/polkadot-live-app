@@ -6,7 +6,6 @@ import * as imports from '@ren/contexts/import';
 import * as extrinsics from '@ren/contexts/action';
 
 import { useMemo } from 'react';
-import { useHelp, useOverlay, useSideNav } from '@polkadot-live/ui/contexts';
 import {
   buildCache,
   ContextProxyProvider,
@@ -20,6 +19,7 @@ import {
   useDeleteHandler,
   useDialogControl,
   useEvents,
+  useHelp,
   useImportAddresses,
   useImportHandler,
   useIntervalSubscriptions,
@@ -27,12 +27,14 @@ import {
   useLedgerFeedback,
   useLedgerHardware,
   useManage,
+  useOverlay,
   usePolkassembly,
   useReferenda,
   useReferendaSubscriptions,
   useRemoveHandler,
   useRenameHandler,
   useSettingFlags,
+  useSideNav,
   useSubscriptions,
   useSummary,
   useTabs,

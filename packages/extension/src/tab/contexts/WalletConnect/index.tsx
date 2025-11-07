@@ -9,6 +9,7 @@ import { createContext, useEffect, useRef } from 'react';
 import {
   createSafeContextHook,
   useConnections,
+  useOverlay,
   useWcFeedback,
 } from '@polkadot-live/contexts';
 import { decodeAddress, encodeAddress, u8aToHex } from 'dedot/utils';
@@ -24,7 +25,6 @@ import type {
   WcFetchedAddress,
   WcSelectNetwork,
 } from '@polkadot-live/types/walletConnect';
-import { useOverlay } from '@polkadot-live/ui/contexts';
 
 export const WalletConnectContext = createContext<
   WalletConnectContextInterface | undefined

@@ -18,7 +18,9 @@ import {
   useAppSettings,
   useConnections,
   useEvents,
+  useHelp,
   useSendNative,
+  useSideNav,
 } from '@polkadot-live/contexts';
 import { Classic } from '@theme-toggles/react';
 import {
@@ -35,7 +37,6 @@ import {
   FixedFlexWrapper,
   ScrollWrapper,
 } from '@polkadot-live/styles/wrappers';
-import { useHelp, useSideNav } from '@polkadot-live/ui/contexts';
 import PolkadotIcon from '@polkadot-live/ui/svg/polkadotIcon.svg?react';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { EventCallback } from '@polkadot-live/types/reporter';

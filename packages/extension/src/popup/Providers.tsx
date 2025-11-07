@@ -8,13 +8,14 @@ import {
   ChainsProvider,
   ConnectionsProvider,
   EventsProvider,
+  HelpProvider,
   IntervalSubscriptionsProvider,
   IntervalTasksManagerProvider,
   ManageProvider,
+  SideNavProvider,
   SubscriptionsProvider,
   SummaryProvider,
 } from '@polkadot-live/contexts';
-import { HelpProvider, SideNavProvider } from '@polkadot-live/ui/contexts';
 import { withProviders } from '@polkadot-live/ui/hooks';
 import { BootstrappingProvider, CogMenuProvider } from './contexts';
 import App from './App';

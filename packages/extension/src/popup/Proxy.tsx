@@ -3,7 +3,6 @@
 
 import { useMemo } from 'react';
 import { useBootstrapping, useCogMenu } from './contexts';
-import { useHelp, useSideNav } from '@polkadot-live/ui/contexts';
 import {
   buildCache,
   ContextProxyProvider,
@@ -13,9 +12,11 @@ import {
   useChains,
   useConnections,
   useEvents,
+  useHelp,
   useIntervalSubscriptions,
   useIntervalTasksManager,
   useManage,
+  useSideNav,
   useSubscriptions,
   useSummary,
 } from '@polkadot-live/contexts';

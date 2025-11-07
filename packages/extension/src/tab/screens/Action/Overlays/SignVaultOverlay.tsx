@@ -7,7 +7,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useMemo, useRef, useState } from 'react';
-import { useOverlay } from '@polkadot-live/ui/contexts';
+import { useOverlay } from '@polkadot-live/contexts';
 import { useTxMeta } from '../../../contexts';
 import { QRViewerWrapper } from '@polkadot-live/styles/wrappers';
 import {

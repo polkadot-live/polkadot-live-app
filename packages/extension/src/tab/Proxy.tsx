@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useMemo } from 'react';
-import { useHelp, useOverlay } from '@polkadot-live/ui/contexts';
 import {
   buildCache,
   ContextProxyProvider,
@@ -12,9 +11,11 @@ import {
   useConnections,
   useDeleteHandler,
   useDialogControl,
+  useHelp,
   useImportHandler,
   useLedgerFeedback,
   useLedgerHardware,
+  useOverlay,
   usePolkassembly,
   useReferenda,
   useReferendaSubscriptions,

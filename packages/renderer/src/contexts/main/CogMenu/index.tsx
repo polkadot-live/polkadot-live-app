@@ -7,10 +7,10 @@ import {
   createSafeContextHook,
   useAppSettings,
   useConnections,
+  useHelp,
 } from '@polkadot-live/contexts';
 import { useBootstrapping } from '@ren/contexts/main';
 import { renderToast } from '@polkadot-live/ui/utils';
-import { useHelp } from '@polkadot-live/ui/contexts';
 import type { CogMenuContextInterface } from '@polkadot-live/contexts/types/main';
 import type { MenuItemData } from '@polkadot-live/types/menu';
 

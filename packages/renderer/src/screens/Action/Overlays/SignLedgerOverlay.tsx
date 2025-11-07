@@ -2,9 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as UI from '@polkadot-live/ui/components';
-import { useConnections, useLedgerFeedback } from '@polkadot-live/contexts';
+import {
+  useConnections,
+  useLedgerFeedback,
+  useOverlay,
+} from '@polkadot-live/contexts';
 import { useEffect } from 'react';
-import { useOverlay } from '@polkadot-live/ui/contexts';
 import { ButtonPrimary, ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
 import {
   FlexColumn,

@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext, useEffect, useRef, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/contexts';
+import { createSafeContextHook } from '../../../utils';
 import { HelpConfig } from '@polkadot-live/consts/help';
 import type { HelpContextProps, HelpContextState } from './types';
 import type { HelpItemKey, HelpStatus } from '@polkadot-live/types/help';
-import type { HelpContextInterface } from '@polkadot-live/contexts/types/common';
+import type { HelpContextInterface } from '../../../types/common';
 
 export const HelpContext = createContext<HelpContextInterface | undefined>(
   undefined
@@ -39,7 +39,6 @@ export const HelpProvider = ({ children }: HelpContextProps) => {
 
   const setDefinition = (key: HelpItemKey) => {
     const item = HelpConfig.find((h) => h.key === key) || null;
-
     setState({
       ...state,
       item,
@@ -55,7 +54,6 @@ export const HelpProvider = ({ children }: HelpContextProps) => {
 
   const openHelp = (key: HelpItemKey) => {
     const item = HelpConfig.find((h) => h.key === key) || null;
-
     setState({
       status: 'open',
       item,

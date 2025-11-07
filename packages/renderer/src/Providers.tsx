@@ -1,13 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-// General contexts.
-import {
-  HelpProvider,
-  OverlayProvider,
-  SideNavProvider,
-} from '@polkadot-live/ui/contexts';
-
 // Main window contexts.
 import {
   BootstrappingProvider,
@@ -34,18 +27,21 @@ import {
   DeleteHandlerProvider,
   DialogControlProvider,
   EventsProvider,
+  HelpProvider,
   ImportHandlerProvider,
   IntervalSubscriptionsProvider,
   IntervalTasksManagerProvider,
   LedgerFeedbackProvider,
   LedgerHardwareProvider,
   ManageProvider,
+  OverlayProvider,
   PolkassemblyProvider,
   ReferendaProvider,
   ReferendaSubscriptionsProvider,
   RemoveHandlerProvider,
   RenameHandlerProvider,
   SettingFlagsProvider,
+  SideNavProvider,
   SubscriptionsProvider,
   SummaryProvider,
   TabsProvider,

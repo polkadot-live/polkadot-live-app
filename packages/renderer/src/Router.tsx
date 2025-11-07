@@ -11,7 +11,7 @@ import {
 } from './Proxy';
 import { MainInterfaceWrapper } from '@polkadot-live/styles/wrappers';
 import { Overlay, Help } from '@polkadot-live/ui/components';
-import { useHelp } from '@polkadot-live/ui/contexts';
+import { useHelp, useOverlay } from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
 import { useTheme } from 'styled-components';
 import { HashRouter, Route, Routes } from 'react-router';
@@ -27,6 +27,7 @@ import type { AnyJson } from '@polkadot-live/types/misc';
 export const RouterInner = () => {
   const { mode }: AnyJson = useTheme();
   const { status: helpStatus, definition, closeHelp, setStatus } = useHelp();
+  const overlayCtx = useOverlay();
 
   /**
    * Return routes for the window being rendered.
@@ -103,7 +104,7 @@ export const RouterInner = () => {
         closeHelp={closeHelp}
         setStatus={setStatus}
       />
-      <Overlay />
+      <Overlay overlayCtx={overlayCtx} />
       <ToastContainer stacked />
       <Routes>{addRoutesForWindow()}</Routes>
     </MainInterfaceWrapper>

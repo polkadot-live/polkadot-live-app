@@ -1,8 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useConnections } from '@polkadot-live/contexts';
-import { useHelp } from '@polkadot-live/ui/contexts';
+import { useConnections, useHelp } from '@polkadot-live/contexts';
 import { Help } from '@polkadot-live/ui/components';
 import { MainInterfaceWrapper } from '@polkadot-live/styles/wrappers';
 import { ToastContainer } from 'react-toastify';

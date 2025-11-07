@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import React, { createContext, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/contexts';
+import { createSafeContextHook } from '../../../utils';
 import type { AnyJson } from '@polkadot-live/types/misc';
-import type { OverlayContextInterface } from '@polkadot-live/contexts/types/common';
+import type { OverlayContextInterface } from '../../../types/common';
 
 export const OverlayContext = createContext<
   OverlayContextInterface | undefined
@@ -73,7 +73,6 @@ export const OverlayProvider = ({
     if (state.onCloseOverlay) {
       state.onCloeOverlay();
     }
-
     setState({
       ...state,
       status: 0,
