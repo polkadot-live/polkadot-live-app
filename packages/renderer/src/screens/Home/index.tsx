@@ -160,7 +160,6 @@ export const Home = () => {
     if (platform === 'linux') {
       return;
     }
-
     toggleSetting('setting:docked-window');
 
     // Analytics.

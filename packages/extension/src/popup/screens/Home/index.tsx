@@ -4,6 +4,7 @@
 import * as UI from '@polkadot-live/ui/components';
 import * as Ctx from '../../contexts';
 import PolkadotIcon from '@polkadot-live/ui/svg/polkadotIcon.svg?react';
+import { useEffect } from 'react';
 import { version } from '../../../../package.json';
 import { Classic } from '@theme-toggles/react';
 import {
@@ -20,6 +21,7 @@ import {
   useAppSettings,
   useSendNative,
   useSideNav,
+  useHelp,
 } from '@polkadot-live/contexts';
 import {
   fetchSendAccountsBrowser,
@@ -33,6 +35,7 @@ import {
 } from '@polkadot-live/styles/wrappers';
 
 export const Home = () => {
+  const { openHelp } = useHelp();
   const { getAddresses } = useAddresses();
   const { cacheGet, toggleSetting } = useAppSettings();
   const { cacheGet: getShared, relayState } = useConnections();
@@ -48,6 +51,12 @@ export const Home = () => {
     relayState('mode:dark', !darkMode);
     toggleSetting('setting:dark-mode');
   };
+
+  useEffect(() => {
+    chrome.runtime
+      .sendMessage({ type: 'settings', task: 'showDisclaimer' })
+      .then((res: boolean) => res && openHelp('help:docs:disclaimer'));
+  }, []);
 
   return (
     <>

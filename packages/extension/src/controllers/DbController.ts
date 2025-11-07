@@ -99,6 +99,7 @@ export class DbController {
         for (const [key, value] of getDefaultSettings().entries()) {
           settingsStore.put(value, key);
         }
+        settingsStore.put(false, 'setting:show-disclaimer');
       },
     });
   }

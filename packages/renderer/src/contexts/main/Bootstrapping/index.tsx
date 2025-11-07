@@ -71,7 +71,6 @@ export const BootstrappingProvider = ({
       new URL('dedot/smoldot/worker', import.meta.url),
       { type: 'module' }
     );
-
     APIsController.smoldotClient = startWithWorker(SmoldotWorker);
   };
 
