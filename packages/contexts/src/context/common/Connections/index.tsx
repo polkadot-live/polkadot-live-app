@@ -4,7 +4,7 @@
 import * as themeVariables from '@polkadot-live/styles/theme/variables';
 import { createSafeContextHook } from '../../../utils';
 import { createContext, useEffect, useRef, useState } from 'react';
-import { getConnectionsAdapter } from './adaptors';
+import { getConnectionsAdapter } from './adapters';
 import { initSharedState } from '@polkadot-live/consts/sharedState';
 import { setStateWithRef } from '@w3ux/utils';
 import type { ActionMeta } from '@polkadot-live/types/tx';
@@ -26,7 +26,7 @@ export const ConnectionsProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const adaptor = getConnectionsAdapter();
+  const adapter = getConnectionsAdapter();
 
   /**
    * Cache to control rendering logic only.
@@ -44,7 +44,7 @@ export const ConnectionsProvider = ({
    * Relay shared state.
    */
   const relayState = (syncId: SyncID, state: boolean | string) =>
-    adaptor.relayState(syncId, state);
+    adapter.relayState(syncId, state);
 
   /**
    * Return flag indicating whether app is in online or offline mode.
@@ -64,25 +64,25 @@ export const ConnectionsProvider = ({
    * Copy to clipboard.
    */
   const copyToClipboard = async (text: string) =>
-    await adaptor.copyToClipboard(text);
+    await adapter.copyToClipboard(text);
 
   /**
    * Open URL in browser.
    */
   const openInBrowser = (uri: string, analytics?: AnyData) =>
-    adaptor.openInBrowser(uri, analytics);
+    adapter.openInBrowser(uri, analytics);
 
   /**
    * Checks if a tab is open.
    */
-  const isTabOpen = async (tab: string) => await adaptor.isTabOpen(tab);
+  const isTabOpen = async (tab: string) => await adapter.isTabOpen(tab);
 
   /**
    * Message to initialize a transaction in the extrinsics tab.
    */
   const initExtrinsicMsg = (txMeta: ActionMeta) => {
-    adaptor.relayState('extrinsic:building', true);
-    adaptor.initAction(txMeta);
+    adapter.relayState('extrinsic:building', true);
+    adapter.initAction(txMeta);
   };
 
   /**
@@ -92,17 +92,17 @@ export const ConnectionsProvider = ({
     tab: string,
     relayData?: AnyData, // electron
     analytics?: { event: string; data: AnyData | null }
-  ) => adaptor.openTab(tab, relayData, analytics);
+  ) => adapter.openTab(tab, relayData, analytics);
 
   useEffect(() => {
     // Synchronize with stored flags.
     const sync = async () => {
-      const map = await adaptor.getSharedStateOnMount();
+      const map = await adapter.getSharedStateOnMount();
       setStateWithRef(map, setCache, cacheRef);
     };
 
     // Listen for shared state syncing.
-    const removeListener = adaptor.listenSharedStateOnMount(setCache, cacheRef);
+    const removeListener = adapter.listenSharedStateOnMount(setCache, cacheRef);
     sync().then(() => setStateLoaded(true));
     return () => {
       removeListener && removeListener();

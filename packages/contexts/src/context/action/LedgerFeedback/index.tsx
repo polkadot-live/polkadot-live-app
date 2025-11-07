@@ -4,7 +4,7 @@
 import { createContext, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
 import { useConnections, useOverlay } from '../../common';
-import { getLedgerFeedbackAdapter } from './adaptors';
+import { getLedgerFeedbackAdapter } from './adapters';
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 import type { LedgerFeedbackContextInterface } from '../../../types/action';
 import type {

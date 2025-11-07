@@ -5,7 +5,7 @@ import { createContext, useRef, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
 import { decodeAddress, u8aToHex } from 'dedot/utils';
 import { setStateWithRef } from '@w3ux/utils';
-import { getLedgerHardwareAdapter } from './adaptors';
+import { getLedgerHardwareAdapter } from './adapters';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { LedgerMetadata } from '@polkadot-live/types/accounts';
 import type {

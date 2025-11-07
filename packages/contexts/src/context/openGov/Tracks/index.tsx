@@ -5,7 +5,7 @@ import { createContext, useRef, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
 import { useConnections } from '../../common';
 import { setStateWithRef } from '@w3ux/utils';
-import { getTracksAdapter } from './adaptors';
+import { getTracksAdapter } from './adapters';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { Track } from '@polkadot-live/core';
 import type { TracksContextInterface } from '../../../types/openGov';
@@ -17,7 +17,7 @@ export const TracksContext = createContext<TracksContextInterface | undefined>(
 export const useTracks = createSafeContextHook(TracksContext, 'TracksContext');
 
 export const TracksProvider = ({ children }: { children: React.ReactNode }) => {
-  const adaptor = getTracksAdapter();
+  const adapter = getTracksAdapter();
   const { getOnlineMode } = useConnections();
 
   const [tracksMap, setTracksMap] = useState(new Map<ChainID, Track[]>());
@@ -52,7 +52,7 @@ export const TracksProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Request tracks.
   const requestTracks = (chainId: ChainID) => {
-    adaptor.requestTracks(chainId, setFetchingTracks, receiveTracksData);
+    adapter.requestTracks(chainId, setFetchingTracks, receiveTracksData);
   };
 
   return (

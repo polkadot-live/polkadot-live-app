@@ -3,7 +3,7 @@
 
 import { createContext } from 'react';
 import { createSafeContextHook } from '../../../utils';
-import { getRemoveHandlerAdapter } from './adaptors';
+import { getRemoveHandlerAdapter } from './adapters';
 import { useAddresses } from '../Addresses';
 import type {
   EncodedAccount,
@@ -26,7 +26,7 @@ export const RemoveHandlerProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const adaptor = getRemoveHandlerAdapter();
+  const adapter = getRemoveHandlerAdapter();
   const { handleAddressUpdate } = useAddresses();
 
   /**
@@ -51,14 +51,14 @@ export const RemoveHandlerProvider = ({
    * Update address in store.
    */
   const updateAddressInStore = async (account: ImportedGenericAccount) => {
-    await adaptor.updateAddressInStore(account);
+    await adapter.updateAddressInStore(account);
   };
 
   /**
    * Send address data to background worker or main process to process removal.
    */
   const postToMain = (address: string, chainId: ChainID) => {
-    adaptor.postToMain(address, chainId);
+    adapter.postToMain(address, chainId);
   };
 
   return (

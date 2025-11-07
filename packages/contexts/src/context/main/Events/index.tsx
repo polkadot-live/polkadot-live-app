@@ -3,7 +3,7 @@
 
 import React, { createContext, useEffect, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
-import { getEventsAdapter } from './adaptors';
+import { getEventsAdapter } from './adapters';
 import {
   pushUniqueEvent,
   getEventChainId,

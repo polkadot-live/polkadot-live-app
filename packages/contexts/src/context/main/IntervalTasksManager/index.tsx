@@ -6,7 +6,7 @@ import { useConnections } from '../../common';
 import { useIntervalSubscriptions } from '../IntervalSubscriptions';
 import { useManage } from '../Manage';
 import { createContext } from 'react';
-import { getIntervalTaskManagerAdapter } from './adaptors';
+import { getIntervalTaskManagerAdapter } from './adapters';
 import { intervalDurationsConfig } from '@polkadot-live/consts/subscriptions/interval';
 import { renderToast } from '@polkadot-live/ui/utils';
 import type { AnyFunction } from '@polkadot-live/types/misc';

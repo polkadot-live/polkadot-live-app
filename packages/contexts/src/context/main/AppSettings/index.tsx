@@ -3,7 +3,7 @@
 
 import { createContext, useEffect, useRef, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
-import { getAppSettingsAdapter } from './adaptors';
+import { getAppSettingsAdapter } from './adapters';
 import { getDefaultSettings } from '@polkadot-live/consts/settings';
 import { setStateWithRef } from '@w3ux/utils';
 import type { SettingKey } from '@polkadot-live/types/settings';
@@ -23,7 +23,7 @@ export const AppSettingsProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const adaptor = getAppSettingsAdapter();
+  const adapter = getAppSettingsAdapter();
   const [cache, setCache] = useState(getDefaultSettings());
   const cacheRef = useRef(cache);
 
@@ -37,7 +37,7 @@ export const AppSettingsProvider = ({
    * Update settings cache and send IPC to update settings in main process.
    */
   const toggleSetting = (key: SettingKey) => {
-    adaptor.onSettingToggle(key, setCache, cacheRef);
+    adapter.onSettingToggle(key, setCache, cacheRef);
   };
 
   /**
@@ -45,7 +45,7 @@ export const AppSettingsProvider = ({
    */
   useEffect(() => {
     const sync = async () => {
-      const map = await adaptor.onMount();
+      const map = await adapter.onMount();
       setStateWithRef(map, setCache, cacheRef);
     };
     sync();

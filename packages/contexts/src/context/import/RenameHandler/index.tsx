@@ -5,7 +5,7 @@ import { createContext } from 'react';
 import { renderToast, validateAccountName } from '@polkadot-live/ui/utils';
 import { createSafeContextHook } from '../../../utils';
 import { useAddresses } from '../Addresses';
-import { getRenameHandlerAdapter } from './adaptors';
+import { getRenameHandlerAdapter } from './adapters';
 import type { RenameHandlerContextInterface } from '../../../types/import';
 import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';
 
@@ -23,7 +23,7 @@ export const RenameHandlerProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const adaptor = getRenameHandlerAdapter();
+  const adapter = getRenameHandlerAdapter();
   const { handleAddressImport, isUniqueAccountName } = useAddresses();
 
   /**
@@ -33,7 +33,7 @@ export const RenameHandlerProvider = ({
     updatedAccount: ImportedGenericAccount,
     originalAccount: ImportedGenericAccount
   ) => {
-    await adaptor.handleRename(updatedAccount, originalAccount);
+    await adapter.handleRename(updatedAccount, originalAccount);
     handleAddressImport(updatedAccount);
   };
 

@@ -15,7 +15,7 @@ import type {
   SubscriptionTaskType,
   TaskCategory,
 } from '@polkadot-live/types/subscriptions';
-import { getSubscriptionsAdapter } from './adaptors';
+import { getSubscriptionsAdapter } from './adapters';
 
 export const SubscriptionsContext = createContext<
   SubscriptionsContextInterface | undefined

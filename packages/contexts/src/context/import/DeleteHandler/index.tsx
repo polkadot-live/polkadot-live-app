@@ -5,7 +5,7 @@ import { useAccountStatuses } from '../AccountStatuses';
 import { useAddresses } from '../Addresses';
 import { createSafeContextHook } from '../../../utils';
 import { createContext } from 'react';
-import { getDeleteHandlerAdapter } from './adaptors';
+import { getDeleteHandlerAdapter } from './adapters';
 import type {
   AccountSource,
   ImportedGenericAccount,
@@ -27,7 +27,7 @@ export const DeleteHandlerProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const adaptor = getDeleteHandlerAdapter();
+  const adapter = getDeleteHandlerAdapter();
   const { deleteAccountStatus } = useAccountStatuses();
   const { handleAddressDelete } = useAddresses();
 
@@ -59,13 +59,13 @@ export const DeleteHandlerProvider = ({
    * Remove generic account from store.
    */
   const removeFromStore = async (source: AccountSource, publicKeyHex: string) =>
-    await adaptor.removeFromStore(source, publicKeyHex);
+    await adapter.removeFromStore(source, publicKeyHex);
 
   /**
    * Send address data to main window to process removal.
    */
   const postToMain = (address: string, chainId: ChainID) =>
-    adaptor.postToMain(address, chainId);
+    adapter.postToMain(address, chainId);
 
   return (
     <DeleteHandlerContext

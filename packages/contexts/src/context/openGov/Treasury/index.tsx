@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import BigNumber from 'bignumber.js';
-import { getTreasuryAdapter } from './adaptors';
+import { getTreasuryAdapter } from './adapters';
 import { StatemintAssets } from '@polkadot-live/consts/treasury';
 import { formatBlocksToTime } from '@polkadot-live/core';
 import { createContext, useEffect, useRef, useState } from 'react';
@@ -32,7 +32,7 @@ export const TreasuryProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const adaptor = getTreasuryAdapter();
+  const adapter = getTreasuryAdapter();
   const { getOnlineMode } = useConnections();
 
   // Active treasury chain ID.
@@ -74,12 +74,12 @@ export const TreasuryProvider = ({
       return;
     }
     setTreasuryChainId(chainId);
-    adaptor.initTreasury(chainId, setFetchingTreasuryData, setTreasuryData);
+    adapter.initTreasury(chainId, setFetchingTreasuryData, setTreasuryData);
   };
 
   // Re-fetch treasury stats.
   const refetchStats = () =>
-    adaptor.initTreasury(
+    adapter.initTreasury(
       treasuryChainId,
       setFetchingTreasuryData,
       setTreasuryData

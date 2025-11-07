@@ -3,7 +3,7 @@
 
 import { createContext, useEffect, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
-import { getReferendaSubscriptionsAdapter } from './adaptors';
+import { getReferendaSubscriptionsAdapter } from './adapters';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { ReferendaSubscriptionsContextInterface } from '../../../types/openGov';
@@ -23,7 +23,7 @@ export const ReferendaSubscriptionsProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const adaptor = getReferendaSubscriptionsAdapter();
+  const adapter = getReferendaSubscriptionsAdapter();
 
   // Cached referenda subscriptions.
   const [subscriptions, setSubscriptions] = useState<
@@ -186,7 +186,7 @@ export const ReferendaSubscriptionsProvider = ({
 
   // Fetch interval subscriptions from store and initialize state on mount.
   useEffect(() => {
-    adaptor.fetchOnMount().then((result) => {
+    adapter.fetchOnMount().then((result) => {
       if (result) {
         for (const task of result) {
           addReferendaSubscription(task);
@@ -197,7 +197,7 @@ export const ReferendaSubscriptionsProvider = ({
 
   // Listen for messages from popup.
   useEffect(() => {
-    const removeListener = adaptor.listenOnMount(
+    const removeListener = adapter.listenOnMount(
       addReferendaSubscription,
       removeReferendaSubscription,
       updateReferendaSubscription

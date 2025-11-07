@@ -3,7 +3,7 @@
 
 import { useState, createContext, useRef, useEffect } from 'react';
 import { createSafeContextHook } from '../../../utils';
-import { getManageAdapter } from './adaptors';
+import { getManageAdapter } from './adapters';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   IntervalSubscription,
@@ -19,7 +19,7 @@ export const ManageContext = createContext<ManageContextInterface | undefined>(
 export const useManage = createSafeContextHook(ManageContext, 'ManageContext');
 
 export const ManageProvider = ({ children }: { children: ReactNode }) => {
-  const adaptor = getManageAdapter();
+  const adapter = getManageAdapter();
 
   // Subscription tasks being rendered under the Manage tab.
   const [renderedSubscriptionsState, setRenderedSubscriptionsState] =
@@ -126,7 +126,7 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
 
   // Listen for state messages.
   useEffect(() => {
-    const removeListener = adaptor.onMount(setRenderedSubscriptionsState);
+    const removeListener = adapter.onMount(setRenderedSubscriptionsState);
     return () => {
       removeListener && removeListener();
     };

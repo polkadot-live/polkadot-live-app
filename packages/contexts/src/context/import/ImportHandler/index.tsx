@@ -11,7 +11,7 @@ import { useAccountStatuses } from '../AccountStatuses';
 import { useAddresses } from '../Addresses';
 import { useConnections } from '../../common';
 import { decodeAddress, encodeAddress, u8aToHex } from 'dedot/utils';
-import { getImportHandlerAdapter } from './adaptors';
+import { getImportHandlerAdapter } from './adapters';
 import { renderToast } from '@polkadot-live/ui/utils';
 import type {
   AccountSource,
@@ -36,7 +36,7 @@ export const ImportHandlerProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const adaptor = getImportHandlerAdapter();
+  const adapter = getImportHandlerAdapter();
   const { getOnlineMode } = useConnections();
   const { setStatusForAccount } = useAccountStatuses();
   const { handleAddressImport, getDefaultName } = useAddresses();
@@ -149,7 +149,7 @@ export const ImportHandlerProvider = ({
    * Persist generic account to store.
    */
   const persist = async (genericAccount: ImportedGenericAccount) =>
-    await adaptor.persist(genericAccount);
+    await adapter.persist(genericAccount);
 
   /**
    * Add address to main renderer.
@@ -157,7 +157,7 @@ export const ImportHandlerProvider = ({
   const postToMain = (
     genericAccount: ImportedGenericAccount,
     encodedAccount: EncodedAccount
-  ) => adaptor.postToMain(genericAccount, encodedAccount);
+  ) => adapter.postToMain(genericAccount, encodedAccount);
 
   return (
     <ImportHandlerContext

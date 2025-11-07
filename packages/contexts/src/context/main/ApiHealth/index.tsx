@@ -3,7 +3,7 @@
 
 import { createContext, useEffect, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
-import { getApiHealthAdapter } from './adaptors';
+import { getApiHealthAdapter } from './adapters';
 import type { ApiConnectResult, NodeEndpoint } from '@polkadot-live/types/apis';
 import type { ApiError } from '@polkadot-live/core';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -23,7 +23,7 @@ export const ApiHealthProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const adaptor = getApiHealthAdapter();
+  const adapter = getApiHealthAdapter();
   const [failedConnections, setFailedConnections] = useState(
     new Map<ChainID, ApiConnectResult<ApiError>>()
   );
@@ -38,19 +38,19 @@ export const ApiHealthProvider = ({
    * Attempt connecting to a chain API.
    */
   const startApi = async (chainId: ChainID) =>
-    await adaptor.startApi(chainId, failedConnections);
+    await adapter.startApi(chainId, failedConnections);
 
   /**
    * Handle settings a new chain RPC endpoint.
    */
   const onEndpointChange = async (chainId: ChainID, endpoint: NodeEndpoint) =>
-    await adaptor.onEndpointChange(chainId, endpoint);
+    await adapter.onEndpointChange(chainId, endpoint);
 
   /**
    * Listen for react state tasks from background worker.
    */
   useEffect(() => {
-    const removeListener = adaptor.onMount(setFailedConnections);
+    const removeListener = adapter.onMount(setFailedConnections);
     return () => {
       removeListener && removeListener();
     };

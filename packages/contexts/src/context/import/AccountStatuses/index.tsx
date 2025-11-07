@@ -5,7 +5,7 @@ import { createContext, useEffect, useRef, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
 import { useAddresses } from '../Addresses';
 import { useRemoveHandler } from '../RemoveHandler';
-import { getAccountStatusesAdapter } from './adaptors';
+import { getAccountStatusesAdapter } from './adapters';
 import { getSupportedSources } from '@polkadot-live/consts/chains';
 import { setStateWithRef } from '@w3ux/utils';
 import type { AccountStatusesContextInterface } from '../../../types/import';
@@ -37,7 +37,7 @@ export const AccountStatusesProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const adaptor = getAccountStatusesAdapter();
+  const adapter = getAccountStatusesAdapter();
   const { getAccounts } = useAddresses();
   const { handleRemoveAddress } = useRemoveHandler();
 
@@ -67,7 +67,7 @@ export const AccountStatusesProvider = ({
     setStateWithRef(outer, setStatusMap, statusMapRef);
 
     // Set up message listener for extension.
-    const removeListener = adaptor.listenOnMount(
+    const removeListener = adapter.listenOnMount(
       setStatusForAccount,
       handleRemoveAddress
     );

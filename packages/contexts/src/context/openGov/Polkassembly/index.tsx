@@ -4,7 +4,7 @@
 import axios from 'axios';
 import { createContext, useEffect, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
-import { getPolkassemblyAdapter } from './adaptors';
+import { getPolkassemblyAdapter } from './adapters';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   PolkassemblyProposal,
@@ -26,13 +26,13 @@ export const PolkassemblyProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const adaptor = getPolkassemblyAdapter();
+  const adapter = getPolkassemblyAdapter();
   const [usePolkassemblyApi, setUsePolkassemblyApi] = useState<boolean>(false);
   const [fetchingMetadata, setFetchingMetadata] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchSetting = async () => {
-      const flag = await adaptor.fetchSetting();
+      const flag = await adapter.fetchSetting();
       setUsePolkassemblyApi(flag);
     };
     fetchSetting();

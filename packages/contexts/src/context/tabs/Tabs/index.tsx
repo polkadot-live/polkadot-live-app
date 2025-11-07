@@ -4,7 +4,7 @@
 import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { createContext, useEffect, useRef, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
-import { getTabsAdapter } from './adaptors';
+import { getTabsAdapter } from './adapters';
 import {
   KeyboardSensor,
   PointerSensor,
@@ -22,7 +22,7 @@ export const TabsContext = createContext<TabsContextInterface | undefined>(
 export const useTabs = createSafeContextHook(TabsContext, 'TabsContext');
 
 export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
-  const adaptor = getTabsAdapter();
+  const adapter = getTabsAdapter();
   const [activeId, setActiveId] = useState<number | null>(null);
   const [clickedId, setClickedId] = useState<number | null>(null);
   const [items, setItems] = useState<number[]>([]);
@@ -61,7 +61,7 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
    */
   useEffect(() => {
     const sync = async () => {
-      await adaptor.onMount(addTab);
+      await adapter.onMount(addTab);
     };
     sync();
   }, []);
@@ -70,7 +70,7 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
    * Listen for messages.
    */
   useEffect(() => {
-    const removeListener = adaptor.listenOnMount(addTab);
+    const removeListener = adapter.listenOnMount(addTab);
     return () => {
       removeListener && removeListener();
     };
@@ -125,7 +125,7 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
   const handleTabClick = (id: number) => {
     setClickedId(id);
     const { viewId } = tabsData.find((t) => t.id === id)!;
-    adaptor.onClickTab(viewId);
+    adapter.onClickTab(viewId);
   };
 
   /**
@@ -158,7 +158,7 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
     !tabsDataRef.current.length && setClickedId(null);
 
     if (tabData) {
-      adaptor.onCloseTab(tabData.viewId, maybeShowViewId || null);
+      adapter.onCloseTab(tabData.viewId, maybeShowViewId || null);
     }
   };
 

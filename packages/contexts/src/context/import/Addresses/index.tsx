@@ -3,7 +3,7 @@
 
 import { createContext, useEffect, useRef, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
-import { getImportAddressesAdapter } from './adaptors';
+import { getImportAddressesAdapter } from './adapters';
 import { getSupportedSources } from '@polkadot-live/consts/chains';
 import { setStateWithRef } from '@w3ux/utils';
 import type {
@@ -26,7 +26,7 @@ export const AddressesProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const adaptor = getImportAddressesAdapter();
+  const adapter = getImportAddressesAdapter();
 
   /**
    * Generic accounts map and reference.
@@ -165,7 +165,7 @@ export const AddressesProvider = ({
    */
   useEffect(() => {
     const fetchAccounts = async () => {
-      const map = await adaptor.fetchOnMount();
+      const map = await adapter.fetchOnMount();
       setStateWithRef(map, setGenericAccounts, genericAccountsRef);
     };
     fetchAccounts();
@@ -175,7 +175,7 @@ export const AddressesProvider = ({
    * Listen for state syncing messages.
    */
   useEffect(() => {
-    const removeListener = adaptor.listenOnMount(
+    const removeListener = adapter.listenOnMount(
       setGenericAccounts,
       genericAccountsRef
     );

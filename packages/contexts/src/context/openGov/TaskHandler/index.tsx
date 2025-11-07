@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext } from 'react';
-import { getTaskHandlerAdapter } from './adaptors';
+import { getTaskHandlerAdapter } from './adapters';
 import { renderToast } from '@polkadot-live/ui/utils';
 import { createSafeContextHook } from '../../../utils';
 import { useConnections } from '../../common';
@@ -25,7 +25,7 @@ export const TaskHandlerProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const adaptor = getTaskHandlerAdapter();
+  const adapter = getTaskHandlerAdapter();
   const { getOnlineMode } = useConnections();
   const {
     addReferendaSubscription,
@@ -44,14 +44,14 @@ export const TaskHandlerProvider = ({
     task.status = 'enable';
 
     addReferendaSubscription(task);
-    adaptor.addIntervalSubscriptionMessage(task, getOnlineMode());
+    adapter.addIntervalSubscriptionMessage(task, getOnlineMode());
 
     const text = `Subscription added for referendum ${referendumId}.`;
     const toastId = `add-${task.chainId}-${referendumId}-${task.action}`;
     renderToast(text, toastId, 'success');
 
     const { action } = task;
-    adaptor.handleAnalytics('referenda-subscribe', { action });
+    adapter.handleAnalytics('referenda-subscribe', { action });
   };
 
   // Handles removing an interval subscription for a referendum.
@@ -64,14 +64,14 @@ export const TaskHandlerProvider = ({
     task.referendumId = referendumId;
 
     removeReferendaSubscription(task);
-    adaptor.removeIntervalSubscriptionMessage(task);
+    adapter.removeIntervalSubscriptionMessage(task);
 
     const text = `Subscription removed for referendum ${referendumId}.`;
     const toastId = `remove-${task.chainId}-${referendumId}-${task.action}`;
     renderToast(text, toastId, 'success');
 
     const { action } = task;
-    adaptor.handleAnalytics('referenda-unsubscribe', { action });
+    adapter.handleAnalytics('referenda-unsubscribe', { action });
   };
 
   // Handles adding all available subscriptions for a referendum.
@@ -97,11 +97,11 @@ export const TaskHandlerProvider = ({
     for (const task of updated) {
       addReferendaSubscription({ ...task });
     }
-    adaptor.addIntervalSubscriptionsMessage(updated, getOnlineMode());
+    adapter.addIntervalSubscriptionsMessage(updated, getOnlineMode());
     const text = `Subscriptions added for referendum ${referendumId}.`;
     const toastId = `add-all-${tasks[0].chainId}-${referendumId}`;
     renderToast(text, toastId, 'success');
-    adaptor.handleAnalytics('referenda-subscribe-all', null);
+    adapter.handleAnalytics('referenda-subscribe-all', null);
   };
 
   // Handles removing all addde subscriptions for a referendum.
@@ -127,11 +127,11 @@ export const TaskHandlerProvider = ({
     for (const task of updated) {
       removeReferendaSubscription({ ...task });
     }
-    adaptor.removeIntervalSubscriptionsMessage(updated, getOnlineMode());
+    adapter.removeIntervalSubscriptionsMessage(updated, getOnlineMode());
     const text = `Subscriptions removed for referendum ${referendumId}.`;
     const toastId = `remove-all-${tasks[0].chainId}-${referendumId}`;
     renderToast(text, toastId, 'success');
-    adaptor.handleAnalytics('referenda-unsubscribe-all', null);
+    adapter.handleAnalytics('referenda-unsubscribe-all', null);
   };
 
   return (

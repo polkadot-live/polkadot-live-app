@@ -5,7 +5,7 @@ import React, { createContext, useEffect, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
 import { useApiHealth } from '../ApiHealth';
 import { ChainList } from '@polkadot-live/consts/chains';
-import { getChainsAdapter } from './adaptors';
+import { getChainsAdapter } from './adapters';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChainsContextInterface } from '../../../types/main';
 import type { FlattenedAPIData } from '@polkadot-live/types/apis';
@@ -17,7 +17,7 @@ export const ChainsContext = createContext<ChainsContextInterface | undefined>(
 export const useChains = createSafeContextHook(ChainsContext, 'ChainsContext');
 
 export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
-  const adaptor = getChainsAdapter();
+  const adapter = getChainsAdapter();
   const { startApi } = useApiHealth();
   const [uiTrigger, setUiTrigger] = useState(false);
 
@@ -72,7 +72,7 @@ export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
    */
   const onDisconnectClick = async (chainId: ChainID) => {
     setWorkingDisconnects((pv) => new Map(pv).set(chainId, true));
-    await adaptor.onDisconnectApi(chainId);
+    await adapter.onDisconnectApi(chainId);
     setWorkingDisconnects((pv) => new Map(pv).set(chainId, false));
   };
 
@@ -96,14 +96,14 @@ export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
    * Handle mounting.
    */
   useEffect(() => {
-    adaptor.onMount();
+    adapter.onMount();
   }, []);
 
   /**
    * Listen for react state tasks from background worker.
    */
   useEffect(() => {
-    const removeListener = adaptor.listenOnMount(setChains, setUiTrigger);
+    const removeListener = adapter.listenOnMount(setChains, setUiTrigger);
     return () => {
       removeListener && removeListener();
     };

@@ -3,7 +3,7 @@
 
 import { createContext, useState, useRef, useEffect } from 'react';
 import { createSafeContextHook } from '../../../utils';
-import { getAddressesAdaptor } from './adaptors';
+import { getAddressesAdapter } from './adapters';
 import type { AddressesContextInterface } from '../../../types/main';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
@@ -25,7 +25,7 @@ export const AddressesProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const adaptor = getAddressesAdaptor();
+  const adapter = getAddressesAdapter();
 
   /// Store the currently imported addresses
   const [addresses, setAddresses] = useState<FlattenedAccounts>(new Map());
@@ -43,7 +43,7 @@ export const AddressesProvider = ({
 
   /// Saves received address as an imported address.
   const importAddress = async (accountName: string, fromBackup = false) => {
-    await adaptor.importAddress(
+    await adapter.importAddress(
       accountName,
       fromBackup,
       addressesRef,
@@ -53,7 +53,7 @@ export const AddressesProvider = ({
 
   /// Removes an imported address.
   const removeAddress = async (chainId: ChainID, address: string) => {
-    adaptor.removeAddress(chainId, address);
+    adapter.removeAddress(chainId, address);
   };
 
   /// Get current addresses.
@@ -96,12 +96,12 @@ export const AddressesProvider = ({
 
   /// Cache functions on mount (electron).
   useEffect(() => {
-    adaptor.onMount(addressesRef, setAddresses);
+    adapter.onMount(addressesRef, setAddresses);
   }, []);
 
   /// Listen to state messages from background worker.
   useEffect(() => {
-    const removeListener = adaptor.listenOnMount(addressesRef, setAddresses);
+    const removeListener = adapter.listenOnMount(addressesRef, setAddresses);
     return () => {
       removeListener && removeListener();
     };

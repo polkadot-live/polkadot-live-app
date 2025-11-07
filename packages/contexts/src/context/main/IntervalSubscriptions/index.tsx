@@ -4,7 +4,7 @@
 import { createContext, useEffect, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
 import { useManage } from '../Manage';
-import { getIntervalSubscriptionsAdapter } from './adaptors';
+import { getIntervalSubscriptionsAdapter } from './adapters';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { IntervalSubscriptionsContextInterface } from '../../../types/main';

@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { getReferendaAdapter } from './adaptors';
+import { getReferendaAdapter } from './adapters';
 import { createContext, useCallback, useEffect, useRef, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
 import { useConnections } from '../../common';
@@ -35,7 +35,7 @@ export const ReferendaProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const adaptor = getReferendaAdapter();
+  const adapter = getReferendaAdapter();
   const { getOnlineMode } = useConnections();
   const {
     clearProposals,
@@ -238,7 +238,7 @@ export const ReferendaProvider = ({
     // Fetch referenda if cached data doesn't exist for the chain.
     if (getOnlineMode() && !referendaMap.has(chainId)) {
       setFetchingReferenda(true);
-      adaptor.requestReferenda(chainId).then((result) => {
+      adapter.requestReferenda(chainId).then((result) => {
         if (result !== null) {
           receiveReferendaData(result);
         }
@@ -250,7 +250,7 @@ export const ReferendaProvider = ({
   const refetchReferenda = () => {
     setFetchingReferenda(true);
     clearProposals(activeReferendaChainId);
-    adaptor.requestReferenda(activeReferendaChainId).then((result) => {
+    adapter.requestReferenda(activeReferendaChainId).then((result) => {
       if (result !== null) {
         receiveReferendaData(result);
       }
@@ -265,7 +265,7 @@ export const ReferendaProvider = ({
 
   // Fetch paged referenda metadata if necessary.
   const fetchFromPolkassembly = async (referenda: ReferendaInfo[]) => {
-    const flag = await adaptor.getPolkassemblyFlag();
+    const flag = await adapter.getPolkassemblyFlag();
     setUsePolkassemblyApi(flag);
 
     // Fetch proposal metadata if Polkassembly enabled.

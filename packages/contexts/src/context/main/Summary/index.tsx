@@ -3,7 +3,7 @@
 
 import { createContext, useEffect, useRef, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
-import { getSummaryAdapter } from './adaptors';
+import { getSummaryAdapter } from './adapters';
 import type {
   AccountSource,
   ImportedGenericAccount,

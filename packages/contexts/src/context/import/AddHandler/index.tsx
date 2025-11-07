@@ -6,7 +6,7 @@ import { useAccountStatuses } from '../AccountStatuses';
 import { useAddresses } from '../Addresses';
 import { useConnections } from '../../common';
 import { createContext } from 'react';
-import { getAddHandlerAdapter } from './adaptors';
+import { getAddHandlerAdapter } from './adapters';
 import type { AddHandlerContextInterface } from '../../../types/import';
 import type {
   EncodedAccount,
@@ -27,7 +27,7 @@ export const AddHandlerProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const adaptor = getAddHandlerAdapter();
+  const adapter = getAddHandlerAdapter();
   const { getOnlineMode } = useConnections();
   const { setStatusForAccount } = useAccountStatuses();
   const { handleAddressUpdate } = useAddresses();
@@ -76,7 +76,7 @@ export const AddHandlerProvider = ({
    * Update address in store.
    */
   const updateAddressInStore = async (account: ImportedGenericAccount) => {
-    await adaptor.updateAddressInStore(account);
+    await adapter.updateAddressInStore(account);
   };
 
   /**
@@ -86,7 +86,7 @@ export const AddHandlerProvider = ({
     encodedAccount: EncodedAccount,
     genericAccount: ImportedGenericAccount
   ) => {
-    adaptor.postToMain(encodedAccount, genericAccount);
+    adapter.postToMain(encodedAccount, genericAccount);
   };
 
   return (
