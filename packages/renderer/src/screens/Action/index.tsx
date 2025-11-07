@@ -3,7 +3,7 @@
 
 import { useActionMessagePorts } from '@ren/hooks/useActionMessagePorts';
 import { useDebug } from '@ren/hooks/useDebug';
-import { useConnections } from '@ren/contexts/common';
+import { useConnections } from '@polkadot-live/contexts';
 import { FadeInWrapper } from '@polkadot-live/ui/utils';
 import { Action } from '@polkadot-live/screens';
 

@@ -1,17 +1,20 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ConnectionsProvider } from '../contexts';
-import { DialogControlProvider } from '@polkadot-live/contexts';
-import { HelpProvider, OverlayProvider } from '@polkadot-live/ui/contexts';
+import App from './App';
+import { LedgerController } from '../controllers';
 import {
   AccountStatusesProvider,
-  AddHandlerProvider,
-  DeleteHandlerProvider,
   ImportAddressesProvider,
+  AddHandlerProvider,
+  ConnectionsProvider,
+  DeleteHandlerProvider,
+  DialogControlProvider,
+  HelpProvider,
   ImportHandlerProvider,
   LedgerFeedbackProvider,
   LedgerHardwareProvider,
+  OverlayProvider,
   PolkassemblyProvider,
   ReferendaProvider,
   ReferendaSubscriptionsProvider,
@@ -22,14 +25,15 @@ import {
   TaskHandlerProvider,
   TracksProvider,
   TreasuryProvider,
+  WcFeedbackProvider,
+} from '@polkadot-live/contexts';
+import {
   TxMetaProvider,
   WalletConnectProvider,
   WalletConnectImportProvider,
-  WcFeedbackProvider,
   WcVerifierProvider,
 } from './contexts';
 import { withProviders } from '@polkadot-live/ui/hooks';
-import App from './App';
 
 export const Providers = withProviders(
   HelpProvider,
@@ -39,14 +43,14 @@ export const Providers = withProviders(
   TracksProvider,
   ImportAddressesProvider,
   RemoveHandlerProvider,
-  AccountStatusesProvider, // useAddresses, useRemoveHandler
+  AccountStatusesProvider, // useImportAddresses, useRemoveHandler
   AddHandlerProvider, // useAccountStatuses
   ImportHandlerProvider, // useAccountStatuses
   RenameHandlerProvider,
   DeleteHandlerProvider,
   DialogControlProvider,
   TabsProvider,
-  LedgerHardwareProvider,
+  [LedgerHardwareProvider, { ledgerController: LedgerController }],
   WcFeedbackProvider,
   WalletConnectProvider,
   WalletConnectImportProvider,

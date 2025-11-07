@@ -14,9 +14,13 @@ import {
   Send,
   Summary,
 } from '@polkadot-live/screens';
-import { useSideNav } from '@polkadot-live/ui/contexts';
-import { useConnections } from '../../../contexts';
-import { useSendNative } from '@polkadot-live/contexts';
+import {
+  useAddresses,
+  useConnections,
+  useAppSettings,
+  useSendNative,
+  useSideNav,
+} from '@polkadot-live/contexts';
 import {
   fetchSendAccountsBrowser,
   getSpendableBalanceBrowser,
@@ -29,8 +33,8 @@ import {
 } from '@polkadot-live/styles/wrappers';
 
 export const Home = () => {
-  const { getAddresses } = Ctx.useAddresses();
-  const { cacheGet, toggleSetting } = Ctx.useAppSettings();
+  const { getAddresses } = useAddresses();
+  const { cacheGet, toggleSetting } = useAppSettings();
   const { cacheGet: getShared, relayState } = useConnections();
   const { appLoading } = Ctx.useBootstrapping();
   const cogMenu = Ctx.useCogMenu();

@@ -2,22 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useMemo } from 'react';
-import {
-  useAddresses,
-  useApiHealth,
-  useAppSettings,
-  useBootstrapping,
-  useChains,
-  useCogMenu,
-  useEvents,
-  useIntervalSubscriptions,
-  useIntervalTasksManager,
-  useManage,
-  useSubscriptions,
-  useSummary,
-} from './contexts';
-import { useConnections } from '../contexts';
-import { useHelp, useSideNav } from '@polkadot-live/ui/contexts';
+import { useBootstrapping, useCogMenu } from './contexts';
 import { buildCache, ContextProxyProvider } from '@polkadot-live/contexts';
 
 interface ContextProxyProps {
@@ -28,21 +13,8 @@ export const ContextProxyMain = ({ children }: ContextProxyProps) => {
   const cache = useMemo(
     () =>
       buildCache({
-        HelpCtx: () => useHelp(),
-        ConnectionsCtx: () => useConnections(),
-        AddressesCtx: () => useAddresses(),
-        AppSettingsCtx: () => useAppSettings(),
-        SideNavCtx: () => useSideNav(),
-        ApiHealthCtx: () => useApiHealth(),
-        ChainsCtx: () => useChains(),
-        ManageCtx: () => useManage(),
-        SubscriptionsCtx: () => useSubscriptions(),
-        IntervalSubscriptionsCtx: () => useIntervalSubscriptions(),
-        IntervalTaskManagerCtx: () => useIntervalTasksManager(),
-        EventsCtx: () => useEvents(),
         BootstrappingCtx: () => useBootstrapping(),
         CogMenuCtx: () => useCogMenu(),
-        SummaryCtx: () => useSummary(),
       }),
     []
   );

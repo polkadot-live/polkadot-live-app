@@ -26,7 +26,8 @@
     "@polkadot-live/styles": "workspace:*"
   },
   "devDependencies": {
-    "@polkadot-live/types": "workspace:*"
+    "@polkadot-live/types": "workspace:*",
+    "@types/wicg-file-system-access": "^2023.10.7"
   },
   "packageManager": "yarn@4.0.2"
 }

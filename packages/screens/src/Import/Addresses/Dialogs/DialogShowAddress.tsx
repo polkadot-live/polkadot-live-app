@@ -3,7 +3,7 @@
 
 import * as Dialog from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
-import { useContextProxy } from '@polkadot-live/contexts';
+import { useConnections, useDialogControl } from '@polkadot-live/contexts';
 import {
   DialogContent,
   DialogHr,
@@ -28,10 +28,9 @@ const AddressText = styled.p`
 `;
 
 export const DialogShowAddress = ({ address }: DialogShowAddressProps) => {
-  const { useCtx } = useContextProxy();
-  const { copyToClipboard, getTheme } = useCtx('ConnectionsCtx')();
+  const { copyToClipboard, getTheme } = useConnections();
   const { getShowAddressDialogData, setShowAddressDialogData } =
-    useCtx('DialogControlCtx')();
+    useDialogControl();
 
   const theme = getTheme();
   const handleOpenChange = (open: boolean) =>

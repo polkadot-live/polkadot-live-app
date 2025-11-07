@@ -3,14 +3,13 @@
 
 import { ConfigAction } from '@polkadot-live/core';
 import { useEffect } from 'react';
-import { useConnections } from '@ren/contexts/common';
 import {
+  useConnections,
   useLedgerFeedback,
-  useTxMeta,
+  useOverlay,
   useWcFeedback,
-  useWcVerifier,
-} from '@ren/contexts/action';
-import { useOverlay } from '@polkadot-live/ui/contexts';
+} from '@polkadot-live/contexts';
+import { useTxMeta, useWcVerifier } from '@ren/contexts/action';
 import { renderToast } from '@polkadot-live/ui/utils';
 import type { ActionMeta, TxStatus } from '@polkadot-live/types/tx';
 import type { ChainID } from '@polkadot-live/types/chains';

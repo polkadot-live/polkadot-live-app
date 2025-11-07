@@ -5,13 +5,12 @@ import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/styles/wrappers';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { TreasuryStats } from '../Wrappers';
-import { useContextProxy } from '@polkadot-live/contexts';
+import { useConnections, useHelp, useTreasury } from '@polkadot-live/contexts';
 import type { ChainID } from '@polkadot-live/types/chains';
 
 export const OverviewTreasury: React.FC = () => {
-  const { useCtx } = useContextProxy();
-  const { openHelp } = useCtx('HelpCtx')();
-  const { getTheme, getOnlineMode } = useCtx('ConnectionsCtx')();
+  const { openHelp } = useHelp();
+  const { getTheme, getOnlineMode } = useConnections();
   const theme = getTheme();
 
   // Treasury context.
@@ -26,7 +25,7 @@ export const OverviewTreasury: React.FC = () => {
     getFormattedNextBurn,
     getFormattedToBeAwarded,
     getSpendPeriodProgress,
-  } = useCtx('TreasuryCtx')();
+  } = useTreasury();
 
   // Flag to control disabled stat styling.
   const statDisabled =

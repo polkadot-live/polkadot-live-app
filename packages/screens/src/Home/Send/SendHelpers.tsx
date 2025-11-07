@@ -4,7 +4,7 @@
 import * as Select from '@radix-ui/react-select';
 import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/styles/wrappers';
-import { useContextProxy } from '@polkadot-live/contexts';
+import { useConnections } from '@polkadot-live/contexts';
 import { ellipsisFn } from '@w3ux/utils';
 import { PuffLoader } from 'react-spinners';
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
@@ -166,8 +166,7 @@ export const SelectBox = ({
   disabled = false,
   onValueChange,
 }: SelectBoxProps) => {
-  const { useCtx } = useContextProxy();
-  const { getTheme } = useCtx('ConnectionsCtx')();
+  const { getTheme } = useConnections();
   const theme = getTheme();
 
   return (

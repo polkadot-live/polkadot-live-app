@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useContextProxy } from '@polkadot-live/contexts';
+import { useConnections } from '@polkadot-live/contexts';
 import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { FlexColumn } from '@polkadot-live/styles/wrappers';
@@ -16,8 +16,7 @@ export const OpenViewButton = ({
   umamiEvent,
 }: OpenViewButtonProps) => {
   const [isHovering, setIsHovering] = useState(false);
-  const { useCtx } = useContextProxy();
-  const { cacheGet, openTab } = useCtx('ConnectionsCtx')();
+  const { cacheGet, openTab } = useConnections();
   const darkMode = cacheGet('mode:dark');
 
   return (

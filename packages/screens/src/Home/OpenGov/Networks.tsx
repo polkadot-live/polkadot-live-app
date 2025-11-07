@@ -4,7 +4,11 @@
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as Style from '@polkadot-live/styles/wrappers';
-import { useContextProxy } from '@polkadot-live/contexts';
+import {
+  useConnections,
+  useIntervalSubscriptions,
+  useManage,
+} from '@polkadot-live/contexts';
 import { useState } from 'react';
 import { ButtonText } from '@polkadot-live/ui/kits/buttons';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
@@ -14,13 +18,10 @@ import type { ChainID } from '@polkadot-live/types/chains';
 import type { NetworksProps } from './types';
 
 export const Networks = ({ setBreadcrumb, setSection }: NetworksProps) => {
-  const { useCtx } = useContextProxy();
-  const { openTab } = useCtx('ConnectionsCtx')();
-  const { setDynamicIntervalTasks } = useCtx('ManageCtx')();
-  const { getIntervalSubscriptionsForChain, getSortedKeys } = useCtx(
-    'IntervalSubscriptionsCtx'
-  )();
-
+  const { openTab } = useConnections();
+  const { setDynamicIntervalTasks } = useManage();
+  const { getIntervalSubscriptionsForChain, getSortedKeys } =
+    useIntervalSubscriptions();
   /**
    * Accordion state.
    */

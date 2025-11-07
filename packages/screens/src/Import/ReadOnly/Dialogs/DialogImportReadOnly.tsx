@@ -18,13 +18,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getSupportedChains } from '@polkadot-live/consts/chains';
 import { renderToast } from '@polkadot-live/ui/utils';
 import { unescape } from '@w3ux/utils';
-import { useContextProxy } from '@polkadot-live/contexts';
+import {
+  useConnections,
+  useImportAddresses,
+  useImportHandler,
+} from '@polkadot-live/contexts';
 
 export const DialogImportReadOnly = () => {
-  const { useCtx } = useContextProxy();
-  const { isAlreadyImported } = useCtx('ImportAddressesCtx')();
-  const { getTheme } = useCtx('ConnectionsCtx')();
-  const { handleImportAddress } = useCtx('ImportHandlerCtx')();
+  const { isAlreadyImported } = useImportAddresses();
+  const { getTheme } = useConnections();
+  const { handleImportAddress } = useImportHandler();
 
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [inputVal, setInputVal] = useState<string>('');

@@ -4,7 +4,14 @@
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as Style from '@polkadot-live/styles/wrappers';
-import { useContextProxy } from '@polkadot-live/contexts';
+import {
+  useApiHealth,
+  useConnections,
+  useContextProxy,
+  useIntervalSubscriptions,
+  useIntervalTasksManager,
+  useManage,
+} from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
@@ -18,21 +25,21 @@ export const Subscriptions = ({
 }: SubscriptionsProps) => {
   const { useCtx } = useContextProxy();
   const { isConnecting } = useCtx('BootstrappingCtx')();
-  const { hasConnectionIssue } = useCtx('ApiHealthCtx')();
-  const { cacheGet, getOnlineMode } = useCtx('ConnectionsCtx')();
-  const { updateIntervalSubscription } = useCtx('IntervalSubscriptionsCtx')();
+  const { hasConnectionIssue } = useApiHealth();
+  const { cacheGet, getOnlineMode } = useConnections();
+  const { updateIntervalSubscription } = useIntervalSubscriptions();
   const {
     insertSubscriptions,
     handleIntervalAnalytics,
     updateIntervalTask,
     removeSubscriptions,
-  } = useCtx('IntervalTaskManagerCtx')();
+  } = useIntervalTasksManager();
   const {
     activeChainId,
     dynamicIntervalTasksState,
     tryUpdateDynamicIntervalTask,
     getCategorisedDynamicIntervals,
-  } = useCtx('ManageCtx')();
+  } = useManage();
 
   const [accordionValueIntervals, setAccordionValueIntervals] = useState<
     string[]

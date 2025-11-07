@@ -4,7 +4,7 @@
 import { Import } from '@polkadot-live/screens';
 import { useImportMessagePorts } from '@ren/hooks/useImportMessagePorts';
 import { useDebug } from '@ren/hooks/useDebug';
-import { useConnections } from '@ren/contexts/common';
+import { useConnections } from '@polkadot-live/contexts';
 import { FadeInWrapper } from '@polkadot-live/ui/utils';
 
 export const FadeImport = () => {

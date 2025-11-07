@@ -5,7 +5,7 @@ import { ConfigSettings } from '@polkadot-live/core';
 
 /// Settings window contexts.
 import { useEffect } from 'react';
-import { useSettingFlags } from '@ren/contexts/settings';
+import { useSettingFlags } from '@polkadot-live/contexts';
 import { renderToast } from '@polkadot-live/ui/utils';
 
 export const useSettingsMessagePorts = () => {

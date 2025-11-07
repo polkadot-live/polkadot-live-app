@@ -10,7 +10,14 @@ import {
 } from './Wrappers';
 import { renderOrigin } from '@polkadot-live/core';
 import { useState } from 'react';
-import { useContextProxy } from '@polkadot-live/contexts';
+import {
+  useConnections,
+  useHelp,
+  usePolkassembly,
+  useReferenda,
+  useReferendaSubscriptions,
+  useTaskHandler,
+} from '@polkadot-live/contexts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { motion } from 'framer-motion';
 import { TooltipRx } from '@polkadot-live/ui/components';
@@ -24,28 +31,26 @@ import type { RefStatus } from '@polkadot-live/types/openGov';
 import type { ReferendumRowProps } from '../types';
 
 export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
-  const { useCtx } = useContextProxy();
-  const { openHelp } = useCtx('HelpCtx')();
-  const { cacheGet, getOnlineMode, getTheme } = useCtx('ConnectionsCtx')();
+  const { openHelp } = useHelp();
+  const { cacheGet, getOnlineMode, getTheme } = useConnections();
 
   const darkMode = cacheGet('mode:dark');
   const isOnline = getOnlineMode();
   const theme = getTheme();
 
   const { refId, refStatus } = referendum;
-  const { activeReferendaChainId: chainId } = useCtx('ReferendaCtx')();
-  const { isSubscribedToTask, allSubscriptionsAdded } = useCtx(
-    'ReferendaSubscriptionsCtx'
-  )();
+  const { activeReferendaChainId: chainId } = useReferenda();
+  const { isSubscribedToTask, allSubscriptionsAdded } =
+    useReferendaSubscriptions();
 
   const {
     addIntervalSubscription,
     addAllIntervalSubscriptions,
     removeAllIntervalSubscriptions,
     removeIntervalSubscription,
-  } = useCtx('TaskHandlerCtx')();
+  } = useTaskHandler();
 
-  const { getProposal, usePolkassemblyApi } = useCtx('PolkassemblyCtx')();
+  const { getProposal, usePolkassemblyApi } = usePolkassembly();
   const proposalData = getProposal(chainId, refId);
   const { title } = proposalData || { title: '' };
 

@@ -5,15 +5,14 @@ import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/styles/wrappers';
 import * as Kits from '@polkadot-live/ui/kits/overlay';
 import { useState } from 'react';
-import { useContextProxy } from '@polkadot-live/contexts';
+import { useConnections, useHelp } from '@polkadot-live/contexts';
 import { Overview } from './Overview';
 import { Referenda } from './Referenda';
 import { Tracks } from './Tracks';
 
 export const OpenGov = () => {
-  const { useCtx } = useContextProxy();
-  const { getOnlineMode } = useCtx('ConnectionsCtx')();
-  const { openHelp } = useCtx('HelpCtx')();
+  const { getOnlineMode } = useConnections();
+  const { openHelp } = useHelp();
   const [section, setSection] = useState<number>(0);
   const [sectionContent, setSectionContent] = useState('');
 

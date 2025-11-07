@@ -3,7 +3,7 @@
 
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useContextProxy } from '@polkadot-live/contexts';
+import { useSubscriptions } from '@polkadot-live/contexts';
 import type { NotificationsSwitchProps } from './types';
 
 export const NotificationsSwitch = ({
@@ -11,8 +11,7 @@ export const NotificationsSwitch = ({
   isChecked,
   isDisabled,
 }: NotificationsSwitchProps) => {
-  const { useCtx } = useContextProxy();
-  const { onNotificationToggle } = useCtx('SubscriptionsCtx')();
+  const { onNotificationToggle } = useSubscriptions();
 
   return (
     <div

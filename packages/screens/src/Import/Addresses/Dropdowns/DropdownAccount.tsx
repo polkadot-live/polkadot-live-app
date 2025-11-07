@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { useContextProxy } from '@polkadot-live/contexts';
+import { useConnections, useDialogControl } from '@polkadot-live/contexts';
 import { ActionBtn } from '../Dialogs/Wrappers';
 import { DropdownMenuContent } from '@polkadot-live/styles/wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -23,11 +23,9 @@ export const DropdownAccount = ({
   genericAccount,
   onBookmarkToggle,
 }: DropdownAccountProps) => {
-  const { useCtx } = useContextProxy();
   const { address, chainId, isBookmarked } = encodedAccount;
-  const { getTheme, openInBrowser } = useCtx('ConnectionsCtx')();
-  const { setShowAddressDialogData, setRenameDialogData } =
-    useCtx('DialogControlCtx')();
+  const { getTheme, openInBrowser } = useConnections();
+  const { setShowAddressDialogData, setRenameDialogData } = useDialogControl();
   const theme = getTheme();
 
   const onBlockExplorerClick = () => {

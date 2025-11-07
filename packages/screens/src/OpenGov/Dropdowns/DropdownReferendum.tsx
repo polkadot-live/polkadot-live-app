@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { useContextProxy } from '@polkadot-live/contexts';
+import { useConnections } from '@polkadot-live/contexts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   DropdownMenuContent,
@@ -25,8 +25,7 @@ export const ReferendumDropdownMenu = ({
   chainId,
   referendum,
 }: ReferendumDropdownMenuProps) => {
-  const { useCtx } = useContextProxy();
-  const { cacheGet, getTheme, openInBrowser } = useCtx('ConnectionsCtx')();
+  const { cacheGet, getTheme, openInBrowser } = useConnections();
   const darkMode = cacheGet('mode:dark');
   const theme = getTheme();
 

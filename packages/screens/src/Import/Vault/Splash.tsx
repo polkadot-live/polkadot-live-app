@@ -5,7 +5,11 @@ import {
   ButtonMonoInvert,
   ButtonPrimary,
 } from '@polkadot-live/ui/kits/buttons';
-import { useContextProxy } from '@polkadot-live/contexts';
+import {
+  useImportAddresses,
+  useImportHandler,
+  useOverlay,
+} from '@polkadot-live/contexts';
 import { ErrorBoundary } from 'react-error-boundary';
 import { faAngleLeft, faQrcode } from '@fortawesome/free-solid-svg-icons';
 import { Reader } from './Reader';
@@ -15,10 +19,9 @@ import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
 import type { VaultSplashProps } from './types';
 
 export const Splash = ({ setSection }: VaultSplashProps) => {
-  const { useCtx } = useContextProxy();
-  const { openOverlayWith, setStatus } = useCtx('OverlayCtx')();
-  const { handleImportAddress } = useCtx('ImportHandlerCtx')();
-  const { isAlreadyImported } = useCtx('ImportAddressesCtx')();
+  const { openOverlayWith, setStatus } = useOverlay();
+  const { handleImportAddress } = useImportHandler();
+  const { isAlreadyImported } = useImportAddresses();
 
   return (
     <FlexRow style={{ height: '100%' }}>

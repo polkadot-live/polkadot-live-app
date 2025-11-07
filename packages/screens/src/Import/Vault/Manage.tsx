@@ -7,7 +7,11 @@ import {
   ControlsWrapper,
   SortControlLabel,
 } from '@polkadot-live/ui/components';
-import { useContextProxy } from '@polkadot-live/contexts';
+import {
+  useImportAddresses,
+  useImportHandler,
+  useOverlay,
+} from '@polkadot-live/contexts';
 import { faQrcode, faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Listing } from '../Addresses';
@@ -19,10 +23,9 @@ import {
 import type { ManageVaultProps } from './types';
 
 export const Manage = ({ setSection }: ManageVaultProps) => {
-  const { useCtx } = useContextProxy();
-  const { openOverlayWith, setStatus } = useCtx('OverlayCtx')();
-  const { handleImportAddress } = useCtx('ImportHandlerCtx')();
-  const { isAlreadyImported } = useCtx('ImportAddressesCtx')();
+  const { openOverlayWith, setStatus } = useOverlay();
+  const { handleImportAddress } = useImportHandler();
+  const { isAlreadyImported } = useImportAddresses();
 
   return (
     <Styles.PadWrapper>

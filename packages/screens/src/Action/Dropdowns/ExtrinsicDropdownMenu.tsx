@@ -4,7 +4,7 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
-import { useContextProxy } from '@polkadot-live/contexts';
+import { useConnections, useContextProxy } from '@polkadot-live/contexts';
 import { DropdownMenuContent } from '@polkadot-live/styles/wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconButton } from './Wrappers';
@@ -21,8 +21,8 @@ export const ExtrinsicDropdownMenu = ({
   onBlockExplorerClick,
 }: ExtrinsicDropdownMenuProps) => {
   const { useCtx } = useContextProxy();
+  const { cacheGet, getTheme, getOnlineMode } = useConnections();
   const { showMockUI } = useCtx('TxMetaCtx')();
-  const { cacheGet, getTheme, getOnlineMode } = useCtx('ConnectionsCtx')();
   const isBuildingExtrinsic = cacheGet('extrinsic:building');
   const theme = getTheme();
 

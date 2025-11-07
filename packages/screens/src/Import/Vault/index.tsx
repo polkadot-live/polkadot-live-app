@@ -3,12 +3,11 @@
 
 import { Manage } from './Manage';
 import { Splash } from './Splash';
-import { useContextProxy } from '@polkadot-live/contexts';
+import { useImportAddresses } from '@polkadot-live/contexts';
 import type { ImportVaultProps } from './types';
 
 export const ImportVault = ({ section, setSection }: ImportVaultProps) => {
-  const { useCtx } = useContextProxy();
-  const { getAccounts } = useCtx('ImportAddressesCtx')();
+  const { getAccounts } = useImportAddresses();
 
   return !getAccounts('vault').length ? (
     <Splash setSection={setSection} />

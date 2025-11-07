@@ -2,6 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 export * from './hooks';
-export * from './import';
+export * from './contexts';
 export * from './middleware';
 export * from './utils';

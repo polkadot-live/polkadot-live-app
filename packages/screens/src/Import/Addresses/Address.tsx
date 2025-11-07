@@ -4,26 +4,31 @@
 import { Delete } from '../Actions';
 import { DropdownAccount } from './Dropdowns';
 import { HardwareAddress } from '@polkadot-live/ui/components';
-import { useContextProxy } from '@polkadot-live/contexts';
+import {
+  useAccountStatuses,
+  useAddHandler,
+  useConnections,
+  useDeleteHandler,
+  useDialogControl,
+  useOverlay,
+  useRemoveHandler,
+} from '@polkadot-live/contexts';
 import type { AddressProps } from './types';
 import type { EncodedAccount } from '@polkadot-live/types/accounts';
 
 export const Address = ({ genericAccount, setSection }: AddressProps) => {
   const { publicKeyHex, source } = genericAccount;
-  const { useCtx } = useContextProxy();
-  const { getStatusForAccount, anyProcessing } = useCtx('AccountStatusesCtx')();
-  const { handleAddAddress, handleBookmarkToggle } = useCtx('AddHandlerCtx')();
-  const { handleRemoveAddress } = useCtx('RemoveHandlerCtx')();
-  const { handleDeleteAddress } = useCtx('DeleteHandlerCtx')();
-  const { copyToClipboard, getTheme, getOnlineMode } =
-    useCtx('ConnectionsCtx')();
-
-  const { openOverlayWith, setStatus } = useCtx('OverlayCtx')();
+  const { copyToClipboard, getTheme, getOnlineMode } = useConnections();
+  const { getStatusForAccount, anyProcessing } = useAccountStatuses();
+  const { handleAddAddress, handleBookmarkToggle } = useAddHandler();
+  const { handleRemoveAddress } = useRemoveHandler();
+  const { handleDeleteAddress } = useDeleteHandler();
+  const { openOverlayWith, setStatus } = useOverlay();
   const {
     setManageAccountDialogData,
     setBulkRenameDialogData,
     setShowAddressDialogData,
-  } = useCtx('DialogControlCtx')();
+  } = useDialogControl();
   const theme = getTheme();
 
   return (

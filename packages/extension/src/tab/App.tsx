@@ -1,10 +1,13 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useConnections } from '../contexts';
+import {
+  useConnections,
+  useHelp,
+  useOverlay,
+  useTabs,
+} from '@polkadot-live/contexts';
 import { useEffect } from 'react';
-import { useHelp } from '@polkadot-live/ui/contexts';
-import { useTabs } from './contexts';
 import { Help, Overlay, Tabs } from '@polkadot-live/ui/components';
 import { Action, Import, OpenGov, Settings } from '@polkadot-live/screens';
 import { MainInterfaceWrapper } from '@polkadot-live/styles/wrappers';
@@ -39,6 +42,7 @@ export default function App() {
   const { cacheGet } = useConnections();
   const mode = cacheGet('mode:dark') ? 'dark' : 'light';
   const { status: helpStatus, definition, closeHelp, setStatus } = useHelp();
+  const overlayCtx = useOverlay();
 
   return (
     <MainInterfaceWrapper className={`theme-polkadot-relay theme-${mode}`}>
@@ -48,7 +52,7 @@ export default function App() {
         closeHelp={closeHelp}
         setStatus={setStatus}
       />
-      <Overlay />
+      <Overlay overlayCtx={overlayCtx} />
       <ToastContainer stacked />
       <HashRouter basename="/">
         <RouterInner />

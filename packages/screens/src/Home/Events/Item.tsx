@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useEffect, useState, memo } from 'react';
-import { useContextProxy } from '@polkadot-live/contexts';
+import { useConnections, useEvents } from '@polkadot-live/contexts';
 import { FlexColumn, FlexRow } from '@polkadot-live/styles/wrappers';
 import { AnimatePresence } from 'framer-motion';
 import { EventItem } from './Wrappers';
@@ -26,9 +26,8 @@ export const Item = memo(function Item({ event }: ItemProps) {
   // The state of the event item display.
   const [display, setDisplay] = useState<'in' | 'fade' | 'out'>('in');
 
-  const { useCtx } = useContextProxy();
-  const { getTheme } = useCtx('ConnectionsCtx')();
-  const { dismissEvent, removeEvent } = useCtx('EventsCtx')();
+  const { getTheme } = useConnections();
+  const { dismissEvent, removeEvent } = useEvents();
   const theme = getTheme();
   const { uid, title, subtitle, txActions, uriActions /*, data*/ } = event;
 

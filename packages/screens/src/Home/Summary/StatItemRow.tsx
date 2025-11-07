@@ -4,7 +4,7 @@
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as Styles from '@polkadot-live/styles/wrappers';
 import * as UI from '@polkadot-live/ui/components';
-import { useContextProxy } from '@polkadot-live/contexts';
+import { useConnections, useHelp } from '@polkadot-live/contexts';
 import { ellipsisFn } from '@w3ux/utils';
 import { StatItemRowWrapper } from './Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -28,9 +28,8 @@ export const StatItemRow = ({
   icon?: IconDefinition;
   category?: string;
 }) => {
-  const { useCtx } = useContextProxy();
-  const { openHelp } = useCtx('HelpCtx')();
-  const { getTheme } = useCtx('ConnectionsCtx')();
+  const { openHelp } = useHelp();
+  const { getTheme } = useConnections();
   const theme = getTheme();
 
   const mCol =

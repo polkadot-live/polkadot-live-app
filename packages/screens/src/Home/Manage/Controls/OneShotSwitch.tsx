@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import { useContextProxy } from '@polkadot-live/contexts';
+import { useSubscriptions } from '@polkadot-live/contexts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { OneShotSwitchProps } from './types';
 
@@ -13,8 +13,7 @@ export const OneShotSwitch = ({
   isDisabled,
   setProcessing,
 }: OneShotSwitchProps) => {
-  const { useCtx } = useContextProxy();
-  const { onOneShot } = useCtx('SubscriptionsCtx')();
+  const { onOneShot } = useSubscriptions();
 
   return (
     <div className="one-shot-wrapper">

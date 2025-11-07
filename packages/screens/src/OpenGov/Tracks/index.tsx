@@ -3,7 +3,7 @@
 
 import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/styles/wrappers';
-import { useContextProxy } from '@polkadot-live/contexts';
+import { useConnections, useHelp, useTracks } from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
 import {
   faArrowDownShortWide,
@@ -15,16 +15,14 @@ import { renderPlaceholders } from '@polkadot-live/ui/utils';
 import type { TracksProps } from '../types';
 
 export const Tracks = ({ setSection }: TracksProps) => {
-  const { useCtx } = useContextProxy();
-  const { getOnlineMode } = useCtx('ConnectionsCtx')();
-  const { openHelp } = useCtx('HelpCtx')();
-
+  const { getOnlineMode } = useConnections();
+  const { openHelp } = useHelp();
   const {
     activeChainId: chainId,
     fetchingTracks,
     tracksMap,
     requestTracks,
-  } = useCtx('TracksCtx')();
+  } = useTracks();
 
   // Controls state.
   const [sortIdAscending, setSortIdAscending] = useState(true);

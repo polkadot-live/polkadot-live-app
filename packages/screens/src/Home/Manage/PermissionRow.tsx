@@ -3,7 +3,7 @@
 
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from 'react';
-import { useContextProxy } from '@polkadot-live/contexts';
+import { useConnections, useHelp } from '@polkadot-live/contexts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { TaskEntryWrapper } from '@polkadot-live/styles/wrappers';
 import { Switch, TooltipRx } from '@polkadot-live/ui/components';
@@ -17,9 +17,8 @@ export const PermissionRow = ({
   getDisabled,
   getTaskType,
 }: PermissionRowProps) => {
-  const { useCtx } = useContextProxy();
-  const { openHelp } = useCtx('HelpCtx')();
-  const { getTheme } = useCtx('ConnectionsCtx')();
+  const { openHelp } = useHelp();
+  const { getTheme } = useConnections();
   const theme = getTheme();
 
   const [isToggled, setIsToggled] = useState<boolean>(task.status === 'enable');

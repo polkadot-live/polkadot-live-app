@@ -14,7 +14,12 @@ import {
   ButtonText,
 } from '@polkadot-live/ui/kits/buttons';
 import { ChainIcon, InfoCard } from '@polkadot-live/ui/components';
-import { useContextProxy } from '@polkadot-live/contexts';
+import {
+  useConnections,
+  useContextProxy,
+  useDialogControl,
+  useImportAddresses,
+} from '@polkadot-live/contexts';
 import { useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { WcSessionButton } from './Wrappers';
@@ -25,11 +30,13 @@ import type { ImportProps } from './types';
 
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   const { useCtx } = useContextProxy();
-  const { isAlreadyImported, getAccounts } = useCtx('ImportAddressesCtx')();
+  const { isAlreadyImported, getAccounts } = useImportAddresses();
   const wcAddresses = getAccounts('wallet-connect');
 
+  const { getShowAddressDialogData, setShowAddressDialogData } =
+    useDialogControl();
   const { copyToClipboard, getOnlineMode, cacheGet, getTheme } =
-    useCtx('ConnectionsCtx')();
+    useConnections();
 
   const theme = getTheme();
   const darkMode = cacheGet('mode:dark');
@@ -50,9 +57,6 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
     handleImportProcess,
     setWcNetworks,
   } = useCtx('WalletConnectImportCtx')();
-
-  const { getShowAddressDialogData, setShowAddressDialogData } =
-    useCtx('DialogControlCtx')();
 
   /**
    * Accordion state.

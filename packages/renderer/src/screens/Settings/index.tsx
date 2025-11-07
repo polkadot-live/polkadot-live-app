@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useEffect, useState } from 'react';
-import { useConnections } from '@ren/contexts/common';
+import { useConnections } from '@polkadot-live/contexts';
 import { useDebug } from '@ren/hooks/useDebug';
 import { useSettingsMessagePorts } from '@ren/hooks/useSettingsMessagePorts';
 import { FadeInWrapper } from '@polkadot-live/ui/utils';

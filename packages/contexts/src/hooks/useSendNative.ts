@@ -16,7 +16,7 @@ import type {
 } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChangeEvent } from 'react';
-import type { SendNativeHookInterface } from '@polkadot-live/contexts/types/main';
+import type { SendNativeHookInterface } from '../types/main';
 
 const TOKEN_TRANSFER_LIMIT = 100;
 

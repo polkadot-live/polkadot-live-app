@@ -3,12 +3,11 @@
 
 import { useMemo } from 'react';
 import { Item } from './Item';
-import { useContextProxy } from '@polkadot-live/contexts';
+import { useEvents } from '@polkadot-live/contexts';
 import type { EventItemProps } from './types';
 
 export const EventItem = function EventItem({ event }: EventItemProps) {
-  const { useCtx } = useContextProxy();
-  const { events } = useCtx('EventsCtx')();
+  const { events } = useEvents();
 
   /// Memoize both event and icon objects.
   const { memoizedEvent } = useMemo(

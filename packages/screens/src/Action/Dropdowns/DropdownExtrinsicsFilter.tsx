@@ -8,15 +8,15 @@ import {
   FlexColumn,
   FlexRow,
 } from '@polkadot-live/styles/wrappers';
-import { useContextProxy } from '@polkadot-live/contexts';
+import { useConnections, useContextProxy } from '@polkadot-live/contexts';
 import { CheckboxRx, TooltipRx } from '@polkadot-live/ui/components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FilterButton } from './Wrappers';
 
 export const DropdownExtrinsicsFilter = () => {
   const { useCtx } = useContextProxy();
+  const { getTheme } = useConnections();
   const { getSortedFilterOptions, setFilterOption } = useCtx('TxMetaCtx')();
-  const { getTheme } = useCtx('ConnectionsCtx')();
   const theme = getTheme();
 
   const renderFilterMark = (): boolean =>

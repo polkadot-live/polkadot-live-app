@@ -12,11 +12,14 @@ import {
   getOnlineStatus,
 } from '@polkadot-live/core';
 import React, { createContext, useEffect, useRef, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/contexts';
+import {
+  createSafeContextHook,
+  useApiHealth,
+  useConnections,
+  useIntervalSubscriptions,
+} from '@polkadot-live/contexts';
 import { setStateWithRef } from '@w3ux/utils';
 import { startWithWorker } from 'dedot/smoldot/with-worker';
-import { useConnections } from '@ren/contexts/common';
-import { useApiHealth, useIntervalSubscriptions } from '@ren/contexts/main';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { BootstrappingInterface } from '@polkadot-live/contexts/types/main';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';

@@ -4,9 +4,8 @@
 import { ConfigOpenGov } from '@polkadot-live/core';
 import { useOpenGovMessagePorts } from '@ren/hooks/useOpenGovMessagePorts';
 import { useEffect } from 'react';
-import { useConnections } from '@ren/contexts/common';
+import { useConnections, useTreasury } from '@polkadot-live/contexts';
 import { useDebug } from '@ren/hooks/useDebug';
-import { useTreasury } from '@ren/contexts/openGov';
 import { FadeInWrapper } from '@polkadot-live/ui/utils';
 import { OpenGov } from '@polkadot-live/screens';
 

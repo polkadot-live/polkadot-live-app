@@ -30,7 +30,6 @@ export const handleLedgerTaskError = (err: Error): LedgerTaskResponse => {
   if (err.name === 'TransportUndefined') {
     errorData = ledgerErrorMeta['TransportUndefined'];
   }
-
   // Check `errorMessage` property on error object.
   if ('errorMessage' in err) {
     switch (err.errorMessage) {

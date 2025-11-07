@@ -11,10 +11,17 @@ import {
   getSpendableBalanceElectron,
 } from '@polkadot-live/core';
 import { useEffect, useState } from 'react';
-import { useConnections } from '@ren/contexts/common';
 import { useInitIpcHandlers } from '@ren/hooks/useInitIpcHandlers';
 import { useMainMessagePorts } from '@ren/hooks/useMainMessagePorts';
-import { useSendNative } from '@polkadot-live/contexts';
+import {
+  useAddresses,
+  useAppSettings,
+  useConnections,
+  useEvents,
+  useHelp,
+  useSendNative,
+  useSideNav,
+} from '@polkadot-live/contexts';
 import { Classic } from '@theme-toggles/react';
 import {
   Events,
@@ -30,7 +37,6 @@ import {
   FixedFlexWrapper,
   ScrollWrapper,
 } from '@polkadot-live/styles/wrappers';
-import { useHelp, useSideNav } from '@polkadot-live/ui/contexts';
 import PolkadotIcon from '@polkadot-live/ui/svg/polkadotIcon.svg?react';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { EventCallback } from '@polkadot-live/types/reporter';
@@ -43,14 +49,14 @@ export const Home = () => {
   // Set up app initialization and online/offline switching handlers.
   useInitIpcHandlers();
 
-  const { getAddresses } = Ctx.useAddresses();
-  const { addEvent, markStaleEvent, removeOutdatedEvents } = Ctx.useEvents();
+  const { getAddresses } = useAddresses();
+  const { addEvent, markStaleEvent, removeOutdatedEvents } = useEvents();
   const { openHelp } = useHelp();
 
   const { cacheGet: getSharedState } = useConnections();
   const darkMode = getSharedState('mode:dark');
 
-  const { cacheGet, toggleSetting } = Ctx.useAppSettings();
+  const { cacheGet, toggleSetting } = useAppSettings();
   const dockToggled = cacheGet('setting:docked-window');
   const sideNavCollapsed = cacheGet('setting:collapse-side-nav');
   const silenceOsNotifications = cacheGet('setting:silence-os-notifications');

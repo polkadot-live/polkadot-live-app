@@ -4,7 +4,14 @@
 import * as UI from '@polkadot-live/ui/components';
 import * as Accordion from '@radix-ui/react-accordion';
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import { useContextProxy } from '@polkadot-live/contexts';
+import {
+  useApiHealth,
+  useChains,
+  useConnections,
+  useContextProxy,
+  useIntervalSubscriptions,
+  useSubscriptions,
+} from '@polkadot-live/contexts';
 import {
   FlexColumn,
   FlexRow,
@@ -24,17 +31,14 @@ import type { FlattenedAPIData } from '@polkadot-live/types/apis';
 export const Footer = () => {
   const { useCtx } = useContextProxy();
   const { appLoading, isConnecting, isAborting } = useCtx('BootstrappingCtx')();
-  const { onDisconnectClick, setWorkingEndpoint } = useCtx('ChainsCtx')();
-  const { getOnlineMode, getTheme, cacheGet } = useCtx('ConnectionsCtx')();
-  const { chainHasSubscriptions } = useCtx('SubscriptionsCtx')();
+  const { onDisconnectClick, setWorkingEndpoint } = useChains();
+  const { getOnlineMode, getTheme, cacheGet } = useConnections();
+  const { chainHasSubscriptions } = useSubscriptions();
 
+  const { chains, isWorking, onConnectClick, showWorkingSpinner } = useChains();
+  const { chainHasIntervalSubscriptions } = useIntervalSubscriptions();
   const { hasConnectionIssue, failedConnections, onEndpointChange } =
-    useCtx('ApiHealthCtx')();
-  const { chains, isWorking, onConnectClick, showWorkingSpinner } =
-    useCtx('ChainsCtx')();
-  const { chainHasIntervalSubscriptions } = useCtx(
-    'IntervalSubscriptionsCtx'
-  )();
+    useApiHealth();
 
   const numFailed = failedConnections.size;
   const isConnected = getOnlineMode();

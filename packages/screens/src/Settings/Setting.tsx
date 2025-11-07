@@ -6,17 +6,20 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SettingWrapper } from './Wrappers';
 import { EllipsisSpinner, Switch } from '@polkadot-live/ui/components';
 import { ButtonMonoInvert } from '@polkadot-live/ui/kits/buttons';
-import { useContextProxy } from '@polkadot-live/contexts';
+import {
+  useConnections,
+  useHelp,
+  useSettingFlags,
+} from '@polkadot-live/contexts';
 import type { SettingProps } from './types';
 import type { SettingItem, SettingKey } from '@polkadot-live/types/settings';
 
 export const Setting = ({ setting }: SettingProps) => {
   const { title, settingType, helpKey } = setting;
-  const { useCtx } = useContextProxy();
-  const { cacheGet } = useCtx('ConnectionsCtx')();
-  const { openHelp } = useCtx('HelpCtx')();
+  const { cacheGet } = useConnections();
+  const { openHelp } = useHelp();
   const { getSwitchState, handleSwitchToggle, handleAnalytics, handleSetting } =
-    useCtx('SettingFlagsCtx')();
+    useSettingFlags();
 
   /**
    * Handle a setting switch toggle.

@@ -6,7 +6,13 @@ import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as Style from '@polkadot-live/styles/wrappers';
 import * as UI from '@polkadot-live/ui/components';
 
-import { useContextProxy } from '@polkadot-live/contexts';
+import {
+  useAccountStatuses,
+  useAddHandler,
+  useConnections,
+  useDialogControl,
+  useRemoveHandler,
+} from '@polkadot-live/contexts';
 import { ControlsRow, EncodedAddressesWrapper, ToggleRx } from './Wrappers';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { DropdownAccount } from '../Dropdowns';
@@ -22,18 +28,16 @@ import type { EncodedAccount } from '@polkadot-live/types/accounts';
 export const DialogManageAccounts = ({
   genericAccount,
 }: DialogManageAccountsProps) => {
-  const { useCtx } = useContextProxy();
   const { accountName, encodedAccounts, publicKeyHex, source } = genericAccount;
-  const { copyToClipboard, getTheme, getOnlineMode } =
-    useCtx('ConnectionsCtx')();
-  const { getStatusForAccount } = useCtx('AccountStatusesCtx')();
-  const { handleAddAddress, handleBookmarkToggle } = useCtx('AddHandlerCtx')();
-  const { handleRemoveAddress } = useCtx('RemoveHandlerCtx')();
+  const { copyToClipboard, getTheme, getOnlineMode } = useConnections();
+  const { getStatusForAccount } = useAccountStatuses();
+  const { handleAddAddress, handleBookmarkToggle } = useAddHandler();
+  const { handleRemoveAddress } = useRemoveHandler();
   const {
     getManageAccountDialogData,
     setManageAccountDialogData,
     setShowAddressDialogData,
-  } = useCtx('DialogControlCtx')();
+  } = useDialogControl();
 
   const [showBookmarks, setShowBookmarks] = useState(false);
   const theme = getTheme();

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useState } from 'react';
-import { useContextProxy } from '@polkadot-live/contexts';
+import { useManage } from '@polkadot-live/contexts';
 import {
   CarouselWrapper,
   FlexColumn,
@@ -13,8 +13,7 @@ import { Networks } from './Networks';
 import { Subscriptions } from './Subscriptions';
 
 export const OpenGov = () => {
-  const { useCtx } = useContextProxy();
-  const { setDynamicIntervalTasks } = useCtx('ManageCtx')();
+  const { setDynamicIntervalTasks } = useManage();
   const [section, setSection] = useState<number>(0);
   const [breadcrumb, setBreadcrumb] = useState<string>('');
 

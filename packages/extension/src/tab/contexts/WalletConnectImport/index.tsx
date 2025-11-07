@@ -3,9 +3,11 @@
 
 import * as wc from '@polkadot-live/consts/walletConnect';
 import { createContext, useEffect, useRef, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/contexts';
-import { useAddresses } from '../Addresses';
-import { useImportHandler } from '../ImportHandler';
+import {
+  createSafeContextHook,
+  useImportAddresses,
+  useImportHandler,
+} from '@polkadot-live/contexts';
 import { WalletConnectModal } from '@walletconnect/modal';
 import type { WalletConnectImportContextInterface } from '@polkadot-live/contexts/types/import';
 import type {
@@ -32,7 +34,7 @@ export const WalletConnectImportProvider = ({
   const { connectWc, disconnectWcSession, fetchAddressesFromExistingSession } =
     useWalletConnect();
 
-  const { isAlreadyImported, getNextNames } = useAddresses();
+  const { isAlreadyImported, getNextNames } = useImportAddresses();
   const { handleImportAddress } = useImportHandler();
   const [isImporting, setIsImporting] = useState(false);
 

@@ -4,7 +4,14 @@
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import { useEffect, useState } from 'react';
-import { useContextProxy } from '@polkadot-live/contexts';
+import {
+  useApiHealth,
+  useAppSettings,
+  useConnections,
+  useContextProxy,
+  useManage,
+  useSubscriptions,
+} from '@polkadot-live/contexts';
 import { showGroupTooltip, toolTipTextFor } from '@polkadot-live/core';
 import { ellipsisFn } from '@w3ux/utils';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
@@ -31,17 +38,17 @@ export const Permissions = ({
   setSection,
 }: PermissionsProps) => {
   const { useCtx } = useContextProxy();
-  const { cacheGet: settingsCacheGet } = useCtx('AppSettingsCtx')();
+  const { isConnecting } = useCtx('BootstrappingCtx')();
+  const { cacheGet: settingsCacheGet } = useAppSettings();
   const showDebuggingSubscriptions = settingsCacheGet(
     'setting:show-debugging-subscriptions'
   );
 
-  const { hasConnectionIssue } = useCtx('ApiHealthCtx')();
-  const { isConnecting } = useCtx('BootstrappingCtx')();
-  const { cacheGet, getTheme, getOnlineMode } = useCtx('ConnectionsCtx')();
-  const { renderedSubscriptions } = useCtx('ManageCtx')();
+  const { hasConnectionIssue } = useApiHealth();
+  const { cacheGet, getTheme, getOnlineMode } = useConnections();
+  const { renderedSubscriptions } = useManage();
   const { handleQueuedToggle, toggleCategoryTasks, getTaskType } =
-    useCtx('SubscriptionsCtx')();
+    useSubscriptions();
 
   const isImportingData = cacheGet('backup:importing');
   const theme = getTheme();

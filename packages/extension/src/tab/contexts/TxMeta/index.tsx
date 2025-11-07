@@ -17,9 +17,11 @@ import type {
   TxStatus,
 } from '@polkadot-live/types/tx';
 import { setStateWithRef } from '@w3ux/utils';
-import { useConnections } from '../../../contexts';
-import { useOverlay } from '@polkadot-live/ui/contexts';
-import { createSafeContextHook } from '@polkadot-live/contexts';
+import {
+  createSafeContextHook,
+  useConnections,
+  useOverlay,
+} from '@polkadot-live/contexts';
 import { renderToast } from '@polkadot-live/ui/utils';
 import { WalletConnectModal } from '@walletconnect/modal';
 import { ChainIcon } from '@polkadot-live/ui/components';
@@ -142,6 +144,21 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   const wcModal = useRef<WalletConnectModal | null>(null);
 
   /**
+   * Instantiate WalletConnect modal when component mounts.
+   */
+  useEffect(() => {
+    if (!wcModal.current) {
+      const modal = new WalletConnectModal({
+        enableExplorer: false,
+        explorerRecommendedWalletIds: 'NONE',
+        explorerExcludedWalletIds: 'ALL',
+        projectId: wc.WC_PROJECT_IDS['browser'],
+      });
+      wcModal.current = modal;
+    }
+  }, []);
+
+  /**
    * Parse serialized extrinsic data to object.
    * Must be called before caching a received extrinsic item.
    */
@@ -160,21 +177,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       }
     }
   };
-
-  /**
-   * Instantiate WalletConnect modal when component mounts.
-   */
-  useEffect(() => {
-    if (!wcModal.current) {
-      const modal = new WalletConnectModal({
-        enableExplorer: false,
-        explorerRecommendedWalletIds: 'NONE',
-        explorerExcludedWalletIds: 'ALL',
-        projectId: wc.WC_PROJECT_IDS['electron'],
-      });
-      wcModal.current = modal;
-    }
-  }, []);
 
   /**
    * Initialize chrome runtime listeners.
@@ -295,6 +297,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
 
       // Rebuild addresses data.
       const map = new Map<string, AddressInfo>();
+
       for (const {
         actionMeta: { accountName, from, chainId },
       } of extrinsicsRef.current.values()) {
@@ -572,6 +575,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       }
       info.txStatus = txStatus;
       setUpdateCache(true);
+
       if (txStatus === 'error' || txStatus === 'finalized') {
         relayState('extrinsic:building', false);
       }
@@ -741,7 +745,6 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       });
       return updated;
     });
-
     setUpdateCache(true);
   };
 
@@ -750,15 +753,12 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
    */
   const getCategoryTitle = (info: ExtrinsicInfo): string => {
     switch (info.actionMeta.pallet) {
-      case 'nominationPools': {
+      case 'nominationPools':
         return 'Nomination Pools';
-      }
-      case 'balances': {
+      case 'balances':
         return 'Balances';
-      }
-      default: {
+      default:
         return 'Unknown.';
-      }
     }
   };
 

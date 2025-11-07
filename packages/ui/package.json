@@ -11,10 +11,6 @@
       "import": "./dist/components.es.js",
       "types": "./dist/components.d.ts"
     },
-    "./contexts": {
-      "import": "./dist/contexts.es.js",
-      "types": "./dist/contexts.d.ts"
-    },
     "./hooks": {
       "import": "./dist/hooks.es.js",
       "types": "./dist/hooks.d.ts"
