@@ -2,21 +2,22 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext, useRef, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/contexts';
+import { createSafeContextHook } from '../../../utils';
 import { decodeAddress, u8aToHex } from 'dedot/utils';
 import { setStateWithRef } from '@w3ux/utils';
-import { getLedgerAddresses, getLedgerTaskResponse } from './utils';
+import { getLedgerHardwareAdapter } from './adaptors';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { LedgerMetadata } from '@polkadot-live/types/accounts';
 import type {
   LedgerHardwareContextInterface,
   NamedRawLedgerAddress,
   RawLedgerAddress,
-} from '@polkadot-live/contexts/types/import';
+} from '../../../types/import';
 import type {
-  LedgerFetchedAddressData,
+  ILedgerController,
   LedgerResponse,
   LedgerTaskResponse,
+  SerLedgerTaskResponse,
 } from '@polkadot-live/types/ledger';
 
 export const LedgerHardwareContext = createContext<
@@ -30,9 +31,12 @@ export const useLedgerHardware = createSafeContextHook(
 
 export const LedgerHardwareProvider = ({
   children,
+  ledgerController,
 }: {
   children: React.ReactNode;
+  ledgerController?: ILedgerController;
 }) => {
+  const adapter = getLedgerHardwareAdapter();
   const [deviceConnected, setDeviceConnected] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
@@ -45,6 +49,13 @@ export const LedgerHardwareProvider = ({
   const [connectedNetwork, setConnectedNetwork] = useState('');
   const selectedNetworkRef = useRef(selectedNetworkState);
   const connectedNetworkRef = useRef(connectedNetwork);
+
+  /**
+   * Access to ledger controller (extension).
+   */
+  const ledgerControllerRef = useRef<ILedgerController | undefined>(
+    ledgerController
+  );
 
   /**
    * State for received addresses from `main` and selected addresses.
@@ -84,10 +95,12 @@ export const LedgerHardwareProvider = ({
       (i) => i + offset
     );
     setIsFetching(true);
-
-    // TODO: Handle JSON.parse exception.
-    const result = await getLedgerAddresses(accountIndices, network);
-    const response = getLedgerTaskResponse(result, accountIndices);
+    const controller = ledgerControllerRef.current;
+    const response = await adapter.getLedgerAddresses(
+      accountIndices,
+      network,
+      controller
+    );
     handleLedgerStatusResponse(response);
 
     // Update the connected network state post connection.
@@ -177,11 +190,9 @@ export const LedgerHardwareProvider = ({
       if (!checked) {
         return filtered;
       }
-
       const target = receivedAddresses.find(
         ({ address }) => pk === getPublicKey(address)
       );
-
       if (target) {
         const namedTarget: NamedRawLedgerAddress = { ...target, accountName };
         return [...filtered, namedTarget];
@@ -194,21 +205,16 @@ export const LedgerHardwareProvider = ({
   /**
    * Handle a collection of received Ledger addresses.
    */
-  const handleLedgerStatusResponse = (response: LedgerTaskResponse) => {
-    const { ack, statusCode, payload } = response;
+  const handleLedgerStatusResponse = (
+    response: LedgerTaskResponse | SerLedgerTaskResponse
+  ) => {
+    const { ack, statusCode } = response;
 
     switch (statusCode) {
       /** Handle fetched Ledger addresses. */
       case 'ReceiveAddress': {
-        const { addresses, options } = payload!;
-        const { accountIndices } = options;
-        const received: LedgerFetchedAddressData[] = addresses.map(
-          ({ device, body }) => ({
-            statusCode,
-            device: { id: device.id!, productName: device.productName! },
-            body,
-          })
-        );
+        const { options, received } =
+          adapter.handleFetchedAddressData(response);
 
         // Cache new address list.
         const cache: RawLedgerAddress[] = [];
@@ -218,9 +224,8 @@ export const LedgerHardwareProvider = ({
           const { pubKey, address } = body;
           const ledgerMeta: LedgerMetadata = {
             device,
-            accountIndex: accountIndices[i],
+            accountIndex: options.accountIndices[i],
           };
-
           cache.push({ address, ledgerMeta, pubKey, options });
           i += 1;
         }
@@ -234,7 +239,6 @@ export const LedgerHardwareProvider = ({
       default: {
         setConnectedNetwork('');
         connectedNetworkRef.current = '';
-
         setIsFetching(false);
         handleNewStatusCode(ack, statusCode);
         break;

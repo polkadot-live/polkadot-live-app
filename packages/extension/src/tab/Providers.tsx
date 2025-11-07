@@ -10,6 +10,7 @@ import {
   DialogControlProvider,
   ImportHandlerProvider,
   LedgerFeedbackProvider,
+  LedgerHardwareProvider,
   PolkassemblyProvider,
   ReferendaProvider,
   ReferendaSubscriptionsProvider,
@@ -23,8 +24,8 @@ import {
   WcFeedbackProvider,
 } from '@polkadot-live/contexts';
 import { HelpProvider, OverlayProvider } from '@polkadot-live/ui/contexts';
+import { LedgerController } from '../controllers';
 import {
-  LedgerHardwareProvider,
   TxMetaProvider,
   WalletConnectProvider,
   WalletConnectImportProvider,
@@ -48,7 +49,7 @@ export const Providers = withProviders(
   DeleteHandlerProvider,
   DialogControlProvider,
   TabsProvider,
-  LedgerHardwareProvider,
+  [LedgerHardwareProvider, { ledgerController: LedgerController }],
   WcFeedbackProvider,
   WalletConnectProvider,
   WalletConnectImportProvider,

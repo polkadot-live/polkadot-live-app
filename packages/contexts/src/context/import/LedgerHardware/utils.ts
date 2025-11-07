@@ -1,13 +1,13 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { LedgerController } from '../../../controllers';
 import { getLedgerAppName } from '@polkadot-live/consts/chains';
 import { handleLedgerTaskError } from '@polkadot-live/core';
 import { supportedApps } from '@zondax/ledger-substrate';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { LedgerFetchAddressResult } from './types';
 import type {
+  ILedgerController,
   LedgerResult,
   LedgerTaskResponse,
 } from '@polkadot-live/types/ledger';
@@ -18,10 +18,11 @@ import type {
  */
 export const getLedgerAddresses = async (
   indices: number[],
-  chainId: ChainID
+  chainId: ChainID,
+  controller: ILedgerController
 ): Promise<LedgerFetchAddressResult> => {
   try {
-    const { app, deviceModel } = await LedgerController.initialize();
+    const { app, deviceModel } = await controller.initialize();
     const { id, productName } = deviceModel;
     const appName = getLedgerAppName(chainId as ChainID);
     const { ss58_addr_type: ss58Prefix } = supportedApps.find(
@@ -30,7 +31,7 @@ export const getLedgerAddresses = async (
 
     const results: LedgerResult[] = [];
     for (const index of indices) {
-      const address = await LedgerController.getAddress(app, index, ss58Prefix);
+      const address = await controller.getAddress(app, index, ss58Prefix);
       results.push({
         device: { id, productName },
         body: address,

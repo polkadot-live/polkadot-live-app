@@ -25,6 +25,7 @@ import {
   useIntervalSubscriptions,
   useIntervalTasksManager,
   useLedgerFeedback,
+  useLedgerHardware,
   useManage,
   usePolkassembly,
   useReferenda,
@@ -144,7 +145,7 @@ export const ContextProxyImport = ({ children }: ContextProxyProps) => {
         AddHandlerCtx: () => useAddHandler(),
         DeleteHandlerCtx: () => useDeleteHandler(),
         RenameHandlerCtx: () => useRenameHandler(),
-        LedgerHardwareCtx: () => imports.useLedgerHardware(),
+        LedgerHardwareCtx: () => useLedgerHardware(),
         WalletConnectImportCtx: () => imports.useWalletConnectImport(),
       }),
     []

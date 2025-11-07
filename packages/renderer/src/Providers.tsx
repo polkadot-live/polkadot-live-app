@@ -38,6 +38,7 @@ import {
   IntervalSubscriptionsProvider,
   IntervalTasksManagerProvider,
   LedgerFeedbackProvider,
+  LedgerHardwareProvider,
   ManageProvider,
   PolkassemblyProvider,
   ReferendaProvider,
@@ -53,10 +54,7 @@ import {
   TreasuryProvider,
   WcFeedbackProvider,
 } from '@polkadot-live/contexts';
-import {
-  LedgerHardwareProvider,
-  WalletConnectImportProvider,
-} from '@ren/contexts/import';
+import { WalletConnectImportProvider } from '@ren/contexts/import';
 
 // Other imports.
 import { Theme } from './Theme';

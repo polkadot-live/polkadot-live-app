@@ -14,6 +14,7 @@ import {
   useDialogControl,
   useImportHandler,
   useLedgerFeedback,
+  useLedgerHardware,
   usePolkassembly,
   useReferenda,
   useReferendaSubscriptions,
@@ -27,7 +28,6 @@ import {
   useWcFeedback,
 } from '@polkadot-live/contexts';
 import {
-  useLedgerHardware,
   useTxMeta,
   useWalletConnect,
   useWalletConnectImport,

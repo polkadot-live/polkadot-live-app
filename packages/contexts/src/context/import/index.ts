@@ -10,5 +10,6 @@ export { useAccountStatuses, AccountStatusesProvider } from './AccountStatuses';
 export { useDialogControl, DialogControlProvider } from './DialogControl';
 export { useDeleteHandler, DeleteHandlerProvider } from './DeleteHandler';
 export { useImportHandler, ImportHandlerProvider } from './ImportHandler';
+export { useLedgerHardware, LedgerHardwareProvider } from './LedgerHardware';
 export { useRemoveHandler, RemoveHandlerProvider } from './RemoveHandler';
 export { useRenameHandler, RenameHandlerProvider } from './RenameHandler';
