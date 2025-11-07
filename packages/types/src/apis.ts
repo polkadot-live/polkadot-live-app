@@ -62,7 +62,7 @@ export type DedotClientSet =
  * Dedot clients with staking.
  */
 export type DedotStakingClient =
-  | DedotClient<PolkadotApi>
+  | DedotClient<PolkadotAssetHubApi>
   | DedotClient<KusamaAssetHubApi>
   | DedotClient<PaseoAssetHubApi>
   | DedotClient<WestendAssetHubApi>;
@@ -71,7 +71,7 @@ export type DedotStakingClient =
  * Dedot clients with governance.
  */
 export type DedotOpenGovClient =
-  | DedotClient<PolkadotApi>
+  | DedotClient<PolkadotAssetHubApi>
   | DedotClient<KusamaAssetHubApi>;
 
 /**

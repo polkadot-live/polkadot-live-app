@@ -65,7 +65,7 @@ export const PolkassemblyProvider = ({
       baseURL: `https://api.polkassembly.io/api/v1/`,
     });
     // Header requires `polkadot` or `kusama`.
-    const network = chainId === 'Polkadot Relay' ? 'polkadot' : 'kusama';
+    const network = chainId.startsWith('Polkadot') ? 'polkadot' : 'kusama';
 
     // Make asynchronous requests to Polkassembly API for each referenda.
     const results = await Promise.all(

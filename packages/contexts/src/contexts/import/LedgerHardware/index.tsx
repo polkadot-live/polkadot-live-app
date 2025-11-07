@@ -80,7 +80,7 @@ export const LedgerHardwareProvider = ({
    * Derive public key from encoded address.
    */
   const getPublicKey = (address: string) => {
-    const prefix = connectedNetwork === 'Polkadot Relay' ? 0 : 2;
+    const prefix = connectedNetwork.startsWith('Polkadot') ? 0 : 2;
     return u8aToHex(decodeAddress(address, true, prefix));
   };
 

@@ -170,7 +170,7 @@ export const getPolkadotGenericApp = (
   )!;
 
   // Get the correct chain name for the metadata API.
-  const chainName = chainId === 'Polkadot Relay' ? 'dot' : 'ksm';
+  const chainName = chainId.startsWith('Polkadot') ? 'dot' : 'ksm';
 
   // Establish connection to Ledger Polkadot app.
   const app = new PolkadotGenericApp(transport, chainName, TX_METADATA_SRV_URL);
@@ -233,7 +233,7 @@ export const handleGetAddresses = async (
     debug('🔷 New Substrate app. Id: %o Product name: %o', id, productName);
 
     // Get the correct `coin_type` for the address derivation path.
-    //const slip = chainName === 'Polkadot Relay' ? '354' : '434';
+    //const slip = chainName === 'Polkadot Asset Hub' ? '354' : '434';
     const slip = '354';
 
     const results: LedgerResult[] = [];

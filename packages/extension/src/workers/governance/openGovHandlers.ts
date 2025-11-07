@@ -22,8 +22,8 @@ export const handleInitTreasury = async (
   try {
     const api = (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
     switch (chainId) {
-      case 'Polkadot Relay': {
-        const castApi = api as DedotClient<ClientTypes['polkadot']>;
+      case 'Polkadot Asset Hub': {
+        const castApi = api as DedotClient<ClientTypes['statemint']>;
         const [coreTreasuryInfo, statemintTreasuryInfo] = await Promise.all([
           fetchCoreTreasuryInfo(castApi, chainId),
           fetchStatemintTreasuryInfo(),
@@ -87,8 +87,8 @@ export const handleFetchReferenda = async (
     }
     let referenda: ReferendaInfo[] = [];
     switch (chainId) {
-      case 'Polkadot Relay': {
-        const api = client.api as DedotClient<ClientTypes['polkadot']>;
+      case 'Polkadot Asset Hub': {
+        const api = client.api as DedotClient<ClientTypes['statemint']>;
         referenda = await fetchProcessReferenda(api);
         break;
       }

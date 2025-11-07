@@ -37,7 +37,7 @@ export const TreasuryProvider = ({
 
   // Active treasury chain ID.
   const [treasuryChainId, setTreasuryChainId] =
-    useState<ChainID>('Polkadot Relay');
+    useState<ChainID>('Polkadot Asset Hub');
 
   // Flag to determine whether treasury data is being fetched.
   const [fetchingTreasuryData, setFetchingTreasuryData] = useState(false);

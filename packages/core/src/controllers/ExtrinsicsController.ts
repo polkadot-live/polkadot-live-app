@@ -116,7 +116,7 @@ export class ExtrinsicsController {
     switch (action) {
       case 'balances_transferKeepAlive': {
         // NOTE: Disable Polkadot network transfers in pre-releases.
-        if (chainId === 'Polkadot Relay') {
+        if (chainId === 'Polkadot Asset Hub') {
           return {
             isValid: false,
             reason: 'Polkadot token transfers coming soon',

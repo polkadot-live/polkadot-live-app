@@ -22,7 +22,8 @@ export const TracksProvider = ({ children }: { children: React.ReactNode }) => {
 
   const [tracksMap, setTracksMap] = useState(new Map<ChainID, Track[]>());
   const [fetchingTracks, setFetchingTracks] = useState<boolean>(false);
-  const [activeChainId, setActiveChainId] = useState<ChainID>('Polkadot Relay');
+  const [activeChainId, setActiveChainId] =
+    useState<ChainID>('Polkadot Asset Hub');
   const activeChainIdRef = useRef<ChainID>(activeChainId);
 
   // Initiate fetching tracks.
