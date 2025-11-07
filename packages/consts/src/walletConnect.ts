@@ -17,7 +17,7 @@ export const WC_EVENT_ORIGIN = 'https://verify.walletconnect.org';
 
 // CAIPs
 export const WC_POLKADOT_CAIP_ID = '91b171bb158e2d3848fa23a9f1c25182';
-export const WC_STATEMINT_CAPI_ID = '68d56f15f85d3136970ec16946040bc1';
+export const WC_STATEMINT_CAIP_ID = '68d56f15f85d3136970ec16946040bc1';
 export const WC_KUSAMA_CAIP_ID = 'b0a8d493285c2df73290dfb7e61f870f';
 export const WC_STATEMINE_CAIP_ID = '48239ef607d7928874027a43a6768920';
 export const WC_WESTEND_CAIP_ID = 'e143f23803ac50e8f6f8e62695d1ce9e';
@@ -26,7 +26,7 @@ export const WC_PASEO_ASSET_HUB_CAIP_ID = 'd6eec26135305a8ad257a20d00335728';
 
 export const WcNetworks: WcSelectNetwork[] = [
   {
-    caipId: WC_STATEMINT_CAPI_ID,
+    caipId: WC_STATEMINT_CAIP_ID,
     chainId: 'Polkadot Asset Hub',
     selected: false,
   },
@@ -49,7 +49,7 @@ export const WcNetworks: WcSelectNetwork[] = [
 
 export const WcCaipToChainID: Record<string, ChainID> = {
   [WC_POLKADOT_CAIP_ID]: 'Polkadot Relay',
-  [WC_STATEMINT_CAPI_ID]: 'Polkadot Asset Hub',
+  [WC_STATEMINT_CAIP_ID]: 'Polkadot Asset Hub',
   [WC_KUSAMA_CAIP_ID]: 'Kusama Relay',
   [WC_STATEMINE_CAIP_ID]: 'Kusama Asset Hub',
   [WC_PASEO_ASSET_HUB_CAIP_ID]: 'Paseo Asset Hub',
@@ -62,7 +62,7 @@ export const getWalletConnectChainId = (chainId: ChainID) => {
     case 'Polkadot Relay':
       return WC_POLKADOT_CAIP_ID;
     case 'Polkadot Asset Hub':
-      return WC_STATEMINT_CAPI_ID;
+      return WC_STATEMINT_CAIP_ID;
     case 'Kusama Relay':
       return WC_KUSAMA_CAIP_ID;
     case 'Kusama Asset Hub':
