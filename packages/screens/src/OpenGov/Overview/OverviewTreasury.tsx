@@ -85,7 +85,7 @@ export const OverviewTreasury: React.FC = () => {
                       value={treasuryChainId}
                       onChange={(e) => handleChangeStats(e)}
                     >
-                      <option value="Polkadot Relay">Polkadot</option>
+                      <option value="Polkadot Asset Hub">Polkadot</option>
                       <option value="Kusama Asset Hub">Kusama</option>
                     </select>
                   </div>
@@ -129,7 +129,7 @@ export const OverviewTreasury: React.FC = () => {
                 />
               </Styles.GridFourCol>
 
-              {treasuryChainId === 'Polkadot Relay' && (
+              {treasuryChainId === 'Polkadot Asset Hub' && (
                 <Styles.FlexRow className="PolkadotHubStats">
                   <Styles.FlexColumn $rowGap={'0.2rem'}>
                     <h2 className="Heading">{'Polkadot Asset Hub'}</h2>

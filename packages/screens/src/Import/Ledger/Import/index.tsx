@@ -82,12 +82,10 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
     targetIndex = 0
   ) => {
     const selected = ledger.selectedNetworkState;
-
     if (selected === '') {
       setShowConnectStatus(true);
       return;
     }
-
     const offset = !changingPage ? 0 : targetIndex * 5;
 
     // Use the connected network if we're changing page. Otherwise, use the selected network.
@@ -109,7 +107,6 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
     if (selectedAddresses.length === 0) {
       return;
     }
-
     ledger.setIsImporting(true);
     const accountNames = getNextNames(selectedAddresses.length);
 
@@ -120,7 +117,6 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
       if (isAlreadyImported(ledger.getPublicKey(address))) {
         continue;
       }
-
       const accountName = accountNames[i];
       const toast = accountNames.length === 1;
       const source = 'ledger';
@@ -134,7 +130,6 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
 
       i += 1;
     }
-
     ledger.resetAll();
     setShowImportUi(false);
   };

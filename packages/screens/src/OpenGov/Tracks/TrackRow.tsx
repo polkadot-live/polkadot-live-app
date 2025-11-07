@@ -118,7 +118,7 @@ export const TrackRow = ({ track }: TrackRowProps) => {
         </FlexRow>
         <FlexRow>
           <div
-            className={`expand-btn-wrapper ${chainId === 'Polkadot Relay' ? 'polkadot-bg' : 'kusama-bg'}`}
+            className={`expand-btn-wrapper ${chainId === 'Polkadot Asset Hub' ? 'polkadot-bg' : 'kusama-bg'}`}
             onClick={() => setExpanded(!expanded)}
           >
             <h4>Timeline</h4>

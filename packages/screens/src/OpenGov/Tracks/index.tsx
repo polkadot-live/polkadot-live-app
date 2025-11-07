@@ -58,11 +58,11 @@ export const Tracks = ({ setSection }: TracksProps) => {
                 onClick={() => setSection(0)}
                 style={{
                   color:
-                    chainId === 'Polkadot Relay'
+                    chainId === 'Polkadot Asset Hub'
                       ? 'rgb(169, 74, 117)'
                       : 'rgb(133, 113, 177)',
                   borderColor:
-                    chainId === 'Polkadot Relay'
+                    chainId === 'Polkadot Asset Hub'
                       ? 'rgb(169, 74, 117)'
                       : 'rgb(133, 113, 177)',
                 }}

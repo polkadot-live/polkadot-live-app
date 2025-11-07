@@ -55,7 +55,7 @@ export const ReferendaProvider = ({
 
   // Chain ID for currently rendered referenda.
   const [activeReferendaChainId, setActiveReferendaChainId] =
-    useState<ChainID>('Polkadot Relay');
+    useState<ChainID>('Polkadot Asset Hub');
   const activeReferendaChainRef = useRef(activeReferendaChainId);
 
   // Flag to indicate that referenda are being fetched.
@@ -71,7 +71,7 @@ export const ReferendaProvider = ({
   // Selected track filter.
   const [trackFilter, setTrackFilter] = useState(
     new Map<ChainID, string | null>([
-      ['Polkadot Relay', null],
+      ['Polkadot Asset Hub', null],
       ['Kusama Asset Hub', null],
     ])
   );

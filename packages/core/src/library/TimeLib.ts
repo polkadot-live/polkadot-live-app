@@ -35,7 +35,7 @@ export const secondsUntilNextMinute = (minute: number): number => {
  */
 export const formatBlocksToTime = (chainId: ChainID, blocks: string) => {
   const secondsPerBlock =
-    chainId === 'Polkadot Relay' || chainId === 'Kusama Asset Hub' ? 6 : 0;
+    chainId === 'Polkadot Asset Hub' || chainId === 'Kusama Asset Hub' ? 6 : 0;
 
   const seconds = parseInt(rmCommas(blocks)) * secondsPerBlock;
   const days = Math.floor(seconds / (60 * 60 * 24));

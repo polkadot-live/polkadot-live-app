@@ -322,12 +322,12 @@ const SubscanSubdomainMap = new Map<ChainID, string>([
 ]);
 
 const SubsquareSubdomainMap = new Map<ChainID, string>([
-  ['Polkadot Relay', 'polkadot'],
+  ['Polkadot Asset Hub', 'polkadot'],
   ['Kusama Asset Hub', 'kusama'],
 ]);
 
 const PolkassemblySubdomainMap = new Map<ChainID, string>([
-  ['Polkadot Relay', 'polkadot'],
+  ['Polkadot Asset Hub', 'polkadot'],
   ['Kusama Asset Hub', 'kusama'],
 ]);
 
@@ -353,22 +353,23 @@ export const getCategory = (category: string) => CategoryList.get(category);
 
 export const getSelectLedgerNetworkData = (): LedgerSelectNetworkData[] => [
   {
-    network: 'Polkadot Relay',
+    network: 'Polkadot Asset Hub',
     ledgerId: 'dot',
     iconWidth: 18,
   },
   {
-    network: 'Kusama Relay',
+    network: 'Kusama Asset Hub',
     ledgerId: 'kusama',
     iconWidth: 18,
   },
 ];
 
 /**
- * Get an array of supported chains.
+ * Get an array of supported chains for imported accounts.
  */
 export const getSupportedChains = (): Record<ChainID, Chain> => {
   const unsupported: ChainID[] = [
+    'Polkadot Relay',
     'Kusama Relay',
     'Paseo Relay',
     'Westend Relay',
@@ -394,7 +395,7 @@ export const getSendChains = (): ChainID[] => [
  * Get chain IDs that support staking APIs.
  */
 export const getStakingChains = (): ChainID[] => [
-  'Polkadot Relay',
+  'Polkadot Asset Hub',
   'Kusama Asset Hub',
   'Paseo Asset Hub',
   'Westend Asset Hub',
@@ -414,7 +415,7 @@ export const getSupportedSources = (): AccountSource[] => [
  * Get chain IDs that support importing Ledger accounts.
  */
 export const getSupportedLedgerChains = (): ChainID[] => [
-  'Polkadot Relay',
+  'Polkadot Asset Hub',
   'Kusama Asset Hub',
 ];
 

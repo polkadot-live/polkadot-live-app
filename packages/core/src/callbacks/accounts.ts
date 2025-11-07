@@ -324,7 +324,6 @@ export const callback_account_balance_spendable = async (
       entry.task.chainId,
       entry.task.account!.address
     );
-
     if (!account || !account.balance) {
       return false;
     }
@@ -932,8 +931,8 @@ export const callback_nominating_nominations = async (
  */
 const getStakingApi = (chainId: ChainID, api: DedotClientSet) => {
   switch (chainId) {
-    case 'Polkadot Relay':
-      return api as DedotClient<ClientTypes['polkadot']>;
+    case 'Polkadot Asset Hub':
+      return api as DedotClient<ClientTypes['statemint']>;
     case 'Kusama Asset Hub':
       return api as DedotClient<ClientTypes['statemine']>;
     case 'Paseo Asset Hub':

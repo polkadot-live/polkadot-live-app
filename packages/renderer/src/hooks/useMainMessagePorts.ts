@@ -408,8 +408,8 @@ export const useMainMessagePorts = () => {
       }
       let referenda: OG.ReferendaInfo[] = [];
       switch (chainId) {
-        case 'Polkadot Relay': {
-          const api = client.api as DedotClient<ClientTypes['polkadot']>;
+        case 'Polkadot Asset Hub': {
+          const api = client.api as DedotClient<ClientTypes['statemint']>;
           referenda = await Core.fetchProcessReferenda(api);
           break;
         }

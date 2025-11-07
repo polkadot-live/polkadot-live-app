@@ -13,7 +13,7 @@ export const chromeAdapter: TreasuryAdapter = {
     // Utility to parse serialized treasury info.
     const parseTreasuryInfo = (info: SerIpcTreasuryInfo): IpcTreasuryInfo => {
       switch (chainId) {
-        case 'Polkadot Relay': {
+        case 'Polkadot Asset Hub': {
           const { coreTreasuryInfo, serStatemintTreasuryInfo: ser } = info;
           return {
             coreTreasuryInfo,

@@ -62,7 +62,7 @@ export const OverviewExplore: React.FC<OverviewExploreProps> = ({
         <Styles.FlexRow $gap={'0.25rem'} style={{ marginTop: '1rem' }}>
           <NetworkHeader style={{ borderTopLeftRadius: '0.375rem' }}>
             <UI.ChainIcon
-              chainId="Polkadot Relay"
+              chainId="Polkadot Asset Hub"
               style={{ width: '1.45rem' }}
             />
             <h4>Polkadot</h4>
@@ -79,7 +79,7 @@ export const OverviewExplore: React.FC<OverviewExploreProps> = ({
           <UI.NavCardThin
             title={'Referenda'}
             styleLogoCont={{ opacity: '0.8' }}
-            onClick={() => handleOpenReferenda('Polkadot Relay')}
+            onClick={() => handleOpenReferenda('Polkadot Asset Hub')}
             childrenLogo={
               <FontAwesomeIcon icon={faFilePen} transform={'grow-3'} />
             }
@@ -100,7 +100,7 @@ export const OverviewExplore: React.FC<OverviewExploreProps> = ({
           />
           <UI.NavCardThin
             title={'Tracks'}
-            onClick={() => handleOpenTracks('Polkadot Relay')}
+            onClick={() => handleOpenTracks('Polkadot Asset Hub')}
             childrenLogo={
               <FontAwesomeIcon icon={faList} transform={'grow-2'} />
             }

@@ -114,7 +114,6 @@ export class APIsController {
       if (!client) {
         throw new ApiError('ApiUndefined');
       }
-
       const controller = new AbortController();
       const timeout = this.getConnectionTimeout(chainId);
 
@@ -129,7 +128,6 @@ export class APIsController {
       if (ack === 'failure') {
         throw error || new ApiError('ApiConnectError');
       }
-
       this.set(client);
       this.updateUiChainState(client);
 

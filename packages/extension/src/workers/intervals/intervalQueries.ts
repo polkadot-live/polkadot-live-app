@@ -10,7 +10,7 @@ export const handleGetAllIntervalTasks = async (): Promise<
 > => {
   let tasks: IntervalSubscription[] = [];
   const store = 'intervalSubscriptions';
-  const chainIds: ChainID[] = ['Polkadot Relay', 'Kusama Asset Hub'];
+  const chainIds: ChainID[] = ['Polkadot Asset Hub', 'Kusama Asset Hub'];
   for (const key of chainIds) {
     const fetched =
       ((await DbController.get(store, key)) as
