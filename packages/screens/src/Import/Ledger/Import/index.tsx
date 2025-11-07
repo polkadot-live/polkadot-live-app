@@ -8,8 +8,13 @@ import * as Icons from '@radix-ui/react-icons';
 import * as Select from '@radix-ui/react-select';
 import * as Styles from '@polkadot-live/styles/wrappers';
 import * as UI from '@polkadot-live/ui/components';
-
-import { useContextProxy } from '@polkadot-live/contexts';
+import {
+  useConnections,
+  useDialogControl,
+  useImportAddresses,
+  useImportHandler,
+  useLedgerHardware,
+} from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
 import { BarLoader } from 'react-spinners';
 import { ChainIcon, InfoCard } from '@polkadot-live/ui/components';
@@ -29,19 +34,17 @@ import type { ImportProps } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
 
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
-  const { useCtx } = useContextProxy();
-  const { cacheGet, copyToClipboard, getTheme } = useCtx('ConnectionsCtx')();
-  const { handleImportAddress } = useCtx('ImportHandlerCtx')();
-
+  const { cacheGet, copyToClipboard, getTheme } = useConnections();
+  const { handleImportAddress } = useImportHandler();
   const { getShowAddressDialogData, setShowAddressDialogData } =
-    useCtx('DialogControlCtx')();
-  const { isAlreadyImported, getAccounts, getNextNames } =
-    useCtx('ImportAddressesCtx')();
+    useDialogControl();
+
+  const { isAlreadyImported, getAccounts, getNextNames } = useImportAddresses();
   const genericAccounts = getAccounts('ledger');
 
-  const ledger = useCtx('LedgerHardwareCtx')();
+  const ledger = useLedgerHardware();
   const { connectedNetwork, selectedAddresses, receivedAddresses } =
-    useCtx('LedgerHardwareCtx')();
+    useLedgerHardware();
 
   /**
    * Accordion state.

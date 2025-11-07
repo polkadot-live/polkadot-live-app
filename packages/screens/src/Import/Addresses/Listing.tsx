@@ -5,7 +5,7 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as Styles from '@polkadot-live/styles/wrappers';
 
-import { useContextProxy } from '@polkadot-live/contexts';
+import { useDialogControl, useImportAddresses } from '@polkadot-live/contexts';
 import { useState } from 'react';
 import { Address } from './Address';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
@@ -20,15 +20,13 @@ import type { ManageAccountsProps } from './types';
 import type { ImportedGenericAccount } from '@polkadot-live/types';
 
 export const Listing = ({ source, setSection }: ManageAccountsProps) => {
-  const { useCtx } = useContextProxy();
-  const { getAccounts } = useCtx('ImportAddressesCtx')();
+  const { getAccounts } = useImportAddresses();
   const genericAccounts: ImportedGenericAccount[] = getAccounts(source);
-
   const {
     getBulkRenameDialogData,
     getManageAccountDialogData,
     getShowAddressDialogData,
-  } = useCtx('DialogControlCtx')();
+  } = useDialogControl();
 
   const getAccordionTitle = (): string => {
     switch (source) {

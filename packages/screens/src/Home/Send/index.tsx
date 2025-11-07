@@ -7,7 +7,7 @@ import * as FA from '@fortawesome/free-solid-svg-icons';
 import { FlexColumn, FlexRow } from '@polkadot-live/styles/wrappers';
 import { chainCurrency, PreRelease } from '@polkadot-live/consts/chains';
 import { MainHeading } from '@polkadot-live/ui/components';
-import { useContextProxy } from '@polkadot-live/contexts';
+import { useConnections } from '@polkadot-live/contexts';
 import { useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -31,9 +31,7 @@ export const Send = ({
   fetchSendAccounts,
   getSpendableBalance,
 }: SendProps) => {
-  const { useCtx } = useContextProxy();
-  const { copyToClipboard, getOnlineMode, getTheme } =
-    useCtx('ConnectionsCtx')();
+  const { copyToClipboard, getOnlineMode, getTheme } = useConnections();
   const theme = getTheme();
 
   const {

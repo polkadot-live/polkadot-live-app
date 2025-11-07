@@ -6,7 +6,12 @@ import * as UI from '@polkadot-live/ui/components';
 import { ButtonText } from '@polkadot-live/ui/kits/buttons';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { NoAccounts } from '@polkadot-live/ui/utils';
-import { useContextProxy } from '@polkadot-live/contexts';
+import {
+  useAppSettings,
+  useConnections,
+  useManage,
+  useSubscriptions,
+} from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
@@ -28,12 +33,11 @@ export const Accounts = ({
   setTypeClicked,
   setSelectedAccount,
 }: AccountsProps) => {
-  const { useCtx } = useContextProxy();
-  const { cacheGet } = useCtx('AppSettingsCtx')();
-  const { getTheme, openTab } = useCtx('ConnectionsCtx')();
-  const { setRenderedSubscriptions } = useCtx('ManageCtx')();
+  const { cacheGet } = useAppSettings();
+  const { getTheme, openTab } = useConnections();
+  const { setRenderedSubscriptions } = useManage();
   const { getChainSubscriptions, getAccountSubscriptions, chainSubscriptions } =
-    useCtx('SubscriptionsCtx')();
+    useSubscriptions();
 
   const theme = getTheme();
   const showDebuggingSubscriptions = cacheGet(

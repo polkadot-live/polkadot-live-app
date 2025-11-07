@@ -5,9 +5,6 @@ import {
   ContextProxyExtrinsics,
   ContextProxyImport,
   ContextProxyMain,
-  ContextProxyOpenGov,
-  ContextProxySettings,
-  ContextProxyTabs,
 } from './Proxy';
 import { MainInterfaceWrapper } from '@polkadot-live/styles/wrappers';
 import { Overlay, Help } from '@polkadot-live/ui/components';
@@ -59,16 +56,7 @@ export const RouterInner = () => {
           />
         );
       case 'settings':
-        return (
-          <Route
-            path={'settings'}
-            element={
-              <ContextProxySettings>
-                <FadeSettings />
-              </ContextProxySettings>
-            }
-          />
-        );
+        return <Route path={'settings'} element={<FadeSettings />} />;
       case 'action':
         return (
           <Route
@@ -81,16 +69,7 @@ export const RouterInner = () => {
           />
         );
       case 'openGov':
-        return (
-          <Route
-            path={'openGov'}
-            element={
-              <ContextProxyOpenGov>
-                <FadeOpenGov />
-              </ContextProxyOpenGov>
-            }
-          />
-        );
+        return <Route path={'openGov'} element={<FadeOpenGov />} />;
       default:
         throw new Error('Window ID not recognized.');
     }
@@ -129,14 +108,7 @@ export const Router = () => {
     <HashRouter basename="/">
       {windowId === 'tabs' ? (
         <Routes>
-          <Route
-            path={'/tabs'}
-            element={
-              <ContextProxyTabs>
-                <TabsWrapper />
-              </ContextProxyTabs>
-            }
-          />
+          <Route path={'/tabs'} element={<TabsWrapper />} />
         </Routes>
       ) : (
         <RouterInner />

@@ -1,7 +1,11 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useContextProxy } from '@polkadot-live/contexts';
+import {
+  useConnections,
+  useContextProxy,
+  useOverlay,
+} from '@polkadot-live/contexts';
 import { ButtonSubmit } from '@polkadot-live/ui/kits/buttons';
 import { faSquarePen } from '@fortawesome/free-solid-svg-icons';
 import type { SubmitProps } from './types';
@@ -13,8 +17,8 @@ export const Signer = ({
   buttons?: React.ReactNode[];
 }) => {
   const { useCtx } = useContextProxy();
-  const { getOnlineMode } = useCtx('ConnectionsCtx')();
-  const { status: overlayStatus } = useCtx('OverlayCtx')();
+  const { getOnlineMode } = useConnections();
+  const { status: overlayStatus } = useOverlay();
   const { initTxDynamicInfo } = useCtx('TxMetaCtx')();
 
   const enablePulse = () => {

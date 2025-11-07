@@ -4,8 +4,7 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import * as Styles from '@polkadot-live/styles/wrappers';
 import * as Icons from '@radix-ui/react-icons';
-
-import { useContextProxy } from '@polkadot-live/contexts';
+import { useConnections } from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
 import { checkAddress } from '@polkadot/util-crypto';
 import { getReadableAccountSource } from '@polkadot-live/core';
@@ -21,7 +20,6 @@ import {
   InputWrapper,
   TriggerButton,
 } from './Wrappers';
-
 import type { DialogSelectAccountProps } from './types';
 import type { ChangeEvent } from 'react';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -37,8 +35,7 @@ export const DialogSelectAccount = ({
   handleSenderChange,
   setRecipientFilter,
 }: DialogSelectAccountProps) => {
-  const { useCtx } = useContextProxy();
-  const { getTheme, getOnlineMode } = useCtx('ConnectionsCtx')();
+  const { getTheme, getOnlineMode } = useConnections();
   const theme = getTheme();
 
   const [isOpen, setIsOpen] = useState(false);

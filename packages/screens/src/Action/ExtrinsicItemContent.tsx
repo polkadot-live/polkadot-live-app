@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import { useContextProxy } from '@polkadot-live/contexts';
+import { useConnections } from '@polkadot-live/contexts';
 import { chainCurrency, chainUnits } from '@polkadot-live/consts/chains';
 import { formatDecimal } from '@polkadot-live/core';
 import { planckToUnit } from '@w3ux/utils';
@@ -18,8 +18,7 @@ export const ExtrinsicItemContent = ({
   onClickSummary,
 }: ExtrinsicItemContentProps): React.ReactNode => {
   const { chainId, data } = info.actionMeta;
-  const { useCtx } = useContextProxy();
-  const { cacheGet } = useCtx('ConnectionsCtx')();
+  const { cacheGet } = useConnections();
   const isBuildingExtrinsic = cacheGet('extrinsic:building');
 
   const renderSummaryButton = () => (

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Styles from '@polkadot-live/styles/wrappers';
-import { useContextProxy } from '@polkadot-live/contexts';
+import { useConnections } from '@polkadot-live/contexts';
 import { ellipsisFn } from '@w3ux/utils';
 import { Identicon } from '@polkadot-live/ui/components';
 import { SelectedAddressItem } from './Wrappers';
@@ -14,8 +14,7 @@ export const TriggerSelectAccount = ({
   recipient,
   sender,
 }: TriggerSelectAccountProps) => {
-  const { useCtx } = useContextProxy();
-  const { getTheme, getOnlineMode } = useCtx('ConnectionsCtx')();
+  const { getTheme, getOnlineMode } = useConnections();
   const theme = getTheme();
 
   let sendAccount: SendAccount | SendRecipient | null;

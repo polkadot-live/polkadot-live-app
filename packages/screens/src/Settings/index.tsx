@@ -8,13 +8,12 @@ import { Setting } from './Setting';
 import { SettingsList } from '@polkadot-live/consts/settings';
 import { useState } from 'react';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { useContextProxy } from '@polkadot-live/contexts';
+import { useHelp } from '@polkadot-live/contexts';
 import type { OsPlatform, SettingItem } from '@polkadot-live/types/settings';
 import type { SettingsProps } from './types';
 
 export const Settings = ({ platform }: SettingsProps) => {
-  const { useCtx } = useContextProxy();
-  const { openHelp } = useCtx('HelpCtx')();
+  const { openHelp } = useHelp();
 
   /**
    * Accordion state.

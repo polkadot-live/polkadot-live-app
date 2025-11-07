@@ -2,7 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Dialog from '@radix-ui/react-dialog';
-import { useContextProxy } from '@polkadot-live/contexts';
+import {
+  useConnections,
+  usePolkassembly,
+  useReferenda,
+} from '@polkadot-live/contexts';
 import { useState } from 'react';
 import {
   FlexColumn,
@@ -20,14 +24,13 @@ import type { AnyData } from '@polkadot-live/types/misc';
 import type { DialogFindReferendumProps } from './types';
 
 export const DialogFindReferendum = ({ tab }: DialogFindReferendumProps) => {
-  const { useCtx } = useContextProxy();
-  const { getTheme } = useCtx('ConnectionsCtx')();
+  const { getTheme } = useConnections();
   const theme = getTheme();
 
   const { getActiveReferenda, getHistoryReferenda, getItemsPerPage, setPage } =
-    useCtx('ReferendaCtx')();
+    useReferenda();
 
-  const { fetchingMetadata } = useCtx('PolkassemblyCtx')();
+  const { fetchingMetadata } = usePolkassembly();
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [inputVal, setInputVal] = useState<number | null>(null);
 

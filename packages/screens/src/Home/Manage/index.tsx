@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useState } from 'react';
-import { useContextProxy } from '@polkadot-live/contexts';
+import { useManage } from '@polkadot-live/contexts';
 import { Accounts } from './Accounts';
 import {
   CarouselWrapper,
@@ -16,8 +16,7 @@ import type { ManageProps } from './types';
 import type { SubscriptionTaskType } from '@polkadot-live/types/subscriptions';
 
 export const Manage = ({ addresses }: ManageProps) => {
-  const { useCtx } = useContextProxy();
-  const { setRenderedSubscriptions } = useCtx('ManageCtx')();
+  const { setRenderedSubscriptions } = useManage();
 
   // Outermost breadcrumb title.
   const [breadcrumb, setBreadcrumb] = useState<string>('');

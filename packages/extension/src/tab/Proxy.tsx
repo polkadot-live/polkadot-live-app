@@ -2,32 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useMemo } from 'react';
-import {
-  buildCache,
-  ContextProxyProvider,
-  useAccountStatuses,
-  useImportAddresses,
-  useAddHandler,
-  useConnections,
-  useDeleteHandler,
-  useDialogControl,
-  useHelp,
-  useImportHandler,
-  useLedgerFeedback,
-  useLedgerHardware,
-  useOverlay,
-  usePolkassembly,
-  useReferenda,
-  useReferendaSubscriptions,
-  useRemoveHandler,
-  useRenameHandler,
-  useSettingFlags,
-  useTabs,
-  useTaskHandler,
-  useTracks,
-  useTreasury,
-  useWcFeedback,
-} from '@polkadot-live/contexts';
+import { buildCache, ContextProxyProvider } from '@polkadot-live/contexts';
 import {
   useTxMeta,
   useWalletConnect,
@@ -43,36 +18,13 @@ export const ContextProxyTab = ({ children }: ContextProxyProps) => {
   const cache = useMemo(
     () =>
       buildCache({
-        HelpCtx: () => useHelp(),
-        OverlayCtx: () => useOverlay(),
-        ConnectionsCtx: () => useConnections(),
-        TracksCtx: () => useTracks(),
-        ImportAddressesCtx: () => useImportAddresses(),
-        AccountStatusesCtx: () => useAccountStatuses(),
-        ImportHandlerCtx: () => useImportHandler(),
-        AddHandlerCtx: () => useAddHandler(),
-        RemoveHandlerCtx: () => useRemoveHandler(),
-        DeleteHandlerCtx: () => useDeleteHandler(),
-        RenameHandlerCtx: () => useRenameHandler(),
-        DialogControlCtx: () => useDialogControl(),
-        SettingFlagsCtx: () => useSettingFlags(),
-        TabsCtx: () => useTabs(),
-        LedgerHardwareCtx: () => useLedgerHardware(),
-        WcFeedbackCtx: () => useWcFeedback(),
         WalletConnectCtx: () => useWalletConnect(),
         WalletConnectImportCtx: () => useWalletConnectImport(),
         WcVerifierCtx: () => useWcVerifier(),
-        LedgerFeedbackCtx: () => useLedgerFeedback(),
         TxMetaCtx: () => useTxMeta(),
-        TreasuryCtx: () => useTreasury(),
-        PolkassemblyCtx: () => usePolkassembly(),
-        ReferendaCtx: () => useReferenda(),
-        ReferendaSubscriptionsCtx: () => useReferendaSubscriptions(),
-        TaskHandlerCtx: () => useTaskHandler(),
       }),
     []
   );
-
   return (
     <ContextProxyProvider initialCache={cache}>{children}</ContextProxyProvider>
   );

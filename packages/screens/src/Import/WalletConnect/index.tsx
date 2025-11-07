@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import { Import } from './Import';
-import { useContextProxy } from '@polkadot-live/contexts';
+import { useImportAddresses } from '@polkadot-live/contexts';
 import { Manage } from './Manage';
 
 interface ImportWalletConnectProps {
@@ -13,8 +13,7 @@ interface ImportWalletConnectProps {
 export const ImportWalletConnect = ({
   setSection,
 }: ImportWalletConnectProps) => {
-  const { useCtx } = useContextProxy();
-  const { getAccounts } = useCtx('ImportAddressesCtx')();
+  const { getAccounts } = useImportAddresses();
   const genericAccounts = getAccounts('wallet-connect');
 
   const [showImportUi, setShowImportUi] = useState<boolean>(

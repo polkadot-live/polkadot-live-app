@@ -5,17 +5,20 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as Styles from '@polkadot-live/styles/wrappers';
 import { CheckboxRx, TooltipRx } from '@polkadot-live/ui/components';
-import { useContextProxy } from '@polkadot-live/contexts';
+import {
+  useConnections,
+  usePolkassembly,
+  useReferenda,
+} from '@polkadot-live/contexts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { DropdownReferendaFilterProps } from './types';
 
 export const DropdownReferendaFilter = ({
   tab,
 }: DropdownReferendaFilterProps) => {
-  const { useCtx } = useContextProxy();
-  const { getSortedFilterOptions, setFilterOption } = useCtx('ReferendaCtx')();
-  const { fetchingMetadata } = useCtx('PolkassemblyCtx')();
-  const { getTheme } = useCtx('ConnectionsCtx')();
+  const { getSortedFilterOptions, setFilterOption } = useReferenda();
+  const { fetchingMetadata } = usePolkassembly();
+  const { getTheme } = useConnections();
   const theme = getTheme();
 
   const renderFilterMark = (): boolean =>

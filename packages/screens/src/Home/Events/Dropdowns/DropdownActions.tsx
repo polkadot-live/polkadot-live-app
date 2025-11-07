@@ -3,7 +3,7 @@
 
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import { useContextProxy } from '@polkadot-live/contexts';
+import { useConnections, useContextProxy } from '@polkadot-live/contexts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   DropdownMenuContent,
@@ -21,7 +21,7 @@ export const ActionsDropdown = ({
 }: ActionsDropdownProps) => {
   const { useCtx } = useContextProxy();
   const { cacheGet, getTheme, getOnlineMode, initExtrinsicMsg, openInBrowser } =
-    useCtx('ConnectionsCtx')();
+    useConnections();
   const { isConnecting } = useCtx('BootstrappingCtx')();
   const darkMode = cacheGet('mode:dark');
   const isBuildingExtrinsic = cacheGet('extrinsic:building');

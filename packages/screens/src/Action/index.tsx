@@ -7,7 +7,11 @@ import * as Select from '@radix-ui/react-select';
 import * as Styles from '@polkadot-live/styles/wrappers';
 import * as UI from '@polkadot-live/ui/components';
 
-import { useContextProxy } from '@polkadot-live/contexts';
+import {
+  useConnections,
+  useContextProxy,
+  useHelp,
+} from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { formatDistanceToNow } from 'date-fns';
@@ -23,7 +27,7 @@ import type { ExtrinsicInfo, TxStatus } from '@polkadot-live/types/tx';
 
 export const Action = () => {
   const { useCtx } = useContextProxy();
-  const { openHelp } = useCtx('HelpCtx')();
+  const { openHelp } = useHelp();
 
   // Get state and setters from TxMeta context.
   const {
@@ -53,8 +57,7 @@ export const Action = () => {
       : setPage(page < pageCount ? page + 1 : page);
   };
 
-  const { cacheGet, getOnlineMode, getTheme, openInBrowser } =
-    useCtx('ConnectionsCtx')();
+  const { cacheGet, getOnlineMode, getTheme, openInBrowser } = useConnections();
   const isBuildingExtrinsic = cacheGet('extrinsic:building');
   const darkMode = cacheGet('mode:dark');
   const theme = getTheme();

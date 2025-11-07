@@ -3,7 +3,13 @@
 
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useRef, useState } from 'react';
-import { useContextProxy } from '@polkadot-live/contexts';
+import {
+  useApiHealth,
+  useConnections,
+  useContextProxy,
+  useHelp,
+  useIntervalTasksManager,
+} from '@polkadot-live/contexts';
 import { TaskEntryWrapper } from '@polkadot-live/styles/wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
@@ -15,11 +21,11 @@ import type { IntervalRowProps } from './types';
 
 export const IntervalRow = ({ task }: IntervalRowProps) => {
   const { useCtx } = useContextProxy();
-  const { openHelp } = useCtx('HelpCtx')();
-  const { failedConnections, hasConnectionIssue } = useCtx('ApiHealthCtx')();
+  const { openHelp } = useHelp();
+  const { failedConnections, hasConnectionIssue } = useApiHealth();
   const { isConnecting } = useCtx('BootstrappingCtx')();
 
-  const { cacheGet, getOnlineMode, getTheme } = useCtx('ConnectionsCtx')();
+  const { cacheGet, getOnlineMode, getTheme } = useConnections();
   const isImportingData = cacheGet('backup:importing');
   const isOnlineMode = getOnlineMode();
   const theme = getTheme();
@@ -30,7 +36,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
     handleRemoveIntervalSubscription,
     handleChangeIntervalDuration,
     handleIntervalOneShot,
-  } = useCtx('IntervalTaskManagerCtx')();
+  } = useIntervalTasksManager();
 
   const [isToggled, setIsToggled] = useState<boolean>(task.status === 'enable');
   const [oneShotProcessing, setOneShotProcessing] = useState(false);

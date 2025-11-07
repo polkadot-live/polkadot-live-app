@@ -3,7 +3,7 @@
 
 import * as Wrappers from './Wrappers';
 import { renderOrigin } from '@polkadot-live/core';
-import { useContextProxy } from '@polkadot-live/contexts';
+import { usePolkassembly, useReferenda } from '@polkadot-live/contexts';
 import { FlexRow } from '@polkadot-live/styles/wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHashtag } from '@fortawesome/free-solid-svg-icons';
@@ -15,9 +15,8 @@ interface HistoryRowProps {
 }
 
 export const HistoryRow = ({ info }: HistoryRowProps) => {
-  const { useCtx } = useContextProxy();
-  const { usePolkassemblyApi, getProposal } = useCtx('PolkassemblyCtx')();
-  const { activeReferendaChainId: chainId } = useCtx('ReferendaCtx')();
+  const { usePolkassemblyApi, getProposal } = usePolkassembly();
+  const { activeReferendaChainId: chainId } = useReferenda();
   const proposalData = getProposal(chainId, info.refId);
   const { title } = proposalData || { title: '' };
 

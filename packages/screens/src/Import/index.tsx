@@ -3,7 +3,7 @@
 
 import * as UI from '@polkadot-live/ui/components';
 import React, { useEffect, useState } from 'react';
-import { useContextProxy } from '@polkadot-live/contexts';
+import { useConnections, useHelp } from '@polkadot-live/contexts';
 import { Home } from './Home';
 import { ImportReadOnly } from './ReadOnly';
 import { ImportVault } from './Vault';
@@ -36,9 +36,8 @@ export const ImportScreen = ({
 };
 
 export const Import = () => {
-  const { useCtx } = useContextProxy();
-  const { openHelp } = useCtx('HelpCtx')();
-  const { getOnlineMode } = useCtx('ConnectionsCtx')();
+  const { openHelp } = useHelp();
+  const { getOnlineMode } = useConnections();
 
   // Active section
   const [section, setSection] = useState<number>(0);

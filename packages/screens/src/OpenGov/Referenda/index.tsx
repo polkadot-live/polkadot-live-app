@@ -17,7 +17,14 @@ import {
   faCaretRight,
   faEllipsis,
 } from '@fortawesome/free-solid-svg-icons';
-import { useContextProxy } from '@polkadot-live/contexts';
+import {
+  useConnections,
+  useHelp,
+  usePolkassembly,
+  useReferenda,
+  useReferendaSubscriptions,
+  useTracks,
+} from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
 import { ReferendumRow } from './ReferendumRow';
 import { renderPlaceholders } from '@polkadot-live/ui/utils';
@@ -29,8 +36,7 @@ import { DialogFindReferendum } from './Dialogs';
 import type { ReferendaProps } from '../types';
 
 export const Referenda = ({ setSection }: ReferendaProps) => {
-  const { useCtx } = useContextProxy();
-  const { getTheme, getOnlineMode } = useCtx('ConnectionsCtx')();
+  const { getTheme, getOnlineMode } = useConnections();
   const theme = getTheme();
 
   const {
@@ -50,14 +56,13 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     setTabVal,
     showPageEllipsis,
     updateTrackFilter,
-  } = useCtx('ReferendaCtx')();
+  } = useReferenda();
 
-  const { openHelp } = useCtx('HelpCtx')();
-  const { fetchingMetadata } = useCtx('PolkassemblyCtx')();
-  const { fetchingTracks, getOrderedTracks } = useCtx('TracksCtx')();
-  const { isSubscribedToReferendum, isNotSubscribedToAny } = useCtx(
-    'ReferendaSubscriptionsCtx'
-  )();
+  const { openHelp } = useHelp();
+  const { fetchingMetadata } = usePolkassembly();
+  const { fetchingTracks, getOrderedTracks } = useTracks();
+  const { isSubscribedToReferendum, isNotSubscribedToAny } =
+    useReferendaSubscriptions();
 
   // Flag to display referenda with active subscriptions.
   const [onlySubscribed, setOnlySubscribed] = useState(false);

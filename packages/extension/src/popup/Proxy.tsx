@@ -3,23 +3,7 @@
 
 import { useMemo } from 'react';
 import { useBootstrapping, useCogMenu } from './contexts';
-import {
-  buildCache,
-  ContextProxyProvider,
-  useAddresses,
-  useApiHealth,
-  useAppSettings,
-  useChains,
-  useConnections,
-  useEvents,
-  useHelp,
-  useIntervalSubscriptions,
-  useIntervalTasksManager,
-  useManage,
-  useSideNav,
-  useSubscriptions,
-  useSummary,
-} from '@polkadot-live/contexts';
+import { buildCache, ContextProxyProvider } from '@polkadot-live/contexts';
 
 interface ContextProxyProps {
   children: React.ReactNode;
@@ -29,21 +13,8 @@ export const ContextProxyMain = ({ children }: ContextProxyProps) => {
   const cache = useMemo(
     () =>
       buildCache({
-        HelpCtx: () => useHelp(),
-        ConnectionsCtx: () => useConnections(),
-        AddressesCtx: () => useAddresses(),
-        AppSettingsCtx: () => useAppSettings(),
-        SideNavCtx: () => useSideNav(),
-        ApiHealthCtx: () => useApiHealth(),
-        ChainsCtx: () => useChains(),
-        ManageCtx: () => useManage(),
-        SubscriptionsCtx: () => useSubscriptions(),
-        IntervalSubscriptionsCtx: () => useIntervalSubscriptions(),
-        IntervalTaskManagerCtx: () => useIntervalTasksManager(),
-        EventsCtx: () => useEvents(),
         BootstrappingCtx: () => useBootstrapping(),
         CogMenuCtx: () => useCogMenu(),
-        SummaryCtx: () => useSummary(),
       }),
     []
   );

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useState } from 'react';
-import { useContextProxy } from '@polkadot-live/contexts';
+import { useHelp, useTracks } from '@polkadot-live/contexts';
 import { StickyHeading, TrackItem } from './Wrappers';
 import { formatChainUnits, formatBlocksToTime } from '@polkadot-live/core';
 import { motion } from 'framer-motion';
@@ -19,8 +19,7 @@ import type { TrackRowProps } from '../types';
 
 // Re-use track item component for header alignment.
 export const StickyHeadingsRow = () => {
-  const { useCtx } = useContextProxy();
-  const { openHelp } = useCtx('HelpCtx')();
+  const { openHelp } = useHelp();
 
   return (
     <TrackItem
@@ -79,9 +78,8 @@ export const StickyHeadingsRow = () => {
 };
 
 export const TrackRow = ({ track }: TrackRowProps) => {
-  const { useCtx } = useContextProxy();
-  const { openHelp } = useCtx('HelpCtx')();
-  const { activeChainId: chainId } = useCtx('TracksCtx')();
+  const { openHelp } = useHelp();
+  const { activeChainId: chainId } = useTracks();
 
   const [expanded, setExpanded] = useState(false);
   const expandVariants = {

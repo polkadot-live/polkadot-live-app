@@ -13,13 +13,12 @@ import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
 import WalletConnectSVG from '@w3ux/extension-assets/WalletConnect.svg?react';
 import LedgerLogoSVG from '@w3ux/extension-assets/Ledger.svg?react';
 import { useEffect } from 'react';
-import { useContextProxy } from '@polkadot-live/contexts';
+import { useHelp } from '@polkadot-live/contexts';
 import type { AccountSource } from '@polkadot-live/types/accounts';
 import type { HomeProps } from './types';
 
 export const Home = ({ setSection, setSource }: HomeProps) => {
-  const { useCtx } = useContextProxy();
-  const { openHelp } = useCtx('HelpCtx')();
+  const { openHelp } = useHelp();
 
   /// Handle clicking on an import method card.
   const handleClick = (

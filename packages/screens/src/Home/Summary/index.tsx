@@ -4,7 +4,15 @@
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import { useContextProxy } from '@polkadot-live/contexts';
+import {
+  useAddresses,
+  useConnections,
+  useEvents,
+  useIntervalSubscriptions,
+  useSideNav,
+  useSubscriptions,
+  useSummary,
+} from '@polkadot-live/contexts';
 import { getReadableAccountSource } from '@polkadot-live/core';
 import { getSupportedSources } from '@polkadot-live/consts/chains';
 import { useState } from 'react';
@@ -17,18 +25,15 @@ import { StatItemRow } from './StatItemRow';
 import type { SummaryAccordionValue } from './types';
 
 export const Summary = () => {
-  const { useCtx } = useContextProxy();
-  const { setSelectedId } = useCtx('SideNavCtx')();
-  const { openTab } = useCtx('ConnectionsCtx')();
-  const { addressMap, extrinsicCounts } = useCtx('SummaryCtx')();
-  const { getTotalIntervalSubscriptionCount } = useCtx(
-    'IntervalSubscriptionsCtx'
-  )();
+  const { getAllAccounts } = useAddresses();
+  const { openTab } = useConnections();
   const { getEventsCount, getReadableEventCategory, getAllEventCategoryKeys } =
-    useCtx('EventsCtx')();
-  const { getAllAccounts } = useCtx('AddressesCtx')();
+    useEvents();
+  const { getTotalIntervalSubscriptionCount } = useIntervalSubscriptions();
+  const { setSelectedId } = useSideNav();
   const { getSubscriptionCountForAccount, getTotalSubscriptionCount } =
-    useCtx('SubscriptionsCtx')();
+    useSubscriptions();
+  const { addressMap, extrinsicCounts } = useSummary();
 
   /**
    * Utils.

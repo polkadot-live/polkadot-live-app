@@ -4,45 +4,8 @@
 import * as main from '@ren/contexts/main';
 import * as imports from '@ren/contexts/import';
 import * as extrinsics from '@ren/contexts/action';
-
 import { useMemo } from 'react';
-import {
-  buildCache,
-  ContextProxyProvider,
-  useAccountStatuses,
-  useAppSettings,
-  useApiHealth,
-  useAddHandler,
-  useAddresses,
-  useChains,
-  useConnections,
-  useDeleteHandler,
-  useDialogControl,
-  useEvents,
-  useHelp,
-  useImportAddresses,
-  useImportHandler,
-  useIntervalSubscriptions,
-  useIntervalTasksManager,
-  useLedgerFeedback,
-  useLedgerHardware,
-  useManage,
-  useOverlay,
-  usePolkassembly,
-  useReferenda,
-  useReferendaSubscriptions,
-  useRemoveHandler,
-  useRenameHandler,
-  useSettingFlags,
-  useSideNav,
-  useSubscriptions,
-  useSummary,
-  useTabs,
-  useTaskHandler,
-  useTracks,
-  useTreasury,
-  useWcFeedback,
-} from '@polkadot-live/contexts';
+import { buildCache, ContextProxyProvider } from '@polkadot-live/contexts';
 
 interface ContextProxyProps {
   children: React.ReactNode;
@@ -55,13 +18,8 @@ export const ContextProxyExtrinsics = ({ children }: ContextProxyProps) => {
   const cache = useMemo(
     () =>
       buildCache({
-        HelpCtx: () => useHelp(),
-        OverlayCtx: () => useOverlay(),
-        ConnectionsCtx: () => useConnections(),
         TxMetaCtx: () => extrinsics.useTxMeta(),
         WcVerifierCtx: () => extrinsics.useWcVerifier(),
-        LedgerFeedbackCtx: () => useLedgerFeedback(),
-        WcFeedbackCtx: () => useWcFeedback(),
       }),
     []
   );
@@ -77,50 +35,9 @@ export const ContextProxyMain = ({ children }: ContextProxyProps) => {
   const cache = useMemo(
     () =>
       buildCache({
-        HelpCtx: () => useHelp(),
-        OverlayCtx: () => useOverlay(),
-        ConnectionsCtx: () => useConnections(),
-        AddressesCtx: () => useAddresses(),
-        AppSettingsCtx: () => useAppSettings(),
-        SideNavCtx: () => useSideNav(),
-        ApiHealthCtx: () => useApiHealth(),
-        TreasuryApiCtx: () => main.useTreasuryApi(),
-        ChainsCtx: () => useChains(),
-        SubscriptionsCtx: () => useSubscriptions(),
-        IntervalSubscriptionsCtx: () => useIntervalSubscriptions(),
-        ManageCtx: () => useManage(),
-        IntervalTaskManagerCtx: () => useIntervalTasksManager(),
-        EventsCtx: () => useEvents(),
         BootstrappingCtx: () => main.useBootstrapping(),
-        DataBackupCtx: () => main.useDataBackup(),
         CogMenuCtx: () => main.useCogMenu(),
         WalletConnectCtx: () => main.useWalletConnect(),
-        LedgerSigningCtx: () => main.useLedgerSigner(),
-        SummaryCtx: () => useSummary(),
-      }),
-    []
-  );
-  return (
-    <ContextProxyProvider initialCache={cache}>{children}</ContextProxyProvider>
-  );
-};
-
-/**
- * OpenGov view.
- */
-export const ContextProxyOpenGov = ({ children }: ContextProxyProps) => {
-  const cache = useMemo(
-    () =>
-      buildCache({
-        HelpCtx: () => useHelp(),
-        OverlayCtx: () => useOverlay(),
-        ConnectionsCtx: () => useConnections(),
-        TracksCtx: () => useTracks(),
-        TreasuryCtx: () => useTreasury(),
-        PolkassemblyCtx: () => usePolkassembly(),
-        ReferendaCtx: () => useReferenda(),
-        TaskHandlerCtx: () => useTaskHandler(),
-        ReferendaSubscriptionsCtx: () => useReferendaSubscriptions(),
       }),
     []
   );
@@ -136,55 +53,7 @@ export const ContextProxyImport = ({ children }: ContextProxyProps) => {
   const cache = useMemo(
     () =>
       buildCache({
-        HelpCtx: () => useHelp(),
-        OverlayCtx: () => useOverlay(),
-        ConnectionsCtx: () => useConnections(),
-        ImportAddressesCtx: () => useImportAddresses(),
-        RemoveHandlerCtx: () => useRemoveHandler(),
-        AccountStatusesCtx: () => useAccountStatuses(),
-        DialogControlCtx: () => useDialogControl(),
-        ImportHandlerCtx: () => useImportHandler(),
-        AddHandlerCtx: () => useAddHandler(),
-        DeleteHandlerCtx: () => useDeleteHandler(),
-        RenameHandlerCtx: () => useRenameHandler(),
-        LedgerHardwareCtx: () => useLedgerHardware(),
         WalletConnectImportCtx: () => imports.useWalletConnectImport(),
-      }),
-    []
-  );
-  return (
-    <ContextProxyProvider initialCache={cache}>{children}</ContextProxyProvider>
-  );
-};
-
-/**
- * Settings view.
- */
-export const ContextProxySettings = ({ children }: ContextProxyProps) => {
-  const cache = useMemo(
-    () =>
-      buildCache({
-        HelpCtx: () => useHelp(),
-        OverlayCtx: () => useOverlay(),
-        ConnectionsCtx: () => useConnections(),
-        SettingFlagsCtx: () => useSettingFlags(),
-      }),
-    []
-  );
-  return (
-    <ContextProxyProvider initialCache={cache}>{children}</ContextProxyProvider>
-  );
-};
-
-/**
- * Tabs view.
- */
-export const ContextProxyTabs = ({ children }: ContextProxyProps) => {
-  const cache = useMemo(
-    () =>
-      buildCache({
-        ConnectionsCtx: () => useConnections(),
-        TabsCtx: () => useTabs(),
       }),
     []
   );

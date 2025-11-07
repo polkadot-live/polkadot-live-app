@@ -9,7 +9,11 @@ import {
   FlexRow,
 } from '@polkadot-live/styles/wrappers';
 import { Cross2Icon } from '@radix-ui/react-icons';
-import { useContextProxy } from '@polkadot-live/contexts';
+import {
+  useConnections,
+  useDialogControl,
+  useRenameHandler,
+} from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
 import { TooltipRx } from '@polkadot-live/ui/components';
 import { NetworkLabel } from './NetworkLabel';
@@ -21,15 +25,14 @@ import type { FormEvent } from 'react';
 import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';
 
 export const DialogRename = () => {
-  const { useCtx } = useContextProxy();
-  const { getTheme } = useCtx('ConnectionsCtx')();
-  const { renameHandler, validateNameInput } = useCtx('RenameHandlerCtx')();
+  const { getTheme } = useConnections();
+  const { renameHandler, validateNameInput } = useRenameHandler();
   const {
     getRenameDialogData,
     setRenameDialogData,
     getManageAccountDialogData,
     setManageAccountDialogData,
-  } = useCtx('DialogControlCtx')();
+  } = useDialogControl();
 
   const theme = getTheme();
   const { encodedAccount, genericAccount } = getRenameDialogData();

@@ -10,7 +10,11 @@ import {
 } from '@polkadot-live/styles/wrappers';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { NetworkLabel } from './NetworkLabel';
-import { useContextProxy } from '@polkadot-live/contexts';
+import {
+  useConnections,
+  useDialogControl,
+  useRenameHandler,
+} from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
 import { renderToast } from '@polkadot-live/ui/utils';
 import { TooltipRx } from '@polkadot-live/ui/components';
@@ -23,12 +27,11 @@ import type { FormEvent } from 'react';
 import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';
 
 export const DialogBulkRename = ({ genericAccount }: DialogBulkRenameProps) => {
-  const { useCtx } = useContextProxy();
   const { accountName, encodedAccounts } = genericAccount;
-  const { getTheme } = useCtx('ConnectionsCtx')();
-  const { renameHandler, validateNameInput } = useCtx('RenameHandlerCtx')();
+  const { getTheme } = useConnections();
+  const { renameHandler, validateNameInput } = useRenameHandler();
   const { getBulkRenameDialogData, setBulkRenameDialogData } =
-    useCtx('DialogControlCtx')();
+    useDialogControl();
 
   const theme = getTheme();
   const [inputVal, setInputVal] = useState<string>(accountName);
