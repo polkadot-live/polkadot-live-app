@@ -48,7 +48,7 @@ export const RouterInner = () => {
 
   return (
     <ContextProxyTab>
-      <FlexColumn style={{ height: '100vh', width: '100%' }}>
+      <FlexColumn $rowGap={'0'} style={{ height: '100vh', width: '100%' }}>
         <Tabs tabsCtx={useTabs()} />
         {tabsData
           .filter((tab) => visitedTabs.has(tab.viewId))
