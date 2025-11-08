@@ -90,9 +90,8 @@ export const ConnectionsProvider = ({
    */
   const openTab = (
     tab: string,
-    relayData?: AnyData, // electron
     analytics?: { event: string; data: AnyData | null }
-  ) => adapter.openTab(tab, relayData, analytics);
+  ) => adapter.openTab(tab, analytics);
 
   useEffect(() => {
     // Synchronize with stored flags.

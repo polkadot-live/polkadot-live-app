@@ -4,7 +4,7 @@
 import type { ChainID } from './chains';
 import type { DismissEvent, EventCallback, NotificationData } from './reporter';
 import type { ExportResult, ImportResult } from './backup';
-import type { IpcTask, RelayPortTask, SyncID, TabData } from './communication';
+import type { IpcTask, SyncID, TabData } from './communication';
 import type { IpcRendererEvent } from 'electron';
 import type { AnyData } from './misc';
 import type { SettingKey } from './settings';
@@ -41,17 +41,7 @@ export interface PreloadAPI {
 
   showNotification: ApiShowNotification;
 
-  relayTask: (
-    callback: (
-      _: IpcRendererEvent,
-      windowId: string,
-      task: string,
-      serData: string
-    ) => void
-  ) => Electron.IpcRenderer;
-
-  openWindow: (id: string, relayData?: RelayPortTask) => Promise<void>;
-
+  openWindow: (id: string) => Promise<void>;
   resizeBaseWindow: (size: 'small' | 'medium' | 'large' | '') => void;
   onBaseWindowResized: (
     callback: (_: IpcRendererEvent) => void

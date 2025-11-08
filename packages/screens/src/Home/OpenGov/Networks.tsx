@@ -60,7 +60,7 @@ export const Networks = ({ setBreadcrumb, setSection }: NetworksProps) => {
                 {getSortedKeys().length === 0 ? (
                   <NoOpenGov
                     onClick={() =>
-                      openTab('openGov', undefined, {
+                      openTab('openGov', {
                         event: 'window-open-openGov',
                         data: null,
                       })

@@ -163,18 +163,13 @@ export const API: PreloadAPI = {
   onBaseWindowResized: (callback) =>
     ipcRenderer.on('renderer:base:resized', callback),
 
-  relayTask: (callback) => ipcRenderer.on('renderer:relay:task', callback),
-
   quitApp: async (): Promise<void> => {
     await ipcRenderer.invoke('app:quit');
   },
 
-  hideWindow: (id) => ipcRenderer.send('app:window:hide', id),
-
   closeWindow: (id: string) => ipcRenderer.send('app:window:close', id),
-
-  openWindow: async (id, relayData) =>
-    ipcRenderer.send(`${id}:open`, relayData),
+  hideWindow: (id) => ipcRenderer.send('app:window:hide', id),
+  openWindow: async (id) => ipcRenderer.send(`${id}:open`),
 
   minimizeWindow: (windowId: string) =>
     ipcRenderer.send('app:window:minimize', windowId),

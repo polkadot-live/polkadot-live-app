@@ -12,12 +12,11 @@ export interface ConnectionsContextInterface {
   copyToClipboard: (text: string) => Promise<void>;
   getTheme: () => typeof themeVariables.darkTheme;
   getOnlineMode: () => boolean;
-  initExtrinsicMsg: (txMeta: ActionMeta, relayData?: AnyData) => void;
+  initExtrinsicMsg: (txMeta: ActionMeta) => void;
   isTabOpen: (tab: string) => Promise<boolean>;
   openInBrowser: (uri: string, analytics?: AnyData) => void;
   openTab: (
     tab: string,
-    relayData?: AnyData, // electron
     analytics?: { event: string; data: AnyData | null }
   ) => void;
   relayState: (syncId: SyncID, state: boolean | string) => void;
