@@ -24,12 +24,6 @@ export type SyncID =
   | 'wc:initialized'
   | 'wc:session:restored';
 
-export interface RelayPortTask {
-  windowId: string;
-  task: string;
-  serData: string;
-}
-
 export interface TabData {
   id: number;
   label: string;
@@ -79,6 +73,8 @@ export interface IpcTask {
     | 'extrinsics:persist'
     | 'extrinsics:remove'
     | 'extrinsics:update'
+    | 'extrinsics:addPending'
+    | 'extrinsics:getPending'
     // Subscriptions (Account)
     | 'subscriptions:account:getAll'
     | 'subscriptions:account:update'

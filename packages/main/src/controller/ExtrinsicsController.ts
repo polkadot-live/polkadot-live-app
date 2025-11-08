@@ -13,6 +13,7 @@ import type { IpcTask } from '@polkadot-live/types/communication';
 
 export class ExtrinsicsController {
   private static storeKey = 'persisted_extrinsics';
+  private static pendingExtrinsics: string[] = [];
 
   /**
    * Process an async IPC task.
@@ -39,6 +40,16 @@ export class ExtrinsicsController {
       case 'extrinsics:update': {
         this.update(task);
         return;
+      }
+      case 'extrinsics:addPending': {
+        const { serMeta }: { serMeta: string } = task.data;
+        this.pendingExtrinsics.push(serMeta);
+        return;
+      }
+      case 'extrinsics:getPending': {
+        const res = JSON.stringify(this.pendingExtrinsics);
+        this.pendingExtrinsics = [];
+        return res;
       }
       default: {
         return;

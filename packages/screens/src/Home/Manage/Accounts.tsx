@@ -174,7 +174,7 @@ export const Accounts = ({
                     {chainId === 'Empty' ? (
                       <NoAccounts
                         onClick={() =>
-                          openTab('import', undefined, {
+                          openTab('import', {
                             event: 'window-open-accounts',
                             data: null,
                           })

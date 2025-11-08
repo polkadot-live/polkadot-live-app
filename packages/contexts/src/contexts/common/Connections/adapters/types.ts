@@ -16,7 +16,6 @@ export interface ConnectionsAdapter {
   openInBrowser: (uri: string, analytics?: AnyData) => void;
   openTab: (
     tab: string,
-    relayData?: AnyData,
     analytics?: {
       event: string;
       data: AnyData | null;

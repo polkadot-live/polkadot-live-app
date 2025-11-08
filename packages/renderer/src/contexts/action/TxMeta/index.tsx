@@ -140,6 +140,31 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   const wcModal = useRef<WalletConnectModal | null>(null);
 
   /**
+   * Fetch any pending extrinsics.
+   */
+  useEffect(() => {
+    const fetch = async () => {
+      const result = (await window.myAPI.sendExtrinsicsTaskAsync({
+        action: 'extrinsics:getPending',
+        data: null,
+      })) as string;
+
+      const parsed: string[] = JSON.parse(result);
+      if (!parsed.length) {
+        return;
+      }
+      // Wait some time for port to initialize.
+      setTimeout(() => {
+        for (const serTxMeta of parsed) {
+          const txMeta: ActionMeta = JSON.parse(serTxMeta);
+          initTx(txMeta);
+        }
+      }, 200);
+    };
+    fetch();
+  }, []);
+
+  /**
    * Instantiate WalletConnect modal when component mounts.
    */
   useEffect(() => {

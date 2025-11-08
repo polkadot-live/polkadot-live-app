@@ -19,21 +19,18 @@ export const initExtrinsicElectron = async (meta: ActionMeta) => {
   const extrinsicsViewOpen = await window.myAPI.isViewOpen('action');
 
   if (!extrinsicsViewOpen) {
-    // Relay init task to extrinsics window after its DOM has loaded.
-    window.myAPI.openWindow('action', {
-      windowId: 'action',
-      task: 'action:init',
-      serData: JSON.stringify(meta),
+    // Cache pending extrinsic in main process.
+    await window.myAPI.sendExtrinsicsTaskAsync({
+      action: 'extrinsics:addPending',
+      data: { serMeta: JSON.stringify(meta) },
     });
-
-    // Analytics.
+    // Pending extrinsics fetched on mount.
+    window.myAPI.openWindow('action');
     window.myAPI.umamiEvent('window-open-extrinsics', {
       action: `send-transfer-keep-alive`,
     });
   } else {
     window.myAPI.openWindow('action');
-
-    // Send init task directly to extrinsics window if it's already open.
     ConfigRenderer.portToAction?.postMessage({
       task: 'action:init',
       data: JSON.stringify(meta),

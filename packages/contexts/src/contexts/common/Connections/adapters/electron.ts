@@ -42,9 +42,13 @@ export const electronAdapter: ConnectionsAdapter = {
           data: JSON.stringify(txMeta),
         });
       } else {
-        const serData = JSON.stringify(txMeta);
-        const relayData = { windowId: 'action', task: 'action:init', serData };
-        electronAdapter.openTab('action', relayData);
+        // Cache pending extrinsic in main process.
+        window.myAPI
+          .sendExtrinsicsTaskAsync({
+            action: 'extrinsics:addPending',
+            data: { serMeta: JSON.stringify(txMeta) },
+          })
+          .then(() => electronAdapter.openTab('action'));
       }
     });
   },
@@ -58,11 +62,8 @@ export const electronAdapter: ConnectionsAdapter = {
     }
   },
 
-  openTab: (tab, relayData, analytics) => {
-    relayData
-      ? window.myAPI.openWindow(tab, relayData)
-      : window.myAPI.openWindow(tab);
-
+  openTab: (tab, analytics) => {
+    window.myAPI.openWindow(tab);
     if (analytics) {
       const { event, data } = analytics;
       window.myAPI.umamiEvent(event, data);
