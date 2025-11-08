@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { connectApis } from '../apis';
+import { disconnectAPIs } from '@polkadot-live/core';
 import { eventBus } from '../eventBus';
 import { initAPIs } from './apisInit';
 import { initManagedAccounts } from './accountsInit';
@@ -22,4 +23,5 @@ export const initSystems = async () => {
   initIntervalSubscriptions();
   eventBus.dispatchEvent(new CustomEvent('initSystems:complete'));
   setSystemsInitialized(true);
+  await disconnectAPIs();
 };

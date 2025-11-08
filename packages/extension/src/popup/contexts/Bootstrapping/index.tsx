@@ -50,14 +50,6 @@ export const BootstrappingProvider = ({
   };
 
   /**
-   * Disconnect idle APIs after bootstrapping phase.
-   */
-  const disconnectAPIs = async () => {
-    const data = { type: 'bootstrap', task: 'disconnectApis' };
-    await chrome.runtime.sendMessage(data);
-  };
-
-  /**
    * Handle app initialization.
    */
   const initApp = async () => {
@@ -65,7 +57,7 @@ export const BootstrappingProvider = ({
       return;
     }
     setAppLoading(true);
-    const initTasks: (() => Promise<AnyData>)[] = [initSystems, disconnectAPIs];
+    const initTasks: (() => Promise<AnyData>)[] = [initSystems];
     for (const task of initTasks) {
       if (!refAborted.current) {
         await task();
