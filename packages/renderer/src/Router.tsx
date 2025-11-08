@@ -10,7 +10,6 @@ import { MainInterfaceWrapper } from '@polkadot-live/styles/wrappers';
 import { Overlay, Help } from '@polkadot-live/ui/components';
 import { useHelp, useOverlay } from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
-import { useTheme } from 'styled-components';
 import { HashRouter, Route, Routes } from 'react-router';
 import { FadeAction } from '@ren/screens/Action';
 import { FadeImport } from '@ren/screens/Import';
@@ -19,10 +18,8 @@ import { FadeOpenGov } from './screens/OpenGov';
 import { Home } from './screens/Home';
 import { ToastContainer } from 'react-toastify';
 import { TabsWrapper } from '@ren/screens/Tabs';
-import type { AnyJson } from '@polkadot-live/types/misc';
 
 export const RouterInner = () => {
-  const { mode }: AnyJson = useTheme();
   const { status: helpStatus, definition, closeHelp, setStatus } = useHelp();
   const overlayCtx = useOverlay();
 
@@ -76,7 +73,7 @@ export const RouterInner = () => {
   };
 
   return (
-    <MainInterfaceWrapper className={`theme-polkadot theme-${mode}`}>
+    <MainInterfaceWrapper>
       <Help
         status={helpStatus}
         definition={definition}
