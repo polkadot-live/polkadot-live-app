@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "asar:list": "asar list",
-    "build": "cross-env MODE=production nx run-many -t build",
+    "build": "cross-env MODE=production nx run-many -t build --exclude=@polkadot-live/extension",
     "build:core": "nx build:dev @polkadot-live/core",
     "build:contexts": "nx build:dev @polkadot-live/contexts",
     "build:screens": "nx build:dev @polkadot-live/screens",
