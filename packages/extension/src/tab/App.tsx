@@ -9,7 +9,10 @@ import {
 } from '@polkadot-live/contexts';
 import { Help, Overlay, Tabs } from '@polkadot-live/ui/components';
 import { Action, Import, OpenGov, Settings } from '@polkadot-live/screens';
-import { MainInterfaceWrapper } from '@polkadot-live/styles/wrappers';
+import {
+  FlexColumn,
+  MainInterfaceWrapper,
+} from '@polkadot-live/styles/wrappers';
 import { ToastContainer } from 'react-toastify';
 import { useEffect, useState } from 'react';
 import { ContextProxyTab } from './Proxy';
@@ -45,21 +48,30 @@ export const RouterInner = () => {
 
   return (
     <ContextProxyTab>
-      <Tabs tabsCtx={useTabs()} />
-      {tabsData
-        .filter((tab) => visitedTabs.has(tab.viewId))
-        .map((tab) => (
-          <div
-            key={tab.id}
-            style={{
-              width: '100%',
-              height: '100%',
-              display: clickedId === tab.id ? 'block' : 'none',
-            }}
-          >
-            {renderView(tab.viewId)}
-          </div>
-        ))}
+      <FlexColumn style={{ height: '100vh', width: '100%' }}>
+        <Tabs tabsCtx={useTabs()} />
+        {tabsData
+          .filter((tab) => visitedTabs.has(tab.viewId))
+          .map((tab) => (
+            <div
+              key={tab.id}
+              style={
+                clickedId === tab.id
+                  ? {
+                      display: 'block',
+                      height: '100%',
+                      width: '100%',
+                      overflowY: 'auto',
+                    }
+                  : {
+                      display: 'none',
+                    }
+              }
+            >
+              {renderView(tab.viewId)}
+            </div>
+          ))}
+      </FlexColumn>
     </ContextProxyTab>
   );
 };
