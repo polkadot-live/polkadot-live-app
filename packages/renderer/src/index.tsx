@@ -9,13 +9,13 @@ import { createRoot } from 'react-dom/client';
 import '@theme-toggles/react/css/Classic.css';
 
 // Network themes.
-import '@ren/theme/accents/polkadot-relay.css';
+import '@polkadot-live/styles/accents/polkadot-relay.css';
 
 // App styles.
-import './theme/theme.scss';
-import './theme/index.scss';
-import './theme/utils.scss';
-import './theme/dialog.scss';
+import '@polkadot-live/styles/theme/theme.scss';
+import '@polkadot-live/styles/theme/index.scss';
+import '@polkadot-live/styles/partials/utils.scss';
+import '@polkadot-live/styles/partials/dialog.scss';
 
 // Library styles.
 import '@polkadot-live/ui/scss/buttons/index.scss';

@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ConfigOpenGov, getTracks } from '@polkadot-live/core';
-import { useEffect } from 'react';
 import {
   useReferenda,
   useReferendaSubscriptions,
   useTracks,
   useTreasury,
-} from '@ren/contexts/openGov';
+} from '@polkadot-live/contexts';
+import { useEffect } from 'react';
 import { renderToast } from '@polkadot-live/ui/utils';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { ChainID } from '@polkadot-live/types/chains';

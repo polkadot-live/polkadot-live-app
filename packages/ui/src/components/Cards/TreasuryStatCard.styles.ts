@@ -3,7 +3,7 @@
 
 import styled from 'styled-components';
 import { getChainIdColor } from './utils';
-import { mixinHelpIcon } from '../Common';
+import { mixinHelpIcon } from '@polkadot-live/styles/wrappers';
 import type { ChainID } from '@polkadot-live/types/chains';
 
 export const TreasuryStatCardWrapper = styled.div<{ $chainId: ChainID }>`

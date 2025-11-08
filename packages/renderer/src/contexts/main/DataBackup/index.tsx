@@ -4,25 +4,23 @@
 /// Dependencies.
 import * as Core from '@polkadot-live/core';
 import { createContext } from 'react';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import {
+  createSafeContextHook,
+  useConnections,
+  useEvents,
+  useIntervalSubscriptions,
+  useManage,
+} from '@polkadot-live/contexts';
 import {
   AccountsController,
   IntervalsController,
   SubscriptionsController,
 } from '@polkadot-live/core';
-
-/// Main window contexts.
-import { useConnections } from '@ren/contexts/common';
-import { useEvents } from '@ren/contexts/main';
-import { useManage } from '../Manage';
-import { useIntervalSubscriptions } from '../IntervalSubscriptions';
-
-/// Types.
 import type {
   DataBackupContextInterface,
   ImportFunc,
   RemoveFunc,
-} from './types';
+} from '@polkadot-live/contexts/types/main';
 import type {
   AccountSource,
   ImportedGenericAccount,
@@ -119,12 +117,10 @@ export const DataBackupProvider = ({
           if (!response.data) {
             throw new Error('No import data.');
           }
-
           // Import serialized data.
           const { serialized: s } = response.data;
           await importAddressData(s, handleImportAddress, handleRemoveAddress);
-          await updateTaskEntries();
-
+          updateTaskEntries();
           await importEventData(s);
           await importIntervalData(s);
           await importAccountTaskData(s);
@@ -179,7 +175,6 @@ export const DataBackupProvider = ({
     if (!s_addresses) {
       return;
     }
-
     const p_array: [AccountSource, string][] = JSON.parse(s_addresses);
     const p_map = new Map<AccountSource, string>(p_array);
     const importWindowOpen = await window.myAPI.isViewOpen('import');
@@ -190,7 +185,7 @@ export const DataBackupProvider = ({
 
       // Process parsed addresses.
       for (const genericAccount of genericAccounts) {
-        const { encodedAccounts, publicKeyHex } = genericAccount;
+        const { encodedAccounts } = genericAccount;
 
         // Iterate encoded accounts and set `isImported` flag.
         for (const en of Object.values(encodedAccounts)) {
@@ -199,13 +194,11 @@ export const DataBackupProvider = ({
             genericAccount.encodedAccounts[chainId].isImported = false;
           }
         }
-
         // Persist or update generic account in Electron store.
         await window.myAPI.rawAccountTask({
           action: 'raw-account:import',
           data: { serialized: JSON.stringify(genericAccount) },
         });
-
         // Add address and its status to import window's state.
         importWindowOpen &&
           Core.postToImport('import:account:add', {
@@ -230,18 +223,10 @@ export const DataBackupProvider = ({
             const data = { data: { data: { address, chainId } } };
             await handleRemoveAddress(new MessageEvent('message', data));
           }
-
           // Update state in import view.
           Core.postToImport('import:address:update', { genericAccount });
-
-          // Update managed account names.
-          const account = AccountsController.get(chainId, publicKeyHex);
-          if (account) {
-            await AccountsController.set(account);
-          }
         }
       }
-
       // Update account list state.
       AccountsController.syncState();
     }
@@ -255,7 +240,6 @@ export const DataBackupProvider = ({
     if (!s_extrinsics) {
       return;
     }
-
     const s_extrinsics_synced = (await window.myAPI.sendExtrinsicsTaskAsync({
       action: 'extrinsics:import',
       data: { serialized: s_extrinsics },
@@ -272,7 +256,6 @@ export const DataBackupProvider = ({
     if (!s_events) {
       return;
     }
-
     // Send serialized events to main for processing.
     const updated = (await window.myAPI.sendEventTaskAsync({
       action: 'events:import',
@@ -291,7 +274,6 @@ export const DataBackupProvider = ({
     if (!s_tasks) {
       return;
     }
-
     // Receive new tasks after persisting them to store.
     const s_data =
       (await window.myAPI.sendIntervalTask({
@@ -302,7 +284,6 @@ export const DataBackupProvider = ({
     // Parse received tasks to insert and update.
     const s_array: [string, string][] = JSON.parse(s_data);
     const map = new Map<string, string>(s_array);
-
     const inserts: IntervalSubscription[] = JSON.parse(
       map.get('insert') || '[]'
     );
@@ -322,7 +303,6 @@ export const DataBackupProvider = ({
 
     if (updates.length > 0) {
       IntervalsController.removeSubscriptions(updates, isOnline);
-
       updates.forEach((t) => {
         t.status === 'enable' &&
           IntervalsController.insertSubscription(t, isOnline);
@@ -349,7 +329,7 @@ export const DataBackupProvider = ({
   /**
    * Updates the account name cache maintained by subscription tasks.
    */
-  const updateTaskEntries = async () => {
+  const updateTaskEntries = () => {
     for (const [chainId, managed] of AccountsController.accounts.entries()) {
       for (const account of managed) {
         const flattened = account.flatten();
@@ -379,7 +359,6 @@ export const DataBackupProvider = ({
       if (parsed.length === 0) {
         continue;
       }
-
       const [chainId, address] = key.split(':', 2);
       const account = AccountsController.get(chainId as ChainID, address);
       const valid: SubscriptionTask[] = [];
@@ -394,7 +373,6 @@ export const DataBackupProvider = ({
             // Throw away task if necessary.
             continue;
           }
-
           // Otherwise subscribe to task.
           await AccountsController.subscribeTask(t);
           SubscriptionsController.updateRendererdTask(t);

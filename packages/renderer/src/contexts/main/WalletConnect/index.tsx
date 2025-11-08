@@ -9,16 +9,19 @@ import {
   WcError,
 } from '@polkadot-live/core';
 import { createContext, useEffect, useRef } from 'react';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import {
+  createSafeContextHook,
+  useAppSettings,
+  useConnections,
+} from '@polkadot-live/contexts';
 import { decodeAddress, encodeAddress, u8aToHex } from 'dedot/utils';
-import { useConnections } from '@ren/contexts/common';
 import { getSdkError } from '@walletconnect/utils';
 import UniversalProvider from '@walletconnect/universal-provider';
 
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
-import type { WalletConnectContextInterface } from './types';
+import type { WalletConnectContextInterface } from '@polkadot-live/contexts/types/main';
 import type {
   WalletConnectMeta,
   WcFetchedAddress,
@@ -39,6 +42,7 @@ export const WalletConnectProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { cacheGet: getSetting } = useAppSettings();
   const { cacheGet, getOnlineMode } = useConnections();
   const isConnected = cacheGet('mode:connected');
   const onlineMode = cacheGet('mode:online');
@@ -164,7 +168,7 @@ export const WalletConnectProvider = ({
     if (!wcProvider.current) {
       // Instantiate provider.
       const provider = await UniversalProvider.init({
-        projectId: wc.WC_PROJECT_ID,
+        projectId: wc.WC_PROJECT_IDS['electron'],
         relayUrl: wc.WC_RELAY_URL,
         // TODO: metadata
       });
@@ -443,7 +447,10 @@ export const WalletConnectProvider = ({
       // Attach signature to info and submit transaction.
       wcTxSignMap.current.delete(txId);
       info.dynamicInfo.txSignature = result.signature;
-      ExtrinsicsController.submit(info);
+      const silence =
+        getSetting('setting:silence-os-notifications') ||
+        getSetting('setting:silence-extrinsic-notifications');
+      ExtrinsicsController.submit(info, silence);
 
       // Close overlay in extrinsics window.
       ConfigRenderer.portToAction?.postMessage({

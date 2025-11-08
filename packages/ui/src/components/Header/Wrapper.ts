@@ -43,7 +43,6 @@ export const HeaderWrapper = styled.div`
       display: flex;
       flex: 1;
       -webkit-app-region: drag;
-      cursor: grab;
     }
     > .right {
       display: flex;

@@ -2,14 +2,18 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as UI from '@polkadot-live/ui/components';
-import { ConfigAction } from '@polkadot-live/core';
-import { useConnections } from '@ren/contexts/common';
+import {
+  useConnections,
+  useLedgerFeedback,
+  useOverlay,
+} from '@polkadot-live/contexts';
 import { useEffect } from 'react';
-import { useLedgerFeedback } from '@ren/contexts/action';
-import { useOverlay } from '@polkadot-live/ui/contexts';
 import { ButtonPrimary, ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
-import { FlexColumn, FlexRow } from '@polkadot-live/ui/styles';
-import { LedgerOverlayWrapper } from './Wrappers';
+import {
+  FlexColumn,
+  FlexRow,
+  LedgerOverlayWrapper,
+} from '@polkadot-live/styles/wrappers';
 import { PuffLoader } from 'react-spinners';
 import {
   faChevronRight,
@@ -18,13 +22,9 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import LedgerLogoSVG from '@w3ux/extension-assets/Ledger.svg?react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import type { ExtrinsicInfo } from '@polkadot-live/types';
+import type { SignLedgerOverlayProps } from './types';
 
-interface LedgerSignOverlayProps {
-  info: ExtrinsicInfo;
-}
-
-export const SignLedgerOverlay = ({ info }: LedgerSignOverlayProps) => {
+export const SignLedgerOverlay = ({ info }: SignLedgerOverlayProps) => {
   const { cacheGet } = useConnections();
   const isBuildingExtrinsic = cacheGet('extrinsic:building');
   const { setDisableClose, setStatus: setOverlayStatus } = useOverlay();
@@ -32,7 +32,8 @@ export const SignLedgerOverlay = ({ info }: LedgerSignOverlayProps) => {
     isSigning,
     message: ledgerFeedback,
     clearFeedback,
-    setIsSigning,
+    handleLedgerTask,
+    handleSign,
   } = useLedgerFeedback();
 
   useEffect(() => {
@@ -41,22 +42,9 @@ export const SignLedgerOverlay = ({ info }: LedgerSignOverlayProps) => {
     // Clear generic app cache in main process when overlay closed.
     return () => {
       clearFeedback();
-      window.myAPI.doLedgerTask('close_polkadot', '');
+      handleLedgerTask('close_polkadot', '');
     };
   }, []);
-
-  /**
-   * Handle sign click.
-   */
-  const handleSign = () => {
-    setIsSigning(true);
-    window.myAPI.relaySharedState('extrinsic:building', true);
-
-    ConfigAction.portAction.postMessage({
-      task: 'renderer:ledger:sign',
-      data: { info: JSON.stringify(info) },
-    });
-  };
 
   return (
     <LedgerOverlayWrapper>
@@ -100,7 +88,7 @@ export const SignLedgerOverlay = ({ info }: LedgerSignOverlayProps) => {
         <ButtonPrimary
           text="Sign"
           disabled={isBuildingExtrinsic || isSigning}
-          onClick={() => handleSign()}
+          onClick={() => handleSign(info)}
           iconRight={faChevronRight}
           iconTransform="shrink-3"
         />

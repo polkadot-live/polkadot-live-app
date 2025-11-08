@@ -60,13 +60,11 @@ export class QueryMultiWrapper {
    */
   getSubscriptionTasks() {
     const result: SubscriptionTask[] = [];
-
     for (const entry of this.subscriptions.values()) {
       for (const { task } of entry.callEntries) {
         result.push({ ...task });
       }
     }
-
     return result;
   }
 
@@ -76,12 +74,10 @@ export class QueryMultiWrapper {
    */
   setChainTaskVal(entry: ApiCallEntry, newVal: AnyData, chainId: ChainID) {
     const retrieved = this.subscriptions.get(chainId);
-
     if (retrieved) {
       const newEntries = retrieved.callEntries.map((e) =>
         e.task.action === entry.task.action ? { ...e, curVal: newVal } : e
       );
-
       this.subscriptions.set(chainId, {
         unsub: retrieved.unsub,
         callEntries: newEntries,
@@ -122,7 +118,6 @@ export class QueryMultiWrapper {
             } as ApiCallEntry)
           : e
       );
-
       this.subscriptions.set(chainId, {
         unsub: retrieved.unsub,
         callEntries: newEntries,
@@ -283,7 +278,6 @@ export class QueryMultiWrapper {
         const balance = await getBalance(api, address, chain, false);
         account.balance = balance;
       }
-
       // Sync account nominating data.
       if (this.postCallbackSyncFlags.syncAccountNominating) {
         const result = await getAccountNominatingData(
@@ -292,7 +286,6 @@ export class QueryMultiWrapper {
         );
         result && (account.nominatingData = result);
       }
-
       // Sync account nomination pool data.
       if (this.postCallbackSyncFlags.syncAccountNominationPool) {
         const result = await getNominationPoolData(
@@ -301,14 +294,12 @@ export class QueryMultiWrapper {
         );
         result && (account.nominationPoolData = result);
       }
-
       // Set updated account data in the appropriate entries.
       for (const entry of callEntries) {
         if (entry.task.account) {
           entry.task.account = account.flatten();
         }
       }
-
       // Update managed account data.
       await AccountsController.set(account);
 
@@ -333,7 +324,6 @@ export class QueryMultiWrapper {
     if (!subscriptions) {
       return;
     }
-
     for (const entry of subscriptions.callEntries) {
       if (entry.task.account) {
         entry.task.account = flattened;
@@ -370,7 +360,6 @@ export class QueryMultiWrapper {
         unsub: null,
         callEntries: [newEntry],
       });
-
       return;
     }
 
@@ -409,10 +398,8 @@ export class QueryMultiWrapper {
     if (!this.actionExists(chainId, action)) {
       console.log("🟠 API call doesn't exist.");
     } else {
-      // Remove action from query multi map.
+      // Remove action from query multi map and unsub.
       const entry = this.subscriptions.get(chainId)!;
-
-      // Unsubscribe from current query multi.
       entry.unsub();
 
       // Remove task from entry.
@@ -423,7 +410,6 @@ export class QueryMultiWrapper {
 
       // Update chain's query multi entry.
       this.subscriptions.set(chainId, updated);
-
       if (updated.callEntries.length === 0) {
         this.subscriptions.delete(chainId);
       }
@@ -622,7 +608,6 @@ export class QueryMultiWrapper {
     if (!args) {
       return args;
     }
-
     switch (action) {
       case 'subscribe:account:balance:free':
       case 'subscribe:account:balance:frozen':

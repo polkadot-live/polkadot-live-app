@@ -12,10 +12,10 @@ import type { HeaderProps } from './types';
 
 export const Header = ({
   children,
-  appLoading = false,
-  showButtons = false,
-  showDock = true,
-  showMinimize = false,
+  appLoading,
+  showButtons,
+  showDock,
+  showMinimize,
   dockToggled,
   version,
   onCloseWindow,
@@ -39,7 +39,7 @@ export const Header = ({
             {children}
 
             {/* Minimize button */}
-            {showMinimize && (
+            {Boolean(showMinimize) && (
               <button
                 type="button"
                 data-testid="minimize-btn"
@@ -54,7 +54,7 @@ export const Header = ({
             )}
 
             {/* Dock button */}
-            {showDock && (
+            {Boolean(showDock) && (
               <Padlock
                 locked={Boolean(dockToggled)}
                 onClick={() => onDockToggle && onDockToggle()}
@@ -63,9 +63,10 @@ export const Header = ({
           </div>
         ) : (
           <button
+            style={onCloseWindow ? undefined : { display: 'none' }}
             type="button"
             data-testid="close-btn"
-            disabled={appLoading}
+            disabled={Boolean(appLoading)}
             onClick={() => onCloseWindow && onCloseWindow()}
           >
             <FontAwesomeIcon icon={faTimes} transform="shrink-1" />

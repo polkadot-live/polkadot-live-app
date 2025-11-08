@@ -52,11 +52,11 @@ export const ChainList = new Map<ChainID, Chain>([
     {
       endpoints: {
         rpcs: [
+          'wss://rpc.ibp.network/polkadot',
           'wss://rpc.polkadot.io',
           'wss://apps-rpc.polkadot.io',
           'wss://polkadot-rpc.dwellir.com',
           'wss://polkadot-rpc-tn.dwellir.com',
-          'wss://rpc.ibp.network/polkadot',
           'wss://rpc.dotters.network/polkadot',
           'wss://1rpc.io/dot',
           'wss://polkadot-public-rpc.blockops.network/ws',
@@ -322,13 +322,13 @@ const SubscanSubdomainMap = new Map<ChainID, string>([
 ]);
 
 const SubsquareSubdomainMap = new Map<ChainID, string>([
-  ['Polkadot Relay', 'polkadot'],
-  ['Kusama Relay', 'kusama'],
+  ['Polkadot Asset Hub', 'polkadot'],
+  ['Kusama Asset Hub', 'kusama'],
 ]);
 
 const PolkassemblySubdomainMap = new Map<ChainID, string>([
-  ['Polkadot Relay', 'polkadot'],
-  ['Kusama Relay', 'kusama'],
+  ['Polkadot Asset Hub', 'polkadot'],
+  ['Kusama Asset Hub', 'kusama'],
 ]);
 
 export const getPolkassemblySubdomain = (chainId: ChainID): string =>
@@ -353,30 +353,33 @@ export const getCategory = (category: string) => CategoryList.get(category);
 
 export const getSelectLedgerNetworkData = (): LedgerSelectNetworkData[] => [
   {
-    network: 'Polkadot Relay',
+    network: 'Polkadot Asset Hub',
     ledgerId: 'dot',
     iconWidth: 18,
   },
   {
-    network: 'Kusama Relay',
+    network: 'Kusama Asset Hub',
     ledgerId: 'kusama',
     iconWidth: 18,
   },
 ];
 
 /**
- * Get an array of supported chains.
+ * Get an array of supported chains for imported accounts.
  */
 export const getSupportedChains = (): Record<ChainID, Chain> => {
-  const unsupported: ChainID[] = ['Paseo Relay', 'Westend Relay'];
+  const unsupported: ChainID[] = [
+    'Polkadot Relay',
+    'Kusama Relay',
+    'Paseo Relay',
+    'Westend Relay',
+  ];
   const record = {} as Record<ChainID, Chain>;
-
   for (const [cid, chain] of Array.from(ChainList.entries())) {
     if (!unsupported.includes(cid)) {
       record[cid] = chain;
     }
   }
-
   return record;
 };
 
@@ -384,7 +387,7 @@ export const getSupportedChains = (): Record<ChainID, Chain> => {
  * Get chain IDs that support send screen transfers.
  */
 export const getSendChains = (): ChainID[] => [
-  'Kusama Relay',
+  'Kusama Asset Hub',
   'Westend Asset Hub',
 ];
 
@@ -392,8 +395,8 @@ export const getSendChains = (): ChainID[] => [
  * Get chain IDs that support staking APIs.
  */
 export const getStakingChains = (): ChainID[] => [
-  'Polkadot Relay',
-  'Kusama Relay',
+  'Polkadot Asset Hub',
+  'Kusama Asset Hub',
   'Paseo Asset Hub',
   'Westend Asset Hub',
 ];
@@ -412,8 +415,8 @@ export const getSupportedSources = (): AccountSource[] => [
  * Get chain IDs that support importing Ledger accounts.
  */
 export const getSupportedLedgerChains = (): ChainID[] => [
-  'Polkadot Relay',
-  'Kusama Relay',
+  'Polkadot Asset Hub',
+  'Kusama Asset Hub',
 ];
 
 /**

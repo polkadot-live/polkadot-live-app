@@ -2,30 +2,41 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as UI from '@polkadot-live/ui/components';
+import * as Ctx from '@ren/contexts/main';
 import { version } from '../../../package.json';
-import { ConfigRenderer } from '@polkadot-live/core';
+import {
+  ConfigRenderer,
+  initExtrinsicElectron,
+  fetchSendAccountsElectron,
+  getSpendableBalanceElectron,
+} from '@polkadot-live/core';
 import { useEffect, useState } from 'react';
+import { useInitIpcHandlers } from '@ren/hooks/useInitIpcHandlers';
+import { useMainMessagePorts } from '@ren/hooks/useMainMessagePorts';
 import {
   useAddresses,
   useAppSettings,
-  useBootstrapping,
-  useCogMenu,
+  useConnections,
   useEvents,
-} from '@ren/contexts/main';
-import { useConnections, useHelp } from '@ren/contexts/common';
-import { useInitIpcHandlers } from '@ren/hooks/useInitIpcHandlers';
-import { useMainMessagePorts } from '@ren/hooks/useMainMessagePorts';
+  useHelp,
+  useSendNative,
+  useSideNav,
+} from '@polkadot-live/contexts';
 import { Classic } from '@theme-toggles/react';
-import { Events } from './Events';
-import { Footer } from './Footer';
-import { OpenGov } from './OpenGov';
-import { Manage } from './Manage';
-import { Send } from './Send';
-import { Summary } from '@ren/screens/Home/Summary';
-import { FixedFlexWrapper, IconWrapper } from './Wrappers';
-import { BodyInterfaceWrapper } from '@ren/Wrappers';
-import { ScrollWrapper } from '@polkadot-live/ui/styles';
-import { useSideNav } from '@polkadot-live/ui/contexts';
+import {
+  Events,
+  Footer,
+  Manage,
+  OpenGovHome,
+  Send,
+  Summary,
+} from '@polkadot-live/screens';
+import {
+  BackgroundIconWrapper,
+  BodyInterfaceWrapper,
+  FixedFlexWrapper,
+  ScrollWrapper,
+} from '@polkadot-live/styles/wrappers';
 import PolkadotIcon from '@polkadot-live/ui/svg/polkadotIcon.svg?react';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { EventCallback } from '@polkadot-live/types/reporter';
@@ -50,8 +61,8 @@ export const Home = () => {
   const sideNavCollapsed = cacheGet('setting:collapse-side-nav');
   const silenceOsNotifications = cacheGet('setting:silence-os-notifications');
 
-  const { appLoading } = useBootstrapping();
-  const cogMenu = useCogMenu();
+  const { appLoading } = Ctx.useBootstrapping();
+  const cogMenu = Ctx.useCogMenu();
   const sideNav = useSideNav();
 
   const [platform, setPlatform] = useState<string | null>(null);
@@ -149,7 +160,6 @@ export const Home = () => {
     if (platform === 'linux') {
       return;
     }
-
     toggleSetting('setting:docked-window');
 
     // Analytics.
@@ -211,9 +221,9 @@ export const Home = () => {
         />
 
         <BodyInterfaceWrapper $maxHeight>
-          <IconWrapper>
+          <BackgroundIconWrapper>
             <PolkadotIcon width={175} opacity={appLoading ? 0.01 : 0.02} />
-          </IconWrapper>
+          </BackgroundIconWrapper>
 
           {appLoading ? (
             <div className="app-loading">
@@ -234,10 +244,17 @@ export const Home = () => {
               )}
 
               {/* OpenGov Subscriptions */}
-              {sideNav.selectedId === 3 && <OpenGov />}
+              {sideNav.selectedId === 3 && <OpenGovHome />}
 
               {/* Send */}
-              {sideNav.selectedId === 4 && <Send />}
+              {sideNav.selectedId === 4 && (
+                <Send
+                  useSendNative={useSendNative}
+                  initExtrinsic={initExtrinsicElectron}
+                  fetchSendAccounts={fetchSendAccountsElectron}
+                  getSpendableBalance={getSpendableBalanceElectron}
+                />
+              )}
             </ScrollWrapper>
           )}
         </BodyInterfaceWrapper>

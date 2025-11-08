@@ -1,38 +1,73 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { MainInterfaceWrapper } from '@ren/Wrappers';
+import {
+  ContextProxyExtrinsics,
+  ContextProxyImport,
+  ContextProxyMain,
+} from './Proxy';
+import { MainInterfaceWrapper } from '@polkadot-live/styles/wrappers';
 import { Overlay, Help } from '@polkadot-live/ui/components';
+import { useHelp, useOverlay } from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
+import { useTheme } from 'styled-components';
 import { HashRouter, Route, Routes } from 'react-router';
 import { FadeAction } from '@ren/screens/Action';
-import { Tabs } from './screens/Tabs';
-import { Home } from './screens/Home';
 import { FadeImport } from '@ren/screens/Import';
 import { FadeSettings } from './screens/Settings';
 import { FadeOpenGov } from './screens/OpenGov';
-import { useHelp } from './contexts/common';
-import { useTheme } from 'styled-components';
+import { Home } from './screens/Home';
 import { ToastContainer } from 'react-toastify';
+import { TabsWrapper } from '@ren/screens/Tabs';
 import type { AnyJson } from '@polkadot-live/types/misc';
 
 export const RouterInner = () => {
   const { mode }: AnyJson = useTheme();
   const { status: helpStatus, definition, closeHelp, setStatus } = useHelp();
+  const overlayCtx = useOverlay();
 
-  /// Return routes for the window being rendered.
+  /**
+   * Return routes for the window being rendered.
+   */
   const addRoutesForWindow = () => {
     const windowId = window.myAPI.getWindowId();
 
     switch (windowId) {
       case 'main':
-        return <Route path={'/'} element={<Home />} />;
+        return (
+          <Route
+            path={'/'}
+            element={
+              <ContextProxyMain>
+                <Home />
+              </ContextProxyMain>
+            }
+          />
+        );
       case 'import':
-        return <Route path={'import'} element={<FadeImport />} />;
+        return (
+          <Route
+            path={'import'}
+            element={
+              <ContextProxyImport>
+                <FadeImport />
+              </ContextProxyImport>
+            }
+          />
+        );
       case 'settings':
         return <Route path={'settings'} element={<FadeSettings />} />;
       case 'action':
-        return <Route path={'action'} element={<FadeAction />} />;
+        return (
+          <Route
+            path={'action'}
+            element={
+              <ContextProxyExtrinsics>
+                <FadeAction />
+              </ContextProxyExtrinsics>
+            }
+          />
+        );
       case 'openGov':
         return <Route path={'openGov'} element={<FadeOpenGov />} />;
       default:
@@ -48,7 +83,7 @@ export const RouterInner = () => {
         closeHelp={closeHelp}
         setStatus={setStatus}
       />
-      <Overlay />
+      <Overlay overlayCtx={overlayCtx} />
       <ToastContainer stacked />
       <Routes>{addRoutesForWindow()}</Routes>
     </MainInterfaceWrapper>
@@ -58,7 +93,9 @@ export const RouterInner = () => {
 export const Router = () => {
   const [windowId] = useState<string>(window.myAPI.getWindowId());
 
-  /// Initialize analytics once.
+  /**
+   * Initialize analytics once.
+   */
   useEffect(() => {
     window.myAPI.initAnalytics(
       navigator.userAgent,
@@ -71,7 +108,7 @@ export const Router = () => {
     <HashRouter basename="/">
       {windowId === 'tabs' ? (
         <Routes>
-          <Route path={'/tabs'} element={<Tabs />} />
+          <Route path={'/tabs'} element={<TabsWrapper />} />
         </Routes>
       ) : (
         <RouterInner />

@@ -1,0 +1,126 @@
+// Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
+// SPDX-License-Identifier: GPL-3.0-only
+
+import React, { createContext, useEffect, useState } from 'react';
+import { createSafeContextHook } from '../../../utils';
+import { useApiHealth } from '../ApiHealth';
+import { ChainList } from '@polkadot-live/consts/chains';
+import { getChainsAdapter } from './adapters';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { ChainsContextInterface } from '../../../types/main';
+import type { FlattenedAPIData } from '@polkadot-live/types/apis';
+
+export const ChainsContext = createContext<ChainsContextInterface | undefined>(
+  undefined
+);
+
+export const useChains = createSafeContextHook(ChainsContext, 'ChainsContext');
+
+export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
+  const adapter = getChainsAdapter();
+  const { startApi } = useApiHealth();
+  const [uiTrigger, setUiTrigger] = useState(false);
+
+  /**
+   * Chains connected with Dedot.
+   */
+  const [chains, setChains] = useState<Map<ChainID, FlattenedAPIData>>(
+    new Map()
+  );
+
+  const base = new Map<ChainID, boolean>(
+    Array.from(ChainList.keys()).map((c) => [c, false])
+  );
+
+  const [workingConnects, setWorkingConnects] = useState(new Map(base));
+  const [workingDisconnects, setWorkingDisconnects] = useState(new Map(base));
+  const [workingEndpoints, setWorkingEndpoints] = useState(new Map(base));
+
+  /**
+   * Return true if any work is happening for the given chain.
+   */
+  const isWorking = (chainId: ChainID): boolean =>
+    Boolean(workingConnects.get(chainId)) ||
+    Boolean(workingDisconnects.get(chainId)) ||
+    Boolean(workingEndpoints.get(chainId));
+
+  /**
+   * Show spinner if any work is happening.
+   */
+  const showWorkingSpinner = () => {
+    const hasSome = (m: typeof base) =>
+      Array.from(m.values()).some((v) => v === true);
+
+    return (
+      hasSome(workingConnects) ||
+      hasSome(workingEndpoints) ||
+      hasSome(workingDisconnects)
+    );
+  };
+
+  /**
+   * Handle clicking the api connect button.
+   */
+  const onConnectClick = async (chainId: ChainID) => {
+    setWorkingConnects((pv) => new Map(pv).set(chainId, true));
+    await startApi(chainId);
+    setWorkingConnects((pv) => new Map(pv).set(chainId, false));
+  };
+
+  /**
+   * Handle clicking the api disconnect button.
+   */
+  const onDisconnectClick = async (chainId: ChainID) => {
+    setWorkingDisconnects((pv) => new Map(pv).set(chainId, true));
+    await adapter.onDisconnectApi(chainId);
+    setWorkingDisconnects((pv) => new Map(pv).set(chainId, false));
+  };
+
+  /**
+   * Set chain endooint working flags.
+   */
+  const setWorkingEndpoint = (chainId: ChainID, val: boolean) => {
+    setWorkingEndpoints((pv) => new Map(pv).set(chainId, val));
+  };
+
+  /**
+   * Trigger a render after chain data is set.
+   */
+  useEffect(() => {
+    if (uiTrigger) {
+      setUiTrigger(false);
+    }
+  }, [uiTrigger]);
+
+  /**
+   * Handle mounting.
+   */
+  useEffect(() => {
+    adapter.onMount();
+  }, []);
+
+  /**
+   * Listen for react state tasks from background worker.
+   */
+  useEffect(() => {
+    const removeListener = adapter.listenOnMount(setChains, setUiTrigger);
+    return () => {
+      removeListener && removeListener();
+    };
+  }, []);
+
+  return (
+    <ChainsContext
+      value={{
+        chains,
+        isWorking,
+        onConnectClick,
+        onDisconnectClick,
+        setWorkingEndpoint,
+        showWorkingSpinner,
+      }}
+    >
+      {children}
+    </ChainsContext>
+  );
+};

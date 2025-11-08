@@ -2,15 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ConfigImport } from '@polkadot-live/core';
-
-/// Import window contexts.
+import { useWalletConnectImport } from '@ren/contexts/import';
 import {
   useAccountStatuses,
-  useAddresses,
+  useImportAddresses,
   useImportHandler,
   useRemoveHandler,
-  useWalletConnectImport,
-} from '@ren/contexts/import';
+} from '@polkadot-live/contexts';
 import { useEffect } from 'react';
 import { renderToast } from '@polkadot-live/ui/utils';
 import type {
@@ -23,7 +21,7 @@ import type { WcFetchedAddress } from '@polkadot-live/types/walletConnect';
 export const useImportMessagePorts = () => {
   const { handleImportAddressFromBackup } = useImportHandler();
   const { setStatusForAccount } = useAccountStatuses();
-  const { handleAddressImport } = useAddresses();
+  const { handleAddressImport } = useImportAddresses();
   const { handleRemoveAddress } = useRemoveHandler();
   const { setWcFetchedAddresses, handleOpenCloseWcModal } =
     useWalletConnectImport();

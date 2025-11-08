@@ -131,10 +131,8 @@ export class AddressesController {
       if (fetched.length === 0) {
         continue;
       }
-
       map.set(source, JSON.stringify(fetched));
     }
-
     return JSON.stringify(Array.from(map.entries()));
   }
 

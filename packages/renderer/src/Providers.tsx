@@ -1,70 +1,56 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-// General contexts.
-import { ConnectionsProvider, HelpProvider } from '@ren/contexts/common';
-import { OverlayProvider, SideNavProvider } from '@polkadot-live/ui/contexts';
-
-// Tabs contexts.
-import { TabsProvider } from '@ren/contexts/tabs';
-
 // Main window contexts.
 import {
-  AddressesProvider,
-  ApiHealthProvider,
-  AppSettingsProvider,
   BootstrappingProvider,
-  ChainsProvider,
   CogMenuProvider,
   DataBackupProvider,
-  EventsProvider,
-  IntervalSubscriptionsProvider,
-  IntervalTasksManagerProvider,
   LedgerSignerProvider,
-  ManageProvider,
-  SubscriptionsProvider,
   TreasuryApiProvider,
   WalletConnectProvider,
 } from '@ren/contexts/main';
 
+// Actions window contexts.
+import { TxMetaProvider, WcVerifierProvider } from '@ren/contexts/action';
+
 // Import window contexts.
 import {
+  AddressesProvider,
+  AppSettingsProvider,
+  ApiHealthProvider,
   AccountStatusesProvider,
-  AddressesProvider as ImportAddressesProvider,
+  ImportAddressesProvider,
   AddHandlerProvider,
+  ChainsProvider,
+  ConnectionsProvider,
   DeleteHandlerProvider,
   DialogControlProvider,
+  EventsProvider,
+  HelpProvider,
   ImportHandlerProvider,
-  LedgerHardwareProvider,
-  RemoveHandlerProvider,
-  RenameHandlerProvider,
-  WalletConnectImportProvider,
-} from '@ren/contexts/import';
-
-// Settings window contexts.
-import {
-  SettingFlagsProvider,
-  WebsocketServerProvider,
-  WorkspacesProvider,
-} from '@ren/contexts/settings';
-
-// Actions window contexts.
-import {
+  IntervalSubscriptionsProvider,
+  IntervalTasksManagerProvider,
   LedgerFeedbackProvider,
-  WcFeedbackProvider,
-  TxMetaProvider,
-  WcVerifierProvider,
-} from '@ren/contexts/action';
-
-// OpenGov window contexts.
-import {
+  LedgerHardwareProvider,
+  ManageProvider,
+  OverlayProvider,
   PolkassemblyProvider,
   ReferendaProvider,
   ReferendaSubscriptionsProvider,
+  RemoveHandlerProvider,
+  RenameHandlerProvider,
+  SettingFlagsProvider,
+  SideNavProvider,
+  SubscriptionsProvider,
+  SummaryProvider,
+  TabsProvider,
   TaskHandlerProvider,
   TracksProvider,
   TreasuryProvider,
-} from '@ren/contexts/openGov';
+  WcFeedbackProvider,
+} from '@polkadot-live/contexts';
+import { WalletConnectImportProvider } from '@ren/contexts/import';
 
 // Other imports.
 import { Theme } from './Theme';
@@ -89,9 +75,9 @@ const getProvidersForWindow = () => {
         ApiHealthProvider,
         TreasuryApiProvider,
         ChainsProvider,
+        ManageProvider,
         SubscriptionsProvider,
         IntervalSubscriptionsProvider,
-        ManageProvider,
         IntervalTasksManagerProvider,
         EventsProvider,
         // Online status relies on other contexts being initialized.
@@ -101,7 +87,8 @@ const getProvidersForWindow = () => {
         // Requires useBootstrapping and useHelp.
         CogMenuProvider,
         WalletConnectProvider,
-        LedgerSignerProvider
+        LedgerSignerProvider,
+        SummaryProvider
       )(Theme);
     }
     case 'import': {
@@ -110,14 +97,14 @@ const getProvidersForWindow = () => {
         OverlayProvider,
         ConnectionsProvider,
         ImportAddressesProvider,
+        // Requires useAddresses
+        RemoveHandlerProvider,
         AccountStatusesProvider,
         DialogControlProvider,
         // Requires useAccountStatuses + useAddresses
         ImportHandlerProvider,
         // Requires useAccountStatuses + useAddresses
         AddHandlerProvider,
-        // Requires useAddresses
-        RemoveHandlerProvider,
         // Requires useAccountStatuses + useAddresses
         DeleteHandlerProvider,
         // Requires useAddresses
@@ -133,9 +120,7 @@ const getProvidersForWindow = () => {
         HelpProvider,
         OverlayProvider,
         ConnectionsProvider,
-        SettingFlagsProvider,
-        WebsocketServerProvider,
-        WorkspacesProvider
+        SettingFlagsProvider
       )(Theme);
     }
     case 'action': {

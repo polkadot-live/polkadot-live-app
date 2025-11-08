@@ -4,12 +4,12 @@
 import { ConfigAction } from '@polkadot-live/core';
 import { useEffect } from 'react';
 import {
+  useConnections,
   useLedgerFeedback,
-  useTxMeta,
+  useOverlay,
   useWcFeedback,
-  useWcVerifier,
-} from '@ren/contexts/action';
-import { useOverlay } from '@polkadot-live/ui/contexts';
+} from '@polkadot-live/contexts';
+import { useTxMeta, useWcVerifier } from '@ren/contexts/action';
 import { renderToast } from '@polkadot-live/ui/utils';
 import type { ActionMeta, TxStatus } from '@polkadot-live/types/tx';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -32,6 +32,7 @@ export const useActionMessagePorts = () => {
     updateTxStatus,
   } = useTxMeta();
 
+  const { relayState } = useConnections();
   const { resolveMessage, setIsSigning } = useLedgerFeedback();
   const { resolveMessage: resolveWcMessage, clearFeedback } = useWcFeedback();
   const { setDisableClose, setStatus: setOverlayStatus } = useOverlay();
@@ -66,8 +67,8 @@ export const useActionMessagePorts = () => {
       newName: string;
     }
 
-    const { address, newName }: Target = ev.data.data;
-    await updateAccountName(address, newName);
+    const { address, chainId, newName }: Target = ev.data.data;
+    await updateAccountName(address, chainId, newName);
   };
 
   /**
@@ -114,11 +115,13 @@ export const useActionMessagePorts = () => {
     const { txId, status }: { txId: string; status: TxStatus } = ev.data.data;
 
     // Handle transaction hash.
+    if ((['finalized', 'error'] as TxStatus[]).includes(status)) {
+      relayState('extrinsic:building', false);
+    }
     if (status === 'finalized') {
       const { txHash }: { txHash: `0x${string}` } = ev.data.data;
       setTxHash(txId, txHash);
     }
-
     // Also updates store with transaction hash.
     await updateTxStatus(txId, status);
   };

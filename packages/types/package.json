@@ -12,6 +12,7 @@
     "./help": "./src/help.ts",
     "./ledger": "./src/ledger.ts",
     "./legacy": "./src/legacy.ts",
+    "./menu": "./src/menu.ts",
     "./misc": "./src/misc.ts",
     "./openGov": "./src/openGov.ts",
     "./orchestrator": "./src/orchestrator.ts",
@@ -23,8 +24,7 @@
     "./tx": "./src/tx.ts",
     "./walletConnect": "./src/walletConnect.ts",
     "./chains": "./src/chains/index.ts",
-    "./chains/polkadot": "./src/chains/polkadot.ts",
-    "./developerConsole/workspaces": "./src/developerConsole/workspaces.ts"
+    "./chains/polkadot": "./src/chains/polkadot.ts"
   },
   "scripts": {
     "lint": "eslint --fix ./src",

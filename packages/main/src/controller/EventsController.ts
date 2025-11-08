@@ -76,22 +76,27 @@ export class EventsController {
         // Destructure received data.
         interface Target {
           event: EventCallback;
-          notification: NotificationData | null;
-          isOneShot: boolean;
+          notification: NotificationData;
+          showNotification: {
+            isOneShot: boolean;
+            isEnabled: boolean;
+          };
         }
-        const { event, notification, isOneShot }: Target = task.data;
+        const { event, notification, showNotification }: Target = task.data;
+        const { isOneShot, isEnabled } = showNotification;
+        const key = 'setting:silence-os-notifications';
+        const silenced = SettingsController.get(key);
+        const notify = isOneShot ? true : silenced ? false : isEnabled;
 
         // Remove any outdated events of the same type, if setting enabled.
         if (!SettingsController.get('setting:keep-outdated-events')) {
           this.removeOutdatedEvents(event);
         }
 
+        // TODO: Decouple showing notification from this function.
         // Persist new event to store.
         const { event: eventWithUid, wasPersisted } = this.persistEvent(event);
-
-        // TODO: Decouple showing notification from this function.
-        // Show notification if event was added and notification data was received.
-        if ((wasPersisted || isOneShot) && notification) {
+        if (isOneShot || (wasPersisted && notify)) {
           const { title, body, subtitle } = notification;
           NotificationsController.showNotification(title, body, subtitle);
         }
@@ -116,7 +121,6 @@ export class EventsController {
           uid,
           chainId
         );
-
         return;
       }
     }
@@ -368,12 +372,10 @@ export class EventsController {
    */
   private static persistStaleEvent(uid: string) {
     const stored = this.getEventsFromStore();
-
     const updated = stored.map((e) => {
       e.uid === uid && (e.stale = true);
       return e;
     });
-
     this.persistEventsToStore(updated);
   }
 
@@ -385,7 +387,6 @@ export class EventsController {
     const stored = (store as Record<string, AnyJson>).get(
       this.storeKey
     ) as string;
-
     return !stored ? [] : JSON.parse(stored);
   };
 

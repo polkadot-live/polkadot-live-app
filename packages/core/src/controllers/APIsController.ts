@@ -17,6 +17,7 @@ import type {
 } from '@polkadot-live/types/apis';
 
 export class APIsController {
+  static backend: 'browser' | 'electron';
   static clients: Api<keyof ClientTypes>[] = [];
   static smoldotClient: smoldot.Client | null = null;
   static failedCache = new Map<ChainID, ApiConnectResult<ApiError>>();
@@ -31,7 +32,17 @@ export class APIsController {
   >;
 
   static syncFailedConnections = () => {
-    this.setFailedConnections(new Map(this.failedCache));
+    if (this.backend === 'electron') {
+      this.setFailedConnections(new Map(this.failedCache));
+    } else {
+      chrome.runtime.sendMessage({
+        type: 'api',
+        task: 'state:failedConnections',
+        payload: {
+          ser: JSON.stringify(Array.from(this.failedCache.entries())),
+        },
+      });
+    }
   };
 
   /**
@@ -43,16 +54,19 @@ export class APIsController {
   /**
    * Initalize disconnected API clients.
    */
-  static initialize = async () => {
+  static initialize = async (backend: 'electron' | 'browser') => {
+    this.backend = backend;
     const chainIds = ChainList.keys();
     for (const chainId of chainIds) {
       this.new(chainId);
     }
-
-    // Set react state.
     const map = new Map<ChainID, FlattenedAPIData>();
     this.clients.map((c) => map.set(c.chainId, c.flatten()));
-    this.cachedSetChains(map);
+
+    // Set react state.
+    if (this.backend === 'electron') {
+      this.cachedSetChains(map);
+    }
   };
 
   /**
@@ -62,7 +76,12 @@ export class APIsController {
     const client = this.clients.find((c) => c.chainId === chainId);
     if (client !== undefined) {
       // Manually disconnect if system is online (disconnection initiated by user).
-      const isOnline: boolean = await CommonLib.getOnlineStatus();
+      let isOnline: boolean;
+      if (this.backend === 'electron') {
+        isOnline = await CommonLib.getOnlineStatus(this.backend);
+      } else {
+        isOnline = navigator.onLine;
+      }
       if (isOnline) {
         await client.disconnect();
       }
@@ -95,7 +114,6 @@ export class APIsController {
       if (!client) {
         throw new ApiError('ApiUndefined');
       }
-
       const controller = new AbortController();
       const timeout = this.getConnectionTimeout(chainId);
 
@@ -110,7 +128,6 @@ export class APIsController {
       if (ack === 'failure') {
         throw error || new ApiError('ApiConnectError');
       }
-
       this.set(client);
       this.updateUiChainState(client);
 
@@ -195,7 +212,6 @@ export class APIsController {
     if (client === null) {
       throw new ApiError('CouldNotGetConnectedApi');
     }
-
     return client;
   };
 
@@ -309,7 +325,24 @@ export class APIsController {
    * Update react state.
    */
   private static updateUiChainState = (client: Api<keyof ClientTypes>) => {
-    this.cachedSetChains((pv) => pv.set(client.chainId, client.flatten()));
-    this.setUiTrigger(true);
+    if (this.backend === 'electron') {
+      this.cachedSetChains((pv) => pv.set(client.chainId, client.flatten()));
+      this.setUiTrigger(true);
+    } else if (this.backend === 'browser') {
+      const ser = JSON.stringify(client.flatten());
+      const msg = { type: 'api', task: 'state:chain', payload: { ser } };
+      chrome.runtime.sendMessage(msg);
+    }
+  };
+
+  /**
+   * Sync chain state on popup reload (extension).
+   */
+  static syncChainConnections = () => {
+    const map = new Map<ChainID, FlattenedAPIData>();
+    this.clients.map((client) => map.set(client.chainId, client.flatten()));
+    const ser = JSON.stringify(Array.from(map.entries()));
+    const msg = { type: 'api', task: 'state:onPopupReload', payload: { ser } };
+    chrome.runtime.sendMessage(msg);
   };
 }

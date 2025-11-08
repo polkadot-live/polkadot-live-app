@@ -1,10 +1,14 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useOverlay } from '../../contexts';
 import { ContentWrapper, HeightWrapper, OverlayWrapper } from './Wrappers';
+import type { OverlayContextInterface } from '@polkadot-live/contexts/types/common';
 
-export const Overlay = () => {
+export const Overlay = ({
+  overlayCtx,
+}: {
+  overlayCtx: OverlayContextInterface;
+}) => {
   const {
     closeOverlay,
     size,
@@ -12,7 +16,7 @@ export const Overlay = () => {
     transparent,
     Overlay: OverlayInner,
     disableClose,
-  } = useOverlay();
+  } = overlayCtx;
 
   if (status === 0) {
     return null;

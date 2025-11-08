@@ -30,11 +30,17 @@ export const tryApiDisconnect = async (task: SubscriptionTask) => {
  * @summary Disconnect from any API instances that are not currently required.
  */
 export const disconnectAPIs = async () => {
-  const isConnected: boolean =
-    (await window.myAPI.sendConnectionTaskAsync({
-      action: 'connection:getStatus',
-      data: null,
-    })) || false;
+  const backend = APIsController.backend;
+  let isConnected: boolean;
+  if (backend === 'electron') {
+    isConnected =
+      (await window.myAPI.sendConnectionTaskAsync({
+        action: 'connection:getStatus',
+        data: null,
+      })) || false;
+  } else {
+    isConnected = navigator.onLine;
+  }
 
   if (isConnected) {
     await Promise.all(

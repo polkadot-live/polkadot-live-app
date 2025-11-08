@@ -1,8 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { motion } from 'framer-motion';
-import { LoadingPlaceholderWrapper } from '../styles/LoadingPlaceholderWrapper';
+import { LoadingPlaceholderWrapper } from '@polkadot-live/styles/wrappers';
 
 /**
  * @name createArrayWithLength
@@ -49,25 +48,3 @@ export const validateAccountName = (accountName: string): boolean => {
 
   return true;
 };
-
-/**
- * @name FadeInWrapper
- * @summary Fades in elements when provided flag is true.
- */
-export const FadeInWrapper = ({
-  show,
-  children,
-}: {
-  show: boolean;
-  children: React.ReactNode;
-}) =>
-  show && (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5, easings: ['easeOut'] }}
-      style={{ width: '100%', height: '100%' }}
-    >
-      {children}
-    </motion.div>
-  );

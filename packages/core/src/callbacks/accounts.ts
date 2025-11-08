@@ -1,12 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ConfigRenderer } from '../config';
 import { checkAccountWithProperties } from '../library/AccountsLib';
 import { areSortedArraysEqual } from '../library/CommonLib';
 import {
   AccountsController,
-  APIsController,
   EventsController,
   NotificationsController,
 } from '../controllers';
@@ -14,6 +12,7 @@ import {
   getAccountNominatingData,
   getEraRewards,
 } from '../library/AccountsLib/nominating';
+import { getApiOrThrow, handleEvent } from './utils';
 import { u8aToString, u8aUnwrapBytes } from '@polkadot/util';
 import type {
   ApiCallEntry,
@@ -60,17 +59,23 @@ export const callback_query_timestamp_now = (
     }
 
     // Cache new value.
-    wrapper.setChainTaskVal(entry, cur.toString(), chainId);
+    const timestamp = cur.toString();
+    wrapper.setChainTaskVal(entry, timestamp, chainId);
 
     // Debugging.
     const now = new Date(Number(cur) * 1000).toDateString();
     console.log(`Now: ${now} | ${data}`);
 
     // Send event and notification data to main process.
-    const event = EventsController.getEvent(entry, cur.toString());
-    window.myAPI.sendEventTask({
+    handleEvent({
       action: 'events:persist',
-      data: { event, notification: null, isOneShot: false },
+      data: {
+        event: EventsController.getEvent(entry, cur.toString()),
+        notification: NotificationsController.getChainNotification(entry, {
+          timestamp,
+        }),
+        showNotification: { isOneShot: false, isEnabled: false },
+      },
     });
   } catch (err) {
     console.error(err);
@@ -102,16 +107,22 @@ export const callback_query_babe_currentSlot = (
     }
 
     // Cache new value.
-    wrapper.setChainTaskVal(entry, cur.toString(), chainId);
+    const slot = cur.toString();
+    wrapper.setChainTaskVal(entry, slot, chainId);
 
     // Debugging.
-    console.log(`Current Sot: ${cur}`);
+    console.log(`Current Sot: ${slot}`);
 
     // Send event and notification data to main process.
-    const event = EventsController.getEvent(entry, cur.toString());
-    window.myAPI.sendEventTask({
+    handleEvent({
       action: 'events:persist',
-      data: { event, notification: null, isOneShot: false },
+      data: {
+        event: EventsController.getEvent(entry, slot),
+        notification: NotificationsController.getChainNotification(entry, {
+          slot,
+        }),
+        showNotification: { isOneShot: false, isEnabled: false },
+      },
     });
   } catch (err) {
     console.error(err);
@@ -160,15 +171,16 @@ export const callback_account_balance_free = async (
     const event = EventsController.getEvent(entry, { free });
     const parsed: EventCallback = JSON.parse(JSON.stringify(event));
 
-    // Get notification.
-    const notification = getNotificationFlag(entry, isOneShot)
-      ? NotificationsController.getNotification(entry, account, { free })
-      : null;
-
     // Send event and notification data to main process.
-    window.myAPI.sendEventTask({
+    handleEvent({
       action: 'events:persist',
-      data: { event: parsed, notification, isOneShot },
+      data: {
+        event: parsed,
+        notification: NotificationsController.getNotification(entry, account, {
+          free,
+        }),
+        showNotification: getNotificationFlags(entry, isOneShot),
+      },
     });
 
     return true;
@@ -218,15 +230,16 @@ export const callback_account_balance_frozen = async (
     const event = EventsController.getEvent(entry, { frozen });
     const parsed: EventCallback = JSON.parse(JSON.stringify(event));
 
-    // Get notification.
-    const notification = getNotificationFlag(entry, isOneShot)
-      ? NotificationsController.getNotification(entry, account, { frozen })
-      : null;
-
     // Send event and notification data to main process.
-    window.myAPI.sendEventTask({
+    handleEvent({
       action: 'events:persist',
-      data: { event: parsed, notification, isOneShot },
+      data: {
+        event: parsed,
+        notification: NotificationsController.getNotification(entry, account, {
+          frozen,
+        }),
+        showNotification: getNotificationFlags(entry, isOneShot),
+      },
     });
 
     return true;
@@ -276,15 +289,16 @@ export const callback_account_balance_reserved = async (
     const event = EventsController.getEvent(entry, { reserved });
     const parsed: EventCallback = JSON.parse(JSON.stringify(event));
 
-    // Get notification.
-    const notification = getNotificationFlag(entry, isOneShot)
-      ? NotificationsController.getNotification(entry, account, { reserved })
-      : null;
-
     // Send event and notification data to main process.
-    window.myAPI.sendEventTask({
+    handleEvent({
       action: 'events:persist',
-      data: { event: parsed, notification, isOneShot },
+      data: {
+        event: parsed,
+        notification: NotificationsController.getNotification(entry, account, {
+          reserved,
+        }),
+        showNotification: getNotificationFlags(entry, isOneShot),
+      },
     });
 
     return true;
@@ -310,7 +324,6 @@ export const callback_account_balance_spendable = async (
       entry.task.chainId,
       entry.task.account!.address
     );
-
     if (!account || !account.balance) {
       return false;
     }
@@ -343,15 +356,16 @@ export const callback_account_balance_spendable = async (
     const event = EventsController.getEvent(entry, { spendable });
     const parsed: EventCallback = JSON.parse(JSON.stringify(event));
 
-    // Get notification.
-    const notification = getNotificationFlag(entry, isOneShot)
-      ? NotificationsController.getNotification(entry, account, { spendable })
-      : null;
-
     // Send event and notification to main process.
-    window.myAPI.sendEventTask({
+    handleEvent({
       action: 'events:persist',
-      data: { event: parsed, notification, isOneShot },
+      data: {
+        event: parsed,
+        notification: NotificationsController.getNotification(entry, account, {
+          spendable,
+        }),
+        showNotification: getNotificationFlags(entry, isOneShot),
+      },
     });
 
     return true;
@@ -402,14 +416,15 @@ export const callback_nomination_pool_rewards = async (
     }
 
     // Get event and notification.
-    const event = EventsController.getEvent(entry, { pending });
-    const notification = getNotificationFlag(entry, isOneShot)
-      ? NotificationsController.getNotification(entry, account, { pending })
-      : null;
-
-    window.myAPI.sendEventTask({
+    handleEvent({
       action: 'events:persist',
-      data: { event, notification, isOneShot },
+      data: {
+        event: EventsController.getEvent(entry, { pending }),
+        notification: NotificationsController.getNotification(entry, account, {
+          pending,
+        }),
+        showNotification: getNotificationFlags(entry, isOneShot),
+      },
     });
 
     return true;
@@ -449,21 +464,16 @@ export const callback_nomination_pool_state = async (
       syncFlags.syncAccountNominationPool = true;
     }
 
-    // Get notification.
-    const notification = getNotificationFlag(entry, isOneShot)
-      ? NotificationsController.getNotification(entry, account, {
-          cur: state,
-          prev: cur,
-        })
-      : null;
-
     // Handle notification and events in main process.
-    window.myAPI.sendEventTask({
+    handleEvent({
       action: 'events:persist',
       data: {
         event: EventsController.getEvent(entry, { cur: state, prev: cur }),
-        notification,
-        isOneShot,
+        notification: NotificationsController.getNotification(entry, account, {
+          cur: state,
+          prev: cur,
+        }),
+        showNotification: getNotificationFlags(entry, isOneShot),
       },
     });
 
@@ -503,21 +513,16 @@ export const callback_nomination_pool_renamed = async (
       syncFlags.syncAccountNominationPool = true;
     }
 
-    // Get notification.
-    const notification = getNotificationFlag(entry, isOneShot)
-      ? NotificationsController.getNotification(entry, account, {
-          cur: poolName,
-          prev: cur,
-        })
-      : null;
-
     // Handle notification and events in main process.
-    window.myAPI.sendEventTask({
+    handleEvent({
       action: 'events:persist',
       data: {
         event: EventsController.getEvent(entry, { cur: poolName, prev: cur }),
-        notification,
-        isOneShot,
+        notification: NotificationsController.getNotification(entry, account, {
+          cur: poolName,
+          prev: cur,
+        }),
+        showNotification: getNotificationFlags(entry, isOneShot),
       },
     });
 
@@ -574,21 +579,16 @@ export const callback_nomination_pool_roles = async (
       syncFlags.syncAccountNominationPool = true;
     }
 
-    // Get notification.
-    const notification = getNotificationFlag(entry, isOneShot)
-      ? NotificationsController.getNotification(entry, account, {
-          cur: roles,
-          prev: cur,
-        })
-      : null;
-
     // Handle notification and events in main process.
-    window.myAPI.sendEventTask({
+    handleEvent({
       action: 'events:persist',
       data: {
         event: EventsController.getEvent(entry, { cur: roles, prev: cur }),
-        notification,
-        isOneShot,
+        notification: NotificationsController.getNotification(entry, account, {
+          cur: roles,
+          prev: cur,
+        }),
+        showNotification: getNotificationFlags(entry, isOneShot),
       },
     });
 
@@ -649,24 +649,19 @@ export const callback_nomination_pool_commission = async (
       syncFlags.syncAccountNominationPool = true;
     }
 
-    // Get notification.
-    const notification = getNotificationFlag(entry, isOneShot)
-      ? NotificationsController.getNotification(entry, account, {
-          cur,
-          prev: poolCommission,
-        })
-      : null;
-
     // Handle notification and events in main process.
-    window.myAPI.sendEventTask({
+    handleEvent({
       action: 'events:persist',
       data: {
         event: EventsController.getEvent(entry, {
           cur,
           prev: poolCommission,
         }),
-        notification,
-        isOneShot,
+        notification: NotificationsController.getNotification(entry, account, {
+          cur,
+          prev: poolCommission,
+        }),
+        showNotification: getNotificationFlags(entry, isOneShot),
       },
     });
 
@@ -696,21 +691,24 @@ export const callback_nominating_era_rewards = async (
     const eraRewards = await getEraRewards(account.address, api, lastEra);
 
     // Get notification and event.
-    const notification = getNotificationFlag(entry, isOneShot)
-      ? NotificationsController.getNotification(entry, account, {
-          rewards: eraRewards.toString(),
-          chainId: account.chain,
-        })
-      : null;
+    const notification = NotificationsController.getNotification(
+      entry,
+      account,
+      { rewards: eraRewards.toString(), chainId: account.chain }
+    );
 
     const event = EventsController.getEvent(entry, {
       rewards: eraRewards.toString(),
       era: lastEra.toString(),
     });
 
-    window.myAPI.sendEventTask({
+    handleEvent({
       action: 'events:persist',
-      data: { event, notification, isOneShot },
+      data: {
+        event,
+        notification,
+        showNotification: getNotificationFlags(entry, isOneShot),
+      },
     });
 
     return true;
@@ -767,21 +765,16 @@ export const callback_nominating_exposure = async (
       syncFlags.syncAccountNominating = true;
     }
 
-    // Get notification.
-    const notification = getNotificationFlag(entry, isOneShot)
-      ? NotificationsController.getNotification(entry, account, {
-          era,
-          exposed,
-        })
-      : null;
-
     // Handle notification and events in main process.
-    window.myAPI.sendEventTask({
+    handleEvent({
       action: 'events:persist',
       data: {
         event: EventsController.getEvent(entry, { era, exposed }),
-        notification,
-        isOneShot,
+        notification: NotificationsController.getNotification(entry, account, {
+          era,
+          exposed,
+        }),
+        showNotification: getNotificationFlags(entry, isOneShot),
       },
     });
 
@@ -843,20 +836,15 @@ export const callback_nominating_commission = async (
       hasChanged = true;
     }
 
-    // Get notification.
-    const notification = getNotificationFlag(entry, isOneShot)
-      ? NotificationsController.getNotification(entry, account, {
-          hasChanged,
-        })
-      : null;
-
     // Handle notification and events in main process.
-    window.myAPI.sendEventTask({
+    handleEvent({
       action: 'events:persist',
       data: {
         event: EventsController.getEvent(entry, { era, hasChanged }),
-        notification,
-        isOneShot,
+        notification: NotificationsController.getNotification(entry, account, {
+          hasChanged,
+        }),
+        showNotification: getNotificationFlags(entry, isOneShot),
       },
     });
 
@@ -918,20 +906,15 @@ export const callback_nominating_nominations = async (
       hasChanged = true;
     }
 
-    // Get notification.
-    const notification = getNotificationFlag(entry, isOneShot)
-      ? NotificationsController.getNotification(entry, account, {
-          hasChanged,
-        })
-      : null;
-
     // Handle notification and events in main process.
-    window.myAPI.sendEventTask({
+    handleEvent({
       action: 'events:persist',
       data: {
         event: EventsController.getEvent(entry, { era, hasChanged }),
-        notification,
-        isOneShot,
+        notification: NotificationsController.getNotification(entry, account, {
+          hasChanged,
+        }),
+        showNotification: getNotificationFlags(entry, isOneShot),
       },
     });
 
@@ -943,22 +926,15 @@ export const callback_nominating_nominations = async (
 };
 
 /**
- * @name getApiOrThrow
- * @summary Get an API instance of throw.
- */
-const getApiOrThrow = async (chainId: ChainID) =>
-  (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
-
-/**
  * @name getStakingApi
  * @summary Get an API instance that supports staking and nominating.
  */
 const getStakingApi = (chainId: ChainID, api: DedotClientSet) => {
   switch (chainId) {
-    case 'Polkadot Relay':
-      return api as DedotClient<ClientTypes['polkadot']>;
-    case 'Kusama Relay':
-      return api as DedotClient<ClientTypes['kusama']>;
+    case 'Polkadot Asset Hub':
+      return api as DedotClient<ClientTypes['statemint']>;
+    case 'Kusama Asset Hub':
+      return api as DedotClient<ClientTypes['statemine']>;
     case 'Paseo Asset Hub':
       return api as DedotClient<ClientTypes['asset-hub-paseo']>;
     case 'Westend Asset Hub':
@@ -972,8 +948,10 @@ const getStakingApi = (chainId: ChainID, api: DedotClientSet) => {
  * @name showNotificationFlag
  * @summary Determine if the task should show a native OS notification.
  */
-const getNotificationFlag = (entry: ApiCallEntry, isOneShot: boolean) =>
-  isOneShot
-    ? true
-    : !ConfigRenderer.getAppSeting('setting:silence-os-notifications') &&
-      entry.task.enableOsNotifications;
+const getNotificationFlags = (
+  entry: ApiCallEntry,
+  isOneShot: boolean
+): { isOneShot: boolean; isEnabled: boolean } => ({
+  isOneShot,
+  isEnabled: entry.task.enableOsNotifications,
+});

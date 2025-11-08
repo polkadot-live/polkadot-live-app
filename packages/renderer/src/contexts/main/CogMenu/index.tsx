@@ -3,12 +3,16 @@
 
 import { ConfigRenderer } from '@polkadot-live/core';
 import { createContext } from 'react';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
-import { useAppSettings, useBootstrapping } from '@ren/contexts/main';
-import { useConnections, useHelp } from '@ren/contexts/common';
-import { Flip, toast } from 'react-toastify';
-import type { CogMenuContextInterface } from './types';
-import type { MenuItemData } from '@polkadot-live/ui/components';
+import {
+  createSafeContextHook,
+  useAppSettings,
+  useConnections,
+  useHelp,
+} from '@polkadot-live/contexts';
+import { useBootstrapping } from '@ren/contexts/main';
+import { renderToast } from '@polkadot-live/ui/utils';
+import type { CogMenuContextInterface } from '@polkadot-live/contexts/types/main';
+import type { MenuItemData } from '@polkadot-live/types/menu';
 
 export const CogMenuContext = createContext<
   CogMenuContextInterface | undefined
@@ -40,7 +44,7 @@ export const CogMenuProvider = ({
   const { openHelp } = useHelp();
   const { toggleSetting } = useAppSettings();
 
-  /// Connection button text.
+  // Connection button text.
   const getConnectionButtonText = (): string => {
     if (isConnecting || appLoading) {
       return 'Abort';
@@ -51,13 +55,13 @@ export const CogMenuProvider = ({
     }
   };
 
-  /// Handle abort connecting.
+  // Handle abort connecting.
   const handleAbortConnecting = () => {
     setIsAborting(true);
     ConfigRenderer.abortConnecting = true;
   };
 
-  /// Handle connect click.
+  // Handle connect click.
   const handleConnectClick = async () => {
     if (isConnecting || appLoading) {
       handleAbortConnecting();
@@ -71,30 +75,17 @@ export const CogMenuProvider = ({
         await handleInitializeAppOnline();
         setIsConnecting(false);
       } else {
-        // Render error alert.
-        toast.error('You are offline.', {
-          position: 'top-center',
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          closeButton: false,
-          pauseOnHover: false,
-          draggable: false,
-          progress: undefined,
-          theme: 'dark',
-          transition: Flip,
-          toastId: 'toast-connection', // prevent duplicate alerts
-        });
+        renderToast('You are offline.', 'connect-error', 'error', 'top-center');
       }
     }
   };
 
-  /// Handle silence notifications.
+  // Handle silence notifications.
   const handleSilenceNotifications = () => {
     toggleSetting('setting:silence-os-notifications');
   };
 
-  /// Menu item data.
+  // Menu item data.
   const getMenuItems = (): MenuItemData[] => [
     {
       label: 'Accounts',
@@ -152,7 +143,7 @@ export const CogMenuProvider = ({
     },
   ];
 
-  /// Get app flags.
+  // Get app flags.
   const getAppFlags = () => ({
     isConnecting,
     isOnline: getOnlineMode(),

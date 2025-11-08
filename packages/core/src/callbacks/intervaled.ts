@@ -4,15 +4,20 @@
 import * as Utils from '../library/OpenGovLib';
 import BigNumber from 'bignumber.js';
 import { rmCommas } from '@w3ux/utils';
-import { ConfigRenderer } from '../config';
 import { formatBlocksToTime } from '../library/TimeLib';
+import { getApiOrThrow, handleEvent } from './utils';
 import {
   APIsController,
   EventsController,
   NotificationsController,
 } from '../controllers';
-import type { OneShotReturn, RefDeciding } from '@polkadot-live/types/openGov';
+import type { DedotOpenGovClient } from '@polkadot-live/types/apis';
 import type { NotificationData } from '@polkadot-live/types/reporter';
+import type {
+  OneShotReturn,
+  RefDeciding,
+  ReferendumStatus,
+} from '@polkadot-live/types/openGov';
 import type {
   IntervalSubscription,
   NotificationPolicy,
@@ -36,34 +41,35 @@ export const executeIntervaledOneShot = async (
   task: IntervalSubscription,
   policy: NotificationPolicy = 'default'
 ): Promise<OneShotReturn> => {
-  const { action, referendumId } = task;
+  try {
+    const { action, chainId, referendumId } = task;
 
-  // Return early if referendum ID is undefined (should not happen).
-  if (!referendumId) {
-    return { success: false, message: 'Undefined referendum ID' };
-  }
-
-  // Return early if network failed to connect.
-  if (APIsController.getFailedChainIds().includes(task.chainId)) {
-    return { success: false };
-  }
-
-  switch (action) {
-    case 'subscribe:interval:openGov:referendumVotes': {
-      const result = await oneShot_openGov_referendumVotes(task, policy);
-      return result;
+    // Return early if referendum ID is undefined (should not happen).
+    if (!referendumId) {
+      return { success: false, message: 'Undefined referendum ID' };
     }
-    case 'subscribe:interval:openGov:decisionPeriod': {
-      const result = await oneShot_openGov_decisionPeriod(task, policy);
-      return result;
+    // Return early if network failed to connect.
+    if (APIsController.getFailedChainIds().includes(task.chainId)) {
+      return { success: false };
     }
-    case 'subscribe:interval:openGov:referendumThresholds': {
-      const result = await oneShot_openGov_thresholds(task, policy);
-      return result;
+    const api = (await getApiOrThrow(chainId)) as DedotOpenGovClient;
+    switch (action) {
+      case 'subscribe:interval:openGov:referendumVotes': {
+        return await oneShot_openGov_referendumVotes(task, policy, api);
+      }
+      case 'subscribe:interval:openGov:decisionPeriod': {
+        return await oneShot_openGov_decisionPeriod(task, policy, api);
+      }
+      case 'subscribe:interval:openGov:referendumThresholds': {
+        return await oneShot_openGov_thresholds(task, policy, api);
+      }
+      default: {
+        return { success: false, message: 'One-shot action not found.' };
+      }
     }
-    default: {
-      return { success: false, message: 'One-shot action not found.' };
-    }
+  } catch (error) {
+    console.error(error);
+    return { success: false, message: 'Unknown error.' };
   }
 };
 
@@ -73,27 +79,20 @@ export const executeIntervaledOneShot = async (
  */
 const oneShot_openGov_referendumVotes = async (
   task: IntervalSubscription,
-  policy: NotificationPolicy = 'default'
+  policy: NotificationPolicy = 'default',
+  api: DedotOpenGovClient
 ): Promise<OneShotReturn> => {
-  const { chainId, referendumId } = task;
+  const { referendumId } = task;
   if (!referendumId) {
     return { success: false, message: 'Undefined referendum ID.' };
   }
-
-  const client = await APIsController.getConnectedApi(chainId);
-  if (!client || !client.api) {
-    return { success: false, message: 'API instance not found.' };
-  }
-
-  const { api } = client;
   const result = await api.query.referenda.referendumInfoFor(referendumId);
   if (!result || result.type !== 'Ongoing') {
     return { success: false, message: 'Referendum is not ongoing.' };
   }
 
-  const info = Utils.serializeReferendumInfo(result.value);
+  const info = Utils.serializeReferendumInfo(result.value as ReferendumStatus);
   const { ayes, nays } = info.tally;
-
   const bnAyes = new BigNumber(rmCommas(String(ayes)));
   const bnNays = new BigNumber(rmCommas(String(nays)));
   const bnTotal = bnAyes.plus(bnNays);
@@ -110,27 +109,20 @@ const oneShot_openGov_referendumVotes = async (
     .decimalPlaces(1)
     .toString();
 
-  const event = EventsController.getIntervalEvent(task, {
-    percentAyes,
-    percentNays,
-  });
-
-  const notification = getNotificationFlag(task, policy)
-    ? NotificationsController.getIntervalNotification(task, {
-        percentAyes,
-        percentNays,
-      })
-    : null;
-
-  window.myAPI.sendEventTask({
+  handleEvent({
     action: 'events:persist',
     data: {
-      event,
-      notification,
-      isOneShot: policy === 'one-shot',
+      event: EventsController.getIntervalEvent(task, {
+        percentAyes,
+        percentNays,
+      }),
+      notification: NotificationsController.getIntervalNotification(task, {
+        percentAyes,
+        percentNays,
+      }),
+      showNotification: getNotificationFlags(task, policy),
     },
   });
-
   return { success: true };
 };
 
@@ -140,19 +132,13 @@ const oneShot_openGov_referendumVotes = async (
  */
 const oneShot_openGov_decisionPeriod = async (
   task: IntervalSubscription,
-  policy: NotificationPolicy = 'default'
+  policy: NotificationPolicy = 'default',
+  api: DedotOpenGovClient
 ): Promise<OneShotReturn> => {
   const { chainId, referendumId } = task;
   if (!referendumId) {
     return { success: false, message: 'Undefined referendum ID.' };
   }
-
-  const client = await APIsController.getConnectedApi(chainId);
-  if (!client || !client.api) {
-    return { success: false, message: 'API instance not found.' };
-  }
-
-  const { api } = client;
   const result = await api.query.referenda.referendumInfoFor(referendumId);
   if (!result || result.type !== 'Ongoing') {
     return { success: false, message: 'Referendum is not ongoing.' };
@@ -166,11 +152,12 @@ const oneShot_openGov_decisionPeriod = async (
     subtitle: 'Decision Period',
   };
 
-  const info = Utils.serializeReferendumInfo(result.value) as RefDeciding;
+  const info = Utils.serializeReferendumInfo(
+    result.value as ReferendumStatus
+  ) as RefDeciding;
   if (!info.deciding) {
     return { success: false, message: 'Referendum not in decision period.' };
   }
-
   const lastHeader = await api.rpc.chain_getHeader();
   const bnCurrentBlock = new BigNumber(lastHeader!.number);
   const { confirming } = info.deciding;
@@ -186,7 +173,7 @@ const oneShot_openGov_decisionPeriod = async (
     // Get origin and its decision period in number of blocks.
     type T = [number, PalletReferendaTrackDetails][];
     const originName = info.origin;
-    const tracks = client!.api!.consts.referenda.tracks;
+    const tracks = api.consts.referenda.tracks;
     const tracksData = Utils.getTracks(Utils.getSerializedTracks(tracks as T));
     const trackId = Utils.getOriginIdFromName(originName);
     const track = tracksData.find((t) => t.trackId === trackId);
@@ -204,24 +191,17 @@ const oneShot_openGov_decisionPeriod = async (
     notificationData.body = `Ends in ${formattedTime}.`;
   }
 
-  const event = EventsController.getIntervalEvent(task, {
-    formattedTime,
-    subtext: notificationData.body,
-  });
-
-  const notification = getNotificationFlag(task, policy)
-    ? notificationData
-    : null;
-
-  window.myAPI.sendEventTask({
+  handleEvent({
     action: 'events:persist',
     data: {
-      event,
-      notification,
-      isOneShot: policy === 'one-shot',
+      event: EventsController.getIntervalEvent(task, {
+        formattedTime,
+        subtext: notificationData.body,
+      }),
+      notification: notificationData,
+      showNotification: getNotificationFlags(task, policy),
     },
   });
-
   return { success: true };
 };
 
@@ -231,25 +211,20 @@ const oneShot_openGov_decisionPeriod = async (
  */
 const oneShot_openGov_thresholds = async (
   task: IntervalSubscription,
-  policy: NotificationPolicy = 'default'
+  policy: NotificationPolicy = 'default',
+  api: DedotOpenGovClient
 ): Promise<OneShotReturn> => {
-  const { chainId, referendumId } = task;
+  const { referendumId } = task;
   if (!referendumId) {
     return { success: false, message: 'Undefined referendum ID.' };
   }
-
-  const client = await APIsController.getConnectedApi(chainId);
-  if (!client || !client.api) {
-    return { success: false, message: 'API instance not found.' };
-  }
-
-  const { api } = client;
   const result = await api.query.referenda.referendumInfoFor(referendumId);
   if (!result || result.type !== 'Ongoing') {
     return { success: false, message: 'Referendum is not ongoing.' };
   }
-
-  const info = Utils.serializeReferendumInfo(result.value) as RefDeciding;
+  const info = Utils.serializeReferendumInfo(
+    result.value as ReferendumStatus
+  ) as RefDeciding;
   if (!info.deciding) {
     return { success: false, message: 'Referendum not being decided.' };
   }
@@ -257,14 +232,13 @@ const oneShot_openGov_thresholds = async (
   // Get track data for decision period.
   type T = [number, PalletReferendaTrackDetails][];
   const originName = info.origin;
-  const tracks = client.api.consts.referenda.tracks;
+  const tracks = api.consts.referenda.tracks;
   const tracksData = Utils.getTracks(Utils.getSerializedTracks(tracks as T));
   const trackId = Utils.getOriginIdFromName(originName);
   const track = tracksData.find((t) => t.trackId === trackId);
   if (!track) {
     return { success: false, message: 'Referendum track not found.' };
   }
-
   // Get current approval and support thresholds.
   const thresholds = await Utils.getMinApprovalSupport(
     api,
@@ -275,7 +249,6 @@ const oneShot_openGov_thresholds = async (
   if (!thresholds) {
     return { success: false, message: 'Threshold data error.' };
   }
-
   const formattedApp = new BigNumber(Utils.rmChars(thresholds.minApproval))
     .multipliedBy(100)
     .toFixed(2)
@@ -286,28 +259,20 @@ const oneShot_openGov_thresholds = async (
     .toFixed(2)
     .toString();
 
-  const event = EventsController.getIntervalEvent(task, {
-    formattedApp,
-    formattedSup,
-  });
-
-  // Render native OS notification if enabled.
-  const notification = getNotificationFlag(task, policy)
-    ? NotificationsController.getIntervalNotification(task, {
-        formattedApp,
-        formattedSup,
-      })
-    : null;
-
-  window.myAPI.sendEventTask({
+  handleEvent({
     action: 'events:persist',
     data: {
-      event,
-      notification,
-      isOneShot: policy === 'one-shot',
+      event: EventsController.getIntervalEvent(task, {
+        formattedApp,
+        formattedSup,
+      }),
+      notification: NotificationsController.getIntervalNotification(task, {
+        formattedApp,
+        formattedSup,
+      }),
+      showNotification: getNotificationFlags(task, policy),
     },
   });
-
   return { success: true };
 };
 
@@ -315,12 +280,10 @@ const oneShot_openGov_thresholds = async (
  * @name getNotificationFlag
  * @summary Returns `true` if a notification should be rendered, `false` otherwise.
  */
-const getNotificationFlag = (
+const getNotificationFlags = (
   task: IntervalSubscription,
   policy: NotificationPolicy
-) =>
-  policy === 'one-shot'
-    ? true
-    : policy !== 'none' &&
-      !ConfigRenderer.getAppSeting('setting:silence-os-notifications') &&
-      task.enableOsNotifications;
+): { isOneShot: boolean; isEnabled: boolean } => ({
+  isOneShot: policy === 'one-shot',
+  isEnabled: task.enableOsNotifications,
+});

@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "target": "ESNext",
+    "moduleResolution": "Bundler",
+    "checkJs": false,
+    "strict": true,
+    "allowJs": true,
+    "jsx": "react-jsx",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "noImplicitAny": true,
+    "sourceMap": false,
+    "outDir": "dist",
+    "resolveJsonModule": true,
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "allowSyntheticDefaultImports": true,
+    "types": ["node", "chrome", "electron", "wicg-file-system-access", "vite-plugin-svgr/client", "vitest/globals"],
+    "removeComments": true,
+    "rootDir": "."
+  }
+}

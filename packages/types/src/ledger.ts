@@ -2,8 +2,37 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { PolkadotGenericApp } from '@zondax/ledger-substrate';
+import type { AnyData } from './misc';
+import type {
+  GenericeResponseAddress,
+  ResponseVersion,
+} from '@zondax/ledger-substrate/dist/common';
 
 export type LedgerTask = 'get_address' | 'close_polkadot' | 'ledger_sign';
+
+/**
+ * Ledger controller interface (extension).
+ */
+export interface ILedgerController {
+  transport: AnyData | null;
+  isPaired: boolean;
+  initialize: () => Promise<{ app: PolkadotGenericApp; deviceModel: AnyData }>;
+  ensureClosed: () => Promise<void>;
+  ensureOpen: () => Promise<void>;
+  getVersion: (app: PolkadotGenericApp) => Promise<ResponseVersion>;
+  getAddress: (
+    app: PolkadotGenericApp,
+    index: number,
+    ss58Prefix: number
+  ) => Promise<GenericeResponseAddress>;
+  signPayload: (
+    app: PolkadotGenericApp,
+    index: number,
+    payload: Uint8Array,
+    txMetadata: Uint8Array
+  ) => Promise<LedgerTaskResult>;
+  unmount: () => Promise<void>;
+}
 
 /**
  * Return result when instantiating `PolkadotGenericApp`.
@@ -105,6 +134,18 @@ export interface LedgerFetchedAddressData {
 }
 
 export interface LedgerTaskResponse {
+  ack: 'success' | 'failure';
+  statusCode: string;
+  payload?: {
+    options: { accountIndices: number[] };
+    addresses: LedgerResult[];
+  };
+  body?: {
+    msg: string;
+  };
+}
+
+export interface SerLedgerTaskResponse {
   ack: 'success' | 'failure';
   statusCode: string;
   serData?: string;

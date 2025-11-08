@@ -11,17 +11,9 @@
       "import": "./dist/components.es.js",
       "types": "./dist/components.d.ts"
     },
-    "./contexts": {
-      "import": "./dist/contexts.es.js",
-      "types": "./dist/contexts.d.ts"
-    },
     "./hooks": {
       "import": "./dist/hooks.es.js",
       "types": "./dist/hooks.d.ts"
-    },
-    "./styles": {
-      "import": "./dist/styles.es.js",
-      "types": "./dist/styles.d.ts"
     },
     "./utils": {
       "import": "./dist/utils.es.js",
@@ -51,7 +43,9 @@
   },
   "dependencies": {
     "@polkadot-live/consts": "workspace:*",
+    "@polkadot-live/contexts": "workspace:*",
     "@polkadot-live/core": "workspace:*",
+    "@polkadot-live/styles": "workspace:*",
     "react-svg": "^16.2.0"
   },
   "devDependencies": {

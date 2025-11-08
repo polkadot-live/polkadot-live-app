@@ -1,9 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-/// Dependencies.
+import * as MainCtx from '@ren/contexts/main';
 import * as Core from '@polkadot-live/core';
-import { WC_EVENT_ORIGIN } from '@polkadot-live/consts/walletConnect';
 import {
   ConfigRenderer,
   disconnectAPIs,
@@ -15,54 +14,47 @@ import {
   TaskOrchestrator,
 } from '@polkadot-live/core';
 import { useEffect } from 'react';
-
-/// Main window contexts.
-import { useConnections } from '@ren/contexts/common';
+import { WC_EVENT_ORIGIN } from '@polkadot-live/consts/walletConnect';
 import {
   useAddresses,
   useAppSettings,
-  useBootstrapping,
-  useDataBackup,
+  useConnections,
   useEvents,
   useIntervalSubscriptions,
-  useLedgerSigner,
   useManage,
   useSubscriptions,
-  useTreasuryApi,
-  useWalletConnect,
-} from '@ren/contexts/main';
+} from '@polkadot-live/contexts';
 
-/// Types.
 import type * as OG from '@polkadot-live/types/openGov';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { ClientTypes } from '@polkadot-live/types/apis';
+import type { DedotClient } from 'dedot';
 import type { EventCallback } from '@polkadot-live/types/reporter';
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
-import type {
-  IntervalSubscription,
-  SubscriptionTask,
-} from '@polkadot-live/types/subscriptions';
 import type {
   EncodedAccount,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
-import type { ChainID } from '@polkadot-live/types/chains';
-import type { DedotClient } from 'dedot';
+import type {
+  IntervalSubscription,
+  SubscriptionTask,
+} from '@polkadot-live/types/subscriptions';
 import type { PalletReferendaTrackDetails } from '@dedot/chaintypes/substrate';
 import type { SettingItem } from '@polkadot-live/types/settings';
 import type { WcSelectNetwork } from '@polkadot-live/types/walletConnect';
-import type {
-  ClientTypes,
-  DedotOpenGovClient,
-} from '@polkadot-live/types/apis';
 
 export const useMainMessagePorts = () => {
-  /// Main renderer contexts.
-  const { importAddress, removeAddress } = useAddresses();
-  const { updateEventsOnAccountRename } = useEvents();
-  const { syncOpenGovWindow } = useBootstrapping();
-  const { exportDataToBackup, importDataFromBackup } = useDataBackup();
   const { getOnlineMode } = useConnections();
-  const { ledgerSignSubmit } = useLedgerSigner();
-  const { handleInitTreasury } = useTreasuryApi();
+  const { cacheGet, toggleSetting } = useAppSettings();
+  const { importAddress, removeAddress } = useAddresses();
+  const { updateAccountNameInTasks } = useSubscriptions();
+  const { syncOpenGovWindow } = MainCtx.useBootstrapping();
+  const { exportDataToBackup, importDataFromBackup } = MainCtx.useDataBackup();
+  const { updateEventsOnAccountRename } = useEvents();
+  const { ledgerSignSubmit } = MainCtx.useLedgerSigner();
+  const { handleInitTreasury } = MainCtx.useTreasuryApi();
+  const { addIntervalSubscription, removeIntervalSubscription } =
+    useIntervalSubscriptions();
 
   const {
     connectWc,
@@ -75,18 +67,12 @@ export const useMainMessagePorts = () => {
     wcSignExtrinsic,
     updateWcTxSignMap,
     verifySigningAccount,
-  } = useWalletConnect();
-
+  } = MainCtx.useWalletConnect();
   const {
     setRenderedSubscriptions,
     tryAddIntervalSubscription,
     tryRemoveIntervalSubscription,
   } = useManage();
-
-  const { toggleSetting } = useAppSettings();
-  const { updateAccountNameInTasks } = useSubscriptions();
-  const { addIntervalSubscription, removeIntervalSubscription } =
-    useIntervalSubscriptions();
 
   /**
    * @name handleImportAddress
@@ -116,15 +102,13 @@ export const useMainMessagePorts = () => {
           }
 
           await AccountsController.removeAllSubscriptions(account);
-          const allTasks =
-            SubscriptionsController.getAllSubscriptionsForAccount(
-              account,
-              'disable'
-            );
+          const allTasks = SubscriptionsController.buildSubscriptions(
+            account,
+            'disable'
+          );
 
           for (const task of allTasks) {
             SubscriptionsController.updateTaskState(task);
-
             await window.myAPI.sendSubscriptionTask({
               action: 'subscriptions:account:update',
               data: {
@@ -153,11 +137,10 @@ export const useMainMessagePorts = () => {
       if (account.queryMulti !== null && !fromBackup) {
         const key = 'setting:automatic-subscriptions';
         const status = ConfigRenderer.getAppSeting(key) ? 'enable' : 'disable';
-        const tasks = SubscriptionsController.getAllSubscriptionsForAccount(
+        const tasks = SubscriptionsController.buildSubscriptions(
           account,
           status
         );
-
         // Update persisted state and React state for tasks.
         for (const task of tasks) {
           await window.myAPI.sendSubscriptionTask({
@@ -170,19 +153,17 @@ export const useMainMessagePorts = () => {
 
           SubscriptionsController.updateTaskState(task);
         }
-
         // Subscribe to tasks if app setting enabled.
         if (!fromBackup && account.queryMulti !== null) {
           await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
         }
-
         // Update React subscriptions state.
         SubscriptionsController.syncAccountSubscriptionsState();
       }
 
-      // Add account to address context state.
+      // Show notification.
       if (!fromBackup) {
-        await importAddress(chainId, source, address, alias, fromBackup);
+        await importAddress(alias, fromBackup);
       }
 
       // Send message back to import window to reset account's processing flag.
@@ -225,19 +206,14 @@ export const useMainMessagePorts = () => {
   const handleRemoveAddress = async (ev: MessageEvent) => {
     try {
       const { address, chainId } = ev.data.data;
-
-      // Retrieve the account.
       const account = AccountsController.get(chainId, address);
-
       if (!account) {
         console.log('Account could not be fetched, probably not imported yet');
         return;
       }
 
-      // Unsubscribe from all active tasks.
+      // Unsubscribe from tasks and remove account from controller.
       await AccountsController.removeAllSubscriptions(account);
-
-      // Remove account from controller and store.
       AccountsController.remove(chainId, address);
 
       // Remove address from context.
@@ -344,7 +320,14 @@ export const useMainMessagePorts = () => {
    */
   const handleTxBuild = async (ev: MessageEvent) => {
     const info: ExtrinsicInfo = JSON.parse(ev.data.data);
-    await ExtrinsicsController.build(info);
+    const result = await ExtrinsicsController.build(info);
+    if (result) {
+      const { accountNonce, genesisHash, txId, txPayload } = result;
+      ConfigRenderer.portToAction?.postMessage({
+        task: 'action:tx:report:data',
+        data: { accountNonce, genesisHash, txId, txPayload },
+      });
+    }
   };
 
   /**
@@ -354,7 +337,10 @@ export const useMainMessagePorts = () => {
   const handleTxVaultSubmit = (ev: MessageEvent) => {
     const { info: serialized } = ev.data.data;
     const info: ExtrinsicInfo = JSON.parse(serialized);
-    ExtrinsicsController.submit(info);
+    const silence =
+      cacheGet('setting:silence-os-notifications') ||
+      cacheGet('setting:silence-extrinsic-notifications');
+    ExtrinsicsController.submit(info, silence);
   };
 
   /**
@@ -364,7 +350,10 @@ export const useMainMessagePorts = () => {
   const handleTxMockSubmit = (ev: MessageEvent) => {
     const { info: serialized } = ev.data.data;
     const info: ExtrinsicInfo = JSON.parse(serialized);
-    ExtrinsicsController.mockSubmit(info);
+    const silence =
+      cacheGet('setting:silence-os-notifications') ||
+      cacheGet('setting:silence-extrinsic-notifications');
+    ExtrinsicsController.mockSubmit(info, silence);
   };
 
   /**
@@ -382,13 +371,11 @@ export const useMainMessagePorts = () => {
    */
   const handleGetTracks = async (ev: MessageEvent) => {
     const { chainId } = ev.data.data;
-
     try {
       const { api } = await APIsController.getConnectedApiOrThrow(chainId);
       if (!api) {
         throw Error('api is null');
       }
-
       type T = [number, PalletReferendaTrackDetails][];
       const tracks = api.consts.referenda.tracks;
       const serialized = Core.getSerializedTracks(tracks as T);
@@ -407,94 +394,6 @@ export const useMainMessagePorts = () => {
   };
 
   /**
-   * @name fetchProcessReferenda
-   * @summary Use API to fetch and parse a network's OpenGov referenda.
-   */
-  const fetchProcessReferenda = async (api: DedotOpenGovClient) => {
-    // Populate referenda map.
-    const results = await api.query.referenda.referendumInfoFor.entries();
-    const allReferenda: OG.ReferendaInfo[] = [];
-
-    for (const [refId, storage] of results) {
-      if (storage !== undefined) {
-        if (storage.type === 'Approved') {
-          const info: OG.RefApproved = {
-            block: storage.value[0].toString(),
-            who: storage.value[1] ? String(storage.value[1].who.raw) : null,
-            amount: storage.value[1]
-              ? storage.value[1].amount.toString()
-              : null,
-          };
-
-          allReferenda.push({ refId, refStatus: 'Approved', info });
-        } else if (storage.type === 'Cancelled') {
-          const info: OG.RefCancelled = {
-            block: storage.value[0].toString(),
-            who: storage.value[1] ? String(storage.value[1].who.raw) : null,
-            amount: storage.value[1]
-              ? storage.value[1].amount.toString()
-              : null,
-          };
-
-          allReferenda.push({ refId, refStatus: 'Cancelled', info });
-        } else if (storage.type === 'Rejected') {
-          const info: OG.RefRejected = {
-            block: storage.value[0].toString(),
-            who: storage.value[1] ? String(storage.value[1].who.raw) : null,
-            amount: storage.value[1]
-              ? storage.value[1].amount.toString()
-              : null,
-          };
-
-          allReferenda.push({ refId, refStatus: 'Rejected', info });
-        } else if (storage.type === 'TimedOut') {
-          const info: OG.RefTimedOut = {
-            block: storage.value[0].toString(),
-            who: storage.value[1] ? String(storage.value[1].who.raw) : null,
-            amount: storage.value[1]
-              ? storage.value[1].amount.toString()
-              : null,
-          };
-
-          allReferenda.push({ refId, refStatus: 'TimedOut', info });
-        } else if (storage.type === 'Ongoing') {
-          const serRef = Core.serializeReferendumInfo(storage.value);
-
-          // In Queue
-          if (serRef.inQueue) {
-            const info = serRef as OG.RefOngoing;
-            allReferenda.push({ refId, refStatus: 'Queueing', info });
-          }
-          // Preparing
-          else if (serRef.deciding === null) {
-            const info = serRef as OG.RefPreparing;
-            allReferenda.push({ refId, refStatus: 'Preparing', info });
-          }
-          // Deciding
-          else if (serRef.deciding.confirming === null) {
-            const info = serRef as OG.RefDeciding;
-            allReferenda.push({ refId, refStatus: 'Deciding', info });
-          }
-          // Confirming
-          else if (serRef.deciding.confirming !== null) {
-            const info = serRef as OG.RefConfirming;
-            allReferenda.push({ refId, refStatus: 'Confirming', info });
-          }
-        } else if (storage.type === 'Killed') {
-          const info: OG.RefKilled = { block: storage.value.toString() };
-          allReferenda.push({ refId, refStatus: 'Killed', info });
-        }
-      }
-    }
-
-    // Serialize data before sending to open gov window.
-    ConfigRenderer.portToOpenGov?.postMessage({
-      task: 'openGov:referenda:receive',
-      data: { json: JSON.stringify(allReferenda) },
-    });
-  };
-
-  /**
    * @name handleGetReferenda
    * @summary Cast an API to get a network's OpenGov referenda.
    */
@@ -507,19 +406,23 @@ export const useMainMessagePorts = () => {
       if (!client.api) {
         return;
       }
-
+      let referenda: OG.ReferendaInfo[] = [];
       switch (chainId) {
-        case 'Polkadot Relay': {
-          const api = client.api as DedotClient<ClientTypes['polkadot']>;
-          await fetchProcessReferenda(api);
+        case 'Polkadot Asset Hub': {
+          const api = client.api as DedotClient<ClientTypes['statemint']>;
+          referenda = await Core.fetchProcessReferenda(api);
           break;
         }
-        case 'Kusama Relay': {
-          const api = client.api as DedotClient<ClientTypes['kusama']>;
-          await fetchProcessReferenda(api);
+        case 'Kusama Asset Hub': {
+          const api = client.api as DedotClient<ClientTypes['statemine']>;
+          referenda = await Core.fetchProcessReferenda(api);
           break;
         }
       }
+      ConfigRenderer.portToOpenGov?.postMessage({
+        task: 'openGov:referenda:receive',
+        data: { json: JSON.stringify(referenda) },
+      });
     } catch (e) {
       console.error(e);
       ConfigRenderer.portToOpenGov?.postMessage({

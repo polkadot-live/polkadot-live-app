@@ -1,0 +1,31 @@
+{
+  "name": "@polkadot-live/extension",
+  "version": "0.11.0-beta",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build"
+  },
+  "dependencies": {
+    "@ledgerhq/hw-transport-webhid": "^6.30.8",
+    "@polkadot-live/consts": "workspace:*",
+    "@polkadot-live/contexts": "workspace:*",
+    "@polkadot-live/core": "workspace:*",
+    "@polkadot-live/screens": "workspace:*",
+    "@polkadot-live/styles": "workspace:*",
+    "@polkadot-live/ui": "workspace:*",
+    "buffer": "^6.0.3",
+    "idb": "^8.0.3"
+  },
+  "devDependencies": {
+    "@crxjs/vite-plugin": "^2.0.3",
+    "@polkadot-live/types": "workspace:*",
+    "@types/chrome": "^0.1.1",
+    "@types/node": "^24.0.15",
+    "@vitejs/plugin-react": "^4.7.0",
+    "vite-plugin-node-polyfills": "^0.24.0",
+    "vite-plugin-zip-pack": "^1.2.4"
+  },
+  "packageManager": "yarn@4.0.2"
+}

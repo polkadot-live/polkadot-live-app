@@ -3,18 +3,22 @@
 
 import { TX_METADATA_SRV_URL } from '@polkadot-live/consts/ledger';
 import { getLedgerAppName } from '@polkadot-live/consts/chains';
+import {
+  handleLedgerTaskError,
+  serializeTaskResponse,
+} from '@polkadot-live/core';
 import { MainDebug } from '@/utils/DebugUtils';
 import { PolkadotGenericApp, supportedApps } from '@zondax/ledger-substrate';
 import { USBController } from './controller';
 import { WindowsController } from '@/controller/WindowsController';
-import { handleLedgerTaskError, withTimeout } from './utils';
+import { withTimeout } from './utils';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   LedgerGetAddressData,
   LedgerPolkadotApp,
   LedgerResult,
   LedgerTask,
-  LedgerTaskResponse,
+  SerLedgerTaskResponse,
   LedgerTaskResult,
 } from '@polkadot-live/types/ledger';
 import { hexToU8a, u8aToHex } from 'dedot/utils';
@@ -29,7 +33,7 @@ const debug = MainDebug.extend('Ledger');
 export const executeLedgerTask = async (
   task: LedgerTask,
   serData: string
-): Promise<LedgerTaskResponse> => {
+): Promise<SerLedgerTaskResponse> => {
   switch (task) {
     /**
      * Get Address.
@@ -71,7 +75,7 @@ export const executeLedgerTask = async (
           }),
         };
       } else {
-        return handleLedgerTaskError(result.error!);
+        return serializeTaskResponse(handleLedgerTaskError(result.error!));
       }
     }
     /**
@@ -94,14 +98,12 @@ export const executeLedgerTask = async (
 
       result = initPolkadot(chainId);
       if (!result.success) {
-        return handleLedgerTaskError(result.error!);
+        return serializeTaskResponse(handleLedgerTaskError(result.error!));
       }
-
       result = await signLedgerPayload(chainId, index, rawPayload, proof);
       if (!result.success) {
-        return handleLedgerTaskError(result.error!);
+        return serializeTaskResponse(handleLedgerTaskError(result.error!));
       }
-
       return {
         ack: 'success',
         statusCode: 'LedgerSign',
@@ -117,7 +119,7 @@ export const executeLedgerTask = async (
     }
     default: {
       const error = new Error('Error: Unrecognized Ledger task.');
-      return handleLedgerTaskError(error);
+      return serializeTaskResponse(handleLedgerTaskError(error));
     }
   }
 };
@@ -168,7 +170,7 @@ export const getPolkadotGenericApp = (
   )!;
 
   // Get the correct chain name for the metadata API.
-  const chainName = chainId === 'Polkadot Relay' ? 'dot' : 'ksm';
+  const chainName = chainId.startsWith('Polkadot') ? 'dot' : 'ksm';
 
   // Establish connection to Ledger Polkadot app.
   const app = new PolkadotGenericApp(transport, chainName, TX_METADATA_SRV_URL);
@@ -231,7 +233,7 @@ export const handleGetAddresses = async (
     debug('🔷 New Substrate app. Id: %o Product name: %o', id, productName);
 
     // Get the correct `coin_type` for the address derivation path.
-    //const slip = chainName === 'Polkadot Relay' ? '354' : '434';
+    //const slip = chainName === 'Polkadot Asset Hub' ? '354' : '434';
     const slip = '354';
 
     const results: LedgerResult[] = [];

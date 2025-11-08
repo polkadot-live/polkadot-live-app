@@ -1,0 +1,32 @@
+{
+  "name": "@polkadot-live/screens",
+  "version": "0.11.0-beta",
+  "type": "module",
+  "private": true,
+  "files": [
+    "dist/**"
+  ],
+  "main": "./dist/index.es.js",
+  "exports": {
+    "import": "./dist/index.es.js",
+    "types": "./dist/index.d.ts"
+  },
+  "scripts": {
+    "build": "cross-env MODE=production vite build --config vite.config.js",
+    "build:dev": "cross-env MODE=development vite build --config vite.config.js",
+    "clear:dist": "[ -d \"node_modules\" ] && rm -fr \"node_modules\" || true",
+    "clear": "([ -d \"dist\" ] && rm -fr \"dist\") || true && ([ -d \"node_modules\" ] && rm -fr \"node_modules\") || true",
+    "lint": "eslint --fix ./src",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@polkadot-live/consts": "workspace:*",
+    "@polkadot-live/contexts": "workspace:*",
+    "@polkadot-live/ui": "workspace:*"
+  },
+  "devDependencies": {
+    "@polkadot-live/types": "workspace:*",
+    "vite-plugin-dts": "^4.5.3"
+  },
+  "packageManager": "yarn@4.0.2"
+}

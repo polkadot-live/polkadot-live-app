@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext } from 'react';
-import { createSafeContextHook } from '@polkadot-live/ui/utils';
+import { createSafeContextHook, useAppSettings } from '@polkadot-live/contexts';
 import {
   ConfigRenderer,
   ExtrinsicsController,
@@ -13,7 +13,7 @@ import { decodeAddress, u8aToHex } from 'dedot/utils';
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 import type { HexString } from 'dedot/utils';
 import type { LedgerErrorStatusCode } from '@polkadot-live/types/ledger';
-import type { LedgerSignerContextInterface } from './types';
+import type { LedgerSignerContextInterface } from '@polkadot-live/contexts/types/main';
 
 export const LedgerSignerContext = createContext<
   LedgerSignerContextInterface | undefined
@@ -29,6 +29,7 @@ export const LedgerSignerProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { cacheGet } = useAppSettings();
   /**
    * Sends Ledger error data to extrinsics window.
    */
@@ -49,7 +50,6 @@ export const LedgerSignerProvider = ({
       if (!info.actionMeta.ledgerMeta) {
         throw new LedgerTxError('TxLedgerMetaUndefined');
       }
-
       const { chainId } = info.actionMeta;
       const { accountIndex: index } = info.actionMeta.ledgerMeta;
       const { txId, dynamicInfo } = info;
@@ -57,12 +57,10 @@ export const LedgerSignerProvider = ({
       if (!dynamicInfo) {
         throw new LedgerTxError('TxDynamicInfoUndefined');
       }
-
       const txData = ExtrinsicsController.getTransactionPayload(txId);
       if (!txData) {
         throw new LedgerTxError('TxDataUndefined');
       }
-
       const { proof, rawPayload } = txData;
       if (!(proof && rawPayload)) {
         throw new LedgerTxError('TxPayloadsUndefined');
@@ -79,14 +77,16 @@ export const LedgerSignerProvider = ({
       if (result.ack === 'failure') {
         throw new LedgerTxError(result.statusCode as LedgerErrorStatusCode);
       }
-
       const { signature }: { signature: HexString } = JSON.parse(
         result.serData!
       );
 
       // Attach signature to `info` and submit transaction.
       dynamicInfo.txSignature = signature;
-      ExtrinsicsController.submit(info);
+      const silence =
+        cacheGet('setting:silence-os-notifications') ||
+        cacheGet('setting:silence-extrinsic-notifications');
+      ExtrinsicsController.submit(info, silence);
 
       // Close overlay in extrinsics window.
       ConfigRenderer.portToAction?.postMessage({
@@ -109,7 +109,6 @@ export const LedgerSignerProvider = ({
       if (info.actionMeta.ledgerMeta) {
         return;
       }
-
       const result = (await window.myAPI.rawAccountTask({
         action: 'raw-account:get:ledger-meta',
         data: {
@@ -119,7 +118,6 @@ export const LedgerSignerProvider = ({
           }),
         },
       })) as string;
-
       result !== '' && (info.actionMeta.ledgerMeta = JSON.parse(result));
     } catch (error) {
       console.error('Error parsing JSON:', error);
