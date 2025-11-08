@@ -12,7 +12,7 @@ const resources =
 export default defineManifest({
   manifest_version: 3,
   name: pkg.name,
-  version: pkg.version,
+  version: pkg.version.split('-')[0],
   icons: {
     16: 'public/icon-16.png',
     32: 'public/icon-32.png',

@@ -1,6 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { DbController } from '../../controllers';
 import { SubscriptionsController } from '@polkadot-live/core';
 import {
   setChainSubscriptionsState,
@@ -24,4 +25,16 @@ export const handleDebuggingSubscriptions = async (setting: SettingItem) => {
     await updateChainSubscriptions(active);
     await setChainSubscriptionsState();
   }
+};
+
+export const handleShowDisclaimer = async (): Promise<boolean> => {
+  const flag = (await DbController.get(
+    'settings',
+    'setting:show-disclaimer'
+  )) as boolean;
+
+  if (!flag) {
+    await DbController.set('settings', 'setting:show-disclaimer', true);
+  }
+  return !flag;
 };

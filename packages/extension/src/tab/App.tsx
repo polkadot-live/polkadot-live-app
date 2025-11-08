@@ -7,33 +7,71 @@ import {
   useOverlay,
   useTabs,
 } from '@polkadot-live/contexts';
-import { useEffect } from 'react';
 import { Help, Overlay, Tabs } from '@polkadot-live/ui/components';
 import { Action, Import, OpenGov, Settings } from '@polkadot-live/screens';
-import { MainInterfaceWrapper } from '@polkadot-live/styles/wrappers';
+import {
+  FlexColumn,
+  MainInterfaceWrapper,
+} from '@polkadot-live/styles/wrappers';
 import { ToastContainer } from 'react-toastify';
-import { HashRouter, Route, Routes, useNavigate } from 'react-router';
+import { useEffect, useState } from 'react';
 import { ContextProxyTab } from './Proxy';
 import './App.scss';
 
 export const RouterInner = () => {
+  // Lazy load tabs.
   const { tabsData, clickedId } = useTabs();
-  const navigate = useNavigate();
+  const [visitedTabs, setVisitedTabs] = useState<Set<string>>(new Set([]));
 
   useEffect(() => {
-    navigate(tabsData.find((t) => t.id === clickedId)?.viewId || '/');
+    if (clickedId) {
+      const tab = tabsData.find((t) => t.id === clickedId);
+      if (tab) {
+        const { viewId } = tab;
+        setVisitedTabs((prev) => new Set([...prev, viewId]));
+      }
+    }
   }, [clickedId]);
+
+  const renderView = (viewId: string) => {
+    switch (viewId) {
+      case 'action':
+        return <Action />;
+      case 'import':
+        return <Import />;
+      case 'openGov':
+        return <OpenGov />;
+      case 'settings':
+        return <Settings platform={'chrome'} />;
+    }
+  };
 
   return (
     <ContextProxyTab>
-      <Tabs tabsCtx={useTabs()} />
-      <Routes>
-        <Route path={'/'} element={null} />
-        <Route path={'import'} element={<Import />} />
-        <Route path={'settings'} element={<Settings platform={'chrome'} />} />
-        <Route path={'action'} element={<Action />} />
-        <Route path={'openGov'} element={<OpenGov />} />
-      </Routes>
+      <FlexColumn $rowGap={'0'} style={{ height: '100vh', width: '100%' }}>
+        <Tabs tabsCtx={useTabs()} />
+        {tabsData
+          .filter((tab) => visitedTabs.has(tab.viewId))
+          .map((tab) => (
+            <div
+              key={tab.id}
+              style={
+                clickedId === tab.id
+                  ? {
+                      display: 'block',
+                      height: '100%',
+                      width: '100%',
+                      overflowY: 'auto',
+                    }
+                  : {
+                      display: 'none',
+                    }
+              }
+            >
+              {renderView(tab.viewId)}
+            </div>
+          ))}
+      </FlexColumn>
     </ContextProxyTab>
   );
 };
@@ -54,9 +92,7 @@ export default function App() {
       />
       <Overlay overlayCtx={overlayCtx} />
       <ToastContainer stacked />
-      <HashRouter basename="/">
-        <RouterInner />
-      </HashRouter>
+      <RouterInner />
     </MainInterfaceWrapper>
   );
 }
