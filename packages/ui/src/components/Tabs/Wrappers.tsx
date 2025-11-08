@@ -14,7 +14,7 @@ export const TabsWrapper = styled.div`
   margin-top: 3rem; // header height offset
   user-select: none;
   width: 100%;
-  height: 49px;
+  min-height: 49px;
 
   // Scrollbar
   scrollbar-color: inherit transparent;

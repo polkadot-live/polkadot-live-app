@@ -74,12 +74,11 @@ export const handleExtrinsicMessage = (
         viewId: 'action',
         label: 'Extrinsics',
       };
-      const { viewId } = tabData;
 
       isMainTabOpen().then((tab) => {
         const browserTabOpen = Boolean(tab);
         browserTabOpen && setBrowserTabId(tab?.id || null);
-        const url = chrome.runtime.getURL(`src/tab/index.html#${viewId}`);
+        const url = chrome.runtime.getURL(`src/tab/index.html`);
 
         if (browserTabOpen) {
           const browserTabId = getBrowserTabId();
