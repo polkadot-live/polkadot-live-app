@@ -8,7 +8,7 @@ import {
   verifyPermission,
   writeFile,
 } from './fileSystem';
-import { renderToast } from '@polkadot-live/ui/utils';
+import { renderToast } from '../../../../utils';
 import type { SettingFlagsAdapter } from './types';
 import type { SettingKey } from '@polkadot-live/types/settings';
 
