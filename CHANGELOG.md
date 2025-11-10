@@ -1,5 +1,42 @@
 # Changelog
 
+## [0.12.0-beta](https://github.com/polkadot-live/polkadot-live-app/compare/v0.11.0-beta...v0.12.0-beta) (2025-11-10)
+
+
+### Features
+
+* **extension:** account subscriptions and events integration ([#1101](https://github.com/polkadot-live/polkadot-live-app/issues/1101)) ([a7eb9ba](https://github.com/polkadot-live/polkadot-live-app/commit/a7eb9baf1da4fdf0f92c5a86b8f6504575ecb9b7))
+* **extension:** accounts screen integration ([#1099](https://github.com/polkadot-live/polkadot-live-app/issues/1099)) ([36b6393](https://github.com/polkadot-live/polkadot-live-app/commit/36b6393d6277e0d7515e11e64d8282663a71d1c2))
+* **extension:** debugging subscriptions integration ([#1105](https://github.com/polkadot-live/polkadot-live-app/issues/1105)) ([e87da79](https://github.com/polkadot-live/polkadot-live-app/commit/e87da796343d95a71e7a583f5522d1f4a4815278))
+* **extension:** establish popup window foundation and infrastructure ([#1096](https://github.com/polkadot-live/polkadot-live-app/issues/1096)) ([7bbc1c1](https://github.com/polkadot-live/polkadot-live-app/commit/7bbc1c1d6e5fcf398c3706ec5881cda3b35b458b))
+* **extension:** events screen abstracted and integrated into extension ([8364822](https://github.com/polkadot-live/polkadot-live-app/commit/8364822acca75be68ed1c7f392873b6b4b363c3b))
+* **extension:** export and import backup implementation ([#1108](https://github.com/polkadot-live/polkadot-live-app/issues/1108)) ([4152335](https://github.com/polkadot-live/polkadot-live-app/commit/415233519b9b871013b449a9aa0dca042411fa99))
+* **extension:** extrinsics integration ([#1103](https://github.com/polkadot-live/polkadot-live-app/issues/1103)) ([df246ca](https://github.com/polkadot-live/polkadot-live-app/commit/df246ca7d902bf93921d0880f42812595e9f94e9))
+* **extension:** implement tab loading and routing logic ([c24a4b7](https://github.com/polkadot-live/polkadot-live-app/commit/c24a4b7a246863ffe42a345475ca744d0401a16e))
+* **extension:** initial connections context and shared state mechanism ([a7a5453](https://github.com/polkadot-live/polkadot-live-app/commit/a7a5453272e5a55de8b354963b931dff9658e0ab))
+* **extension:** integrate ledger address fetching and abstract ledger screens ([fc9a70e](https://github.com/polkadot-live/polkadot-live-app/commit/fc9a70e3a9da51fc58a9c91d5d6a814ab519f544))
+* **extension:** move wallet connect import ui to screens package and integrate into extension ([be2b1d0](https://github.com/polkadot-live/polkadot-live-app/commit/be2b1d057bf8a08de98990effe8cec029d4b1da8))
+* **extension:** open gov integration ([#1104](https://github.com/polkadot-live/polkadot-live-app/issues/1104)) ([93c2c39](https://github.com/polkadot-live/polkadot-live-app/commit/93c2c39f1be6d1730bd44e7af797970f58edbb81))
+* **extension:** popup screens integration ([#1100](https://github.com/polkadot-live/polkadot-live-app/issues/1100)) ([c9714b0](https://github.com/polkadot-live/polkadot-live-app/commit/c9714b0c0c3cf4eb4bb182dce4755de7e2f6e316))
+* **extension:** settings screen integration ([#1098](https://github.com/polkadot-live/polkadot-live-app/issues/1098)) ([46fa3e6](https://github.com/polkadot-live/polkadot-live-app/commit/46fa3e66798d700dc2ee5e66a563126ad5df431a))
+* **extension:** show extrinsic stats on summary screen ([a5506b4](https://github.com/polkadot-live/polkadot-live-app/commit/a5506b40860cd0b50e0014377ba1d6af828771cf))
+* **extension:** summary screen and initial contexts foundation ([9e61065](https://github.com/polkadot-live/polkadot-live-app/commit/9e6106585069e7fd51cfabefc4e9a527e61647d0))
+* **extension:** tab window foundation ([#1097](https://github.com/polkadot-live/polkadot-live-app/issues/1097)) ([7ca94f1](https://github.com/polkadot-live/polkadot-live-app/commit/7ca94f12ec6fe771dcfcc1f816ccb96ccdbe092d))
+* web extension infrastructure ([#1095](https://github.com/polkadot-live/polkadot-live-app/issues/1095)) ([b894464](https://github.com/polkadot-live/polkadot-live-app/commit/b89446441c5df252e149d73fa8dee92d4e32cd8e))
+
+
+### Bug Fixes
+
+* **ci:** build screens package ([c1f464b](https://github.com/polkadot-live/polkadot-live-app/commit/c1f464b5da99f19c58a7cb260f8177754c51cf69))
+* electron build script ([1c5547e](https://github.com/polkadot-live/polkadot-live-app/commit/1c5547eddcccb5048b95c733f1ba3bedf364c7e3))
+* **electron:** cache pending extrinsics and fetch on view mount ([#1115](https://github.com/polkadot-live/polkadot-live-app/issues/1115)) ([b35ad67](https://github.com/polkadot-live/polkadot-live-app/commit/b35ad67d5ce7e159f34e91bdb9911af723802828))
+* **electron:** extrinsic import algorithm when restoring backup data ([#1109](https://github.com/polkadot-live/polkadot-live-app/issues/1109)) ([4bbb906](https://github.com/polkadot-live/polkadot-live-app/commit/4bbb906233ca5b28b8d510c37eec6517d8d28d15))
+* **extrinsics:** cache pending transactions in main process and fetch on view mount ([075779e](https://github.com/polkadot-live/polkadot-live-app/commit/075779eb9caa2e5277cc534d4bb9639e3236896b))
+* **footer:** network font styling ([93a3d11](https://github.com/polkadot-live/polkadot-live-app/commit/93a3d11eb65bbec0dd454a2a8df493634fe687c0))
+* **packages:** resolve circular dependency ([#1116](https://github.com/polkadot-live/polkadot-live-app/issues/1116)) ([f875c70](https://github.com/polkadot-live/polkadot-live-app/commit/f875c70d5fdb34520eacc4d53b0a1fa702526215))
+* **styles:** remove redundant theme class declaration ([f31ad13](https://github.com/polkadot-live/polkadot-live-app/commit/f31ad138df95d865583af6788bdf34312ad32f13))
+* **ui:** import path ([00cd6d8](https://github.com/polkadot-live/polkadot-live-app/commit/00cd6d8d697b6ea3ed92f574c79f48ba80792064))
+
 ## [0.11.0-beta](https://github.com/polkadot-live/polkadot-live-app/compare/v0.10.0-alpha...v0.11.0-beta) (2025-08-30)
 
 
