@@ -1,6 +1,6 @@
 {
   "name": "@polkadot-live/renderer",
-  "version": "0.11.0-beta",
+  "version": "0.12.0-beta",
   "type": "module",
   "private": true,
   "main": "./dist/index.html",
