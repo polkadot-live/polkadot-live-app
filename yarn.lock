@@ -2415,10 +2415,9 @@ __metadata:
   resolution: "@polkadot-live/main@workspace:packages/main"
   dependencies:
     "@polkadot-live/consts": "workspace:*"
+    "@polkadot-live/core": "workspace:*"
     "@polkadot-live/types": "workspace:*"
     "@types/auto-launch": "npm:^5.0.2"
-    "@types/debug": "npm:^4.1.12"
-    debug: "npm:^4.4.1"
   languageName: unknown
   linkType: soft
 
@@ -4512,7 +4511,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/debug@npm:^4, @types/debug@npm:^4.1.12, @types/debug@npm:^4.1.6":
+"@types/debug@npm:^4.1.12, @types/debug@npm:^4.1.6":
   version: 4.1.12
   resolution: "@types/debug@npm:4.1.12"
   dependencies:
@@ -12584,7 +12583,7 @@ __metadata:
     "@testing-library/react": "npm:^16.0.1"
     "@testing-library/user-event": "npm:^14.5.2"
     "@theme-toggles/react": "npm:^4.1.0"
-    "@types/debug": "npm:^4"
+    "@types/debug": "npm:^4.1.12"
     "@types/react": "npm:^19.1.12"
     "@types/react-dom": "npm:^19.1.9"
     "@typescript-eslint/eslint-plugin": "npm:^8.42.0"

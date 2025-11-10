@@ -13,12 +13,13 @@
     "clear:dist": "([ -d \"dist\" ] && rm -fr \"dist\") || true && ([ -d \"node_modules\" ] && rm -fr \"node_modules\") || true",
     "typecheck": "tsc --noEmit"
   },
-  "devDependencies": {
+  "dependencies": {
     "@polkadot-live/consts": "workspace:*",
+    "@polkadot-live/core": "workspace:*"
+  },
+  "devDependencies": {
     "@polkadot-live/types": "workspace:*",
-    "@types/auto-launch": "^5.0.2",
-    "@types/debug": "^4.1.12",
-    "debug": "^4.4.1"
+    "@types/auto-launch": "^5.0.2"
   },
   "packageManager": "yarn@4.0.2"
 }
