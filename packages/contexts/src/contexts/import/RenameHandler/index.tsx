@@ -2,8 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext } from 'react';
-import { renderToast, validateAccountName } from '@polkadot-live/ui/utils';
-import { createSafeContextHook } from '../../../utils';
+import {
+  createSafeContextHook,
+  renderToast,
+  validateAccountName,
+} from '../../../utils';
 import { useAddresses } from '../Addresses';
 import { getRenameHandlerAdapter } from './adapters';
 import type { RenameHandlerContextInterface } from '../../../types/import';

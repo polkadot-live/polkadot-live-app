@@ -6,7 +6,7 @@ import type {
   EncodedAccount,
   ImportedGenericAccount,
 } from '@polkadot-live/types';
-import { renderToast } from '@polkadot-live/ui/utils';
+import { renderToast } from '../../../../utils';
 import type { AccountStatusesAdapter } from './types';
 
 export const chromeAdapter: AccountStatusesAdapter = {

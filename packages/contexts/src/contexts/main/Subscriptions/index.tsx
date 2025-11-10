@@ -3,9 +3,8 @@
 
 import { createContext, useEffect, useState } from 'react';
 import { useAddresses } from '../Addresses';
-import { createSafeContextHook } from '../../../utils';
+import { createSafeContextHook, renderToast } from '../../../utils';
 import { useManage } from '../Manage';
-import { renderToast } from '@polkadot-live/ui/utils';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
 import type { ReactNode } from 'react';

@@ -3,8 +3,7 @@
 
 import { createContext } from 'react';
 import { getTaskHandlerAdapter } from './adapters';
-import { renderToast } from '@polkadot-live/ui/utils';
-import { createSafeContextHook } from '../../../utils';
+import { createSafeContextHook, renderToast } from '../../../utils';
 import { useConnections } from '../../common';
 import { useReferendaSubscriptions } from '../ReferendaSubscriptions';
 import type { ReferendaInfo } from '@polkadot-live/types/openGov';

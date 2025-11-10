@@ -1,14 +1,13 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { createSafeContextHook } from '../../../utils';
+import { createSafeContextHook, renderToast } from '../../../utils';
 import { useConnections } from '../../common';
 import { useIntervalSubscriptions } from '../IntervalSubscriptions';
 import { useManage } from '../Manage';
 import { createContext } from 'react';
 import { getIntervalTaskManagerAdapter } from './adapters';
 import { intervalDurationsConfig } from '@polkadot-live/consts/subscriptions/interval';
-import { renderToast } from '@polkadot-live/ui/utils';
 import type { AnyFunction } from '@polkadot-live/types/misc';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { IntervalTasksManagerContextInterface } from '../../../types/main';
