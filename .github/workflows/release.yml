@@ -58,4 +58,5 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         EP_GH_IGNORE_TIME: true
         MODE: 'production'
+        NODE_OPTIONS: '--max-old-space-size=4096'
       run: yarn vendors && yarn package

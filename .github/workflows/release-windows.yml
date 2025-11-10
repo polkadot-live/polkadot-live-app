@@ -32,7 +32,8 @@ jobs:
 
     - name: Build and Package App
       env:
-        MODE: 'production'
+        MODE: "production"
+        NODE_OPTIONS: "--max-old-space-size=4096"
       run: yarn vendors && yarn package
 
     - name: Find EXE Path
