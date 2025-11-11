@@ -22,10 +22,6 @@ export const connectApis = async () => {
   return true;
 };
 
-export const closeApis = async () => {
-  await APIsController.closeAll();
-};
-
 export const closeApi = async (chainId: ChainID) => {
   await APIsController.close(chainId);
 };

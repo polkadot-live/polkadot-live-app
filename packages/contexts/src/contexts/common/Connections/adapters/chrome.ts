@@ -23,10 +23,16 @@ export const chromeAdapter: ConnectionsAdapter = {
 
   listenSharedStateOnMount: (setCache, cacheRef) => {
     const callback = (message: AnyData) => {
-      if (message.type === 'sharedState' && message.task === 'set') {
-        const { key, value }: { key: SyncID; value: boolean } = message.payload;
-        const map = new Map(cacheRef.current).set(key, value);
-        setStateWithRef(map, setCache, cacheRef);
+      if (message.type === 'sharedState') {
+        switch (message.task) {
+          case 'set': {
+            const { key, value }: { key: SyncID; value: boolean } =
+              message.payload;
+            const map = new Map(cacheRef.current).set(key, value);
+            setStateWithRef(map, setCache, cacheRef);
+            break;
+          }
+        }
       }
     };
     chrome.runtime.onMessage.addListener(callback);
