@@ -93,16 +93,22 @@ export const ConnectionsProvider = ({
     analytics?: { event: string; data: AnyData | null }
   ) => adapter.openTab(tab, analytics);
 
+  /**
+   * Synchronize with stored flags.
+   */
   useEffect(() => {
-    // Synchronize with stored flags.
     const sync = async () => {
       const map = await adapter.getSharedStateOnMount();
       setStateWithRef(map, setCache, cacheRef);
     };
-
-    // Listen for shared state syncing.
-    const removeListener = adapter.listenSharedStateOnMount(setCache, cacheRef);
     sync().then(() => setStateLoaded(true));
+  }, []);
+
+  /**
+   * Listen for shared state syncing.
+   */
+  useEffect(() => {
+    const removeListener = adapter.listenSharedStateOnMount(setCache, cacheRef);
     return () => {
       removeListener && removeListener();
     };

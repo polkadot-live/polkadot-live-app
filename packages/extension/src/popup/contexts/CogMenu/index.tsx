@@ -5,6 +5,7 @@ import { createContext } from 'react';
 import {
   createSafeContextHook,
   useAppSettings,
+  useConnections,
   useHelp,
 } from '@polkadot-live/contexts';
 import { renderToast } from '@polkadot-live/ui/utils';
@@ -27,11 +28,13 @@ export const CogMenuProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { cacheGet, getOnlineMode } = useConnections();
+  const isConnected = cacheGet('mode:connected');
+
   const { openHelp } = useHelp();
   const { toggleSetting } = useAppSettings();
   const { initAppOffline, initAppOnline, setIsAborting } = useBootstrapping();
-  const { appLoading, isAborting, isConnected, isConnecting, isOnlineMode } =
-    useBootstrapping();
+  const { appLoading, isAborting, isConnecting } = useBootstrapping();
 
   // Open tab page.
   const onOpenTab = async (route: string, label: string) => {
@@ -45,7 +48,7 @@ export const CogMenuProvider = ({
   const getConnectionButtonText = (): string => {
     if (isConnecting || appLoading) {
       return 'Abort';
-    } else if (isOnlineMode) {
+    } else if (getOnlineMode()) {
       return 'Disconnect';
     } else {
       return 'Connect';
@@ -61,14 +64,14 @@ export const CogMenuProvider = ({
   const handleConnectClick = async () => {
     if (isConnecting || appLoading) {
       handleAbortConnecting();
-    } else if (isOnlineMode) {
+    } else if (getOnlineMode()) {
       await initAppOffline();
     } else {
       // Confirm online connection.
       if (isConnected) {
         await initAppOnline();
       } else {
-        renderToast('You are offline.', 'toast-connect', 'error', 'top-center');
+        renderToast('You Are Offline', 'toast-connect', 'error', 'top-center');
       }
     }
   };
@@ -120,7 +123,7 @@ export const CogMenuProvider = ({
   // Get app flags.
   const getAppFlags = () => ({
     isConnecting,
-    isOnline: isOnlineMode,
+    isOnline: getOnlineMode(),
     isAborting,
     isLoading: appLoading,
   });

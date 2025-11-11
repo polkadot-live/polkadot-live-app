@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import React, { createContext, useEffect, useRef, useState } from 'react';
-import { createSafeContextHook } from '@polkadot-live/contexts';
+import { createSafeContextHook, useConnections } from '@polkadot-live/contexts';
 import { setStateWithRef } from '@w3ux/utils';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { BootstrappingInterface } from './types';
@@ -21,11 +21,12 @@ export const BootstrappingProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { cacheGet, relayState } = useConnections();
+  const isConnected = cacheGet('mode:connected');
+
   const [appLoading, setAppLoading] = useState(true);
   const [isAborting, setIsAborting] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
-  const [isConnected, setIsConnected] = useState(navigator.onLine);
-  const [isOnlineMode, setIsOnlineMode] = useState(navigator.onLine);
 
   const refAppInitialized = useRef(false);
   const refAborted = useRef(false);
@@ -63,7 +64,6 @@ export const BootstrappingProvider = ({
         await task();
       }
     }
-
     refAppInitialized.current = true;
     if (refAborted.current) {
       setStateWithRef(false, setIsAborting, refAborted);
@@ -83,9 +83,13 @@ export const BootstrappingProvider = ({
     // Set config flag to false to re-start the online mode initialization
     // when connection status goes back online.
     refSwitchingToOnline.current = false;
-    setIsOnlineMode(false);
-    const data = { type: 'bootstrap', task: 'closeApis' };
-    await chrome.runtime.sendMessage(data);
+    relayState('mode:connected', navigator.onLine);
+    relayState('mode:online', false);
+
+    await chrome.runtime.sendMessage({
+      type: 'bootstrap',
+      task: 'switchToOffline',
+    });
   };
 
   /**
@@ -104,32 +108,28 @@ export const BootstrappingProvider = ({
     for (const task of initTasks) {
       await task();
     }
+    await chrome.runtime.sendMessage({
+      type: 'bootstrap',
+      task: 'switchToOnline',
+    });
 
     refSwitchingToOnline.current = false;
     if (refAborted.current) {
       setIsConnecting(false);
       setStateWithRef(false, setIsAborting, refAborted);
       await initAppOffline();
-      return;
+    } else {
+      const isOnline = navigator.onLine;
+      setIsConnecting(false);
+      relayState('mode:connected', isOnline);
+      relayState('mode:online', isOnline);
     }
-
-    setIsConnecting(false);
-    setIsOnlineMode(true);
   };
 
   /**
-   * Handle event listeners.
+   * Initialize app on mount.
    */
   useEffect(() => {
-    // Listen for online status changes.
-    window.addEventListener('online', () => {
-      initAppOnline();
-    });
-    window.addEventListener('offline', () => {
-      initAppOffline();
-    });
-
-    // Initialize app on mount.
     const init = async () => {
       if (!refAppInitialized.current) {
         await initApp();
@@ -139,18 +139,23 @@ export const BootstrappingProvider = ({
   }, []);
 
   /**
-   * Handle Dedot clients when online mode changes.
+   * Handle online status changes.
    */
   useEffect(() => {
-    const disconnectAll = async () => {
-      // TODO
+    const handleOnline = async () => {
+      await initAppOnline();
     };
+    const handleOffline = async () => {
+      await initAppOffline();
+    };
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
 
-    setIsConnected(navigator.onLine);
-    if (!navigator.onLine) {
-      disconnectAll();
-    }
-  }, [navigator.onLine]);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   return (
     <BootstrappingContext
@@ -159,13 +164,11 @@ export const BootstrappingProvider = ({
         isAborting,
         isConnected,
         isConnecting,
-        isOnlineMode,
         initAppOffline,
         initAppOnline,
         setAppLoading,
         setIsAborting,
         setIsConnecting,
-        setIsOnlineMode,
       }}
     >
       {children}
