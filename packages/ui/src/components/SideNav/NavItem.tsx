@@ -25,7 +25,7 @@ export const NavItem = ({
       {icon && (
         <FontAwesomeIcon
           icon={icon}
-          transform={isCollapsed ? 'shrink-1' : 'grow-4'}
+          transform={isCollapsed ? 'grow-0' : 'grow-2'}
           style={{ marginTop: isCollapsed ? '0.5rem' : '0.5rem' }}
         />
       )}

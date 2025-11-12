@@ -7,6 +7,7 @@ export const InfoCardStepsWrapper = styled.div`
   background-color: var(--background-surface);
   color: var(--text-color-secondary);
 
+  font-size: 1rem;
   display: flex;
   gap: 0.5rem;
   padding: 1.25rem 1.5rem;

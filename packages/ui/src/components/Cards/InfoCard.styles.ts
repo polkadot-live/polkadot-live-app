@@ -13,10 +13,11 @@ export const InfoCardWrapper = styled.div`
   margin-top: 0.75rem;
   padding: 1.25rem 1.5rem;
   border-radius: 0.375rem;
+  font-size: 1rem;
 
   .dismiss {
     color: var(--accent-warning) !important;
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     filter: brightness(0.65);
 
     &:hover {
