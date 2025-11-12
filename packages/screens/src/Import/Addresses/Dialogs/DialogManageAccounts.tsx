@@ -105,7 +105,7 @@ export const DialogManageAccounts = ({
               </UI.TooltipRx>
               <h2>{accountName}</h2>
               <UI.TooltipRx theme={theme} text={'Public Key'}>
-                <Style.FlexRow $gap={'0.5rem'}>
+                <Style.FlexRow $gap={'0.5rem'} style={{ fontSize: '1rem' }}>
                   <FontAwesomeIcon icon={FA.faKey} transform={'shrink-4'} />
                   <span>{ellipsisFn(publicKeyHex, 5)}</span>
                 </Style.FlexRow>

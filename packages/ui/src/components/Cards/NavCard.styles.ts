@@ -9,6 +9,7 @@ export const NavCardWrapper = styled.div<{ $thin?: boolean }>`
   padding: ${({ $thin }) => ($thin ? '1.5rem 2rem' : '1.75rem 2rem')};
   min-height: ${({ $thin }) => ($thin ? 'fit-content' : '125px')};
   transition: background-color 150ms ease-out;
+  font-size: 1rem;
   cursor: pointer;
 
   &:hover {

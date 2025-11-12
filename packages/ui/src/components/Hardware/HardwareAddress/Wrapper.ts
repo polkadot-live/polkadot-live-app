@@ -91,6 +91,7 @@ export const HardwareAddressWrapper = styled.div`
   }
   .NoBookmarks {
     color: var(--text-color-secondary);
+    font-size: 1rem;
     opacity: 0.6;
     padding-left: 0.5rem;
   }

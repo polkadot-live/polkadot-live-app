@@ -6,6 +6,7 @@ import styled from 'styled-components';
 /** Import Screens */
 export const ImportAddressRow = styled.div`
   display: flex;
+  font-size: 1rem;
   align-items: center;
   gap: 1.25rem;
   padding: 1.25rem;

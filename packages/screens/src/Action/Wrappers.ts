@@ -14,6 +14,7 @@ export const ExtrinsicItemContentWrapper = styled.div`
   }
   .WarningBox {
     color: var(--accent-warning);
+    font-size: 1rem;
     padding: 0.5rem 0;
   }
   .SummaryButton {

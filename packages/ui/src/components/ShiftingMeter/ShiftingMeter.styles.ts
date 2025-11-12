@@ -10,6 +10,10 @@ export const ShiftingMeterWrapper = styled.div`
     display: flex;
     justify-content: start;
     overflow: hidden;
+
+    div {
+      font-size: 1.1rem;
+    }
   }
 
   .shifting-digits {

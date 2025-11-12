@@ -48,10 +48,13 @@ export const NavItemWrapper = styled(motion.button).attrs<{
     position: relative;
     z-index: 10;
 
+    svg {
+      font-size: 1.15rem;
+    }
     h2 {
-      font-size: 0.95rem;
+      font-size: 0.96rem;
       font-weight: 600;
-      margin-top: 0.5rem;
+      margin-top: 0.4rem;
       color: ${({ $active }) =>
         $active ? 'var(--nav-button-text-active)' : 'var(--nav-button-text)'};
     }

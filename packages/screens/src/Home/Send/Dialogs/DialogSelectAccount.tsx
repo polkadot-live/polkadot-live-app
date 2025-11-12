@@ -341,6 +341,7 @@ export const DialogSelectAccount = ({
                       <Styles.FlexRow>
                         <span
                           style={{
+                            fontSize: '1rem',
                             width: '100%',
                             textAlign: 'center',
                             color: theme.textColorSecondary,

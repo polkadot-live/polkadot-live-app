@@ -201,6 +201,7 @@ export const TaskEntryWrapper = styled(motion.div)`
     width: 100%;
     max-width: 100%;
     align-items: center;
+    font-size: 0.9rem;
 
     > div {
       display: flex;
