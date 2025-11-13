@@ -85,7 +85,7 @@ export const handleImportAddress = async (
     if (!fromBackup) {
       eventBus.dispatchEvent(new CustomEvent('setManagedAccountsState'));
       const id = `import:${address}`;
-      dispatchNotification(id, 'Account Imported', account.name);
+      dispatchNotification(id, 'Subscriptions Added', account.name);
     }
 
     // Send message back to import window to reset account's processing flag.

@@ -119,6 +119,10 @@ export const HardwareAddress = ({
               className="EncodedRow"
             >
               <FlexRow $gap="1.25rem" className="NameAddressRow">
+                <FontAwesomeIcon
+                  className="BookmarkIcon"
+                  icon={FA.faBookmark}
+                />
                 <FlexRow className="NetworkRow">
                   <ChainIcon chainId={cid as ChainID} className="NetworkIcon" />
                   <span className="overflow NetworkLabel">{a.chainId}</span>

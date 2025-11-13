@@ -39,7 +39,10 @@ export class AccountsController {
    */
   private static async import(task: IpcTask) {
     const { accountName }: { accountName: string } = task.data;
-    NotificationsController.showNotification('Account Imported', accountName);
+    NotificationsController.showNotification(
+      'Subscriptions Added',
+      accountName
+    );
   }
 
   /**

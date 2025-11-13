@@ -114,6 +114,11 @@ export const HardwareAddressWrapper = styled.div`
       flex: 1;
       min-width: 0;
 
+      .BookmarkIcon {
+        color: var(--text-dimmed);
+        font-size: 0.75rem;
+        padding-left: 0.25rem;
+      }
       > .EntryArrow {
         color: var(--text-color-secondary);
         opacity: 0.35;
