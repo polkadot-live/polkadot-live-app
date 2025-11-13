@@ -41,6 +41,18 @@ export const ImportHandlerProvider = ({
   const { handleAddressImport, getDefaultName } = useAddresses();
 
   /**
+   * Set default bookmarks on account import.
+   */
+  const handleDefaultBookmarks = (genericAccount: ImportedGenericAccount) => {
+    for (const chainId of [
+      'Polkadot Asset Hub',
+      'Kusama Asset Hub',
+    ] as ChainID[]) {
+      genericAccount.encodedAccounts[chainId].isBookmarked = true;
+    }
+  };
+
+  /**
    * Exposed function to import an address.
    */
   const handleImportAddress = async (
@@ -58,6 +70,8 @@ export const ImportHandlerProvider = ({
       ledgerMeta
     );
 
+    // Handle default bookmarks.
+    handleDefaultBookmarks(genericAccount);
     const { encodedAccounts } = genericAccount;
 
     for (const enAccount of Object.values(encodedAccounts)) {
