@@ -48,6 +48,7 @@ export const DialogSelectAccount = ({
   });
 
   const ChainPrefix = new Map<ChainID, number>([
+    ['Polkadot Asset Hub', 0],
     ['Kusama Asset Hub', 2],
     ['Westend Asset Hub', 42],
   ]);
@@ -56,12 +57,11 @@ export const DialogSelectAccount = ({
    * Util to validate an address.
    */
   const validateAddressInput = () => {
-    let targetChain: ChainID | null = null;
-    if (accountRole === 'recipient') {
-      targetChain = sender?.chainId || null;
-    } else {
-      targetChain = (inputVal as SendAccount).chainId;
-    }
+    const targetChain: ChainID | null =
+      accountRole === 'recipient'
+        ? sender?.chainId || null
+        : (inputVal as SendAccount).chainId;
+
     const targetPrefixes: number[] = targetChain
       ? [ChainPrefix.get(targetChain!)!]
       : [...ChainPrefix.values()];
@@ -86,7 +86,6 @@ export const DialogSelectAccount = ({
     const managed = accounts.find(({ address }) => address === val)
       ? true
       : false;
-
     setRecipientFilter(val);
     setInputVal({
       accountName: ellipsisFn(val, 5),
@@ -94,7 +93,6 @@ export const DialogSelectAccount = ({
       chainId: sender?.chainId || 'Westend Asset Hub',
       managed,
     } as SendRecipient);
-
     setIsInputValid(validateAddressInput());
   };
 
@@ -114,7 +112,6 @@ export const DialogSelectAccount = ({
         managed: false,
         chainId: cid,
       });
-
       accountRole === 'recipient' && setReceiver(null);
       accountRole === 'sender' && setSender(null);
     } else {

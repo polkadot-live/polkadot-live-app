@@ -34,6 +34,7 @@ export interface SendProps {
 }
 
 export type SendAccordionValue =
+  | 'section-network'
   | 'section-sender'
   | 'section-receiver'
   | 'section-send-amount'

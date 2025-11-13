@@ -73,6 +73,9 @@ export const AccordionWrapper = styled.div<{ $onePart?: boolean }>`
     line-height: 1.6rem;
     transition: background-color 0.15s ease-in-out;
 
+    &.disable {
+      cursor: not-allowed;
+    }
     .HeaderContent {
       background-color: var(--background-surface);
       padding-right: 1.5rem;

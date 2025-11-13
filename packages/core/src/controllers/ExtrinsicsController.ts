@@ -45,7 +45,6 @@ export class ExtrinsicsController {
    */
   static getExtrinsicArgs = (actionMeta: ActionMeta): AnyData => {
     const { action, args } = actionMeta;
-
     let pargs: AnyData;
     if (action === 'balances_transferKeepAlive') {
       pargs = [args[0], BigInt(args[1])];
@@ -54,7 +53,6 @@ export class ExtrinsicsController {
     } else {
       pargs = args;
     }
-
     return pargs;
   };
 
@@ -109,25 +107,16 @@ export class ExtrinsicsController {
     if (!estimatedFee) {
       return { isValid: false, reason: 'Estimated fee not set' };
     }
-
     const { action, chainId, from } = info.actionMeta;
     const args = this.getExtrinsicArgs(info.actionMeta);
 
     switch (action) {
       case 'balances_transferKeepAlive': {
-        // NOTE: Disable Polkadot network transfers in pre-releases.
-        if (chainId === 'Polkadot Asset Hub') {
-          return {
-            isValid: false,
-            reason: 'Polkadot token transfers coming soon',
-          };
-        }
-
+        const fee = BigInt(estimatedFee);
         const sendAmount: bigint = args[1];
         const spendable = BigInt(
           await getSpendableBalanceElectron(from, chainId)
         );
-        const fee = BigInt(estimatedFee);
 
         // NOTE: Limit send amount to 100 tokens in pre-releases.
         const biLimit = unitToPlanck(TOKEN_TRANSFER_LIMIT, chainUnits(chainId));
@@ -152,7 +141,6 @@ export class ExtrinsicsController {
         if (spendable < fee) {
           return { isValid: false, reason: 'Insufficient balance' };
         }
-
         // Check rewards are current (extrinsic is not outdated).
         const { extra }: { extra: string } = info.actionMeta.data;
         const rewards = BigInt(extra);
@@ -161,12 +149,10 @@ export class ExtrinsicsController {
         if (rewards !== curRewards) {
           return { isValid: false, reason: 'Outdated extrinsic' };
         }
-
         // Check rewards are non-zero.
         if (rewards === 0n) {
           return { isValid: false, reason: 'No pending rewards' };
         }
-
         return { isValid: true };
       }
     }
@@ -191,13 +177,11 @@ export class ExtrinsicsController {
         const tx = api.tx[pallet][method](...args);
         this.txPayloads.set(txId, { tx });
       }
-
       // Generate payload.
       const cached = this.txPayloads.get(txId);
       if (cached === undefined) {
         throw new ExtrinsicError('ExtrinsicNotFound');
       }
-
       // Build and cache payload.
       const { tx } = cached;
       let rawPayload: SignerPayloadRaw | null = null;
@@ -209,7 +193,6 @@ export class ExtrinsicsController {
           decimals: units,
           tokenSymbol: unit,
         });
-
         const extra = new ExtraSignedExtension(api, {
           signerAddress: from,
           payloadOptions: {
@@ -223,7 +206,6 @@ export class ExtrinsicsController {
         const proof = merkleizer.proofForExtrinsicPayload(
           rawPayload.data as HexString
         );
-
         this.txPayloads.set(txId, {
           ...cached,
           rawPayload,
