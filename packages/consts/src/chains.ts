@@ -384,9 +384,19 @@ export const getSupportedChains = (): Record<ChainID, Chain> => {
 };
 
 /**
+ * Get account sources capable of signing extrinsics.
+ */
+export const getSignSources = (): AccountSource[] => [
+  'ledger',
+  'vault',
+  'wallet-connect',
+];
+
+/**
  * Get chain IDs that support send screen transfers.
  */
 export const getSendChains = (): ChainID[] => [
+  'Polkadot Asset Hub',
   'Kusama Asset Hub',
   'Westend Asset Hub',
 ];

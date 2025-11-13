@@ -5,14 +5,14 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import { FlexColumn, FlexRow } from '@polkadot-live/styles/wrappers';
-import { chainCurrency, PreRelease } from '@polkadot-live/consts/chains';
+import { chainCurrency } from '@polkadot-live/consts/chains';
 import { MainHeading } from '@polkadot-live/ui/components';
 import { useConnections } from '@polkadot-live/contexts';
 import { useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ActionButton, InputWrapper } from './Wrappers';
-import { DialogSelectAccount } from './Dialogs';
+import { DialogSelectAccount, DialogSelectNetwork } from './Dialogs';
 import { formatDecimal, getBalanceText } from '@polkadot-live/core';
 import {
   AccountNameWithTooltip,
@@ -41,6 +41,7 @@ export const Send = ({
     recipientAccounts,
     sendAmount,
     sender,
+    sendNetwork,
     senderAccounts,
     spendable,
     summaryComplete,
@@ -55,31 +56,35 @@ export const Send = ({
     setReceiver,
     setRecipientFilter,
     setSender,
+    setSendNetwork,
   } = useSendNative(initExtrinsic, fetchSendAccounts, getSpendableBalance);
   const emptySenders = senderAccounts.length === 0;
 
   /**
    * Accordion state.
    */
-  const [accordionValue, setAccordionValue] = useState<SendAccordionValue[]>([
-    'section-sender',
-  ]);
+  const [accordionValue, setAccordionValue] =
+    useState<SendAccordionValue>('section-network');
 
   /**
    * Handle clicking a green next step arrow.
    */
   const handleNextStep = (completed: SendAccordionValue) => {
     switch (completed) {
+      case 'section-network': {
+        setAccordionValue('section-sender');
+        break;
+      }
       case 'section-sender': {
-        setAccordionValue(['section-receiver']);
+        setAccordionValue('section-receiver');
         break;
       }
       case 'section-receiver': {
-        setAccordionValue(['section-send-amount']);
+        setAccordionValue('section-send-amount');
         break;
       }
       case 'section-send-amount': {
-        setAccordionValue(['section-summary']);
+        setAccordionValue('section-summary');
         break;
       }
     }
@@ -106,13 +111,11 @@ export const Send = ({
               <div
                 style={{ lineHeight: '1.5rem', color: 'var(--accent-warning)' }}
               >
-                This {PreRelease} release supports native transfers of up to{' '}
-                <b>100</b> tokens on <b>Kusama Asset Hub</b> and{' '}
-                <b>Westend Asset Hub</b>.
+                This release supports transfers of up to <b>100</b> native
+                tokens.
               </div>
             </FlexColumn>
           </UI.InfoCard>
-
           <div>
             <ProgressBar value={progress} max={100} />
           </div>
@@ -123,16 +126,46 @@ export const Send = ({
         <UI.AccordionWrapper $onePart={true}>
           <Accordion.Root
             className="AccordionRoot"
-            type="multiple"
+            type="single"
             value={accordionValue}
             onValueChange={(val) =>
-              setAccordionValue(val as SendAccordionValue[])
+              setAccordionValue(val as SendAccordionValue)
             }
           >
             <FlexColumn $rowGap={'1.25rem'}>
-              {/** Sender Section */}
-              <Accordion.Item className="AccordionItem" value="section-sender">
+              {/** Network Section */}
+              <Accordion.Item className="AccordionItem" value="section-network">
                 <UI.AccordionTrigger narrow={true}>
+                  <TriggerContent
+                    label="Network"
+                    complete={sendNetwork !== null}
+                  />
+                </UI.AccordionTrigger>
+
+                <UI.AccordionContent narrow={true}>
+                  <FlexColumn $rowGap={'2px'}>
+                    <DialogSelectNetwork
+                      sendNetwork={sendNetwork}
+                      setSendNetwork={setSendNetwork}
+                    />
+                    <NextStepArrow
+                      complete={sendNetwork !== null}
+                      onClick={() => handleNextStep('section-network')}
+                    />
+                  </FlexColumn>
+                </UI.AccordionContent>
+              </Accordion.Item>
+
+              {/** Sender Section */}
+              <Accordion.Item
+                disabled={!sendNetwork}
+                className="AccordionItem"
+                value="section-sender"
+              >
+                <UI.AccordionTrigger
+                  className={!sendNetwork ? 'disable' : undefined}
+                  narrow={true}
+                >
                   <TriggerContent label="Sender" complete={sender !== null} />
                 </UI.AccordionTrigger>
                 <UI.AccordionContent narrow={true}>
@@ -195,10 +228,14 @@ export const Send = ({
 
               {/** Recipient Section */}
               <Accordion.Item
+                disabled={!sender}
                 className="AccordionItem"
                 value="section-receiver"
               >
-                <UI.AccordionTrigger narrow={true}>
+                <UI.AccordionTrigger
+                  className={!sender ? 'disable' : undefined}
+                  narrow={true}
+                >
                   <TriggerContent
                     label="Recipient"
                     complete={receiver !== null}
@@ -255,10 +292,14 @@ export const Send = ({
 
               {/** Send Amount Section */}
               <Accordion.Item
+                disabled={!receiver}
                 className="AccordionItem"
                 value="section-send-amount"
               >
-                <UI.AccordionTrigger narrow={true}>
+                <UI.AccordionTrigger
+                  className={!receiver ? 'disable' : undefined}
+                  narrow={true}
+                >
                   <TriggerContent
                     label="Send Amount"
                     loading={fetchingSpendable}
@@ -305,8 +346,21 @@ export const Send = ({
               </Accordion.Item>
 
               {/** Summary Section */}
-              <Accordion.Item className="AccordionItem" value="section-summary">
-                <UI.AccordionTrigger narrow={true}>
+              <Accordion.Item
+                disabled={
+                  !validAmount || sendAmount === '' || sendAmount === '0'
+                }
+                className="AccordionItem"
+                value="section-summary"
+              >
+                <UI.AccordionTrigger
+                  className={
+                    !validAmount || sendAmount === '' || sendAmount === '0'
+                      ? 'disable'
+                      : undefined
+                  }
+                  narrow={true}
+                >
                   <TriggerContent label="Summary" complete={summaryComplete} />
                 </UI.AccordionTrigger>
                 <UI.AccordionContent narrow={true}>
@@ -364,7 +418,7 @@ export const Send = ({
                         $backgroundColor={'var(--button-background-secondary)'}
                         onClick={() => {
                           handleResetClick();
-                          setAccordionValue(['section-sender']);
+                          setAccordionValue('section-network');
                         }}
                         disabled={false}
                       >

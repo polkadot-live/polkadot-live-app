@@ -4,6 +4,12 @@
 import { formatDecimal } from '@polkadot-live/core';
 import { chainUnits, getSendChains } from '@polkadot-live/consts/chains';
 import { ellipsisFn, unitToPlanck } from '@w3ux/utils';
+import {
+  getRecipientAccounts,
+  getSenderAccounts,
+  removeLeadingZeros,
+  truncateDecimals,
+} from './utils';
 import { useEffect, useState } from 'react';
 import type {
   ActionMeta,
@@ -32,68 +38,11 @@ export const useSendNative = (
     new Map<AccountSource, SendAccount[]>()
   );
 
+  const [sendNetwork, setSendNetwork] = useState<ChainID | null>(null);
   const [sender, setSender] = useState<SendAccount | null>(null);
   const [receiver, setReceiver] = useState<SendRecipient | null>(null);
   const [recipientFilter, setRecipientFilter] = useState('');
   const [updateSender, setUpdateSender] = useState(false);
-  const [updateRecipients, setUpdateRecipients] = useState(false);
-
-  /**
-   * Return all addresses capable of signing extrinsics.
-   */
-  const getSenderAccounts = (
-    accountMap?: Map<AccountSource, SendAccount[]>
-  ): SendAccount[] => {
-    const map = accountMap ? accountMap : addressMap;
-    let result: SendAccount[] = [];
-
-    const sources: AccountSource[] = ['ledger', 'vault', 'wallet-connect'];
-    for (const source of sources) {
-      const accounts = map.get(source);
-      if (!accounts || accounts.length === 0) {
-        continue;
-      }
-
-      // NOTE: Disable Polkadot transfers in pre-releases.
-      const supportedChains = getSendChains();
-      const filtered: SendAccount[] = accounts
-        .filter(({ chainId }) => supportedChains.includes(chainId))
-        .map((en) => ({ ...en, source }));
-
-      result = result.concat(filtered);
-    }
-    return result.sort((a, b) => a.alias.localeCompare(b.alias));
-  };
-
-  /**
-   * Return all addresses for receiver address list.
-   */
-  const getRecipientAccounts = (
-    accountMap?: Map<AccountSource, SendAccount[]>
-  ): SendAccount[] => {
-    const map = accountMap ? accountMap : addressMap;
-    let result: SendAccount[] = [];
-    for (const addresses of map.values()) {
-      result = result.concat(addresses);
-    }
-
-    // Filter accounts on sender address network.
-    return (
-      result
-        .filter(({ chainId }) => {
-          if (!sender) {
-            return getSendChains().includes(chainId);
-          } else {
-            return chainId === sender.chainId;
-          }
-        })
-        // NOTE: Disable Polkadot transfers in pre-releases.
-        .filter(({ chainId }) => !chainId.startsWith('Polkadot'))
-        // Don't include sender in list.
-        .filter(({ address }) => address !== sender?.address)
-        .sort((a, b) => a.alias.localeCompare(b.alias))
-    );
-  };
 
   const [senderAccounts, setSenderAccounts] = useState<SendAccount[]>([]);
   const [recipientAccounts, setRecipientAccounts] = useState<SendAccount[]>([]);
@@ -110,17 +59,16 @@ export const useSendNative = (
    * Handle proceed click.
    */
   const handleProceedClick = async () => {
-    if (!(sender && receiver)) {
+    if (!(sendNetwork && sender && receiver)) {
       return;
     }
-    // NOTE: Disable Polkadot transfers in pre-releases.
-    if (!getSendChains().includes(sender.chainId)) {
+    if (!getSendChains().includes(sendNetwork)) {
       return;
     }
     setSummaryComplete(true);
 
     // Data for action meta.
-    const senderObj = getSenderAccounts().find(
+    const senderObj = getSenderAccounts(addressMap, sendNetwork).find(
       ({ address }) => address === sender.address
     )!;
 
@@ -163,9 +111,8 @@ export const useSendNative = (
    * Handle clicking the reset button.
    */
   const handleResetClick = () => {
+    setSendNetwork(null);
     setSender(null);
-    setUpdateSender(true);
-
     setReceiver(null);
     setSpendable(null);
     setValidAmount(true);
@@ -178,35 +125,6 @@ export const useSendNative = (
   const handleSenderChange = (senderAccount: SendAccount) => {
     setSender({ ...senderAccount });
     setUpdateSender(true);
-  };
-
-  /**
-   * Utility to truncate a send amount to the network's allowable decimal places.
-   */
-  const truncateDecimals = (amount: string, chainId: ChainID): string => {
-    const decimals = chainUnits(chainId);
-    const [integerPart, decimalPart] = amount.split('.');
-
-    if (!decimalPart) {
-      return integerPart;
-    }
-    const truncatedDecimal = decimalPart.slice(0, decimals);
-    return `${integerPart}.${truncatedDecimal}`;
-  };
-
-  /**
-   * Removes leading zeros from a numeric string but keeps a single zero if a decimal follows.
-   */
-  const removeLeadingZeros = (value: string): string => {
-    // Remove unnecessary leading zeros.
-    let cleaned = value.replace(/^0+(?=\d)/, '');
-
-    // If the first character is ".", prepend "0"
-    if (cleaned.startsWith('.')) {
-      cleaned = '0' + cleaned;
-    }
-    // Ensure empty string returns "0"
-    return cleaned || '0';
   };
 
   /**
@@ -238,14 +156,12 @@ export const useSendNative = (
         setValidAmount(false);
         return;
       }
-
       // NOTE: Limit send amount to 100 tokens in pre-releases.
       if (Number(amount) > TOKEN_TRANSFER_LIMIT) {
         setSendAmount(amount);
         setValidAmount(false);
         return;
       }
-
       // Check if send amount is less than spendable amount.
       const units = chainUnits(sender.chainId);
       const amountAsPlanck = unitToPlanck(amount, units);
@@ -277,13 +193,13 @@ export const useSendNative = (
    * Conditions to enable the proceed button.
    */
   const proceedDisabled = () =>
+    sendNetwork === null ||
     sender === null ||
     receiver === null ||
     sendAmount === '0' ||
     sendAmount === '' ||
     // NOTE: Limit token transfers to 100 tokens in pre-releases.
     (!isNaN(Number(sendAmount)) && Number(sendAmount) > TOKEN_TRANSFER_LIMIT) ||
-    // NOTE: Disable Polkadot transfers in pre-releases.
     !getSendChains().includes(sender.chainId) ||
     !validAmount ||
     summaryComplete;
@@ -295,115 +211,93 @@ export const useSendNative = (
     const fetch = async () => {
       const map = await fetchSendAccounts();
       setAddressMap(map);
-
-      // Set sender and receiver accounts.
-      setSenderAccounts(getSenderAccounts(map));
-      setRecipientAccounts(getRecipientAccounts(map));
     };
     fetch();
   }, []);
+
+  /**
+   * Sync sender and recipient accounts when send network changes.
+   */
+  useEffect(() => {
+    setReceiver(null);
+    setSender(null);
+    setSendAmount('0');
+    setValidAmount(true);
+
+    if (!sendNetwork) {
+      setSenderAccounts([]);
+      setRecipientAccounts([]);
+    } else {
+      setSenderAccounts(getSenderAccounts(addressMap, sendNetwork));
+      setRecipientAccounts(
+        getRecipientAccounts(addressMap, sendNetwork, sender)
+      );
+    }
+  }, [sendNetwork]);
 
   /**
    * Control summary complete flag.
    */
   useEffect(() => {
     setSummaryComplete(false);
-  }, [sender, receiver, sendAmount]);
+  }, [sendNetwork, sender, receiver, sendAmount]);
 
   /**
    * Progress bar controller.
    */
   useEffect(() => {
+    const steps = 4;
     let conditions = 0;
+    sendNetwork && (conditions += 1);
     sender && (conditions += 1);
     receiver && (conditions += 1);
     sendAmount !== '0' && sendAmount !== '' && validAmount && (conditions += 1);
-
-    switch (conditions) {
-      case 1: {
-        setProgress(100 / 3);
-        break;
-      }
-      case 2: {
-        setProgress((100 / 3) * 2);
-        break;
-      }
-      case 3: {
-        setProgress(100);
-        break;
-      }
-      default: {
-        setProgress(0);
-        break;
-      }
-    }
-  }, [sender, receiver, sendAmount]);
+    setProgress((100 / steps) * conditions);
+  }, [sendNetwork, sender, receiver, sendAmount]);
 
   /**
    * Update state when sender change is triggered.
    */
   useEffect(() => {
+    setUpdateSender(false);
     if (!updateSender) {
       return;
     }
-
-    // Function to get sender's spendable balance.
-    const getSpendable = () => {
-      if (sender === null) {
-        return;
-      }
-      const { address, chainId } = sender;
-      setFetchingSpendable(true);
-      getSpendableBalance(address, chainId).then((result) => {
-        setSpendable(BigInt(result || '0'));
-        setFetchingSpendable(false);
-      });
-    };
-
-    // Setup state when new sender set.
-    if (sender !== null) {
+    if (!sender) {
+      setReceiver(null);
+      setRecipientAccounts([]);
       setSendAmount('0');
       setValidAmount(true);
-      setReceiver(null);
-      setRecipientFilter('');
-      getSpendable();
-    }
-
-    // Update recipients list state.
-    setUpdateRecipients(true);
-    setUpdateSender(false);
-  }, [updateSender]);
-
-  /**
-   * Update recipient accounts list when triggered.
-   */
-  useEffect(() => {
-    if (!updateRecipients) {
       return;
     }
-    const accounts = getRecipientAccounts();
-    sender === null
-      ? setRecipientAccounts(accounts)
-      : setRecipientAccounts(
-          accounts.filter(({ chainId }) => chainId === sender.chainId)
-        );
+    // Update recipient acounts.
+    setReceiver(null);
+    setRecipientAccounts(getRecipientAccounts(addressMap, sendNetwork, sender));
 
-    setUpdateRecipients(false);
-  }, [updateRecipients]);
+    // Get sender's spendable balance.
+    const { address, chainId } = sender;
+    setFetchingSpendable(true);
+    getSpendableBalance(address, chainId).then((result) => {
+      setSpendable(BigInt(result || '0'));
+      setFetchingSpendable(false);
+    });
+
+    // Reset amount input.
+    setSendAmount('0');
+    setValidAmount(true);
+  }, [updateSender]);
 
   /**
    * Update recipient accounts list when filter changes (only in recipients dialog).
    */
   useEffect(() => {
-    const accounts = getRecipientAccounts();
-    if (recipientFilter === '') {
-      setRecipientAccounts([...accounts]);
-    } else {
-      const filtered = accounts.filter(({ address }) =>
-        address.startsWith(recipientFilter)
-      );
-      setRecipientAccounts(filtered);
-    }
+    const accounts = getRecipientAccounts(addressMap, sendNetwork, sender);
+    const applyFilter = recipientFilter !== '';
+    !applyFilter
+      ? setRecipientAccounts([...accounts])
+      : setRecipientAccounts(
+          accounts.filter(({ address }) => address.startsWith(recipientFilter))
+        );
   }, [recipientFilter]);
 
   return {
@@ -413,6 +307,7 @@ export const useSendNative = (
     recipientAccounts,
     sendAmount,
     sender,
+    sendNetwork,
     senderAccounts,
     spendable,
     summaryComplete,
@@ -427,5 +322,6 @@ export const useSendNative = (
     setReceiver,
     setRecipientFilter,
     setSender,
+    setSendNetwork,
   };
 };
