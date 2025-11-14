@@ -255,6 +255,7 @@ export const ReferendaProvider = ({
 
   // Set state after receiving referenda data from main renderer.
   const receiveReferendaData = async (info: ReferendaInfo[]) => {
+    setFetchingReferenda(false);
     setReferendaMap((pv) => pv.set(activeReferendaChainRef.current, info));
     setRefTrigger(true);
   };
@@ -366,7 +367,6 @@ export const ReferendaProvider = ({
           pageCount: getPageCount('active'),
           referenda: active,
         }));
-
         // History directory.
         const history = getReferendaPage(historyPagedReferenda.page, 'history');
         await fetchFromPolkassembly(history);
@@ -375,11 +375,6 @@ export const ReferendaProvider = ({
           pageCount: getPageCount('history'),
           referenda: history,
         }));
-
-        // Cleanup.
-        if (fetchingReferenda) {
-          setFetchingReferenda(false);
-        }
         setRefTrigger(false);
       }
     };

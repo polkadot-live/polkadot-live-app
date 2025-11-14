@@ -276,7 +276,6 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
               {/* Sorting controls */}
               <ControlsWrapper className="ReferendaControls" $padBottom={true}>
                 <ButtonPrimaryInvert
-                  disabled={fetchingReferenda}
                   className="back-btn"
                   text="Back"
                   iconLeft={faCaretLeft}
