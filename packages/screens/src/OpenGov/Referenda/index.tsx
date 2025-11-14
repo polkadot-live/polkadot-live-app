@@ -181,7 +181,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
           <Styles.EmptyWrapper>
             <PuffLoader size={20} color={'var(--text-color-primary)'} />
             <div style={{ paddingLeft: '0.75rem' }}>
-              <p>Fetching referenda...</p>
+              <p>Fetching Referenda</p>
             </div>
           </Styles.EmptyWrapper>
         )}

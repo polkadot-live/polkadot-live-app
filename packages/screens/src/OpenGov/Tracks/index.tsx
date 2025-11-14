@@ -99,7 +99,7 @@ export const Tracks = ({ setSection }: TracksProps) => {
               <Styles.EmptyWrapper>
                 <PuffLoader size={20} color={'var(--text-color-primary)'} />
                 <div style={{ paddingLeft: '0.75rem' }}>
-                  <p>Fetching tracks...</p>
+                  <p>Fetching Tracks</p>
                 </div>
               </Styles.EmptyWrapper>
             )}
