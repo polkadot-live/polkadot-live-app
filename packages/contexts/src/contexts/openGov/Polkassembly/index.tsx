@@ -2,12 +2,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import axios from 'axios';
+import pLimit from 'p-limit';
 import { createContext, useEffect, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
 import { getPolkassemblyAdapter } from './adapters';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ProposalMeta, ReferendaInfo } from '@polkadot-live/types/openGov';
 import type { PolkassemblyContextInterface } from '../../../types/openGov';
+
+const limit = pLimit(8);
 
 type ProposalsMap = Map<ChainID, Map<number /* postId */, ProposalMeta>>;
 
@@ -65,19 +68,20 @@ export const PolkassemblyProvider = ({
     if (toFetch.length === 0) {
       return;
     }
-    for (const { refId } of toFetch) {
-      fetchProposalMeta(chainId, refId)
+
+    toFetch.forEach(({ refId }) => {
+      limit(() => fetchProposalMeta(chainId, refId))
         .then((meta) => {
           setProposalsMap((prev) => {
-            const updatedChain = new Map(prev.get(chainId) ?? []);
-            updatedChain.set(refId, meta);
-            return new Map(prev).set(chainId, updatedChain);
+            const chainMap = new Map(prev.get(chainId) ?? []);
+            chainMap.set(refId, meta);
+            return new Map(prev).set(chainId, chainMap);
           });
         })
         .catch((err) => {
           console.error(err);
         });
-    }
+    });
   };
 
   // Get proposal metadata via referendum id.
