@@ -3,6 +3,7 @@
 
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import { intervalTasks } from '@polkadot-live/consts/subscriptions/interval';
+import { Loader } from './Loader';
 import {
   ReferendumRowWrapper,
   RefStatusBadge,
@@ -51,8 +52,7 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
   } = useTaskHandler();
 
   const { getProposal, usePolkassemblyApi } = usePolkassembly();
-  const proposalData = getProposal(chainId, refId);
-  const { title } = proposalData || { title: '' };
+  const proposalMeta = getProposal(chainId, refId);
 
   // Whether subscriptions are showing.
   const [expanded, setExpanded] = useState(false);
@@ -78,7 +78,15 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
         </div>
         {usePolkassemblyApi ? (
           <TitleWithOrigin>
-            <h4>{title !== '' ? title : 'No Title'}</h4>
+            <div style={{ minHeight: '22px' }}>
+              {proposalMeta ? (
+                <h4 style={{ width: '100%' }} className="text-ellipsis">
+                  {proposalMeta.title}
+                </h4>
+              ) : (
+                <Loader theme={theme} />
+              )}
+            </div>
             <FlexRow>
               <RefStatusBadge $status={refStatus}>{refStatus}</RefStatusBadge>
               <h5 className="origin text-ellipsis">

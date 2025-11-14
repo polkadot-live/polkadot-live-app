@@ -3,6 +3,7 @@
 
 import type { PalletReferendaReferendumStatus as PolkadotRefStatus } from '@dedot/chaintypes/polkadot-asset-hub';
 import type { PalletReferendaReferendumStatus as KusamaRefStatus } from '@dedot/chaintypes/kusama-asset-hub';
+import type { ChainID } from './chains';
 
 export type RefInQueue = RefOngoing; // inQueue: true
 export type RefPreparing = RefOngoing; // deciding: null
@@ -107,9 +108,10 @@ export interface RefOngoing {
   track: string;
 }
 
-export interface PolkassemblyProposal {
-  title: string;
+export interface ProposalMeta {
+  chainId: ChainID;
   postId: number;
+  title: string;
   status: string;
 }
 

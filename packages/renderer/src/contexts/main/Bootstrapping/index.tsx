@@ -1,6 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import React, { createContext, useEffect, useRef, useState } from 'react';
 import {
   disconnectAPIs,
   AccountsController,
@@ -11,7 +12,6 @@ import {
   IntervalsController,
   getOnlineStatus,
 } from '@polkadot-live/core';
-import React, { createContext, useEffect, useRef, useState } from 'react';
 import {
   createSafeContextHook,
   useApiHealth,

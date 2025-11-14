@@ -5,11 +5,7 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as Styles from '@polkadot-live/styles/wrappers';
 import { CheckboxRx, TooltipRx } from '@polkadot-live/ui/components';
-import {
-  useConnections,
-  usePolkassembly,
-  useReferenda,
-} from '@polkadot-live/contexts';
+import { useConnections, useReferenda } from '@polkadot-live/contexts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { DropdownReferendaFilterProps } from './types';
 
@@ -17,7 +13,6 @@ export const DropdownReferendaFilter = ({
   tab,
 }: DropdownReferendaFilterProps) => {
   const { getSortedFilterOptions, setFilterOption } = useReferenda();
-  const { fetchingMetadata } = usePolkassembly();
   const { getTheme } = useConnections();
   const theme = getTheme();
 
@@ -66,12 +61,9 @@ export const DropdownReferendaFilter = ({
                 <DropdownMenu.Item
                   key={`${i}-${filter}`}
                   className="DropdownMenuItem"
-                  disabled={fetchingMetadata}
                   onSelect={(e) => {
-                    if (!fetchingMetadata) {
-                      e.preventDefault();
-                      setFilterOption(tab, filter, !selected);
-                    }
+                    e.preventDefault();
+                    setFilterOption(tab, filter, !selected);
                   }}
                 >
                   <Styles.FlexRow>
@@ -79,9 +71,7 @@ export const DropdownReferendaFilter = ({
                       selected={selected}
                       theme={theme}
                       onChecked={() => {
-                        if (!fetchingMetadata) {
-                          setFilterOption(tab, filter, !selected);
-                        }
+                        setFilterOption(tab, filter, !selected);
                       }}
                     />
                     <span>{label}</span>

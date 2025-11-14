@@ -12194,6 +12194,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"p-limit@npm:^7.2.0":
+  version: 7.2.0
+  resolution: "p-limit@npm:7.2.0"
+  dependencies:
+    yocto-queue: "npm:^1.2.1"
+  checksum: 18e5ea305c31fdc0cf5260da7b63adfd46748cd72d4b40a31a13bd23eeece729c9308047fb5d848d7fa006d1b2fc2f36bb0d9dd173a300c38cd6dc1ed3355382
+  languageName: node
+  linkType: hard
+
 "p-locate@npm:^3.0.0":
   version: 3.0.0
   resolution: "p-locate@npm:3.0.0"
@@ -12621,11 +12630,13 @@ __metadata:
     html5-qrcode: "npm:^2.3.8"
     jsdom: "npm:^25.0.1"
     nx: "npm:^20.1.2"
+    p-limit: "npm:^7.2.0"
     postcss: "npm:^8.5.3"
     prettier: "npm:^3.2.5"
     prettier-plugin-organize-imports: "npm:^3.2.4"
     qrcode-generator: "npm:^1.4.4"
     react: "npm:^19.1.1"
+    react-content-loader: "npm:^7.1.1"
     react-dom: "npm:^19.1.1"
     react-error-boundary: "npm:^4.0.12"
     react-router: "npm:^7.8.2"
@@ -13022,6 +13033,15 @@ __metadata:
   bin:
     rc: ./cli.js
   checksum: 24a07653150f0d9ac7168e52943cc3cb4b7a22c0e43c7dff3219977c2fdca5a2760a304a029c20811a0e79d351f57d46c9bde216193a0f73978496afc2b85b15
+  languageName: node
+  linkType: hard
+
+"react-content-loader@npm:^7.1.1":
+  version: 7.1.1
+  resolution: "react-content-loader@npm:7.1.1"
+  peerDependencies:
+    react: ">=16.0.0"
+  checksum: 322e0d097ac8ca66a3b22d1cf21c1d3a995b7a80deb87b46c21ae5834fbac60950d56b90b79f40f5a07ca1486a36dc6eaddad8ced177106b274859c1fb2aaead
   languageName: node
   linkType: hard
 
@@ -16246,5 +16266,12 @@ __metadata:
   version: 0.1.0
   resolution: "yocto-queue@npm:0.1.0"
   checksum: dceb44c28578b31641e13695d200d34ec4ab3966a5729814d5445b194933c096b7ced71494ce53a0e8820685d1d010df8b2422e5bf2cdea7e469d97ffbea306f
+  languageName: node
+  linkType: hard
+
+"yocto-queue@npm:^1.2.1":
+  version: 1.2.2
+  resolution: "yocto-queue@npm:1.2.2"
+  checksum: 36d4793e9cf7060f9da543baf67c55e354f4862c8d3d34de1a1b1d7c382d44171315cc54abf84d8900b8113d742b830108a1434f4898fb244f9b7e8426d4b8f5
   languageName: node
   linkType: hard

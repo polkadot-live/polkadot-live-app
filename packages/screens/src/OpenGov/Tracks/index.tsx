@@ -10,8 +10,8 @@ import {
   faCaretLeft,
 } from '@fortawesome/free-solid-svg-icons';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
+import { PuffLoader } from 'react-spinners';
 import { StickyHeadingsRow, TrackRow } from './TrackRow';
-import { renderPlaceholders } from '@polkadot-live/ui/utils';
 import type { TracksProps } from '../types';
 
 export const Tracks = ({ setSection }: TracksProps) => {
@@ -34,6 +34,12 @@ export const Tracks = ({ setSection }: TracksProps) => {
       requestTracks(chainId);
     }
   }, [getOnlineMode()]);
+
+  const hasFetchFailed = () => {
+    const a = !getOnlineMode() && !hasFetched;
+    const b = getOnlineMode() && !hasFetched && !fetchingTracks;
+    return a || b;
+  };
 
   return (
     <UI.ScrollableMax>
@@ -79,49 +85,43 @@ export const Tracks = ({ setSection }: TracksProps) => {
           </section>
 
           <section>
-            {/** Offline and not fetched */}
-            {!getOnlineMode() && !hasFetched && (
-              <div style={{ padding: '0.5rem' }}>
-                <p>Currently offline.</p>
-                <p>Please reconnect to load OpenGov tracks.</p>
-              </div>
+            {/** Fetch failed */}
+            {hasFetchFailed() && (
+              <Styles.EmptyWrapper>
+                <div>
+                  <p>No tracks to display.</p>
+                </div>
+              </Styles.EmptyWrapper>
             )}
-            {/** Online and not fetched */}
-            {getOnlineMode() && !hasFetched && !fetchingTracks && (
-              <div style={{ padding: '0.5rem' }}>
-                <p>Could not fetch tracks.</p>
-              </div>
-            )}
+
             {/** Fetching */}
             {fetchingTracks && (
-              <div style={{ marginTop: '2rem' }}>{renderPlaceholders(4)}</div>
+              <Styles.EmptyWrapper>
+                <PuffLoader size={20} color={'var(--text-color-primary)'} />
+                <div style={{ paddingLeft: '0.75rem' }}>
+                  <p>Fetching Tracks</p>
+                </div>
+              </Styles.EmptyWrapper>
             )}
+
             {/** Online and fetched */}
             {hasFetched && !fetchingTracks && tracksMap.has(chainId) && (
-              <div>
-                {fetchingTracks || !tracksMap.has(chainId) ? (
-                  <div style={{ marginTop: '2rem' }}>
-                    {renderPlaceholders(4)}
-                  </div>
-                ) : (
-                  <>
-                    <StickyHeadingsRow />
-                    {/* Track Listing */}
-                    <Styles.ItemsColumn>
-                      {tracksMap
-                        .get(chainId)!
-                        .sort((a, b) =>
-                          sortIdAscending
-                            ? a.trackId - b.trackId
-                            : b.trackId - a.trackId
-                        )
-                        .map((track) => (
-                          <TrackRow key={track.trackId} track={track} />
-                        ))}
-                    </Styles.ItemsColumn>
-                  </>
-                )}
-              </div>
+              <>
+                <StickyHeadingsRow />
+                {/* Track Listing */}
+                <Styles.ItemsColumn>
+                  {tracksMap
+                    .get(chainId)!
+                    .sort((a, b) =>
+                      sortIdAscending
+                        ? a.trackId - b.trackId
+                        : b.trackId - a.trackId
+                    )
+                    .map((track) => (
+                      <TrackRow key={track.trackId} track={track} />
+                    ))}
+                </Styles.ItemsColumn>
+              </>
             )}
           </section>
         </Styles.FlexColumn>
