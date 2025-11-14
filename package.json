@@ -85,6 +85,7 @@
     "html5-qrcode": "^2.3.8",
     "qrcode-generator": "^1.4.4",
     "react": "^19.1.1",
+    "react-content-loader": "^7.1.1",
     "react-dom": "^19.1.1",
     "react-error-boundary": "^4.0.12",
     "react-router": "^7.8.2",

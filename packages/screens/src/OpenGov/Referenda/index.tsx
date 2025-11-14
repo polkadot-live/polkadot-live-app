@@ -20,14 +20,12 @@ import {
 import {
   useConnections,
   useHelp,
-  usePolkassembly,
   useReferenda,
   useReferendaSubscriptions,
   useTracks,
 } from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
 import { ReferendumRow } from './ReferendumRow';
-import { renderPlaceholders } from '@polkadot-live/ui/utils';
 import { DropdownReferendaFilter } from '../Dropdowns';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { HistoryRow } from './HistoryRow';
@@ -59,8 +57,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
   } = useReferenda();
 
   const { openHelp } = useHelp();
-  const { fetchingMetadata } = usePolkassembly();
-  const { fetchingTracks, getOrderedTracks } = useTracks();
+  const { getOrderedTracks } = useTracks();
   const { isSubscribedToReferendum, isNotSubscribedToAny } =
     useReferendaSubscriptions();
 
@@ -76,13 +73,13 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
   const onPageClick = (tab: 'active' | 'history', val: number) => {
     switch (tab) {
       case 'active': {
-        if (activePagedReferenda.page !== val && !fetchingMetadata) {
+        if (activePagedReferenda.page !== val) {
           setPage(val, tab);
         }
         break;
       }
       case 'history': {
-        if (historyPagedReferenda.page !== val && !fetchingMetadata) {
+        if (historyPagedReferenda.page !== val) {
           setPage(val, tab);
         }
         break;
@@ -95,9 +92,6 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     tab: 'active' | 'history',
     dir: 'prev' | 'next'
   ) => {
-    if (fetchingMetadata) {
-      return;
-    }
     const { page, pageCount } =
       tab === 'active' ? activePagedReferenda : historyPagedReferenda;
 
@@ -145,7 +139,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
         <Styles.PaginationRow>
           <Styles.FlexRow $gap={'0.75rem'} style={{ flex: 1 }}>
             <button
-              className={`btn ${fetchingMetadata && 'fetching'}`}
+              className="btn"
               disabled={curPage === 1 || referenda.length === 0}
               onClick={() => onPageArrowClick(tab, 'prev')}
             >
@@ -160,7 +154,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                 )}
                 <button
                   onClick={() => onPageClick(tab, i)}
-                  className={`btn ${curPage === i && 'selected'} ${fetchingMetadata && 'fetching'}
+                  className={`btn ${curPage === i && 'selected'}
               ${j === 2 && getPageNumbers(tab).length === 5 && 'middle'}`}
                 >
                   {i}
@@ -168,17 +162,12 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
               </Styles.FlexRow>
             ))}
             <button
-              className={`btn ${fetchingMetadata && 'fetching'}`}
+              className="btn"
               disabled={curPage === pageCount || referenda.length === 0}
               onClick={() => onPageArrowClick(tab, 'next')}
             >
               <FontAwesomeIcon icon={faCaretRight} />
             </button>
-
-            {/* Loading Spinner */}
-            {fetchingMetadata && (
-              <PuffLoader size={20} color={'var(--text-color-primary)'} />
-            )}
           </Styles.FlexRow>
 
           {/* Find and Filter */}
@@ -188,13 +177,24 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
           </Styles.FlexRow>
         </Styles.PaginationRow>
 
-        {referenda.length === 0 ? (
+        {fetchingReferenda && (
           <Styles.EmptyWrapper>
-            <div>
-              <p>No referenda match the filters.</p>
+            <PuffLoader size={20} color={'var(--text-color-primary)'} />
+            <div style={{ paddingLeft: '0.75rem' }}>
+              <p>Fetching referenda...</p>
             </div>
           </Styles.EmptyWrapper>
-        ) : (
+        )}
+
+        {referenda.length === 0 && !fetchingReferenda && (
+          <Styles.EmptyWrapper>
+            <div>
+              <p>No referenda to display.</p>
+            </div>
+          </Styles.EmptyWrapper>
+        )}
+
+        {referenda.length > 0 && !fetchingReferenda && (
           <Styles.ItemsColumn>
             {tab === 'active' &&
               referenda.map((referendum, i) => (
@@ -348,86 +348,71 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                   <p>Please reconnect to load OpenGov referenda.</p>
                 </div>
               ) : (
-                <div>
-                  {fetchingReferenda || fetchingTracks ? (
-                    <>{renderPlaceholders(4)}</>
-                  ) : (
-                    <Wrappers.TabsRoot
-                      className="TabsRoot"
-                      value={tabVal}
-                      onValueChange={(val) =>
-                        setTabVal(val as 'active' | 'history')
-                      }
-                    >
-                      <Tabs.List
-                        className="TabsList"
-                        aria-label="Manage your account"
-                      >
-                        <Tabs.Trigger className="TabsTrigger" value="active">
-                          Active Referenda
-                        </Tabs.Trigger>
-                        <Tabs.Trigger className="TabsTrigger" value="history">
-                          History
-                        </Tabs.Trigger>
-                      </Tabs.List>
-                      <Tabs.Content className="TabsContent" value="active">
-                        <Styles.FlexColumn>
-                          <section>
-                            <Styles.FlexRow>
-                              <Wrappers.TracksFilterList
-                                $chainId={chainId}
-                                id="TracksContainer"
-                              >
-                                <Styles.FlexRow
-                                  role="button"
-                                  onClick={() => onTrackClick(null)}
-                                  className="filterContainer"
-                                  $gap={'0.75rem'}
-                                >
-                                  <p
-                                    className={getTrackClass(null)}
-                                    role="button"
-                                  >
-                                    All
-                                  </p>
-                                  <span>{getReferendaCount(null)}</span>
-                                </Styles.FlexRow>
-                                {getOrderedTracks(chainId).map((t) => (
-                                  <Styles.FlexRow
-                                    $gap={'0.6rem'}
-                                    role="button"
-                                    onClick={() =>
-                                      onTrackClick(String(t.trackId))
-                                    }
-                                    className="filterContainer"
-                                    key={t.trackName}
-                                  >
-                                    <p
-                                      className={getTrackClass(
-                                        String(t.trackId)
-                                      )}
-                                    >
-                                      {t.label}
-                                    </p>
-                                    <span>
-                                      {getReferendaCount(String(t.trackId))}
-                                    </span>
-                                  </Styles.FlexRow>
-                                ))}
-                              </Wrappers.TracksFilterList>
+                <Wrappers.TabsRoot
+                  className="TabsRoot"
+                  value={tabVal}
+                  onValueChange={(val) =>
+                    setTabVal(val as 'active' | 'history')
+                  }
+                >
+                  <Tabs.List
+                    className="TabsList"
+                    aria-label="Manage your account"
+                  >
+                    <Tabs.Trigger className="TabsTrigger" value="active">
+                      Active Referenda
+                    </Tabs.Trigger>
+                    <Tabs.Trigger className="TabsTrigger" value="history">
+                      History
+                    </Tabs.Trigger>
+                  </Tabs.List>
+                  <Tabs.Content className="TabsContent" value="active">
+                    <Styles.FlexColumn>
+                      <section>
+                        <Styles.FlexRow>
+                          <Wrappers.TracksFilterList
+                            $chainId={chainId}
+                            id="TracksContainer"
+                          >
+                            <Styles.FlexRow
+                              role="button"
+                              onClick={() => onTrackClick(null)}
+                              className="filterContainer"
+                              $gap={'0.75rem'}
+                            >
+                              <p className={getTrackClass(null)} role="button">
+                                All
+                              </p>
+                              <span>{getReferendaCount(null)}</span>
                             </Styles.FlexRow>
-                          </section>
-                        </Styles.FlexColumn>
+                            {getOrderedTracks(chainId).map((t) => (
+                              <Styles.FlexRow
+                                $gap={'0.6rem'}
+                                role="button"
+                                onClick={() => onTrackClick(String(t.trackId))}
+                                className="filterContainer"
+                                key={t.trackName}
+                              >
+                                <p className={getTrackClass(String(t.trackId))}>
+                                  {t.label}
+                                </p>
+                                <span>
+                                  {getReferendaCount(String(t.trackId))}
+                                </span>
+                              </Styles.FlexRow>
+                            ))}
+                          </Wrappers.TracksFilterList>
+                        </Styles.FlexRow>
+                      </section>
+                    </Styles.FlexColumn>
 
-                        {!onlySubscribed && renderListed('active')}
-                        {onlySubscribed && renderSubscribedListed()}
-                      </Tabs.Content>
-                      <Tabs.Content className="TabsContent" value="history">
-                        {renderListed('history')}
-                      </Tabs.Content>
-                    </Wrappers.TabsRoot>
-                  )}
-                </div>
+                    {!onlySubscribed && renderListed('active')}
+                    {onlySubscribed && renderSubscribedListed()}
+                  </Tabs.Content>
+                  <Tabs.Content className="TabsContent" value="history">
+                    {renderListed('history')}
+                  </Tabs.Content>
+                </Wrappers.TabsRoot>
               )}
             </Styles.FlexColumn>
           </section>

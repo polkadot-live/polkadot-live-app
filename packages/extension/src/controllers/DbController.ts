@@ -36,13 +36,13 @@ interface MyDB extends DBSchema {
     key: string;
     value: EventCallback;
   };
-  intervalSubscriptions: {
-    key: ChainID;
-    value: IntervalSubscription[];
-  };
   extrinsics: {
     key: string;
     value: ExtrinsicInfo;
+  };
+  intervalSubscriptions: {
+    key: ChainID;
+    value: IntervalSubscription[];
   };
   managedAccounts: {
     key: ChainID;

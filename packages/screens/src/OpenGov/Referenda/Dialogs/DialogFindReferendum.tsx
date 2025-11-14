@@ -2,11 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Dialog from '@radix-ui/react-dialog';
-import {
-  useConnections,
-  usePolkassembly,
-  useReferenda,
-} from '@polkadot-live/contexts';
+import { useConnections, useReferenda } from '@polkadot-live/contexts';
 import { useState } from 'react';
 import {
   FlexColumn,
@@ -30,7 +26,6 @@ export const DialogFindReferendum = ({ tab }: DialogFindReferendumProps) => {
   const { getActiveReferenda, getHistoryReferenda, getItemsPerPage, setPage } =
     useReferenda();
 
-  const { fetchingMetadata } = usePolkassembly();
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [inputVal, setInputVal] = useState<number | null>(null);
 
@@ -155,7 +150,7 @@ export const DialogFindReferendum = ({ tab }: DialogFindReferendumProps) => {
                 <button
                   type="submit"
                   className="Dialog__Button"
-                  disabled={isInvalidNumber(inputVal) || fetchingMetadata}
+                  disabled={isInvalidNumber(inputVal)}
                 >
                   Search
                 </button>

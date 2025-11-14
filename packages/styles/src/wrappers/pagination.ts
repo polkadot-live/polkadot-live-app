@@ -48,9 +48,6 @@ export const PaginationRow = styled.div`
         left: 10px;
       }
     }
-    &.fetching {
-      cursor: not-allowed;
-    }
     .exclaim {
       color: #cd8500;
       font-size: 0.75rem;

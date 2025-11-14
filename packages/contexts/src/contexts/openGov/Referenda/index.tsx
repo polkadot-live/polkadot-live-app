@@ -37,12 +37,8 @@ export const ReferendaProvider = ({
 }) => {
   const adapter = getReferendaAdapter();
   const { getOnlineMode } = useConnections();
-  const {
-    clearProposals,
-    fetchProposals,
-    setUsePolkassemblyApi,
-    setFetchingMetadata,
-  } = usePolkassembly();
+  const { clearProposals, fetchProposals, setUsePolkassemblyApi } =
+    usePolkassembly();
 
   // Referenda data received from API.
   const [refTrigger, setRefTrigger] = useState(false);
@@ -384,7 +380,6 @@ export const ReferendaProvider = ({
         if (fetchingReferenda) {
           setFetchingReferenda(false);
         }
-        setFetchingMetadata(false);
         setRefTrigger(false);
       }
     };
@@ -402,7 +397,6 @@ export const ReferendaProvider = ({
       const referenda = getReferendaPage(activePagedReferenda.page, 'active');
       await fetchFromPolkassembly(referenda);
       setActivePagedReferenda((pv) => ({ ...pv, referenda }));
-      setFetchingMetadata(false);
     };
     execute();
   }, [activePagedReferenda.page]);
@@ -412,7 +406,6 @@ export const ReferendaProvider = ({
       const referenda = getReferendaPage(historyPagedReferenda.page, 'history');
       await fetchFromPolkassembly(referenda);
       setHistoryPagedReferenda((pv) => ({ ...pv, referenda }));
-      setFetchingMetadata(false);
     };
     execute();
   }, [historyPagedReferenda.page]);
@@ -420,8 +413,8 @@ export const ReferendaProvider = ({
   // Update paged referenda when new chain selected.
   useEffect(() => {
     const execute = async () => {
-      setActivePagedReferenda((pv) => ({ ...pv, page: 1 }));
-      setHistoryPagedReferenda((pv) => ({ ...pv, page: 1 }));
+      setActivePagedReferenda((pv) => ({ ...pv, page: 1, referenda: [] }));
+      setHistoryPagedReferenda((pv) => ({ ...pv, page: 1, referenda: [] }));
 
       // Reset status filters.
       setActiveStatusFilters((pv) => pv.map((f) => ({ ...f, selected: true })));

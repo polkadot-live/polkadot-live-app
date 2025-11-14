@@ -2,8 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Wrappers from './Wrappers';
+import {
+  useConnections,
+  usePolkassembly,
+  useReferenda,
+} from '@polkadot-live/contexts';
+import { Loader } from './Loader';
 import { renderOrigin } from '@polkadot-live/core';
-import { usePolkassembly, useReferenda } from '@polkadot-live/contexts';
 import { FlexRow } from '@polkadot-live/styles/wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHashtag } from '@fortawesome/free-solid-svg-icons';
@@ -15,10 +20,10 @@ interface HistoryRowProps {
 }
 
 export const HistoryRow = ({ info }: HistoryRowProps) => {
+  const { getTheme } = useConnections();
   const { usePolkassemblyApi, getProposal } = usePolkassembly();
   const { activeReferendaChainId: chainId } = useReferenda();
-  const proposalData = getProposal(chainId, info.refId);
-  const { title } = proposalData || { title: '' };
+  const proposalMeta = getProposal(chainId, info.refId);
 
   return (
     <Wrappers.ReferendumRowWrapper>
@@ -30,7 +35,7 @@ export const HistoryRow = ({ info }: HistoryRowProps) => {
 
         {usePolkassemblyApi ? (
           <Wrappers.TitleWithOrigin $direction="row">
-            <FlexRow style={{ width: '100%' }}>
+            <FlexRow style={{ width: '100%', minHeight: '22px' }}>
               <div style={{ width: '80px', minWidth: '80px' }}>
                 <Wrappers.RefStatusBadge
                   style={{ width: 'fit-content' }}
@@ -39,9 +44,15 @@ export const HistoryRow = ({ info }: HistoryRowProps) => {
                   {info.refStatus}
                 </Wrappers.RefStatusBadge>
               </div>
-              <h4 style={{ width: '100%' }} className="text-ellipsis">
-                {title !== '' ? title : 'No Title'}
-              </h4>
+              <div style={{ minWidth: '0', flex: 1 }}>
+                {proposalMeta ? (
+                  <h4 style={{ width: '100%' }} className="text-ellipsis">
+                    {proposalMeta.title}
+                  </h4>
+                ) : (
+                  <Loader theme={getTheme()} />
+                )}
+              </div>
               <div>
                 <ReferendumDropdownMenu chainId={chainId} referendum={info} />
               </div>
