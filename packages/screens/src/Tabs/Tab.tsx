@@ -6,11 +6,12 @@ import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { TabWrapper } from './Wrappers';
 import { useSortable } from '@dnd-kit/sortable';
+import { useTabs } from '@polkadot-live/contexts';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { TabProps } from './types';
 
-export const Tab: React.FC<TabProps> = ({ id, label, tabsCtx }: TabProps) => {
-  const { activeId, clickedId, handleTabClick, handleTabClose } = tabsCtx;
+export const Tab: React.FC<TabProps> = ({ id, label }: TabProps) => {
+  const { activeId, clickedId, handleTabClick, handleTabClose } = useTabs();
 
   /**
    * Dnd

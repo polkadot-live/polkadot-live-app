@@ -20,13 +20,25 @@ export const chromeAdapter: TabsAdapter = {
     /* empty */
   },
 
+  openTabFromMenu: (tab) => {
+    chrome.runtime.sendMessage({
+      type: 'tabs',
+      task: 'openTabFromMenu',
+      payload: { tab },
+    });
+  },
+
   listenOnMount: (addTab) => {
     const callback = (message: AnyData) => {
-      if (message.type !== 'tabs' && message.type !== 'openTab') {
-        return;
+      if (message.type === 'tabs') {
+        switch (message.task) {
+          case 'openTab': {
+            const { tabData }: { tabData: TabData } = message.payload;
+            addTab(tabData);
+            break;
+          }
+        }
       }
-      const { tabData }: { tabData: TabData } = message.payload;
-      addTab(tabData);
     };
     chrome.runtime.onMessage.addListener(callback);
     return () => chrome.runtime.onMessage.removeListener(callback);

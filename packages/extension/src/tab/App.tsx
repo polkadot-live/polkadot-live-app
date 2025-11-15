@@ -7,8 +7,14 @@ import {
   useOverlay,
   useTabs,
 } from '@polkadot-live/contexts';
-import { Help, Overlay, Tabs } from '@polkadot-live/ui/components';
-import { Action, Import, OpenGov, Settings } from '@polkadot-live/screens';
+import { Help, Overlay } from '@polkadot-live/ui/components';
+import {
+  Action,
+  Import,
+  OpenGov,
+  Settings,
+  Tabs,
+} from '@polkadot-live/screens';
 import {
   FlexColumn,
   MainInterfaceWrapper,
@@ -49,7 +55,7 @@ export const RouterInner = () => {
   return (
     <ContextProxyTab>
       <FlexColumn $rowGap={'0'} style={{ height: '100vh', width: '100%' }}>
-        <Tabs tabsCtx={useTabs()} />
+        <Tabs platform="chrome" />
         {tabsData
           .filter((tab) => visitedTabs.has(tab.viewId))
           .map((tab) => (

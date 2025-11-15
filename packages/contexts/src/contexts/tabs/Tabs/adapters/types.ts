@@ -7,5 +7,6 @@ export interface TabsAdapter {
   onMount: (addTab: (tab: TabData) => void) => Promise<void>;
   onCloseTab: (closeViewId: string, showViewId: string | null) => void;
   onClickTab: (viewId: string) => void;
+  openTabFromMenu: (tab: TabData) => void;
   listenOnMount: (addTab: (tab: TabData) => void) => (() => void) | null;
 }

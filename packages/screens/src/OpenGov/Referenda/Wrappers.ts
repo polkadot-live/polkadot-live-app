@@ -101,6 +101,7 @@ export const TitleWithOrigin = styled.div<{ $direction?: 'row' | 'column' }>`
   }
   .origin {
     color: var(--text-color-secondary);
+    font-size: 1rem;
     margin: 0;
   }
 `;

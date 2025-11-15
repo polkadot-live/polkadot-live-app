@@ -68,7 +68,10 @@ export const HistoryRow = ({ info }: HistoryRowProps) => {
                 {info.refStatus}
               </Wrappers.RefStatusBadge>
             </div>
-            <h4 style={{ width: '100%' }} className="text-ellipsis">
+            <h4
+              style={{ width: '100%', fontSize: '1.1rem' }}
+              className="text-ellipsis"
+            >
               {renderOrigin(info)}
             </h4>
             <div>

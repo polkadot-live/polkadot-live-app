@@ -18,6 +18,10 @@ export const electronAdapter: TabsAdapter = {
     window.myAPI.showTab(viewId);
   },
 
+  openTabFromMenu: () => {
+    /* empty */
+  },
+
   listenOnMount: (addTab) => {
     window.myAPI.handleOpenTab((_: IpcRendererEvent, tabData: TabData) => {
       addTab(tabData);
