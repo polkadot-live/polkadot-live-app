@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.13.0-beta](https://github.com/polkadot-live/polkadot-live-app/compare/v0.12.0-beta...v0.13.0-beta) (2025-11-15)
+
+
+### Features
+
+* **accounts:** default bookmarks for imported accounts ([#1123](https://github.com/polkadot-live/polkadot-live-app/issues/1123)) ([6f134f1](https://github.com/polkadot-live/polkadot-live-app/commit/6f134f1162adcb67d47c3e303cd1f1600605b361))
+* **extension:** add dropdown to open tabs in tabs header ([#1125](https://github.com/polkadot-live/polkadot-live-app/issues/1125)) ([6a4d128](https://github.com/polkadot-live/polkadot-live-app/commit/6a4d1289118daf1c543d27f4ae37575c731afe25))
+* **extension:** online mode switching ([#1120](https://github.com/polkadot-live/polkadot-live-app/issues/1120)) ([775ce1d](https://github.com/polkadot-live/polkadot-live-app/commit/775ce1d3651dac906ccbd697d39da6b12988aa16))
+* **opengov:** referenda loading optimisations ([#1124](https://github.com/polkadot-live/polkadot-live-app/issues/1124)) ([db883d6](https://github.com/polkadot-live/polkadot-live-app/commit/db883d6f658b8edded4240d61c581d0b96b1f993))
+* **send:** add network selection step and improve send flow ([#1122](https://github.com/polkadot-live/polkadot-live-app/issues/1122)) ([86174e5](https://github.com/polkadot-live/polkadot-live-app/commit/86174e5ec711d7c7d62faf272bc53a76bcacf608))
+
+
+### Bug Fixes
+
+* **ci:** increase node memory heap ([#1119](https://github.com/polkadot-live/polkadot-live-app/issues/1119)) ([8aec4f2](https://github.com/polkadot-live/polkadot-live-app/commit/8aec4f26a3b18dac710c75607aea7645b6bdcbb4))
+* **extension:** component font rendering ([#1121](https://github.com/polkadot-live/polkadot-live-app/issues/1121)) ([3a75463](https://github.com/polkadot-live/polkadot-live-app/commit/3a75463bb43a83e962836ab81fe2c0d6c135c47e))
+* **packages:** main dependencies ([#1117](https://github.com/polkadot-live/polkadot-live-app/issues/1117)) ([a438aa6](https://github.com/polkadot-live/polkadot-live-app/commit/a438aa6e75bcd7801c450b9303371ca675b10a84))
+
 ## [0.12.0-beta](https://github.com/polkadot-live/polkadot-live-app/compare/v0.11.0-beta...v0.12.0-beta) (2025-11-10)
 
 
