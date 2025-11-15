@@ -40,7 +40,7 @@ export const Tabs = ({ leftButtons, platform, onCloseWindow }: TabsProps) => {
               strategy={horizontalListSortingStrategy}
             >
               {Number(tabsData.length) === 0 && (
-                <div className="NoTabsOpen">No windows open.</div>
+                <div className="NoTabsOpen">No tabs open.</div>
               )}
               {tabsData.map(({ id, label }) => (
                 <Tab key={String(id)} id={id} label={label} />
