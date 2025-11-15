@@ -16,4 +16,5 @@ export interface TabsContextInterface {
   handleDragEnd: (event: DragEndEvent) => void;
   handleTabClick: (id: number) => void;
   handleTabClose: (id: number) => void;
+  openTabFromMenu: (tab: TabData) => void;
 }

@@ -57,6 +57,22 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   /**
+   * Open tab called from the tabs window (extension).
+   */
+  const openTabFromMenu = (tab: TabData) => {
+    const { viewId } = tab;
+    const found = tabsDataRef.current.find((t) => t.viewId === viewId);
+    if (found) {
+      addTab(found);
+    } else {
+      const ids = tabsDataRef.current.map((t) => t.id);
+      tab.id = (ids.length ? Math.max(...ids) : 0) + 1;
+      addTab(tab);
+      adapter.openTabFromMenu(tab);
+    }
+  };
+
+  /**
    * Check pending tabs on mount (chrome).
    */
   useEffect(() => {
@@ -175,6 +191,7 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
         handleDragEnd,
         handleTabClick,
         handleTabClose,
+        openTabFromMenu,
       }}
     >
       {children}

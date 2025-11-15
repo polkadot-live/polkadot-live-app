@@ -1,7 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { version } from '../../../package.json';
+import { version } from '../../package.json';
+import { useTabs } from '@polkadot-live/contexts';
 import { closestCenter, DndContext } from '@dnd-kit/core';
 import {
   horizontalListSortingStrategy,
@@ -11,18 +12,15 @@ import {
   restrictToHorizontalAxis,
   restrictToParentElement,
 } from '@dnd-kit/modifiers';
-import { Header } from '../Header';
+import { DropdownOpenTabs } from './Dropdowns';
+import { Header } from '@polkadot-live/ui/components';
 import { Tab } from './Tab';
 import { TabsWrapper } from './Wrappers';
 import type { TabsProps } from './types';
 
-export const Tabs: React.FC<TabsProps> = ({
-  tabsCtx,
-  leftButtons,
-  onCloseWindow,
-}: TabsProps) => {
-  const { items, sensors, tabsData } = tabsCtx;
-  const { handleDragStart, handleDragEnd } = tabsCtx;
+export const Tabs = ({ leftButtons, platform, onCloseWindow }: TabsProps) => {
+  const { items, sensors, tabsData } = useTabs();
+  const { handleDragStart, handleDragEnd } = useTabs();
 
   return (
     <>
@@ -42,18 +40,14 @@ export const Tabs: React.FC<TabsProps> = ({
               strategy={horizontalListSortingStrategy}
             >
               {Number(tabsData.length) === 0 && (
-                <div className="NoTabsOpen">No windows open.</div>
+                <div className="NoTabsOpen">No tabs open.</div>
               )}
               {tabsData.map(({ id, label }) => (
-                <Tab
-                  key={String(id)}
-                  id={id}
-                  label={label}
-                  tabsCtx={{ ...tabsCtx }}
-                />
+                <Tab key={String(id)} id={id} label={label} />
               ))}
             </SortableContext>
           </DndContext>
+          {platform === 'chrome' && <DropdownOpenTabs />}
         </div>
       </TabsWrapper>
     </>

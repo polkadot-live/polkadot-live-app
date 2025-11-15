@@ -104,7 +104,9 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
                 {refStatus}
               </RefStatusBadge>
             </div>
-            <h4 className="text-ellipsis">{renderOrigin(referendum)}</h4>
+            <h4 style={{ fontSize: '1.1rem' }} className="text-ellipsis">
+              {renderOrigin(referendum)}
+            </h4>
           </FlexRow>
         )}
 

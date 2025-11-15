@@ -25,7 +25,6 @@ export * from './SideNav';
 export * from './SortControls';
 export * from './Stats';
 export * from './Switch';
-export * from './Tabs';
 export * from './TooltipRx';
 export * from './Tx';
 export * from './Utils';
