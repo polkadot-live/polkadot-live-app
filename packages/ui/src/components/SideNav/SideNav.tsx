@@ -1,18 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as FA from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { NavItemWrapper, SideNavWrapper } from './SideNav.styles';
 import { NavItem } from './NavItem';
-import {
-  faBarsStaggered,
-  faComments,
-  faCubesStacked,
-  faDownLeftAndUpRightToCenter,
-  faGaugeSimple,
-  faPaperPlane,
-  faUpRightAndDownLeftFromCenter,
-} from '@fortawesome/free-solid-svg-icons';
 import type { SideNavProps } from './SideNav.types';
 
 export const SideNav = ({ handleSideNavCollapse, navState }: SideNavProps) => {
@@ -23,23 +15,34 @@ export const SideNav = ({ handleSideNavCollapse, navState }: SideNavProps) => {
       <NavItem
         id={0}
         navState={navState}
-        icon={faGaugeSimple}
+        icon={FA.faGaugeSimple}
         label={'Summary'}
       />
       <NavItem
         id={1}
         navState={navState}
-        icon={faBarsStaggered}
+        icon={FA.faBarsStaggered}
         label={'Events'}
       />
+      <NavItem id={2} navState={navState} icon={FA.faLink} label={'Chains'} />
       <NavItem
-        id={2}
+        id={3}
         navState={navState}
-        icon={faCubesStacked}
+        icon={FA.faCubesStacked}
         label={'Accounts'}
       />
-      <NavItem id={3} navState={navState} icon={faComments} label={'OpenGov'} />
-      <NavItem id={4} navState={navState} icon={faPaperPlane} label={'Send'} />
+      <NavItem
+        id={4}
+        navState={navState}
+        icon={FA.faComments}
+        label={'OpenGov'}
+      />
+      <NavItem
+        id={5}
+        navState={navState}
+        icon={FA.faPaperPlane}
+        label={'Send'}
+      />
 
       <NavItemWrapper
         $active={false}
@@ -56,8 +59,8 @@ export const SideNav = ({ handleSideNavCollapse, navState }: SideNavProps) => {
         <FontAwesomeIcon
           icon={
             isCollapsed
-              ? faUpRightAndDownLeftFromCenter
-              : faDownLeftAndUpRightToCenter
+              ? FA.faUpRightAndDownLeftFromCenter
+              : FA.faDownLeftAndUpRightToCenter
           }
           transform={'shrink-2'}
         />

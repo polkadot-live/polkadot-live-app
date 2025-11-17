@@ -6,6 +6,7 @@ export * from './ApiHealth';
 export * from './AppSettings';
 export * from './Bootstrapping';
 export * from './Chains';
+export * from './ChainEvents';
 export * from './CogMenu';
 export * from './DataBackup';
 export * from './Events';

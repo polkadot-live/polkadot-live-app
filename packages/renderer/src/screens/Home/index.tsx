@@ -24,6 +24,7 @@ import {
 } from '@polkadot-live/contexts';
 import { Classic } from '@theme-toggles/react';
 import {
+  ChainEvents,
   Events,
   Footer,
   Manage,
@@ -194,16 +195,19 @@ export const Home = () => {
               {/* Events */}
               {sideNav.selectedId === 1 && <Events />}
 
+              {/* Chain Events */}
+              {sideNav.selectedId === 2 && <ChainEvents />}
+
               {/* Account Subscriptions */}
-              {sideNav.selectedId === 2 && (
+              {sideNav.selectedId === 3 && (
                 <Manage addresses={getAddresses()} />
               )}
 
               {/* OpenGov Subscriptions */}
-              {sideNav.selectedId === 3 && <OpenGovHome />}
+              {sideNav.selectedId === 4 && <OpenGovHome />}
 
               {/* Send */}
-              {sideNav.selectedId === 4 && (
+              {sideNav.selectedId === 5 && (
                 <Send
                   useSendNative={useSendNative}
                   initExtrinsic={initExtrinsicElectron}

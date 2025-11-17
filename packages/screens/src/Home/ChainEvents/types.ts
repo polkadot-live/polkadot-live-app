@@ -1,0 +1,14 @@
+// Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
+// SPDX-License-Identifier: GPL-3.0-only
+
+import type { ChainEventSubscription } from '@polkadot-live/types';
+
+export interface SubscriptionsProps {
+  breadcrumb: string;
+  subscriptions: ChainEventSubscription[];
+  setSection: React.Dispatch<React.SetStateAction<number>>;
+}
+
+export interface SubscriptionRowProps {
+  subscription: ChainEventSubscription;
+}
