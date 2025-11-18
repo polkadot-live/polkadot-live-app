@@ -1,6 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { parseMap } from '@polkadot-live/core';
 import type { AnyData, SubscriptionTask } from '@polkadot-live/types';
 import type { SubscriptionsAdapter } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -49,10 +50,6 @@ export const chromeAdapter: SubscriptionsAdapter = {
             break;
           }
           case 'setAccountSubscriptions': {
-            const parseMap = <K, V>(map: string) => {
-              const array: [K, V][] = JSON.parse(map);
-              return new Map<K, V>(array);
-            };
             const {
               subscriptions,
               activeChains,
@@ -82,10 +79,6 @@ export const chromeAdapter: SubscriptionsAdapter = {
     chrome.runtime
       .sendMessage({ type: 'chainSubscriptions', task: 'getAll' })
       .then((result: string) => {
-        const parseMap = <K, V>(map: string) => {
-          const array: [K, V][] = JSON.parse(map);
-          return new Map<K, V>(array);
-        };
         const parsed = parseMap<ChainID, SubscriptionTask[]>(result);
         setChainSubscriptionsState(parsed);
       });

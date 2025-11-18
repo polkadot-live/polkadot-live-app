@@ -4,6 +4,7 @@
 import { ChainEventsService } from '@polkadot-live/core';
 import { createContext, useEffect, useState } from 'react';
 import { createSafeContextHook } from '@polkadot-live/contexts';
+import { getChainEventAdapter } from './adapters';
 import { getEventSubscriptions } from '@polkadot-live/consts/subscriptions/chainEvents';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChainEventSubscription } from '@polkadot-live/types';
@@ -23,6 +24,8 @@ export const ChainEventsProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const adapter = getChainEventAdapter();
+
   /**
    * Active network and subscriptions.
    */
@@ -48,37 +51,44 @@ export const ChainEventsProvider = ({
     subscription.enabled = status;
 
     setSubscriptions((prev) => {
-      const filtered =
-        prev.get(activeChain)?.filter((s) => !cmp(s, subscription)) ?? [];
-      return new Map(prev).set(activeChain, [...filtered, subscription]);
+      const existing = prev.get(activeChain) ?? [];
+      const updated = existing
+        .filter((s) => !cmp(s, subscription))
+        .concat(subscription);
+      return new Map(prev).set(activeChain, updated);
     });
 
     if (status) {
+      adapter.storeInsert(activeChain, subscription);
       ChainEventsService.insert(activeChain, subscription);
       await ChainEventsService.initEventStream(activeChain);
     } else {
+      adapter.storeRemove(activeChain, subscription);
       ChainEventsService.remove(activeChain, subscription);
       ChainEventsService.tryStopEventsStream(activeChain);
     }
   };
 
   /**
-   * Load subscriptions when active chain changes.
+   * Get active subscriptions from store and merge with defaults.
    */
   useEffect(() => {
-    // Get active subscriptions from store and merge with defaults.
-    !activeChain
-      ? setSubscriptions(new Map())
-      : setSubscriptions((prev) => {
-          const active = subscriptions.get(activeChain) ?? [];
-          return new Map(prev).set(
-            activeChain,
-            getEventSubscriptions(activeChain, 'Referenda').map((a) => {
-              const s = active.find((b) => cmp(a, b));
-              return s ?? a;
-            })
-          );
-        });
+    const fetch = async () => {
+      if (!activeChain) {
+        setSubscriptions(new Map());
+        return;
+      }
+      const active = (await adapter.getStored()).get(activeChain) ?? [];
+      setSubscriptions((prev) =>
+        new Map(prev).set(
+          activeChain,
+          getEventSubscriptions(activeChain, 'Referenda').map(
+            (a) => active.find((b) => cmp(a, b)) ?? a
+          )
+        )
+      );
+    };
+    fetch();
   }, [activeChain]);
 
   return (

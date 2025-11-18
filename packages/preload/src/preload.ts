@@ -119,6 +119,9 @@ export const API: PreloadAPI = {
   sendIntervalTask: async (task: IpcTask) =>
     await ipcRenderer.invoke('main:task:interval', task),
 
+  sendChainEventTask: async (task: IpcTask) =>
+    ipcRenderer.invoke('main:task:chainEvents', task),
+
   /**
    * File import and export
    */

@@ -66,6 +66,10 @@ export interface IpcTask {
     | 'events:makeStale'
     | 'events:update:accountName'
     | 'events:import'
+    // Chain Events
+    | 'chainEvents:getAll'
+    | 'chainEvents:insert'
+    | 'chainEvents:remove'
     // Extrinsics
     | 'extrinsics:getAll'
     | 'extrinsics:getCount'

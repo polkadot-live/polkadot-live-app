@@ -10,13 +10,11 @@ export const arraysAreEqual = <T>(array1: T[], array2: T[]): boolean => {
   if (array1.length !== array2.length) {
     return false;
   }
-
   for (let i = 0; i < array1.length; i++) {
     if (array1[i] !== array2[i]) {
       return false;
     }
   }
-
   return true;
 };
 
@@ -31,7 +29,6 @@ export const areSortedArraysEqual = (
   if (arr1.length !== arr2.length) {
     return false;
   }
-
   const sortedArr1 = [...arr1].sort();
   const sortedArr2 = [...arr2].sort();
 
@@ -40,7 +37,6 @@ export const areSortedArraysEqual = (
       return false;
     }
   }
-
   return true;
 };
 
@@ -108,4 +104,13 @@ export const perbillToPercent = (
   const fractionPart = percentage % 10n ** BigInt(decimals);
 
   return `${integerPart}.${fractionPart.toString().padStart(decimals, '0')}%`;
+};
+
+/**
+ * @name parseMap
+ * @summary Parse a serialized nested array into a map.
+ */
+export const parseMap = <K, V>(map: string) => {
+  const array: [K, V][] = JSON.parse(map);
+  return new Map<K, V>(array);
 };

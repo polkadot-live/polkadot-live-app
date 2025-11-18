@@ -90,6 +90,7 @@ export class ChainEventsService {
     if (status?.active) {
       return;
     }
+
     const client = await APIsController.getConnectedApi(chainId);
     if (!client?.api) {
       return;
@@ -123,7 +124,10 @@ export class ChainEventsService {
    */
   static stopEventsStream = (chainId: ChainID) => {
     const status = ChainEventsService.serviceStatus.get(chainId);
-    if (status) {
+    if (!status) {
+      return;
+    }
+    if (status.active && status.unsub) {
       const { unsub } = status;
       unsub && unsub();
       ChainEventsService.serviceStatus.set(chainId, {

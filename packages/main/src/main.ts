@@ -21,6 +21,7 @@ import { AccountsController } from '@/controller/AccountsController';
 import { AddressesController } from '@/controller/AddressesController';
 import { AnalyticsController } from '@/controller/AnalyticsController';
 import { BackupController } from '@/controller/BackupController';
+import { ChainEventsController } from '@/controller/ChainEventsController';
 import { ExtrinsicsController } from '@/controller/ExtrinsicsController';
 import { EventsController } from '@/controller/EventsController';
 import { IntervalsController } from '@/controller/IntervalsController';
@@ -253,6 +254,10 @@ app.whenReady().then(async () => {
 
   ipcMain.handle('main:task:interval', async (_, task: IpcTask) =>
     IntervalsController.process(task)
+  );
+
+  ipcMain.handle('main:task:chainEvents', (_, task: IpcTask) =>
+    ChainEventsController.process(task)
   );
 
   /**
