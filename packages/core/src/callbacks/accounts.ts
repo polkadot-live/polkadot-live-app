@@ -146,7 +146,6 @@ export const callback_account_balance_free = async (
       entry.task.chainId,
       entry.task.account!.address
     );
-
     if (!account || !account.balance) {
       return false;
     }
@@ -161,7 +160,6 @@ export const callback_account_balance_free = async (
     if (!isOneShot && isSame) {
       return true;
     }
-
     // Update account data if balance has changed.
     if (!isSame) {
       syncFlags.syncAccountBalance = true;

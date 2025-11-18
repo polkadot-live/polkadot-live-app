@@ -33,7 +33,7 @@ export const doRemoveOutdatedEvents = (
 
   const updated = all.filter((ev) => {
     // Keep if it's a chain event.
-    if (ev.who.origin === 'chain') {
+    if (ev.who.origin === 'chain' || ev.who.origin === 'chainEvent') {
       return true;
     }
 

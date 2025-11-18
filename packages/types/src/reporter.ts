@@ -56,7 +56,7 @@ export interface EventCallback {
   category: string;
   taskAction: TaskAction | string; // TODO: IntervalAction
   who: {
-    origin: 'account' | 'chain' | 'interval';
+    origin: 'account' | 'chain' | 'chainEvent' | 'interval';
     data: EventAccountData | EventChainData;
   };
   title: string;
@@ -91,7 +91,7 @@ export interface EventChainData {
 export interface DismissEvent {
   uid: string;
   who: {
-    origin: 'account' | 'chain' | 'interval';
+    origin: 'account' | 'chain' | 'chainEvent' | 'interval';
     data: EventAccountData | EventChainData;
   };
 }

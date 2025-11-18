@@ -1,10 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { store } from '@/main';
 import { getUid } from '@/utils/CryptoUtils';
 import { MainDebug } from '@/utils/DebugUtils';
-import { doRemoveOutdatedEvents, pushUniqueEvent } from '@/utils/EventUtils';
-import { store } from '@/main';
+import { doRemoveOutdatedEvents, pushUniqueEvent } from '@polkadot-live/core';
 import { AddressesController } from './AddressesController';
 import { NotificationsController } from '@/controller/NotificationsController';
 import { SettingsController } from '@/controller/SettingsController';
