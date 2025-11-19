@@ -30,8 +30,12 @@ export const getEventSubscriptions = <P extends PalletName>(
   chainId: ChainID,
   pallet: P
 ): ChainEventSubscription[] =>
-  Object.entries(Pallets[pallet]).map(([eventName, { label }]) => {
-    const id = `${chainId}::${pallet}::${eventName}`;
-    const en = eventName as EventName<P>;
-    return { id, pallet, eventName: en, enabled: false, label, chainId };
-  });
+  Object.entries(Pallets[pallet]).map(([eventName, { label }]) => ({
+    chainId,
+    enabled: false,
+    eventName: eventName as EventName<P>,
+    id: `${chainId}::${pallet}::${eventName}`,
+    label,
+    osNotify: false,
+    pallet,
+  }));

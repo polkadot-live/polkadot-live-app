@@ -11,6 +11,7 @@ export interface ChainEventSubscription {
   pallet: string;
   eventName: string;
   enabled: boolean;
+  osNotify: boolean;
   label: string;
   eventData?: Record<string, AnyData>;
   helpKey?: HelpItemKey;

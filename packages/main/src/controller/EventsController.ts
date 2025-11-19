@@ -43,14 +43,11 @@ export class EventsController {
     if (this.isInitialized) {
       return;
     }
-
     // Set toggle to indicate stored events have been sent to renderer.
     this.isInitialized = true;
 
     // Fetch events from store and send them to renderer.
     const events = this.getEventsFromStore();
-
-    // Return if no events are stored.
     if (events.length === 0) {
       return;
     }

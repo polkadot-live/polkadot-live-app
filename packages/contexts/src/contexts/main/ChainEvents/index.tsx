@@ -70,6 +70,25 @@ export const ChainEventsProvider = ({
   };
 
   /**
+   * Handler to toggle OS notifications.
+   */
+  const toggleOsNotify = (sub: ChainEventSubscription) => {
+    if (!activeChain) {
+      return;
+    }
+    const osNofify = !sub.osNotify;
+    sub.osNotify = osNofify;
+
+    setSubscriptions((prev) => {
+      const existing = prev.get(activeChain) ?? [];
+      const updated = existing.map((s) => (cmp(s, sub) ? sub : s));
+      return new Map(prev).set(activeChain, updated);
+    });
+    adapter.storeInsert(activeChain, sub);
+    ChainEventsService.update(activeChain, sub);
+  };
+
+  /**
    * Get active subscriptions from store and merge with defaults.
    */
   useEffect(() => {
@@ -99,6 +118,7 @@ export const ChainEventsProvider = ({
         setActiveChain,
         setSubscriptions,
         toggle,
+        toggleOsNotify,
       }}
     >
       {children}

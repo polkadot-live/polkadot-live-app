@@ -13,7 +13,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { SubscriptionRowProps } from './types';
 
 export const SubscriptionRow = ({ subscription }: SubscriptionRowProps) => {
-  const { toggle } = useChainEvents();
+  const { toggle, toggleOsNotify } = useChainEvents();
   const { getTheme } = useConnections();
   const { openHelp } = useHelp();
   const theme = getTheme();
@@ -40,13 +40,16 @@ export const SubscriptionRow = ({ subscription }: SubscriptionRowProps) => {
         <div style={{ flex: 0 }}>
           <FlexRow $gap="1.75rem">
             {/* Notification Checkbox */}
-            <div>
+            <button
+              style={{ opacity: subscription.osNotify ? '1' : '0.3' }}
+              onClick={() => toggleOsNotify(subscription)}
+            >
               <TooltipRx text={'OS Notifications'} theme={theme}>
                 <div className="native-wrapper">
                   <FontAwesomeIcon icon={FA.faList} transform={'grow-3'} />
                 </div>
               </TooltipRx>
-            </div>
+            </button>
 
             {/* Toggle Switch */}
             <span style={{ scale: '0.9' }}>

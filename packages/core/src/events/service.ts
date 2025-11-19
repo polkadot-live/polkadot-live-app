@@ -19,13 +19,21 @@ type RuntimeEvent =
   | AssetHubPolkadotRuntimeRuntimeEvent
   | AssetHubKusamaRuntimeRuntimeEvent;
 
+interface ActiveMeta {
+  eventName: string;
+  osNotify: boolean;
+}
+
 const ChainPallets: Record<string, string[]> = {
   'Polkadot Asset Hub': ['Referenda'],
 };
 
 const PalletHandlers: Record<string, AnyData> = {
-  Referenda: (palletEvent: PalletReferendaEvent) =>
-    handleReferendaEvent(palletEvent),
+  Referenda: (
+    chainId: ChainID,
+    osNotify: boolean,
+    palletEvent: PalletReferendaEvent
+  ) => handleReferendaEvent(chainId, osNotify, palletEvent),
 };
 
 interface ServiceStatus {
@@ -52,6 +60,9 @@ export class ChainEventsService {
    */
   static activeSubscriptions = new Map<ChainID, ChainEventSubscription[]>();
 
+  static cmp = (a: ChainEventSubscription, b: ChainEventSubscription) =>
+    a.pallet === b.pallet && a.eventName === b.eventName;
+
   static insert = (chainId: ChainID, sub: ChainEventSubscription) => {
     const ptr = ChainEventsService.activeSubscriptions;
     const cur = ptr.get(chainId);
@@ -59,25 +70,30 @@ export class ChainEventsService {
   };
 
   static remove = (chainId: ChainID, sub: ChainEventSubscription) => {
-    const cmp = (a: ChainEventSubscription, b: ChainEventSubscription) =>
-      a.pallet === b.pallet && a.eventName === b.eventName;
-
+    const cmp = ChainEventsService.cmp;
     const ptr = ChainEventsService.activeSubscriptions;
     const cur = ptr.get(chainId);
     const upd = cur?.filter((s) => !cmp(s, sub)) ?? [];
     upd.length ? ptr.set(chainId, upd) : ptr.delete(chainId);
   };
 
+  static update = (chainId: ChainID, sub: ChainEventSubscription) => {
+    const cmp = ChainEventsService.cmp;
+    const ptr = ChainEventsService.activeSubscriptions;
+    const upd = ptr.get(chainId)?.map((s) => (cmp(s, sub) ? sub : s));
+    upd && ptr.set(chainId, upd);
+  };
+
   /**
    * Build map of active pallets and event names.
    */
   static buildActiveMap = (chainId: ChainID) => {
-    const map = new Map<string, string[]>();
+    const map = new Map<string, ActiveMeta[]>();
     const active = ChainEventsService.activeSubscriptions.get(chainId) ?? [];
-    for (const { pallet, eventName } of active) {
+    for (const { pallet, eventName, osNotify } of active) {
       map.has(pallet)
-        ? map.set(pallet, [...map.get(pallet)!, eventName])
-        : map.set(pallet, [eventName]);
+        ? map.set(pallet, [...map.get(pallet)!, { eventName, osNotify }])
+        : map.set(pallet, [{ eventName, osNotify }]);
     }
     return map;
   };
@@ -90,7 +106,6 @@ export class ChainEventsService {
     if (status?.active) {
       return;
     }
-
     const client = await APIsController.getConnectedApi(chainId);
     if (!client?.api) {
       return;
@@ -108,11 +123,16 @@ export class ChainEventsService {
 
         // Check if subscription is active for this event.
         const isSupportedPallet = chainPallets.includes(pallet);
-        const isOn = activeMap.get(pallet)?.includes(event.palletEvent.name);
+        const meta = activeMap
+          .get(pallet)
+          ?.find((m) => m.eventName === event.palletEvent.name);
+        const isOn = meta !== undefined;
+
         if (isSupportedPallet && isOn) {
           const { palletEvent } = event;
+          const osNotify = meta.osNotify;
           const handler = PalletHandlers[pallet];
-          handler && handler(palletEvent);
+          handler && handler(chainId, palletEvent, osNotify);
         }
       }
     });
