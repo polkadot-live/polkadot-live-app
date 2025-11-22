@@ -13,8 +13,18 @@ import {
 import type {
   AssetHubPolkadotRuntimeRuntimeEvent,
   PolkadotAssetHubApi,
+  FrameSystemEventRecord as PolkadotAssetHubFrameSystemEventRecord,
 } from '@dedot/chaintypes/polkadot-asset-hub';
-import type { AssetHubKusamaRuntimeRuntimeEvent } from '@dedot/chaintypes/kusama-asset-hub';
+import type {
+  AssetHubKusamaRuntimeRuntimeEvent,
+  KusamaAssetHubApi,
+  FrameSystemEventRecord as KusamaAssetHubFrameSystemEventRecord,
+} from '@dedot/chaintypes/kusama-asset-hub';
+import type {
+  AssetHubPaseoRuntimeRuntimeEvent,
+  PaseoAssetHubApi,
+  FrameSystemEventRecord as PaseoAssetHubFrameSystemEventRecord,
+} from '@dedot/chaintypes/paseo-asset-hub';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { DedotClient } from 'dedot';
@@ -30,7 +40,13 @@ import type {
 
 type RuntimeEvent =
   | AssetHubPolkadotRuntimeRuntimeEvent
-  | AssetHubKusamaRuntimeRuntimeEvent;
+  | AssetHubKusamaRuntimeRuntimeEvent
+  | AssetHubPaseoRuntimeRuntimeEvent;
+
+type FrameSystemEventRecord =
+  | PolkadotAssetHubFrameSystemEventRecord
+  | KusamaAssetHubFrameSystemEventRecord
+  | PaseoAssetHubFrameSystemEventRecord;
 
 interface ActiveMeta {
   eventName: string;
@@ -140,32 +156,63 @@ export class ChainEventsService {
       return;
     }
 
-    const api = client.api as DedotClient<PolkadotAssetHubApi>;
-    const unsub = await api.query.system.events((events) => {
-      // Support pallets for this network.
-      const chainPallets: string[] = ChainPallets[chainId];
-      const activeMap = ChainEventsService.buildActiveMap(chainId);
-
-      for (const item of events) {
-        const { event }: { event: RuntimeEvent } = item;
-        const { pallet } = event;
-
-        // Check if subscription is active for this event.
-        const isSupportedPallet = chainPallets.includes(pallet);
-        const meta = activeMap
-          .get(pallet)
-          ?.find((m) => m.eventName === event.palletEvent.name);
-        const isOn = meta !== undefined;
-
-        if (isSupportedPallet && isOn) {
-          const { palletEvent } = event;
-          const osNotify = meta.osNotify;
-          const handler = PalletHandlers[pallet];
-          handler && handler(chainId, osNotify, palletEvent);
-        }
+    switch (chainId) {
+      case 'Polkadot Asset Hub': {
+        const api = client.api as DedotClient<PolkadotAssetHubApi>;
+        const unsub = await api.query.system.events((events) => {
+          ChainEventsService.handleEvents(chainId, events);
+        });
+        ChainEventsService.serviceStatus.set(chainId, { active: true, unsub });
+        break;
       }
-    });
-    ChainEventsService.serviceStatus.set(chainId, { active: true, unsub });
+      case 'Kusama Asset Hub': {
+        const api = client.api as DedotClient<KusamaAssetHubApi>;
+        const unsub = await api.query.system.events((events) => {
+          ChainEventsService.handleEvents(chainId, events);
+        });
+        ChainEventsService.serviceStatus.set(chainId, { active: true, unsub });
+        break;
+      }
+      case 'Paseo Asset Hub': {
+        const api = client.api as DedotClient<PaseoAssetHubApi>;
+        const unsub = await api.query.system.events((events) => {
+          ChainEventsService.handleEvents(chainId, events);
+        });
+        ChainEventsService.serviceStatus.set(chainId, { active: true, unsub });
+        break;
+      }
+    }
+  };
+
+  /**
+   * Process events for a specific chain.
+   */
+  static handleEvents = (
+    chainId: ChainID,
+    events: FrameSystemEventRecord[]
+  ) => {
+    // Support pallets for this network.
+    const chainPallets: string[] = ChainPallets[chainId];
+    const activeMap = ChainEventsService.buildActiveMap(chainId);
+
+    for (const item of events) {
+      const { event }: { event: RuntimeEvent } = item;
+      const { pallet } = event;
+
+      // Check if subscription is active for this event.
+      const isSupportedPallet = chainPallets.includes(pallet);
+      const meta = activeMap
+        .get(pallet)
+        ?.find((m) => m.eventName === event.palletEvent.name);
+      const isOn = meta !== undefined;
+
+      if (isSupportedPallet && isOn) {
+        const { palletEvent } = event;
+        const osNotify = meta.osNotify;
+        const handler = PalletHandlers[pallet];
+        handler && handler(chainId, osNotify, palletEvent);
+      }
+    }
   };
 
   /**

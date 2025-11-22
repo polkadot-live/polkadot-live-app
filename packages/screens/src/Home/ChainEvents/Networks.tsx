@@ -6,8 +6,9 @@ import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as UI from '@polkadot-live/ui/components';
 import * as Wrappers from '@polkadot-live/styles/wrappers';
 import { useState } from 'react';
-import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { ButtonText } from '@polkadot-live/ui/kits/buttons';
+import { ChainPallets } from '@polkadot-live/consts/subscriptions/chainEvents';
+import { ChevronDownIcon } from '@radix-ui/react-icons';
 import type { ChainID } from '@polkadot-live/types/chains';
 
 interface NetworksProps {
@@ -51,7 +52,7 @@ export const Networks = ({
 
               <UI.AccordionContent transparent={true}>
                 <Wrappers.ItemsColumn>
-                  {(['Polkadot Asset Hub'] as ChainID[]).map((cid) => (
+                  {(Object.keys(ChainPallets) as ChainID[]).map((cid) => (
                     <Wrappers.ItemEntryWrapper
                       whileHover={{ scale: 1.01 }}
                       whileTap={{ scale: 0.99 }}

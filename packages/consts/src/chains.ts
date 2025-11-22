@@ -196,8 +196,8 @@ export const ChainList = new Map<ChainID, Chain>([
     {
       endpoints: {
         rpcs: [
-          'wss://asset-hub-paseo-rpc.dwellir.com',
           'wss://sys.ibp.network/asset-hub-paseo',
+          'wss://asset-hub-paseo-rpc.dwellir.com',
           'wss://asset-hub-paseo.dotters.network',
           'wss://pas-rpc.stakeworld.io/assethub',
           'wss://sys.turboflakes.io/asset-hub-paseo',

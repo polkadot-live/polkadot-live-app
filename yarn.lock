@@ -471,12 +471,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@dedot/chaintypes@npm:^0.180.0":
-  version: 0.180.0
-  resolution: "@dedot/chaintypes@npm:0.180.0"
+"@dedot/chaintypes@npm:^0.185.0":
+  version: 0.185.0
+  resolution: "@dedot/chaintypes@npm:0.185.0"
   peerDependencies:
     dedot: ">=0.16.0"
-  checksum: 9d4a94d28bd29bf26bfe4927f21a5cd62520aa5634a911e0df554ac725f864dc380f941350d916e9065f61e65eb882ca2e14b5b8901c561626b75f7a3bf1cc96
+  checksum: bc5bff204745fd8e619b653e055a44d2fb6c8f3a4ec14261980d09561c3382ad5cb832d32587c26a61b0928e403bb65498632c0397a07340ebe9b6055fadbc2a
   languageName: node
   linkType: hard
 
@@ -12558,7 +12558,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "polkadot-live@workspace:."
   dependencies:
-    "@dedot/chaintypes": "npm:^0.180.0"
+    "@dedot/chaintypes": "npm:^0.185.0"
     "@dnd-kit/core": "npm:^6.1.0"
     "@dnd-kit/modifiers": "npm:^7.0.0"
     "@dnd-kit/sortable": "npm:^8.0.0"
