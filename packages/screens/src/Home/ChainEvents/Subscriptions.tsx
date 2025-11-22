@@ -26,12 +26,30 @@ export const Subscriptions = ({
   const { getOnlineMode } = useConnections();
   const { hasConnectionIssue } = useApiHealth();
 
-  const [accordionVal, setAccordionVal] = useState<string[]>(['Referenda']);
+  const [accordionVal, setAccordionVal] = useState<string>('Balances');
 
   // Utility to determine if a connection issue exists.
   const showConnectionIssue = (): boolean => {
     const chainId = breadcrumb as ChainID;
     return chainId ? hasConnectionIssue(chainId) : false;
+  };
+
+  // Get readable pallet name.
+  const getReadablePallet = (pallet: string) => {
+    switch (pallet) {
+      case 'Balances':
+        return 'Balances';
+      case 'ConvictionVoting':
+        return 'Conviction Voting';
+      case 'NominationPools':
+        return 'Nomination Pools';
+      case 'Referenda':
+        return 'Referenda';
+      case 'Staking':
+        return 'Staking';
+      default:
+        return 'Unknown Category';
+    }
   };
 
   // Handle back click.
@@ -42,7 +60,14 @@ export const Subscriptions = ({
   // Get categorized subscriptions.
   const getCategorised = (): Record<string, ChainEventSubscription[]> => {
     const result: Record<string, ChainEventSubscription[]> = {};
-    for (const pallet of ['Referenda']) {
+    const pallets = [
+      'Balances',
+      'ConvictionVoting',
+      'NominationPools',
+      'Referenda',
+      'Staking',
+    ];
+    for (const pallet of pallets) {
       result[pallet] = subscriptions
         .filter(({ pallet: p }) => p === pallet)
         .sort((a, b) => a.label.localeCompare(b.label));
@@ -76,9 +101,9 @@ export const Subscriptions = ({
         <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
           <Accordion.Root
             className="AccordionRoot"
-            type="multiple"
+            type="single"
             value={accordionVal}
-            onValueChange={(val) => setAccordionVal(val as string[])}
+            onValueChange={(val) => setAccordionVal(val as string)}
           >
             <FlexColumn>
               {Object.entries(getCategorised()).map(([pallet, subs]) => (
@@ -93,7 +118,9 @@ export const Subscriptions = ({
                         className="AccordionChevron"
                         aria-hidden
                       />
-                      <UI.TriggerHeader>{pallet}</UI.TriggerHeader>
+                      <UI.TriggerHeader>
+                        {getReadablePallet(pallet)}
+                      </UI.TriggerHeader>
                     </UI.AccordionTrigger>
                   </FlexRow>
 
@@ -101,7 +128,7 @@ export const Subscriptions = ({
                     <ItemsColumn>
                       {subs.map((sub, i) => (
                         <SubscriptionRow
-                          key={`${pallet}-${i}`}
+                          key={`${pallet}-${sub.eventName}-${i}`}
                           subscription={sub}
                         />
                       ))}

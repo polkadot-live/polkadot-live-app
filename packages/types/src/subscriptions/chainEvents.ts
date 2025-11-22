@@ -5,6 +5,47 @@ import type { AnyData } from '..//misc';
 import type { ChainID } from '../chains';
 import type { HelpItemKey } from '../help';
 
+import type {
+  PalletBalancesEvent as PolkadotAssetHubBalancesEvent,
+  PalletConvictionVotingEvent as PolkadotAssetHubConvictionVotingEvent,
+  PalletNominationPoolsEvent as PolkadotAssetHubNominationPoolsEvent,
+  PalletReferendaEvent as PolkadotAssetHubReferendaEvent,
+  PalletStakingAsyncPalletEvent as PolkadotAssetHubStakingEvent,
+} from '@dedot/chaintypes/polkadot-asset-hub';
+import type {
+  PalletBalancesEvent as KusamaAssetHubBalancesEvent,
+  PalletConvictionVotingEvent as KusamaAssetHubConvictionVotingEvent,
+  PalletNominationPoolsEvent as KusamaAssetHubNominationPoolsEvent,
+  PalletReferendaEvent as KusamaAssetHubReferendaEvent,
+  PalletStakingAsyncPalletEvent as KusamaAssetHubStakingEvent,
+} from '@dedot/chaintypes/kusama-asset-hub';
+
+/**
+ * Union event types.
+ */
+export type PalletBalancesEvent =
+  | PolkadotAssetHubBalancesEvent
+  | KusamaAssetHubBalancesEvent;
+
+export type PalletConvictionVotingEvent =
+  | PolkadotAssetHubConvictionVotingEvent
+  | KusamaAssetHubConvictionVotingEvent;
+
+export type PalletNominationPoolsEvent =
+  | PolkadotAssetHubNominationPoolsEvent
+  | KusamaAssetHubNominationPoolsEvent;
+
+export type PalletReferendaEvent =
+  | PolkadotAssetHubReferendaEvent
+  | KusamaAssetHubReferendaEvent;
+
+export type PalletStakingEvent =
+  | PolkadotAssetHubStakingEvent
+  | KusamaAssetHubStakingEvent;
+
+/**
+ * Chain event subscription.
+ */
 export interface ChainEventSubscription {
   id: string;
   chainId: ChainID;

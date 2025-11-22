@@ -17,6 +17,7 @@ export const SubscriptionRow = ({ subscription }: SubscriptionRowProps) => {
   const { getTheme } = useConnections();
   const { openHelp } = useHelp();
   const theme = getTheme();
+  const { enabled, helpKey, label, osNotify } = subscription;
 
   return (
     <TaskEntryWrapper whileHover={{ scale: 1.01 }}>
@@ -27,13 +28,11 @@ export const SubscriptionRow = ({ subscription }: SubscriptionRowProps) => {
               <div
                 className="icon-wrapper"
                 style={{ marginRight: '0.5rem' }}
-                onClick={() =>
-                  subscription.helpKey && openHelp(subscription.helpKey)
-                }
+                onClick={() => helpKey && openHelp(helpKey)}
               >
                 <FontAwesomeIcon icon={FA.faInfo} transform={'shrink-1'} />
               </div>
-              {subscription.label}
+              {label}
             </h3>
           </div>
         </div>
@@ -41,7 +40,7 @@ export const SubscriptionRow = ({ subscription }: SubscriptionRowProps) => {
           <FlexRow $gap="1.75rem">
             {/* Notification Checkbox */}
             <button
-              style={{ opacity: subscription.osNotify ? '1' : '0.3' }}
+              style={{ opacity: osNotify ? '1' : '0.3' }}
               onClick={() => toggleOsNotify(subscription)}
             >
               <TooltipRx text={'OS Notifications'} theme={theme}>
@@ -57,7 +56,7 @@ export const SubscriptionRow = ({ subscription }: SubscriptionRowProps) => {
                 style={{ paddingRight: '10px' }}
                 size="sm"
                 type="primary"
-                isOn={subscription.enabled}
+                isOn={enabled}
                 handleToggle={async () => {
                   await toggle(subscription);
                 }}

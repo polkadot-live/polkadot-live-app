@@ -2,18 +2,30 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { APIsController } from '../controllers';
-import { handleReferendaEvent } from './handlers';
+import {
+  handleReferendaEvent,
+  handleBalancesEvent,
+  handleStakingEvent,
+  handleNominationPoolsEvent,
+  handleConvictionVotingEvent,
+} from './handlers';
 import type {
   AssetHubPolkadotRuntimeRuntimeEvent,
-  PalletReferendaEvent,
   PolkadotAssetHubApi,
 } from '@dedot/chaintypes/polkadot-asset-hub';
 import type { AssetHubKusamaRuntimeRuntimeEvent } from '@dedot/chaintypes/kusama-asset-hub';
 import type { AnyData } from '@polkadot-live/types/misc';
-import type { ChainEventSubscription } from 'packages/types/src';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { DedotClient } from 'dedot';
 import type { Unsub } from 'dedot/types';
+import type {
+  ChainEventSubscription,
+  PalletBalancesEvent,
+  PalletConvictionVotingEvent,
+  PalletNominationPoolsEvent,
+  PalletReferendaEvent,
+  PalletStakingEvent,
+} from '@polkadot-live/types';
 
 type RuntimeEvent =
   | AssetHubPolkadotRuntimeRuntimeEvent
@@ -25,15 +37,41 @@ interface ActiveMeta {
 }
 
 const ChainPallets: Record<string, string[]> = {
-  'Polkadot Asset Hub': ['Referenda'],
+  'Polkadot Asset Hub': [
+    'Balances',
+    'ConvictionVoting',
+    'NominationPools',
+    'Referenda',
+    'Staking',
+  ],
 };
 
 const PalletHandlers: Record<string, AnyData> = {
+  Balances: (
+    chainId: ChainID,
+    osNotify: boolean,
+    palletEvent: PalletBalancesEvent
+  ) => handleBalancesEvent(chainId, osNotify, palletEvent),
+  ConvictionVoting: (
+    chainId: ChainID,
+    osNotify: boolean,
+    palletEvent: PalletConvictionVotingEvent
+  ) => handleConvictionVotingEvent(chainId, osNotify, palletEvent),
+  NominationPools: (
+    chainId: ChainID,
+    osNotify: boolean,
+    palletEvent: PalletNominationPoolsEvent
+  ) => handleNominationPoolsEvent(chainId, osNotify, palletEvent),
   Referenda: (
     chainId: ChainID,
     osNotify: boolean,
     palletEvent: PalletReferendaEvent
   ) => handleReferendaEvent(chainId, osNotify, palletEvent),
+  Staking: (
+    chainId: ChainID,
+    osNotify: boolean,
+    palletEvent: PalletStakingEvent
+  ) => handleStakingEvent(chainId, osNotify, palletEvent),
 };
 
 interface ServiceStatus {
@@ -132,7 +170,7 @@ export class ChainEventsService {
           const { palletEvent } = event;
           const osNotify = meta.osNotify;
           const handler = PalletHandlers[pallet];
-          handler && handler(chainId, palletEvent, osNotify);
+          handler && handler(chainId, osNotify, palletEvent);
         }
       }
     });

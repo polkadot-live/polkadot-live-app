@@ -138,14 +138,17 @@ export const formatChainUnits = (units: string, chainId: ChainID) => {
  */
 export const getBalanceText = (
   balance: bigint | string,
-  chainId: ChainID
+  chainId: ChainID,
+  decimals = 5
 ): string => {
   const asUnit = planckToUnit(balance, chainUnits(chainId));
-  const regexA = /\.0+$/; // Remove trailing zeros after a decimal point.
-  const regexB = /\B(?=(\d{3})+(?!\d))/g; // Insert commas as thousand separators.
-  const formatted: string = truncateDecimals(asUnit, 3)
-    .replace(regexA, '')
-    .replace(regexB, ',');
+  const truncated = truncateDecimals(asUnit, decimals);
+  const [intPart, fracPart] = truncated.split('.');
+  const withCommas = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const cleanedFraction = fracPart?.replace(/0+$/, '') || '';
+  const formatted = cleanedFraction
+    ? `${withCommas}.${cleanedFraction}`
+    : withCommas;
   return `${formatted} ${chainCurrency(chainId)}`;
 };
 

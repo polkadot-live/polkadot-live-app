@@ -98,14 +98,24 @@ export const ChainEventsProvider = ({
         return;
       }
       const active = (await adapter.getStored()).get(activeChain) ?? [];
-      setSubscriptions((prev) =>
-        new Map(prev).set(
-          activeChain,
-          getEventSubscriptions(activeChain, 'Referenda').map(
-            (a) => active.find((b) => cmp(a, b)) ?? a
-          )
-        )
-      );
+      setSubscriptions((prev) => {
+        let subs: ChainEventSubscription[] = [];
+        const pallets = [
+          'Balances',
+          'ConvictionVoting',
+          'NominationPools',
+          'Referenda',
+          'Staking',
+        ];
+        for (const pallet of pallets) {
+          subs = subs.concat(
+            getEventSubscriptions(activeChain, pallet).map(
+              (a) => active.find((b) => cmp(a, b)) ?? a
+            )
+          );
+        }
+        return new Map(prev).set(activeChain, subs);
+      });
     };
     fetch();
   }, [activeChain]);
