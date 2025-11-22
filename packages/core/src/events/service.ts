@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { APIsController } from '../controllers';
+import { ChainPallets } from '@polkadot-live/consts/subscriptions/chainEvents';
 import {
   handleReferendaEvent,
   handleBalancesEvent,
@@ -35,16 +36,6 @@ interface ActiveMeta {
   eventName: string;
   osNotify: boolean;
 }
-
-const ChainPallets: Record<string, string[]> = {
-  'Polkadot Asset Hub': [
-    'Balances',
-    'ConvictionVoting',
-    'NominationPools',
-    'Referenda',
-    'Staking',
-  ],
-};
 
 const PalletHandlers: Record<string, AnyData> = {
   Balances: (

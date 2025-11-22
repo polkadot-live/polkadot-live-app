@@ -3,17 +3,26 @@
 
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
+
+import {
+  ChainPallets,
+  getReadablePallet,
+} from '@polkadot-live/consts/subscriptions/chainEvents';
+import { ChevronDownIcon } from '@radix-ui/react-icons';
+import { SubscriptionRow } from './SubscriptionRow';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
-import { useApiHealth, useConnections } from '@polkadot-live/contexts';
+import {
+  useApiHealth,
+  useChainEvents,
+  useConnections,
+} from '@polkadot-live/contexts';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import {
   FlexColumn,
   FlexRow,
   ItemsColumn,
 } from '@polkadot-live/styles/wrappers';
-import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { SubscriptionRow } from './SubscriptionRow';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChainEventSubscription } from '@polkadot-live/types';
 import type { SubscriptionsProps } from './types';
@@ -23,6 +32,7 @@ export const Subscriptions = ({
   setSection,
   subscriptions,
 }: SubscriptionsProps) => {
+  const { activeChain } = useChainEvents();
   const { getOnlineMode } = useConnections();
   const { hasConnectionIssue } = useApiHealth();
 
@@ -34,24 +44,6 @@ export const Subscriptions = ({
     return chainId ? hasConnectionIssue(chainId) : false;
   };
 
-  // Get readable pallet name.
-  const getReadablePallet = (pallet: string) => {
-    switch (pallet) {
-      case 'Balances':
-        return 'Balances';
-      case 'ConvictionVoting':
-        return 'Conviction Voting';
-      case 'NominationPools':
-        return 'Nomination Pools';
-      case 'Referenda':
-        return 'Referenda';
-      case 'Staking':
-        return 'Staking';
-      default:
-        return 'Unknown Category';
-    }
-  };
-
   // Handle back click.
   const onBack = () => {
     setSection(0);
@@ -60,13 +52,7 @@ export const Subscriptions = ({
   // Get categorized subscriptions.
   const getCategorised = (): Record<string, ChainEventSubscription[]> => {
     const result: Record<string, ChainEventSubscription[]> = {};
-    const pallets = [
-      'Balances',
-      'ConvictionVoting',
-      'NominationPools',
-      'Referenda',
-      'Staking',
-    ];
+    const pallets = activeChain ? ChainPallets[activeChain] : [];
     for (const pallet of pallets) {
       result[pallet] = subscriptions
         .filter(({ pallet: p }) => p === pallet)

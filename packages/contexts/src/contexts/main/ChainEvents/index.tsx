@@ -5,7 +5,10 @@ import { ChainEventsService } from '@polkadot-live/core';
 import { createContext, useEffect, useState } from 'react';
 import { createSafeContextHook } from '@polkadot-live/contexts';
 import { getChainEventAdapter } from './adapters';
-import { getEventSubscriptions } from '@polkadot-live/consts/subscriptions/chainEvents';
+import {
+  ChainPallets,
+  getEventSubscriptions,
+} from '@polkadot-live/consts/subscriptions/chainEvents';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChainEventSubscription } from '@polkadot-live/types';
 import type { ChainEventsContextInterface } from '../../../types/main';
@@ -100,13 +103,7 @@ export const ChainEventsProvider = ({
       const active = (await adapter.getStored()).get(activeChain) ?? [];
       setSubscriptions((prev) => {
         let subs: ChainEventSubscription[] = [];
-        const pallets = [
-          'Balances',
-          'ConvictionVoting',
-          'NominationPools',
-          'Referenda',
-          'Staking',
-        ];
+        const pallets = ChainPallets[activeChain];
         for (const pallet of pallets) {
           subs = subs.concat(
             getEventSubscriptions(activeChain, pallet).map(

@@ -9,6 +9,33 @@ type EventName<P extends PalletName> = keyof (typeof Pallets)[P];
 
 const prefix = 'help:chainEvents';
 
+export const ChainPallets: Record<string, string[]> = {
+  'Polkadot Asset Hub': [
+    'Balances',
+    'ConvictionVoting',
+    'NominationPools',
+    'Referenda',
+    'Staking',
+  ],
+};
+
+export const getReadablePallet = (pallet: string) => {
+  switch (pallet) {
+    case 'Balances':
+      return 'Balances';
+    case 'ConvictionVoting':
+      return 'Conviction Voting';
+    case 'NominationPools':
+      return 'Nomination Pools';
+    case 'Referenda':
+      return 'Referenda';
+    case 'Staking':
+      return 'Staking';
+    default:
+      return 'Unknown Category';
+  }
+};
+
 const Pallets: Record<
   string,
   Record<string, { helpKey: HelpItemKey; label: string }>
