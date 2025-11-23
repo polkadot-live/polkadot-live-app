@@ -16,19 +16,25 @@ import { setSharedState, setSystemsInitialized } from '../state';
 import {
   initAccountSubscriptions,
   initChainSubscriptions,
-  initEventStreams,
+  initEventSubscriptions,
   initIntervalSubscriptions,
+  startEventStreams,
 } from './subscriptionsInit';
 import { setAccountSubscriptionsState } from '../subscriptions';
 
 export const initSystems = async () => {
   await initOnlineMode();
-  await Promise.all([initTheme(), initManagedAccounts(), initAPIs()]);
+  await initAPIs();
+  await Promise.all([
+    initTheme(),
+    initManagedAccounts(),
+    initEventSubscriptions(),
+  ]);
   await connectApis();
   await initAccountSubscriptions();
   await initChainSubscriptions();
   initIntervalSubscriptions();
-  await initEventStreams();
+  await startEventStreams();
   eventBus.dispatchEvent(new CustomEvent('initSystems:complete'));
   setSystemsInitialized(true);
   await disconnectAPIs();

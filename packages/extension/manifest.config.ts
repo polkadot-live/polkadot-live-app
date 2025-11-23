@@ -36,7 +36,6 @@ export default defineManifest({
   ],
   permissions: [
     'activeTab',
-    'management',
     'notifications',
     'storage',
     'tabs',

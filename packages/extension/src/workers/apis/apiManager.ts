@@ -4,6 +4,7 @@
 import {
   AccountsController,
   APIsController,
+  ChainEventsService,
   SubscriptionsController,
 } from '@polkadot-live/core';
 import { isSystemsInitialized } from '../state';
@@ -17,7 +18,10 @@ export const connectApis = async () => {
   if (!navigator.onLine) {
     return false;
   }
-  const chainIds = Array.from(AccountsController.accounts.keys());
+  const chainIds = [
+    ...Array.from(AccountsController.accounts.keys()),
+    ...Array.from(ChainEventsService.activeSubscriptions.keys()),
+  ];
   await Promise.all(chainIds.map((c) => startApi(c)));
   return true;
 };

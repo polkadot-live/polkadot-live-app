@@ -55,6 +55,9 @@ export class APIsController {
    * Initalize disconnected API clients.
    */
   static initialize = async (backend: 'electron' | 'browser') => {
+    if (this.clients.length) {
+      return;
+    }
     this.backend = backend;
     const chainIds = ChainList.keys();
     for (const chainId of chainIds) {

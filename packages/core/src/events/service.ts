@@ -86,6 +86,56 @@ interface ServiceStatus {
   unsub: Unsub | null;
 }
 
+interface QueueItem {
+  chainId: ChainID;
+  record: FrameSystemEventRecord;
+  osNotify: boolean;
+}
+
+/**
+ * Event queue.
+ */
+class EventQueue {
+  private static queue: QueueItem[] = [];
+  private static isProcessing = false;
+  private static delay = 750;
+  private static maxQueueSize = 500;
+
+  static push(item: QueueItem) {
+    if (this.queue.length > this.maxQueueSize) {
+      console.warn('EventQueue overflow: trimming oldest events');
+      this.queue.splice(0, this.queue.length - this.maxQueueSize);
+    }
+    this.queue.push(item);
+    this.process();
+  }
+
+  private static async process() {
+    if (this.isProcessing) {
+      return;
+    }
+    this.isProcessing = true;
+
+    while (this.queue.length > 0) {
+      try {
+        const { chainId, osNotify, record } = this.queue.shift()!;
+        ChainEventsService.processSingleEvent(chainId, osNotify, record);
+
+        // Yield control to allow UI updates to flush.
+        if (EventQueue.delay > 0) {
+          await new Promise((resolve) => setTimeout(resolve, EventQueue.delay));
+        }
+      } catch (err) {
+        console.error('Error processing event', err);
+      }
+    }
+    this.isProcessing = false;
+  }
+}
+
+/**
+ * Chain events service.
+ */
 export class ChainEventsService {
   /**
    * Status of services for supported networks.
@@ -148,14 +198,13 @@ export class ChainEventsService {
    */
   static initEventStream = async (chainId: ChainID) => {
     const status = ChainEventsService.serviceStatus.get(chainId);
-    if (status?.active) {
+    if (status && status.active) {
       return;
     }
     const client = await APIsController.getConnectedApi(chainId);
     if (!client?.api) {
       return;
     }
-
     switch (chainId) {
       case 'Polkadot Asset Hub': {
         const api = client.api as DedotClient<PolkadotAssetHubApi>;
@@ -207,13 +256,21 @@ export class ChainEventsService {
       const isOn = meta !== undefined;
 
       if (isSupportedPallet && isOn) {
-        const { palletEvent } = event;
-        const osNotify = meta.osNotify;
-        const handler = PalletHandlers[pallet];
-        handler && handler(chainId, osNotify, palletEvent);
+        EventQueue.push({ chainId, osNotify: meta.osNotify, record: item });
       }
     }
   };
+
+  static processSingleEvent(
+    chainId: ChainID,
+    osNotify: boolean,
+    record: FrameSystemEventRecord
+  ) {
+    const { event }: { event: RuntimeEvent } = record;
+    const { pallet, palletEvent } = event;
+    const handler = PalletHandlers[pallet];
+    handler && handler(chainId, osNotify, palletEvent);
+  }
 
   /**
    * Stop events stream for a network.

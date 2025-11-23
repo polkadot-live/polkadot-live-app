@@ -51,7 +51,7 @@ export const initIntervalSubscriptions = async () => {
   IntervalsController.insertSubscriptions(tasks, isOnline);
 };
 
-export const initEventStreams = async () => {
+export const initEventSubscriptions = async () => {
   if (isSystemsInitialized()) {
     return;
   }
@@ -65,8 +65,14 @@ export const initEventStreams = async () => {
   for (const [cid, sub] of stored.entries()) {
     ChainEventsService.insert(cid as ChainID, sub);
   }
+};
+
+export const startEventStreams = async () => {
+  if (isSystemsInitialized()) {
+    return;
+  }
   // Start event streams.
-  for (const cid of stored.keys()) {
+  for (const cid of ChainEventsService.activeSubscriptions.keys()) {
     await ChainEventsService.initEventStream(cid as ChainID);
   }
 };
