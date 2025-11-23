@@ -12,5 +12,5 @@ export interface ChainEventsContextInterface {
     React.SetStateAction<Map<ChainID, ChainEventSubscription[]>>
   >;
   toggle: (subscription: ChainEventSubscription) => Promise<void>;
-  toggleOsNotify: (sub: ChainEventSubscription) => void;
+  toggleOsNotify: (sub: ChainEventSubscription, updateStore?: boolean) => void;
 }

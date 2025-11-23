@@ -68,7 +68,7 @@ export const ChainEventsProvider = ({
   /**
    * Handler to toggle OS notifications.
    */
-  const toggleOsNotify = (sub: ChainEventSubscription) => {
+  const toggleOsNotify = (sub: ChainEventSubscription, updateStore = true) => {
     if (!activeChain) {
       return;
     }
@@ -81,7 +81,9 @@ export const ChainEventsProvider = ({
       return new Map(prev).set(activeChain, updated);
     });
 
-    adapter.toggleNotify(activeChain, sub);
+    if (updateStore) {
+      adapter.toggleNotify(activeChain, sub);
+    }
   };
 
   /**

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as FA from '@fortawesome/free-solid-svg-icons';
+import { useEffect } from 'react';
 import {
   useChainEvents,
   useConnections,
@@ -18,6 +19,12 @@ export const SubscriptionRow = ({ subscription }: SubscriptionRowProps) => {
   const { openHelp } = useHelp();
   const theme = getTheme();
   const { enabled, helpKey, label, osNotify } = subscription;
+
+  useEffect(() => {
+    if (!enabled && osNotify) {
+      toggleOsNotify(subscription, false);
+    }
+  }, [enabled]);
 
   return (
     <TaskEntryWrapper whileHover={{ scale: 1.01 }}>
@@ -40,7 +47,11 @@ export const SubscriptionRow = ({ subscription }: SubscriptionRowProps) => {
           <FlexRow $gap="1.75rem">
             {/* Notification Checkbox */}
             <button
-              style={{ opacity: osNotify ? '1' : '0.3' }}
+              disabled={!enabled}
+              style={{
+                opacity: osNotify ? '1' : '0.3',
+                cursor: enabled ? 'pointer' : 'not-allowed',
+              }}
               onClick={() => toggleOsNotify(subscription)}
             >
               <TooltipRx text={'OS Notifications'} theme={theme}>
