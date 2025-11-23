@@ -160,7 +160,6 @@ export const BootstrappingProvider = ({
         setStateWithRef(false, setIsAborting, refAborted);
         await handleInitializeAppOffline();
       }
-
       // Wait 100ms to avoid a snapping loading spinner.
       setTimeout(() => {
         setAppLoading(false);
@@ -178,6 +177,7 @@ export const BootstrappingProvider = ({
 
     // Stop subscription intervals timer.
     IntervalsController.stopInterval();
+    ChainEventsService.stopAllEventStreams();
 
     // Report online status to renderers.
     const isOnline = await getOnlineStatus('electron');
@@ -195,14 +195,17 @@ export const BootstrappingProvider = ({
     if (refSwitchingToOnline.current) {
       return;
     }
-
     // Set config flag to `true` to make sure the app doesn't re-execute
     // this function's logic whilst the connection status is online.
     refSwitchingToOnline.current = true;
-    const initTasks: (() => Promise<AnyData>)[] = [connectAPIs, disconnectAPIs];
+    const initTasks: (() => Promise<AnyData>)[] = [
+      connectAPIs,
+      initEventStreams,
+      disconnectAPIs,
+    ];
 
     for (const [index, task] of initTasks.entries()) {
-      if (!refAborted.current && index === 1) {
+      if (!refAborted.current && index === 2) {
         // Initialise intervals controller before disconnecting APIs.
         IntervalsController.initIntervals(true);
         await task();

@@ -52,9 +52,6 @@ export const initIntervalSubscriptions = async () => {
 };
 
 export const initEventSubscriptions = async () => {
-  if (isSystemsInitialized()) {
-    return;
-  }
   // Get stored chain event subscriptions.
   const store: Stores = 'chainEvents';
   const stored = (await DbController.getAllObjects(store)) as Map<
@@ -68,9 +65,6 @@ export const initEventSubscriptions = async () => {
 };
 
 export const startEventStreams = async () => {
-  if (isSystemsInitialized()) {
-    return;
-  }
   // Start event streams.
   for (const cid of ChainEventsService.activeSubscriptions.keys()) {
     await ChainEventsService.initEventStream(cid as ChainID);

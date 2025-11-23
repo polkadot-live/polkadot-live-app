@@ -159,9 +159,12 @@ export class ChainEventsService {
     a.pallet === b.pallet && a.eventName === b.eventName;
 
   static insert = (chainId: ChainID, sub: ChainEventSubscription) => {
+    const cmp = ChainEventsService.cmp;
     const ptr = ChainEventsService.activeSubscriptions;
     const cur = ptr.get(chainId);
-    cur ? ptr.set(chainId, [...cur, sub]) : ptr.set(chainId, [sub]);
+    cur
+      ? ptr.set(chainId, [...cur.filter((s) => !cmp(s, sub)), sub])
+      : ptr.set(chainId, [sub]);
   };
 
   static remove = (chainId: ChainID, sub: ChainEventSubscription) => {
@@ -287,6 +290,13 @@ export class ChainEventsService {
         active: false,
         unsub: null,
       });
+    }
+  };
+
+  static stopAllEventStreams = () => {
+    const chainIds = Array.from(ChainEventsService.activeSubscriptions.keys());
+    for (const chainId of chainIds) {
+      ChainEventsService.stopEventsStream(chainId);
     }
   };
 
