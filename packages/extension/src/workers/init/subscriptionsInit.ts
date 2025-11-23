@@ -6,11 +6,14 @@ import { handleGetAllIntervalTasks } from '../intervals';
 import { isSystemsInitialized } from '../state';
 import {
   AccountsController,
+  ChainEventsService,
   ExtrinsicsController,
   IntervalsController,
   SubscriptionsController,
   TaskOrchestrator,
 } from '@polkadot-live/core';
+import type { ChainEventSubscription } from '@polkadot-live/types';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { Stores } from '../../controllers';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 
@@ -46,4 +49,24 @@ export const initIntervalSubscriptions = async () => {
   const tasks = await handleGetAllIntervalTasks();
   const isOnline = navigator.onLine;
   IntervalsController.insertSubscriptions(tasks, isOnline);
+};
+
+export const initEventStreams = async () => {
+  if (isSystemsInitialized()) {
+    return;
+  }
+  // Get stored chain event subscriptions.
+  const store: Stores = 'chainEvents';
+  const stored = (await DbController.getAllObjects(store)) as Map<
+    string,
+    ChainEventSubscription
+  >;
+  // Insert subscriptions.
+  for (const [cid, sub] of stored.entries()) {
+    ChainEventsService.insert(cid as ChainID, sub);
+  }
+  // Start event streams.
+  for (const cid of stored.keys()) {
+    await ChainEventsService.initEventStream(cid as ChainID);
+  }
 };

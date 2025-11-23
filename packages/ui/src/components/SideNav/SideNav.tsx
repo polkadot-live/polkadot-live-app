@@ -7,11 +7,15 @@ import { NavItemWrapper, SideNavWrapper } from './SideNav.styles';
 import { NavItem } from './NavItem';
 import type { SideNavProps } from './SideNav.types';
 
-export const SideNav = ({ handleSideNavCollapse, navState }: SideNavProps) => {
+export const SideNav = ({
+  handleSideNavCollapse,
+  navState,
+  theme,
+}: SideNavProps) => {
   const { isCollapsed } = navState;
 
   return (
-    <SideNavWrapper $isCollapsed={isCollapsed}>
+    <SideNavWrapper $isCollapsed={isCollapsed} $theme={theme}>
       <NavItem
         id={0}
         navState={navState}

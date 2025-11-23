@@ -1,6 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import type { AnyData } from '@polkadot-live/types/misc';
 import type { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 interface NavState {
@@ -12,6 +13,7 @@ interface NavState {
 export interface SideNavProps {
   handleSideNavCollapse: () => void;
   navState: NavState;
+  theme: AnyData;
 }
 
 export interface NavItemProps {

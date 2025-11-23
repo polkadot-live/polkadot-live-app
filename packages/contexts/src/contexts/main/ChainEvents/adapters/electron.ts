@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { parseMap } from '@polkadot-live/core';
+import { ChainEventsService, parseMap } from '@polkadot-live/core';
 import type { ChainEventSubscription } from '@polkadot-live/types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChainEventsAdapter } from './types';
@@ -20,6 +20,8 @@ export const electronAdapter: ChainEventsAdapter = {
       action: 'chainEvents:insert',
       data: { chainId, subscription },
     });
+    ChainEventsService.insert(chainId, subscription);
+    ChainEventsService.initEventStream(chainId);
   },
 
   storeRemove: (chainId, subscription) => {
@@ -27,5 +29,15 @@ export const electronAdapter: ChainEventsAdapter = {
       action: 'chainEvents:remove',
       data: { chainId, subscription },
     });
+    ChainEventsService.remove(chainId, subscription);
+    ChainEventsService.tryStopEventsStream(chainId);
+  },
+
+  toggleNotify: (chainId, subscription) => {
+    window.myAPI.sendChainEventTask({
+      action: 'chainEvents:insert',
+      data: { chainId, subscription },
+    });
+    ChainEventsService.update(chainId, subscription);
   },
 };

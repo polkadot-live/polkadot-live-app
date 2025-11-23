@@ -8,4 +8,8 @@ export interface ChainEventsAdapter {
   getStored: () => Promise<Map<ChainID, ChainEventSubscription[]>>;
   storeInsert: (chainId: ChainID, subscription: ChainEventSubscription) => void;
   storeRemove: (chainId: ChainID, subscription: ChainEventSubscription) => void;
+  toggleNotify: (
+    chainId: ChainID,
+    subscription: ChainEventSubscription
+  ) => void;
 }

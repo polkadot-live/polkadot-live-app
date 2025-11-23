@@ -1,7 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ChainEventsService } from '@polkadot-live/core';
 import { createContext, useEffect, useState } from 'react';
 import { createSafeContextHook } from '@polkadot-live/contexts';
 import { getChainEventAdapter } from './adapters';
@@ -61,15 +60,9 @@ export const ChainEventsProvider = ({
       return new Map(prev).set(activeChain, updated);
     });
 
-    if (status) {
-      adapter.storeInsert(activeChain, subscription);
-      ChainEventsService.insert(activeChain, subscription);
-      await ChainEventsService.initEventStream(activeChain);
-    } else {
-      adapter.storeRemove(activeChain, subscription);
-      ChainEventsService.remove(activeChain, subscription);
-      ChainEventsService.tryStopEventsStream(activeChain);
-    }
+    status
+      ? adapter.storeInsert(activeChain, subscription)
+      : adapter.storeRemove(activeChain, subscription);
   };
 
   /**
@@ -87,8 +80,8 @@ export const ChainEventsProvider = ({
       const updated = existing.map((s) => (cmp(s, sub) ? sub : s));
       return new Map(prev).set(activeChain, updated);
     });
-    adapter.storeInsert(activeChain, sub);
-    ChainEventsService.update(activeChain, sub);
+
+    adapter.toggleNotify(activeChain, sub);
   };
 
   /**

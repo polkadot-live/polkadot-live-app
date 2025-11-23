@@ -114,7 +114,7 @@ export const BootstrappingProvider = ({
         ChainEventsService.insert(cid, s);
       }
     }
-    // Active events stream.
+    // Start event streams.
     for (const cid of stored.keys()) {
       await ChainEventsService.initEventStream(cid);
     }

@@ -16,6 +16,7 @@ import { setSharedState, setSystemsInitialized } from '../state';
 import {
   initAccountSubscriptions,
   initChainSubscriptions,
+  initEventStreams,
   initIntervalSubscriptions,
 } from './subscriptionsInit';
 import { setAccountSubscriptionsState } from '../subscriptions';
@@ -27,6 +28,7 @@ export const initSystems = async () => {
   await initAccountSubscriptions();
   await initChainSubscriptions();
   initIntervalSubscriptions();
+  await initEventStreams();
   eventBus.dispatchEvent(new CustomEvent('initSystems:complete'));
   setSystemsInitialized(true);
   await disconnectAPIs();

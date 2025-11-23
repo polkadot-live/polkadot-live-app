@@ -54,7 +54,7 @@ export const Home = () => {
   const { addEvent, markStaleEvent, removeOutdatedEvents } = useEvents();
   const { openHelp } = useHelp();
 
-  const { cacheGet: getSharedState } = useConnections();
+  const { cacheGet: getSharedState, getTheme } = useConnections();
   const darkMode = getSharedState('mode:dark');
 
   const { cacheGet, toggleSetting } = useAppSettings();
@@ -167,6 +167,7 @@ export const Home = () => {
       <FixedFlexWrapper>
         {/* Side Navigation */}
         <UI.SideNav
+          theme={getTheme()}
           handleSideNavCollapse={() =>
             toggleSetting('setting:collapse-side-nav')
           }

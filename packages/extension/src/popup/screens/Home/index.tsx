@@ -39,7 +39,7 @@ export const Home = () => {
   const { openHelp } = useHelp();
   const { getAddresses } = useAddresses();
   const { cacheGet, toggleSetting } = useAppSettings();
-  const { cacheGet: getShared, relayState } = useConnections();
+  const { cacheGet: getShared, relayState, getTheme } = useConnections();
   const { appLoading } = Ctx.useBootstrapping();
   const cogMenu = Ctx.useCogMenu();
   const sideNav = useSideNav();
@@ -86,6 +86,7 @@ export const Home = () => {
       </UI.Header>
       <FixedFlexWrapper>
         <UI.SideNav
+          theme={getTheme()}
           handleSideNavCollapse={() =>
             toggleSetting('setting:collapse-side-nav')
           }
