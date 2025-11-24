@@ -15,7 +15,7 @@ import type { SubscriptionRowProps } from './types';
 
 export const SubscriptionRow = ({ subscription }: SubscriptionRowProps) => {
   const { toggle, toggleOsNotify } = useChainEvents();
-  const { getTheme } = useConnections();
+  const { getTheme, getOnlineMode } = useConnections();
   const { openHelp } = useHelp();
   const theme = getTheme();
   const { enabled, helpKey, label, osNotify } = subscription;
@@ -64,6 +64,7 @@ export const SubscriptionRow = ({ subscription }: SubscriptionRowProps) => {
             {/* Toggle Switch */}
             <span style={{ scale: '0.9' }}>
               <Switch
+                disabled={!getOnlineMode()}
                 style={{ paddingRight: '10px' }}
                 size="sm"
                 type="primary"
