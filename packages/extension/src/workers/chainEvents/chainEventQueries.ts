@@ -14,3 +14,12 @@ export const getAllChainEvents = async (): Promise<
   >;
   return Array.from(active.values());
 };
+
+export const getActiveCount = async (): Promise<number> => {
+  const store = 'chainEvents';
+  const active = (await DbController.getAllObjects(store)) as Map<
+    string,
+    ChainEventSubscription
+  >;
+  return Array.from(active.keys()).length;
+};

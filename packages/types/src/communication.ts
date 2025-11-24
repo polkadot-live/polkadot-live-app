@@ -68,6 +68,7 @@ export interface IpcTask {
     | 'events:import'
     // Chain Events
     | 'chainEvents:getAll'
+    | 'chainEvents:getActiveCount'
     | 'chainEvents:insert'
     | 'chainEvents:remove'
     // Extrinsics

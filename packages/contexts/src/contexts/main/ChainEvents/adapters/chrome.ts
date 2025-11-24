@@ -11,7 +11,7 @@ export const chromeAdapter: ChainEventsAdapter = {
       const map = new Map<ChainID, ChainEventSubscription[]>();
       const active = (await chrome.runtime.sendMessage({
         type: 'chainEvents',
-        task: 'chainEvents:getAll',
+        task: 'getAll',
       })) as ChainEventSubscription[];
 
       for (const sub of active) {
@@ -26,10 +26,16 @@ export const chromeAdapter: ChainEventsAdapter = {
     }
   },
 
+  getSubCount: async () =>
+    await chrome.runtime.sendMessage({
+      type: 'chainEvents',
+      task: 'getActiveCount',
+    }),
+
   storeInsert: (_, subscription) => {
     chrome.runtime.sendMessage({
       type: 'chainEvents',
-      task: 'chainEvents:insert',
+      task: 'insert',
       payload: { sub: subscription },
     });
   },
@@ -37,7 +43,7 @@ export const chromeAdapter: ChainEventsAdapter = {
   storeRemove: (_, subscription) => {
     chrome.runtime.sendMessage({
       type: 'chainEvents',
-      task: 'chainEvents:remove',
+      task: 'remove',
       payload: { sub: subscription },
     });
   },
@@ -45,7 +51,7 @@ export const chromeAdapter: ChainEventsAdapter = {
   toggleNotify: (_, subscription) => {
     chrome.runtime.sendMessage({
       type: 'chainEvents',
-      task: 'chainEvents:update',
+      task: 'update',
       payload: { sub: subscription },
     });
   },

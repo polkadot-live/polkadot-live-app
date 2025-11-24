@@ -6,6 +6,7 @@ import type { ChainID } from '@polkadot-live/types/chains';
 
 export interface ChainEventsAdapter {
   getStored: () => Promise<Map<ChainID, ChainEventSubscription[]>>;
+  getSubCount: () => Promise<number>;
   storeInsert: (chainId: ChainID, subscription: ChainEventSubscription) => void;
   storeRemove: (chainId: ChainID, subscription: ChainEventSubscription) => void;
   toggleNotify: (

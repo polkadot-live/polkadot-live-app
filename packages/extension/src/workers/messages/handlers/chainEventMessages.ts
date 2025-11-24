@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import {
+  getActiveCount,
   getAllChainEvents,
   putChainEvent,
   removeChainEvent,
@@ -15,21 +16,25 @@ export const handleChainEventMessage = (
   sendResponse: (response?: AnyData) => void
 ): boolean => {
   switch (message.task) {
-    case 'chainEvents:getAll': {
+    case 'getActiveCount': {
+      getActiveCount().then((res) => sendResponse(res));
+      return true;
+    }
+    case 'getAll': {
       getAllChainEvents().then((res) => sendResponse(res));
       return true;
     }
-    case 'chainEvents:insert': {
+    case 'insert': {
       const { sub }: { sub: ChainEventSubscription } = message.payload;
       putChainEvent(sub);
       return false;
     }
-    case 'chainEvents:remove': {
+    case 'remove': {
       const { sub }: { sub: ChainEventSubscription } = message.payload;
       removeChainEvent(sub);
       return false;
     }
-    case 'chainEvents:update': {
+    case 'update': {
       const { sub }: { sub: ChainEventSubscription } = message.payload;
       updateChainEvent(sub);
       return false;

@@ -30,8 +30,18 @@ export class ChainEventsController {
         ChainEventsController.remove(data.chainId, data.subscription);
         break;
       }
+      case 'chainEvents:getActiveCount': {
+        return ChainEventsController.getActiveCount().toString();
+      }
     }
   }
+
+  private static getActiveCount = (): number => {
+    const map = new Map<ChainID, ChainEventSubscription[]>(
+      JSON.parse(ChainEventsController.getAll() ?? '[]')
+    );
+    return map.values().reduce((acc, subs) => (acc += subs.length), 0);
+  };
 
   /**
    * Utility to compare chain event subscriptions.

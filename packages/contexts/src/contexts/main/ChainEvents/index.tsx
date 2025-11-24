@@ -86,6 +86,9 @@ export const ChainEventsProvider = ({
     }
   };
 
+  const getEventSubscriptionCount = async (): Promise<number> =>
+    await adapter.getSubCount();
+
   /**
    * Get active subscriptions from store and merge with defaults.
    */
@@ -117,8 +120,8 @@ export const ChainEventsProvider = ({
       value={{
         activeChain,
         subscriptions,
+        getEventSubscriptionCount,
         setActiveChain,
-        setSubscriptions,
         toggle,
         toggleOsNotify,
       }}

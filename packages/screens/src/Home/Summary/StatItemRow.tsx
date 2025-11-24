@@ -81,6 +81,17 @@ export const StatItemRow = ({
           </div>
         </Styles.FlexRow>
       )}
+      {kind === 'chainEvent' && (
+        <Styles.FlexRow>
+          <div className="left">
+            <FontAwesomeIcon icon={FA.faCheckDouble} transform={'grow-1'} />
+          </div>
+          <h3>Chain Events</h3>
+          <div className="meter">
+            <UI.ShiftingMeter color={mCol} value={meterValue} size={1.1} />
+          </div>
+        </Styles.FlexRow>
+      )}
       {kind === 'event' && (
         <Styles.FlexRow>
           <div className="left">

@@ -15,6 +15,14 @@ export const electronAdapter: ChainEventsAdapter = {
       })) ?? '[]'
     ),
 
+  getSubCount: async () => {
+    const res = await window.myAPI.sendChainEventTask({
+      action: 'chainEvents:getActiveCount',
+      data: null,
+    });
+    return res ? parseInt(res) : 0;
+  },
+
   storeInsert: (chainId, subscription) => {
     window.myAPI.sendChainEventTask({
       action: 'chainEvents:insert',
