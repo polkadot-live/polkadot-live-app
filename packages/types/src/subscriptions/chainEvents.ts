@@ -25,6 +25,11 @@ import type {
 import type {
   AssetHubPaseoRuntimeRuntimeEvent,
   FrameSystemEventRecord as PaseoAssetHubFrameSystemEventRecord,
+  PalletBalancesEvent as PaseoAssetHubBalancesEvent,
+  PalletConvictionVotingEvent as PaseoAssetHubConvictionVotingEvent,
+  PalletNominationPoolsEvent as PaseoAssetHubNominationPoolsEvent,
+  PalletReferendaEvent as PaseoAssetHubReferendaEvent,
+  PalletStakingAsyncPalletEvent as PaseoAssetHubStakingEvent,
 } from '@dedot/chaintypes/paseo-asset-hub';
 
 export type RuntimeEvent =
@@ -42,23 +47,28 @@ export type FrameSystemEventRecord =
  */
 export type PalletBalancesEvent =
   | PolkadotAssetHubBalancesEvent
-  | KusamaAssetHubBalancesEvent;
+  | KusamaAssetHubBalancesEvent
+  | PaseoAssetHubBalancesEvent;
 
 export type PalletConvictionVotingEvent =
   | PolkadotAssetHubConvictionVotingEvent
-  | KusamaAssetHubConvictionVotingEvent;
+  | KusamaAssetHubConvictionVotingEvent
+  | PaseoAssetHubConvictionVotingEvent;
 
 export type PalletNominationPoolsEvent =
   | PolkadotAssetHubNominationPoolsEvent
-  | KusamaAssetHubNominationPoolsEvent;
+  | KusamaAssetHubNominationPoolsEvent
+  | PaseoAssetHubNominationPoolsEvent;
 
 export type PalletReferendaEvent =
   | PolkadotAssetHubReferendaEvent
-  | KusamaAssetHubReferendaEvent;
+  | KusamaAssetHubReferendaEvent
+  | PaseoAssetHubReferendaEvent;
 
 export type PalletStakingEvent =
   | PolkadotAssetHubStakingEvent
-  | KusamaAssetHubStakingEvent;
+  | KusamaAssetHubStakingEvent
+  | PaseoAssetHubStakingEvent;
 
 /**
  * Chain event subscription.

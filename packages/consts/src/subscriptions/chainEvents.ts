@@ -60,6 +60,50 @@ const Pallets: Record<
       helpKey: `${prefix}:Balances:Transfer`,
       label: 'Transfer',
     },
+    Reserved: {
+      helpKey: `${prefix}:Balances:Reserved`,
+      label: 'Reserved',
+    },
+    Unreserved: {
+      helpKey: `${prefix}:Balances:Unreserved`,
+      label: 'Unreserved',
+    },
+    Deposit: {
+      helpKey: `${prefix}:Balances:Deposit`,
+      label: 'Deposit',
+    },
+    Withdraw: {
+      helpKey: `${prefix}:Balances:Withdraw`,
+      label: 'Withdraw',
+    },
+    Slashed: {
+      helpKey: `${prefix}:Balances:Slashed`,
+      label: 'Slashed',
+    },
+    Suspended: {
+      helpKey: `${prefix}:Balances:Suspended`,
+      label: 'Suspended',
+    },
+    Restored: {
+      helpKey: `${prefix}:Balances:Restored`,
+      label: 'Restored',
+    },
+    Locked: {
+      helpKey: `${prefix}:Balances:Locked`,
+      label: 'Locked',
+    },
+    Unlocked: {
+      helpKey: `${prefix}:Balances:Unlocked`,
+      label: 'Unlocked',
+    },
+    Frozen: {
+      helpKey: `${prefix}:Balances:Frozen`,
+      label: 'Frozen',
+    },
+    Thawed: {
+      helpKey: `${prefix}:Balances:Thawed`,
+      label: 'Thawed',
+    },
   },
   /** Conviction Voting */
   ConvictionVoting: {

@@ -540,6 +540,67 @@ export const HelpConfig: HelpItems = [
     definition: ['A transfer on the network succeeded.'],
   },
   {
+    key: 'help:chainEvents:Balances:Reserved',
+    title: 'Reserved',
+    definition: ['Some balance was reserved (moved from free to reserved).'],
+  },
+  {
+    key: 'help:chainEvents:Balances:Unreserved',
+    title: 'Unreserved',
+    definition: ['Some balance was unreserved (moved from reserved to free).'],
+  },
+  {
+    key: 'help:chainEvents:Balances:Deposit',
+    title: 'Deposit',
+    definition: ['Some amount was deposited (e.g. for transaction fees).'],
+  },
+  {
+    key: 'help:chainEvents:Balances:Withdraw',
+    title: 'Withdraw',
+    definition: [
+      'Some amount was withdrawn from the account (e.g. for transaction fees).',
+    ],
+  },
+  {
+    key: 'help:chainEvents:Balances:Slashed',
+    title: 'Slashed',
+    definition: [
+      'Some amount was removed from the account (e.g. for misbehavior).',
+    ],
+  },
+  {
+    key: 'help:chainEvents:Balances:Suspended',
+    title: 'Suspended',
+    definition: [
+      'Some amount was suspended from an account (it can be restored later).',
+    ],
+  },
+  {
+    key: 'help:chainEvents:Balances:Restored',
+    title: 'Restored',
+    definition: ['Some amount was restored into an account.'],
+  },
+  {
+    key: 'help:chainEvents:Balances:Locked',
+    title: 'Locked',
+    definition: ['Some balance was locked.'],
+  },
+  {
+    key: 'help:chainEvents:Balances:Unlocked',
+    title: 'Unlocked',
+    definition: ['Some balance was unlocked.'],
+  },
+  {
+    key: 'help:chainEvents:Balances:Frozen',
+    title: 'Frozen',
+    definition: ['Some balance was frozen.'],
+  },
+  {
+    key: 'help:chainEvents:Balances:Thawed',
+    title: 'Thawed',
+    definition: ['Some balance was thawed.'],
+  },
+  {
     key: 'help:chainEvents:ConvictionVoting:Delegated',
     title: 'Delegated',
     definition: ['An account has delegated their vote to another account.'],

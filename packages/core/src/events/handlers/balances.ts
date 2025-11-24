@@ -40,6 +40,94 @@ const getBalancesNotification = (
         body: `${getBalanceText(amount, chainId)}`,
       };
     }
+    case 'Reserved': {
+      const { /* who, */ amount } = miscData;
+      return {
+        title: 'Reserved',
+        subtitle: `${chainId}`,
+        body: `${getBalanceText(amount, chainId)}`,
+      };
+    }
+    case 'Unreserved': {
+      const { /* who, */ amount } = miscData;
+      return {
+        title: 'Unreserved',
+        subtitle: `${chainId}`,
+        body: `${getBalanceText(amount, chainId)}`,
+      };
+    }
+    case 'Deposit': {
+      const { /* who, */ amount } = miscData;
+      return {
+        title: 'Deposit',
+        subtitle: `${chainId}`,
+        body: `${getBalanceText(amount, chainId)}`,
+      };
+    }
+    case 'Withdraw': {
+      const { /* who, */ amount } = miscData;
+      return {
+        title: 'Withdraw',
+        subtitle: `${chainId}`,
+        body: `${getBalanceText(amount, chainId)}`,
+      };
+    }
+    case 'Slashed': {
+      const { /* who, */ amount } = miscData;
+      return {
+        title: 'Slashed',
+        subtitle: `${chainId}`,
+        body: `${getBalanceText(amount, chainId)}`,
+      };
+    }
+    case 'Suspended': {
+      const { /* who, */ amount } = miscData;
+      return {
+        title: 'Suspended',
+        subtitle: `${chainId}`,
+        body: `${getBalanceText(amount, chainId)}`,
+      };
+    }
+    case 'Restored': {
+      const { /* who, */ amount } = miscData;
+      return {
+        title: 'Restored',
+        subtitle: `${chainId}`,
+        body: `${getBalanceText(amount, chainId)}`,
+      };
+    }
+    case 'Locked': {
+      const { /* who, */ amount } = miscData;
+      return {
+        title: 'Locked',
+        subtitle: `${chainId}`,
+        body: `${getBalanceText(amount, chainId)}`,
+      };
+    }
+    case 'Unlocked': {
+      const { /* who, */ amount } = miscData;
+      return {
+        title: 'Unlocked',
+        subtitle: `${chainId}`,
+        body: `${getBalanceText(amount, chainId)}`,
+      };
+    }
+    case 'Frozen': {
+      const { /* who, */ amount } = miscData;
+      return {
+        title: 'Frozen',
+        subtitle: `${chainId}`,
+        body: `${getBalanceText(amount, chainId)}`,
+      };
+    }
+    case 'Thawed': {
+      const { /* who, */ amount } = miscData;
+      return {
+        title: 'Thawed',
+        subtitle: `${chainId}`,
+        body: `${getBalanceText(amount, chainId)}`,
+      };
+    }
     default: {
       console.log(palletEvent);
       throw new Error(`EventNotRecognised: ${eventName}`);
@@ -57,6 +145,72 @@ const getBalancesChainEvent = (
     case 'Transfer': {
       const { amount /*, from, to */ } = miscData;
       ev.title = 'Transfer';
+      ev.subtitle = `${getBalanceText(amount, chainId)}`;
+      return ev;
+    }
+    case 'Reserved': {
+      const { /* who, */ amount } = miscData;
+      ev.title = 'Reserved';
+      ev.subtitle = `${getBalanceText(amount, chainId)}`;
+      return ev;
+    }
+    case 'Unreserved': {
+      const { /* who, */ amount } = miscData;
+      ev.title = 'Unreserved';
+      ev.subtitle = `${getBalanceText(amount, chainId)}`;
+      return ev;
+    }
+    case 'Deposit': {
+      const { /* who, */ amount } = miscData;
+      ev.title = 'Deposit';
+      ev.subtitle = `${getBalanceText(amount, chainId)}`;
+      return ev;
+    }
+    case 'Withdraw': {
+      const { /* who, */ amount } = miscData;
+      ev.title = 'Withdraw';
+      ev.subtitle = `${getBalanceText(amount, chainId)}`;
+      return ev;
+    }
+    case 'Slashed': {
+      const { /* who, */ amount } = miscData;
+      ev.title = 'Slashed';
+      ev.subtitle = `${getBalanceText(amount, chainId)}`;
+      return ev;
+    }
+    case 'Suspended': {
+      const { /* who, */ amount } = miscData;
+      ev.title = 'Suspended';
+      ev.subtitle = `${getBalanceText(amount, chainId)}`;
+      return ev;
+    }
+    case 'Restored': {
+      const { /* who, */ amount } = miscData;
+      ev.title = 'Restored';
+      ev.subtitle = `${getBalanceText(amount, chainId)}`;
+      return ev;
+    }
+    case 'Locked': {
+      const { /* who, */ amount } = miscData;
+      ev.title = 'Locked';
+      ev.subtitle = `${getBalanceText(amount, chainId)}`;
+      return ev;
+    }
+    case 'Unlocked': {
+      const { /* who, */ amount } = miscData;
+      ev.title = 'Unlocked';
+      ev.subtitle = `${getBalanceText(amount, chainId)}`;
+      return ev;
+    }
+    case 'Frozen': {
+      const { /* who, */ amount } = miscData;
+      ev.title = 'Frozen';
+      ev.subtitle = `${getBalanceText(amount, chainId)}`;
+      return ev;
+    }
+    case 'Thawed': {
+      const { /* who, */ amount } = miscData;
+      ev.title = 'Thawed';
       ev.subtitle = `${getBalanceText(amount, chainId)}`;
       return ev;
     }
