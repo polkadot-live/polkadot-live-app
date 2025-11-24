@@ -5,14 +5,11 @@ import { APIsController } from '../controllers';
 import { EventQueue } from './queue';
 import { ChainPallets } from '@polkadot-live/consts/subscriptions/chainEvents';
 import { PalletHandlers } from './handlers';
-import type { PolkadotAssetHubApi } from '@dedot/chaintypes/polkadot-asset-hub';
-import type { KusamaAssetHubApi } from '@dedot/chaintypes/kusama-asset-hub';
-import type { PaseoAssetHubApi } from '@dedot/chaintypes/paseo-asset-hub';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { DedotClient } from 'dedot';
 import type { Unsub } from 'dedot/types';
 import type {
   ChainEventSubscription,
+  DedotEventStreamClient,
   FrameSystemEventRecord,
   RuntimeEvent,
 } from '@polkadot-live/types';
@@ -91,32 +88,12 @@ export class ChainEventsService {
     if (!client?.api) {
       return;
     }
-    switch (chainId) {
-      case 'Polkadot Asset Hub': {
-        const api = client.api as DedotClient<PolkadotAssetHubApi>;
-        const unsub = await api.query.system.events((events) => {
-          ChainEventsService.handleEvents(chainId, events);
-        });
-        ChainEventsService.serviceStatus.set(chainId, { active: true, unsub });
-        break;
-      }
-      case 'Kusama Asset Hub': {
-        const api = client.api as DedotClient<KusamaAssetHubApi>;
-        const unsub = await api.query.system.events((events) => {
-          ChainEventsService.handleEvents(chainId, events);
-        });
-        ChainEventsService.serviceStatus.set(chainId, { active: true, unsub });
-        break;
-      }
-      case 'Paseo Asset Hub': {
-        const api = client.api as DedotClient<PaseoAssetHubApi>;
-        const unsub = await api.query.system.events((events) => {
-          ChainEventsService.handleEvents(chainId, events);
-        });
-        ChainEventsService.serviceStatus.set(chainId, { active: true, unsub });
-        break;
-      }
-    }
+
+    const api = client.api as DedotEventStreamClient;
+    const unsub = (await api.query.system.events((events) => {
+      ChainEventsService.handleEvents(chainId, events);
+    })) as Unsub;
+    ChainEventsService.serviceStatus.set(chainId, { active: true, unsub });
   };
 
   // Process events for a specific chain.

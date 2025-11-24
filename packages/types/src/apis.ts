@@ -59,6 +59,14 @@ export type DedotClientSet =
   | DedotClient<WestendPeopleApi>;
 
 /**
+ * Dedot clients with chain event subscriptions.
+ */
+export type DedotEventStreamClient =
+  | DedotClient<PolkadotAssetHubApi>
+  | DedotClient<KusamaAssetHubApi>
+  | DedotClient<PaseoAssetHubApi>;
+
+/**
  * Dedot clients with staking.
  */
 export type DedotStakingClient =
