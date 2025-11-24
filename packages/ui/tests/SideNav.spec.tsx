@@ -17,7 +17,9 @@ const NUM_ITEMS = 3;
 
 describe('SideNav', () => {
   const renderSideNav = (navState: NavState) =>
-    render(<SideNav handleSideNavCollapse={vi.fn()} navState={navState} />);
+    render(
+      <SideNav theme={{}} handleSideNavCollapse={vi.fn()} navState={navState} />
+    );
 
   it('should render nav item headings when expanded', () => {
     renderSideNav({

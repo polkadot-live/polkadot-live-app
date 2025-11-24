@@ -10,6 +10,7 @@ import type {
   ImportedGenericAccount,
   StoredAccount,
 } from '@polkadot-live/types/accounts';
+import type { ChainEventSubscription } from '@polkadot-live/types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { DBSchema, IDBPDatabase } from 'idb';
 import type { EventCallback } from '@polkadot-live/types/reporter';
@@ -28,7 +29,13 @@ interface MyDB extends DBSchema {
     key: string;
     value: SubscriptionTask[];
   };
+  chainEvents: {
+    /** chainId::pallet::eventName */
+    key: string;
+    value: ChainEventSubscription;
+  };
   chainSubscriptions: {
+    /** chainId:address */
     key: string;
     value: SubscriptionTask;
   };
@@ -57,6 +64,7 @@ interface MyDB extends DBSchema {
 export type Stores =
   | 'accounts'
   | 'accountSubscriptions'
+  | 'chainEvents'
   | 'chainSubscriptions'
   | 'events'
   | 'extrinsics'
@@ -85,6 +93,7 @@ export class DbController {
     this.db = await openDB<MyDB>(this.DB_NAME, 1, {
       upgrade(db) {
         db.createObjectStore('accountSubscriptions');
+        db.createObjectStore('chainEvents');
         db.createObjectStore('chainSubscriptions');
         db.createObjectStore('events');
         db.createObjectStore('extrinsics');

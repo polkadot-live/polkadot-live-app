@@ -37,6 +37,9 @@ export const Item = memo(function Item({ event }: ItemProps) {
       ? (event.who.data as EventAccountData).address
       : 'Chain Event';
 
+  // Whether to show identicon.
+  const showIdenticon = event.who.origin === 'account';
+
   // Extract chain ID from event.
   const chainId = getEventChainId(event);
 
@@ -95,7 +98,7 @@ export const Item = memo(function Item({ event }: ItemProps) {
                 <FlexRow $gap={'0.25rem'} style={{ flex: 1, minWidth: 0 }}>
                   <h4>{accountName}</h4>
 
-                  {!['openGov', 'debugging'].includes(event.category) && (
+                  {showIdenticon && (
                     <>
                       <DividerVerticalIcon className="DividerVertical" />
                       <div className="icon-wrapper">

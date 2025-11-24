@@ -11,6 +11,8 @@ import {
   SubscriptionsController,
   IntervalsController,
   getOnlineStatus,
+  ChainEventsService,
+  parseMap,
 } from '@polkadot-live/core';
 import {
   createSafeContextHook,
@@ -22,6 +24,8 @@ import { setStateWithRef } from '@w3ux/utils';
 import { startWithWorker } from 'dedot/smoldot/with-worker';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { BootstrappingInterface } from '@polkadot-live/contexts/types/main';
+import type { ChainEventSubscription } from '@polkadot-live/types';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { IpcTask } from '@polkadot-live/types/communication';
 
@@ -94,6 +98,29 @@ export const BootstrappingProvider = ({
   };
 
   /**
+   * Initialize event streams.
+   */
+  const initEventStreams = async () => {
+    // Get stored chain event subscriptions.
+    const stored = parseMap<ChainID, ChainEventSubscription[]>(
+      (await window.myAPI.sendChainEventTask({
+        action: 'chainEvents:getAll',
+        data: null,
+      })) || '[]'
+    );
+    // Insert subscriptions.
+    for (const [cid, subs] of stored.entries()) {
+      for (const s of subs) {
+        ChainEventsService.insert(cid, s);
+      }
+    }
+    // Start event streams.
+    for (const cid of stored.keys()) {
+      await ChainEventsService.initEventStream(cid);
+    }
+  };
+
+  /**
    * Connect APIs and restore systems.
    */
   const connectAPIs = async () => {
@@ -115,6 +142,7 @@ export const BootstrappingProvider = ({
       const initTasks: (() => Promise<AnyData>)[] = [
         connectAPIs,
         initIntervalsController,
+        initEventStreams,
         disconnectAPIs,
       ];
 
@@ -122,7 +150,6 @@ export const BootstrappingProvider = ({
       for (const [index, task] of initTasks.entries()) {
         index === 1 ? await task() : !refAborted.current && (await task());
       }
-
       // Set application state.
       AccountsController.syncState();
       SubscriptionsController.syncState();
@@ -133,7 +160,6 @@ export const BootstrappingProvider = ({
         setStateWithRef(false, setIsAborting, refAborted);
         await handleInitializeAppOffline();
       }
-
       // Wait 100ms to avoid a snapping loading spinner.
       setTimeout(() => {
         setAppLoading(false);
@@ -151,6 +177,7 @@ export const BootstrappingProvider = ({
 
     // Stop subscription intervals timer.
     IntervalsController.stopInterval();
+    ChainEventsService.stopAllEventStreams();
 
     // Report online status to renderers.
     const isOnline = await getOnlineStatus('electron');
@@ -168,14 +195,17 @@ export const BootstrappingProvider = ({
     if (refSwitchingToOnline.current) {
       return;
     }
-
     // Set config flag to `true` to make sure the app doesn't re-execute
     // this function's logic whilst the connection status is online.
     refSwitchingToOnline.current = true;
-    const initTasks: (() => Promise<AnyData>)[] = [connectAPIs, disconnectAPIs];
+    const initTasks: (() => Promise<AnyData>)[] = [
+      connectAPIs,
+      initEventStreams,
+      disconnectAPIs,
+    ];
 
     for (const [index, task] of initTasks.entries()) {
-      if (!refAborted.current && index === 1) {
+      if (!refAborted.current && index === 2) {
         // Initialise intervals controller before disconnecting APIs.
         IntervalsController.initIntervals(true);
         await task();

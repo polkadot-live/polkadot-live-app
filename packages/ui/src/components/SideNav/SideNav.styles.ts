@@ -1,8 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { motion } from 'framer-motion';
 import styled from 'styled-components';
+import { motion } from 'framer-motion';
+import type { AnyData } from '@polkadot-live/types/misc';
 
 export const ExpandButtonWrapper = styled(motion.div)`
   position: relative;
@@ -61,7 +62,10 @@ export const NavItemWrapper = styled(motion.button).attrs<{
   }
 `;
 
-export const SideNavWrapper = styled.nav<{ $isCollapsed: boolean }>`
+export const SideNavWrapper = styled.nav<{
+  $isCollapsed: boolean;
+  $theme: AnyData;
+}>`
   background-color: var(--nav-background);
   flex: 1;
   display: flex;
@@ -74,4 +78,25 @@ export const SideNavWrapper = styled.nav<{ $isCollapsed: boolean }>`
   align-items: center;
   gap: 0.75rem;
   overflow-y: auto;
+
+  // Scrollbar
+  scrollbar-color: inherit transparent;
+  overflow-y: auto;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: ${(props) =>
+      props.$theme.dialogScrollbarThumbBackgroundColor};
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: ${(props) =>
+      props.$theme.dialogScrollbarTrackBackgroundColor};
+    &:hover {
+      background-color: ${(props) =>
+        props.$theme.dialogScrollbarThumbBackgroundColorHover};
+    }
+  }
 `;

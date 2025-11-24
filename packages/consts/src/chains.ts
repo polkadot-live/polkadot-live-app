@@ -1,7 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import {
   polkadot,
   polkadot_asset_hub,
@@ -39,11 +38,13 @@ interface Chain {
 }
 
 const CategoryList = new Map([
-  ['balances', { name: 'Balances', icon: faUserGroup }],
-  ['debugging', { name: 'Debugging', icon: faUserGroup }],
-  ['nominationPools', { name: 'Nomination Pools', icon: faUserGroup }],
-  ['nominating', { name: 'Nominating', icon: faUserGroup }],
-  ['openGov', { name: 'OpenGov', icon: faUserGroup }],
+  ['balances', { label: 'Balances' }],
+  ['debugging', { label: 'Debugging' }],
+  ['nominationPools', { label: 'Nomination Pools' }],
+  ['nominating', { label: 'Nominating' }],
+  ['openGov', { label: 'OpenGov' }],
+  ['staking', { label: 'Staking' }],
+  ['voting', { label: 'Voting' }],
 ]);
 
 export const ChainList = new Map<ChainID, Chain>([
@@ -116,13 +117,13 @@ export const ChainList = new Map<ChainID, Chain>([
     {
       endpoints: {
         rpcs: [
+          'wss://rpc-kusama.luckyfriday.io',
           'wss://kusama-rpc.polkadot.io',
           'wss://kusama-rpc.dwellir.com',
           'wss://kusama-rpc-tn.dwellir.com',
           'wss://rpc.ibp.network/kusama',
           'wss://rpc.dotters.network/kusama',
           'wss://1rpc.io/ksm',
-          'wss://rpc-kusama.luckyfriday.io',
           'wss://kusama.public.curie.radiumblock.co/ws',
         ],
         lightClient: ksmcc3,
@@ -137,11 +138,11 @@ export const ChainList = new Map<ChainID, Chain>([
     {
       endpoints: {
         rpcs: [
-          'wss://sys.ibp.network/asset-hub-kusama',
+          'wss://rpc-asset-hub-kusama.luckyfriday.io',
           'wss://asset-hub-kusama-rpc.dwellir.com',
+          'wss://sys.ibp.network/asset-hub-kusama',
           'wss://statemine-rpc-tn.dwellir.com',
           'wss://asset-hub-kusama.dotters.network',
-          'wss://rpc-asset-hub-kusama.luckyfriday.io',
           'wss://kusama-asset-hub-rpc.polkadot.io',
           'wss://statemine.public.curie.radiumblock.co/ws',
           'wss://ksm-rpc.stakeworld.io/assethub',
@@ -195,8 +196,8 @@ export const ChainList = new Map<ChainID, Chain>([
     {
       endpoints: {
         rpcs: [
-          'wss://asset-hub-paseo-rpc.dwellir.com',
           'wss://sys.ibp.network/asset-hub-paseo',
+          'wss://asset-hub-paseo-rpc.dwellir.com',
           'wss://asset-hub-paseo.dotters.network',
           'wss://pas-rpc.stakeworld.io/assethub',
           'wss://sys.turboflakes.io/asset-hub-paseo',

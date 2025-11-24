@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 export { Events } from './Events';
+export { ChainEvents } from './ChainEvents';
 export { Footer } from './Footer';
 export { Manage } from './Manage';
 export { OpenGov as OpenGovHome } from './OpenGov';

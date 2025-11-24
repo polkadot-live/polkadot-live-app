@@ -6,6 +6,7 @@ import * as UI from '@polkadot-live/ui/components';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import {
   useAddresses,
+  useChainEvents,
   useConnections,
   useEvents,
   useIntervalSubscriptions,
@@ -15,7 +16,7 @@ import {
 } from '@polkadot-live/contexts';
 import { getReadableAccountSource } from '@polkadot-live/core';
 import { getSupportedSources } from '@polkadot-live/consts/chains';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MainHeading } from '@polkadot-live/ui/components';
 import { FlexColumn, FlexRow } from '@polkadot-live/styles/wrappers';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
@@ -33,7 +34,21 @@ export const Summary = () => {
   const { setSelectedId } = useSideNav();
   const { getSubscriptionCountForAccount, getTotalSubscriptionCount } =
     useSubscriptions();
+  const { getEventSubscriptionCount } = useChainEvents();
   const { addressMap, extrinsicCounts } = useSummary();
+
+  /**
+   * State.
+   */
+  const [eventSubCount, setEventSubCount] = useState(0);
+
+  useEffect(() => {
+    const fetch = async () => {
+      const count = await getEventSubscriptionCount();
+      setEventSubCount(count);
+    };
+    fetch();
+  }, []);
 
   /**
    * Utils.
@@ -266,6 +281,13 @@ export const Summary = () => {
                         getTotalIntervalSubscriptionCount()
                       }
                     />
+                    {eventSubCount > 0 && (
+                      <StatItemRow
+                        kind="chainEvent"
+                        meterValue={eventSubCount}
+                        icon={FA.faCheckDouble}
+                      />
+                    )}
                     {getAllAccounts().map((flattened) => (
                       <StatItemRow
                         key={`${flattened.address}_subscriptions_count`}

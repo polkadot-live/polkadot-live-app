@@ -6,6 +6,7 @@ import { handleAccountMessage } from './handlers/accountMessages';
 import { handleAccountSubscriptionMessage } from './handlers/accountSubscriptionMessages';
 import { handleApiMessage } from './handlers/apiMessages';
 import { handleBootstrapMessage } from './handlers/bootstrapMessages';
+import { handleChainEventMessage } from './handlers/chainEventMessages';
 import { handleChainSubscriptionMessage } from './handlers/chainSubscriptionMessages';
 import { handleDataBackupMessage } from './handlers/dataBackupMessages';
 import { handleDbMessage } from './handlers/dbMessages';
@@ -37,6 +38,7 @@ const messageHandlerMap: Record<
   api: handleApiMessage,
   bootstrap: handleBootstrapMessage,
   chainSubscriptions: handleChainSubscriptionMessage,
+  chainEvents: handleChainEventMessage,
   dataBackup: handleDataBackupMessage,
   db: handleDbMessage,
   events: handleEventMessage,

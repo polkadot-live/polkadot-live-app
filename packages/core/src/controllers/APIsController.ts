@@ -55,16 +55,18 @@ export class APIsController {
    * Initalize disconnected API clients.
    */
   static initialize = async (backend: 'electron' | 'browser') => {
+    if (this.clients.length) {
+      return;
+    }
     this.backend = backend;
     const chainIds = ChainList.keys();
     for (const chainId of chainIds) {
       this.new(chainId);
     }
-    const map = new Map<ChainID, FlattenedAPIData>();
-    this.clients.map((c) => map.set(c.chainId, c.flatten()));
-
     // Set react state.
     if (this.backend === 'electron') {
+      const map = new Map<ChainID, FlattenedAPIData>();
+      this.clients.map((c) => map.set(c.chainId, c.flatten()));
       this.cachedSetChains(map);
     }
   };
@@ -101,7 +103,7 @@ export class APIsController {
    * Get timeout duration for RPC or light client connection.
    */
   static getConnectionTimeout = (chainId: ChainID) =>
-    this.getEndpoint(chainId) === 'smoldot' ? 40_000 : 10_000;
+    this.getEndpoint(chainId) === 'smoldot' ? 40_000 : 20_000;
 
   /**
    * Ensure a client is connected.

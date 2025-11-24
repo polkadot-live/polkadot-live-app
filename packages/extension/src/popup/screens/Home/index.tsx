@@ -14,6 +14,7 @@ import {
   Manage,
   Send,
   Summary,
+  ChainEvents,
 } from '@polkadot-live/screens';
 import {
   useAddresses,
@@ -38,7 +39,7 @@ export const Home = () => {
   const { openHelp } = useHelp();
   const { getAddresses } = useAddresses();
   const { cacheGet, toggleSetting } = useAppSettings();
-  const { cacheGet: getShared, relayState } = useConnections();
+  const { cacheGet: getShared, relayState, getTheme } = useConnections();
   const { appLoading } = Ctx.useBootstrapping();
   const cogMenu = Ctx.useCogMenu();
   const sideNav = useSideNav();
@@ -85,6 +86,7 @@ export const Home = () => {
       </UI.Header>
       <FixedFlexWrapper>
         <UI.SideNav
+          theme={getTheme()}
           handleSideNavCollapse={() =>
             toggleSetting('setting:collapse-side-nav')
           }
@@ -111,14 +113,16 @@ export const Home = () => {
               {sideNav.selectedId === 0 && <Summary />}
               {/* Events */}
               {sideNav.selectedId === 1 && <Events />}
+              {/* Chain Events */}
+              {sideNav.selectedId === 2 && <ChainEvents />}
               {/* Account Subscriptions */}
-              {sideNav.selectedId === 2 && (
+              {sideNav.selectedId === 3 && (
                 <Manage addresses={getAddresses()} />
               )}
               {/* OpenGov Subscriptions */}
-              {sideNav.selectedId === 3 && <OpenGovHome />}
+              {sideNav.selectedId === 4 && <OpenGovHome />}
               {/* Send */}
-              {sideNav.selectedId === 4 && (
+              {sideNav.selectedId === 5 && (
                 <Send
                   useSendNative={useSendNative}
                   fetchSendAccounts={fetchSendAccountsBrowser}

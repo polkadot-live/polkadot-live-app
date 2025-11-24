@@ -534,4 +534,293 @@ export const HelpConfig: HelpItems = [
       'The total number of active referenda subscriptions will also be displayed in a separate stat box, providing you have one or more enabled.',
     ],
   },
+  {
+    key: 'help:chainEvents:Balances:Transfer',
+    title: 'Transfer',
+    definition: ['A transfer on the network succeeded.'],
+  },
+  {
+    key: 'help:chainEvents:Balances:Reserved',
+    title: 'Reserved',
+    definition: ['Some balance was reserved (moved from free to reserved).'],
+  },
+  {
+    key: 'help:chainEvents:Balances:Unreserved',
+    title: 'Unreserved',
+    definition: ['Some balance was unreserved (moved from reserved to free).'],
+  },
+  {
+    key: 'help:chainEvents:Balances:Deposit',
+    title: 'Deposit',
+    definition: ['Some amount was deposited (e.g. for transaction fees).'],
+  },
+  {
+    key: 'help:chainEvents:Balances:Withdraw',
+    title: 'Withdraw',
+    definition: [
+      'Some amount was withdrawn from the account (e.g. for transaction fees).',
+    ],
+  },
+  {
+    key: 'help:chainEvents:Balances:Slashed',
+    title: 'Slashed',
+    definition: [
+      'Some amount was removed from the account (e.g. for misbehavior).',
+    ],
+  },
+  {
+    key: 'help:chainEvents:Balances:Suspended',
+    title: 'Suspended',
+    definition: [
+      'Some amount was suspended from an account (it can be restored later).',
+    ],
+  },
+  {
+    key: 'help:chainEvents:Balances:Restored',
+    title: 'Restored',
+    definition: ['Some amount was restored into an account.'],
+  },
+  {
+    key: 'help:chainEvents:Balances:Locked',
+    title: 'Locked',
+    definition: ['Some balance was locked.'],
+  },
+  {
+    key: 'help:chainEvents:Balances:Unlocked',
+    title: 'Unlocked',
+    definition: ['Some balance was unlocked.'],
+  },
+  {
+    key: 'help:chainEvents:Balances:Frozen',
+    title: 'Frozen',
+    definition: ['Some balance was frozen.'],
+  },
+  {
+    key: 'help:chainEvents:Balances:Thawed',
+    title: 'Thawed',
+    definition: ['Some balance was thawed.'],
+  },
+  {
+    key: 'help:chainEvents:ConvictionVoting:Delegated',
+    title: 'Delegated',
+    definition: ['An account has delegated their vote to another account.'],
+  },
+  {
+    key: 'help:chainEvents:ConvictionVoting:Undelegated',
+    title: 'Undelegated',
+    definition: ['An account has canceled a previous delegation operation.'],
+  },
+  {
+    key: 'help:chainEvents:ConvictionVoting:Voted',
+    title: 'Voted',
+    definition: ['An account has voted.'],
+  },
+  {
+    key: 'help:chainEvents:ConvictionVoting:VoteRemoved',
+    title: 'Vote Removed',
+    definition: ['A vote has been removed.'],
+  },
+  {
+    key: 'help:chainEvents:ConvictionVoting:VoteUnlocked',
+    title: 'Vote Unlocked',
+    definition: [
+      'The lockup period of a conviction vote expired, and the funds have been unlocked.',
+    ],
+  },
+  {
+    key: 'help:chainEvents:NominationPools:Created',
+    title: 'Created',
+    definition: ['A pool has been created.'],
+  },
+  {
+    key: 'help:chainEvents:NominationPools:Bonded',
+    title: 'Bonded',
+    definition: ['A member has became bonded in a pool.'],
+  },
+  {
+    key: 'help:chainEvents:NominationPools:PaidOut',
+    title: 'Paid Out',
+    definition: ['A payout has been made to a member.'],
+  },
+  {
+    key: 'help:chainEvents:NominationPools:Unbonded',
+    title: 'Unbonded',
+    definition: ['A member has unbonded from their pool.'],
+  },
+  {
+    key: 'help:chainEvents:NominationPools:Withdrawn',
+    title: 'Withdrawn',
+    definition: ['A member has withdrawn from their pool.'],
+  },
+  {
+    key: 'help:chainEvents:NominationPools:Destroyed',
+    title: 'Destroyed',
+    definition: ['A pool has been destroyed.'],
+  },
+  {
+    key: 'help:chainEvents:NominationPools:StateChanged',
+    title: 'State Changed',
+    definition: ['The state of a pool has changed.'],
+  },
+  {
+    key: 'help:chainEvents:NominationPools:MemberRemoved',
+    title: 'Member Removed',
+    definition: [
+      'A member has been removed from a pool.',
+      'The removal can be voluntary (withdrawn all unbonded funds) or involuntary (kicked). Any funds that are still delegated are released.',
+    ],
+  },
+  {
+    key: 'help:chainEvents:NominationPools:PoolSlashed',
+    title: 'Pool Slashed',
+    definition: ['The active balance of a pool has been slashed.'],
+  },
+  {
+    key: 'help:chainEvents:NominationPools:UnbondingPoolSlashed',
+    title: 'Unbonding Pool Slashed',
+    definition: ['The unbonded pool has been slashed to a newe balance.'],
+  },
+  {
+    key: 'help:chainEvents:NominationPools:PoolCommissionUpdated',
+    title: 'Pool Commission Updated',
+    definition: ["A pool's commission setting has been changed."],
+  },
+  {
+    key: 'help:chainEvents:NominationPools:PoolCommissionChangeRateUpdated',
+    title: 'Pool Commission Change Rate Updated',
+    definition: ["A pool's commission change rate has been changed."],
+  },
+  {
+    key: 'help:chainEvents:NominationPools:PoolCommissionClaimPermissionUpdated',
+    title: 'Pool Commission Claim Permission Updated',
+    definition: ['Pool commission claim permission has been updated.'],
+  },
+  {
+    key: 'help:chainEvents:NominationPools:PoolCommissionClaimed',
+    title: 'Pool Commission Claimed',
+    definition: ['Pool commission has been claimed.'],
+  },
+  {
+    key: 'help:chainEvents:NominationPools:MetadataUpdated',
+    title: 'Metadata Updated',
+    definition: ["A pool's metadata was updated."],
+  },
+  {
+    key: 'help:chainEvents:Referenda:Approved',
+    title: 'Referendum Approved',
+    definition: [
+      'A referendum has been approved and its proposal has been scheduled.',
+    ],
+  },
+  {
+    key: 'help:chainEvents:Referenda:Canceled',
+    title: 'Referendum Canceled',
+    definition: ['A referendum has been canceled.'],
+  },
+  {
+    key: 'help:chainEvents:Referenda:ConfirmAborted',
+    title: 'Referendum Confirmation Aborted',
+    definition: ["A referendum's confirmation phase has been aborted."],
+  },
+  {
+    key: 'help:chainEvents:Referenda:ConfirmStarted',
+    title: 'Referendum Confirmation Started',
+    definition: ['A referendum has moved into the confirmation phase.'],
+  },
+  {
+    key: 'help:chainEvents:Referenda:Confirmed',
+    title: 'Referendum Confirmed',
+    definition: [
+      'A referendum has ended its confirmation phase and is ready for approval.',
+    ],
+  },
+  {
+    key: 'help:chainEvents:Referenda:DecisionDepositPlaced',
+    title: 'Decision Deposit Placed',
+    definition: ['The decision deposit has been placed for a referendum.'],
+  },
+  {
+    key: 'help:chainEvents:Referenda:DecisionDepositRefunded',
+    title: 'Decision Deposit Refunded',
+    definition: ['The decision deposit has been refunded for a referendum.'],
+  },
+  {
+    key: 'help:chainEvents:Referenda:DecisionStarted',
+    title: 'Decision Phase Started',
+    definition: ['A referendum has moved into the deciding phase.'],
+  },
+  {
+    key: 'help:chainEvents:Referenda:DepositSlashed',
+    title: 'Deposit Slashed',
+    definition: ["A referendum's deposit has been slashed."],
+  },
+  {
+    key: 'help:chainEvents:Referenda:Killed',
+    title: 'Referendum Killed',
+    definition: ['A referendum has been killed.'],
+  },
+  {
+    key: 'help:chainEvents:Referenda:Rejected',
+    title: 'Referendum Rejected',
+    definition: ['A proposal has been rejected by referendum.'],
+  },
+  {
+    key: 'help:chainEvents:Referenda:SubmissionDepositRefunded',
+    title: 'Submission Deposit Refunded',
+    definition: ["A referendum's submission deposit has been refunded."],
+  },
+  {
+    key: 'help:chainEvents:Referenda:Submitted',
+    title: 'Referendum Submitted',
+    definition: ['A referendum has been submitted.'],
+  },
+  {
+    key: 'help:chainEvents:Referenda:TimedOut',
+    title: 'Referendum Timed Out',
+    definition: ['A referendum has been timed out without being decided.'],
+  },
+  {
+    key: 'help:chainEvents:Staking:EraPaid',
+    title: 'Era Paid',
+    definition: ['The era payout has been set.'],
+  },
+  {
+    key: 'help:chainEvents:Staking:Rewarded',
+    title: 'Nominator Rewarded',
+    definition: ['The nominator has been rewarded by this amount.'],
+  },
+  {
+    key: 'help:chainEvents:Staking:Slashed',
+    title: 'Staker Slashed',
+    definition: [
+      'A staker (validator or nominator) has been slashed by the given amount.',
+    ],
+  },
+  {
+    key: 'help:chainEvents:Staking:Bonded',
+    title: 'Bonded',
+    definition: ['An account has bonded an amount.'],
+  },
+  {
+    key: 'help:chainEvents:Staking:Unbonded',
+    title: 'Unbonded',
+    definition: ['An account has unbonded an amount.'],
+  },
+  {
+    key: 'help:chainEvents:Staking:Kicked',
+    title: 'Nominator Kicked',
+    definition: ['A nominator has been kicked from a validator.'],
+  },
+  {
+    key: 'help:chainEvents:Staking:Chilled',
+    title: 'Account Chilled',
+    definition: [
+      'An account has stopped participating as either a validator or nominator.',
+    ],
+  },
+  {
+    key: 'help:chainEvents:Staking:ValidatorPrefsSet',
+    title: 'Validator Preferences Set',
+    definition: ['A validator has set their preferences.'],
+  },
 ];

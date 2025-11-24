@@ -14,4 +14,5 @@ export * from './preload';
 export * from './reporter';
 export * from './settings';
 export * from './subscriptions';
+export * from './subscriptions/chainEvents';
 export * from './tx';

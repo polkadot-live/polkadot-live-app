@@ -15,7 +15,7 @@ export const Category = ({ category, events }: EventCategoryProps) => {
    * Get category's readable name.
    */
   const getCategoryName = (key: string): string =>
-    getCategory(key)?.name || 'Unknown Category';
+    getCategory(key)?.label || 'Unknown Category';
 
   return (
     <EventGroup>

@@ -9,6 +9,7 @@ import {
 import { ChainList } from '@polkadot-live/consts/chains';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
+import { ChainEventsService } from '../events';
 
 /**
  * @name tryApiDisconnect
@@ -61,13 +62,17 @@ const isApiRequired = (chainId: ChainID) => {
   if (SubscriptionsController.requiresChainApi(chainId)) {
     return true;
   }
-
   // Return `true` if any account requires an API instance of the chain ID.
   for (const account of AccountsController.accounts.get(chainId) || []) {
     if (account.queryMulti?.requiresChainApi(chainId)) {
       return true;
     }
   }
-
+  // Return `true` if any event streams require an API instance of the chain ID.
+  for (const cid of ChainEventsService.activeSubscriptions.keys()) {
+    if (cid === chainId) {
+      return true;
+    }
+  }
   return false;
 };
