@@ -4,8 +4,9 @@
 import type { AnyData } from '..//misc';
 import type { ChainID } from '../chains';
 import type { HelpItemKey } from '../help';
-
 import type {
+  AssetHubPolkadotRuntimeRuntimeEvent,
+  FrameSystemEventRecord as PolkadotAssetHubFrameSystemEventRecord,
   PalletBalancesEvent as PolkadotAssetHubBalancesEvent,
   PalletConvictionVotingEvent as PolkadotAssetHubConvictionVotingEvent,
   PalletNominationPoolsEvent as PolkadotAssetHubNominationPoolsEvent,
@@ -13,12 +14,28 @@ import type {
   PalletStakingAsyncPalletEvent as PolkadotAssetHubStakingEvent,
 } from '@dedot/chaintypes/polkadot-asset-hub';
 import type {
+  AssetHubKusamaRuntimeRuntimeEvent,
+  FrameSystemEventRecord as KusamaAssetHubFrameSystemEventRecord,
   PalletBalancesEvent as KusamaAssetHubBalancesEvent,
   PalletConvictionVotingEvent as KusamaAssetHubConvictionVotingEvent,
   PalletNominationPoolsEvent as KusamaAssetHubNominationPoolsEvent,
   PalletReferendaEvent as KusamaAssetHubReferendaEvent,
   PalletStakingAsyncPalletEvent as KusamaAssetHubStakingEvent,
 } from '@dedot/chaintypes/kusama-asset-hub';
+import type {
+  AssetHubPaseoRuntimeRuntimeEvent,
+  FrameSystemEventRecord as PaseoAssetHubFrameSystemEventRecord,
+} from '@dedot/chaintypes/paseo-asset-hub';
+
+export type RuntimeEvent =
+  | AssetHubPolkadotRuntimeRuntimeEvent
+  | AssetHubKusamaRuntimeRuntimeEvent
+  | AssetHubPaseoRuntimeRuntimeEvent;
+
+export type FrameSystemEventRecord =
+  | PolkadotAssetHubFrameSystemEventRecord
+  | KusamaAssetHubFrameSystemEventRecord
+  | PaseoAssetHubFrameSystemEventRecord;
 
 /**
  * Union event types.

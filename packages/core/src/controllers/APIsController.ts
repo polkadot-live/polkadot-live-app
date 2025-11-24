@@ -63,11 +63,10 @@ export class APIsController {
     for (const chainId of chainIds) {
       this.new(chainId);
     }
-    const map = new Map<ChainID, FlattenedAPIData>();
-    this.clients.map((c) => map.set(c.chainId, c.flatten()));
-
     // Set react state.
     if (this.backend === 'electron') {
+      const map = new Map<ChainID, FlattenedAPIData>();
+      this.clients.map((c) => map.set(c.chainId, c.flatten()));
       this.cachedSetChains(map);
     }
   };
