@@ -26,6 +26,8 @@ export const chromeAdapter: ChainEventsAdapter = {
     }
   },
 
+  getStoredForAccount: async (): Promise<ChainEventSubscription[]> => [],
+
   getSubCount: async () =>
     await chrome.runtime.sendMessage({
       type: 'chainEvents',

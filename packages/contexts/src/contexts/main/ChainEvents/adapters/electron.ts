@@ -15,6 +15,19 @@ export const electronAdapter: ChainEventsAdapter = {
       })) ?? '[]'
     ),
 
+  getStoredForAccount: async (account): Promise<ChainEventSubscription[]> => {
+    try {
+      const res = (await window.myAPI.sendChainEventTask({
+        action: 'chainEvents:getAllForAccount',
+        data: { account },
+      })) as string;
+      return JSON.parse(res);
+    } catch (err) {
+      console.error(err);
+      return [];
+    }
+  },
+
   getSubCount: async () => {
     const res = await window.myAPI.sendChainEventTask({
       action: 'chainEvents:getActiveCount',
@@ -32,8 +45,12 @@ export const electronAdapter: ChainEventsAdapter = {
     ChainEventsService.initEventStream(chainId);
   },
 
-  storeInsertForAccount: () => {
-    /* empty */
+  storeInsertForAccount: (account, subscription) => {
+    window.myAPI.sendChainEventTask({
+      action: 'chainEvents:insertForAccount',
+      data: { account, subscription },
+    });
+    // TODO: Add to service.
   },
 
   storeRemove: (chainId, subscription) => {
@@ -45,8 +62,12 @@ export const electronAdapter: ChainEventsAdapter = {
     ChainEventsService.tryStopEventsStream(chainId);
   },
 
-  storeRemoveForAccount: () => {
-    /* empty */
+  storeRemoveForAccount: (account, subscription) => {
+    window.myAPI.sendChainEventTask({
+      action: 'chainEvents:removeForAccount',
+      data: { account, subscription },
+    });
+    // TODO: Remove from service.
   },
 
   toggleNotify: (chainId, subscription) => {
@@ -57,7 +78,11 @@ export const electronAdapter: ChainEventsAdapter = {
     ChainEventsService.update(chainId, subscription);
   },
 
-  toggleNotifyForAccount: () => {
-    /* empty */
+  toggleNotifyForAccount: (account, subscription) => {
+    window.myAPI.sendChainEventTask({
+      action: 'chainEvents:insertForAccount',
+      data: { account, subscription },
+    });
+    // TODO: update service.
   },
 };

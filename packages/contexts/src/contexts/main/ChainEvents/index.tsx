@@ -181,8 +181,10 @@ export const ChainEventsProvider = ({
         setAccountSubscriptions(new Map());
         return;
       }
-      // TODO: Get account's active subscriptions from store.
-      const active: ChainEventSubscription[] = [];
+      // Get account's active subscriptions from store.
+      const active: ChainEventSubscription[] =
+        await adapter.getStoredForAccount(activeAccount);
+
       setAccountSubscriptions((prev) => {
         const { address, chain: chainId } = activeAccount;
         const subs = getEventSubscriptionsForAccount(

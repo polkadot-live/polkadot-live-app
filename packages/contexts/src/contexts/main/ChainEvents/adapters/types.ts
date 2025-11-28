@@ -9,6 +9,9 @@ import type { ChainID } from '@polkadot-live/types/chains';
 
 export interface ChainEventsAdapter {
   getStored: () => Promise<Map<ChainID, ChainEventSubscription[]>>;
+  getStoredForAccount: (
+    account: FlattenedAccountData
+  ) => Promise<ChainEventSubscription[]>;
   getSubCount: () => Promise<number>;
   storeInsert: (chainId: ChainID, subscription: ChainEventSubscription) => void;
   storeInsertForAccount: (
