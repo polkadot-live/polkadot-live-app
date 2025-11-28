@@ -40,6 +40,10 @@ export const chromeAdapter: ChainEventsAdapter = {
     });
   },
 
+  storeInsertForAccount: () => {
+    /* empty */
+  },
+
   storeRemove: (_, subscription) => {
     chrome.runtime.sendMessage({
       type: 'chainEvents',
@@ -48,11 +52,19 @@ export const chromeAdapter: ChainEventsAdapter = {
     });
   },
 
+  storeRemoveForAccount: () => {
+    /* empty */
+  },
+
   toggleNotify: (_, subscription) => {
     chrome.runtime.sendMessage({
       type: 'chainEvents',
       task: 'update',
       payload: { sub: subscription },
     });
+  },
+
+  toggleNotifyForAccount: () => {
+    /* empty */
   },
 };

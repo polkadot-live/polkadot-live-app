@@ -2,11 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useState, createContext, useRef, useEffect } from 'react';
+import { useChainEvents } from '../ChainEvents';
 import { createSafeContextHook } from '../../../utils';
 import { getManageAdapter } from './adapters';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   IntervalSubscription,
+  SubscriptionTask,
+  TaskCategory,
   WrappedSubscriptionTasks,
 } from '@polkadot-live/types/subscriptions';
 import type { ManageContextInterface } from '../../../types/main';
@@ -19,6 +22,7 @@ export const ManageContext = createContext<ManageContextInterface | undefined>(
 export const useManage = createSafeContextHook(ManageContext, 'ManageContext');
 
 export const ManageProvider = ({ children }: { children: ReactNode }) => {
+  const { activeAccount } = useChainEvents();
   const adapter = getManageAdapter();
 
   // Subscription tasks being rendered under the Manage tab.
@@ -35,6 +39,34 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
   // Set rendered subscriptions.
   const setRenderedSubscriptions = (wrapped: WrappedSubscriptionTasks) => {
     setRenderedSubscriptionsState({ ...wrapped });
+  };
+
+  // Return subscription tasks mapped by category.
+  const getCategorised = (): Map<TaskCategory, SubscriptionTask[]> => {
+    const ordered: TaskCategory[] = ['Balances', 'Chain'];
+    if (activeAccount) {
+      activeAccount.nominatingData && ordered.push('Nominating');
+      activeAccount.nominationPoolData && ordered.push('Nomination Pools');
+    }
+    const { tasks } = renderedSubscriptionsState;
+    const map = new Map<TaskCategory, SubscriptionTask[]>();
+    for (const category of ordered) {
+      map.set(category, []);
+    }
+    for (const task of tasks) {
+      const { category } = task;
+      if (!ordered.includes(task.category)) {
+        continue;
+      }
+      const cur = map.get(category) ?? [];
+      map.set(category, [...cur, task]);
+    }
+    for (const [key, val] of map.entries()) {
+      if (!val.length) {
+        map.delete(key);
+      }
+    }
+    return map;
   };
 
   // Set intervaled subscriptions with new tasks array.
@@ -138,6 +170,7 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
         activeChainId,
         dynamicIntervalTasksState,
         renderedSubscriptions: renderedSubscriptionsState,
+        getCategorised,
         setDynamicIntervalTasks,
         setRenderedSubscriptions,
         tryUpdateDynamicIntervalTask,

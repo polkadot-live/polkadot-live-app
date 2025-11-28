@@ -7,9 +7,13 @@ import { getChainEventAdapter } from './adapters';
 import {
   ChainPallets,
   getEventSubscriptions,
+  getEventSubscriptionsForAccount,
 } from '@polkadot-live/consts/subscriptions/chainEvents';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { ChainEventSubscription } from '@polkadot-live/types';
+import type {
+  ChainEventSubscription,
+  FlattenedAccountData,
+} from '@polkadot-live/types';
 import type { ChainEventsContextInterface } from '../../../types/main';
 
 export const ChainEventsContext = createContext<
@@ -37,6 +41,36 @@ export const ChainEventsProvider = ({
   >(new Map());
 
   /**
+   * Active account-based subscriptions.
+   */
+  const [activeAccount, setActiveAccount] =
+    useState<FlattenedAccountData | null>(null);
+
+  const [accountSubscriptions, setAccountSubscriptions] = useState<
+    Map<string, ChainEventSubscription[]>
+  >(new Map());
+
+  const getCategorisedForAccount = (
+    account: FlattenedAccountData
+  ): Record<string, ChainEventSubscription[]> => {
+    const { address, chain: chainId } = account;
+    const key = `${chainId}::${address}`;
+    const map = new Map<string, ChainEventSubscription[]>();
+
+    for (const sub of accountSubscriptions.get(key) || []) {
+      const { pallet: p } = sub;
+      map.has(p)
+        ? map.set(p, [...map.get(p)!.filter((s) => !cmp(s, sub)), sub])
+        : map.set(p, [sub]);
+    }
+    const result: Record<string, ChainEventSubscription[]> = {};
+    for (const [k, v] of map.entries()) {
+      result[k] = v.sort((a, b) => a.label.localeCompare(b.label));
+    }
+    return result;
+  };
+
+  /**
    * Compare utility.
    */
   const cmp = (a: ChainEventSubscription, b: ChainEventSubscription) =>
@@ -45,24 +79,35 @@ export const ChainEventsProvider = ({
   /**
    * Handler to toggle a subscription.
    */
-  const toggle = async (subscription: ChainEventSubscription) => {
+  const toggle = async (sub: ChainEventSubscription) => {
     if (!activeChain) {
       return;
     }
-    const status = !subscription.enabled;
-    subscription.enabled = status;
-
+    sub.enabled = !sub.enabled;
     setSubscriptions((prev) => {
       const existing = prev.get(activeChain) ?? [];
-      const updated = existing
-        .filter((s) => !cmp(s, subscription))
-        .concat(subscription);
+      const updated = existing.filter((s) => !cmp(s, sub)).concat(sub);
       return new Map(prev).set(activeChain, updated);
     });
+    sub.enabled
+      ? adapter.storeInsert(activeChain, sub)
+      : adapter.storeRemove(activeChain, sub);
+  };
 
-    status
-      ? adapter.storeInsert(activeChain, subscription)
-      : adapter.storeRemove(activeChain, subscription);
+  const toggleForAccount = async (sub: ChainEventSubscription) => {
+    if (!activeAccount) {
+      return;
+    }
+    sub.enabled = !sub.enabled;
+    setAccountSubscriptions((prev) => {
+      const key = `${activeAccount.chain}::${activeAccount.address}`;
+      const existing = prev.get(key) ?? [];
+      const updated = existing.filter((s) => !cmp(s, sub)).concat(sub);
+      return new Map(prev).set(key, updated);
+    });
+    sub.enabled
+      ? adapter.storeInsertForAccount(activeAccount, sub)
+      : adapter.storeRemoveForAccount(activeAccount, sub);
   };
 
   /**
@@ -72,18 +117,30 @@ export const ChainEventsProvider = ({
     if (!activeChain) {
       return;
     }
-    const osNofify = !sub.osNotify;
-    sub.osNotify = osNofify;
-
+    sub.osNotify = !sub.osNotify;
     setSubscriptions((prev) => {
       const existing = prev.get(activeChain) ?? [];
       const updated = existing.map((s) => (cmp(s, sub) ? sub : s));
       return new Map(prev).set(activeChain, updated);
     });
+    updateStore && adapter.toggleNotify(activeChain, sub);
+  };
 
-    if (updateStore) {
-      adapter.toggleNotify(activeChain, sub);
+  const toggleOsNotifyForAccount = (
+    sub: ChainEventSubscription,
+    updateStore = true
+  ) => {
+    if (!activeAccount) {
+      return;
     }
+    sub.osNotify = !sub.osNotify;
+    setAccountSubscriptions((prev) => {
+      const key = `${activeAccount.chain}::${activeAccount.address}`;
+      const existing = prev.get(key) ?? [];
+      const updated = existing.filter((s) => !cmp(s, sub)).concat(sub);
+      return new Map(prev).set(key, updated);
+    });
+    updateStore && adapter.toggleNotifyForAccount(activeAccount, sub);
   };
 
   const getEventSubscriptionCount = async (): Promise<number> =>
@@ -115,15 +172,44 @@ export const ChainEventsProvider = ({
     fetch();
   }, [activeChain]);
 
+  /**
+   * Get active subscriptions for the selected account.
+   */
+  useEffect(() => {
+    const fetch = async () => {
+      if (!activeAccount) {
+        setAccountSubscriptions(new Map());
+        return;
+      }
+      // TODO: Get account's active subscriptions from store.
+      const active: ChainEventSubscription[] = [];
+      setAccountSubscriptions((prev) => {
+        const { address, chain: chainId } = activeAccount;
+        const subs = getEventSubscriptionsForAccount(
+          chainId,
+          activeAccount
+        ).map((a) => active.find((b) => cmp(a, b)) ?? a);
+        const key = `${chainId}::${address}`;
+        return new Map(prev).set(key, subs);
+      });
+    };
+    fetch();
+  }, [activeAccount]);
+
   return (
     <ChainEventsContext
       value={{
         activeChain,
+        activeAccount,
         subscriptions,
+        getCategorisedForAccount,
         getEventSubscriptionCount,
+        setActiveAccount,
         setActiveChain,
         toggle,
+        toggleForAccount,
         toggleOsNotify,
+        toggleOsNotifyForAccount,
       }}
     >
       {children}

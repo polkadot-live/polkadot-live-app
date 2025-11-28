@@ -3,7 +3,6 @@
 
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
-
 import {
   ChainPallets,
   getReadablePallet,
@@ -36,7 +35,9 @@ export const Subscriptions = ({
   const { getOnlineMode } = useConnections();
   const { hasConnectionIssue } = useApiHealth();
 
-  const [accordionVal, setAccordionVal] = useState<string>('Balances');
+  const [accordionVal, setAccordionVal] = useState<string | undefined>(
+    undefined
+  );
 
   // Utility to determine if a connection issue exists.
   const showConnectionIssue = (): boolean => {
@@ -87,6 +88,7 @@ export const Subscriptions = ({
         <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
           <Accordion.Root
             className="AccordionRoot"
+            collapsible={true}
             type="single"
             value={accordionVal}
             onValueChange={(val) => setAccordionVal(val as string)}

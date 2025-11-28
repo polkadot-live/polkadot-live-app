@@ -127,7 +127,7 @@ export const SubscriptionsProvider = ({
     }
   };
 
-  /// Get subscription count for address.
+  // Get subscription count for address.
   const getSubscriptionCountForAccount = (
     flattened: FlattenedAccountData
   ): number => {
@@ -136,7 +136,7 @@ export const SubscriptionsProvider = ({
     return tasks.reduce((acc, t) => (t.status === 'enable' ? acc + 1 : acc), 0);
   };
 
-  /// Get total subscription count.
+  // Get total subscription count.
   const getTotalSubscriptionCount = (): number =>
     adapter.getTotalSubscriptionCount(activeChainMap, getAllAccounts);
 

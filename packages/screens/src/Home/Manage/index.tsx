@@ -9,8 +9,8 @@ import {
   FlexColumn,
   FlexColumnWrap,
 } from '@polkadot-live/styles/wrappers';
-import { Permissions } from './Permissions';
 import { MainHeading } from '@polkadot-live/ui/components';
+import { Subscriptions } from './Subscriptions';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ManageProps } from './types';
 import type { SubscriptionTaskType } from '@polkadot-live/types/subscriptions';
@@ -25,7 +25,6 @@ export const Manage = ({ addresses }: ManageProps) => {
 
   // Whether the user has clicked on an account or chain.
   const [typeClicked, setTypeClicked] = useState<SubscriptionTaskType>('');
-  const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
 
   return (
     <FlexColumn
@@ -67,7 +66,6 @@ export const Manage = ({ addresses }: ManageProps) => {
               setSection={setSection}
               setBreadcrumb={setBreadcrumb}
               setTypeClicked={setTypeClicked}
-              setSelectedAccount={setSelectedAccount}
             />
           </FlexColumnWrap>
         </div>
@@ -76,10 +74,9 @@ export const Manage = ({ addresses }: ManageProps) => {
           style={{ height: '100%', padding: '0 1rem 1rem' }}
         >
           {/* Subscription toggles for selected account or chain */}
-          <Permissions
+          <Subscriptions
             setSection={setSection}
             section={section}
-            selectedAccount={selectedAccount}
             breadcrumb={breadcrumb}
             tasksChainId={tasksChainId}
             typeClicked={typeClicked}

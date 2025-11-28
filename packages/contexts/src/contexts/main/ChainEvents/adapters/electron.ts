@@ -32,6 +32,10 @@ export const electronAdapter: ChainEventsAdapter = {
     ChainEventsService.initEventStream(chainId);
   },
 
+  storeInsertForAccount: () => {
+    /* empty */
+  },
+
   storeRemove: (chainId, subscription) => {
     window.myAPI.sendChainEventTask({
       action: 'chainEvents:remove',
@@ -41,11 +45,19 @@ export const electronAdapter: ChainEventsAdapter = {
     ChainEventsService.tryStopEventsStream(chainId);
   },
 
+  storeRemoveForAccount: () => {
+    /* empty */
+  },
+
   toggleNotify: (chainId, subscription) => {
     window.myAPI.sendChainEventTask({
       action: 'chainEvents:insert',
       data: { chainId, subscription },
     });
     ChainEventsService.update(chainId, subscription);
+  },
+
+  toggleNotifyForAccount: () => {
+    /* empty */
   },
 };

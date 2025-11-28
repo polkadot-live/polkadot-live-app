@@ -21,6 +21,11 @@ import type {
 } from '@polkadot-live/types/subscriptions';
 
 interface MyDB extends DBSchema {
+  accountChainEvents: {
+    /** chainId::enAddress */
+    key: string;
+    value: ChainEventSubscription[];
+  };
   accounts: {
     key: AccountSource;
     value: ImportedGenericAccount[];
@@ -35,7 +40,7 @@ interface MyDB extends DBSchema {
     value: ChainEventSubscription;
   };
   chainSubscriptions: {
-    /** chainId:address */
+    /** chainId:action */
     key: string;
     value: SubscriptionTask;
   };
@@ -62,6 +67,7 @@ interface MyDB extends DBSchema {
 }
 
 export type Stores =
+  | 'accountChainEvents'
   | 'accounts'
   | 'accountSubscriptions'
   | 'chainEvents'
@@ -92,6 +98,7 @@ export class DbController {
   static async initialize() {
     this.db = await openDB<MyDB>(this.DB_NAME, 1, {
       upgrade(db) {
+        db.createObjectStore('accountChainEvents');
         db.createObjectStore('accountSubscriptions');
         db.createObjectStore('chainEvents');
         db.createObjectStore('chainSubscriptions');

@@ -76,6 +76,7 @@ export type PalletStakingEvent =
 export interface ChainEventSubscription {
   id: string;
   chainId: ChainID;
+  kind: 'account' | 'chain';
   pallet: string;
   eventName: string;
   enabled: boolean;

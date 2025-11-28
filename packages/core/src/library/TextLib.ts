@@ -5,16 +5,12 @@ import { perbillToPercent } from '../library/CommonLib';
 import { chainCurrency, chainUnits } from '@polkadot-live/consts/chains';
 import { formatDistanceToNow } from 'date-fns';
 import { planckToUnit, rmCommas } from '@w3ux/utils';
-import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   AccountSource,
   NominationPoolCommission,
   NominationPoolRoles,
 } from '@polkadot-live/types/accounts';
-import type {
-  SubscriptionTask,
-  TaskCategory,
-} from '@polkadot-live/types/subscriptions';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 /**
  * @name getNominationPoolRolesText
@@ -180,30 +176,6 @@ export const getShortIntervalLabel = (ticksToWait: number) => {
 };
 
 /**
- * @name getTooltipClassForGroup
- * @summary Utility to determine if a tooltip should be rendered over a subscription switch.
- * For subscription tasks associated with an account.
- */
-export const showGroupTooltip = (task: SubscriptionTask) => {
-  const { account, category } = task;
-  if (!account) {
-    return false;
-  }
-
-  switch (category) {
-    case 'Nomination Pools': {
-      return account.nominationPoolData ? false : true;
-    }
-    case 'Nominating': {
-      return account.nominatingData ? false : true;
-    }
-    default: {
-      return false;
-    }
-  }
-};
-
-/**
  * @name getNominationPoolCommissionText
  * @summary Text to render for nomination pool commission events.
  */
@@ -257,25 +229,6 @@ export const timestampToDate = (timestamp: number): string => {
   const formattedDate = `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`;
 
   return formattedDate;
-};
-
-/**
- * @name toolTipTextFor
- * @summary Utility for fetching tooltip text for a subscription switch.
- * For subscrption tasks associated with an account.
- */
-export const toolTipTextFor = (category: TaskCategory) => {
-  switch (category) {
-    case 'Nominating': {
-      return 'Not Nominating';
-    }
-    case 'Nomination Pools': {
-      return 'Not In Nomination Pool';
-    }
-    default: {
-      return '';
-    }
-  }
 };
 
 /**

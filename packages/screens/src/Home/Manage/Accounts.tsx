@@ -8,6 +8,7 @@ import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { NoAccounts } from '@polkadot-live/ui/utils';
 import {
   useAppSettings,
+  useChainEvents,
   useConnections,
   useManage,
   useSubscriptions,
@@ -31,10 +32,10 @@ export const Accounts = ({
   setTasksChainId,
   setSection,
   setTypeClicked,
-  setSelectedAccount,
 }: AccountsProps) => {
   const { cacheGet } = useAppSettings();
   const { getTheme, openTab } = useConnections();
+  const { setActiveAccount } = useChainEvents();
   const { setRenderedSubscriptions } = useManage();
   const { getChainSubscriptions, getAccountSubscriptions, chainSubscriptions } =
     useSubscriptions();
@@ -128,11 +129,8 @@ export const Accounts = ({
   /**
    * Set account subscription tasks state when an account is clicked.
    */
-  const handleClickAccount = (
-    address: string,
-    chainId: ChainID,
-    accountName: string
-  ) => {
+  const handleClickAccount = (account: FlattenedAccountData) => {
+    const { address, chain: chainId, name: accountName } = account;
     setRenderedSubscriptions({
       type: 'account',
       tasks: getAccountSubscriptions(`${chainId}:${address}`),
@@ -141,7 +139,8 @@ export const Accounts = ({
     setTypeClicked('account');
     setBreadcrumb(accountName);
     setSection(1);
-    setSelectedAccount(address);
+    // Set account for chain event subscriptons.
+    setActiveAccount(account);
   };
 
   return (
@@ -154,7 +153,7 @@ export const Accounts = ({
           value={accordionValue}
           onValueChange={(val) => setAccordionValue(val as string[])}
         >
-          <FlexColumn>
+          <FlexColumn $rowGap="1rem">
             {/* Manage Accounts */}
             {Array.from(getSortedAddresses().entries()).map(
               ([chainId, chainAddresses]) => (
@@ -183,34 +182,29 @@ export const Accounts = ({
                     ) : (
                       <ItemsColumn>
                         {chainAddresses.map(
-                          (
-                            { address, chain, name }: FlattenedAccountData,
-                            j: number
-                          ) => (
+                          (a: FlattenedAccountData, j: number) => (
                             <ItemEntryWrapper
                               whileHover={{ scale: 1.01 }}
                               whileTap={{ scale: 0.99 }}
                               key={`manage_account_${j}`}
-                              onClick={() =>
-                                handleClickAccount(address, chain, name)
-                              }
+                              onClick={() => handleClickAccount(a)}
                             >
                               <div className="inner">
                                 <div>
                                   <UI.TooltipRx
-                                    text={ellipsisFn(address, 12)}
+                                    text={ellipsisFn(a.address, 12)}
                                     theme={theme}
                                     side="right"
                                   >
                                     <span>
                                       <UI.Identicon
-                                        value={address}
+                                        value={a.address}
                                         fontSize={'1.75rem'}
                                       />
                                     </span>
                                   </UI.TooltipRx>
                                   <div className="content">
-                                    <h3>{name}</h3>
+                                    <h3>{a.name}</h3>
                                   </div>
                                 </div>
                                 <div>
