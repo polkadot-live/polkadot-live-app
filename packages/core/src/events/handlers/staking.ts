@@ -1,6 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { ChainList } from '@polkadot-live/consts/chains';
 import { ellipsisFn } from '@w3ux/utils';
 import { getBalanceText } from '../../library';
 import { handleEvent } from '../../callbacks/utils';
@@ -24,6 +25,32 @@ export const handleStakingEvent = (
     });
   } catch (err) {
     console.error(err, palletEvent);
+  }
+};
+
+export const getStakingPalletScopedAccountsFromEvent = (
+  chainId: ChainID,
+  palletEvent: PalletStakingEvent
+): string[] => {
+  const { name: eventName, data: miscData } = palletEvent;
+  const prefix = ChainList.get(chainId)?.prefix ?? 42;
+  switch (eventName) {
+    case 'Rewarded': {
+      const { dest } = miscData;
+      return dest.type === 'Account'
+        ? [dest.value.address(prefix).toString()]
+        : [];
+    }
+    case 'Slashed':
+      return [miscData.staker.address(prefix).toString()];
+    case 'Kicked':
+      return [miscData.nominator.address(prefix).toString()];
+    case 'Bonded':
+    case 'Unbonded':
+    case 'Chilled':
+      return [miscData.stash.address(prefix).toString()];
+    default:
+      return [];
   }
 };
 

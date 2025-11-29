@@ -4,12 +4,14 @@
 import { APIsController } from '../controllers';
 import { EventQueue } from './queue';
 import { ChainPallets } from '@polkadot-live/consts/subscriptions/chainEvents';
-import { PalletHandlers } from './handlers';
+import { PalletHandlers, ScopedAccountGetters } from './handlers';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { Unsub } from 'dedot/types';
 import type {
+  AnyData,
   ChainEventSubscription,
   DedotEventStreamClient,
+  FlattenedAccountData,
   FrameSystemEventRecord,
   RuntimeEvent,
 } from '@polkadot-live/types';
@@ -38,6 +40,121 @@ export class ChainEventsService {
 
   // Cache of active chain event subscriptions.
   static activeSubscriptions = new Map<ChainID, ChainEventSubscription[]>();
+
+  // Cache account-scoped chain event subscriptions.
+  static accountScopedSubscriptions = new Map<
+    ChainID,
+    Map<string /* address */, Map<string /* pallet */, ActiveMeta[]>>
+  >();
+
+  static insertForAccount = (
+    account: FlattenedAccountData,
+    sub: ChainEventSubscription
+  ) => {
+    const { address: accKey, chain: chainId } = account;
+    const { pallet, eventName, osNotify } = sub;
+    const scoped = ChainEventsService.accountScopedSubscriptions;
+
+    // Get or create: chain -> accounts
+    let accounts = scoped.get(chainId);
+    if (!accounts) {
+      accounts = new Map();
+      scoped.set(chainId, accounts);
+    }
+    // Get or create: account -> pallets
+    let pallets = accounts.get(accKey);
+    if (!pallets) {
+      pallets = new Map();
+      accounts.set(accKey, pallets);
+    }
+    // Get or create: pallet -> event array
+    let metas = pallets.get(pallet);
+    if (!metas) {
+      metas = [];
+      pallets.set(pallet, metas);
+    }
+    // Add event metadata
+    metas.push({ eventName, osNotify });
+  };
+
+  static removeForAccount = (
+    account: FlattenedAccountData,
+    sub: ChainEventSubscription
+  ) => {
+    const { address: accKey, chain: chainId } = account;
+    const { pallet, eventName } = sub;
+    const scoped = ChainEventsService.accountScopedSubscriptions;
+
+    const accounts = scoped.get(chainId);
+    if (!accounts) {
+      return;
+    }
+    const pallets = accounts.get(accKey);
+    if (!pallets) {
+      return;
+    }
+    const metas = pallets.get(pallet);
+    if (!metas) {
+      return;
+    }
+    // Remove matching meta.
+    const filtered = metas.filter((m) => !(m.eventName === eventName));
+    filtered.length === 0
+      ? pallets.delete(pallet)
+      : pallets.set(pallet, filtered);
+
+    // If pallet map became empty, remove account.
+    if (pallets.size === 0) {
+      accounts.delete(accKey);
+    }
+    // If account map became empty, remove chain entry.
+    if (accounts.size === 0) {
+      scoped.delete(chainId);
+    }
+  };
+
+  static removeAllForAccount = (account: FlattenedAccountData) => {
+    const { address: accKey, chain: chainId } = account;
+    const scoped = ChainEventsService.accountScopedSubscriptions;
+    const accounts = scoped.get(chainId);
+    if (!accounts) {
+      return;
+    }
+    accounts.delete(accKey);
+    if (!Array.from(accounts.keys()).length) {
+      scoped.delete(chainId);
+    }
+    ChainEventsService.tryStopEventsStream(chainId);
+  };
+
+  static updateForAccount = (
+    account: FlattenedAccountData,
+    sub: ChainEventSubscription
+  ) => {
+    const { address: accKey, chain: chainId } = account;
+    const { pallet, eventName, osNotify } = sub;
+    const scoped = ChainEventsService.accountScopedSubscriptions;
+
+    const accounts = scoped.get(chainId);
+    if (!accounts) {
+      return;
+    }
+    const pallets = accounts.get(accKey);
+    if (!pallets) {
+      return;
+    }
+    const metas = pallets.get(pallet);
+    if (!metas) {
+      return;
+    }
+    // Find index by eventName
+    const index = metas.findIndex((m) => m.eventName === eventName);
+    if (index === -1) {
+      return;
+    }
+    // Replace existing entry
+    metas[index] = { eventName, osNotify };
+  };
 
   static cmp = (a: ChainEventSubscription, b: ChainEventSubscription) =>
     a.pallet === b.pallet && a.eventName === b.eventName;
@@ -96,6 +213,38 @@ export class ChainEventsService {
     ChainEventsService.serviceStatus.set(chainId, { active: true, unsub });
   };
 
+  // Determine if an event has an account-scoped subscription.
+  static hasAccountScopedSubscription = (
+    chainId: ChainID,
+    event: RuntimeEvent
+  ): ActiveMeta | null => {
+    const { pallet, palletEvent } = event;
+    const scoped = ChainEventsService.accountScopedSubscriptions;
+
+    for (const [address, palletMap] of scoped.get(chainId)?.entries() || []) {
+      const meta = palletMap.get(pallet);
+      if (meta) {
+        const eventName = palletEvent.name;
+        const activeMeta = meta.find((m) => m.eventName === eventName);
+
+        if (activeMeta) {
+          // Check if `address` is associated with the event.
+          const fn = ScopedAccountGetters[pallet] as
+            | ((c: ChainID, p: AnyData) => string[])
+            | undefined;
+
+          if (!fn) {
+            continue;
+          }
+          if (fn(chainId, palletEvent).includes(address)) {
+            return activeMeta;
+          }
+        }
+      }
+    }
+    return null;
+  };
+
   // Process events for a specific chain.
   static handleEvents = (
     chainId: ChainID,
@@ -108,16 +257,26 @@ export class ChainEventsService {
     for (const item of events) {
       const { event }: { event: RuntimeEvent } = item;
       const { pallet } = event;
-
-      // Check if subscription is active for this event.
       const isSupportedPallet = chainPallets.includes(pallet);
-      const meta = activeMap
-        .get(pallet)
-        ?.find((m) => m.eventName === event.palletEvent.name);
-      const isOn = meta !== undefined;
 
-      if (isSupportedPallet && isOn) {
-        EventQueue.push({ chainId, osNotify: meta.osNotify, record: item });
+      if (isSupportedPallet) {
+        // Check for active account scoped subscription.
+        const maybeScopedMeta = ChainEventsService.hasAccountScopedSubscription(
+          chainId,
+          event
+        );
+        // Check for active global scoped subscription.
+        const meta = activeMap
+          .get(pallet)
+          ?.find((m) => m.eventName === event.palletEvent.name);
+        const isOn = meta !== undefined;
+
+        // Dispatch event if active subscription found.
+        if (isOn || maybeScopedMeta) {
+          const osNotify =
+            Boolean(meta?.osNotify) || Boolean(maybeScopedMeta?.osNotify);
+          EventQueue.push({ chainId, osNotify, record: item });
+        }
       }
     }
   };
@@ -150,7 +309,10 @@ export class ChainEventsService {
   };
 
   static stopAllEventStreams = () => {
-    const chainIds = Array.from(ChainEventsService.activeSubscriptions.keys());
+    const global = ChainEventsService.activeSubscriptions;
+    const scoped = ChainEventsService.accountScopedSubscriptions;
+    const chainIds = Array.from(new Set([...global.keys(), ...scoped.keys()]));
+
     for (const chainId of chainIds) {
       ChainEventsService.stopEventsStream(chainId);
     }
@@ -158,7 +320,10 @@ export class ChainEventsService {
 
   // Stop an event stream if no subscriptions are active.
   static tryStopEventsStream = (chainId: ChainID) => {
-    if (!ChainEventsService.activeSubscriptions.get(chainId)) {
+    const global = ChainEventsService.activeSubscriptions;
+    const scoped = ChainEventsService.accountScopedSubscriptions;
+
+    if (!global.get(chainId) && !scoped.get(chainId)) {
       ChainEventsService.stopEventsStream(chainId);
     }
   };

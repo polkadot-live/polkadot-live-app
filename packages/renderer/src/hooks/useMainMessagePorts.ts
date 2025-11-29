@@ -18,6 +18,7 @@ import { WC_EVENT_ORIGIN } from '@polkadot-live/consts/walletConnect';
 import {
   useAddresses,
   useAppSettings,
+  useChainEvents,
   useConnections,
   useEvents,
   useIntervalSubscriptions,
@@ -73,6 +74,7 @@ export const useMainMessagePorts = () => {
     tryAddIntervalSubscription,
     tryRemoveIntervalSubscription,
   } = useManage();
+  const { removeAllForAccount } = useChainEvents();
 
   /**
    * @name handleImportAddress
@@ -215,6 +217,10 @@ export const useMainMessagePorts = () => {
       // Unsubscribe from tasks and remove account from controller.
       await AccountsController.removeAllSubscriptions(account);
       AccountsController.remove(chainId, address);
+
+      // Remove all account-scoped chain event subscriptions.
+      Core.ChainEventsService.removeAllForAccount(account.flatten());
+      removeAllForAccount(account.flatten());
 
       // Remove address from context.
       await removeAddress(chainId, address);

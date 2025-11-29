@@ -1,6 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { ChainList } from '@polkadot-live/consts/chains';
 import { getBalanceText } from '../../library';
 import { handleEvent } from '../../callbacks/utils';
 import { makeChainEvent } from './utils';
@@ -23,6 +24,35 @@ export const handleBalancesEvent = (
     });
   } catch (err) {
     console.error(err, palletEvent);
+  }
+};
+
+export const getBalancesPalletScopedAccountsFromEvent = (
+  chainId: ChainID,
+  palletEvent: PalletBalancesEvent
+): string[] => {
+  const { name: eventName, data: miscData } = palletEvent;
+  const prefix = ChainList.get(chainId)?.prefix ?? 42;
+  switch (eventName) {
+    case 'Transfer': {
+      const { from, to } = miscData;
+      return [from.address(prefix).toString(), to.address(prefix).toString()];
+    }
+    case 'Reserved':
+    case 'Unreserved':
+    case 'Deposit':
+    case 'Withdraw':
+    case 'Slashed':
+    case 'Suspended':
+    case 'Restored':
+    case 'Locked':
+    case 'Unlocked':
+    case 'Frozen':
+    case 'Thawed': {
+      return [miscData.who.address(prefix).toString()];
+    }
+    default:
+      return [];
   }
 };
 

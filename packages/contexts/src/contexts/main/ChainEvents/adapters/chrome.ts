@@ -26,7 +26,19 @@ export const chromeAdapter: ChainEventsAdapter = {
     }
   },
 
-  getStoredForAccount: async (): Promise<ChainEventSubscription[]> => [],
+  getStoredForAccount: async (account): Promise<ChainEventSubscription[]> => {
+    try {
+      const stored = (await chrome.runtime.sendMessage({
+        type: 'chainEvents',
+        task: 'getAllForAccount',
+        payload: { account },
+      })) as ChainEventSubscription[];
+      return stored;
+    } catch (err) {
+      console.error(err);
+      return [];
+    }
+  },
 
   getSubCount: async () =>
     await chrome.runtime.sendMessage({
@@ -42,8 +54,12 @@ export const chromeAdapter: ChainEventsAdapter = {
     });
   },
 
-  storeInsertForAccount: () => {
-    /* empty */
+  storeInsertForAccount: (account, subscription) => {
+    chrome.runtime.sendMessage({
+      type: 'chainEvents',
+      task: 'insertForAccount',
+      payload: { account, subscription },
+    });
   },
 
   storeRemove: (_, subscription) => {
@@ -54,8 +70,20 @@ export const chromeAdapter: ChainEventsAdapter = {
     });
   },
 
-  storeRemoveForAccount: () => {
-    /* empty */
+  storeRemoveForAccount: (account, subscription) => {
+    chrome.runtime.sendMessage({
+      type: 'chainEvents',
+      task: 'removeForAccount',
+      payload: { account, subscription },
+    });
+  },
+
+  storeRemoveAllForAccount: (account) => {
+    chrome.runtime.sendMessage({
+      type: 'chainEvents',
+      task: 'removeAllForAccount',
+      payload: { account },
+    });
   },
 
   toggleNotify: (_, subscription) => {
@@ -66,7 +94,11 @@ export const chromeAdapter: ChainEventsAdapter = {
     });
   },
 
-  toggleNotifyForAccount: () => {
-    /* empty */
+  toggleNotifyForAccount: (account, subscription) => {
+    chrome.runtime.sendMessage({
+      type: 'chainEvents',
+      task: 'toggleNotifyForAccount',
+      payload: { account, subscription },
+    });
   },
 };

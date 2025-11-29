@@ -70,6 +70,19 @@ export const ChainEventsProvider = ({
     return result;
   };
 
+  // Called when account is deleted or removed.
+  const removeAllForAccount = (account: FlattenedAccountData) => {
+    const { address, chain: chainId } = account;
+    const key = `${chainId}::${address}`;
+
+    // Clear store and state.
+    adapter.storeRemoveAllForAccount(account);
+    setAccountSubscriptions((prev) => {
+      prev.delete(key);
+      return prev;
+    });
+  };
+
   /**
    * Compare utility.
    */
@@ -206,6 +219,7 @@ export const ChainEventsProvider = ({
         subscriptions,
         getCategorisedForAccount,
         getEventSubscriptionCount,
+        removeAllForAccount,
         setActiveAccount,
         setActiveChain,
         toggle,

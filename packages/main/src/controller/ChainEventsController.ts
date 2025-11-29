@@ -41,6 +41,11 @@ export class ChainEventsController {
         ChainEventsController.removeForAccount(account, subscription);
         break;
       }
+      case 'chainEvents:removeAllForAccount': {
+        const { account } = task.data;
+        ChainEventsController.removeAllForAccount(account);
+        break;
+      }
       case 'chainEvents:remove': {
         const { chainId, subscription } = task.data;
         ChainEventsController.remove(chainId, subscription);
@@ -157,6 +162,16 @@ export class ChainEventsController {
       const key = `${prefix}::${chainId}::${address}`;
       (store as Record<string, AnyData>).delete(key);
     }
+  }
+
+  /**
+   * Remove account-scoped chain event subscriptions from the store.
+   */
+  private static removeAllForAccount(account: FlattenedAccountData) {
+    const { address, chain: chainId } = account;
+    const prefix = ChainEventsController.accountScopeKeyPrefix;
+    const key = `${prefix}::${chainId}::${address}`;
+    (store as Record<string, AnyData>).delete(key);
   }
 
   /**

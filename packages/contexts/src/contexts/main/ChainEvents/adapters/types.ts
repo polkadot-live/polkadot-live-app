@@ -23,6 +23,7 @@ export interface ChainEventsAdapter {
     account: FlattenedAccountData,
     subscription: ChainEventSubscription
   ) => void;
+  storeRemoveAllForAccount: (account: FlattenedAccountData) => void;
   toggleNotify: (
     chainId: ChainID,
     subscription: ChainEventSubscription

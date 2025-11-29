@@ -1,6 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { ChainList } from '@polkadot-live/consts/chains';
 import { ellipsisFn } from '@w3ux/utils';
 import { handleEvent } from '../../callbacks/utils';
 import { makeChainEvent } from './utils';
@@ -23,6 +24,35 @@ export const handleConvictionVotingEvent = (
     });
   } catch (err) {
     console.error(err, palletEvent);
+  }
+};
+
+export const getConvictionVotingPalletScopedAccountsFromEvent = (
+  chainId: ChainID,
+  palletEvent: PalletConvictionVotingEvent
+): string[] => {
+  const { name: eventName, data: miscData } = palletEvent;
+  const prefix = ChainList.get(chainId)?.prefix ?? 42;
+  switch (eventName) {
+    case 'Delegated': {
+      const [account] = miscData;
+      return [account.address(prefix).toString()];
+    }
+    case 'Undelegated': {
+      if (Array.isArray(miscData)) {
+        const [account] = miscData;
+        return [account.address(prefix).toString()];
+      } else {
+        return [miscData.address(prefix).toString()];
+      }
+    }
+    case 'Voted':
+    case 'VoteRemoved':
+    case 'VoteUnlocked': {
+      return [miscData.who.address(prefix).toString()];
+    }
+    default:
+      return [];
   }
 };
 

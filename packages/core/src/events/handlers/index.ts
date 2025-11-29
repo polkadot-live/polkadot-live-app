@@ -1,11 +1,23 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { handleBalancesEvent } from './balances';
-import { handleConvictionVotingEvent } from './convictionVoting';
-import { handleNominationPoolsEvent } from './nominationPools';
+import {
+  handleBalancesEvent,
+  getBalancesPalletScopedAccountsFromEvent,
+} from './balances';
+import {
+  handleConvictionVotingEvent,
+  getConvictionVotingPalletScopedAccountsFromEvent,
+} from './convictionVoting';
+import {
+  handleNominationPoolsEvent,
+  getNominationPoolsPalletScopedAccountsFromEvent,
+} from './nominationPools';
 import { handleReferendaEvent } from './referenda';
-import { handleStakingEvent } from './staking';
+import {
+  getStakingPalletScopedAccountsFromEvent,
+  handleStakingEvent,
+} from './staking';
 import type {
   AnyData,
   PalletBalancesEvent,
@@ -42,4 +54,19 @@ export const PalletHandlers: Record<string, AnyData> = {
     osNotify: boolean,
     palletEvent: PalletStakingEvent
   ) => handleStakingEvent(chainId, osNotify, palletEvent),
+};
+
+export const ScopedAccountGetters: Record<string, AnyData> = {
+  Balances: (chainId: ChainID, palletEvent: PalletBalancesEvent) =>
+    getBalancesPalletScopedAccountsFromEvent(chainId, palletEvent),
+  ConvictionVoting: (
+    chainId: ChainID,
+    palletEvent: PalletConvictionVotingEvent
+  ) => getConvictionVotingPalletScopedAccountsFromEvent(chainId, palletEvent),
+  NominationPools: (
+    chainId: ChainID,
+    palletEvent: PalletNominationPoolsEvent
+  ) => getNominationPoolsPalletScopedAccountsFromEvent(chainId, palletEvent),
+  Staking: (chainId: ChainID, palletEvent: PalletStakingEvent) =>
+    getStakingPalletScopedAccountsFromEvent(chainId, palletEvent),
 };

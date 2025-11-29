@@ -50,7 +50,8 @@ export const electronAdapter: ChainEventsAdapter = {
       action: 'chainEvents:insertForAccount',
       data: { account, subscription },
     });
-    // TODO: Add to service.
+    ChainEventsService.insertForAccount(account, subscription);
+    ChainEventsService.initEventStream(account.chain);
   },
 
   storeRemove: (chainId, subscription) => {
@@ -67,7 +68,15 @@ export const electronAdapter: ChainEventsAdapter = {
       action: 'chainEvents:removeForAccount',
       data: { account, subscription },
     });
-    // TODO: Remove from service.
+    ChainEventsService.removeForAccount(account, subscription);
+    ChainEventsService.tryStopEventsStream(account.chain);
+  },
+
+  storeRemoveAllForAccount: (account) => {
+    window.myAPI.sendChainEventTask({
+      action: 'chainEvents:removeAllForAccount',
+      data: { account },
+    });
   },
 
   toggleNotify: (chainId, subscription) => {
@@ -83,6 +92,6 @@ export const electronAdapter: ChainEventsAdapter = {
       action: 'chainEvents:insertForAccount',
       data: { account, subscription },
     });
-    // TODO: update service.
+    ChainEventsService.updateForAccount(account, subscription);
   },
 };

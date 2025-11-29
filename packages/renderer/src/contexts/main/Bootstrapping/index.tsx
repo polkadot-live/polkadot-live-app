@@ -108,14 +108,34 @@ export const BootstrappingProvider = ({
         data: null,
       })) || '[]'
     );
-    // Insert subscriptions.
+
+    // Insert global-scoped subscriptions.
     for (const [cid, subs] of stored.entries()) {
       for (const s of subs) {
         ChainEventsService.insert(cid, s);
       }
     }
+
+    // Insert stored account-scoped chain event subscriptions.
+    const activeChainIds: ChainID[] = [];
+    for (const accounts of AccountsController.accounts.values()) {
+      for (const account of accounts) {
+        const flat = account.flatten();
+        const subs: ChainEventSubscription[] = JSON.parse(
+          (await window.myAPI.sendChainEventTask({
+            action: 'chainEvents:getAllForAccount',
+            data: { account: flat, chainId: flat.chain },
+          })) as string
+        );
+        subs.length && activeChainIds.push(flat.chain);
+        for (const sub of subs) {
+          ChainEventsService.insertForAccount(flat, sub);
+        }
+      }
+    }
+
     // Start event streams.
-    for (const cid of stored.keys()) {
+    for (const cid of new Set([...activeChainIds, ...stored.keys()])) {
       await ChainEventsService.initEventStream(cid);
     }
   };

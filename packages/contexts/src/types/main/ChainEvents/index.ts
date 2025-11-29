@@ -15,6 +15,7 @@ export interface ChainEventsContextInterface {
     account: FlattenedAccountData
   ) => Record<string, ChainEventSubscription[]>;
   getEventSubscriptionCount: () => Promise<number>;
+  removeAllForAccount: (account: FlattenedAccountData) => void;
   setActiveAccount: React.Dispatch<
     React.SetStateAction<FlattenedAccountData | null>
   >;

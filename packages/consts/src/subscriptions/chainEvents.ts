@@ -36,6 +36,13 @@ export const ChainPallets: Record<string, string[]> = {
     'Referenda',
     'Staking',
   ],
+  'Westend Asset Hub': [
+    'Balances',
+    'ConvictionVoting',
+    'NominationPools',
+    'Referenda',
+    'Staking',
+  ],
 };
 
 export const getReadablePallet = (pallet: string) => {
