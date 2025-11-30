@@ -211,6 +211,16 @@ export const ChainEventsProvider = ({
     fetch();
   }, [activeAccount]);
 
+  /**
+   * Listen to state messages from background worker.
+   */
+  useEffect(() => {
+    const removeListener = adapter.listenOnMount(removeAllForAccount);
+    return () => {
+      removeListener && removeListener();
+    };
+  }, []);
+
   return (
     <ChainEventsContext
       value={{

@@ -16,9 +16,7 @@ import type { SubscriptionRowAccountProps } from './types';
 export const SubscriptionRowAccount = ({
   subscription,
 }: SubscriptionRowAccountProps) => {
-  // TODO: Implement.
   const { toggleForAccount, toggleOsNotifyForAccount } = useChainEvents();
-
   const { getTheme, getOnlineMode } = useConnections();
   const { openHelp } = useHelp();
   const theme = getTheme();

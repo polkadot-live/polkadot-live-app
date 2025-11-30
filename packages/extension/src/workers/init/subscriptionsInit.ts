@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { DbController } from '../../controllers';
+import { getAllChainEventsForAccount } from '../chainEvents';
 import { handleGetAllIntervalTasks } from '../intervals';
 import { isSystemsInitialized } from '../state';
 import {
@@ -62,11 +63,34 @@ export const initEventSubscriptions = async () => {
   for (const [cid, sub] of stored.entries()) {
     ChainEventsService.insert(cid as ChainID, sub);
   }
+  // Insert stored account-scoped chain event subscriptions.
+  const activeChainIds: ChainID[] = [];
+  for (const accounts of AccountsController.accounts.values()) {
+    for (const account of accounts) {
+      const flat = account.flatten();
+      const subs = await getAllChainEventsForAccount(account);
+      subs.length && activeChainIds.push(flat.chain);
+      for (const sub of subs) {
+        ChainEventsService.insertForAccount(flat, sub);
+      }
+    }
+  }
 };
 
 export const startEventStreams = async () => {
+  // Get active chains for account-scoped subscriptions.
+  const activeChainIds: ChainID[] = [];
+  for (const accounts of AccountsController.accounts.values()) {
+    for (const account of accounts) {
+      const subs = await getAllChainEventsForAccount(account);
+      subs.length && activeChainIds.push(account.chain);
+    }
+  }
   // Start event streams.
-  for (const cid of ChainEventsService.activeSubscriptions.keys()) {
+  for (const cid of new Set([
+    ...ChainEventsService.activeSubscriptions.keys(),
+    ...activeChainIds,
+  ])) {
     await ChainEventsService.initEventStream(cid as ChainID);
   }
 };

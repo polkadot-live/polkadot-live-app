@@ -7,6 +7,8 @@ import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChainEventsAdapter } from './types';
 
 export const electronAdapter: ChainEventsAdapter = {
+  listenOnMount: () => null,
+
   getStored: async (): Promise<Map<ChainID, ChainEventSubscription[]>> =>
     parseMap<ChainID, ChainEventSubscription[]>(
       (await window.myAPI.sendChainEventTask({

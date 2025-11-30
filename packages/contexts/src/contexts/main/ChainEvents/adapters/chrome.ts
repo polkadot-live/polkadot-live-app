@@ -3,9 +3,25 @@
 
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChainEventsAdapter } from './types';
-import type { ChainEventSubscription } from '@polkadot-live/types';
+import type { AnyData, ChainEventSubscription } from '@polkadot-live/types';
 
 export const chromeAdapter: ChainEventsAdapter = {
+  listenOnMount: (removeAllForAccount) => {
+    const callback = async (message: AnyData) => {
+      if (message.type === 'chainEvents') {
+        switch (message.task) {
+          case 'removeAllForAccount': {
+            const { account } = message.payload;
+            removeAllForAccount(account);
+            break;
+          }
+        }
+      }
+    };
+    chrome.runtime.onMessage.addListener(callback);
+    return () => chrome.runtime.onMessage.removeListener(callback);
+  },
+
   getStored: async (): Promise<Map<ChainID, ChainEventSubscription[]>> => {
     try {
       const map = new Map<ChainID, ChainEventSubscription[]>();
