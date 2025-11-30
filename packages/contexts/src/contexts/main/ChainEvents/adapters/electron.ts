@@ -38,6 +38,15 @@ export const electronAdapter: ChainEventsAdapter = {
     return res ? parseInt(res) : 0;
   },
 
+  getSubCountForAccount: async (account) => {
+    const res = (await window.myAPI.sendChainEventTask({
+      action: 'chainEvents:getAllForAccount',
+      data: { account },
+    })) as string;
+    const parsed: ChainEventSubscription[] = JSON.parse(res);
+    return parsed.length;
+  },
+
   storeInsert: (chainId, subscription) => {
     window.myAPI.sendChainEventTask({
       action: 'chainEvents:insert',

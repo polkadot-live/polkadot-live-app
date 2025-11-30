@@ -62,6 +62,20 @@ export const chromeAdapter: ChainEventsAdapter = {
       task: 'getActiveCount',
     }),
 
+  getSubCountForAccount: async (account) => {
+    try {
+      const stored = (await chrome.runtime.sendMessage({
+        type: 'chainEvents',
+        task: 'getAllForAccount',
+        payload: { account },
+      })) as ChainEventSubscription[];
+      return stored.length;
+    } catch (err) {
+      console.error(err);
+      return 0;
+    }
+  },
+
   storeInsert: (_, subscription) => {
     chrome.runtime.sendMessage({
       type: 'chainEvents',

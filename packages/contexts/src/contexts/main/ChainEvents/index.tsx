@@ -50,6 +50,9 @@ export const ChainEventsProvider = ({
     Map<string, ChainEventSubscription[]>
   >(new Map());
 
+  const accountSubCount = (account: FlattenedAccountData) =>
+    adapter.getSubCountForAccount(account);
+
   const getCategorisedForAccount = (
     account: FlattenedAccountData
   ): Record<string, ChainEventSubscription[]> => {
@@ -227,6 +230,7 @@ export const ChainEventsProvider = ({
         activeChain,
         activeAccount,
         subscriptions,
+        accountSubCount,
         getCategorisedForAccount,
         getEventSubscriptionCount,
         removeAllForAccount,

@@ -23,6 +23,7 @@ import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { SideTriggerButton } from './Wrappers';
 import { OpenViewButton } from './OpenViewButton';
 import { StatItemRow } from './StatItemRow';
+import type { FlattenedAccountData } from '@polkadot-live/types';
 import type { SummaryAccordionValue } from './types';
 
 export const Summary = () => {
@@ -31,21 +32,38 @@ export const Summary = () => {
   const { getEventsCount, getReadableEventCategory, getAllEventCategoryKeys } =
     useEvents();
   const { getTotalIntervalSubscriptionCount } = useIntervalSubscriptions();
+  const { accountSubCount, getEventSubscriptionCount } = useChainEvents();
+  const { getClassicSubCount, getTotalSubscriptionCount } = useSubscriptions();
   const { setSelectedId } = useSideNav();
-  const { getSubscriptionCountForAccount, getTotalSubscriptionCount } =
-    useSubscriptions();
-  const { getEventSubscriptionCount } = useChainEvents();
   const { addressMap, extrinsicCounts } = useSummary();
 
   /**
    * State.
    */
   const [eventSubCount, setEventSubCount] = useState(0);
+  const [accountSmartSubCounts, setAccountSmartSubCounts] = useState<
+    Map<string, number>
+  >(new Map());
+
+  const getSmartSubCount = (account: FlattenedAccountData) =>
+    accountSmartSubCounts.get(`${account.chain}::${account.address}`) ?? 0;
 
   useEffect(() => {
     const fetch = async () => {
       const count = await getEventSubscriptionCount();
       setEventSubCount(count);
+    };
+    fetch();
+  }, []);
+
+  useEffect(() => {
+    const fetch = async () => {
+      const map = new Map<string, number>();
+      const all = getAllAccounts();
+      for (const a of all) {
+        map.set(`${a.chain}::${a.address}`, await accountSubCount(a));
+      }
+      setAccountSmartSubCounts(map);
     };
     fetch();
   }, []);
@@ -288,12 +306,12 @@ export const Summary = () => {
                         icon={FA.faCheckDouble}
                       />
                     )}
-                    {getAllAccounts().map((flattened) => (
+                    {getAllAccounts().map((a) => (
                       <StatItemRow
-                        key={`${flattened.address}_subscriptions_count`}
+                        key={`${a.address}_subscriptions_count`}
                         kind="account"
-                        meterValue={getSubscriptionCountForAccount(flattened)}
-                        flattened={flattened}
+                        meterValue={getClassicSubCount(a) + getSmartSubCount(a)}
+                        flattened={a}
                       />
                     ))}
                     {getTotalIntervalSubscriptionCount() > 0 && (

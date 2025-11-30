@@ -11,6 +11,7 @@ export interface ChainEventsContextInterface {
   activeChain: ChainID | null;
   activeAccount: FlattenedAccountData | null;
   subscriptions: Map<ChainID, ChainEventSubscription[]>;
+  accountSubCount: (account: FlattenedAccountData) => Promise<number>;
   getCategorisedForAccount: (
     account: FlattenedAccountData
   ) => Record<string, ChainEventSubscription[]>;

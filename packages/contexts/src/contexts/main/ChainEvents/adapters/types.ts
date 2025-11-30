@@ -16,6 +16,7 @@ export interface ChainEventsAdapter {
     account: FlattenedAccountData
   ) => Promise<ChainEventSubscription[]>;
   getSubCount: () => Promise<number>;
+  getSubCountForAccount: (account: FlattenedAccountData) => Promise<number>;
   storeInsert: (chainId: ChainID, subscription: ChainEventSubscription) => void;
   storeInsertForAccount: (
     account: FlattenedAccountData,

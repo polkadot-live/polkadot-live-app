@@ -128,9 +128,7 @@ export const SubscriptionsProvider = ({
   };
 
   // Get subscription count for address.
-  const getSubscriptionCountForAccount = (
-    flattened: FlattenedAccountData
-  ): number => {
+  const getClassicSubCount = (flattened: FlattenedAccountData): number => {
     const { chain: chainId, address } = flattened;
     const tasks = accountSubscriptionsState.get(`${chainId}:${address}`) || [];
     return tasks.reduce((acc, t) => (t.status === 'enable' ? acc + 1 : acc), 0);
@@ -171,9 +169,9 @@ export const SubscriptionsProvider = ({
         onOneShot,
         onNotificationToggle,
         toggleCategoryTasks,
+        getClassicSubCount,
         getTaskType,
         getTotalSubscriptionCount,
-        getSubscriptionCountForAccount,
       }}
     >
       {children}
