@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Accordion from '@radix-ui/react-accordion';
+import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as UI from '@polkadot-live/ui/components';
 import { ButtonText } from '@polkadot-live/ui/kits/buttons';
-import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { NoAccounts } from '@polkadot-live/ui/utils';
 import {
   useAppSettings,
@@ -145,6 +145,10 @@ export const Accounts = ({
 
   return (
     <div style={{ width: '100%' }}>
+      <UI.ScreenInfoCard>
+        <div>Select an account to manage its subscriptions.</div>
+      </UI.ScreenInfoCard>
+
       <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
         <Accordion.Root
           style={{ marginBottom: '1rem' }}
@@ -210,7 +214,7 @@ export const Accounts = ({
                                 <div>
                                   <ButtonText
                                     text=""
-                                    iconRight={faChevronRight}
+                                    iconRight={FA.faChevronRight}
                                     iconTransform="shrink-3"
                                   />
                                 </div>
@@ -253,7 +257,7 @@ export const Accounts = ({
                           <div>
                             <ButtonText
                               text=""
-                              iconRight={faChevronRight}
+                              iconRight={FA.faChevronRight}
                               iconTransform="shrink-3"
                             />
                           </div>

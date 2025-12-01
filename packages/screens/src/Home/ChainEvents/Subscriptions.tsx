@@ -84,6 +84,10 @@ export const Subscriptions = ({
         />
       )}
 
+      <UI.ScreenInfoCard>
+        <div>Toggle chain subscriptions.</div>
+      </UI.ScreenInfoCard>
+
       <FlexColumn>
         <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
           <Accordion.Root

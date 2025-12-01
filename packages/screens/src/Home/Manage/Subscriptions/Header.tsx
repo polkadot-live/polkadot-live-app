@@ -2,26 +2,21 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { FlexRow } from '@polkadot-live/styles/wrappers';
-import { faCaretRight } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export const Header = ({ label }: { label: string }) => (
   <FlexRow
     $gap="0.65rem"
     style={{
-      padding: '0 0.25rem',
+      backgroundColor: 'var(--background-surface)',
+      borderRadius: '0.375rem',
+      padding: '0.5rem 1.25rem',
     }}
   >
-    <FontAwesomeIcon
-      style={{ color: 'var(--text-color-primary)', opacity: '0.8' }}
-      icon={faCaretRight}
-      transform={'shrink-4'}
-    />
     <h2
       style={{
-        fontSize: '1rem',
+        fontSize: '0.96rem',
         opacity: '0.8',
-        color: 'var(--text-color-primary)',
+        color: 'var(--text-color-secondary)',
       }}
     >
       {label}

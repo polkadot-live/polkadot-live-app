@@ -108,7 +108,7 @@ export const darkTheme = {
   tooltipBackground: '#464646',
 
   /* Legacy */
-  backgroundDefault: '#171717',
+  backgroundDefault: '#141414',
   backgroundInvert: '#ddd',
   backgroundStatusOverlay: 'rgb(43 38 43 / 75%)',
 

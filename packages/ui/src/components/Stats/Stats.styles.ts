@@ -6,8 +6,8 @@ import { mixinHelpIcon } from '@polkadot-live/styles/wrappers';
 
 export const MainHeading = styled.h1`
   color: var(--text-main-heading);
-  font-size: 1.55rem;
-  margin-bottom: 1rem;
+  font-size: 1.45rem;
+  margin-bottom: 0.75rem;
 `;
 
 export const SubHeading = styled.div`

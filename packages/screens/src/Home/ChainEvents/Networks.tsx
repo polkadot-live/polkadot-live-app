@@ -32,6 +32,10 @@ export const Networks = ({
 
   return (
     <div style={{ width: '100%' }}>
+      <UI.ScreenInfoCard>
+        <div>Select a network to manage its subscriptions.</div>
+      </UI.ScreenInfoCard>
+
       <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
         <Accordion.Root
           style={{ marginBottom: '1rem' }}

@@ -91,6 +91,10 @@ export const Subscriptions = ({
           text={'Reconnect chain to restore API access.'}
         />
       )}
+      <UI.ScreenInfoCard style={{ marginBottom: '1rem' }}>
+        <div>Toggle account subscriptions.</div>
+      </UI.ScreenInfoCard>
+
       {/** Classic Subscriptions */}
       <ClassicSubscriptions
         typeClicked={typeClicked}
