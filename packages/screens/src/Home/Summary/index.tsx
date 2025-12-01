@@ -15,7 +15,7 @@ import {
   useSummary,
 } from '@polkadot-live/contexts';
 import { getReadableAccountSource } from '@polkadot-live/core';
-import { getSupportedSources } from '@polkadot-live/consts/chains';
+import { getCategory, getSupportedSources } from '@polkadot-live/consts/chains';
 import { useEffect, useState } from 'react';
 import { MainHeading } from '@polkadot-live/ui/components';
 import { FlexColumn, FlexRow } from '@polkadot-live/styles/wrappers';
@@ -29,8 +29,7 @@ import type { SummaryAccordionValue } from './types';
 export const Summary = () => {
   const { getAllAccounts } = useAddresses();
   const { openTab } = useConnections();
-  const { getEventsCount, getReadableEventCategory, getAllEventCategoryKeys } =
-    useEvents();
+  const { getEventsCount, getAllEventCategoryKeys } = useEvents();
   const { getTotalIntervalSubscriptionCount } = useIntervalSubscriptions();
   const { accountSubCount, getEventSubscriptionCount } = useChainEvents();
   const { getClassicSubCount, getTotalSubscriptionCount } = useSubscriptions();
@@ -90,6 +89,10 @@ export const Summary = () => {
         return FA.faArrowUpRightDots;
       case 'openGov':
         return FA.faFileContract;
+      case 'staking':
+        return FA.faCubesStacked;
+      case 'voting':
+        return FA.faCheckDouble;
       default:
         return FA.faCircleNodes;
     }
@@ -214,7 +217,7 @@ export const Summary = () => {
                       <StatItemRow
                         key={`total_${category}_events`}
                         kind="event"
-                        category={getReadableEventCategory(category)}
+                        category={getCategory(category)?.label ?? 'Unknown'}
                         meterValue={getEventsCount(category)}
                         icon={getEventIcon(category)}
                       />

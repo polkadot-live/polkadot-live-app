@@ -19,7 +19,6 @@ export interface EventsContextInterface {
   markStaleEvent: (u: string, c: ChainID) => void;
   removeOutdatedEvents: (e: EventCallback) => void;
   getEventsCount: (category?: string) => number;
-  getReadableEventCategory: (category: string) => string;
   getAllEventCategoryKeys: () => string[];
   removeEvent: (event: EventCallback) => Promise<void>;
 }

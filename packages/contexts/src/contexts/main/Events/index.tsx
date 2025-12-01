@@ -223,28 +223,14 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
           )
         : sortAllGroupedEvents(true).get(category)?.length || 0;
 
-  // Get readable event category.
-  const getReadableEventCategory = (category: string) => {
-    switch (category) {
-      case 'balances':
-        return 'Balances';
-      case 'nominationPools':
-        return 'Pools';
-      case 'nominating':
-        return 'Nominating';
-      case 'openGov':
-        return 'OpenGov';
-      default:
-        return 'Unknown';
-    }
-  };
-
   // Get array of all encoded event categories.
   const getAllEventCategoryKeys = (): string[] => [
     'balances',
     'nominationPools',
     'nominating',
     'openGov',
+    'staking',
+    'voting',
   ];
 
   // Handle event messages.
@@ -273,7 +259,6 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
         markStaleEvent,
         removeOutdatedEvents,
         getEventsCount,
-        getReadableEventCategory,
         getAllEventCategoryKeys,
         removeEvent,
       }}

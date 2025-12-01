@@ -159,7 +159,7 @@ const getReferendaChainEvent = (
   whoMeta?: WhoMeta
 ): EventCallback => {
   const { name: eventName, data: miscData } = palletEvent;
-  const ev = makeChainEvent({ chainId, category: 'referenda' }, whoMeta);
+  const ev = makeChainEvent({ chainId, category: 'openGov' }, whoMeta);
 
   switch (eventName) {
     case 'Approved': {
