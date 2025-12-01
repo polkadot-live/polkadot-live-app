@@ -72,13 +72,13 @@ export const Networks = ({
                             <h3>{cid}</h3>
                           </div>
                         </div>
-                        <div>
+                        <Wrappers.FlexRow>
                           <ButtonText
                             text=""
                             iconRight={FA.faChevronRight}
                             iconTransform="shrink-3"
                           />
-                        </div>
+                        </Wrappers.FlexRow>
                       </div>
                     </Wrappers.ItemEntryWrapper>
                   ))}

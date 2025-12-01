@@ -21,6 +21,8 @@ import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { ClassicSubscription } from './ClassicSubscription';
 import type { ClassicSubscriptionsProps } from './types';
 import type { SubscriptionTask, TaskCategory } from '@polkadot-live/types';
+import { faSplotch } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export const ClassicSubscriptions = ({
   typeClicked,
@@ -49,6 +51,16 @@ export const ClassicSubscriptions = ({
       map.set(category, allToggled);
     }
     return map;
+  };
+
+  const subCountForCategory = (category: string): number => {
+    const subs = renderedSubscriptions.tasks;
+    if (!subs.length) {
+      return 0;
+    }
+    return subs
+      .filter((s) => s.category === category)
+      .filter(({ status }) => status === 'enable').length;
   };
 
   // Categorised tasks state.
@@ -127,25 +139,25 @@ export const ClassicSubscriptions = ({
                     className="AccordionItem"
                     value={category}
                   >
-                    {/** Basic trigger for debugging. */}
-                    {category === 'Chain' ? (
+                    <FlexRow $gap={'2px'}>
                       <UI.AccordionTrigger narrow={true}>
                         <ChevronDownIcon
                           className="AccordionChevron"
                           aria-hidden
                         />
-                        <UI.TriggerHeader>{category}</UI.TriggerHeader>
+                        <UI.TriggerHeader>
+                          <FlexRow>
+                            <span style={{ flex: 1 }}>{category}</span>
+                            {subCountForCategory(category) > 0 && (
+                              <FontAwesomeIcon
+                                style={{ color: 'var(--accent-primary)' }}
+                                icon={faSplotch}
+                              />
+                            )}
+                          </FlexRow>
+                        </UI.TriggerHeader>
                       </UI.AccordionTrigger>
-                    ) : (
-                      <FlexRow $gap={'2px'}>
-                        {/** Trigger for grouped account subscriptions. */}
-                        <UI.AccordionTrigger narrow={true}>
-                          <ChevronDownIcon
-                            className="AccordionChevron"
-                            aria-hidden
-                          />
-                          <UI.TriggerHeader>{category}</UI.TriggerHeader>
-                        </UI.AccordionTrigger>
+                      {category !== 'Chain' && (
                         <div
                           className="HeaderContentDropdownWrapper"
                           style={{ cursor: 'default' }}
@@ -162,8 +174,8 @@ export const ClassicSubscriptions = ({
                             />
                           </span>
                         </div>
-                      </FlexRow>
-                    )}
+                      )}
+                    </FlexRow>
                     <UI.AccordionContent transparent={true} topGap={'2px'}>
                       <ItemsColumn>
                         {tasks

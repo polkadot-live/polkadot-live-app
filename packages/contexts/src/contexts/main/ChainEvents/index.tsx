@@ -50,9 +50,6 @@ export const ChainEventsProvider = ({
     Map<string, ChainEventSubscription[]>
   >(new Map());
 
-  const accountSubCount = (account: FlattenedAccountData) =>
-    adapter.getSubCountForAccount(account);
-
   const getCategorisedForAccount = (
     account: FlattenedAccountData
   ): Record<string, ChainEventSubscription[]> => {
@@ -71,6 +68,23 @@ export const ChainEventsProvider = ({
       result[k] = v.sort((a, b) => a.label.localeCompare(b.label));
     }
     return result;
+  };
+
+  const accountSubCount = (account: FlattenedAccountData) =>
+    adapter.getSubCountForAccount(account);
+
+  const accountSubCountForPallet = (pallet: string): number => {
+    if (!activeAccount) {
+      return 0;
+    }
+    const { address, chain: chainId } = activeAccount;
+    const key = `${chainId}::${address}`;
+    return (
+      accountSubscriptions
+        .get(key)
+        ?.filter((s) => s.pallet === pallet)
+        .filter(({ enabled }) => enabled).length ?? 0
+    );
   };
 
   // Called when account is deleted or removed.
@@ -231,6 +245,7 @@ export const ChainEventsProvider = ({
         activeAccount,
         subscriptions,
         accountSubCount,
+        accountSubCountForPallet,
         getCategorisedForAccount,
         getEventSubscriptionCount,
         removeAllForAccount,

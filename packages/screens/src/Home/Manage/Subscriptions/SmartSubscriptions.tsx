@@ -7,6 +7,8 @@ import { useState } from 'react';
 import { useChainEvents } from '@polkadot-live/contexts';
 import { getReadablePallet } from '@polkadot-live/consts/subscriptions/chainEvents';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSplotch } from '@fortawesome/free-solid-svg-icons';
 import { Header } from './Header';
 import {
   FlexColumn,
@@ -16,7 +18,8 @@ import {
 import { SubscriptionRowAccount } from '../../ChainEvents/SubscriptionRowAccount';
 
 export const SmartSubscriptions = () => {
-  const { activeAccount, getCategorisedForAccount } = useChainEvents();
+  const { activeAccount, accountSubCountForPallet, getCategorisedForAccount } =
+    useChainEvents();
 
   const [accordionValEvents, setAccordionValEvents] = useState<
     string | undefined
@@ -50,7 +53,17 @@ export const SmartSubscriptions = () => {
                             aria-hidden
                           />
                           <UI.TriggerHeader>
-                            {getReadablePallet(pallet)}
+                            <FlexRow>
+                              <span style={{ flex: 1 }}>
+                                {getReadablePallet(pallet)}
+                              </span>
+                              {accountSubCountForPallet(pallet) > 0 && (
+                                <FontAwesomeIcon
+                                  style={{ color: 'var(--accent-primary)' }}
+                                  icon={faSplotch}
+                                />
+                              )}
+                            </FlexRow>
                           </UI.TriggerHeader>
                         </UI.AccordionTrigger>
                       </FlexRow>

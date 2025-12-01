@@ -158,7 +158,6 @@ export const Accounts = ({
           onValueChange={(val) => setAccordionValue(val as string[])}
         >
           <FlexColumn $rowGap="1rem">
-            {/* Manage Accounts */}
             {Array.from(getSortedAddresses().entries()).map(
               ([chainId, chainAddresses]) => (
                 <Accordion.Item
@@ -211,13 +210,11 @@ export const Accounts = ({
                                     <h3>{a.name}</h3>
                                   </div>
                                 </div>
-                                <div>
-                                  <ButtonText
-                                    text=""
-                                    iconRight={FA.faChevronRight}
-                                    iconTransform="shrink-3"
-                                  />
-                                </div>
+                                <ButtonText
+                                  text=""
+                                  iconRight={FA.faChevronRight}
+                                  iconTransform="shrink-3"
+                                />
                               </div>
                             </ItemEntryWrapper>
                           )

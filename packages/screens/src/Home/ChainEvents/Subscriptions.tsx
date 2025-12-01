@@ -8,8 +8,9 @@ import {
   getReadablePallet,
 } from '@polkadot-live/consts/subscriptions/chainEvents';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SubscriptionRow } from './SubscriptionRow';
-import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
+import { faCaretLeft, faSplotch } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import {
   useApiHealth,
@@ -62,6 +63,12 @@ export const Subscriptions = ({
     return result;
   };
 
+  // Get number of active subscriptions for pallet.
+  const activeSubCountForPallet = (pallet: string): number =>
+    subscriptions
+      .filter((s) => s.pallet === pallet)
+      .filter(({ enabled }) => enabled).length;
+
   return (
     <>
       <UI.ControlsWrapper $sticky={false} style={{ marginBottom: '1.5rem' }}>
@@ -111,7 +118,17 @@ export const Subscriptions = ({
                         aria-hidden
                       />
                       <UI.TriggerHeader>
-                        {getReadablePallet(pallet)}
+                        <FlexRow>
+                          <span style={{ flex: 1 }}>
+                            {getReadablePallet(pallet)}
+                          </span>
+                          {activeSubCountForPallet(pallet) > 0 && (
+                            <FontAwesomeIcon
+                              style={{ color: 'var(--accent-primary)' }}
+                              icon={faSplotch}
+                            />
+                          )}
+                        </FlexRow>
                       </UI.TriggerHeader>
                     </UI.AccordionTrigger>
                   </FlexRow>

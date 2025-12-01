@@ -8,6 +8,7 @@ import {
   useAppSettings,
   useChainEvents,
   useConnections,
+  useManage,
 } from '@polkadot-live/contexts';
 import { ellipsisFn } from '@w3ux/utils';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
@@ -31,6 +32,7 @@ export const Subscriptions = ({
   const { hasConnectionIssue } = useApiHealth();
   const { getTheme, getOnlineMode } = useConnections();
   const { activeAccount } = useChainEvents();
+  const { renderedSubscriptions } = useManage();
   const theme = getTheme();
 
   // Mechanism to trigger re-caculating the accordion value after the account state is updated.
@@ -103,7 +105,7 @@ export const Subscriptions = ({
         setSection={setSection}
       />
       {/** Smart Subscriptions */}
-      <SmartSubscriptions />
+      {renderedSubscriptions.type === 'account' && <SmartSubscriptions />}
     </>
   );
 };
