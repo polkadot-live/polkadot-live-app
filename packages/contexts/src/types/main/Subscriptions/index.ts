@@ -12,6 +12,7 @@ import type {
 export interface SubscriptionsContextInterface {
   chainSubscriptions: Map<ChainID, SubscriptionTask[]>;
   accountSubscriptions: Map<string, SubscriptionTask[]>;
+  accountHasSubs: (account: FlattenedAccountData) => boolean;
   chainHasSubscriptions: (chainId: ChainID) => boolean;
   getChainSubscriptions: (a: ChainID) => SubscriptionTask[];
   getAccountSubscriptions: (key: string) => SubscriptionTask[];

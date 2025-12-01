@@ -5,11 +5,13 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as UI from '@polkadot-live/ui/components';
 import * as Wrappers from '@polkadot-live/styles/wrappers';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ButtonText } from '@polkadot-live/ui/kits/buttons';
 import { ChainPallets } from '@polkadot-live/consts/subscriptions/chainEvents';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
+import { useChainEvents } from '@polkadot-live/contexts';
 import type { ChainID } from '@polkadot-live/types/chains';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface NetworksProps {
   setActiveChain: React.Dispatch<React.SetStateAction<ChainID | null>>;
@@ -22,6 +24,7 @@ export const Networks = ({
   setBreadcrumb,
   setSection,
 }: NetworksProps) => {
+  const { subscriptions, syncStored } = useChainEvents();
   const [accordionValue, setAccordionValue] = useState('Polkadot Asset Hub');
 
   const onChainClick = (chainId: ChainID) => {
@@ -29,6 +32,18 @@ export const Networks = ({
     setBreadcrumb(chainId);
     setSection(1);
   };
+
+  const chainHasSubs = (chainId: ChainID): boolean => {
+    const maybeSubs = subscriptions.get(chainId);
+    return maybeSubs
+      ? maybeSubs.filter(({ enabled }) => enabled).length > 0
+      : false;
+  };
+
+  useEffect(() => {
+    const sync = async () => await syncStored();
+    sync();
+  }, []);
 
   return (
     <div style={{ width: '100%' }}>
@@ -73,11 +88,19 @@ export const Networks = ({
                           </div>
                         </div>
                         <Wrappers.FlexRow>
-                          <ButtonText
-                            text=""
-                            iconRight={FA.faChevronRight}
-                            iconTransform="shrink-3"
-                          />
+                          <Wrappers.FlexRow>
+                            {chainHasSubs(cid) && (
+                              <FontAwesomeIcon
+                                icon={FA.faSplotch}
+                                style={{ color: 'var(--accent-primary)' }}
+                              />
+                            )}
+                            <ButtonText
+                              text=""
+                              iconRight={FA.faChevronRight}
+                              iconTransform="shrink-3"
+                            />
+                          </Wrappers.FlexRow>
                         </Wrappers.FlexRow>
                       </div>
                     </Wrappers.ItemEntryWrapper>

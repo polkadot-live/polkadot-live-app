@@ -20,11 +20,13 @@ import {
   FlexColumn,
   ItemsColumn,
   ItemEntryWrapper,
+  FlexRow,
 } from '@polkadot-live/styles/wrappers';
 import { getSupportedChains } from '@polkadot-live/consts/chains';
 import type { AccountsProps } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export const Accounts = ({
   addresses,
@@ -35,15 +37,26 @@ export const Accounts = ({
 }: AccountsProps) => {
   const { cacheGet } = useAppSettings();
   const { getTheme, openTab } = useConnections();
-  const { setActiveAccount } = useChainEvents();
+  const {
+    accountHasSubs: accountHasSmartSubs,
+    setActiveAccount,
+    syncAccounts,
+  } = useChainEvents();
   const { setRenderedSubscriptions } = useManage();
-  const { getChainSubscriptions, getAccountSubscriptions, chainSubscriptions } =
-    useSubscriptions();
+  const {
+    accountHasSubs: accountHasClassicSubs,
+    getChainSubscriptions,
+    getAccountSubscriptions,
+    chainSubscriptions,
+  } = useSubscriptions();
 
   const theme = getTheme();
   const showDebuggingSubscriptions = cacheGet(
     'setting:show-debugging-subscriptions'
   );
+
+  const accountHasSubs = (account: FlattenedAccountData) =>
+    accountHasClassicSubs(account) || accountHasSmartSubs(account);
 
   /**
    * Categorise addresses by their chain ID, sort by name.
@@ -55,7 +68,6 @@ export const Accounts = ({
     for (const chainId of Object.keys(getSupportedChains())) {
       sorted.set(chainId as ChainID, []);
     }
-
     // Map addresses to their chain ID.
     for (const address of addresses) {
       const chainId = address.chain;
@@ -65,7 +77,6 @@ export const Accounts = ({
         sorted.set(chainId, [{ ...address }]);
       }
     }
-
     // Sort addresses by their name.
     for (const [chainId, chainAddresses] of sorted.entries()) {
       sorted.set(
@@ -73,7 +84,6 @@ export const Accounts = ({
         chainAddresses.sort((x, y) => x.name.localeCompare(y.name))
       );
     }
-
     // Remove any empty entries.
     const redundantEntries: ChainID[] = [];
     for (const [chainId, chainAddresses] of sorted.entries()) {
@@ -82,7 +92,6 @@ export const Accounts = ({
     redundantEntries.forEach((chainId) => {
       sorted.delete(chainId);
     });
-
     // Add a single `Empty` key if there are no accounts to render.
     if (sorted.size === 0) {
       sorted.set('Empty', []);
@@ -98,19 +107,6 @@ export const Accounts = ({
       showDebuggingSubscriptions ? ['Debug'] : []
     )
   );
-
-  /**
-   * Use indices ref to maintain open accordion panels when toggling debugging setting.
-   */
-  useEffect(() => {
-    setAccordionValue((prev) =>
-      showDebuggingSubscriptions
-        ? !prev.includes('Debug')
-          ? [...prev, 'Debug']
-          : [...prev]
-        : [...prev.filter((v) => v !== 'Debug')]
-    );
-  }, [showDebuggingSubscriptions]);
 
   /**
    * Set parent subscription tasks state when a chain is clicked.
@@ -142,6 +138,30 @@ export const Accounts = ({
     // Set account for chain event subscriptons.
     setActiveAccount(account);
   };
+
+  /**
+   * Sync persisted subscription state.
+   */
+  useEffect(() => {
+    const sync = async () => {
+      const accounts = Array.from(getSortedAddresses().values()).flat();
+      await syncAccounts(accounts);
+    };
+    sync();
+  }, []);
+
+  /**
+   * Use indices ref to maintain open accordion panels when toggling debugging setting.
+   */
+  useEffect(() => {
+    setAccordionValue((prev) =>
+      showDebuggingSubscriptions
+        ? !prev.includes('Debug')
+          ? [...prev, 'Debug']
+          : [...prev]
+        : [...prev.filter((v) => v !== 'Debug')]
+    );
+  }, [showDebuggingSubscriptions]);
 
   return (
     <div style={{ width: '100%' }}>
@@ -210,11 +230,19 @@ export const Accounts = ({
                                     <h3>{a.name}</h3>
                                   </div>
                                 </div>
-                                <ButtonText
-                                  text=""
-                                  iconRight={FA.faChevronRight}
-                                  iconTransform="shrink-3"
-                                />
+                                <FlexRow>
+                                  {accountHasSubs(a) && (
+                                    <FontAwesomeIcon
+                                      icon={FA.faSplotch}
+                                      style={{ color: 'var(--accent-primary)' }}
+                                    />
+                                  )}
+                                  <ButtonText
+                                    text=""
+                                    iconRight={FA.faChevronRight}
+                                    iconTransform="shrink-3"
+                                  />
+                                </FlexRow>
                               </div>
                             </ItemEntryWrapper>
                           )

@@ -70,6 +70,13 @@ export const ChainEventsProvider = ({
     return result;
   };
 
+  const accountHasSubs = (account: FlattenedAccountData): boolean => {
+    const { address, chain: chainId } = account;
+    const key = `${chainId}::${address}`;
+    const subs = accountSubscriptions.get(key);
+    return subs ? subs.filter(({ enabled }) => enabled).length > 0 : false;
+  };
+
   const accountSubCount = (account: FlattenedAccountData) =>
     adapter.getSubCountForAccount(account);
 
@@ -176,13 +183,28 @@ export const ChainEventsProvider = ({
   const getEventSubscriptionCount = async (): Promise<number> =>
     await adapter.getSubCount();
 
+  const syncStored = async () => setSubscriptions(await adapter.getStored());
+
+  const syncAccounts = async (accounts: FlattenedAccountData[]) => {
+    const map = new Map<string, ChainEventSubscription[]>();
+    for (const account of accounts) {
+      const { address, chain: chainId } = account;
+      const key = `${chainId}::${address}`;
+      const active = await adapter.getStoredForAccount(account);
+      const merged = getEventSubscriptionsForAccount(chainId, account).map(
+        (a) => active.find((b) => cmp(a, b)) ?? a
+      );
+      map.set(key, merged);
+    }
+    setAccountSubscriptions(map);
+  };
+
   /**
    * Get active subscriptions from store and merge with defaults.
    */
   useEffect(() => {
     const fetch = async () => {
       if (!activeChain) {
-        setSubscriptions(new Map());
         return;
       }
       const active = (await adapter.getStored()).get(activeChain) ?? [];
@@ -208,7 +230,6 @@ export const ChainEventsProvider = ({
   useEffect(() => {
     const fetch = async () => {
       if (!activeAccount) {
-        setAccountSubscriptions(new Map());
         return;
       }
       // Get account's active subscriptions from store.
@@ -244,6 +265,7 @@ export const ChainEventsProvider = ({
         activeChain,
         activeAccount,
         subscriptions,
+        accountHasSubs,
         accountSubCount,
         accountSubCountForPallet,
         getCategorisedForAccount,
@@ -251,6 +273,8 @@ export const ChainEventsProvider = ({
         removeAllForAccount,
         setActiveAccount,
         setActiveChain,
+        syncAccounts,
+        syncStored,
         toggle,
         toggleForAccount,
         toggleOsNotify,

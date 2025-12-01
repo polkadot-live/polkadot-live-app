@@ -11,6 +11,7 @@ export interface ChainEventsContextInterface {
   activeChain: ChainID | null;
   activeAccount: FlattenedAccountData | null;
   subscriptions: Map<ChainID, ChainEventSubscription[]>;
+  accountHasSubs: (account: FlattenedAccountData) => boolean;
   accountSubCountForPallet: (pallet: string) => number;
   accountSubCount: (account: FlattenedAccountData) => Promise<number>;
   getCategorisedForAccount: (
@@ -22,6 +23,8 @@ export interface ChainEventsContextInterface {
     React.SetStateAction<FlattenedAccountData | null>
   >;
   setActiveChain: React.Dispatch<React.SetStateAction<ChainID | null>>;
+  syncAccounts: (accounts: FlattenedAccountData[]) => Promise<void>;
+  syncStored: () => Promise<void>;
   toggle: (sub: ChainEventSubscription) => Promise<void>;
   toggleForAccount: (sub: ChainEventSubscription) => Promise<void>;
   toggleOsNotify: (sub: ChainEventSubscription, updateStore?: boolean) => void;

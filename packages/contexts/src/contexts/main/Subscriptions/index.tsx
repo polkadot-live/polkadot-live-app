@@ -48,6 +48,15 @@ export const SubscriptionsProvider = ({
     new Map()
   );
 
+  const accountHasSubs = (account: FlattenedAccountData) => {
+    const { address, chain: chainId } = account;
+    const key = `${chainId}:${address}`;
+    const maybeSubs = accountSubscriptionsState.get(key);
+    return maybeSubs
+      ? maybeSubs.filter(({ status }) => status === 'enable').length > 0
+      : false;
+  };
+
   // Determine if there are active subscriptions for a network.
   const chainHasSubscriptions = (chainId: ChainID) =>
     Boolean(activeChainMap.get(chainId)) || false;
@@ -161,6 +170,7 @@ export const SubscriptionsProvider = ({
       value={{
         chainSubscriptions: chainSubscriptionsState,
         accountSubscriptions: accountSubscriptionsState,
+        accountHasSubs,
         chainHasSubscriptions,
         getChainSubscriptions,
         getAccountSubscriptions,
