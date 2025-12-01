@@ -7,7 +7,9 @@ import { ChainPallets } from '@polkadot-live/consts/subscriptions/chainEvents';
 import { PalletHandlers, ScopedAccountGetters } from './handlers';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { Unsub } from 'dedot/types';
+import type { WhoMeta } from './types';
 import type {
+  AccountSource,
   AnyData,
   ChainEventSubscription,
   DedotEventStreamClient,
@@ -47,13 +49,19 @@ export class ChainEventsService {
     Map<string /* address */, Map<string /* pallet */, ActiveMeta[]>>
   >();
 
+  static getKeyForAccount = (account: FlattenedAccountData) => {
+    const { address, name: alias, chain: chainId, source } = account;
+    return `${chainId}::${source}::${alias}::${address}`;
+  };
+
   static insertForAccount = (
     account: FlattenedAccountData,
     sub: ChainEventSubscription
   ) => {
-    const { address: accKey, chain: chainId } = account;
+    const { chain: chainId } = account;
     const { pallet, eventName, osNotify } = sub;
     const scoped = ChainEventsService.accountScopedSubscriptions;
+    const accKey = ChainEventsService.getKeyForAccount(account);
 
     // Get or create: chain -> accounts
     let accounts = scoped.get(chainId);
@@ -81,9 +89,10 @@ export class ChainEventsService {
     account: FlattenedAccountData,
     sub: ChainEventSubscription
   ) => {
-    const { address: accKey, chain: chainId } = account;
+    const { chain: chainId } = account;
     const { pallet, eventName } = sub;
     const scoped = ChainEventsService.accountScopedSubscriptions;
+    const accKey = ChainEventsService.getKeyForAccount(account);
 
     const accounts = scoped.get(chainId);
     if (!accounts) {
@@ -114,8 +123,9 @@ export class ChainEventsService {
   };
 
   static removeAllForAccount = (account: FlattenedAccountData) => {
-    const { address: accKey, chain: chainId } = account;
+    const { chain: chainId } = account;
     const scoped = ChainEventsService.accountScopedSubscriptions;
+    const accKey = ChainEventsService.getKeyForAccount(account);
     const accounts = scoped.get(chainId);
     if (!accounts) {
       return;
@@ -131,9 +141,10 @@ export class ChainEventsService {
     account: FlattenedAccountData,
     sub: ChainEventSubscription
   ) => {
-    const { address: accKey, chain: chainId } = account;
+    const { chain: chainId } = account;
     const { pallet, eventName, osNotify } = sub;
     const scoped = ChainEventsService.accountScopedSubscriptions;
+    const accKey = ChainEventsService.getKeyForAccount(account);
 
     const accounts = scoped.get(chainId);
     if (!accounts) {
@@ -217,11 +228,13 @@ export class ChainEventsService {
   static hasAccountScopedSubscription = (
     chainId: ChainID,
     event: RuntimeEvent
-  ): ActiveMeta | null => {
+  ): { activeMeta: ActiveMeta; whoMeta: WhoMeta }[] | null => {
     const { pallet, palletEvent } = event;
     const scoped = ChainEventsService.accountScopedSubscriptions;
+    const result: { activeMeta: ActiveMeta; whoMeta: WhoMeta }[] = [];
 
-    for (const [address, palletMap] of scoped.get(chainId)?.entries() || []) {
+    for (const [accKey, palletMap] of scoped.get(chainId)?.entries() || []) {
+      const address = accKey.split('::')[3];
       const meta = palletMap.get(pallet);
       if (meta) {
         const eventName = palletEvent.name;
@@ -237,12 +250,21 @@ export class ChainEventsService {
             continue;
           }
           if (fn(chainId, palletEvent).includes(address)) {
-            return activeMeta;
+            const split = accKey.split('::');
+            result.push({
+              activeMeta,
+              whoMeta: {
+                chainId: split[0] as ChainID,
+                source: split[1] as AccountSource,
+                accountName: split[2],
+                address: split[3],
+              },
+            });
           }
         }
       }
     }
-    return null;
+    return result.length ? result : null;
   };
 
   // Process events for a specific chain.
@@ -261,7 +283,7 @@ export class ChainEventsService {
 
       if (isSupportedPallet) {
         // Check for active account scoped subscription.
-        const maybeScopedMeta = ChainEventsService.hasAccountScopedSubscription(
+        const maybeMeta = ChainEventsService.hasAccountScopedSubscription(
           chainId,
           event
         );
@@ -272,9 +294,13 @@ export class ChainEventsService {
         const isOn = meta !== undefined;
 
         // Dispatch event if active subscription found.
-        if (isOn || maybeScopedMeta) {
-          const osNotify =
-            Boolean(meta?.osNotify) || Boolean(maybeScopedMeta?.osNotify);
+        if (maybeMeta !== null) {
+          for (const { activeMeta, whoMeta } of maybeMeta) {
+            const osNotify = activeMeta.osNotify;
+            EventQueue.push({ chainId, osNotify, record: item, whoMeta });
+          }
+        } else if (isOn) {
+          const osNotify = Boolean(meta?.osNotify);
           EventQueue.push({ chainId, osNotify, record: item });
         }
       }
@@ -284,12 +310,13 @@ export class ChainEventsService {
   static processSingleEvent(
     chainId: ChainID,
     osNotify: boolean,
-    record: FrameSystemEventRecord
+    record: FrameSystemEventRecord,
+    whoMeta?: WhoMeta
   ) {
     const { event }: { event: RuntimeEvent } = record;
     const { pallet, palletEvent } = event;
     const handler = PalletHandlers[pallet];
-    handler && handler(chainId, osNotify, palletEvent);
+    handler && handler(chainId, osNotify, palletEvent, whoMeta);
   }
 
   // Stop events stream for a network.

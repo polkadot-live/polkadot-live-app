@@ -4,21 +4,27 @@
 import { ChainList } from '@polkadot-live/consts/chains';
 import { ellipsisFn } from '@w3ux/utils';
 import { handleEvent } from '../../callbacks/utils';
-import { makeChainEvent } from './utils';
+import { makeChainEvent, notifyTitle } from './utils';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { PalletConvictionVotingEvent } from '@polkadot-live/types';
+import type { WhoMeta } from '../types';
 
 export const handleConvictionVotingEvent = (
   chainId: ChainID,
   osNotify: boolean,
-  palletEvent: PalletConvictionVotingEvent
+  palletEvent: PalletConvictionVotingEvent,
+  whoMeta?: WhoMeta
 ) => {
   try {
     handleEvent({
       action: 'events:persist',
       data: {
-        event: getConvictionVotingChainEvent(chainId, palletEvent),
-        notification: getConvictionVotingNotification(chainId, palletEvent),
+        event: getConvictionVotingChainEvent(chainId, palletEvent, whoMeta),
+        notification: getConvictionVotingNotification(
+          chainId,
+          palletEvent,
+          whoMeta
+        ),
         showNotification: { isOneShot: false, isEnabled: osNotify },
       },
     });
@@ -58,14 +64,15 @@ export const getConvictionVotingPalletScopedAccountsFromEvent = (
 
 const getConvictionVotingNotification = (
   chainId: ChainID,
-  palletEvent: PalletConvictionVotingEvent
+  palletEvent: PalletConvictionVotingEvent,
+  whoMeta?: WhoMeta
 ) => {
   const { name: eventName, data: miscData } = palletEvent;
   switch (eventName) {
     case 'Delegated': {
       const [, target] = miscData;
       return {
-        title: 'Vote Delegated',
+        title: notifyTitle('Vote Delegated', whoMeta),
         subtitle: `${chainId}`,
         body: `Vote delegated to ${ellipsisFn(target.address().toString())}`,
       };
@@ -73,7 +80,7 @@ const getConvictionVotingNotification = (
     case 'Undelegated': {
       /* const account = miscData; */
       return {
-        title: 'Vote Undelegated',
+        title: notifyTitle('Vote Undelegated', whoMeta),
         subtitle: `${chainId}`,
         body: 'Vote undelegated from account',
       };
@@ -81,7 +88,7 @@ const getConvictionVotingNotification = (
     case 'Voted': {
       /* const { who, vote } = miscData; */
       return {
-        title: 'Voted',
+        title: notifyTitle('Voted', whoMeta),
         subtitle: `${chainId}`,
         body: 'An account has voted',
       };
@@ -89,7 +96,7 @@ const getConvictionVotingNotification = (
     case 'VoteRemoved': {
       /* const { who, vote } = miscData; */
       return {
-        title: 'Vote Removed',
+        title: notifyTitle('Vote Removed', whoMeta),
         subtitle: `${chainId}`,
         body: 'A vote has been removed',
       };
@@ -97,7 +104,7 @@ const getConvictionVotingNotification = (
     case 'VoteUnlocked': {
       /* const { who } = miscData; */
       return {
-        title: 'Vote Unlocked',
+        title: notifyTitle('Vote Unlocked', whoMeta),
         subtitle: `${chainId}`,
         body: 'Conviction vote lockup period has expired',
       };
@@ -110,10 +117,11 @@ const getConvictionVotingNotification = (
 
 const getConvictionVotingChainEvent = (
   chainId: ChainID,
-  palletEvent: PalletConvictionVotingEvent
+  palletEvent: PalletConvictionVotingEvent,
+  whoMeta?: WhoMeta
 ) => {
   const { name: eventName, data: miscData } = palletEvent;
-  const ev = makeChainEvent({ chainId, category: 'voting' });
+  const ev = makeChainEvent({ chainId, category: 'voting' }, whoMeta);
 
   switch (eventName) {
     case 'Delegated': {

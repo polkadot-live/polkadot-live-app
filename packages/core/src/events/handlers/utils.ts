@@ -7,23 +7,13 @@ import {
   getSubsquareSubdomain,
 } from '@polkadot-live/consts/chains';
 import type {
-  AnyData,
+  EventAccountData,
   EventCallback,
   EventChainData,
-  TxAction,
   UriAction,
 } from '@polkadot-live/types';
 import type { ChainID } from '@polkadot-live/types/chains';
-
-interface EventMeta {
-  category: string;
-  chainId: ChainID;
-  subtitle?: string;
-  title?: string;
-  txActions?: TxAction[];
-  uriActions?: UriAction[];
-  data?: AnyData;
-}
+import type { EventMeta, WhoMeta } from '../types';
 
 export const getRefUriActions = (
   chainId: ChainID,
@@ -39,15 +29,22 @@ export const getRefUriActions = (
   },
 ];
 
-export const makeChainEvent = (meta: EventMeta): EventCallback => {
+export const makeChainEvent = (
+  meta: EventMeta,
+  whoMeta?: WhoMeta
+): EventCallback => {
   const { category, chainId, subtitle, title, txActions, uriActions, data } =
     meta;
+  const whoData: EventAccountData | EventChainData = whoMeta
+    ? ({ ...whoMeta } as EventAccountData)
+    : ({ chainId } as EventChainData);
+
   return {
     uid: '',
     category,
     who: {
-      origin: 'chainEvent',
-      data: { chainId } as EventChainData,
+      origin: whoMeta ? 'account' : 'chainEvent',
+      data: { ...whoData },
     },
     title: title ?? '',
     subtitle: subtitle ?? '',
@@ -59,3 +56,6 @@ export const makeChainEvent = (meta: EventMeta): EventCallback => {
     uriActions: uriActions ?? [],
   };
 };
+
+export const notifyTitle = (base: string, whoMeta?: WhoMeta) =>
+  whoMeta ? `${whoMeta.accountName} (${base})` : base;

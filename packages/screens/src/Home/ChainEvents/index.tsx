@@ -22,7 +22,9 @@ export const ChainEvents = () => {
       $rowGap={'1rem'}
       style={{ height: '100%', padding: '2rem 0rem 0' }}
     >
-      <MainHeading style={{ padding: '0 1rem' }}>Chain Events</MainHeading>
+      <MainHeading style={{ padding: '0 1rem' }}>
+        Chain Subscriptions
+      </MainHeading>
       <CarouselWrapper
         animate={section === 0 ? 'home' : 'next'}
         transition={{

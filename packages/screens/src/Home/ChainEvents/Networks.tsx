@@ -22,7 +22,7 @@ export const Networks = ({
   setBreadcrumb,
   setSection,
 }: NetworksProps) => {
-  const [accordionValue, setAccordionValue] = useState(['Polkadot Asset Hub']);
+  const [accordionValue, setAccordionValue] = useState('Polkadot Asset Hub');
 
   const onChainClick = (chainId: ChainID) => {
     setActiveChain(chainId);
@@ -36,9 +36,9 @@ export const Networks = ({
         <Accordion.Root
           style={{ marginBottom: '1rem' }}
           className="AccordionRoot"
-          type="multiple"
+          type="single"
           value={accordionValue}
-          onValueChange={(val) => setAccordionValue(val as string[])}
+          onValueChange={(val) => setAccordionValue(val as string)}
         >
           <Wrappers.FlexColumn>
             <Accordion.Item
@@ -47,7 +47,7 @@ export const Networks = ({
             >
               <UI.AccordionTrigger narrow={true}>
                 <ChevronDownIcon className="AccordionChevron" aria-hidden />
-                <UI.TriggerHeader>All Networks</UI.TriggerHeader>
+                <UI.TriggerHeader>Networks</UI.TriggerHeader>
               </UI.AccordionTrigger>
 
               <UI.AccordionContent transparent={true}>

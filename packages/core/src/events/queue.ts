@@ -4,11 +4,13 @@
 import { ChainEventsService } from './service';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { FrameSystemEventRecord } from '@polkadot-live/types';
+import type { WhoMeta } from './types';
 
 interface QueueItem {
   chainId: ChainID;
   record: FrameSystemEventRecord;
   osNotify: boolean;
+  whoMeta?: WhoMeta;
 }
 
 export class EventQueue {
@@ -34,9 +36,13 @@ export class EventQueue {
 
     while (this.queue.length > 0) {
       try {
-        const { chainId, osNotify, record } = this.queue.shift()!;
-        ChainEventsService.processSingleEvent(chainId, osNotify, record);
-
+        const { chainId, osNotify, record, whoMeta } = this.queue.shift()!;
+        ChainEventsService.processSingleEvent(
+          chainId,
+          osNotify,
+          record,
+          whoMeta
+        );
         // Yield control to allow UI updates to flush.
         if (EventQueue.delay > 0) {
           await new Promise((resolve) => setTimeout(resolve, EventQueue.delay));

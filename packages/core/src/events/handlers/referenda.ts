@@ -7,17 +7,19 @@ import { handleEvent } from '../../callbacks/utils';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { EventCallback } from '@polkadot-live/types/reporter';
 import type { PalletReferendaEvent } from '@polkadot-live/types';
+import type { WhoMeta } from '../types';
 
 export const handleReferendaEvent = (
   chainId: ChainID,
   osNotify: boolean,
-  palletEvent: PalletReferendaEvent
+  palletEvent: PalletReferendaEvent,
+  whoMeta?: WhoMeta
 ) => {
   try {
     handleEvent({
       action: 'events:persist',
       data: {
-        event: getReferendaChainEvent(chainId, palletEvent),
+        event: getReferendaChainEvent(chainId, palletEvent, whoMeta),
         notification: getReferendaNotification(chainId, palletEvent),
         showNotification: { isOneShot: false, isEnabled: osNotify },
       },
@@ -153,10 +155,11 @@ const getReferendaNotification = (
 
 const getReferendaChainEvent = (
   chainId: ChainID,
-  palletEvent: PalletReferendaEvent
+  palletEvent: PalletReferendaEvent,
+  whoMeta?: WhoMeta
 ): EventCallback => {
   const { name: eventName, data: miscData } = palletEvent;
-  const ev = makeChainEvent({ chainId, category: 'referenda' });
+  const ev = makeChainEvent({ chainId, category: 'referenda' }, whoMeta);
 
   switch (eventName) {
     case 'Approved': {

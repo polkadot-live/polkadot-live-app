@@ -27,33 +27,39 @@ import type {
   PalletStakingEvent,
 } from '@polkadot-live/types';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { WhoMeta } from '../types';
 
 export const PalletHandlers: Record<string, AnyData> = {
   Balances: (
     chainId: ChainID,
     osNotify: boolean,
-    palletEvent: PalletBalancesEvent
-  ) => handleBalancesEvent(chainId, osNotify, palletEvent),
+    palletEvent: PalletBalancesEvent,
+    whoMeta?: WhoMeta
+  ) => handleBalancesEvent(chainId, osNotify, palletEvent, whoMeta),
   ConvictionVoting: (
     chainId: ChainID,
     osNotify: boolean,
-    palletEvent: PalletConvictionVotingEvent
-  ) => handleConvictionVotingEvent(chainId, osNotify, palletEvent),
+    palletEvent: PalletConvictionVotingEvent,
+    whoMeta?: WhoMeta
+  ) => handleConvictionVotingEvent(chainId, osNotify, palletEvent, whoMeta),
   NominationPools: (
     chainId: ChainID,
     osNotify: boolean,
-    palletEvent: PalletNominationPoolsEvent
-  ) => handleNominationPoolsEvent(chainId, osNotify, palletEvent),
+    palletEvent: PalletNominationPoolsEvent,
+    whoMeta?: WhoMeta
+  ) => handleNominationPoolsEvent(chainId, osNotify, palletEvent, whoMeta),
   Referenda: (
     chainId: ChainID,
     osNotify: boolean,
-    palletEvent: PalletReferendaEvent
-  ) => handleReferendaEvent(chainId, osNotify, palletEvent),
+    palletEvent: PalletReferendaEvent,
+    whoMeta?: WhoMeta
+  ) => handleReferendaEvent(chainId, osNotify, palletEvent, whoMeta),
   Staking: (
     chainId: ChainID,
     osNotify: boolean,
-    palletEvent: PalletStakingEvent
-  ) => handleStakingEvent(chainId, osNotify, palletEvent),
+    palletEvent: PalletStakingEvent,
+    whoMeta?: WhoMeta
+  ) => handleStakingEvent(chainId, osNotify, palletEvent, whoMeta),
 };
 
 export const ScopedAccountGetters: Record<string, AnyData> = {
