@@ -2,7 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { DbController } from '../../controllers';
-import type { ChainEventSubscription } from '@polkadot-live/types';
+import type { Stores } from '../../controllers';
+import type {
+  ChainEventSubscription,
+  FlattenedAccountData,
+} from '@polkadot-live/types';
 
 export const getAllChainEvents = async (): Promise<
   ChainEventSubscription[]
@@ -13,6 +17,18 @@ export const getAllChainEvents = async (): Promise<
     ChainEventSubscription
   >;
   return Array.from(active.values());
+};
+
+export const getAllChainEventsForAccount = async (
+  account: FlattenedAccountData
+): Promise<ChainEventSubscription[]> => {
+  const { address, chain: chainId } = account;
+  const store: Stores = 'accountChainEvents';
+  const key = `${chainId}::${address}`;
+  const active = (await DbController.get(store, key)) as
+    | ChainEventSubscription[]
+    | undefined;
+  return active ?? [];
 };
 
 export const getActiveCount = async (): Promise<number> => {

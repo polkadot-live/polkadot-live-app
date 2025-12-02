@@ -48,6 +48,15 @@ export const SubscriptionsProvider = ({
     new Map()
   );
 
+  const accountHasSubs = (account: FlattenedAccountData) => {
+    const { address, chain: chainId } = account;
+    const key = `${chainId}:${address}`;
+    const maybeSubs = accountSubscriptionsState.get(key);
+    return maybeSubs
+      ? maybeSubs.filter(({ status }) => status === 'enable').length > 0
+      : false;
+  };
+
   // Determine if there are active subscriptions for a network.
   const chainHasSubscriptions = (chainId: ChainID) =>
     Boolean(activeChainMap.get(chainId)) || false;
@@ -127,16 +136,14 @@ export const SubscriptionsProvider = ({
     }
   };
 
-  /// Get subscription count for address.
-  const getSubscriptionCountForAccount = (
-    flattened: FlattenedAccountData
-  ): number => {
+  // Get subscription count for address.
+  const getClassicSubCount = (flattened: FlattenedAccountData): number => {
     const { chain: chainId, address } = flattened;
     const tasks = accountSubscriptionsState.get(`${chainId}:${address}`) || [];
     return tasks.reduce((acc, t) => (t.status === 'enable' ? acc + 1 : acc), 0);
   };
 
-  /// Get total subscription count.
+  // Get total subscription count.
   const getTotalSubscriptionCount = (): number =>
     adapter.getTotalSubscriptionCount(activeChainMap, getAllAccounts);
 
@@ -163,6 +170,7 @@ export const SubscriptionsProvider = ({
       value={{
         chainSubscriptions: chainSubscriptionsState,
         accountSubscriptions: accountSubscriptionsState,
+        accountHasSubs,
         chainHasSubscriptions,
         getChainSubscriptions,
         getAccountSubscriptions,
@@ -171,9 +179,9 @@ export const SubscriptionsProvider = ({
         onOneShot,
         onNotificationToggle,
         toggleCategoryTasks,
+        getClassicSubCount,
         getTaskType,
         getTotalSubscriptionCount,
-        getSubscriptionCountForAccount,
       }}
     >
       {children}

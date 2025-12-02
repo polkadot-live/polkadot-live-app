@@ -31,16 +31,27 @@ import type {
   PalletReferendaEvent as PaseoAssetHubReferendaEvent,
   PalletStakingAsyncPalletEvent as PaseoAssetHubStakingEvent,
 } from '@dedot/chaintypes/paseo-asset-hub';
+import type {
+  AssetHubWestendRuntimeRuntimeEvent,
+  FrameSystemEventRecord as WestendAssetHubFrameSystemEventRecord,
+  PalletBalancesEvent as WestendAssetHubBalancesEvent,
+  PalletConvictionVotingEvent as WestendAssetHubConvictionVotingEvent,
+  PalletNominationPoolsEvent as WestendAssetHubNominationPoolsEvent,
+  PalletReferendaEvent as WestendAssetHubReferendaEvent,
+  PalletStakingAsyncPalletEvent as WestendAssetHubStakingEvent,
+} from '@dedot/chaintypes/westend-asset-hub';
 
 export type RuntimeEvent =
   | AssetHubPolkadotRuntimeRuntimeEvent
   | AssetHubKusamaRuntimeRuntimeEvent
-  | AssetHubPaseoRuntimeRuntimeEvent;
+  | AssetHubPaseoRuntimeRuntimeEvent
+  | AssetHubWestendRuntimeRuntimeEvent;
 
 export type FrameSystemEventRecord =
   | PolkadotAssetHubFrameSystemEventRecord
   | KusamaAssetHubFrameSystemEventRecord
-  | PaseoAssetHubFrameSystemEventRecord;
+  | PaseoAssetHubFrameSystemEventRecord
+  | WestendAssetHubFrameSystemEventRecord;
 
 /**
  * Union event types.
@@ -48,27 +59,32 @@ export type FrameSystemEventRecord =
 export type PalletBalancesEvent =
   | PolkadotAssetHubBalancesEvent
   | KusamaAssetHubBalancesEvent
-  | PaseoAssetHubBalancesEvent;
+  | PaseoAssetHubBalancesEvent
+  | WestendAssetHubBalancesEvent;
 
 export type PalletConvictionVotingEvent =
   | PolkadotAssetHubConvictionVotingEvent
   | KusamaAssetHubConvictionVotingEvent
-  | PaseoAssetHubConvictionVotingEvent;
+  | PaseoAssetHubConvictionVotingEvent
+  | WestendAssetHubConvictionVotingEvent;
 
 export type PalletNominationPoolsEvent =
   | PolkadotAssetHubNominationPoolsEvent
   | KusamaAssetHubNominationPoolsEvent
-  | PaseoAssetHubNominationPoolsEvent;
+  | PaseoAssetHubNominationPoolsEvent
+  | WestendAssetHubNominationPoolsEvent;
 
 export type PalletReferendaEvent =
   | PolkadotAssetHubReferendaEvent
   | KusamaAssetHubReferendaEvent
-  | PaseoAssetHubReferendaEvent;
+  | PaseoAssetHubReferendaEvent
+  | WestendAssetHubReferendaEvent;
 
 export type PalletStakingEvent =
   | PolkadotAssetHubStakingEvent
   | KusamaAssetHubStakingEvent
-  | PaseoAssetHubStakingEvent;
+  | PaseoAssetHubStakingEvent
+  | WestendAssetHubStakingEvent;
 
 /**
  * Chain event subscription.
@@ -76,6 +92,7 @@ export type PalletStakingEvent =
 export interface ChainEventSubscription {
   id: string;
   chainId: ChainID;
+  kind: 'account' | 'chain';
   pallet: string;
   eventName: string;
   enabled: boolean;

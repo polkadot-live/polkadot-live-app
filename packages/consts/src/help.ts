@@ -38,7 +38,7 @@ export const HelpConfig: HelpItems = [
   },
   {
     key: 'help:subscription:balances:transfers',
-    title: 'Subscription: Free Balance',
+    title: 'Free Balance',
     definition: [
       "Get notified when an account's free balance changes.",
       "An account's free balance does not include the reserved balance. It can be used for on-chain activity like staking, participating in governance etc. but is not necessarily spendable (or transferrable).",
@@ -46,7 +46,7 @@ export const HelpConfig: HelpItems = [
   },
   {
     key: 'help:subscription:balances:frozen',
-    title: 'Subscription: Frozen Balance',
+    title: 'Frozen Balance',
     definition: [
       "Get notified when an account's frozen balance changes.",
       "An account's frozen balance is the free balance locked for staking, governance, and vesting (also called locked balance).",
@@ -54,7 +54,7 @@ export const HelpConfig: HelpItems = [
   },
   {
     key: 'help:subscription:balances:reserved',
-    title: 'Subscription: Reserved Balance',
+    title: 'Reserved Balance',
     definition: [
       "Get notified when an account's reserved balance changes.",
       'An account\'s reserved balance (also known as "on hold") is used for identities, proxies, OpenGov preimages and deposits, and it is no longer free.',
@@ -62,7 +62,7 @@ export const HelpConfig: HelpItems = [
   },
   {
     key: 'help:subscription:balances:spendable',
-    title: 'Subscription: Spendable Balance',
+    title: 'Spendable Balance',
     definition: [
       "Get notified when an account's spendable balance changes.",
       "An account's spendable balance is the free balance that can be spent.",
@@ -70,7 +70,7 @@ export const HelpConfig: HelpItems = [
   },
   {
     key: 'help:subscription:nominationPools:commission',
-    title: 'Nomination Pools: Commission Subscription',
+    title: 'Commission Changed',
     definition: [
       "Get notified when your nomination pool's commission setting has changed.",
       'A larger commission percentage may indicate that you will receive less rewards, as the nomination pool will take a bigger cut of rewards at the end of each era.',
@@ -78,14 +78,14 @@ export const HelpConfig: HelpItems = [
   },
   {
     key: 'help:subscription:nominationPools:name',
-    title: 'Nomination Pools: Name Subscription',
+    title: 'Pool Name Changed',
     definition: [
       "Get notified when your nomination pool's name has changed when a new era starts.",
     ],
   },
   {
     key: 'help:subscription:nominationPools:state',
-    title: 'Nomination Pools: State Subscription',
+    title: 'Pool State Changed',
     definition: [
       'Get notified when your nomination pool has changed its state setting when a new era starts.',
       'The "Open" state means anyone can join the pool and no members can be permissionlessly removed.',
@@ -95,21 +95,21 @@ export const HelpConfig: HelpItems = [
   },
   {
     key: 'help:subscription:nominationPools:roles',
-    title: 'Nomination Pools: Roles Subscription',
+    title: 'Roles Changed',
     definition: [
       'Get notified when your nomination pool has changed its roles setting when a new era starts.',
     ],
   },
   {
     key: 'help:subscription:nominationPools:rewards',
-    title: 'Nomination Pools: Unclaimed Rewards Subscription',
+    title: 'Unclaimed Rewards',
     definition: [
       'Get notified when you have unclaimed nomination pool rewards, when a new era starts.',
     ],
   },
   {
     key: 'help:subscription:nominating:commission',
-    title: 'Nominating: Commission Subscription',
+    title: 'Commission Changed',
     definition: [
       'Get notified when a commission change is detected among your nominated validators, when a new era starts.',
       'You will be notified when your cached commissions do not match the commissions fetched in the latest era.',
@@ -117,7 +117,7 @@ export const HelpConfig: HelpItems = [
   },
   {
     key: 'help:subscription:nominating:exposure',
-    title: 'Nominating: Exposure Subscription',
+    title: 'Exposure Changed',
     definition: [
       'Get notified when your nominating exposure changes when a new era starts.',
       'Your address is "exposed" in the current era when at least one of your nominated validators are selected to actively participate in consensus, and have a chance of receiving rewards.',
@@ -125,7 +125,7 @@ export const HelpConfig: HelpItems = [
   },
   {
     key: 'help:subscription:nominating:payouts',
-    title: 'Nominating: Era Rewards Subscription',
+    title: 'Era Rewards',
     definition: [
       'Get notified of your nominating rewards from the previous era.',
       'Polkadot Live will calculate your rewards in a decentralized way, fetching required state from the network.',
@@ -133,7 +133,7 @@ export const HelpConfig: HelpItems = [
   },
   {
     key: 'help:subscription:nominating:nominations',
-    title: 'Nominating: Nominations Subscription',
+    title: 'Nominations Changed',
     definition: [
       'Get notified when any of your nominated validators have changed.',
       'You will be notified when your cached nominations do not match the nominations fetched in the latest era.',

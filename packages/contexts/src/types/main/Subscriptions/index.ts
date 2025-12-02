@@ -12,6 +12,7 @@ import type {
 export interface SubscriptionsContextInterface {
   chainSubscriptions: Map<ChainID, SubscriptionTask[]>;
   accountSubscriptions: Map<string, SubscriptionTask[]>;
+  accountHasSubs: (account: FlattenedAccountData) => boolean;
   chainHasSubscriptions: (chainId: ChainID) => boolean;
   getChainSubscriptions: (a: ChainID) => SubscriptionTask[];
   getAccountSubscriptions: (key: string) => SubscriptionTask[];
@@ -27,7 +28,7 @@ export interface SubscriptionsContextInterface {
   updateAccountNameInTasks: (key: string, newName: string) => void;
   handleQueuedToggle: (task: SubscriptionTask) => Promise<void>;
   toggleCategoryTasks: (c: TaskCategory, i: boolean) => Promise<void>;
+  getClassicSubCount: (flattened: FlattenedAccountData) => number;
   getTaskType: (t: SubscriptionTask) => SubscriptionTaskType;
-  getSubscriptionCountForAccount: (flattened: FlattenedAccountData) => number;
   getTotalSubscriptionCount: () => number;
 }

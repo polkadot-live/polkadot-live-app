@@ -17,6 +17,7 @@ import { updateEventWhoInfo } from '../events';
 import {
   AccountsController,
   APIsController,
+  ChainEventsService,
   disconnectAPIs,
   SubscriptionsController,
 } from '@polkadot-live/core';
@@ -25,6 +26,7 @@ import type {
   EncodedAccount,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
+import { removeAllChainEventsForAccount } from '../chainEvents';
 
 export const handleImportAddress = async (
   generic: ImportedGenericAccount,
@@ -114,6 +116,14 @@ export const handleRemoveAddress = async (
     await AccountsController.removeAllSubscriptions(account);
     AccountsController.remove(chainId, address);
     await removeManagedAccount(account);
+
+    // Remove all account-scoped chain event subscriptions.
+    const flat = account.flatten();
+    ChainEventsService.removeAllForAccount(flat);
+    removeAllChainEventsForAccount(flat);
+    sendChromeMessage('chainEvents', 'removeAllForAccount', {
+      account: flat,
+    });
 
     // Sync managed accounts state.
     eventBus.dispatchEvent(new CustomEvent('setManagedAccountsState'));

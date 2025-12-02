@@ -12,3 +12,7 @@ export interface SubscriptionsProps {
 export interface SubscriptionRowProps {
   subscription: ChainEventSubscription;
 }
+
+export interface SubscriptionRowAccountProps {
+  subscription: ChainEventSubscription;
+}

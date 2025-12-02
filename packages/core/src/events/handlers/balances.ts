@@ -1,23 +1,26 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { ChainList } from '@polkadot-live/consts/chains';
 import { getBalanceText } from '../../library';
 import { handleEvent } from '../../callbacks/utils';
-import { makeChainEvent } from './utils';
+import { makeChainEvent, notifyTitle } from './utils';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { EventCallback, PalletBalancesEvent } from '@polkadot-live/types';
+import type { WhoMeta } from '../types';
 
 export const handleBalancesEvent = (
   chainId: ChainID,
   osNotify: boolean,
-  palletEvent: PalletBalancesEvent
+  palletEvent: PalletBalancesEvent,
+  whoMeta?: WhoMeta
 ) => {
   try {
     handleEvent({
       action: 'events:persist',
       data: {
-        event: getBalancesChainEvent(chainId, palletEvent),
-        notification: getBalancesNotification(chainId, palletEvent),
+        event: getBalancesChainEvent(chainId, palletEvent, whoMeta),
+        notification: getBalancesNotification(chainId, palletEvent, whoMeta),
         showNotification: { isOneShot: false, isEnabled: osNotify },
       },
     });
@@ -26,16 +29,47 @@ export const handleBalancesEvent = (
   }
 };
 
-const getBalancesNotification = (
+export const getBalancesPalletScopedAccountsFromEvent = (
   chainId: ChainID,
   palletEvent: PalletBalancesEvent
+): string[] => {
+  const { name: eventName, data: miscData } = palletEvent;
+  const prefix = ChainList.get(chainId)?.prefix ?? 42;
+  switch (eventName) {
+    case 'Transfer': {
+      const { from, to } = miscData;
+      return [from.address(prefix).toString(), to.address(prefix).toString()];
+    }
+    case 'Reserved':
+    case 'Unreserved':
+    case 'Deposit':
+    case 'Withdraw':
+    case 'Slashed':
+    case 'Suspended':
+    case 'Restored':
+    case 'Locked':
+    case 'Unlocked':
+    case 'Frozen':
+    case 'Thawed': {
+      return [miscData.who.address(prefix).toString()];
+    }
+    default:
+      return [];
+  }
+};
+
+const getBalancesNotification = (
+  chainId: ChainID,
+  palletEvent: PalletBalancesEvent,
+  whoMeta?: WhoMeta
 ) => {
   const { name: eventName, data: miscData } = palletEvent;
+
   switch (eventName) {
     case 'Transfer': {
       const { amount /*, from, to */ } = miscData;
       return {
-        title: 'Transfer',
+        title: notifyTitle('Transfer', whoMeta),
         subtitle: `${chainId}`,
         body: `${getBalanceText(amount, chainId)}`,
       };
@@ -43,7 +77,7 @@ const getBalancesNotification = (
     case 'Reserved': {
       const { /* who, */ amount } = miscData;
       return {
-        title: 'Reserved',
+        title: notifyTitle('Reserved', whoMeta),
         subtitle: `${chainId}`,
         body: `${getBalanceText(amount, chainId)}`,
       };
@@ -51,7 +85,7 @@ const getBalancesNotification = (
     case 'Unreserved': {
       const { /* who, */ amount } = miscData;
       return {
-        title: 'Unreserved',
+        title: notifyTitle('Unreserved', whoMeta),
         subtitle: `${chainId}`,
         body: `${getBalanceText(amount, chainId)}`,
       };
@@ -59,7 +93,7 @@ const getBalancesNotification = (
     case 'Deposit': {
       const { /* who, */ amount } = miscData;
       return {
-        title: 'Deposit',
+        title: notifyTitle('Deposit', whoMeta),
         subtitle: `${chainId}`,
         body: `${getBalanceText(amount, chainId)}`,
       };
@@ -67,7 +101,7 @@ const getBalancesNotification = (
     case 'Withdraw': {
       const { /* who, */ amount } = miscData;
       return {
-        title: 'Withdraw',
+        title: notifyTitle('Withdraw', whoMeta),
         subtitle: `${chainId}`,
         body: `${getBalanceText(amount, chainId)}`,
       };
@@ -75,7 +109,7 @@ const getBalancesNotification = (
     case 'Slashed': {
       const { /* who, */ amount } = miscData;
       return {
-        title: 'Slashed',
+        title: notifyTitle('Slashed', whoMeta),
         subtitle: `${chainId}`,
         body: `${getBalanceText(amount, chainId)}`,
       };
@@ -83,7 +117,7 @@ const getBalancesNotification = (
     case 'Suspended': {
       const { /* who, */ amount } = miscData;
       return {
-        title: 'Suspended',
+        title: notifyTitle('Suspended', whoMeta),
         subtitle: `${chainId}`,
         body: `${getBalanceText(amount, chainId)}`,
       };
@@ -91,7 +125,7 @@ const getBalancesNotification = (
     case 'Restored': {
       const { /* who, */ amount } = miscData;
       return {
-        title: 'Restored',
+        title: notifyTitle('Restored', whoMeta),
         subtitle: `${chainId}`,
         body: `${getBalanceText(amount, chainId)}`,
       };
@@ -99,7 +133,7 @@ const getBalancesNotification = (
     case 'Locked': {
       const { /* who, */ amount } = miscData;
       return {
-        title: 'Locked',
+        title: notifyTitle('Locked', whoMeta),
         subtitle: `${chainId}`,
         body: `${getBalanceText(amount, chainId)}`,
       };
@@ -107,7 +141,7 @@ const getBalancesNotification = (
     case 'Unlocked': {
       const { /* who, */ amount } = miscData;
       return {
-        title: 'Unlocked',
+        title: notifyTitle('Unlocked', whoMeta),
         subtitle: `${chainId}`,
         body: `${getBalanceText(amount, chainId)}`,
       };
@@ -115,7 +149,7 @@ const getBalancesNotification = (
     case 'Frozen': {
       const { /* who, */ amount } = miscData;
       return {
-        title: 'Frozen',
+        title: notifyTitle('Frozen', whoMeta),
         subtitle: `${chainId}`,
         body: `${getBalanceText(amount, chainId)}`,
       };
@@ -123,7 +157,7 @@ const getBalancesNotification = (
     case 'Thawed': {
       const { /* who, */ amount } = miscData;
       return {
-        title: 'Thawed',
+        title: notifyTitle('Thawed', whoMeta),
         subtitle: `${chainId}`,
         body: `${getBalanceText(amount, chainId)}`,
       };
@@ -137,10 +171,11 @@ const getBalancesNotification = (
 
 const getBalancesChainEvent = (
   chainId: ChainID,
-  palletEvent: PalletBalancesEvent
+  palletEvent: PalletBalancesEvent,
+  whoMeta?: WhoMeta
 ): EventCallback => {
   const { name: eventName, data: miscData } = palletEvent;
-  const ev = makeChainEvent({ chainId, category: 'balances' });
+  const ev = makeChainEvent({ chainId, category: 'balances' }, whoMeta);
   switch (eventName) {
     case 'Transfer': {
       const { amount /*, from, to */ } = miscData;

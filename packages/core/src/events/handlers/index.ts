@@ -1,11 +1,23 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { handleBalancesEvent } from './balances';
-import { handleConvictionVotingEvent } from './convictionVoting';
-import { handleNominationPoolsEvent } from './nominationPools';
+import {
+  handleBalancesEvent,
+  getBalancesPalletScopedAccountsFromEvent,
+} from './balances';
+import {
+  handleConvictionVotingEvent,
+  getConvictionVotingPalletScopedAccountsFromEvent,
+} from './convictionVoting';
+import {
+  handleNominationPoolsEvent,
+  getNominationPoolsPalletScopedAccountsFromEvent,
+} from './nominationPools';
 import { handleReferendaEvent } from './referenda';
-import { handleStakingEvent } from './staking';
+import {
+  getStakingPalletScopedAccountsFromEvent,
+  handleStakingEvent,
+} from './staking';
 import type {
   AnyData,
   PalletBalancesEvent,
@@ -15,31 +27,52 @@ import type {
   PalletStakingEvent,
 } from '@polkadot-live/types';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { WhoMeta } from '../types';
 
 export const PalletHandlers: Record<string, AnyData> = {
   Balances: (
     chainId: ChainID,
     osNotify: boolean,
-    palletEvent: PalletBalancesEvent
-  ) => handleBalancesEvent(chainId, osNotify, palletEvent),
+    palletEvent: PalletBalancesEvent,
+    whoMeta?: WhoMeta
+  ) => handleBalancesEvent(chainId, osNotify, palletEvent, whoMeta),
   ConvictionVoting: (
     chainId: ChainID,
     osNotify: boolean,
-    palletEvent: PalletConvictionVotingEvent
-  ) => handleConvictionVotingEvent(chainId, osNotify, palletEvent),
+    palletEvent: PalletConvictionVotingEvent,
+    whoMeta?: WhoMeta
+  ) => handleConvictionVotingEvent(chainId, osNotify, palletEvent, whoMeta),
   NominationPools: (
     chainId: ChainID,
     osNotify: boolean,
-    palletEvent: PalletNominationPoolsEvent
-  ) => handleNominationPoolsEvent(chainId, osNotify, palletEvent),
+    palletEvent: PalletNominationPoolsEvent,
+    whoMeta?: WhoMeta
+  ) => handleNominationPoolsEvent(chainId, osNotify, palletEvent, whoMeta),
   Referenda: (
     chainId: ChainID,
     osNotify: boolean,
-    palletEvent: PalletReferendaEvent
-  ) => handleReferendaEvent(chainId, osNotify, palletEvent),
+    palletEvent: PalletReferendaEvent,
+    whoMeta?: WhoMeta
+  ) => handleReferendaEvent(chainId, osNotify, palletEvent, whoMeta),
   Staking: (
     chainId: ChainID,
     osNotify: boolean,
-    palletEvent: PalletStakingEvent
-  ) => handleStakingEvent(chainId, osNotify, palletEvent),
+    palletEvent: PalletStakingEvent,
+    whoMeta?: WhoMeta
+  ) => handleStakingEvent(chainId, osNotify, palletEvent, whoMeta),
+};
+
+export const ScopedAccountGetters: Record<string, AnyData> = {
+  Balances: (chainId: ChainID, palletEvent: PalletBalancesEvent) =>
+    getBalancesPalletScopedAccountsFromEvent(chainId, palletEvent),
+  ConvictionVoting: (
+    chainId: ChainID,
+    palletEvent: PalletConvictionVotingEvent
+  ) => getConvictionVotingPalletScopedAccountsFromEvent(chainId, palletEvent),
+  NominationPools: (
+    chainId: ChainID,
+    palletEvent: PalletNominationPoolsEvent
+  ) => getNominationPoolsPalletScopedAccountsFromEvent(chainId, palletEvent),
+  Staking: (chainId: ChainID, palletEvent: PalletStakingEvent) =>
+    getStakingPalletScopedAccountsFromEvent(chainId, palletEvent),
 };

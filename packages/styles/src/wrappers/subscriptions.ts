@@ -48,10 +48,12 @@ export const ItemEntryWrapper = styled(motion.div)`
 
 export const TaskEntryWrapper = styled(motion.div)`
   background: var(--background-primary);
-  width: 100%;
   position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  width: 100%;
   padding: 0.75rem 1rem;
-  max-height: 54px;
   overflow: hidden;
 
   /* OS Notifications Icon */

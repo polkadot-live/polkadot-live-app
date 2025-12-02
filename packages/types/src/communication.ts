@@ -71,6 +71,10 @@ export interface IpcTask {
     | 'chainEvents:getActiveCount'
     | 'chainEvents:insert'
     | 'chainEvents:remove'
+    | 'chainEvents:getAllForAccount'
+    | 'chainEvents:insertForAccount'
+    | 'chainEvents:removeForAccount'
+    | 'chainEvents:removeAllForAccount'
     // Extrinsics
     | 'extrinsics:getAll'
     | 'extrinsics:getCount'

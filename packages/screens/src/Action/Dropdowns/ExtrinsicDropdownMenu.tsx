@@ -38,7 +38,7 @@ export const ExtrinsicDropdownMenu = ({
     <DropdownMenu.Root open={open} onOpenChange={(val) => setOpen(val)}>
       <DropdownMenu.Trigger asChild>
         <IconButton aria-label="Extrinsic Actions">
-          <FontAwesomeIcon icon={FA.faEllipsis} transform={'grow-10'} />
+          <FontAwesomeIcon icon={FA.faEllipsis} transform={'grow-4'} />
         </IconButton>
       </DropdownMenu.Trigger>
 

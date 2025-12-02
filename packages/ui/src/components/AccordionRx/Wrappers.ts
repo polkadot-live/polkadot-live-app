@@ -43,7 +43,7 @@ export const AccordionWrapper = styled.div<{ $onePart?: boolean }>`
     align-items: center;
     align-self: stretch;
     justify-content: center;
-    padding: 0 0.75rem;
+    padding: 0 1rem;
     border-top-right-radius: 0.375rem;
     border-bottom-right-radius: 0.375rem;
     cursor: pointer;

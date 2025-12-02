@@ -15,7 +15,7 @@ import {
   useSummary,
 } from '@polkadot-live/contexts';
 import { getReadableAccountSource } from '@polkadot-live/core';
-import { getSupportedSources } from '@polkadot-live/consts/chains';
+import { getCategory, getSupportedSources } from '@polkadot-live/consts/chains';
 import { useEffect, useState } from 'react';
 import { MainHeading } from '@polkadot-live/ui/components';
 import { FlexColumn, FlexRow } from '@polkadot-live/styles/wrappers';
@@ -23,29 +23,46 @@ import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { SideTriggerButton } from './Wrappers';
 import { OpenViewButton } from './OpenViewButton';
 import { StatItemRow } from './StatItemRow';
+import type { FlattenedAccountData } from '@polkadot-live/types';
 import type { SummaryAccordionValue } from './types';
 
 export const Summary = () => {
   const { getAllAccounts } = useAddresses();
   const { openTab } = useConnections();
-  const { getEventsCount, getReadableEventCategory, getAllEventCategoryKeys } =
-    useEvents();
+  const { getEventsCount, getAllEventCategoryKeys } = useEvents();
   const { getTotalIntervalSubscriptionCount } = useIntervalSubscriptions();
+  const { accountSubCount, getEventSubscriptionCount } = useChainEvents();
+  const { getClassicSubCount, getTotalSubscriptionCount } = useSubscriptions();
   const { setSelectedId } = useSideNav();
-  const { getSubscriptionCountForAccount, getTotalSubscriptionCount } =
-    useSubscriptions();
-  const { getEventSubscriptionCount } = useChainEvents();
   const { addressMap, extrinsicCounts } = useSummary();
 
   /**
    * State.
    */
   const [eventSubCount, setEventSubCount] = useState(0);
+  const [accountSmartSubCounts, setAccountSmartSubCounts] = useState<
+    Map<string, number>
+  >(new Map());
+
+  const getSmartSubCount = (account: FlattenedAccountData) =>
+    accountSmartSubCounts.get(`${account.chain}::${account.address}`) ?? 0;
 
   useEffect(() => {
     const fetch = async () => {
       const count = await getEventSubscriptionCount();
       setEventSubCount(count);
+    };
+    fetch();
+  }, []);
+
+  useEffect(() => {
+    const fetch = async () => {
+      const map = new Map<string, number>();
+      const all = getAllAccounts();
+      for (const a of all) {
+        map.set(`${a.chain}::${a.address}`, await accountSubCount(a));
+      }
+      setAccountSmartSubCounts(map);
     };
     fetch();
   }, []);
@@ -72,6 +89,10 @@ export const Summary = () => {
         return FA.faArrowUpRightDots;
       case 'openGov':
         return FA.faFileContract;
+      case 'staking':
+        return FA.faCubesStacked;
+      case 'voting':
+        return FA.faCheckDouble;
       default:
         return FA.faCircleNodes;
     }
@@ -196,7 +217,7 @@ export const Summary = () => {
                       <StatItemRow
                         key={`total_${category}_events`}
                         kind="event"
-                        category={getReadableEventCategory(category)}
+                        category={getCategory(category)?.label ?? 'Unknown'}
                         meterValue={getEventsCount(category)}
                         icon={getEventIcon(category)}
                       />
@@ -288,12 +309,12 @@ export const Summary = () => {
                         icon={FA.faCheckDouble}
                       />
                     )}
-                    {getAllAccounts().map((flattened) => (
+                    {getAllAccounts().map((a) => (
                       <StatItemRow
-                        key={`${flattened.address}_subscriptions_count`}
+                        key={`${a.address}_subscriptions_count`}
                         kind="account"
-                        meterValue={getSubscriptionCountForAccount(flattened)}
-                        flattened={flattened}
+                        meterValue={getClassicSubCount(a) + getSmartSubCount(a)}
+                        flattened={a}
                       />
                     ))}
                     {getTotalIntervalSubscriptionCount() > 0 && (

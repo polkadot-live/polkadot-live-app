@@ -157,6 +157,10 @@ export const Subscriptions = ({
         />
       )}
 
+      <UI.ScreenInfoCard style={{ marginBottom: '1rem' }}>
+        <div>Toggle referenda subscriptions.</div>
+      </UI.ScreenInfoCard>
+
       <Style.FlexColumn>
         <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
           <Accordion.Root

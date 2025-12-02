@@ -3,9 +3,25 @@
 
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChainEventsAdapter } from './types';
-import type { ChainEventSubscription } from '@polkadot-live/types';
+import type { AnyData, ChainEventSubscription } from '@polkadot-live/types';
 
 export const chromeAdapter: ChainEventsAdapter = {
+  listenOnMount: (removeAllForAccount) => {
+    const callback = async (message: AnyData) => {
+      if (message.type === 'chainEvents') {
+        switch (message.task) {
+          case 'removeAllForAccount': {
+            const { account } = message.payload;
+            removeAllForAccount(account);
+            break;
+          }
+        }
+      }
+    };
+    chrome.runtime.onMessage.addListener(callback);
+    return () => chrome.runtime.onMessage.removeListener(callback);
+  },
+
   getStored: async (): Promise<Map<ChainID, ChainEventSubscription[]>> => {
     try {
       const map = new Map<ChainID, ChainEventSubscription[]>();
@@ -26,17 +42,53 @@ export const chromeAdapter: ChainEventsAdapter = {
     }
   },
 
+  getStoredForAccount: async (account): Promise<ChainEventSubscription[]> => {
+    try {
+      const stored = (await chrome.runtime.sendMessage({
+        type: 'chainEvents',
+        task: 'getAllForAccount',
+        payload: { account },
+      })) as ChainEventSubscription[];
+      return stored;
+    } catch (err) {
+      console.error(err);
+      return [];
+    }
+  },
+
   getSubCount: async () =>
     await chrome.runtime.sendMessage({
       type: 'chainEvents',
       task: 'getActiveCount',
     }),
 
+  getSubCountForAccount: async (account) => {
+    try {
+      const stored = (await chrome.runtime.sendMessage({
+        type: 'chainEvents',
+        task: 'getAllForAccount',
+        payload: { account },
+      })) as ChainEventSubscription[];
+      return stored.length;
+    } catch (err) {
+      console.error(err);
+      return 0;
+    }
+  },
+
   storeInsert: (_, subscription) => {
     chrome.runtime.sendMessage({
       type: 'chainEvents',
       task: 'insert',
       payload: { sub: subscription },
+    });
+  },
+
+  storeInsertForAccount: (account, subscription) => {
+    chrome.runtime.sendMessage({
+      type: 'chainEvents',
+      task: 'insertForAccount',
+      payload: { account, subscription },
     });
   },
 
@@ -48,11 +100,35 @@ export const chromeAdapter: ChainEventsAdapter = {
     });
   },
 
+  storeRemoveForAccount: (account, subscription) => {
+    chrome.runtime.sendMessage({
+      type: 'chainEvents',
+      task: 'removeForAccount',
+      payload: { account, subscription },
+    });
+  },
+
+  storeRemoveAllForAccount: (account) => {
+    chrome.runtime.sendMessage({
+      type: 'chainEvents',
+      task: 'removeAllForAccount',
+      payload: { account },
+    });
+  },
+
   toggleNotify: (_, subscription) => {
     chrome.runtime.sendMessage({
       type: 'chainEvents',
       task: 'update',
       payload: { sub: subscription },
+    });
+  },
+
+  toggleNotifyForAccount: (account, subscription) => {
+    chrome.runtime.sendMessage({
+      type: 'chainEvents',
+      task: 'toggleNotifyForAccount',
+      payload: { account, subscription },
     });
   },
 };

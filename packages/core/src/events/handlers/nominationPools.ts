@@ -1,23 +1,30 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { ChainList } from '@polkadot-live/consts/chains';
 import { getBalanceText } from '../../library';
 import { handleEvent } from '../../callbacks/utils';
-import { makeChainEvent } from './utils';
+import { makeChainEvent, notifyTitle } from './utils';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { PalletNominationPoolsEvent } from '@polkadot-live/types';
+import type { WhoMeta } from '../types';
 
 export const handleNominationPoolsEvent = (
   chainId: ChainID,
   osNotify: boolean,
-  palletEvent: PalletNominationPoolsEvent
+  palletEvent: PalletNominationPoolsEvent,
+  whoMeta?: WhoMeta
 ) => {
   try {
     handleEvent({
       action: 'events:persist',
       data: {
-        event: getNominationPoolsChainEvent(chainId, palletEvent),
-        notification: getNominationPoolsNotification(chainId, palletEvent),
+        event: getNominationPoolsChainEvent(chainId, palletEvent, whoMeta),
+        notification: getNominationPoolsNotification(
+          chainId,
+          palletEvent,
+          whoMeta
+        ),
         showNotification: { isOneShot: false, isEnabled: osNotify },
       },
     });
@@ -26,9 +33,29 @@ export const handleNominationPoolsEvent = (
   }
 };
 
-const getNominationPoolsNotification = (
+export const getNominationPoolsPalletScopedAccountsFromEvent = (
   chainId: ChainID,
   palletEvent: PalletNominationPoolsEvent
+): string[] => {
+  const { name: eventName, data: miscData } = palletEvent;
+  const prefix = ChainList.get(chainId)?.prefix ?? 42;
+  switch (eventName) {
+    case 'Bonded':
+    case 'PaidOut':
+    case 'Unbonded':
+    case 'Withdrawn':
+    case 'MemberRemoved': {
+      return [miscData.member.address(prefix).toString()];
+    }
+    default:
+      return [];
+  }
+};
+
+const getNominationPoolsNotification = (
+  chainId: ChainID,
+  palletEvent: PalletNominationPoolsEvent,
+  whoMeta?: WhoMeta
 ) => {
   const { name: eventName, data: miscData } = palletEvent;
   switch (eventName) {
@@ -43,7 +70,7 @@ const getNominationPoolsNotification = (
     case 'Bonded': {
       const { /* member, */ poolId /*, bonded, joined */ } = miscData;
       return {
-        title: 'Bonded',
+        title: notifyTitle('Bonded', whoMeta),
         subtitle: `${chainId}`,
         body: `Member bonded to pool ${poolId}`,
       };
@@ -51,7 +78,7 @@ const getNominationPoolsNotification = (
     case 'PaidOut': {
       const { /* member, */ poolId, payout } = miscData;
       return {
-        title: 'Paid Out',
+        title: notifyTitle('Paid Out', whoMeta),
         subtitle: `${chainId}`,
         body: `Pool ${poolId} paid out ${getBalanceText(payout, chainId)}`,
       };
@@ -59,7 +86,7 @@ const getNominationPoolsNotification = (
     case 'Unbonded': {
       const { /* member, */ poolId, balance /*, points, era */ } = miscData;
       return {
-        title: 'Unbonded',
+        title: notifyTitle('Unbonded', whoMeta),
         subtitle: `${chainId}`,
         body: `${getBalanceText(balance, chainId)} unbonded from pool ${poolId}`,
       };
@@ -67,7 +94,7 @@ const getNominationPoolsNotification = (
     case 'Withdrawn': {
       const { /* member, */ poolId, balance /*, points */ } = miscData;
       return {
-        title: 'Withdrawn',
+        title: notifyTitle('Withdrawn', whoMeta),
         subtitle: `${chainId}`,
         body: `${getBalanceText(balance, chainId)} withdrawn from pool ${poolId}`,
       };
@@ -91,7 +118,7 @@ const getNominationPoolsNotification = (
     case 'MemberRemoved': {
       const { poolId /* ,member  releasedBalance */ } = miscData;
       return {
-        title: 'Pool Member Removed',
+        title: notifyTitle('Pool Member Removed', whoMeta),
         subtitle: `${chainId}`,
         body: `Pool ${poolId}`,
       };
@@ -160,10 +187,11 @@ const getNominationPoolsNotification = (
 
 const getNominationPoolsChainEvent = (
   chainId: ChainID,
-  palletEvent: PalletNominationPoolsEvent
+  palletEvent: PalletNominationPoolsEvent,
+  whoMeta?: WhoMeta
 ) => {
   const { name: eventName, data: miscData } = palletEvent;
-  const ev = makeChainEvent({ chainId, category: 'nominationPools' });
+  const ev = makeChainEvent({ chainId, category: 'nominationPools' }, whoMeta);
 
   switch (eventName) {
     case 'Created': {

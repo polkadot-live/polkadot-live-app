@@ -30,7 +30,7 @@ export const AccordionTrigger = forwardRef(
 
 export const AccordionContent = forwardRef(
   (
-    { children, className, narrow, transparent, ...props }: AnyData,
+    { children, className, narrow, transparent, topGap, ...props }: AnyData,
     forwardedRef
   ) => (
     <Accordion.Content
@@ -40,6 +40,7 @@ export const AccordionContent = forwardRef(
     >
       <div
         className={`${transparent ? 'AccordionContentTransparent' : narrow ? 'AccordionContentInnerAlternate' : 'AccordionContentInner'}`}
+        style={{ marginTop: topGap ?? undefined }}
       >
         {children}
       </div>

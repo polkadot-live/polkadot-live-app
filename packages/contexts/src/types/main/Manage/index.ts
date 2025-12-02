@@ -4,6 +4,8 @@
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   IntervalSubscription,
+  SubscriptionTask,
+  TaskCategory,
   WrappedSubscriptionTasks,
 } from '@polkadot-live/types/subscriptions';
 
@@ -11,6 +13,7 @@ import type {
 export interface ManageContextInterface {
   renderedSubscriptions: WrappedSubscriptionTasks;
   dynamicIntervalTasksState: IntervalSubscription[];
+  getCategorised: () => Map<TaskCategory, SubscriptionTask[]>;
   setDynamicIntervalTasks: (
     tasks: IntervalSubscription[],
     chainId: ChainID

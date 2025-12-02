@@ -1,24 +1,27 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { ChainList } from '@polkadot-live/consts/chains';
 import { ellipsisFn } from '@w3ux/utils';
 import { getBalanceText } from '../../library';
 import { handleEvent } from '../../callbacks/utils';
-import { makeChainEvent } from './utils';
+import { makeChainEvent, notifyTitle } from './utils';
 import type { PalletStakingEvent } from '@polkadot-live/types';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { WhoMeta } from '../types';
 
 export const handleStakingEvent = (
   chainId: ChainID,
   osNotify: boolean,
-  palletEvent: PalletStakingEvent
+  palletEvent: PalletStakingEvent,
+  whoMeta?: WhoMeta
 ) => {
   try {
     handleEvent({
       action: 'events:persist',
       data: {
-        event: getStakingChainEvent(chainId, palletEvent),
-        notification: getStakingNotification(chainId, palletEvent),
+        event: getStakingChainEvent(chainId, palletEvent, whoMeta),
+        notification: getStakingNotification(chainId, palletEvent, whoMeta),
         showNotification: { isOneShot: false, isEnabled: osNotify },
       },
     });
@@ -27,9 +30,36 @@ export const handleStakingEvent = (
   }
 };
 
-const getStakingNotification = (
+export const getStakingPalletScopedAccountsFromEvent = (
   chainId: ChainID,
   palletEvent: PalletStakingEvent
+): string[] => {
+  const { name: eventName, data: miscData } = palletEvent;
+  const prefix = ChainList.get(chainId)?.prefix ?? 42;
+  switch (eventName) {
+    case 'Rewarded': {
+      const { dest } = miscData;
+      return dest.type === 'Account'
+        ? [dest.value.address(prefix).toString()]
+        : [];
+    }
+    case 'Slashed':
+      return [miscData.staker.address(prefix).toString()];
+    case 'Kicked':
+      return [miscData.nominator.address(prefix).toString()];
+    case 'Bonded':
+    case 'Unbonded':
+    case 'Chilled':
+      return [miscData.stash.address(prefix).toString()];
+    default:
+      return [];
+  }
+};
+
+const getStakingNotification = (
+  chainId: ChainID,
+  palletEvent: PalletStakingEvent,
+  whoMeta?: WhoMeta
 ) => {
   const { name: eventName, data: miscData } = palletEvent;
   switch (eventName) {
@@ -46,7 +76,7 @@ const getStakingNotification = (
     case 'Rewarded': {
       const { /* stash, dest, */ amount } = miscData;
       return {
-        title: 'Nominator Rewarded',
+        title: notifyTitle('Nominator Rewarded', whoMeta),
         subtitle: `${chainId}`,
         body: `${getBalanceText(amount, chainId)}`,
       };
@@ -54,7 +84,7 @@ const getStakingNotification = (
     case 'Slashed': {
       const { /* staker, */ amount } = miscData;
       return {
-        title: 'Staker Slashed',
+        title: notifyTitle('Staker Slashed', whoMeta),
         subtitle: `${chainId}`,
         body: `${getBalanceText(amount, chainId)}`,
       };
@@ -62,7 +92,7 @@ const getStakingNotification = (
     case 'Bonded': {
       const { /* stash, */ amount } = miscData;
       return {
-        title: `Bonded`,
+        title: notifyTitle('Bonded', whoMeta),
         subtitle: `${chainId}`,
         body: `${getBalanceText(amount, chainId)}`,
       };
@@ -70,7 +100,7 @@ const getStakingNotification = (
     case 'Unbonded': {
       const { /* stash, */ amount } = miscData;
       return {
-        title: `Unbonded`,
+        title: notifyTitle('Unbonded', whoMeta),
         subtitle: `${chainId}`,
         body: `${getBalanceText(amount, chainId)}`,
       };
@@ -78,7 +108,7 @@ const getStakingNotification = (
     case 'Kicked': {
       const { nominator /*, stash */ } = miscData;
       return {
-        title: `Nominator Kicked`,
+        title: notifyTitle('Nominator Kicked', whoMeta),
         subtitle: `${chainId}`,
         body: `${ellipsisFn(nominator.address().toString(), 5)}`,
       };
@@ -86,7 +116,7 @@ const getStakingNotification = (
     case 'Chilled': {
       const { stash } = miscData;
       return {
-        title: `Account Chilled`,
+        title: notifyTitle('Account Chilled', whoMeta),
         subtitle: `${chainId}`,
         body: `${ellipsisFn(stash.address().toString(), 5)}`,
       };
@@ -94,9 +124,9 @@ const getStakingNotification = (
     case 'ValidatorPrefsSet': {
       /* const {  stash, prefs  } = miscData; */
       return {
-        title: `Validator Preferences Set`,
+        title: 'Validator Preferences Set',
         subtitle: `${chainId}`,
-        body: `Validator preferences set`,
+        body: 'Validator preferences set',
       };
     }
     default: {
@@ -107,10 +137,11 @@ const getStakingNotification = (
 
 const getStakingChainEvent = (
   chainId: ChainID,
-  palletEvent: PalletStakingEvent
+  palletEvent: PalletStakingEvent,
+  whoMeta?: WhoMeta
 ) => {
   const { name: eventName, data: miscData } = palletEvent;
-  const ev = makeChainEvent({ chainId, category: 'staking' });
+  const ev = makeChainEvent({ chainId, category: 'staking' }, whoMeta);
 
   switch (eventName) {
     case 'EraPaid': {
@@ -129,38 +160,38 @@ const getStakingChainEvent = (
     }
     case 'Slashed': {
       const { /* staker, */ amount } = miscData;
-      ev.title = `Staker Slashed`;
+      ev.title = 'Staker Slashed';
       ev.subtitle = `${getBalanceText(amount, chainId)}`;
       return ev;
     }
     case 'Bonded': {
       const { /* stash, */ amount } = miscData;
-      ev.title = `Bonded`;
+      ev.title = 'Bonded';
       ev.subtitle = `${getBalanceText(amount, chainId)}`;
       return ev;
     }
     case 'Unbonded': {
       const { /* stash, */ amount } = miscData;
-      ev.title = `Unbonded`;
+      ev.title = 'Unbonded';
       ev.subtitle = `${getBalanceText(amount, chainId)}`;
       return ev;
     }
     case 'Kicked': {
       const { nominator /*, stash */ } = miscData;
-      ev.title = `Nominator Kicked`;
+      ev.title = 'Nominator Kicked';
       ev.subtitle = `${ellipsisFn(nominator.address().toString(), 5)}`;
       return ev;
     }
     case 'Chilled': {
       const { stash } = miscData;
-      ev.title = `Account Chilled`;
+      ev.title = 'Account Chilled';
       ev.subtitle = `${ellipsisFn(stash.address().toString(), 5)}`;
       return ev;
     }
     case 'ValidatorPrefsSet': {
       /* const { stash, prefs } = miscData; */
-      ev.title = `Validator Preferences Set`;
-      ev.subtitle = `Validator preferences set`;
+      ev.title = 'Validator Preferences Set';
+      ev.subtitle = 'Validator preferences set';
       return ev;
     }
     default: {

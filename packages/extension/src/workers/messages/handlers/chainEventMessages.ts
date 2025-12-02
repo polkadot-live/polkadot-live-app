@@ -4,12 +4,20 @@
 import {
   getActiveCount,
   getAllChainEvents,
+  getAllChainEventsForAccount,
   putChainEvent,
+  putChainEventForAccount,
+  removeAllChainEventsForAccount,
   removeChainEvent,
+  removeChainEventForAccount,
   updateChainEvent,
 } from '../../chainEvents';
 import type { AnyData } from '@polkadot-live/types/misc';
-import type { ChainEventSubscription } from '@polkadot-live/types';
+import type {
+  ChainEventSubscription,
+  FlattenedAccountData,
+} from '@polkadot-live/types';
+import { ChainEventsService } from '@polkadot-live/core';
 
 export const handleChainEventMessage = (
   message: AnyData,
@@ -24,14 +32,47 @@ export const handleChainEventMessage = (
       getAllChainEvents().then((res) => sendResponse(res));
       return true;
     }
+    case 'getAllForAccount': {
+      const { account }: { account: FlattenedAccountData } = message.payload;
+      getAllChainEventsForAccount(account).then((res) => sendResponse(res));
+      return true;
+    }
     case 'insert': {
       const { sub }: { sub: ChainEventSubscription } = message.payload;
       putChainEvent(sub);
       return false;
     }
+    case 'insertForAccount': {
+      const { account, subscription: sub } = message.payload;
+      putChainEventForAccount(account, sub).then(() => {
+        ChainEventsService.insertForAccount(account, sub);
+        ChainEventsService.initEventStream(account.chain);
+      });
+      return false;
+    }
     case 'remove': {
       const { sub }: { sub: ChainEventSubscription } = message.payload;
       removeChainEvent(sub);
+      return false;
+    }
+    case 'removeForAccount': {
+      const { account, subscription } = message.payload;
+      removeChainEventForAccount(account, subscription).then(() => {
+        ChainEventsService.removeForAccount(account, subscription);
+        ChainEventsService.tryStopEventsStream(account.chain);
+      });
+      return false;
+    }
+    case 'removeAllForAccount': {
+      const { account }: { account: FlattenedAccountData } = message.payload;
+      removeAllChainEventsForAccount(account);
+      return false;
+    }
+    case 'toggleNotifyForAccount': {
+      const { account, subscription: sub } = message.payload;
+      putChainEventForAccount(account, sub).then(() => {
+        ChainEventsService.updateForAccount(account, sub);
+      });
       return false;
     }
     case 'update': {

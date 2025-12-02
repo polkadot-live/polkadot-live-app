@@ -2,12 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Accordion from '@radix-ui/react-accordion';
+import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as UI from '@polkadot-live/ui/components';
 import { ButtonText } from '@polkadot-live/ui/kits/buttons';
-import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { NoAccounts } from '@polkadot-live/ui/utils';
 import {
   useAppSettings,
+  useChainEvents,
   useConnections,
   useManage,
   useSubscriptions,
@@ -19,11 +20,13 @@ import {
   FlexColumn,
   ItemsColumn,
   ItemEntryWrapper,
+  FlexRow,
 } from '@polkadot-live/styles/wrappers';
 import { getSupportedChains } from '@polkadot-live/consts/chains';
 import type { AccountsProps } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export const Accounts = ({
   addresses,
@@ -31,18 +34,29 @@ export const Accounts = ({
   setTasksChainId,
   setSection,
   setTypeClicked,
-  setSelectedAccount,
 }: AccountsProps) => {
   const { cacheGet } = useAppSettings();
   const { getTheme, openTab } = useConnections();
+  const {
+    accountHasSubs: accountHasSmartSubs,
+    setActiveAccount,
+    syncAccounts,
+  } = useChainEvents();
   const { setRenderedSubscriptions } = useManage();
-  const { getChainSubscriptions, getAccountSubscriptions, chainSubscriptions } =
-    useSubscriptions();
+  const {
+    accountHasSubs: accountHasClassicSubs,
+    getChainSubscriptions,
+    getAccountSubscriptions,
+    chainSubscriptions,
+  } = useSubscriptions();
 
   const theme = getTheme();
   const showDebuggingSubscriptions = cacheGet(
     'setting:show-debugging-subscriptions'
   );
+
+  const accountHasSubs = (account: FlattenedAccountData) =>
+    accountHasClassicSubs(account) || accountHasSmartSubs(account);
 
   /**
    * Categorise addresses by their chain ID, sort by name.
@@ -54,7 +68,6 @@ export const Accounts = ({
     for (const chainId of Object.keys(getSupportedChains())) {
       sorted.set(chainId as ChainID, []);
     }
-
     // Map addresses to their chain ID.
     for (const address of addresses) {
       const chainId = address.chain;
@@ -64,7 +77,6 @@ export const Accounts = ({
         sorted.set(chainId, [{ ...address }]);
       }
     }
-
     // Sort addresses by their name.
     for (const [chainId, chainAddresses] of sorted.entries()) {
       sorted.set(
@@ -72,7 +84,6 @@ export const Accounts = ({
         chainAddresses.sort((x, y) => x.name.localeCompare(y.name))
       );
     }
-
     // Remove any empty entries.
     const redundantEntries: ChainID[] = [];
     for (const [chainId, chainAddresses] of sorted.entries()) {
@@ -81,7 +92,6 @@ export const Accounts = ({
     redundantEntries.forEach((chainId) => {
       sorted.delete(chainId);
     });
-
     // Add a single `Empty` key if there are no accounts to render.
     if (sorted.size === 0) {
       sorted.set('Empty', []);
@@ -97,19 +107,6 @@ export const Accounts = ({
       showDebuggingSubscriptions ? ['Debug'] : []
     )
   );
-
-  /**
-   * Use indices ref to maintain open accordion panels when toggling debugging setting.
-   */
-  useEffect(() => {
-    setAccordionValue((prev) =>
-      showDebuggingSubscriptions
-        ? !prev.includes('Debug')
-          ? [...prev, 'Debug']
-          : [...prev]
-        : [...prev.filter((v) => v !== 'Debug')]
-    );
-  }, [showDebuggingSubscriptions]);
 
   /**
    * Set parent subscription tasks state when a chain is clicked.
@@ -128,11 +125,8 @@ export const Accounts = ({
   /**
    * Set account subscription tasks state when an account is clicked.
    */
-  const handleClickAccount = (
-    address: string,
-    chainId: ChainID,
-    accountName: string
-  ) => {
+  const handleClickAccount = (account: FlattenedAccountData) => {
+    const { address, chain: chainId, name: accountName } = account;
     setRenderedSubscriptions({
       type: 'account',
       tasks: getAccountSubscriptions(`${chainId}:${address}`),
@@ -141,11 +135,40 @@ export const Accounts = ({
     setTypeClicked('account');
     setBreadcrumb(accountName);
     setSection(1);
-    setSelectedAccount(address);
+    // Set account for chain event subscriptons.
+    setActiveAccount(account);
   };
+
+  /**
+   * Sync persisted subscription state.
+   */
+  useEffect(() => {
+    const sync = async () => {
+      const accounts = Array.from(getSortedAddresses().values()).flat();
+      await syncAccounts(accounts);
+    };
+    sync();
+  }, []);
+
+  /**
+   * Use indices ref to maintain open accordion panels when toggling debugging setting.
+   */
+  useEffect(() => {
+    setAccordionValue((prev) =>
+      showDebuggingSubscriptions
+        ? !prev.includes('Debug')
+          ? [...prev, 'Debug']
+          : [...prev]
+        : [...prev.filter((v) => v !== 'Debug')]
+    );
+  }, [showDebuggingSubscriptions]);
 
   return (
     <div style={{ width: '100%' }}>
+      <UI.ScreenInfoCard>
+        <div>Select an account to manage its subscriptions.</div>
+      </UI.ScreenInfoCard>
+
       <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
         <Accordion.Root
           style={{ marginBottom: '1rem' }}
@@ -154,8 +177,7 @@ export const Accounts = ({
           value={accordionValue}
           onValueChange={(val) => setAccordionValue(val as string[])}
         >
-          <FlexColumn>
-            {/* Manage Accounts */}
+          <FlexColumn $rowGap="1rem">
             {Array.from(getSortedAddresses().entries()).map(
               ([chainId, chainAddresses]) => (
                 <Accordion.Item
@@ -183,43 +205,44 @@ export const Accounts = ({
                     ) : (
                       <ItemsColumn>
                         {chainAddresses.map(
-                          (
-                            { address, chain, name }: FlattenedAccountData,
-                            j: number
-                          ) => (
+                          (a: FlattenedAccountData, j: number) => (
                             <ItemEntryWrapper
                               whileHover={{ scale: 1.01 }}
                               whileTap={{ scale: 0.99 }}
                               key={`manage_account_${j}`}
-                              onClick={() =>
-                                handleClickAccount(address, chain, name)
-                              }
+                              onClick={() => handleClickAccount(a)}
                             >
                               <div className="inner">
                                 <div>
                                   <UI.TooltipRx
-                                    text={ellipsisFn(address, 12)}
+                                    text={ellipsisFn(a.address, 12)}
                                     theme={theme}
                                     side="right"
                                   >
                                     <span>
                                       <UI.Identicon
-                                        value={address}
+                                        value={a.address}
                                         fontSize={'1.75rem'}
                                       />
                                     </span>
                                   </UI.TooltipRx>
                                   <div className="content">
-                                    <h3>{name}</h3>
+                                    <h3>{a.name}</h3>
                                   </div>
                                 </div>
-                                <div>
+                                <FlexRow>
+                                  {accountHasSubs(a) && (
+                                    <FontAwesomeIcon
+                                      icon={FA.faSplotch}
+                                      style={{ color: 'var(--accent-primary)' }}
+                                    />
+                                  )}
                                   <ButtonText
                                     text=""
-                                    iconRight={faChevronRight}
+                                    iconRight={FA.faChevronRight}
                                     iconTransform="shrink-3"
                                   />
-                                </div>
+                                </FlexRow>
                               </div>
                             </ItemEntryWrapper>
                           )
@@ -259,7 +282,7 @@ export const Accounts = ({
                           <div>
                             <ButtonText
                               text=""
-                              iconRight={faChevronRight}
+                              iconRight={FA.faChevronRight}
                               iconTransform="shrink-3"
                             />
                           </div>

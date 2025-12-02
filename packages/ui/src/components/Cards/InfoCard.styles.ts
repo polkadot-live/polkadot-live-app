@@ -3,6 +3,25 @@
 
 import styled from 'styled-components';
 
+export const ScreenInfoCardWrapper = styled.div`
+  background-color: var(--background-default);
+  color: var(--text-color-secondary);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  padding: 2rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+
+  > div {
+    color: var(--text-color-secondary);
+    width: 100%;
+    align-items: center;
+    font-size: 1.05rem;
+  }
+`;
+
 export const InfoCardWrapper = styled.div`
   background-color: var(--background-surface);
   color: var(--text-color-secondary);

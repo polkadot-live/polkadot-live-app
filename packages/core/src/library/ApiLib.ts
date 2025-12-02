@@ -74,5 +74,10 @@ const isApiRequired = (chainId: ChainID) => {
       return true;
     }
   }
+  for (const cid of ChainEventsService.accountScopedSubscriptions.keys()) {
+    if (cid === chainId) {
+      return true;
+    }
+  }
   return false;
 };
