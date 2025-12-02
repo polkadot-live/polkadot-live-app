@@ -79,17 +79,18 @@ export const electronAdapter: SubscriptionsAdapter = {
   },
 
   handleQueuedToggle: async (task, taskType) => {
+    // Invert the task status.
+    const newStatus = task.status === 'enable' ? 'disable' : 'enable';
+    task.status = newStatus;
+    task.enableOsNotifications = newStatus === 'enable' ? true : false;
+    SubscriptionsController.updateTaskState(task);
+
     const p = async () =>
       await electronAdapter.toggleSubscription(task, taskType);
     TaskQueue.add(p);
   },
 
   toggleSubscription: async (task, taskType) => {
-    // Invert the task status.
-    const newStatus = task.status === 'enable' ? 'disable' : 'enable';
-    task.status = newStatus;
-    task.enableOsNotifications = newStatus === 'enable' ? true : false;
-
     switch (taskType) {
       case 'chain': {
         await SubscriptionsController.subscribeChainTasks([task]);
@@ -97,7 +98,6 @@ export const electronAdapter: SubscriptionsAdapter = {
           action: 'subscriptions:chain:update',
           data: { serTask: JSON.stringify(task) },
         });
-        SubscriptionsController.updateTaskState(task);
         break;
       }
       case 'account': {
@@ -115,11 +115,9 @@ export const electronAdapter: SubscriptionsAdapter = {
             serTask: JSON.stringify(task),
           },
         });
-        SubscriptionsController.updateTaskState(task);
-
         // Analytics.
-        const { action, category } = task;
-        const event = `subscription-account-${newStatus === 'enable' ? 'on' : 'off'}`;
+        const { action, category, status } = task;
+        const event = `subscription-account-${status === 'enable' ? 'on' : 'off'}`;
         window.myAPI.umamiEvent(event, { action, category });
         break;
       }
