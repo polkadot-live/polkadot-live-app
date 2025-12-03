@@ -29,12 +29,10 @@ export class TaskOrchestrator {
     if (tasks.length === 0) {
       return;
     }
-
     // Insert task in owner account's query multi wrapper.
     for (const task of tasks) {
       this.next(task, wrapper);
     }
-
     // Build query multi API argument.
     await wrapper.build(tasks[0].chainId);
   }

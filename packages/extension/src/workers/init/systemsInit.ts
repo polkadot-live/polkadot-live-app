@@ -53,7 +53,11 @@ export const handleSwitchToOnline = async () => {
   setSharedState('mode:connected', navigator.onLine);
   setSharedState('mode:online', navigator.onLine);
   // Re-connect APIs.
-  const chainIds = Array.from(AccountsController.accounts.keys());
+  const chainIds = [
+    ...Array.from(AccountsController.accounts.keys()),
+    ...Array.from(ChainEventsService.activeSubscriptions.keys()),
+    ...Array.from(ChainEventsService.accountScopedSubscriptions.keys()),
+  ];
   await Promise.all(chainIds.map((c) => startApi(c)));
   // Re-start interval clock.
   IntervalsController.initIntervals(true);

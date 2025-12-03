@@ -240,7 +240,6 @@ export class QueryMultiWrapper {
         for (const entry of callEntries) {
           await this.handleCallback(entry, data);
         }
-
         // Update managed state after all callbacks processed.
         await this.postCallback(api, chainId, callEntries);
       });
@@ -454,7 +453,6 @@ export class QueryMultiWrapper {
     if (entry.unsub !== null && typeof entry.unsub === 'function') {
       entry.unsub();
     }
-
     this.subscriptions.set(chainId, {
       unsub: newUnsub,
       callEntries: [...entry!.callEntries],

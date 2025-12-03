@@ -68,13 +68,16 @@ export class AccountsController {
       return;
     }
     for (const [chainId, stored] of fetched) {
-      this.accounts.set(
-        chainId,
-        stored.map(
-          ({ _source, _address, _name }) =>
-            new Account(chainId, _source, _address, _name)
-        )
-      );
+      const updated = [];
+      const cur = this.accounts.get(chainId) ?? [];
+
+      for (const { _address, _source, _name } of stored) {
+        if (this.accountExists(chainId, _address)) {
+          continue;
+        }
+        updated.push(new Account(chainId, _source, _address, _name));
+      }
+      updated.length > 0 && this.accounts.set(chainId, [...cur, ...updated]);
     }
   }
 
@@ -92,13 +95,16 @@ export class AccountsController {
     }
     const parsed = new Map<ChainID, StoredAccount[]>(JSON.parse(serialized));
     for (const [chain, stored] of parsed) {
-      this.accounts.set(
-        chain,
-        stored.map(
-          ({ _source, _address, _name }) =>
-            new Account(chain, _source, _address, _name)
-        )
-      );
+      const updated = [];
+      const cur = this.accounts.get(chain) ?? [];
+
+      for (const { _address, _source, _name } of stored) {
+        if (this.accountExists(chain, _address)) {
+          continue;
+        }
+        updated.push(new Account(chain, _source, _address, _name));
+      }
+      updated.length > 0 && this.accounts.set(chain, [...cur, ...updated]);
     }
   }
 

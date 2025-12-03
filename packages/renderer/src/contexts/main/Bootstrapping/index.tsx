@@ -146,7 +146,14 @@ export const BootstrappingProvider = ({
   const connectAPIs = async () => {
     const isOnline = await getOnlineStatus('electron');
     if (isOnline) {
-      const chainIds = Array.from(AccountsController.accounts.keys());
+      const chainIds = [
+        ...new Set([
+          ...AccountsController.accounts.keys(),
+          ...SubscriptionsController.chainSubscriptions
+            .getSubscriptionTasks()
+            .map((s) => s.chainId),
+        ]),
+      ];
       await Promise.all(chainIds.map((c) => startApi(c)));
     }
   };

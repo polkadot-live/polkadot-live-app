@@ -63,26 +63,28 @@ export class ChainEventsService {
     const scoped = ChainEventsService.accountScopedSubscriptions;
     const accKey = ChainEventsService.getKeyForAccount(account);
 
-    // Get or create: chain -> accounts
+    // Get or create: chain -> accounts.
     let accounts = scoped.get(chainId);
     if (!accounts) {
       accounts = new Map();
       scoped.set(chainId, accounts);
     }
-    // Get or create: account -> pallets
+    // Get or create: account -> pallets.
     let pallets = accounts.get(accKey);
     if (!pallets) {
       pallets = new Map();
       accounts.set(accKey, pallets);
     }
-    // Get or create: pallet -> event array
+    // Get or create: pallet -> event array.
     let metas = pallets.get(pallet);
     if (!metas) {
       metas = [];
       pallets.set(pallet, metas);
     }
-    // Add event metadata
-    metas.push({ eventName, osNotify });
+    // Add event metadata.
+    if (!metas.find((m) => m.eventName === eventName)) {
+      metas.push({ eventName, osNotify });
+    }
   };
 
   static removeForAccount = (
@@ -158,12 +160,12 @@ export class ChainEventsService {
     if (!metas) {
       return;
     }
-    // Find index by eventName
+    // Find index by eventName.
     const index = metas.findIndex((m) => m.eventName === eventName);
     if (index === -1) {
       return;
     }
-    // Replace existing entry
+    // Replace existing entry.
     metas[index] = { eventName, osNotify };
   };
 
@@ -216,7 +218,6 @@ export class ChainEventsService {
     if (!client?.api) {
       return;
     }
-
     const api = client.api as DedotEventStreamClient;
     const unsub = (await api.query.system.events((events) => {
       ChainEventsService.handleEvents(chainId, events);
