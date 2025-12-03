@@ -55,9 +55,6 @@ export class APIsController {
    * Initalize disconnected API clients.
    */
   static initialize = async (backend: 'electron' | 'browser') => {
-    if (this.clients.length) {
-      return;
-    }
     this.backend = backend;
     const chainIds = ChainList.keys();
     for (const chainId of chainIds) {
@@ -115,6 +112,8 @@ export class APIsController {
       const client = this.get(chainId);
       if (!client) {
         throw new ApiError('ApiUndefined');
+      } else if (['connected', 'reconnecting'].includes(client.status())) {
+        return { ack: 'failure' };
       }
       const controller = new AbortController();
       const timeout = this.getConnectionTimeout(chainId);
@@ -169,7 +168,10 @@ export class APIsController {
    * Returns a connected client for a given chain.
    */
   static getConnectedApi = async (chainId: ChainID) => {
-    const client = this.get(chainId)!;
+    const client = this.get(chainId);
+    if (!client) {
+      return null;
+    }
     switch (client.status()) {
       case 'connected': {
         return this.castClient(chainId, client);
@@ -291,6 +293,9 @@ export class APIsController {
    * Push a disconnected API instance.
    */
   private static new = (chainId: ChainID) => {
+    if (this.clients.find((a) => a.chainId === chainId)) {
+      return;
+    }
     const chainMetaData = ChainList.get(chainId)!;
     const endpoint: NodeEndpoint = chainMetaData.endpoints.rpcs[0];
     const rpcs = chainMetaData.endpoints.rpcs;

@@ -126,11 +126,9 @@ export class SubscriptionsController {
           data: null,
         })) || '[]';
 
-      // Subscribe to tasks.
-      await TaskOrchestrator.buildTasks(
-        JSON.parse(serialized),
-        this.chainSubscriptions
-      );
+      // Add tasks to wrapper.
+      const tasks: SubscriptionTask[] = JSON.parse(serialized);
+      await TaskOrchestrator.buildTasks(tasks, this.chainSubscriptions);
     }
   }
 
@@ -139,7 +137,7 @@ export class SubscriptionsController {
    * @summary Run managed chain subscriptions. Called when the app goes into online mode.
    */
   static async resubscribeChains() {
-    const tasks = this.chainSubscriptions.getSubscriptionTasks() || [];
+    const tasks = this.chainSubscriptions.getSubscriptionTasks();
     await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions);
   }
 

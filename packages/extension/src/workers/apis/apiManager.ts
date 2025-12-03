@@ -7,20 +7,17 @@ import {
   ChainEventsService,
   SubscriptionsController,
 } from '@polkadot-live/core';
-import { isSystemsInitialized } from '../state';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { NodeEndpoint } from '@polkadot-live/types/apis';
 
 export const connectApis = async () => {
-  if (isSystemsInitialized()) {
-    return;
-  }
   if (!navigator.onLine) {
     return false;
   }
   const chainIds = [
     ...Array.from(AccountsController.accounts.keys()),
     ...Array.from(ChainEventsService.activeSubscriptions.keys()),
+    ...Array.from(ChainEventsService.accountScopedSubscriptions.keys()),
   ];
   await Promise.all(chainIds.map((c) => startApi(c)));
   return true;

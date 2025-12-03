@@ -36,10 +36,8 @@ export const electronAdapter: ApiHealthAdapter = {
         const api = res.getApi();
 
         await AccountsController.syncAllAccounts(api, chainId);
-        await Promise.all([
-          AccountsController.subscribeAccountsForChain(chainId),
-          SubscriptionsController.resubscribeChain(chainId),
-        ]);
+        await AccountsController.subscribeAccountsForChain(chainId);
+        await SubscriptionsController.resubscribeChain(chainId);
       } catch (error) {
         console.error(error);
       }

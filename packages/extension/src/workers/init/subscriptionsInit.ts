@@ -4,7 +4,6 @@
 import { DbController } from '../../controllers';
 import { getAllChainEventsForAccount } from '../chainEvents';
 import { handleGetAllIntervalTasks } from '../intervals';
-import { isSystemsInitialized } from '../state';
 import {
   AccountsController,
   ChainEventsService,
@@ -19,9 +18,6 @@ import type { Stores } from '../../controllers';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 
 export const initAccountSubscriptions = async () => {
-  if (isSystemsInitialized()) {
-    return;
-  }
   type T = Map<string, SubscriptionTask[]>;
   const store = 'accountSubscriptions';
   const active = (await DbController.getAllObjects(store)) as T;
@@ -33,9 +29,6 @@ export const initAccountSubscriptions = async () => {
 };
 
 export const initChainSubscriptions = async () => {
-  if (isSystemsInitialized()) {
-    return;
-  }
   const store: Stores = 'chainSubscriptions';
   const fetched = (await DbController.getAllObjects(store)) as Map<
     string,
@@ -43,7 +36,7 @@ export const initChainSubscriptions = async () => {
   >;
   const tasks = Array.from(fetched.values()).map((t) => t);
   const queryMulti = SubscriptionsController.chainSubscriptions;
-  await TaskOrchestrator.buildTasks(tasks, queryMulti);
+  await TaskOrchestrator.subscribeTasks(tasks, queryMulti);
 };
 
 export const initIntervalSubscriptions = async () => {
@@ -60,8 +53,9 @@ export const initEventSubscriptions = async () => {
     ChainEventSubscription
   >;
   // Insert subscriptions.
-  for (const [cid, sub] of stored.entries()) {
-    ChainEventsService.insert(cid as ChainID, sub);
+  for (const [key, sub] of stored.entries()) {
+    const cid = key.split('::')[0] as ChainID;
+    ChainEventsService.insert(cid, sub);
   }
   // Insert stored account-scoped chain event subscriptions.
   const activeChainIds: ChainID[] = [];
