@@ -11,7 +11,7 @@ export const chromeAdapter: TaskHandlerAdapter = {
       payload: { task, onlineMode: isOnline },
     }),
 
-  addIntervalSubscriptionsMessage: (tasks, isOnline) =>
+  addIntervalSubscriptionsMessage: (_, tasks, isOnline) =>
     chrome.runtime.sendMessage({
       type: 'intervalSubscriptions',
       task: 'addMulti',
@@ -29,7 +29,7 @@ export const chromeAdapter: TaskHandlerAdapter = {
       payload: { task },
     }),
 
-  removeIntervalSubscriptionsMessage: (tasks, isOnline) =>
+  removeIntervalSubscriptionsMessage: (_, tasks, isOnline) =>
     chrome.runtime.sendMessage({
       type: 'intervalSubscriptions',
       task: 'removeMulti',

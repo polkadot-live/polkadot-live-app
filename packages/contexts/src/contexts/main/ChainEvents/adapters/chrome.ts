@@ -56,6 +56,8 @@ export const chromeAdapter: ChainEventsAdapter = {
     }
   },
 
+  getStoredRefSubsForChain: async () => [],
+
   getSubCount: async () =>
     await chrome.runtime.sendMessage({
       type: 'chainEvents',

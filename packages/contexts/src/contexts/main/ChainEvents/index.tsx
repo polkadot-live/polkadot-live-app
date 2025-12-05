@@ -8,6 +8,7 @@ import {
   ChainPallets,
   getEventSubscriptions,
   getEventSubscriptionsForAccount,
+  getEventSubscriptionsForRef,
 } from '@polkadot-live/consts/subscriptions/chainEvents';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
@@ -33,7 +34,7 @@ export const ChainEventsProvider = ({
   const adapter = getChainEventAdapter();
 
   /**
-   * Active network and subscriptions.
+   * Active chain subscriptions.
    */
   const [activeChain, setActiveChain] = useState<ChainID | null>(null);
   const [subscriptions, setSubscriptions] = useState<
@@ -49,6 +50,79 @@ export const ChainEventsProvider = ({
   const [accountSubscriptions, setAccountSubscriptions] = useState<
     Map<string, ChainEventSubscription[]>
   >(new Map());
+
+  /**
+   * Active referendum-based subscriptions.
+   */
+  const [activeRefChain, setActiveRefChain] = useState<ChainID | null>(null);
+  const [refSubscriptions, setRefSubscriptions] = useState<
+    Map<ChainID, Map<number /* refId */, ChainEventSubscription[]>>
+  >(new Map());
+
+  const addSubsForRef = (
+    chainId: ChainID,
+    refId: number
+  ): ChainEventSubscription[] => {
+    let updated: ChainEventSubscription[] = [];
+    setRefSubscriptions((prev) => {
+      type T = Map<number, ChainEventSubscription[]>;
+      const map: T = prev.get(chainId) ?? new Map();
+      const subs = getEventSubscriptionsForRef(chainId, refId);
+      updated = [...subs];
+      const newMap = new Map(map).set(refId, updated);
+      return new Map(prev).set(chainId, newMap);
+    });
+    return updated.filter(({ enabled }) => enabled);
+  };
+
+  const removeSubsForRef = (
+    chainId: ChainID,
+    refId: number
+  ): ChainEventSubscription[] => {
+    let removed: ChainEventSubscription[] = [];
+
+    setRefSubscriptions((prev) => {
+      const chainMap = prev.get(chainId);
+      if (!chainMap) {
+        return prev;
+      }
+      // Get the subs that will be removed.
+      removed = chainMap.get(refId) ?? [];
+      const newMap = new Map(chainMap);
+      newMap.delete(refId);
+
+      // If chain becomes empty, remove it entirely.
+      if (newMap.size === 0) {
+        const newTop = new Map(prev);
+        newTop.delete(chainId);
+        return newTop;
+      }
+      // Otherwise, update the chain's map
+      return new Map(prev).set(chainId, newMap);
+    });
+    return removed.filter(({ enabled }) => enabled);
+  };
+
+  const getCategorisedRefsForChain = (): Record<
+    number,
+    ChainEventSubscription[]
+  > => {
+    if (!activeRefChain) {
+      return {};
+    }
+    const chainMap = refSubscriptions.get(activeRefChain);
+    if (!chainMap) {
+      return {};
+    }
+    return Object.fromEntries(
+      Array.from(chainMap.entries())
+        .sort(([a], [b]) => b - a)
+        .map(([refId, subs]) => [
+          refId,
+          [...subs].sort((a, b) => a.label.localeCompare(b.label)),
+        ])
+    );
+  };
 
   const getCategorisedForAccount = (
     account: FlattenedAccountData
@@ -114,9 +188,41 @@ export const ChainEventsProvider = ({
     a.pallet === b.pallet && a.eventName === b.eventName;
 
   /**
-   * Handler to toggle a subscription.
+   * Subscription toggle handler.
    */
   const toggle = async (sub: ChainEventSubscription) => {
+    switch (sub.kind) {
+      case 'account':
+        toggleForAccount(sub);
+        break;
+      case 'chain':
+        toggleForChain(sub);
+        break;
+      case 'referendum':
+        break;
+    }
+  };
+
+  /**
+   * Handler to toggle OS notifications.
+   */
+  const toggleOsNotify = (sub: ChainEventSubscription, updateStore = true) => {
+    switch (sub.kind) {
+      case 'account':
+        toggleOsNotifyForAccount(sub, updateStore);
+        break;
+      case 'chain':
+        toggleOsNotifyForChain(sub, updateStore);
+        break;
+      case 'referendum':
+        break;
+    }
+  };
+
+  /**
+   * Toggle chain-scoped event subscription.
+   */
+  const toggleForChain = async (sub: ChainEventSubscription) => {
     if (!activeChain) {
       return;
     }
@@ -131,6 +237,25 @@ export const ChainEventsProvider = ({
       : adapter.storeRemove(activeChain, sub);
   };
 
+  const toggleOsNotifyForChain = (
+    sub: ChainEventSubscription,
+    updateStore = true
+  ) => {
+    if (!activeChain) {
+      return;
+    }
+    sub.osNotify = !sub.osNotify;
+    setSubscriptions((prev) => {
+      const existing = prev.get(activeChain) ?? [];
+      const updated = existing.map((s) => (cmp(s, sub) ? sub : s));
+      return new Map(prev).set(activeChain, updated);
+    });
+    updateStore && adapter.toggleNotify(activeChain, sub);
+  };
+
+  /**
+   * Toggle account-scoped event subscription.
+   */
   const toggleForAccount = async (sub: ChainEventSubscription) => {
     if (!activeAccount) {
       return;
@@ -145,22 +270,6 @@ export const ChainEventsProvider = ({
     sub.enabled
       ? adapter.storeInsertForAccount(activeAccount, sub)
       : adapter.storeRemoveForAccount(activeAccount, sub);
-  };
-
-  /**
-   * Handler to toggle OS notifications.
-   */
-  const toggleOsNotify = (sub: ChainEventSubscription, updateStore = true) => {
-    if (!activeChain) {
-      return;
-    }
-    sub.osNotify = !sub.osNotify;
-    setSubscriptions((prev) => {
-      const existing = prev.get(activeChain) ?? [];
-      const updated = existing.map((s) => (cmp(s, sub) ? sub : s));
-      return new Map(prev).set(activeChain, updated);
-    });
-    updateStore && adapter.toggleNotify(activeChain, sub);
   };
 
   const toggleOsNotifyForAccount = (
@@ -200,7 +309,7 @@ export const ChainEventsProvider = ({
   };
 
   /**
-   * Get active subscriptions from store and merge with defaults.
+   * Get chain subscriptions state from store and merge with defaults.
    */
   useEffect(() => {
     const fetch = async () => {
@@ -225,7 +334,7 @@ export const ChainEventsProvider = ({
   }, [activeChain]);
 
   /**
-   * Get active subscriptions for the selected account.
+   * Get subscriptions state for the selected account.
    */
   useEffect(() => {
     const fetch = async () => {
@@ -250,6 +359,44 @@ export const ChainEventsProvider = ({
   }, [activeAccount]);
 
   /**
+   * Get referenda subscription state for selected chain.
+   */
+  useEffect(() => {
+    const fetch = async () => {
+      if (!activeRefChain) {
+        return;
+      }
+      // Get active ref subscriptions from store.
+      const allActive = await adapter.getStoredRefSubsForChain(activeRefChain);
+      if (allActive.length === 0) {
+        return;
+      }
+
+      const parseRefId = ({ id }: ChainEventSubscription): number =>
+        parseInt(id.split('::')[1]);
+      const activeIds = new Set(allActive.map((s) => parseRefId(s)));
+
+      setRefSubscriptions((prev) => {
+        const next = new Map(prev);
+        const chainMap = new Map(next.get(activeRefChain) ?? new Map());
+        for (const id of activeIds) {
+          const active = allActive.filter((s) => parseRefId(s) === id);
+          const merged = getEventSubscriptionsForRef(activeRefChain, id).map(
+            (def) => {
+              const found = active.find((a) => a.id === def.id);
+              return found ? { ...found } : def;
+            }
+          );
+          chainMap.set(id, merged);
+        }
+        next.set(activeRefChain, chainMap);
+        return next;
+      });
+    };
+    fetch();
+  }, [activeRefChain]);
+
+  /**
    * Listen to state messages from background worker.
    */
   useEffect(() => {
@@ -264,15 +411,20 @@ export const ChainEventsProvider = ({
       value={{
         activeChain,
         activeAccount,
+        refSubscriptions,
         subscriptions,
         accountHasSubs,
         accountSubCount,
         accountSubCountForPallet,
+        addSubsForRef,
         getCategorisedForAccount,
+        getCategorisedRefsForChain,
         getEventSubscriptionCount,
         removeAllForAccount,
+        removeSubsForRef,
         setActiveAccount,
         setActiveChain,
+        setActiveRefChain,
         syncAccounts,
         syncStored,
         toggle,

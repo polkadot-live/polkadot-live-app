@@ -75,6 +75,9 @@ export interface IpcTask {
     | 'chainEvents:insertForAccount'
     | 'chainEvents:removeForAccount'
     | 'chainEvents:removeAllForAccount'
+    | 'chainEvents:insertRefSubs'
+    | 'chainEvents:removeRefSubs'
+    | 'chainEvents:getAllRefSubsForChain'
     // Extrinsics
     | 'extrinsics:getAll'
     | 'extrinsics:getCount'

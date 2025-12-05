@@ -96,7 +96,11 @@ export const TaskHandlerProvider = ({
     for (const task of updated) {
       addReferendaSubscription({ ...task });
     }
-    adapter.addIntervalSubscriptionsMessage(updated, getOnlineMode());
+    adapter.addIntervalSubscriptionsMessage(
+      referendumId,
+      updated,
+      getOnlineMode()
+    );
     const text = `Subscriptions added for referendum ${referendumId}.`;
     const toastId = `add-all-${tasks[0].chainId}-${referendumId}`;
     renderToast(text, toastId, 'success');
@@ -126,7 +130,11 @@ export const TaskHandlerProvider = ({
     for (const task of updated) {
       removeReferendaSubscription({ ...task });
     }
-    adapter.removeIntervalSubscriptionsMessage(updated, getOnlineMode());
+    adapter.removeIntervalSubscriptionsMessage(
+      referendumId,
+      updated,
+      getOnlineMode()
+    );
     const text = `Subscriptions removed for referendum ${referendumId}.`;
     const toastId = `remove-all-${tasks[0].chainId}-${referendumId}`;
     renderToast(text, toastId, 'success');

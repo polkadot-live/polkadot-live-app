@@ -5,6 +5,7 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as Style from '@polkadot-live/styles/wrappers';
 import {
+  useChainEvents,
   useConnections,
   useIntervalSubscriptions,
   useManage,
@@ -22,6 +23,8 @@ export const Networks = ({ setBreadcrumb, setSection }: NetworksProps) => {
   const { setDynamicIntervalTasks } = useManage();
   const { getIntervalSubscriptionsForChain, getSortedKeys } =
     useIntervalSubscriptions();
+  const { setActiveRefChain } = useChainEvents();
+
   /**
    * Accordion state.
    */
@@ -32,6 +35,7 @@ export const Networks = ({ setBreadcrumb, setSection }: NetworksProps) => {
    */
   const handleClickOpenGovChain = (chainId: ChainID) => {
     const tasks = getIntervalSubscriptionsForChain(chainId);
+    setActiveRefChain(chainId);
     setDynamicIntervalTasks(tasks, chainId);
     setBreadcrumb(`${chainId} OpenGov`);
     setSection(1);

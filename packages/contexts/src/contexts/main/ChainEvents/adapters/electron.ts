@@ -30,6 +30,19 @@ export const electronAdapter: ChainEventsAdapter = {
     }
   },
 
+  getStoredRefSubsForChain: async (chainId) => {
+    try {
+      const res = (await window.myAPI.sendChainEventTask({
+        action: 'chainEvents:getAllRefSubsForChain',
+        data: { chainId },
+      })) as string;
+      return JSON.parse(res);
+    } catch (err) {
+      console.error(err);
+      return [];
+    }
+  },
+
   getSubCount: async () => {
     const res = await window.myAPI.sendChainEventTask({
       action: 'chainEvents:getActiveCount',

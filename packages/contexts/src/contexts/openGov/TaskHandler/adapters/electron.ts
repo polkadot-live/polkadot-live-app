@@ -15,10 +15,11 @@ export const electronAdapter: TaskHandlerAdapter = {
     });
   },
 
-  addIntervalSubscriptionsMessage: (tasks) => {
+  addIntervalSubscriptionsMessage: (refId, tasks) => {
     ConfigOpenGov.portOpenGov.postMessage({
       task: 'openGov:interval:add:multi',
       data: {
+        refId,
         tasks: JSON.stringify(tasks),
       },
     });
@@ -37,10 +38,11 @@ export const electronAdapter: TaskHandlerAdapter = {
     });
   },
 
-  removeIntervalSubscriptionsMessage: (tasks) => {
+  removeIntervalSubscriptionsMessage: (refId, tasks) => {
     ConfigOpenGov.portOpenGov.postMessage({
       task: 'openGov:interval:remove:multi',
       data: {
+        refId,
         tasks: JSON.stringify(tasks),
       },
     });

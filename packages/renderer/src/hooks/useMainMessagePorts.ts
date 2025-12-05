@@ -48,6 +48,7 @@ export const useMainMessagePorts = () => {
   const { getOnlineMode } = useConnections();
   const { cacheGet, toggleSetting } = useAppSettings();
   const { importAddress, removeAddress } = useAddresses();
+  const { addSubsForRef, removeSubsForRef } = useChainEvents();
   const { updateAccountNameInTasks } = useSubscriptions();
   const { syncOpenGovWindow } = MainCtx.useBootstrapping();
   const { exportDataToBackup, importDataFromBackup } = MainCtx.useDataBackup();
@@ -491,21 +492,25 @@ export const useMainMessagePorts = () => {
    * @summary Add an array of interval subscriptions to the main renderer state.
    */
   const handleAddIntervals = async (ev: MessageEvent) => {
-    const { tasks } = ev.data.data;
+    const { refId, tasks } = ev.data.data;
     const parsed: IntervalSubscription[] = JSON.parse(tasks);
+    if (!parsed.length) {
+      return;
+    }
+
+    // Add ref-scoped chain event subscriptions.
+    const chainId = parsed[0].chainId;
+    const subs = addSubsForRef(chainId, refId);
+    await window.myAPI.sendChainEventTask({
+      action: 'chainEvents:insertRefSubs',
+      data: { chainId, refId, serialized: JSON.stringify(subs) },
+    });
 
     // Update managed tasks in intervals controller.
     IntervalsController.insertSubscriptions(parsed, getOnlineMode());
-
-    // Update React and store state.
     for (const task of parsed) {
-      // Add task to dynamic manage state if necessary.
-      tryAddIntervalSubscription({ ...task });
-
-      // Add task to React state for rendering.
-      addIntervalSubscription({ ...task });
-
-      // Persist task to store.
+      tryAddIntervalSubscription(task);
+      addIntervalSubscription(task);
       await window.myAPI.sendIntervalTask({
         action: 'interval:task:add',
         data: { serialized: JSON.stringify(task) },
@@ -518,21 +523,28 @@ export const useMainMessagePorts = () => {
    * @summary Remove an array of interval subscriptions from the main renderer state.
    */
   const handleRemoveIntervals = async (ev: MessageEvent) => {
-    const { tasks } = ev.data.data;
+    const { refId, tasks } = ev.data.data;
     const parsed: IntervalSubscription[] = JSON.parse(tasks);
+    if (!parsed.length) {
+      return;
+    }
+
+    // Remove ref-scoped chain event subscriptions.
+    const chainId = parsed[0].chainId;
+    const subs = removeSubsForRef(chainId, refId);
+    await window.myAPI.sendChainEventTask({
+      action: 'chainEvents:removeRefSubs',
+      data: { chainId, refId, serialized: JSON.stringify(subs) },
+    });
 
     // Update managed tasks in intervals controller.
     IntervalsController.removeSubscriptions(parsed, getOnlineMode());
 
     // Update React and store state.
     for (const task of parsed) {
-      // Remove task from dynamic manage state if necessary.
-      tryRemoveIntervalSubscription({ ...task });
+      tryRemoveIntervalSubscription(task);
+      removeIntervalSubscription(task);
 
-      // Remove task from React state for rendering.
-      removeIntervalSubscription({ ...task });
-
-      // Remove task from store.
       await window.myAPI.sendIntervalTask({
         action: 'interval:task:remove',
         data: { serialized: JSON.stringify(task) },

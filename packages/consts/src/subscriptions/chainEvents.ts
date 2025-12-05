@@ -3,6 +3,7 @@
 
 import type {
   ChainEventSubscription,
+  EventSubKind,
   FlattenedAccountData,
   HelpItemKey,
 } from '@polkadot-live/types';
@@ -10,7 +11,7 @@ import type { ChainID } from '@polkadot-live/types/chains';
 
 type PalletName = keyof typeof Pallets;
 type EventName<P extends PalletName> = keyof (typeof Pallets)[P];
-type SubscriptionScope = 'global' | 'account';
+type SubscriptionScope = 'global' | 'account' | 'referendum';
 
 const prefix = 'help:chainEvents';
 
@@ -243,72 +244,72 @@ const Pallets: Record<
     Approved: {
       helpKey: `${prefix}:Referenda:Approved`,
       label: 'Referendum Approved',
-      scope: ['global'],
+      scope: ['global', 'referendum'],
     },
     Canceled: {
       helpKey: `${prefix}:Referenda:Canceled`,
       label: 'Referendum Canceled',
-      scope: ['global'],
+      scope: ['global', 'referendum'],
     },
     ConfirmAborted: {
       helpKey: `${prefix}:Referenda:ConfirmAborted`,
       label: 'Referendum Confirmation Aborted',
-      scope: ['global'],
+      scope: ['global', 'referendum'],
     },
     ConfirmStarted: {
       helpKey: `${prefix}:Referenda:ConfirmStarted`,
       label: 'Referendum Confirmation Started',
-      scope: ['global'],
+      scope: ['global', 'referendum'],
     },
     Confirmed: {
       helpKey: `${prefix}:Referenda:Confirmed`,
       label: 'Referendum Confirmed',
-      scope: ['global'],
+      scope: ['global', 'referendum'],
     },
     DecisionDepositPlaced: {
       helpKey: `${prefix}:Referenda:DecisionDepositPlaced`,
       label: 'Decision Deposit Placed',
-      scope: ['global'],
+      scope: ['global', 'referendum'],
     },
     DecisionDepositRefunded: {
       helpKey: `${prefix}:Referenda:DecisionDepositRefunded`,
       label: 'Decision Deposit Refunded',
-      scope: ['global'],
+      scope: ['global', 'referendum'],
     },
     DecisionStarted: {
       helpKey: `${prefix}:Referenda:DecisionStarted`,
       label: 'Decision Phase Started',
-      scope: ['global'],
+      scope: ['global', 'referendum'],
     },
     DepositSlashed: {
       helpKey: `${prefix}:Referenda:DepositSlashed`,
       label: 'Deposit Slashed',
-      scope: ['global'],
+      scope: ['global', 'referendum'],
     },
     Killed: {
       helpKey: `${prefix}:Referenda:Killed`,
       label: 'Referendum Killed',
-      scope: ['global'],
+      scope: ['global', 'referendum'],
     },
     Rejected: {
       helpKey: `${prefix}:Referenda:Rejected`,
       label: 'Referendum Rejected',
-      scope: ['global'],
+      scope: ['global', 'referendum'],
     },
     SubmissionDepositRefunded: {
       helpKey: `${prefix}:Referenda:SubmissionDepositRefunded`,
       label: 'Submission Deposit Refunded',
-      scope: ['global'],
+      scope: ['global', 'referendum'],
     },
     Submitted: {
       helpKey: `${prefix}:Referenda:Submitted`,
       label: 'Referendum Submitted',
-      scope: ['global'],
+      scope: ['global', 'referendum'],
     },
     TimedOut: {
       helpKey: `${prefix}:Referenda:TimedOut`,
       label: 'Referendum Timed Out',
-      scope: ['global'],
+      scope: ['global', 'referendum'],
     },
   },
   /** Staking */
@@ -362,7 +363,7 @@ export const getEventSubscriptions = <P extends PalletName>(
 ): ChainEventSubscription[] =>
   Object.entries(Pallets[pallet]).map(([eventName, { helpKey, label }]) => ({
     id: `${chainId}::${pallet}::${eventName}`,
-    kind: 'chain',
+    kind: 'chain' as EventSubKind,
     chainId,
     enabled: false,
     eventName: eventName as EventName<P>,
@@ -389,10 +390,34 @@ export const getEventSubscriptionsForAccount = <P extends PalletName>(
         .filter(([, { scope }]) => scope.includes('account'))
         .map(([eventName, { helpKey, label }]) => ({
           id: `${chainId}::${flattened.address}::${pallet}::${eventName}`,
-          kind: 'account' as 'chain' | 'account',
+          kind: 'account' as EventSubKind,
           chainId,
           enabled: false,
           eventName: eventName as EventName<P>,
+          helpKey,
+          label,
+          osNotify: false,
+          pallet,
+        }))
+    )
+    .flat();
+};
+
+export const getEventSubscriptionsForRef = (
+  chainId: ChainID,
+  refId: number
+): ChainEventSubscription[] => {
+  const pallets = ['Referenda'];
+  return pallets
+    .map((pallet) =>
+      Object.entries(Pallets[pallet])
+        .filter(([, { scope }]) => scope.includes('referendum'))
+        .map(([eventName, { helpKey, label }]) => ({
+          id: `${chainId}::${refId}::${pallet}::${eventName}`,
+          kind: 'referendum' as EventSubKind,
+          chainId,
+          enabled: false,
+          eventName,
           helpKey,
           label,
           osNotify: false,

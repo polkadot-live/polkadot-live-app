@@ -6,6 +6,7 @@ import * as UI from '@polkadot-live/ui/components';
 import * as Style from '@polkadot-live/styles/wrappers';
 import {
   useApiHealth,
+  useChainEvents,
   useConnections,
   useContextProxy,
   useIntervalSubscriptions,
@@ -16,7 +17,10 @@ import { useEffect, useState } from 'react';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { IntervalRow } from './IntervalRow';
-import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
+import { faCaretLeft, faSplotch } from '@fortawesome/free-solid-svg-icons';
+import { Header } from '../Manage/Subscriptions/Header';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { SubscriptionRow } from '../ChainEvents/SubscriptionRow';
 import type { SubscriptionsProps } from './types';
 
 export const Subscriptions = ({
@@ -40,12 +44,17 @@ export const Subscriptions = ({
     tryUpdateDynamicIntervalTask,
     getCategorisedDynamicIntervals,
   } = useManage();
+  const { getCategorisedRefsForChain, setActiveRefChain } = useChainEvents();
 
   const [accordionValueIntervals, setAccordionValueIntervals] = useState<
     string[]
   >([]);
 
   const isImportingData = cacheGet('backup:importing');
+
+  const [accordionValEvents, setAccordionValEvents] = useState<
+    string | undefined
+  >(undefined);
 
   /**
    * Go to section zero if all interval subscriptions have been removed.
@@ -143,7 +152,10 @@ export const Subscriptions = ({
             className="back-btn"
             text="Back"
             iconLeft={faCaretLeft}
-            onClick={() => setSection(0)}
+            onClick={() => {
+              setActiveRefChain(null);
+              setSection(0);
+            }}
           />
           <UI.SortControlLabel label={breadcrumb} />
         </div>
@@ -161,7 +173,8 @@ export const Subscriptions = ({
         <div>Toggle referenda subscriptions.</div>
       </UI.ScreenInfoCard>
 
-      <Style.FlexColumn>
+      <Header label="Classic" />
+      <Style.FlexColumn style={{ marginBottom: '1rem' }}>
         <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
           <Accordion.Root
             className="AccordionRoot"
@@ -214,6 +227,60 @@ export const Subscriptions = ({
                           <IntervalRow
                             key={`${task.referendumId}_${task.action}`}
                             task={task}
+                          />
+                        ))}
+                      </Style.ItemsColumn>
+                    </UI.AccordionContent>
+                  </Accordion.Item>
+                )
+              )}
+            </Style.FlexColumn>
+          </Accordion.Root>
+        </UI.AccordionWrapper>
+      </Style.FlexColumn>
+
+      <Header label="Smart" />
+      <Style.FlexColumn>
+        <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
+          <Accordion.Root
+            className="AccordionRoot"
+            collapsible={true}
+            type="single"
+            value={accordionValEvents}
+            onValueChange={(val) => setAccordionValEvents(val as string)}
+          >
+            <Style.FlexColumn $rowGap="2px">
+              {Object.entries(getCategorisedRefsForChain()).map(
+                ([refId, subs]) => (
+                  <Accordion.Item
+                    key={refId}
+                    className="AccordionItem"
+                    value={refId}
+                  >
+                    <Style.FlexRow $gap={'2px'}>
+                      <UI.AccordionTrigger narrow={true}>
+                        <ChevronDownIcon
+                          className="AccordionChevron"
+                          aria-hidden
+                        />
+                        <UI.TriggerHeader>
+                          <Style.FlexRow>
+                            <span style={{ flex: 1 }}>Referendum {refId}</span>
+                            <FontAwesomeIcon
+                              style={{ color: 'var(--accent-primary)' }}
+                              icon={faSplotch}
+                            />
+                          </Style.FlexRow>
+                        </UI.TriggerHeader>
+                      </UI.AccordionTrigger>
+                    </Style.FlexRow>
+
+                    <UI.AccordionContent transparent={true} topGap={'2px'}>
+                      <Style.ItemsColumn>
+                        {subs.map((sub, i) => (
+                          <SubscriptionRow
+                            key={`${refId}-${sub.eventName}-${i}`}
+                            subscription={sub}
                           />
                         ))}
                       </Style.ItemsColumn>

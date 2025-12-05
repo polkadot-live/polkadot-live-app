@@ -15,7 +15,7 @@ import {
   FlexRow,
   ItemsColumn,
 } from '@polkadot-live/styles/wrappers';
-import { SubscriptionRowAccount } from '../../ChainEvents/SubscriptionRowAccount';
+import { SubscriptionRow } from '../../ChainEvents/SubscriptionRow';
 
 export const SmartSubscriptions = () => {
   const { activeAccount, accountSubCountForPallet, getCategorisedForAccount } =
@@ -71,7 +71,7 @@ export const SmartSubscriptions = () => {
                       <UI.AccordionContent transparent={true} topGap={'2px'}>
                         <ItemsColumn>
                           {subs.map((sub, i) => (
-                            <SubscriptionRowAccount
+                            <SubscriptionRow
                               key={`${pallet}-${sub.eventName}-${i}`}
                               subscription={sub}
                             />
