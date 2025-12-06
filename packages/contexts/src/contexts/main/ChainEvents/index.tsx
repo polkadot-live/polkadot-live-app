@@ -59,6 +59,34 @@ export const ChainEventsProvider = ({
     Map<ChainID, Map<number /* refId */, ChainEventSubscription[]>>
   >(new Map());
 
+  const refChainHasSubs = (chainId: ChainID): boolean => {
+    const refs = refSubscriptions.get(chainId);
+    if (!refs) {
+      return false;
+    }
+    for (const subs of refs.values()) {
+      if (subs.find((s) => s.enabled)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const refActiveSubCount = (refId: number): number => {
+    if (!activeRefChain) {
+      return 0;
+    }
+    const refs = refSubscriptions.get(activeRefChain);
+    if (!refs) {
+      return 0;
+    }
+    const subs = refs.get(refId);
+    if (!subs) {
+      return 0;
+    }
+    return subs.filter((s) => s.enabled).length;
+  };
+
   const addSubsForRef = (
     chainId: ChainID,
     refId: number
@@ -198,8 +226,10 @@ export const ChainEventsProvider = ({
       case 'chain':
         toggleForChain(sub);
         break;
-      case 'referendum':
+      case 'referendum': {
+        toggleForRef(sub);
         break;
+      }
     }
   };
 
@@ -215,8 +245,63 @@ export const ChainEventsProvider = ({
         toggleOsNotifyForChain(sub, updateStore);
         break;
       case 'referendum':
+        toggleOsNotifyForRef(sub, updateStore);
         break;
     }
+  };
+
+  /**
+   * Toggle referenda-scoped event subscription.
+   */
+  const toggleForRef = async (sub: ChainEventSubscription) => {
+    if (!activeRefChain) {
+      return;
+    }
+    const refId = parseInt(sub.id.split('::')[1]);
+    sub.enabled = !sub.enabled;
+    setRefSubscriptions((prev) => {
+      const next = new Map(prev);
+      const refs = next.get(activeRefChain);
+      if (!refs) {
+        return prev;
+      }
+      const subs = refs.get(refId);
+      if (!subs) {
+        return prev;
+      }
+      const updated = subs.map((a) => (cmp(a, sub) ? sub : a));
+      refs.set(refId, updated);
+      return next;
+    });
+    sub.enabled
+      ? adapter.storeInsertForRef(activeRefChain, refId, sub)
+      : adapter.storeRemoveForRef(activeRefChain, refId, sub);
+  };
+
+  const toggleOsNotifyForRef = (
+    sub: ChainEventSubscription,
+    updateStore = true
+  ) => {
+    if (!activeRefChain) {
+      return;
+    }
+    const refId = parseInt(sub.id.split('::')[1]);
+    sub.osNotify = !sub.osNotify;
+    setRefSubscriptions((prev) => {
+      const next = new Map(prev);
+      const refs = next.get(activeRefChain);
+      if (!refs) {
+        return prev;
+      }
+      const subs = refs.get(refId);
+      if (!subs) {
+        return prev;
+      }
+      const updated = subs.map((a) => (cmp(a, sub) ? sub : a));
+      refs.set(refId, updated);
+      return next;
+    });
+    updateStore && adapter.toggleNotifyForRef(activeRefChain, refId, sub);
   };
 
   /**
@@ -308,6 +393,30 @@ export const ChainEventsProvider = ({
     setAccountSubscriptions(map);
   };
 
+  const syncRefs = async () => {
+    const rec = await adapter.getAllRefSubs();
+    const chainIds = Object.keys(rec);
+
+    setRefSubscriptions(() => {
+      type T = Map<ChainID, Map<number, ChainEventSubscription[]>>;
+      const next: T = new Map();
+      for (const chainId of chainIds) {
+        const mapRefs = new Map<number, ChainEventSubscription[]>();
+        for (const [refId, active] of Object.entries(rec[chainId])) {
+          const rid = parseInt(refId);
+          const cid = chainId as ChainID;
+          const merged = getEventSubscriptionsForRef(cid, rid).map((def) => {
+            const found = active.find((a) => a.id === def.id);
+            return found ? { ...found } : def;
+          });
+          mapRefs.set(parseInt(refId), merged);
+        }
+        next.set(chainId as ChainID, mapRefs);
+      }
+      return next;
+    });
+  };
+
   /**
    * Get chain subscriptions state from store and merge with defaults.
    */
@@ -367,14 +476,10 @@ export const ChainEventsProvider = ({
         return;
       }
       // Get active ref subscriptions from store.
+      const activeIds = await adapter.getActiveRefIds(activeRefChain);
       const allActive = await adapter.getStoredRefSubsForChain(activeRefChain);
-      if (allActive.length === 0) {
-        return;
-      }
-
       const parseRefId = ({ id }: ChainEventSubscription): number =>
         parseInt(id.split('::')[1]);
-      const activeIds = new Set(allActive.map((s) => parseRefId(s)));
 
       setRefSubscriptions((prev) => {
         const next = new Map(prev);
@@ -420,17 +525,19 @@ export const ChainEventsProvider = ({
         getCategorisedForAccount,
         getCategorisedRefsForChain,
         getEventSubscriptionCount,
+        refChainHasSubs,
+        refActiveSubCount,
         removeAllForAccount,
         removeSubsForRef,
         setActiveAccount,
         setActiveChain,
         setActiveRefChain,
         syncAccounts,
+        syncRefs,
         syncStored,
         toggle,
         toggleForAccount,
         toggleOsNotify,
-        toggleOsNotifyForAccount,
       }}
     >
       {children}

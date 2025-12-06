@@ -21,6 +21,8 @@ export interface ChainEventsContextInterface {
   ) => Record<string, ChainEventSubscription[]>;
   getCategorisedRefsForChain: () => Record<number, ChainEventSubscription[]>;
   getEventSubscriptionCount: () => Promise<number>;
+  refChainHasSubs: (chainId: ChainID) => boolean;
+  refActiveSubCount: (refId: number) => number;
   removeAllForAccount: (account: FlattenedAccountData) => void;
   removeSubsForRef: (
     chainId: ChainID,
@@ -32,12 +34,9 @@ export interface ChainEventsContextInterface {
   setActiveChain: React.Dispatch<React.SetStateAction<ChainID | null>>;
   setActiveRefChain: React.Dispatch<React.SetStateAction<ChainID | null>>;
   syncAccounts: (accounts: FlattenedAccountData[]) => Promise<void>;
+  syncRefs: () => Promise<void>;
   syncStored: () => Promise<void>;
   toggle: (sub: ChainEventSubscription) => Promise<void>;
   toggleForAccount: (sub: ChainEventSubscription) => Promise<void>;
   toggleOsNotify: (sub: ChainEventSubscription, updateStore?: boolean) => void;
-  toggleOsNotifyForAccount: (
-    sub: ChainEventSubscription,
-    updateStore?: boolean
-  ) => void;
 }

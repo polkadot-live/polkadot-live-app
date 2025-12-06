@@ -15,6 +15,10 @@ export interface ChainEventsAdapter {
   getStoredForAccount: (
     account: FlattenedAccountData
   ) => Promise<ChainEventSubscription[]>;
+  getActiveRefIds: (chainId: ChainID) => Promise<number[]>;
+  getAllRefSubs: () => Promise<
+    Record<string, Record<number, ChainEventSubscription[]>>
+  >;
   getStoredRefSubsForChain: (
     chainId: ChainID
   ) => Promise<ChainEventSubscription[]>;
@@ -37,6 +41,21 @@ export interface ChainEventsAdapter {
   ) => void;
   toggleNotifyForAccount: (
     account: FlattenedAccountData,
+    subscription: ChainEventSubscription
+  ) => void;
+  toggleNotifyForRef: (
+    chainId: ChainID,
+    refId: number,
+    subscription: ChainEventSubscription
+  ) => void;
+  storeInsertForRef: (
+    chainId: ChainID,
+    refId: number,
+    subscription: ChainEventSubscription
+  ) => void;
+  storeRemoveForRef: (
+    chainId: ChainID,
+    refId: number,
     subscription: ChainEventSubscription
   ) => void;
 }

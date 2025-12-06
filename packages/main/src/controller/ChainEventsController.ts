@@ -42,9 +42,18 @@ export class ChainEventsController {
         ChainEventsController.putSubsForRef(chainId, refId, serialized);
         break;
       }
+      case 'chainEvents:getActiveRefIds': {
+        const { chainId } = task.data;
+        return JSON.stringify(ChainEventsController.getActiveRefIds(chainId));
+      }
+      case 'chainEvents:getAllRefSubs': {
+        return ChainEventsController.getAllRefSubs();
+      }
       case 'chainEvents:getAllRefSubsForChain': {
         const { chainId } = task.data;
-        return ChainEventsController.getAllRefSubsForChain(chainId);
+        return JSON.stringify(
+          ChainEventsController.getAllRefSubsForChain(chainId)
+        );
       }
       case 'chainEvents:removeRefSubs': {
         const { chainId, refId, serialized } = task.data;
@@ -72,7 +81,56 @@ export class ChainEventsController {
     }
   }
 
-  private static getAllRefSubsForChain = (chainId: ChainID): string => {
+  private static getActiveRefIds = (chainId: ChainID): number[] => {
+    const key = ChainEventsController.activeRefsKey;
+    const raw = (store as Record<string, AnyData>).get(key);
+    const cur: string[] = raw ? JSON.parse(raw) : [];
+    return cur
+      .map((active) => {
+        const s = active.split('::');
+        return { cid: s[0] as ChainID, rid: parseInt(s[1]) };
+      })
+      .filter(({ cid }) => cid === chainId)
+      .map(({ rid }) => rid);
+  };
+
+  private static getAllRefSubs = (): string => {
+    // Get active ref ids.
+    const idsKey = ChainEventsController.activeRefsKey;
+    const idsRaw = (store as Record<string, AnyData>).get(idsKey);
+    const idsCur: string[] = idsRaw ? JSON.parse(idsRaw) : [];
+    const idsObj = idsCur.map((k) => {
+      const s = k.split('::');
+      return { chainId: s[0] as ChainID, refId: parseInt(s[1]) };
+    });
+
+    // Construct record chainId -> refId -> subscriptions.
+    const prefix = ChainEventsController.scopeKeyPrefix;
+    const chainIds = new Set(idsObj.map(({ chainId }) => chainId));
+    const recResult: Record<
+      string,
+      Record<number, ChainEventSubscription[]>
+    > = {};
+
+    for (const cid of chainIds) {
+      const refIds = idsObj
+        .filter(({ chainId }) => chainId === cid)
+        .map(({ refId }) => refId);
+
+      const recRefs: Record<number, ChainEventSubscription[]> = {};
+      for (const refId of refIds) {
+        const key = `${prefix}::${cid}::${refId}`;
+        const raw = (store as Record<string, AnyData>).get(key);
+        raw !== undefined && (recRefs[refId] = JSON.parse(raw));
+      }
+      recResult[cid] = recRefs;
+    }
+    return JSON.stringify(recResult);
+  };
+
+  private static getAllRefSubsForChain = (
+    chainId: ChainID
+  ): ChainEventSubscription[] => {
     const cacheKey = ChainEventsController.activeRefsKey;
     const rawIds = (store as Record<string, AnyData>).get(cacheKey);
     const cur: string[] = rawIds ? JSON.parse(rawIds) : [];
@@ -94,7 +152,7 @@ export class ChainEventsController {
         raw ? (JSON.parse(raw) as ChainEventSubscription[]) : []
       );
     }
-    return JSON.stringify(subs);
+    return subs;
   };
 
   private static putSubsForRef = (
@@ -102,6 +160,7 @@ export class ChainEventsController {
     refId: number,
     serialized: string
   ) => {
+    ChainEventsController.putActiveRefId(chainId, refId);
     const parsed: ChainEventSubscription[] = JSON.parse(serialized);
     if (!parsed.length) {
       return;
@@ -112,7 +171,6 @@ export class ChainEventsController {
       .filter((a) => !parsed.find((b) => cmp(a, b)))
       .concat(parsed);
     ChainEventsController.updateStoreForRef(chainId, refId, updated);
-    ChainEventsController.putActiveRefId(chainId, refId);
   };
 
   private static removeSubsForRef = (
@@ -127,11 +185,12 @@ export class ChainEventsController {
     const cmp = ChainEventsController.cmp;
     const stored = ChainEventsController.getAllForRef(chainId, refId);
     const updated = stored.filter((a) => !parsed.find((b) => cmp(a, b)));
-
     ChainEventsController.updateStoreForRef(chainId, refId, updated);
-    if (updated.length === 0) {
-      ChainEventsController.removeActiveRefId(chainId, refId);
-    }
+
+    // TODO: Delete when ref is removed from main renderer.
+    //if (updated.length === 0) {
+    //  ChainEventsController.removeActiveRefId(chainId, refId);
+    //}
   };
 
   // Functions to control cached ref ids.

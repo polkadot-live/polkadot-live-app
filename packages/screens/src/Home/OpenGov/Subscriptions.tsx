@@ -44,11 +44,8 @@ export const Subscriptions = ({
     tryUpdateDynamicIntervalTask,
     getCategorisedDynamicIntervals,
   } = useManage();
-  const { getCategorisedRefsForChain, setActiveRefChain } = useChainEvents();
-
-  const [accordionValueIntervals, setAccordionValueIntervals] = useState<
-    string[]
-  >([]);
+  const { getCategorisedRefsForChain, refActiveSubCount, setActiveRefChain } =
+    useChainEvents();
 
   const isImportingData = cacheGet('backup:importing');
 
@@ -64,13 +61,6 @@ export const Subscriptions = ({
       setSection(0);
     }
   }, [dynamicIntervalTasksState]);
-
-  /**
-   * Update accordion interval indices if active chain has changed.
-   */
-  useEffect(() => {
-    setAccordionValueIntervals([]);
-  }, [activeChainId]);
 
   /**
    * Determines if interval task should be disabled.
@@ -173,73 +163,6 @@ export const Subscriptions = ({
         <div>Toggle referenda subscriptions.</div>
       </UI.ScreenInfoCard>
 
-      <Header label="Classic" />
-      <Style.FlexColumn style={{ marginBottom: '1rem' }}>
-        <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
-          <Accordion.Root
-            className="AccordionRoot"
-            type="multiple"
-            value={accordionValueIntervals}
-            onValueChange={(val) => setAccordionValueIntervals(val as string[])}
-          >
-            <Style.FlexColumn>
-              {Array.from(getCategorisedDynamicIntervals().entries()).map(
-                ([referendumId, intervalTasks]) => (
-                  <Accordion.Item
-                    key={`${referendumId}_interval_subscriptions`}
-                    className="AccordionItem"
-                    value={String(referendumId)}
-                  >
-                    <Style.FlexRow $gap={'2px'}>
-                      <UI.AccordionTrigger narrow={true}>
-                        <ChevronDownIcon
-                          className="AccordionChevron"
-                          aria-hidden
-                        />
-                        <UI.TriggerHeader>
-                          Referendum {referendumId}
-                        </UI.TriggerHeader>
-                      </UI.AccordionTrigger>
-                      <div
-                        className="HeaderContentDropdownWrapper"
-                        style={{ cursor: 'default' }}
-                      >
-                        <UI.Switch
-                          disabled={isIntervalTaskDisabled()}
-                          size="sm"
-                          type="primary"
-                          isOn={
-                            getOpenGovGlobalToggles().get(referendumId) || false
-                          }
-                          handleToggle={async () =>
-                            await toggleGlobalSwitch(
-                              referendumId,
-                              getOpenGovGlobalToggles().get(referendumId) ||
-                                false
-                            )
-                          }
-                        />
-                      </div>
-                    </Style.FlexRow>
-                    <UI.AccordionContent transparent={true}>
-                      <Style.ItemsColumn>
-                        {intervalTasks.map((task) => (
-                          <IntervalRow
-                            key={`${task.referendumId}_${task.action}`}
-                            task={task}
-                          />
-                        ))}
-                      </Style.ItemsColumn>
-                    </UI.AccordionContent>
-                  </Accordion.Item>
-                )
-              )}
-            </Style.FlexColumn>
-          </Accordion.Root>
-        </UI.AccordionWrapper>
-      </Style.FlexColumn>
-
-      <Header label="Smart" />
       <Style.FlexColumn>
         <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
           <Accordion.Root
@@ -266,24 +189,67 @@ export const Subscriptions = ({
                         <UI.TriggerHeader>
                           <Style.FlexRow>
                             <span style={{ flex: 1 }}>Referendum {refId}</span>
-                            <FontAwesomeIcon
-                              style={{ color: 'var(--accent-primary)' }}
-                              icon={faSplotch}
-                            />
+                            {refActiveSubCount(parseInt(refId)) > 0 && (
+                              <FontAwesomeIcon
+                                style={{ color: 'var(--accent-primary)' }}
+                                icon={faSplotch}
+                              />
+                            )}
                           </Style.FlexRow>
                         </UI.TriggerHeader>
                       </UI.AccordionTrigger>
                     </Style.FlexRow>
 
                     <UI.AccordionContent transparent={true} topGap={'2px'}>
-                      <Style.ItemsColumn>
-                        {subs.map((sub, i) => (
-                          <SubscriptionRow
-                            key={`${refId}-${sub.eventName}-${i}`}
-                            subscription={sub}
-                          />
-                        ))}
-                      </Style.ItemsColumn>
+                      <Style.FlexColumn style={{ margin: '1rem 0' }}>
+                        <Style.FlexRow>
+                          <Header label="Classic">
+                            <span style={{ scale: '0.85' }}>
+                              <UI.Switch
+                                disabled={isIntervalTaskDisabled()}
+                                size="sm"
+                                type="primary"
+                                isOn={
+                                  getOpenGovGlobalToggles().get(
+                                    parseInt(refId)
+                                  ) || false
+                                }
+                                handleToggle={async () =>
+                                  await toggleGlobalSwitch(
+                                    parseInt(refId),
+                                    getOpenGovGlobalToggles().get(
+                                      parseInt(refId)
+                                    ) || false
+                                  )
+                                }
+                              />
+                            </span>
+                          </Header>
+                        </Style.FlexRow>
+
+                        {Array.from(getCategorisedDynamicIntervals().entries())
+                          .filter(([rid]) => parseInt(refId) === rid)
+                          .map(([referendumId, intervalTasks]) => (
+                            <Style.ItemsColumn key={`classic-${referendumId}`}>
+                              {intervalTasks.map((task) => (
+                                <IntervalRow
+                                  key={`${task.referendumId}_${task.action}`}
+                                  task={task}
+                                />
+                              ))}
+                            </Style.ItemsColumn>
+                          ))}
+
+                        <Header label="Smart" />
+                        <Style.ItemsColumn>
+                          {subs.map((sub, i) => (
+                            <SubscriptionRow
+                              key={`${refId}-${sub.eventName}-${i}`}
+                              subscription={sub}
+                            />
+                          ))}
+                        </Style.ItemsColumn>
+                      </Style.FlexColumn>
                     </UI.AccordionContent>
                   </Accordion.Item>
                 )

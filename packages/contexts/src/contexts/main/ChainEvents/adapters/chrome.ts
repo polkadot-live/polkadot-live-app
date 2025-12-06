@@ -133,4 +133,20 @@ export const chromeAdapter: ChainEventsAdapter = {
       payload: { account, subscription },
     });
   },
+
+  getActiveRefIds: async () => [],
+
+  getAllRefSubs: async () => ({}),
+
+  storeInsertForRef: () => {
+    /* empty */
+  },
+
+  storeRemoveForRef: () => {
+    /* empty */
+  },
+
+  toggleNotifyForRef: () => {
+    /* empty */
+  },
 };
