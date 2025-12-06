@@ -5,15 +5,17 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as Style from '@polkadot-live/styles/wrappers';
 import {
+  useChainEvents,
   useConnections,
   useIntervalSubscriptions,
   useManage,
 } from '@polkadot-live/contexts';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ButtonText } from '@polkadot-live/ui/kits/buttons';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faChevronRight, faSplotch } from '@fortawesome/free-solid-svg-icons';
 import { NoOpenGov } from '@polkadot-live/ui/utils';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { NetworksProps } from './types';
 
@@ -22,6 +24,8 @@ export const Networks = ({ setBreadcrumb, setSection }: NetworksProps) => {
   const { setDynamicIntervalTasks } = useManage();
   const { getIntervalSubscriptionsForChain, getSortedKeys } =
     useIntervalSubscriptions();
+  const { refChainHasSubs, setActiveRefChain, syncRefs } = useChainEvents();
+
   /**
    * Accordion state.
    */
@@ -32,10 +36,21 @@ export const Networks = ({ setBreadcrumb, setSection }: NetworksProps) => {
    */
   const handleClickOpenGovChain = (chainId: ChainID) => {
     const tasks = getIntervalSubscriptionsForChain(chainId);
+    setActiveRefChain(chainId);
     setDynamicIntervalTasks(tasks, chainId);
     setBreadcrumb(`${chainId} OpenGov`);
     setSection(1);
   };
+
+  /**
+   * Sync persisted referenda subscription state.
+   */
+  useEffect(() => {
+    const sync = async () => {
+      await syncRefs();
+    };
+    sync();
+  }, []);
 
   return (
     <div style={{ width: '100%' }}>
@@ -88,13 +103,19 @@ export const Networks = ({ setBreadcrumb, setSection }: NetworksProps) => {
                               <h3>{chainId}</h3>
                             </div>
                           </div>
-                          <div>
+                          <Style.FlexRow>
+                            {refChainHasSubs(chainId) && (
+                              <FontAwesomeIcon
+                                style={{ color: 'var(--accent-primary)' }}
+                                icon={faSplotch}
+                              />
+                            )}
                             <ButtonText
                               text=""
                               iconRight={faChevronRight}
                               iconTransform="shrink-3"
                             />
-                          </div>
+                          </Style.FlexRow>
                         </div>
                       </Style.ItemEntryWrapper>
                     ))}

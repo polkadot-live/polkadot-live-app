@@ -290,13 +290,15 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
           </TooltipRx>
 
           {/* Toggle Switch */}
-          <Switch
-            disabled={isDisabled}
-            size="sm"
-            type="primary"
-            isOn={isToggled}
-            handleToggle={async () => await handleToggle()}
-          />
+          <span style={{ scale: '0.9' }}>
+            <Switch
+              disabled={isDisabled}
+              size="sm"
+              type="primary"
+              isOn={isToggled}
+              handleToggle={async () => await handleToggle()}
+            />
+          </span>
         </div>
       </div>
     </TaskEntryWrapper>

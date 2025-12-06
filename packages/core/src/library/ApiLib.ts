@@ -69,15 +69,12 @@ const isApiRequired = (chainId: ChainID) => {
     }
   }
   // Return `true` if any event streams require an API instance of the chain ID.
-  for (const cid of ChainEventsService.activeSubscriptions.keys()) {
-    if (cid === chainId) {
-      return true;
-    }
-  }
-  for (const cid of ChainEventsService.accountScopedSubscriptions.keys()) {
-    if (cid === chainId) {
-      return true;
-    }
-  }
-  return false;
+  const chainIds = [
+    ...new Set([
+      ...ChainEventsService.activeSubscriptions.keys(),
+      ...ChainEventsService.accountScopedSubscriptions.keys(),
+      ...ChainEventsService.refScopedSubscriptions.keys(),
+    ]),
+  ];
+  return chainIds.includes(chainId);
 };

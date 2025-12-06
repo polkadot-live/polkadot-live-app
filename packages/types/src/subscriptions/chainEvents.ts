@@ -89,10 +89,12 @@ export type PalletStakingEvent =
 /**
  * Chain event subscription.
  */
+export type EventSubKind = 'account' | 'chain' | 'referendum';
+
 export interface ChainEventSubscription {
   id: string;
   chainId: ChainID;
-  kind: 'account' | 'chain';
+  kind: EventSubKind;
   pallet: string;
   eventName: string;
   enabled: boolean;

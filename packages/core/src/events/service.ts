@@ -40,7 +40,7 @@ export class ChainEventsService {
     )
   );
 
-  // Cache of active chain event subscriptions.
+  // Cache chain-scoped event subscriptions.
   static activeSubscriptions = new Map<ChainID, ChainEventSubscription[]>();
 
   // Cache account-scoped chain event subscriptions.
@@ -49,11 +49,100 @@ export class ChainEventsService {
     Map<string /* address */, Map<string /* pallet */, ActiveMeta[]>>
   >();
 
+  // Cache referenda-scoped chain event subscriptions.
+  static refScopedSubscriptions = new Map<
+    ChainID,
+    Map<number /* refId */, ChainEventSubscription[]>
+  >();
+
+  static cmp = (a: ChainEventSubscription, b: ChainEventSubscription) =>
+    a.pallet === b.pallet && a.eventName === b.eventName;
+
   static getKeyForAccount = (account: FlattenedAccountData) => {
     const { address, name: alias, chain: chainId, source } = account;
     return `${chainId}::${source}::${alias}::${address}`;
   };
 
+  // Referenda-scoped.
+  static insertRefScoped = (refId: number, sub: ChainEventSubscription) => {
+    const { chainId, eventName } = sub;
+    const scoped = ChainEventsService.refScopedSubscriptions;
+
+    // Get or create Chain -> refId.
+    let refs = scoped.get(chainId);
+    if (!refs) {
+      refs = new Map();
+      scoped.set(chainId, refs);
+    }
+    // Get or create refs -> event array.
+    let subs = refs.get(refId);
+    if (!subs) {
+      subs = [];
+      refs.set(refId, subs);
+    }
+    // Add new subscription.
+    if (!subs.find((s) => s.eventName === eventName)) {
+      subs.push(sub);
+    }
+  };
+
+  static removeRefScoped = (refId: number, sub: ChainEventSubscription) => {
+    const { chainId, eventName } = sub;
+    const scoped = ChainEventsService.refScopedSubscriptions;
+
+    const refs = scoped.get(chainId);
+    if (!refs) {
+      return;
+    }
+    const subs = refs.get(refId);
+    if (!subs) {
+      return;
+    }
+    // Remove matching sub.
+    const filtered = subs.filter((s) => !(s.eventName === eventName));
+    filtered.length === 0 ? refs.delete(refId) : refs.set(refId, filtered);
+
+    // If refs map became empty, remove map.
+    if (refs.size === 0) {
+      scoped.delete(chainId);
+    }
+  };
+
+  static removeAllRefScoped = (chainId: ChainID, refId: number) => {
+    const scoped = ChainEventsService.refScopedSubscriptions;
+    const refs = scoped.get(chainId);
+    if (!refs) {
+      return;
+    }
+    const subs = refs.get(refId);
+    if (!subs) {
+      return;
+    }
+    refs.delete(refId);
+    if (!Array.from(refs.keys()).length) {
+      scoped.delete(chainId);
+    }
+    ChainEventsService.tryStopEventsStream(chainId);
+  };
+
+  static updateRefScoped = (refId: number, sub: ChainEventSubscription) => {
+    const { chainId } = sub;
+    const scoped = ChainEventsService.refScopedSubscriptions;
+    const cmp = ChainEventsService.cmp;
+
+    const refs = scoped.get(chainId);
+    if (!refs) {
+      return;
+    }
+    const subs = refs.get(refId);
+    if (!subs) {
+      return;
+    }
+    const updated = subs.map((s) => (cmp(s, sub) ? sub : s));
+    refs.set(refId, updated);
+  };
+
+  // Account-scoped.
   static insertForAccount = (
     account: FlattenedAccountData,
     sub: ChainEventSubscription
@@ -169,9 +258,7 @@ export class ChainEventsService {
     metas[index] = { eventName, osNotify };
   };
 
-  static cmp = (a: ChainEventSubscription, b: ChainEventSubscription) =>
-    a.pallet === b.pallet && a.eventName === b.eventName;
-
+  // Chain-scoped.
   static insert = (chainId: ChainID, sub: ChainEventSubscription) => {
     const cmp = ChainEventsService.cmp;
     const ptr = ChainEventsService.activeSubscriptions;
@@ -223,6 +310,33 @@ export class ChainEventsService {
       ChainEventsService.handleEvents(chainId, events);
     })) as Unsub;
     ChainEventsService.serviceStatus.set(chainId, { active: true, unsub });
+  };
+
+  static hasRefScopedSubscription = (
+    chainId: ChainID,
+    event: RuntimeEvent
+  ): { osNotify: boolean } | null => {
+    const { pallet, palletEvent } = event;
+    if (pallet !== 'Referenda') {
+      return null;
+    }
+    if (!('index' in event.palletEvent.data)) {
+      return null;
+    }
+    const refs = ChainEventsService.refScopedSubscriptions.get(chainId);
+    if (!refs) {
+      return null;
+    }
+    const evRefId = event.palletEvent.data.index;
+    const evName = palletEvent.name;
+    for (const [refId, subs] of refs.entries()) {
+      for (const sub of subs) {
+        if (refId === evRefId && evName === sub.eventName) {
+          return { osNotify: sub.osNotify };
+        }
+      }
+    }
+    return null;
   };
 
   // Determine if an event has an account-scoped subscription.
@@ -283,12 +397,17 @@ export class ChainEventsService {
       const isSupportedPallet = chainPallets.includes(pallet);
 
       if (isSupportedPallet) {
-        // Check for active account scoped subscription.
+        // Check for active account-scoped subscription.
         const maybeMeta = ChainEventsService.hasAccountScopedSubscription(
           chainId,
           event
         );
-        // Check for active global scoped subscription.
+        // Check for active ref-scoped subscription.
+        const maybeRefMeta = ChainEventsService.hasRefScopedSubscription(
+          chainId,
+          event
+        );
+        // Check for active chain-scoped subscription.
         const meta = activeMap
           .get(pallet)
           ?.find((m) => m.eventName === event.palletEvent.name);
@@ -300,6 +419,9 @@ export class ChainEventsService {
             const osNotify = activeMeta.osNotify;
             EventQueue.push({ chainId, osNotify, record: item, whoMeta });
           }
+        } else if (maybeRefMeta) {
+          const { osNotify } = maybeRefMeta;
+          EventQueue.push({ chainId, osNotify, record: item });
         } else if (isOn) {
           const osNotify = Boolean(meta?.osNotify);
           EventQueue.push({ chainId, osNotify, record: item });
@@ -338,9 +460,12 @@ export class ChainEventsService {
 
   static stopAllEventStreams = () => {
     const global = ChainEventsService.activeSubscriptions;
-    const scoped = ChainEventsService.accountScopedSubscriptions;
-    const chainIds = Array.from(new Set([...global.keys(), ...scoped.keys()]));
+    const accounts = ChainEventsService.accountScopedSubscriptions;
+    const refs = ChainEventsService.refScopedSubscriptions;
 
+    const chainIds = Array.from(
+      new Set([...global.keys(), ...accounts.keys(), ...refs.keys()])
+    );
     for (const chainId of chainIds) {
       ChainEventsService.stopEventsStream(chainId);
     }
@@ -349,9 +474,10 @@ export class ChainEventsService {
   // Stop an event stream if no subscriptions are active.
   static tryStopEventsStream = (chainId: ChainID) => {
     const global = ChainEventsService.activeSubscriptions;
-    const scoped = ChainEventsService.accountScopedSubscriptions;
+    const accounts = ChainEventsService.accountScopedSubscriptions;
+    const refs = ChainEventsService.refScopedSubscriptions;
 
-    if (!global.get(chainId) && !scoped.get(chainId)) {
+    if (!global.get(chainId) && !accounts.get(chainId) && !refs.get(chainId)) {
       ChainEventsService.stopEventsStream(chainId);
     }
   };

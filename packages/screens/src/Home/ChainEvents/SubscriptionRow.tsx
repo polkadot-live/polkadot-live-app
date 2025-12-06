@@ -52,7 +52,9 @@ export const SubscriptionRow = ({ subscription }: SubscriptionRowProps) => {
                 opacity: osNotify ? '1' : '0.3',
                 cursor: enabled ? 'pointer' : 'not-allowed',
               }}
-              onClick={() => toggleOsNotify(subscription)}
+              onClick={() => {
+                toggleOsNotify(subscription, true);
+              }}
             >
               <TooltipRx text={'OS Notifications'} theme={theme}>
                 <div className="native-wrapper">

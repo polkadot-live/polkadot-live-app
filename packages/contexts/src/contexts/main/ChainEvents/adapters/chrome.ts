@@ -56,6 +56,8 @@ export const chromeAdapter: ChainEventsAdapter = {
     }
   },
 
+  getStoredRefSubsForChain: async () => [],
+
   getSubCount: async () =>
     await chrome.runtime.sendMessage({
       type: 'chainEvents',
@@ -130,5 +132,21 @@ export const chromeAdapter: ChainEventsAdapter = {
       task: 'toggleNotifyForAccount',
       payload: { account, subscription },
     });
+  },
+
+  getActiveRefIds: async () => [],
+
+  getAllRefSubs: async () => ({}),
+
+  storeInsertForRef: () => {
+    /* empty */
+  },
+
+  storeRemoveForRef: () => {
+    /* empty */
+  },
+
+  toggleNotifyForRef: () => {
+    /* empty */
   },
 };
