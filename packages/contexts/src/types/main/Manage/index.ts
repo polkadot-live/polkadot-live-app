@@ -22,7 +22,5 @@ export interface ManageContextInterface {
   tryAddIntervalSubscription: (task: IntervalSubscription) => void;
   tryRemoveIntervalSubscription: (task: IntervalSubscription) => void;
   tryUpdateDynamicIntervalTask: (task: IntervalSubscription) => void;
-  activeChainId: ChainID | null;
-  setActiveChainId: (cid: ChainID) => void;
   getCategorisedDynamicIntervals: () => Map<number, IntervalSubscription[]>;
 }

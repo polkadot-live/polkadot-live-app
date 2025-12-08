@@ -8,7 +8,6 @@ import {
   useChainEvents,
   useConnections,
   useIntervalSubscriptions,
-  useManage,
 } from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
 import { ButtonText } from '@polkadot-live/ui/kits/buttons';
@@ -21,9 +20,7 @@ import type { NetworksProps } from './types';
 
 export const Networks = ({ setBreadcrumb, setSection }: NetworksProps) => {
   const { openTab } = useConnections();
-  const { setDynamicIntervalTasks } = useManage();
-  const { getIntervalSubscriptionsForChain, getSortedKeys } =
-    useIntervalSubscriptions();
+  const { getSortedKeys } = useIntervalSubscriptions();
   const { refChainHasSubs, setActiveRefChain, syncRefs } = useChainEvents();
 
   /**
@@ -35,9 +32,7 @@ export const Networks = ({ setBreadcrumb, setSection }: NetworksProps) => {
    * Set interval subscription tasks state when chain is clicked.
    */
   const handleClickOpenGovChain = (chainId: ChainID) => {
-    const tasks = getIntervalSubscriptionsForChain(chainId);
     setActiveRefChain(chainId);
-    setDynamicIntervalTasks(tasks, chainId);
     setBreadcrumb(`${chainId} OpenGov`);
     setSection(1);
   };

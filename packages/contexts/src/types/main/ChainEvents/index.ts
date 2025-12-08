@@ -10,6 +10,7 @@ import type { ChainID } from '@polkadot-live/types/chains';
 export interface ChainEventsContextInterface {
   activeChain: ChainID | null;
   activeAccount: FlattenedAccountData | null;
+  activeRefChain: ChainID | null;
   refSubscriptions: Map<ChainID, Map<number, ChainEventSubscription[]>>;
   subscriptions: Map<ChainID, ChainEventSubscription[]>;
   accountHasSubs: (account: FlattenedAccountData) => boolean;

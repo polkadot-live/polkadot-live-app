@@ -32,20 +32,26 @@ export const Subscriptions = ({
   const { hasConnectionIssue } = useApiHealth();
   const { cacheGet, getOnlineMode } = useConnections();
   const { updateIntervalSubscription } = useIntervalSubscriptions();
+
   const {
     insertSubscriptions,
     handleIntervalAnalytics,
     updateIntervalTask,
     removeSubscriptions,
   } = useIntervalTasksManager();
+
   const {
-    activeChainId,
     dynamicIntervalTasksState,
     tryUpdateDynamicIntervalTask,
     getCategorisedDynamicIntervals,
   } = useManage();
-  const { getCategorisedRefsForChain, refActiveSubCount, setActiveRefChain } =
-    useChainEvents();
+
+  const {
+    activeRefChain,
+    getCategorisedRefsForChain,
+    refActiveSubCount,
+    setActiveRefChain,
+  } = useChainEvents();
 
   const isImportingData = cacheGet('backup:importing');
 
@@ -132,7 +138,7 @@ export const Subscriptions = ({
    * Utility to determine if a connection issue exists.
    */
   const showConnectionIssue = (): boolean =>
-    activeChainId ? hasConnectionIssue(activeChainId) : false;
+    activeRefChain ? hasConnectionIssue(activeRefChain) : false;
 
   return (
     <>

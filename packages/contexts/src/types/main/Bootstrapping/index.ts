@@ -11,5 +11,4 @@ export interface BootstrappingInterface {
   handleInitializeApp: () => Promise<void>;
   handleInitializeAppOffline: () => Promise<void>;
   handleInitializeAppOnline: () => Promise<void>;
-  syncOpenGovWindow: () => Promise<void>;
 }

@@ -1,11 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useState, createContext, useRef, useEffect } from 'react';
+import { useState, createContext, useEffect } from 'react';
 import { useChainEvents } from '../ChainEvents';
 import { createSafeContextHook } from '../../../utils';
 import { getManageAdapter } from './adapters';
-import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   IntervalSubscription,
   SubscriptionTask,
@@ -22,7 +21,7 @@ export const ManageContext = createContext<ManageContextInterface | undefined>(
 export const useManage = createSafeContextHook(ManageContext, 'ManageContext');
 
 export const ManageProvider = ({ children }: { children: ReactNode }) => {
-  const { activeAccount } = useChainEvents();
+  const { activeAccount, activeRefChain } = useChainEvents();
   const adapter = getManageAdapter();
 
   // Subscription tasks being rendered under the Manage tab.
@@ -31,10 +30,6 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
   const [dynamicIntervalTasksState, setDynamicIntervalTasksState] = useState<
     IntervalSubscription[]
   >([]);
-
-  // Active ChainID for OpenGov subscriptions list.
-  const [activeChainId, setActiveChainId] = useState<ChainID | null>(null);
-  const activeChainRef = useRef<ChainID | null>(null);
 
   // Set rendered subscriptions.
   const setRenderedSubscriptions = (wrapped: WrappedSubscriptionTasks) => {
@@ -70,12 +65,7 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Set intervaled subscriptions with new tasks array.
-  const setDynamicIntervalTasks = (
-    tasks: IntervalSubscription[],
-    chainId: ChainID
-  ) => {
-    activeChainRef.current = chainId;
-    setActiveChainId(chainId);
+  const setDynamicIntervalTasks = (tasks: IntervalSubscription[]) => {
     setDynamicIntervalTasksState([...tasks]);
   };
 
@@ -94,14 +84,25 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
 
   // Add an interval task to state if it should be rendered.
   const tryAddIntervalSubscription = (task: IntervalSubscription) => {
-    if (activeChainRef.current === task.chainId) {
-      setDynamicIntervalTasksState((prev) => [...prev, { ...task }]);
+    if (activeRefChain === task.chainId) {
+      const { action, chainId, referendumId: refId } = task;
+      setDynamicIntervalTasksState((prev) => [
+        ...prev.filter(
+          (t) =>
+            !(
+              t.action === action &&
+              t.chainId === chainId &&
+              t.referendumId === refId
+            )
+        ),
+        task,
+      ]);
     }
   };
 
   // Remove an interval task from state if it should be removed.
   const tryRemoveIntervalSubscription = (task: IntervalSubscription) => {
-    if (activeChainRef.current === task.chainId) {
+    if (activeRefChain === task.chainId) {
       const { action, chainId, referendumId } = task;
       setDynamicIntervalTasksState((prev) =>
         prev.filter(
@@ -167,7 +168,6 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
   return (
     <ManageContext
       value={{
-        activeChainId,
         dynamicIntervalTasksState,
         renderedSubscriptions: renderedSubscriptionsState,
         getCategorised,
@@ -176,7 +176,6 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
         tryUpdateDynamicIntervalTask,
         tryAddIntervalSubscription,
         tryRemoveIntervalSubscription,
-        setActiveChainId,
         getCategorisedDynamicIntervals,
       }}
     >

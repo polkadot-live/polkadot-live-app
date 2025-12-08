@@ -1,13 +1,15 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { intervalTasks } from '@polkadot-live/consts/subscriptions/interval';
 import { createContext } from 'react';
 import { getTaskHandlerAdapter } from './adapters';
 import { createSafeContextHook, renderToast } from '../../../utils';
 import { useConnections } from '../../common';
 import { useReferendaSubscriptions } from '../ReferendaSubscriptions';
-import type { ReferendaInfo } from '@polkadot-live/types/openGov';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
+import type { ReferendaInfo, RefStatus } from '@polkadot-live/types/openGov';
 import type { TaskHandlerContextInterface } from '../../../types/openGov';
 
 export const TaskHandlerContext = createContext<
@@ -26,117 +28,74 @@ export const TaskHandlerProvider = ({
 }) => {
   const adapter = getTaskHandlerAdapter();
   const { getOnlineMode } = useConnections();
-  const {
-    addReferendaSubscription,
-    removeReferendaSubscription,
-    isSubscribedToTask,
-  } = useReferendaSubscriptions();
+  const { addReferendaSubscription, removeReferendaSubscription } =
+    useReferendaSubscriptions();
 
-  // Handles adding an interval subscription for a referendum.
-  const addIntervalSubscription = (
-    task: IntervalSubscription,
-    referendumInfo: ReferendaInfo
+  const getIntervalSubscriptions = (
+    chainId: ChainID,
+    refInfo: ReferendaInfo
   ) => {
-    // Set referendum ID on task, enable and cache.
-    const { refId: referendumId } = referendumInfo;
-    task.referendumId = referendumId;
-    task.status = 'enable';
-
-    addReferendaSubscription(task);
-    adapter.addIntervalSubscriptionMessage(task, getOnlineMode());
-
-    const text = `Subscription added for referendum ${referendumId}.`;
-    const toastId = `add-${task.chainId}-${referendumId}-${task.action}`;
-    renderToast(text, toastId, 'success');
-
-    const { action } = task;
-    adapter.handleAnalytics('referenda-subscribe', { action });
-  };
-
-  // Handles removing an interval subscription for a referendum.
-  const removeIntervalSubscription = (
-    task: IntervalSubscription,
-    referendumInfo: ReferendaInfo
-  ) => {
-    // Set referendum ID on task.
-    const { refId: referendumId } = referendumInfo;
-    task.referendumId = referendumId;
-
-    removeReferendaSubscription(task);
-    adapter.removeIntervalSubscriptionMessage(task);
-
-    const text = `Subscription removed for referendum ${referendumId}.`;
-    const toastId = `remove-${task.chainId}-${referendumId}-${task.action}`;
-    renderToast(text, toastId, 'success');
-
-    const { action } = task;
-    adapter.handleAnalytics('referenda-unsubscribe', { action });
+    const { refStatus } = refInfo;
+    return intervalTasks
+      .filter((t) => t.chainId === chainId)
+      .filter((t) => {
+        if ((['Preparing', 'Queueing'] as RefStatus[]).includes(refStatus)) {
+          const actions = ['subscribe:interval:openGov:referendumVotes'];
+          return actions.includes(t.action);
+        } else {
+          return true;
+        }
+      });
   };
 
   // Handles adding all available subscriptions for a referendum.
   const addAllIntervalSubscriptions = (
-    tasks: IntervalSubscription[],
-    referendumInfo: ReferendaInfo
+    chainId: ChainID,
+    refInfo: ReferendaInfo
   ) => {
-    const { refId: referendumId } = referendumInfo;
-
-    // Throw away task if it's already added and set required fields.
-    const updated = tasks
-      .filter((t) => !isSubscribedToTask(referendumInfo, t))
-      .map(
-        (t) =>
-          ({
-            ...t,
-            status: 'enable',
-            referendumId,
-          }) as IntervalSubscription
-      );
-
+    const { refId } = refInfo;
+    const all = getIntervalSubscriptions(chainId, refInfo);
+    const updated = all.map(
+      (t) =>
+        ({
+          ...t,
+          status: 'enable',
+          referendumId: refId,
+        }) as IntervalSubscription
+    );
     // Cache task data in referenda subscriptions context.
     for (const task of updated) {
       addReferendaSubscription({ ...task });
     }
-    adapter.addIntervalSubscriptionsMessage(
-      referendumId,
-      updated,
-      getOnlineMode()
-    );
-    const text = `Subscriptions added for referendum ${referendumId}.`;
-    const toastId = `add-all-${tasks[0].chainId}-${referendumId}`;
+    adapter.addIntervalSubscriptionsMessage(refId, updated, getOnlineMode());
+    const text = `Subscriptions added for referendum ${refId}.`;
+    const toastId = `add-all-${chainId}-${refId}`;
     renderToast(text, toastId, 'success');
     adapter.handleAnalytics('referenda-subscribe-all', null);
   };
 
   // Handles removing all addde subscriptions for a referendum.
   const removeAllIntervalSubscriptions = (
-    tasks: IntervalSubscription[],
-    referendumInfo: ReferendaInfo
+    chainId: ChainID,
+    refInfo: ReferendaInfo
   ) => {
-    const { refId: referendumId } = referendumInfo;
-
-    // Throw away task if it is not added.
-    const updated = tasks
-      .filter((t) => isSubscribedToTask(referendumInfo, t))
-      .map(
-        (t) =>
-          ({
-            ...t,
-            status: 'disable',
-            referendumId,
-          }) as IntervalSubscription
-      );
-
+    const { refId } = refInfo;
+    const all = getIntervalSubscriptions(chainId, refInfo);
+    const updated = all.map(
+      (t) =>
+        ({
+          ...t,
+          status: 'disable',
+          referendumId: refId,
+        }) as IntervalSubscription
+    );
     // Cache task data in referenda subscriptions context.
     for (const task of updated) {
       removeReferendaSubscription({ ...task });
     }
-    adapter.removeIntervalSubscriptionsMessage(
-      referendumId,
-      updated,
-      getOnlineMode()
-    );
-    const text = `Subscriptions removed for referendum ${referendumId}.`;
-    const toastId = `remove-all-${tasks[0].chainId}-${referendumId}`;
+    adapter.removeIntervalSubscriptionsMessage(refId, updated, getOnlineMode());
+    const text = `Subscriptions removed for referendum ${refId}.`;
+    const toastId = `remove-all-${chainId}-${refId}`;
     renderToast(text, toastId, 'success');
     adapter.handleAnalytics('referenda-unsubscribe-all', null);
   };
@@ -144,9 +103,7 @@ export const TaskHandlerProvider = ({
   return (
     <TaskHandlerContext
       value={{
-        addIntervalSubscription,
         addAllIntervalSubscriptions,
-        removeIntervalSubscription,
         removeAllIntervalSubscriptions,
       }}
     >

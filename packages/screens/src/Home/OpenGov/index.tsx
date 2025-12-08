@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useState } from 'react';
-import { useManage } from '@polkadot-live/contexts';
+import { useEffect, useState } from 'react';
+import { useChainEvents } from '@polkadot-live/contexts';
 import {
   CarouselWrapper,
   FlexColumn,
@@ -13,9 +13,16 @@ import { Networks } from './Networks';
 import { Subscriptions } from './Subscriptions';
 
 export const OpenGov = () => {
-  const { setDynamicIntervalTasks } = useManage();
+  const { setActiveRefChain } = useChainEvents();
   const [section, setSection] = useState<number>(0);
   const [breadcrumb, setBreadcrumb] = useState<string>('');
+
+  useEffect(
+    () => () => {
+      setActiveRefChain(null);
+    },
+    []
+  );
 
   return (
     <FlexColumn $rowGap={'1rem'} style={{ height: '100%' }}>
@@ -34,7 +41,7 @@ export const OpenGov = () => {
         // Doing this will remove the scrollbar on the right section.
         onTransitionEnd={() => {
           if (section === 0) {
-            setDynamicIntervalTasks([], 'Polkadot Asset Hub');
+            /* empty */
           }
         }}
         variants={{

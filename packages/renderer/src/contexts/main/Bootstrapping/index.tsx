@@ -299,25 +299,6 @@ export const BootstrappingProvider = ({
   };
 
   /**
-   * Called when initializing the openGov window.
-   */
-  const syncOpenGovWindow = async () => {
-    const ipcTask: IpcTask = { action: 'interval:task:get', data: null };
-    const serialized = (await window.myAPI.sendIntervalTask(ipcTask)) || '[]';
-    const tasks: IntervalSubscription[] = JSON.parse(serialized);
-
-    // Add tasks to React state in main and open gov window.
-    for (const task of tasks) {
-      ConfigRenderer.portToOpenGov?.postMessage({
-        task: 'openGov:task:add',
-        data: {
-          serialized: JSON.stringify({ ...task }),
-        },
-      });
-    }
-  };
-
-  /**
    * Handle event listeners.
    */
   useEffect(() => {
@@ -365,7 +346,6 @@ export const BootstrappingProvider = ({
         handleInitializeApp,
         handleInitializeAppOffline,
         handleInitializeAppOnline,
-        syncOpenGovWindow,
       }}
     >
       {children}

@@ -516,6 +516,7 @@ export const ChainEventsProvider = ({
       value={{
         activeChain,
         activeAccount,
+        activeRefChain,
         refSubscriptions,
         subscriptions,
         accountHasSubs,

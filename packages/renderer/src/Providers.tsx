@@ -78,8 +78,8 @@ const getProvidersForWindow = () => {
         ChainsProvider,
         ChainEventsProvider,
         ManageProvider,
-        SubscriptionsProvider,
         IntervalSubscriptionsProvider,
+        SubscriptionsProvider,
         IntervalTasksManagerProvider,
         EventsProvider,
         // Online status relies on other contexts being initialized.

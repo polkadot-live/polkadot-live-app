@@ -3,6 +3,7 @@
 
 import { createContext, useEffect, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
+import { useChainEvents } from '../ChainEvents';
 import { useManage } from '../Manage';
 import { getIntervalSubscriptionsAdapter } from './adapters';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -26,25 +27,32 @@ export const IntervalSubscriptionsProvider = ({
   const adapter = getIntervalSubscriptionsAdapter();
   const { tryAddIntervalSubscription, tryRemoveIntervalSubscription } =
     useManage();
+  const { activeRefChain } = useChainEvents();
 
-  /// Active interval subscriptions.
+  // Active interval subscriptions.
   const [subscriptions, setSubscriptions] = useState<
     Map<ChainID, IntervalSubscription[]>
   >(new Map());
 
-  /// Add an interval subscription to the context state.
+  // Add an interval subscription to the context state.
   const addIntervalSubscription = (task: IntervalSubscription) => {
     setSubscriptions((prev) => {
-      const { chainId } = task;
-      const cloned = new Map(prev);
-      cloned.has(chainId)
-        ? cloned.set(chainId, [...cloned.get(chainId)!, { ...task }])
-        : cloned.set(chainId, [{ ...task }]);
-      return cloned;
+      const { chainId, action, referendumId: refId } = task;
+      const next = new Map(prev);
+      const updated = (next.get(chainId) ?? []).filter(
+        (t) =>
+          !(
+            t.chainId === chainId &&
+            t.action === action &&
+            t.referendumId === refId
+          )
+      );
+      next.set(chainId, [...updated, task]);
+      return next;
     });
   };
 
-  /// Determine if there are active subscriptions for a network.
+  // Determine if there are active subscriptions for a network.
   const chainHasIntervalSubscriptions = (chainId: ChainID) => {
     for (const task of subscriptions.get(chainId) || []) {
       if (task.status === 'enable') {
@@ -54,7 +62,7 @@ export const IntervalSubscriptionsProvider = ({
     return false;
   };
 
-  /// Remove an interval subscription from the context state.
+  // Remove an interval subscription from the context state.
   const removeIntervalSubscription = (task: IntervalSubscription) => {
     adapter.onRemoveInterval(task, tryRemoveIntervalSubscription);
     setSubscriptions((prev) => {
@@ -71,7 +79,7 @@ export const IntervalSubscriptionsProvider = ({
     });
   };
 
-  /// Update an interval subscription.
+  // Update an interval subscription.
   const updateIntervalSubscription = (task: IntervalSubscription) => {
     setSubscriptions((prev) => {
       const { action, chainId, referendumId } = task;
@@ -86,7 +94,7 @@ export const IntervalSubscriptionsProvider = ({
     });
   };
 
-  /// Get interval subscriptions for a specific chain.
+  // Get interval subscriptions for a specific chain.
   const getIntervalSubscriptionsForChain = (chainId: ChainID) => {
     const tasks = subscriptions.get(chainId);
     if (!tasks) {
@@ -95,7 +103,7 @@ export const IntervalSubscriptionsProvider = ({
     return tasks;
   };
 
-  /// Get sorted keys to render chain IDs in a certain order.
+  // Get sorted keys to render chain IDs in a certain order.
   const getSortedKeys = () => {
     const order: ChainID[] = ['Polkadot Asset Hub', 'Kusama Asset Hub'];
     const result: ChainID[] = [];
@@ -105,7 +113,7 @@ export const IntervalSubscriptionsProvider = ({
     return result;
   };
 
-  /// Get total interval subscription count.
+  // Get total interval subscription count.
   const getTotalIntervalSubscriptionCount = (): number =>
     [...subscriptions.values()].reduce(
       (acc, tasks) =>
@@ -125,6 +133,18 @@ export const IntervalSubscriptionsProvider = ({
       removeListener && removeListener();
     };
   }, []);
+
+  // Update interval subscription state on mount and chain change.
+  useEffect(() => {
+    const fetch = async () => {
+      const tasks = await adapter.getIntervalSubs();
+      tasks.forEach((t) => {
+        addIntervalSubscription(t);
+        tryAddIntervalSubscription(t);
+      });
+    };
+    fetch();
+  }, [activeRefChain]);
 
   return (
     <IntervalSubscriptionsContext
