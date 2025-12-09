@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import { intervalTasks } from '@polkadot-live/consts/subscriptions/interval';
 import { Loader } from './Loader';
 import {
   ReferendumRowWrapper,
@@ -10,64 +9,33 @@ import {
   TitleWithOrigin,
 } from './Wrappers';
 import { renderOrigin } from '@polkadot-live/core';
-import { useState } from 'react';
 import {
   useConnections,
-  useHelp,
   usePolkassembly,
   useReferenda,
   useReferendaSubscriptions,
   useTaskHandler,
 } from '@polkadot-live/contexts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { motion } from 'framer-motion';
 import { TooltipRx } from '@polkadot-live/ui/components';
-import {
-  FlexRow,
-  RoundLeftButton,
-  RoundRightButton,
-} from '@polkadot-live/styles/wrappers';
+import { FlexRow, MenuButton } from '@polkadot-live/styles/wrappers';
 import { ReferendumDropdownMenu } from '../Dropdowns';
-import type { RefStatus } from '@polkadot-live/types/openGov';
 import type { ReferendumRowProps } from '../types';
 
-export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
-  const { openHelp } = useHelp();
+export const ReferendumRow = ({ referendum }: ReferendumRowProps) => {
+  const { activeReferendaChainId: chainId } = useReferenda();
   const { cacheGet, getOnlineMode, getTheme } = useConnections();
-
-  const darkMode = cacheGet('mode:dark');
-  const isOnline = getOnlineMode();
-  const theme = getTheme();
+  const { getProposal, usePolkassemblyApi } = usePolkassembly();
+  const { isAdded } = useReferendaSubscriptions();
+  const { addAllIntervalSubscriptions, removeAllIntervalSubscriptions } =
+    useTaskHandler();
 
   const { refId, refStatus } = referendum;
-  const { activeReferendaChainId: chainId } = useReferenda();
-  const { isSubscribedToTask, allSubscriptionsAdded } =
-    useReferendaSubscriptions();
-
-  const {
-    addIntervalSubscription,
-    addAllIntervalSubscriptions,
-    removeAllIntervalSubscriptions,
-    removeIntervalSubscription,
-  } = useTaskHandler();
-
-  const { getProposal, usePolkassemblyApi } = usePolkassembly();
+  const darkMode = cacheGet('mode:dark');
+  const refAdded = isAdded(referendum, chainId);
+  const isOnline = getOnlineMode();
   const proposalMeta = getProposal(chainId, refId);
-
-  // Whether subscriptions are showing.
-  const [expanded, setExpanded] = useState(false);
-
-  const getIntervalSubscriptions = () =>
-    intervalTasks
-      .filter((t) => t.chainId === chainId)
-      .filter((t) => {
-        if ((['Preparing', 'Queueing'] as RefStatus[]).includes(refStatus)) {
-          const actions = ['subscribe:interval:openGov:referendumVotes'];
-          return actions.includes(t.action);
-        } else {
-          return true;
-        }
-      });
+  const theme = getTheme();
 
   return (
     <ReferendumRowWrapper>
@@ -112,134 +80,32 @@ export const ReferendumRow = ({ referendum, index }: ReferendumRowProps) => {
 
         <FlexRow>
           <FlexRow $gap={'2px'}>
-            {!allSubscriptionsAdded(chainId, referendum) ? (
-              <TooltipRx
-                theme={theme}
-                text={isOnline ? 'Subscribe All' : 'Currently Offline'}
-              >
-                <span>
-                  <RoundLeftButton
-                    $dark={darkMode}
-                    disabled={!isOnline}
-                    onClick={() =>
-                      addAllIntervalSubscriptions(
-                        getIntervalSubscriptions(),
-                        referendum
-                      )
-                    }
-                  >
-                    <FontAwesomeIcon
-                      className="icon"
-                      icon={FA.faPlus}
-                      transform={'shrink-1'}
-                    />
-                  </RoundLeftButton>
-                </span>
-              </TooltipRx>
-            ) : (
-              <TooltipRx theme={theme} text={'Unsubscribe All'}>
-                <span>
-                  <RoundLeftButton
-                    $dark={darkMode}
-                    onClick={() =>
-                      removeAllIntervalSubscriptions(
-                        getIntervalSubscriptions(),
-                        referendum
-                      )
-                    }
-                  >
-                    <FontAwesomeIcon
-                      className="icon"
-                      icon={FA.faMinus}
-                      transform={'shrink-1'}
-                    />
-                  </RoundLeftButton>
-                </span>
-              </TooltipRx>
-            )}
-            {/* Expand Button */}
             <TooltipRx
               theme={theme}
-              text={expanded ? 'Hide Subscriptions' : 'Show Subscriptions'}
+              text={`${refAdded ? 'Add' : 'Remove'} Subscriptions`}
             >
               <span>
-                <RoundRightButton
+                <MenuButton
                   $dark={darkMode}
-                  onClick={() => setExpanded(!expanded)}
+                  disabled={!isOnline}
+                  onClick={() =>
+                    !refAdded
+                      ? addAllIntervalSubscriptions(chainId, referendum)
+                      : removeAllIntervalSubscriptions(chainId, referendum)
+                  }
                 >
                   <FontAwesomeIcon
                     className="icon"
-                    icon={expanded ? FA.faChevronUp : FA.faChevronDown}
+                    icon={!refAdded ? FA.faPlus : FA.faMinus}
                     transform={'shrink-1'}
                   />
-                </RoundRightButton>
+                </MenuButton>
               </span>
             </TooltipRx>
           </FlexRow>
-
           <ReferendumDropdownMenu chainId={chainId} referendum={referendum} />
         </FlexRow>
       </FlexRow>
-      <motion.section
-        className="collapse"
-        initial={{ height: 0 }}
-        animate={expanded ? 'open' : 'closed'}
-        variants={{
-          open: { height: 'auto' },
-          closed: { height: 0 },
-        }}
-        transition={{ type: 'spring', duration: 0.25, bounce: 0 }}
-      >
-        <div className="ContentWrapper">
-          <FlexRow className="SubscriptionGrid">
-            {/* Render interval tasks from config */}
-            {getIntervalSubscriptions().map((t) => (
-              <div
-                key={`${index}_${refId}_${t.action}`}
-                className="SubscriptionRow"
-              >
-                {isSubscribedToTask(referendum, t) ? (
-                  <TooltipRx
-                    text={isOnline ? 'Unsubscribe' : 'Currently Offline'}
-                    theme={theme}
-                  >
-                    <button
-                      className={`${!isOnline && 'Disable'} BtnAdd`}
-                      disabled={!isOnline}
-                      onClick={() => removeIntervalSubscription(t, referendum)}
-                    >
-                      <FontAwesomeIcon
-                        icon={FA.faMinus}
-                        transform={'shrink-4'}
-                      />
-                    </button>
-                  </TooltipRx>
-                ) : (
-                  <TooltipRx
-                    text={isOnline ? 'Subscribe' : 'Currently Offline'}
-                    theme={theme}
-                  >
-                    <button
-                      className={`${!isOnline && 'Disable'} BtnAdd`}
-                      disabled={!isOnline}
-                      onClick={() => addIntervalSubscription(t, referendum)}
-                    >
-                      <FontAwesomeIcon
-                        icon={FA.faPlus}
-                        transform={'shrink-2'}
-                      />
-                    </button>
-                  </TooltipRx>
-                )}
-                <p>{t.label}</p>
-                <span onClick={() => openHelp(t.helpKey)}>
-                  <FontAwesomeIcon icon={FA.faInfo} transform={'shrink-0'} />
-                </span>
-              </div>
-            ))}
-          </FlexRow>
-        </div>
-      </motion.section>
     </ReferendumRowWrapper>
   );
 };

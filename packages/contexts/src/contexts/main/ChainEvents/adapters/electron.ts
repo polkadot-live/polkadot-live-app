@@ -30,6 +30,47 @@ export const electronAdapter: ChainEventsAdapter = {
     }
   },
 
+  getActiveRefIds: async (chainId): Promise<number[]> => {
+    try {
+      const res = (await window.myAPI.sendChainEventTask({
+        action: 'chainEvents:getActiveRefIds',
+        data: { chainId },
+      })) as string;
+      return JSON.parse(res);
+    } catch (err) {
+      console.error(err);
+      return [];
+    }
+  },
+
+  getAllRefSubs: async (): Promise<
+    Record<string, Record<number, ChainEventSubscription[]>>
+  > => {
+    try {
+      const res = (await window.myAPI.sendChainEventTask({
+        action: 'chainEvents:getAllRefSubs',
+        data: null,
+      })) as string;
+      return JSON.parse(res);
+    } catch (err) {
+      console.error(err);
+      return {};
+    }
+  },
+
+  getStoredRefSubsForChain: async (chainId) => {
+    try {
+      const res = (await window.myAPI.sendChainEventTask({
+        action: 'chainEvents:getAllRefSubsForChain',
+        data: { chainId },
+      })) as string;
+      return JSON.parse(res);
+    } catch (err) {
+      console.error(err);
+      return [];
+    }
+  },
+
   getSubCount: async () => {
     const res = await window.myAPI.sendChainEventTask({
       action: 'chainEvents:getActiveCount',
@@ -104,5 +145,31 @@ export const electronAdapter: ChainEventsAdapter = {
       data: { account, subscription },
     });
     ChainEventsService.updateForAccount(account, subscription);
+  },
+
+  toggleNotifyForRef: (chainId, refId, subscription) => {
+    window.myAPI.sendChainEventTask({
+      action: 'chainEvents:insertRefSubs',
+      data: { chainId, refId, serialized: JSON.stringify([subscription]) },
+    });
+    ChainEventsService.updateRefScoped(refId, subscription);
+  },
+
+  storeInsertForRef: (chainId, refId, subscription) => {
+    window.myAPI.sendChainEventTask({
+      action: 'chainEvents:insertRefSubs',
+      data: { chainId, refId, serialized: JSON.stringify([subscription]) },
+    });
+    ChainEventsService.insertRefScoped(refId, subscription);
+    ChainEventsService.initEventStream(chainId);
+  },
+
+  storeRemoveForRef: (chainId, refId, subscription) => {
+    window.myAPI.sendChainEventTask({
+      action: 'chainEvents:removeRefSubs',
+      data: { chainId, refId, serialized: JSON.stringify([subscription]) },
+    });
+    ChainEventsService.removeRefScoped(refId, subscription);
+    ChainEventsService.tryStopEventsStream(chainId);
   },
 };

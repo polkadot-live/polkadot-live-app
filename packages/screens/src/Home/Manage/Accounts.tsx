@@ -16,6 +16,7 @@ import {
 import { useEffect, useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   FlexColumn,
   ItemsColumn,
@@ -26,7 +27,6 @@ import { getSupportedChains } from '@polkadot-live/consts/chains';
 import type { AccountsProps } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export const Accounts = ({
   addresses,

@@ -75,6 +75,11 @@ export interface IpcTask {
     | 'chainEvents:insertForAccount'
     | 'chainEvents:removeForAccount'
     | 'chainEvents:removeAllForAccount'
+    | 'chainEvents:insertRefSubs'
+    | 'chainEvents:removeRefSubs'
+    | 'chainEvents:getAllRefSubs'
+    | 'chainEvents:getAllRefSubsForChain'
+    | 'chainEvents:getActiveRefIds'
     // Extrinsics
     | 'extrinsics:getAll'
     | 'extrinsics:getCount'
@@ -97,6 +102,7 @@ export interface IpcTask {
     | 'interval:task:remove'
     | 'interval:task:update'
     | 'interval:tasks:import'
+    | 'interval:tasks:remove'
     // Settings
     | 'settings:handle';
   data: AnyData;

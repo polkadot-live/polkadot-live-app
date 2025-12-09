@@ -5,36 +5,41 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui/components';
 import * as Style from '@polkadot-live/styles/wrappers';
 import {
+  useChainEvents,
   useConnections,
   useIntervalSubscriptions,
-  useManage,
 } from '@polkadot-live/contexts';
 import { useState } from 'react';
 import { ButtonText } from '@polkadot-live/ui/kits/buttons';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faChevronRight, faSplotch } from '@fortawesome/free-solid-svg-icons';
 import { NoOpenGov } from '@polkadot-live/ui/utils';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { NetworksProps } from './types';
 
 export const Networks = ({ setBreadcrumb, setSection }: NetworksProps) => {
   const { openTab } = useConnections();
-  const { setDynamicIntervalTasks } = useManage();
-  const { getIntervalSubscriptionsForChain, getSortedKeys } =
-    useIntervalSubscriptions();
-  /**
-   * Accordion state.
-   */
+  const { getSortedKeys, subscriptions } = useIntervalSubscriptions();
+  const { refChainHasSubs, setActiveRefChain } = useChainEvents();
+
+  // Accordion state.
   const [accordionValue, setAccordionValue] = useState<string[]>(['OpenGov']);
 
-  /**
-   * Set interval subscription tasks state when chain is clicked.
-   */
+  // Set interval subscription tasks state when chain is clicked.
   const handleClickOpenGovChain = (chainId: ChainID) => {
-    const tasks = getIntervalSubscriptionsForChain(chainId);
-    setDynamicIntervalTasks(tasks, chainId);
+    setActiveRefChain(chainId);
     setBreadcrumb(`${chainId} OpenGov`);
     setSection(1);
+  };
+
+  // Determine if a chain has active subscriptions.
+  const chainHasSubs = (chainId: ChainID): boolean => {
+    const hasSmart = refChainHasSubs(chainId);
+    const hasClassic = Boolean(
+      subscriptions.get(chainId)?.find((s) => s.status === 'enable')
+    );
+    return hasSmart || hasClassic;
   };
 
   return (
@@ -88,13 +93,19 @@ export const Networks = ({ setBreadcrumb, setSection }: NetworksProps) => {
                               <h3>{chainId}</h3>
                             </div>
                           </div>
-                          <div>
+                          <Style.FlexRow>
+                            {chainHasSubs(chainId) && (
+                              <FontAwesomeIcon
+                                style={{ color: 'var(--accent-primary)' }}
+                                icon={faSplotch}
+                              />
+                            )}
                             <ButtonText
                               text=""
                               iconRight={faChevronRight}
                               iconTransform="shrink-3"
                             />
-                          </div>
+                          </Style.FlexRow>
                         </div>
                       </Style.ItemEntryWrapper>
                     ))}

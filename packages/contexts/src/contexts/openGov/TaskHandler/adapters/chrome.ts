@@ -4,14 +4,7 @@
 import type { TaskHandlerAdapter } from './types';
 
 export const chromeAdapter: TaskHandlerAdapter = {
-  addIntervalSubscriptionMessage: (task, isOnline) =>
-    chrome.runtime.sendMessage({
-      type: 'intervalSubscriptions',
-      task: 'add',
-      payload: { task, onlineMode: isOnline },
-    }),
-
-  addIntervalSubscriptionsMessage: (tasks, isOnline) =>
+  addIntervalSubscriptionsMessage: (_, tasks, isOnline) =>
     chrome.runtime.sendMessage({
       type: 'intervalSubscriptions',
       task: 'addMulti',
@@ -22,14 +15,7 @@ export const chromeAdapter: TaskHandlerAdapter = {
     /* empty */
   },
 
-  removeIntervalSubscriptionMessage: (task) =>
-    chrome.runtime.sendMessage({
-      type: 'intervalSubscriptions',
-      task: 'delete',
-      payload: { task },
-    }),
-
-  removeIntervalSubscriptionsMessage: (tasks, isOnline) =>
+  removeIntervalSubscriptionsMessage: (_, tasks, isOnline) =>
     chrome.runtime.sendMessage({
       type: 'intervalSubscriptions',
       task: 'removeMulti',

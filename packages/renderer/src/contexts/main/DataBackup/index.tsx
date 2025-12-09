@@ -9,7 +9,6 @@ import {
   useConnections,
   useEvents,
   useIntervalSubscriptions,
-  useManage,
 } from '@polkadot-live/contexts';
 import {
   AccountsController,
@@ -49,10 +48,6 @@ export const DataBackupProvider = ({
 }) => {
   const { getOnlineMode } = useConnections();
   const { setEvents } = useEvents();
-
-  const { tryAddIntervalSubscription, tryUpdateDynamicIntervalTask } =
-    useManage();
-
   const { addIntervalSubscription, updateIntervalSubscription } =
     useIntervalSubscriptions();
 
@@ -295,10 +290,7 @@ export const DataBackupProvider = ({
     // Update manage subscriptions in controller and update React state.
     if (inserts.length > 0) {
       IntervalsController.insertSubscriptions(inserts, isOnline);
-      inserts.forEach((t) => {
-        tryAddIntervalSubscription(t);
-        addIntervalSubscription(t);
-      });
+      inserts.forEach((t) => addIntervalSubscription(t));
     }
 
     if (updates.length > 0) {
@@ -306,7 +298,6 @@ export const DataBackupProvider = ({
       updates.forEach((t) => {
         t.status === 'enable' &&
           IntervalsController.insertSubscription(t, isOnline);
-        tryUpdateDynamicIntervalTask(t);
         updateIntervalSubscription(t);
       });
     }

@@ -13,7 +13,6 @@ import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import {
   faCaretLeft,
   faArrowsRotate,
-  faEllipsisVertical,
   faCaretRight,
   faEllipsis,
 } from '@fortawesome/free-solid-svg-icons';
@@ -21,10 +20,9 @@ import {
   useConnections,
   useHelp,
   useReferenda,
-  useReferendaSubscriptions,
   useTracks,
 } from '@polkadot-live/contexts';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { ReferendumRow } from './ReferendumRow';
 import { DropdownReferendaFilter } from '../Dropdowns';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -44,7 +42,6 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
     historyPagedReferenda,
     referendaMap,
     tabVal,
-    getActiveReferenda,
     getPageNumbers,
     getReferendaCount,
     getTrackFilter,
@@ -58,12 +55,6 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
 
   const { openHelp } = useHelp();
   const { getOrderedTracks } = useTracks();
-  const { isSubscribedToReferendum, isNotSubscribedToAny } =
-    useReferendaSubscriptions();
-
-  // Flag to display referenda with active subscriptions.
-  const [onlySubscribed, setOnlySubscribed] = useState(false);
-  const [showSubscribedButton] = useState(false);
 
   const { page: activePage, pageCount: activePageCount } = activePagedReferenda;
   const { page: historyPage, pageCount: historyPageCount } =
@@ -99,14 +90,6 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
       ? setPage(page > 1 ? page - 1 : page, tab)
       : setPage(page < pageCount ? page + 1 : page, tab);
   };
-
-  // Get subscribed referenda only.
-  const getSubscribedReferenda = () =>
-    referendaMap.has(chainId)
-      ? referendaMap
-          .get(chainId)!
-          .filter((r) => isSubscribedToReferendum(chainId, r))
-      : [];
 
   // Reset filter and tracks container when another chain is selected.
   useEffect(() => {
@@ -201,7 +184,6 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                 <ReferendumRow
                   key={`${i}_${referendum.refId}`}
                   referendum={referendum}
-                  index={i}
                 />
               ))}
             {tab === 'history' &&
@@ -215,29 +197,6 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
         )}
       </Styles.FlexColumn>
     );
-  };
-
-  // Render subscribed referenda as a single list.
-  const renderSubscribedListed = () =>
-    isNotSubscribedToAny(chainId) ? (
-      <div>
-        <p>You have not subscribed to any referenda.</p>
-      </div>
-    ) : (
-      <Styles.ItemsColumn>
-        {getActiveReferenda(getSubscribedReferenda()).map((referendum, i) => (
-          <ReferendumRow
-            key={`${i}_${referendum.refId}_subscribed`}
-            referendum={referendum}
-            index={i}
-          />
-        ))}
-      </Styles.ItemsColumn>
-    );
-
-  // Handle clicking only subscribed button.
-  const handleToggleOnlySubscribed = () => {
-    setOnlySubscribed(!onlySubscribed);
   };
 
   // Handle track click.
@@ -308,39 +267,12 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                     />
                   </span>
                 </UI.TooltipRx>
-                {showSubscribedButton && (
-                  <UI.TooltipRx theme={theme} text={'Show Subscribed'}>
-                    <span>
-                      <SortControlButton
-                        isActive={onlySubscribed}
-                        isDisabled={fetchingReferenda}
-                        faIcon={faEllipsisVertical}
-                        onClick={() => handleToggleOnlySubscribed()}
-                        fixedWidth={false}
-                        respClass="ReferendaControls"
-                      />
-                    </span>
-                  </UI.TooltipRx>
-                )}
               </ControlsWrapper>
             </Styles.FlexColumn>
           </section>
 
           <section>
             <Styles.FlexColumn>
-              {/* Only Subscribed Notice */}
-              {onlySubscribed && (
-                <Wrappers.NoteWrapper>
-                  <Styles.FlexRow>
-                    <span>Note:</span>
-                    <p>
-                      You are viewing only referenda that you are subscribed to.
-                    </p>
-                  </Styles.FlexRow>
-                </Wrappers.NoteWrapper>
-              )}
-
-              {/* List referenda */}
               {!getOnlineMode() && !referendaMap.has(chainId) ? (
                 <div style={{ padding: '0.5rem' }}>
                   <p>Currently offline.</p>
@@ -404,9 +336,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                         </Styles.FlexRow>
                       </section>
                     </Styles.FlexColumn>
-
-                    {!onlySubscribed && renderListed('active')}
-                    {onlySubscribed && renderSubscribedListed()}
+                    {renderListed('active')}
                   </Tabs.Content>
                   <Tabs.Content className="TabsContent" value="history">
                     {renderListed('history')}

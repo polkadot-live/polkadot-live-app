@@ -6,16 +6,17 @@ import type { ChainID } from '@polkadot-live/types/chains';
 
 export interface IntervalSubscriptionsContextInterface {
   subscriptions: Map<ChainID, IntervalSubscription[]>;
-  chainHasIntervalSubscriptions: (chainId: ChainID) => boolean;
-  setSubscriptions: (
-    subscriptions: Map<ChainID, IntervalSubscription[]>
-  ) => void;
   addIntervalSubscription: (task: IntervalSubscription) => void;
-  removeIntervalSubscription: (task: IntervalSubscription) => void;
-  updateIntervalSubscription: (task: IntervalSubscription) => void;
+  chainHasIntervalSubscriptions: (chainId: ChainID) => boolean;
+  getCategorised: () => Map<number, IntervalSubscription[]>;
   getIntervalSubscriptionsForChain: (
     chainId: ChainID
   ) => IntervalSubscription[];
   getSortedKeys: () => ChainID[];
   getTotalIntervalSubscriptionCount: () => number;
+  setSubscriptions: (
+    subscriptions: Map<ChainID, IntervalSubscription[]>
+  ) => void;
+  removeIntervalSubscription: (task: IntervalSubscription) => void;
+  updateIntervalSubscription: (task: IntervalSubscription) => void;
 }

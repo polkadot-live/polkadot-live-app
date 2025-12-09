@@ -6,6 +6,7 @@ import type { SetStateAction } from 'react';
 import type { IntervalSubscription } from '@polkadot-live/types';
 
 export interface IntervalSubscriptionsAdapter {
+  getIntervalSubs: () => Promise<IntervalSubscription[]>;
   listenOnMount: (
     setSubscriptions: (
       value: SetStateAction<Map<ChainID, IntervalSubscription[]>>
@@ -15,10 +16,5 @@ export interface IntervalSubscriptionsAdapter {
   onMount: (
     addIntervalSubscription?: (task: IntervalSubscription) => void,
     tryAddIntervalSubscription?: (task: IntervalSubscription) => void
-  ) => void;
-
-  onRemoveInterval: (
-    task?: IntervalSubscription,
-    tryRemoveIntervalSubscription?: (task: IntervalSubscription) => void
   ) => void;
 }

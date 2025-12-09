@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   useApiHealth,
   useConnections,
@@ -16,41 +16,35 @@ import { faClock } from '@fortawesome/free-regular-svg-icons';
 import { Switch, TooltipRx } from '@polkadot-live/ui/components';
 import { getShortIntervalLabel } from '@polkadot-live/core';
 import { intervalDurationsConfig } from '@polkadot-live/consts/subscriptions/interval';
-import type { AnyData } from '@polkadot-live/types/misc';
 import type { IntervalRowProps } from './types';
 
 export const IntervalRow = ({ task }: IntervalRowProps) => {
   const { useCtx } = useContextProxy();
-  const { openHelp } = useHelp();
-  const { failedConnections, hasConnectionIssue } = useApiHealth();
   const { isConnecting } = useCtx('BootstrappingCtx')();
 
+  const { failedConnections, hasConnectionIssue } = useApiHealth();
   const { cacheGet, getOnlineMode, getTheme } = useConnections();
-  const isImportingData = cacheGet('backup:importing');
-  const isOnlineMode = getOnlineMode();
-  const theme = getTheme();
-
+  const { openHelp } = useHelp();
   const {
     handleIntervalToggle,
     handleIntervalNativeCheckbox,
-    handleRemoveIntervalSubscription,
     handleChangeIntervalDuration,
     handleIntervalOneShot,
   } = useIntervalTasksManager();
 
   const [isToggled, setIsToggled] = useState<boolean>(task.status === 'enable');
   const [oneShotProcessing, setOneShotProcessing] = useState(false);
-  const [nativeChecked, setNativeChecked] = useState(
-    task.enableOsNotifications
-  );
-
-  const [removeClicked, setRemoveClicked] = useState(false);
-  const removeTimeoutRef = useRef<null | AnyData>(null);
-
   const [intervalClicked, setIntervalClicked] = useState(false);
   const [intervalSetting, setIntervalSetting] = useState(
     task.intervalSetting.ticksToWait
   );
+  const [nativeChecked, setNativeChecked] = useState(
+    task.enableOsNotifications
+  );
+
+  const isImportingData = cacheGet('backup:importing');
+  const isOnlineMode = getOnlineMode();
+  const theme = getTheme();
 
   const [isDisabled, setIsDisabled] = useState<boolean>(
     isConnecting ||
@@ -58,34 +52,6 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
       hasConnectionIssue(task.chainId) ||
       isImportingData
   );
-
-  useEffect(() => {
-    setIsDisabled(
-      isConnecting ||
-        !getOnlineMode() ||
-        hasConnectionIssue(task.chainId) ||
-        isImportingData
-    );
-  }, [failedConnections, isConnecting, isOnlineMode, isImportingData]);
-
-  useEffect(() => {
-    const newStatusToBoolean = task.status === 'enable';
-    newStatusToBoolean !== isToggled && setIsToggled(newStatusToBoolean);
-  }, [task.status]);
-
-  useEffect(() => {
-    setIntervalSetting(task.intervalSetting.ticksToWait);
-  }, [task.intervalSetting]);
-
-  useEffect(() => {
-    setNativeChecked(task.enableOsNotifications);
-  }, [task.enableOsNotifications]);
-
-  useEffect(() => {
-    if (!getOnlineMode()) {
-      setIntervalClicked(false);
-    }
-  }, [getOnlineMode()]);
 
   const handleToggle = async () => {
     await handleIntervalToggle(task);
@@ -98,15 +64,6 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
       await handleIntervalNativeCheckbox(task, flag);
       setNativeChecked(flag);
     }
-  };
-
-  const handleRemove = async () => {
-    if (removeTimeoutRef.current !== null) {
-      clearTimeout(removeTimeoutRef.current);
-      removeTimeoutRef.current = null;
-    }
-    // Remove subscription.
-    await handleRemoveIntervalSubscription(task);
   };
 
   const renderOneShotSwitch = () => (
@@ -145,6 +102,34 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
     </div>
   );
 
+  useEffect(() => {
+    setIsDisabled(
+      isConnecting ||
+        !getOnlineMode() ||
+        hasConnectionIssue(task.chainId) ||
+        isImportingData
+    );
+  }, [failedConnections, isConnecting, isOnlineMode, isImportingData]);
+
+  useEffect(() => {
+    const newStatusToBoolean = task.status === 'enable';
+    newStatusToBoolean !== isToggled && setIsToggled(newStatusToBoolean);
+  }, [task.status]);
+
+  useEffect(() => {
+    setIntervalSetting(task.intervalSetting.ticksToWait);
+  }, [task.intervalSetting]);
+
+  useEffect(() => {
+    setNativeChecked(task.enableOsNotifications);
+  }, [task.enableOsNotifications]);
+
+  useEffect(() => {
+    if (!getOnlineMode()) {
+      setIntervalClicked(false);
+    }
+  }, [getOnlineMode()]);
+
   return (
     <TaskEntryWrapper whileHover={{ scale: 1.01 }}>
       <div className="inner">
@@ -162,36 +147,6 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
           </div>
         </div>
         <div>
-          {/* Remove Button */}
-          <div
-            style={{ display: intervalClicked ? 'none' : 'block' }}
-            className="remove-wrapper"
-          >
-            <TooltipRx text={'Click Twice To Remove'} theme={theme}>
-              {!removeClicked ? (
-                <FontAwesomeIcon
-                  className="enabled"
-                  icon={FA.faXmark}
-                  transform={'grow-4'}
-                  onClick={() => {
-                    removeTimeoutRef.current = setTimeout(() => {
-                      removeTimeoutRef.current !== null &&
-                        setRemoveClicked(false);
-                    }, 5000);
-                    setRemoveClicked(true);
-                  }}
-                />
-              ) : (
-                <FontAwesomeIcon
-                  className="enabled"
-                  icon={FA.faTriangleExclamation}
-                  transform={'grow-4'}
-                  onClick={async () => await handleRemove()}
-                />
-              )}
-            </TooltipRx>
-          </div>
-
           {/* One Shot Button */}
           {!isDisabled && !oneShotProcessing ? (
             <TooltipRx text={'Get Notification'} theme={theme}>
@@ -290,13 +245,15 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
           </TooltipRx>
 
           {/* Toggle Switch */}
-          <Switch
-            disabled={isDisabled}
-            size="sm"
-            type="primary"
-            isOn={isToggled}
-            handleToggle={async () => await handleToggle()}
-          />
+          <span style={{ scale: '0.9' }}>
+            <Switch
+              disabled={isDisabled}
+              size="sm"
+              type="primary"
+              isOn={isToggled}
+              handleToggle={async () => await handleToggle()}
+            />
+          </span>
         </div>
       </div>
     </TaskEntryWrapper>

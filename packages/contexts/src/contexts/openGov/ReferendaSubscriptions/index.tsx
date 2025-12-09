@@ -7,7 +7,7 @@ import { getReferendaSubscriptionsAdapter } from './adapters';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { ReferendaSubscriptionsContextInterface } from '../../../types/openGov';
-import type { ReferendaInfo, RefStatus } from '@polkadot-live/types/openGov';
+import type { ReferendaInfo } from '@polkadot-live/types/openGov';
 
 export const ReferendaSubscriptionsContext = createContext<
   ReferendaSubscriptionsContextInterface | undefined
@@ -30,11 +30,10 @@ export const ReferendaSubscriptionsProvider = ({
     Map<ChainID, IntervalSubscription[]>
   >(new Map());
 
-  // Map to identify added subscriptions for individual referenda.
-  // Key is referendum ID, value is array of subscription tasks.
-  type ActiveTasksForChain = Map<number, string[]>;
-  type ActiveTasks = Map<ChainID, ActiveTasksForChain>;
-  const [activeTasksMap, setActiveTasksMap] = useState<ActiveTasks>(new Map());
+  // Map to identify referenda added to main window.
+  const [addedRefsMap, setAddedRefsMap] = useState(
+    new Map<ChainID, number[] /* refIds */>()
+  );
 
   // Add a task to the context.
   const addReferendaSubscription = (task: IntervalSubscription) => {
@@ -48,21 +47,11 @@ export const ReferendaSubscriptionsProvider = ({
       return cloned;
     });
 
-    // Update active tasks map.
-    setActiveTasksMap((prev) => {
-      const { chainId, referendumId, action } = task;
-      const key = referendumId!;
-      const cloned = new Map(prev);
-      if (cloned.has(chainId)) {
-        const chainItems = cloned.get(chainId)!;
-        chainItems.has(key)
-          ? chainItems.set(key, [...chainItems.get(key)!, action])
-          : chainItems.set(key, [action] as string[]);
-        cloned.set(chainId, chainItems);
-      } else {
-        cloned.set(chainId, new Map([[key, [action]]]));
-      }
-      return cloned;
+    setAddedRefsMap((prev) => {
+      const { chainId, referendumId: refId } = task;
+      const next = (prev.get(chainId) || []).filter((id) => id !== refId);
+      refId && next.push(refId);
+      return new Map(prev).set(chainId, next);
     });
   };
 
@@ -89,83 +78,20 @@ export const ReferendaSubscriptionsProvider = ({
       return cloned;
     });
 
-    // Update active tasks map.
-    setActiveTasksMap((prev) => {
-      const { chainId, action, referendumId } = task;
-      const cloned = new Map(prev);
-      const key = referendumId!;
-
-      if (cloned.has(chainId)) {
-        const chainItems = cloned.get(chainId)!;
-        if (chainItems.has(key)) {
-          const cached = chainItems.get(key)!;
-          cached.length === 1
-            ? chainItems.delete(key)
-            : chainItems.set(
-                key,
-                cached.filter((a) => a !== action)
-              );
-          chainItems.size
-            ? cloned.set(chainId, chainItems)
-            : cloned.delete(chainId);
-        }
-      }
-      return cloned;
+    setAddedRefsMap((prev) => {
+      const { chainId, referendumId: refId } = task;
+      const next = new Map(prev);
+      const updated = (next.get(chainId) || []).filter((id) => id !== refId);
+      updated.length > 0 ? next.set(chainId, updated) : next.delete(chainId);
+      return next;
     });
   };
 
   // Check if a task has been added for a referendum.
-  const isSubscribedToTask = (
-    referendum: ReferendaInfo,
-    task: IntervalSubscription
-  ) => {
+  const isAdded = (referendum: ReferendaInfo, chainId: ChainID) => {
     const { refId } = referendum;
-    const { chainId, action } = task;
-    if (activeTasksMap.has(chainId)) {
-      const chainItems = activeTasksMap.get(chainId)!;
-      if (chainItems.has(refId)) {
-        const items = chainItems.get(refId)!;
-        if (items.includes(action)) {
-          return true;
-        }
-      }
-    }
-    return false;
+    return (addedRefsMap.get(chainId) || []).includes(refId);
   };
-
-  // Check if a referendum has added subscription tasks.
-  const isSubscribedToReferendum = (
-    chainId: ChainID,
-    referendum: ReferendaInfo
-  ) =>
-    activeTasksMap.has(chainId)
-      ? activeTasksMap.get(chainId)!.has(referendum.refId)
-      : false;
-
-  // Check if referendum has all its subscriptions added.
-  const allSubscriptionsAdded = (
-    chainId: ChainID,
-    referendum: ReferendaInfo
-  ) => {
-    if (!activeTasksMap.has(chainId)) {
-      return false;
-    }
-    const chainItems = activeTasksMap.get(chainId)!;
-    const { refId } = referendum;
-    if (!chainItems.has(Number(refId))) {
-      return false;
-    }
-    const MAX_SUBSCRIPTIONS: number = (
-      ['Preparing', 'Queueing'] as RefStatus[]
-    ).includes(referendum.refStatus)
-      ? 1
-      : 3;
-    return chainItems.get(refId)!.length === MAX_SUBSCRIPTIONS ? true : false;
-  };
-
-  // Check if any subscriptions have been added for a given chain.
-  const isNotSubscribedToAny = (chainId: ChainID) =>
-    !activeTasksMap.has(chainId);
 
   // Update data of a managed task.
   const updateReferendaSubscription = (task: IntervalSubscription) => {
@@ -211,15 +137,11 @@ export const ReferendaSubscriptionsProvider = ({
     <ReferendaSubscriptionsContext
       value={{
         subscriptions,
-        setSubscriptions,
-        activeTasksMap,
         addReferendaSubscription,
+        isAdded,
         removeReferendaSubscription,
+        setSubscriptions,
         updateReferendaSubscription,
-        isSubscribedToTask,
-        isSubscribedToReferendum,
-        isNotSubscribedToAny,
-        allSubscriptionsAdded,
       }}
     >
       {children}

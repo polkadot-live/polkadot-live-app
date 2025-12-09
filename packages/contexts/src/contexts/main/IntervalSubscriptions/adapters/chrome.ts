@@ -6,6 +6,8 @@ import type { IntervalSubscriptionsAdapter } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
 
 export const chromeAdapter: IntervalSubscriptionsAdapter = {
+  getIntervalSubs: async () => [],
+
   listenOnMount: (setSubscriptions) => {
     const callback = (message: AnyData) => {
       if (message.type === 'intervalSubscriptions') {
@@ -30,8 +32,8 @@ export const chromeAdapter: IntervalSubscriptionsAdapter = {
     return () => chrome.runtime.onMessage.removeListener(callback);
   },
 
-  onMount: (addIntervalSubscription, tryAddIntervalSubscription) => {
-    if (!(addIntervalSubscription && tryAddIntervalSubscription)) {
+  onMount: (addIntervalSubscription) => {
+    if (!addIntervalSubscription) {
       return;
     }
     chrome.runtime
@@ -39,18 +41,8 @@ export const chromeAdapter: IntervalSubscriptionsAdapter = {
         type: 'intervalSubscriptions',
         task: 'getAll',
       })
-      .then((result: IntervalSubscription[]) => {
-        for (const t of result) {
-          addIntervalSubscription(t);
-          tryAddIntervalSubscription(t);
-        }
+      .then((tasks: IntervalSubscription[]) => {
+        tasks.forEach((t) => addIntervalSubscription(t));
       });
-  },
-
-  onRemoveInterval: (task, tryRemoveIntervalSubscription) => {
-    if (!(task && tryRemoveIntervalSubscription)) {
-      return;
-    }
-    tryRemoveIntervalSubscription(task);
   },
 };

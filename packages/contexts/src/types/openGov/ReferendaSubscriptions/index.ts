@@ -7,24 +7,11 @@ import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 
 export interface ReferendaSubscriptionsContextInterface {
   subscriptions: Map<ChainID, IntervalSubscription[]>;
+  addReferendaSubscription: (task: IntervalSubscription) => void;
+  isAdded: (referendum: ReferendaInfo, chainId: ChainID) => boolean;
+  removeReferendaSubscription: (task: IntervalSubscription) => void;
   setSubscriptions: (
     subscriptions: Map<ChainID, IntervalSubscription[]>
   ) => void;
-  activeTasksMap: Map<ChainID, Map<number, string[]>>;
-  addReferendaSubscription: (task: IntervalSubscription) => void;
-  removeReferendaSubscription: (task: IntervalSubscription) => void;
   updateReferendaSubscription: (task: IntervalSubscription) => void;
-  isSubscribedToTask: (
-    referendum: ReferendaInfo,
-    task: IntervalSubscription
-  ) => boolean;
-  isSubscribedToReferendum: (
-    chainId: ChainID,
-    referendum: ReferendaInfo
-  ) => boolean;
-  isNotSubscribedToAny: (chainId: ChainID) => boolean;
-  allSubscriptionsAdded: (
-    chainId: ChainID,
-    referendum: ReferendaInfo
-  ) => boolean;
 }

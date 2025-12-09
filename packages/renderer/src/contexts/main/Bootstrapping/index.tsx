@@ -102,7 +102,7 @@ export const BootstrappingProvider = ({
    */
   const initEventStreams = async () => {
     // Get stored chain event subscriptions.
-    const stored = parseMap<ChainID, ChainEventSubscription[]>(
+    const activeChainSubs = parseMap<ChainID, ChainEventSubscription[]>(
       (await window.myAPI.sendChainEventTask({
         action: 'chainEvents:getAll',
         data: null,
@@ -110,13 +110,13 @@ export const BootstrappingProvider = ({
     );
 
     // Insert global-scoped subscriptions.
-    for (const [cid, subs] of stored.entries()) {
+    for (const [cid, subs] of activeChainSubs.entries()) {
       for (const s of subs) {
         ChainEventsService.insert(cid, s);
       }
     }
 
-    // Insert stored account-scoped chain event subscriptions.
+    // Insert account-scoped subscriptions.
     const activeChainIds: ChainID[] = [];
     for (const accounts of AccountsController.accounts.values()) {
       for (const account of accounts) {
@@ -134,8 +134,32 @@ export const BootstrappingProvider = ({
       }
     }
 
+    // Insert ref-scoped subscriptions.
+    const recRes = (await window.myAPI.sendChainEventTask({
+      action: 'chainEvents:getAllRefSubs',
+      data: null,
+    })) as string;
+
+    const recParsed: Record<
+      string,
+      Record<number, ChainEventSubscription[]>
+    > = JSON.parse(recRes);
+
+    const insert = ChainEventsService.insertRefScoped;
+    for (const [chainId, recRefs] of Object.entries(recParsed)) {
+      for (const [refId, subs] of Object.entries(recRefs)) {
+        subs
+          .filter((s) => s.enabled && s.kind === 'referendum')
+          .forEach((s) => {
+            const cid = chainId as ChainID;
+            !activeChainIds.includes(cid) && activeChainIds.push(cid);
+            insert(parseInt(refId), s);
+          });
+      }
+    }
+
     // Start event streams.
-    for (const cid of new Set([...activeChainIds, ...stored.keys()])) {
+    for (const cid of new Set([...activeChainIds, ...activeChainSubs.keys()])) {
       await ChainEventsService.initEventStream(cid);
     }
   };
@@ -275,25 +299,6 @@ export const BootstrappingProvider = ({
   };
 
   /**
-   * Called when initializing the openGov window.
-   */
-  const syncOpenGovWindow = async () => {
-    const ipcTask: IpcTask = { action: 'interval:task:get', data: null };
-    const serialized = (await window.myAPI.sendIntervalTask(ipcTask)) || '[]';
-    const tasks: IntervalSubscription[] = JSON.parse(serialized);
-
-    // Add tasks to React state in main and open gov window.
-    for (const task of tasks) {
-      ConfigRenderer.portToOpenGov?.postMessage({
-        task: 'openGov:task:add',
-        data: {
-          serialized: JSON.stringify({ ...task }),
-        },
-      });
-    }
-  };
-
-  /**
    * Handle event listeners.
    */
   useEffect(() => {
@@ -341,7 +346,6 @@ export const BootstrappingProvider = ({
         handleInitializeApp,
         handleInitializeAppOffline,
         handleInitializeAppOnline,
-        syncOpenGovWindow,
       }}
     >
       {children}

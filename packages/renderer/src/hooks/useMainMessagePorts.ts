@@ -48,8 +48,8 @@ export const useMainMessagePorts = () => {
   const { getOnlineMode } = useConnections();
   const { cacheGet, toggleSetting } = useAppSettings();
   const { importAddress, removeAddress } = useAddresses();
+  const { addSubsForRef, removeSubsForRef } = useChainEvents();
   const { updateAccountNameInTasks } = useSubscriptions();
-  const { syncOpenGovWindow } = MainCtx.useBootstrapping();
   const { exportDataToBackup, importDataFromBackup } = MainCtx.useDataBackup();
   const { updateEventsOnAccountRename } = useEvents();
   const { ledgerSignSubmit } = MainCtx.useLedgerSigner();
@@ -69,11 +69,7 @@ export const useMainMessagePorts = () => {
     updateWcTxSignMap,
     verifySigningAccount,
   } = MainCtx.useWalletConnect();
-  const {
-    setRenderedSubscriptions,
-    tryAddIntervalSubscription,
-    tryRemoveIntervalSubscription,
-  } = useManage();
+  const { setRenderedSubscriptions } = useManage();
   const { removeAllForAccount } = useChainEvents();
 
   /**
@@ -439,73 +435,28 @@ export const useMainMessagePorts = () => {
   };
 
   /**
-   * @name handleAddInterval
-   * @summary Add an interval subscription to the intervals controller.
-   */
-  const handleAddInterval = async (ev: MessageEvent) => {
-    const { task: serialized } = ev.data.data;
-    const task: IntervalSubscription = JSON.parse(serialized);
-
-    // Add task to interval controller.
-    IntervalsController.insertSubscription({ ...task }, getOnlineMode());
-
-    // Add task to dynamic manage state if necessary.
-    tryAddIntervalSubscription({ ...task });
-
-    // Add task to React state for rendering.
-    addIntervalSubscription({ ...task });
-
-    // Persist task to store.
-    await window.myAPI.sendIntervalTask({
-      action: 'interval:task:add',
-      data: { serialized: JSON.stringify(task) },
-    });
-  };
-
-  /**
-   * @name handleRemoveInterval
-   * @summary Remove an interval subscription from the intervals controller.
-   */
-  const handleRemoveInterval = async (ev: MessageEvent) => {
-    const { task: serialized } = ev.data.data;
-    const task: IntervalSubscription = JSON.parse(serialized);
-
-    // Remove task from interval controller.
-    IntervalsController.removeSubscription({ ...task }, getOnlineMode());
-
-    // Remove task from dynamic manage state if necessary.
-    tryRemoveIntervalSubscription({ ...task });
-
-    // Remove task from React state for rendering.
-    removeIntervalSubscription({ ...task });
-
-    // Remove task from store.
-    await window.myAPI.sendIntervalTask({
-      action: 'interval:task:remove',
-      data: { serialized: JSON.stringify(task) },
-    });
-  };
-
-  /**
    * @name handleAddIntervals
    * @summary Add an array of interval subscriptions to the main renderer state.
    */
   const handleAddIntervals = async (ev: MessageEvent) => {
-    const { tasks } = ev.data.data;
+    const { refId, tasks } = ev.data.data;
     const parsed: IntervalSubscription[] = JSON.parse(tasks);
+    if (!parsed.length) {
+      return;
+    }
+
+    // Add ref-scoped chain event subscriptions.
+    const chainId = parsed[0].chainId;
+    const subs = addSubsForRef(chainId, refId);
+    await window.myAPI.sendChainEventTask({
+      action: 'chainEvents:insertRefSubs',
+      data: { chainId, refId, serialized: JSON.stringify(subs) },
+    });
 
     // Update managed tasks in intervals controller.
     IntervalsController.insertSubscriptions(parsed, getOnlineMode());
-
-    // Update React and store state.
     for (const task of parsed) {
-      // Add task to dynamic manage state if necessary.
-      tryAddIntervalSubscription({ ...task });
-
-      // Add task to React state for rendering.
-      addIntervalSubscription({ ...task });
-
-      // Persist task to store.
+      addIntervalSubscription(task);
       await window.myAPI.sendIntervalTask({
         action: 'interval:task:add',
         data: { serialized: JSON.stringify(task) },
@@ -518,26 +469,29 @@ export const useMainMessagePorts = () => {
    * @summary Remove an array of interval subscriptions from the main renderer state.
    */
   const handleRemoveIntervals = async (ev: MessageEvent) => {
-    const { tasks } = ev.data.data;
+    const { refId, tasks } = ev.data.data;
     const parsed: IntervalSubscription[] = JSON.parse(tasks);
+    if (!parsed.length) {
+      return;
+    }
+
+    // Remove ref-scoped chain event subscriptions.
+    const chainId = parsed[0].chainId;
+    const subs = removeSubsForRef(chainId, refId);
+    await window.myAPI.sendChainEventTask({
+      action: 'chainEvents:removeRefSubs',
+      data: { chainId, refId, serialized: JSON.stringify(subs) },
+    });
+
+    // Update React state.
+    parsed.forEach((task) => removeIntervalSubscription(task));
 
     // Update managed tasks in intervals controller.
     IntervalsController.removeSubscriptions(parsed, getOnlineMode());
-
-    // Update React and store state.
-    for (const task of parsed) {
-      // Remove task from dynamic manage state if necessary.
-      tryRemoveIntervalSubscription({ ...task });
-
-      // Remove task from React state for rendering.
-      removeIntervalSubscription({ ...task });
-
-      // Remove task from store.
-      await window.myAPI.sendIntervalTask({
-        action: 'interval:task:remove',
-        data: { serialized: JSON.stringify(task) },
-      });
-    }
+    await window.myAPI.sendIntervalTask({
+      action: 'interval:tasks:remove',
+      data: { chainId, refId },
+    });
   };
 
   /**
@@ -767,14 +721,6 @@ export const useMainMessagePorts = () => {
               await handleInitTreasury(ev);
               break;
             }
-            case 'openGov:interval:add': {
-              await handleAddInterval(ev);
-              break;
-            }
-            case 'openGov:interval:remove': {
-              await handleRemoveInterval(ev);
-              break;
-            }
             case 'openGov:interval:add:multi': {
               await handleAddIntervals(ev);
               break;
@@ -790,7 +736,6 @@ export const useMainMessagePorts = () => {
         };
 
         ConfigRenderer.portToOpenGov.start();
-        await syncOpenGovWindow();
         break;
       }
       default: {
