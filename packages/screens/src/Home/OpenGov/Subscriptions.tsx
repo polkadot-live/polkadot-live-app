@@ -53,18 +53,31 @@ export const Subscriptions = ({
     string | undefined
   >(undefined);
 
-  /**
-   * Determines if interval task should be disabled.
-   */
-  const isIntervalTaskDisabled = () =>
+  // Utility to determine if a connection issue exists.
+  const showConnectionIssue = (): boolean =>
+    activeRefChain ? hasConnectionIssue(activeRefChain) : false;
+
+  // Total active subscription count.
+  const activeCount = (refId: number): number => {
+    const smart = refActiveSubCount(refId);
+    if (!activeRefChain) {
+      return smart;
+    }
+    const chainSubs = subscriptions.get(activeRefChain) ?? [];
+    const classic = chainSubs.filter(
+      (s) => s.referendumId === refId && s.status === 'enable'
+    ).length;
+    return smart + classic;
+  };
+
+  // Determines if interval task should be disabled.
+  const isIntervalTaskDisabled = (): boolean =>
     !getOnlineMode() ||
     showConnectionIssue() ||
     isConnecting ||
     isImportingData;
 
-  /**
-   * Map referendum ID to its global toggle state.
-   */
+  // Map referendum ID to its global toggle state.
   const getOpenGovGlobalToggles = () => {
     const map = new Map<number, boolean>();
 
@@ -79,9 +92,7 @@ export const Subscriptions = ({
     return map;
   };
 
-  /**
-   * Handler for toggling the "global" switch for a referendum.
-   */
+  // Handler for toggling the "global" switch for a referendum.
   const toggleGlobalSwitch = async (referendumId: number, isOn: boolean) => {
     // Get all tasks with the target status.
     const targetStatus = isOn ? 'enable' : 'disable';
@@ -117,12 +128,6 @@ export const Subscriptions = ({
       handleIntervalAnalytics(task);
     }
   };
-
-  /**
-   * Utility to determine if a connection issue exists.
-   */
-  const showConnectionIssue = (): boolean =>
-    activeRefChain ? hasConnectionIssue(activeRefChain) : false;
 
   return (
     <>
@@ -179,7 +184,7 @@ export const Subscriptions = ({
                         <UI.TriggerHeader>
                           <Style.FlexRow>
                             <span style={{ flex: 1 }}>Referendum {refId}</span>
-                            {refActiveSubCount(parseInt(refId)) > 0 && (
+                            {activeCount(parseInt(refId)) > 0 && (
                               <FontAwesomeIcon
                                 style={{ color: 'var(--accent-primary)' }}
                                 icon={faSplotch}

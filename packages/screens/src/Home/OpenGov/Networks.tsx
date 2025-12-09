@@ -20,26 +20,29 @@ import type { NetworksProps } from './types';
 
 export const Networks = ({ setBreadcrumb, setSection }: NetworksProps) => {
   const { openTab } = useConnections();
-  const { getSortedKeys } = useIntervalSubscriptions();
+  const { getSortedKeys, subscriptions } = useIntervalSubscriptions();
   const { refChainHasSubs, setActiveRefChain, syncRefs } = useChainEvents();
 
-  /**
-   * Accordion state.
-   */
+  // Accordion state.
   const [accordionValue, setAccordionValue] = useState<string[]>(['OpenGov']);
 
-  /**
-   * Set interval subscription tasks state when chain is clicked.
-   */
+  // Set interval subscription tasks state when chain is clicked.
   const handleClickOpenGovChain = (chainId: ChainID) => {
     setActiveRefChain(chainId);
     setBreadcrumb(`${chainId} OpenGov`);
     setSection(1);
   };
 
-  /**
-   * Sync persisted referenda subscription state.
-   */
+  // Determine if a chain has active subscriptions.
+  const chainHasSubs = (chainId: ChainID): boolean => {
+    const hasSmart = refChainHasSubs(chainId);
+    const hasClassic = Boolean(
+      subscriptions.get(chainId)?.find((s) => s.status === 'enable')
+    );
+    return hasSmart || hasClassic;
+  };
+
+  // Sync persisted referenda subscription state.
   useEffect(() => {
     const sync = async () => {
       await syncRefs();
@@ -99,7 +102,7 @@ export const Networks = ({ setBreadcrumb, setSection }: NetworksProps) => {
                             </div>
                           </div>
                           <Style.FlexRow>
-                            {refChainHasSubs(chainId) && (
+                            {chainHasSubs(chainId) && (
                               <FontAwesomeIcon
                                 style={{ color: 'var(--accent-primary)' }}
                                 icon={faSplotch}
