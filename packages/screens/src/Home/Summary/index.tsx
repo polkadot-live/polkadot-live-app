@@ -27,25 +27,54 @@ import type { FlattenedAccountData } from '@polkadot-live/types';
 import type { SummaryAccordionValue } from './types';
 
 export const Summary = () => {
+  const { addressMap, extrinsicCounts } = useSummary();
   const { getAllAccounts } = useAddresses();
   const { openTab } = useConnections();
   const { getEventsCount, getAllEventCategoryKeys } = useEvents();
   const { getTotalIntervalSubscriptionCount } = useIntervalSubscriptions();
-  const { accountSubCount, getEventSubscriptionCount } = useChainEvents();
-  const { getClassicSubCount, getTotalSubscriptionCount } = useSubscriptions();
   const { setSelectedId } = useSideNav();
-  const { addressMap, extrinsicCounts } = useSummary();
+  const { getClassicSubCount, getTotalSubscriptionCount } = useSubscriptions();
+  const { accountSubCount, countActiveRefSubs, getEventSubscriptionCount } =
+    useChainEvents();
 
-  /**
-   * State.
-   */
   const [eventSubCount, setEventSubCount] = useState(0);
   const [accountSmartSubCounts, setAccountSmartSubCounts] = useState<
     Map<string, number>
   >(new Map());
 
+  const [accordionValue, setAccordionValue] =
+    useState<SummaryAccordionValue>('summary-accounts');
+
   const getSmartSubCount = (account: FlattenedAccountData) =>
     accountSmartSubCounts.get(`${account.chain}::${account.address}`) ?? 0;
+
+  const getActiveRefSubCount = () => {
+    const classic = getTotalIntervalSubscriptionCount();
+    const smart = countActiveRefSubs();
+    return classic + smart;
+  };
+
+  const getTotalAccounts = () =>
+    Array.from(addressMap.values()).reduce((pv, cur) => (pv += cur.length), 0);
+
+  const getEventIcon = (category: string) => {
+    switch (category) {
+      case 'balances':
+        return FA.faWallet;
+      case 'nominationPools':
+        return FA.faUsers;
+      case 'nominating':
+        return FA.faArrowUpRightDots;
+      case 'openGov':
+        return FA.faFileContract;
+      case 'staking':
+        return FA.faCubesStacked;
+      case 'voting':
+        return FA.faCheckDouble;
+      default:
+        return FA.faCircleNodes;
+    }
+  };
 
   useEffect(() => {
     const fetch = async () => {
@@ -66,37 +95,6 @@ export const Summary = () => {
     };
     fetch();
   }, []);
-
-  /**
-   * Utils.
-   */
-  const getTotalAccounts = () =>
-    Array.from(addressMap.values()).reduce((pv, cur) => (pv += cur.length), 0);
-
-  /**
-   * Accordion state.
-   */
-  const [accordionValue, setAccordionValue] =
-    useState<SummaryAccordionValue>('summary-accounts');
-
-  const getEventIcon = (category: string) => {
-    switch (category) {
-      case 'balances':
-        return FA.faWallet;
-      case 'nominationPools':
-        return FA.faUsers;
-      case 'nominating':
-        return FA.faArrowUpRightDots;
-      case 'openGov':
-        return FA.faFileContract;
-      case 'staking':
-        return FA.faCubesStacked;
-      case 'voting':
-        return FA.faCheckDouble;
-      default:
-        return FA.faCircleNodes;
-    }
-  };
 
   return (
     <div
@@ -317,10 +315,10 @@ export const Summary = () => {
                         flattened={a}
                       />
                     ))}
-                    {getTotalIntervalSubscriptionCount() > 0 && (
+                    {getActiveRefSubCount() > 0 && (
                       <StatItemRow
                         kind="referenda"
-                        meterValue={getTotalIntervalSubscriptionCount()}
+                        meterValue={getActiveRefSubCount()}
                       />
                     )}
                   </FlexColumn>

@@ -17,6 +17,7 @@ export interface ChainEventsContextInterface {
   accountSubCountForPallet: (pallet: string) => number;
   accountSubCount: (account: FlattenedAccountData) => Promise<number>;
   addSubsForRef: (chainId: ChainID, refId: number) => void;
+  countActiveRefSubs: () => number;
   getCategorisedForAccount: (
     account: FlattenedAccountData
   ) => Record<string, ChainEventSubscription[]>;

@@ -9,7 +9,7 @@ import {
   useConnections,
   useIntervalSubscriptions,
 } from '@polkadot-live/contexts';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ButtonText } from '@polkadot-live/ui/kits/buttons';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { faChevronRight, faSplotch } from '@fortawesome/free-solid-svg-icons';
@@ -21,7 +21,7 @@ import type { NetworksProps } from './types';
 export const Networks = ({ setBreadcrumb, setSection }: NetworksProps) => {
   const { openTab } = useConnections();
   const { getSortedKeys, subscriptions } = useIntervalSubscriptions();
-  const { refChainHasSubs, setActiveRefChain, syncRefs } = useChainEvents();
+  const { refChainHasSubs, setActiveRefChain } = useChainEvents();
 
   // Accordion state.
   const [accordionValue, setAccordionValue] = useState<string[]>(['OpenGov']);
@@ -41,14 +41,6 @@ export const Networks = ({ setBreadcrumb, setSection }: NetworksProps) => {
     );
     return hasSmart || hasClassic;
   };
-
-  // Sync persisted referenda subscription state.
-  useEffect(() => {
-    const sync = async () => {
-      await syncRefs();
-    };
-    sync();
-  }, []);
 
   return (
     <div style={{ width: '100%' }}>

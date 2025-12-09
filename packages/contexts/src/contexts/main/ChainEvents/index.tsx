@@ -72,6 +72,16 @@ export const ChainEventsProvider = ({
     return false;
   };
 
+  const countActiveRefSubs = (): number => {
+    let count = 0;
+    for (const refIds of refSubscriptions.values()) {
+      for (const subs of refIds.values()) {
+        count += subs.filter((s) => s.enabled).length;
+      }
+    }
+    return count;
+  };
+
   const refActiveSubCount = (refId: number): number => {
     if (!activeRefChain) {
       return 0;
@@ -418,6 +428,26 @@ export const ChainEventsProvider = ({
   };
 
   /**
+   * Sync persisted referenda subscription state.
+   */
+  useEffect(() => {
+    const sync = async () => {
+      await syncRefs();
+    };
+    sync();
+  }, []);
+
+  /**
+   * Listen to state messages from background worker.
+   */
+  useEffect(() => {
+    const removeListener = adapter.listenOnMount(removeAllForAccount);
+    return () => {
+      removeListener && removeListener();
+    };
+  }, []);
+
+  /**
    * Get chain subscriptions state from store and merge with defaults.
    */
   useEffect(() => {
@@ -501,16 +531,6 @@ export const ChainEventsProvider = ({
     fetch();
   }, [activeRefChain]);
 
-  /**
-   * Listen to state messages from background worker.
-   */
-  useEffect(() => {
-    const removeListener = adapter.listenOnMount(removeAllForAccount);
-    return () => {
-      removeListener && removeListener();
-    };
-  }, []);
-
   return (
     <ChainEventsContext
       value={{
@@ -523,6 +543,7 @@ export const ChainEventsProvider = ({
         accountSubCount,
         accountSubCountForPallet,
         addSubsForRef,
+        countActiveRefSubs,
         getCategorisedForAccount,
         getCategorisedRefsForChain,
         getEventSubscriptionCount,
