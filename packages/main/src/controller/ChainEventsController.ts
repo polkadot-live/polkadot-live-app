@@ -186,11 +186,6 @@ export class ChainEventsController {
     const stored = ChainEventsController.getAllForRef(chainId, refId);
     const updated = stored.filter((a) => !parsed.find((b) => cmp(a, b)));
     ChainEventsController.updateStoreForRef(chainId, refId, updated);
-
-    // TODO: Delete when ref is removed from main renderer.
-    //if (updated.length === 0) {
-    //  ChainEventsController.removeActiveRefId(chainId, refId);
-    //}
   };
 
   // Functions to control cached ref ids.
@@ -207,7 +202,7 @@ export class ChainEventsController {
     }
   };
 
-  private static removeActiveRefId = (chainId: ChainID, refId: number) => {
+  static removeActiveRefId = (chainId: ChainID, refId: number) => {
     const key = ChainEventsController.activeRefsKey;
     const raw = (store as Record<string, AnyData>).get(key);
     const cur: string[] = raw ? JSON.parse(raw) : [];

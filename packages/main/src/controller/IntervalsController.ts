@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { store } from '@/main';
+import { ChainEventsController } from './ChainEventsController';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { IpcTask } from '@polkadot-live/types/communication';
@@ -27,6 +28,10 @@ export class IntervalsController {
       }
       case 'interval:task:remove': {
         this.remove(task);
+        return;
+      }
+      case 'interval:tasks:remove': {
+        this.removeTasks(task);
         return;
       }
       case 'interval:task:update': {
@@ -162,6 +167,16 @@ export class IntervalsController {
         )
     );
     this.set(filtered);
+  }
+
+  private static removeTasks(task: IpcTask) {
+    const { chainId, refId } = task.data;
+    const stored: IntervalSubscription[] = JSON.parse(this.get());
+    const updated = stored.filter(
+      (t) => !(t.chainId === chainId && t.referendumId === refId)
+    );
+    this.set(updated);
+    ChainEventsController.removeActiveRefId(chainId, refId);
   }
 
   /**

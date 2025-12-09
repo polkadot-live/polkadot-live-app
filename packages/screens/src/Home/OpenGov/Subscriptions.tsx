@@ -11,9 +11,8 @@ import {
   useContextProxy,
   useIntervalSubscriptions,
   useIntervalTasksManager,
-  useManage,
 } from '@polkadot-live/contexts';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { IntervalRow } from './IntervalRow';
@@ -31,7 +30,8 @@ export const Subscriptions = ({
   const { isConnecting } = useCtx('BootstrappingCtx')();
   const { hasConnectionIssue } = useApiHealth();
   const { cacheGet, getOnlineMode } = useConnections();
-  const { updateIntervalSubscription } = useIntervalSubscriptions();
+  const { subscriptions, getCategorised, updateIntervalSubscription } =
+    useIntervalSubscriptions();
 
   const {
     insertSubscriptions,
@@ -39,12 +39,6 @@ export const Subscriptions = ({
     updateIntervalTask,
     removeSubscriptions,
   } = useIntervalTasksManager();
-
-  const {
-    dynamicIntervalTasksState,
-    tryUpdateDynamicIntervalTask,
-    getCategorisedDynamicIntervals,
-  } = useManage();
 
   const {
     activeRefChain,
@@ -58,15 +52,6 @@ export const Subscriptions = ({
   const [accordionValEvents, setAccordionValEvents] = useState<
     string | undefined
   >(undefined);
-
-  /**
-   * Go to section zero if all interval subscriptions have been removed.
-   */
-  useEffect(() => {
-    if (dynamicIntervalTasksState.length === 0) {
-      setSection(0);
-    }
-  }, [dynamicIntervalTasksState]);
 
   /**
    * Determines if interval task should be disabled.
@@ -84,16 +69,12 @@ export const Subscriptions = ({
     const map = new Map<number, boolean>();
 
     // A "global" toggle is set if all of its tasks are enabled.
-    for (const [
-      referendumId,
-      intervalTasks,
-    ] of getCategorisedDynamicIntervals().entries()) {
-      const allToggled = intervalTasks.reduce(
+    for (const [refId, subs] of getCategorised().entries()) {
+      const allToggled = subs.reduce(
         (acc, task) => (acc ? (task.status === 'enable' ? true : false) : acc),
         true
       );
-
-      map.set(referendumId, allToggled);
+      map.set(refId, allToggled);
     }
     return map;
   };
@@ -106,7 +87,11 @@ export const Subscriptions = ({
     const targetStatus = isOn ? 'enable' : 'disable';
 
     // Get dynamic tasks under the referendum ID with target status and invert it.
-    const tasks = dynamicIntervalTasksState
+    const subs = activeRefChain
+      ? (subscriptions.get(activeRefChain) ?? [])
+      : [];
+
+    const tasks = subs
       .filter(
         (t) => t.referendumId === referendumId && t.status === targetStatus
       )
@@ -128,7 +113,6 @@ export const Subscriptions = ({
     // Update React and store state.
     for (const task of tasks) {
       updateIntervalSubscription({ ...task });
-      tryUpdateDynamicIntervalTask({ ...task });
       updateIntervalTask(task);
       handleIntervalAnalytics(task);
     }
@@ -233,16 +217,18 @@ export const Subscriptions = ({
                           </Header>
                         </Style.FlexRow>
 
-                        {Array.from(getCategorisedDynamicIntervals().entries())
+                        {Array.from(getCategorised().entries())
                           .filter(([rid]) => parseInt(refId) === rid)
                           .map(([referendumId, intervalTasks]) => (
                             <Style.ItemsColumn key={`classic-${referendumId}`}>
-                              {intervalTasks.map((task) => (
-                                <IntervalRow
-                                  key={`${task.referendumId}_${task.action}`}
-                                  task={task}
-                                />
-                              ))}
+                              {intervalTasks
+                                .sort((a, b) => a.label.localeCompare(b.label))
+                                .map((task) => (
+                                  <IntervalRow
+                                    key={`${task.referendumId}_${task.action}`}
+                                    task={task}
+                                  />
+                                ))}
                             </Style.ItemsColumn>
                           ))}
 

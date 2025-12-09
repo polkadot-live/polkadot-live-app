@@ -102,6 +102,7 @@ export interface IpcTask {
     | 'interval:task:remove'
     | 'interval:task:update'
     | 'interval:tasks:import'
+    | 'interval:tasks:remove'
     // Settings
     | 'settings:handle';
   data: AnyData;

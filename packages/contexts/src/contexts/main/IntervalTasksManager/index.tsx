@@ -4,7 +4,6 @@
 import { createSafeContextHook, renderToast } from '../../../utils';
 import { useConnections } from '../../common';
 import { useIntervalSubscriptions } from '../IntervalSubscriptions';
-import { useManage } from '../Manage';
 import { createContext } from 'react';
 import { getIntervalTaskManagerAdapter } from './adapters';
 import { intervalDurationsConfig } from '@polkadot-live/consts/subscriptions/interval';
@@ -31,8 +30,6 @@ export const IntervalTasksManagerProvider = ({
   const { getOnlineMode } = useConnections();
   const { updateIntervalSubscription, removeIntervalSubscription } =
     useIntervalSubscriptions();
-  const { tryUpdateDynamicIntervalTask, tryRemoveIntervalSubscription } =
-    useManage();
 
   // Utility to update an interval task.
   const updateIntervalTask = (task: IntervalSubscription) => {
@@ -53,7 +50,6 @@ export const IntervalTasksManagerProvider = ({
 
     // Update store and renderer state.
     updateIntervalSubscription(task);
-    tryUpdateDynamicIntervalTask(task);
     updateIntervalTask(task);
   };
 
@@ -68,7 +64,6 @@ export const IntervalTasksManagerProvider = ({
 
     // Update store and renderer state.
     updateIntervalSubscription(task);
-    tryUpdateDynamicIntervalTask(task);
     updateIntervalTask(task);
   };
 
@@ -79,7 +74,6 @@ export const IntervalTasksManagerProvider = ({
     adapter.onRemoveSubscription(task, getOnlineMode());
     // Set status to disable and update state.
     task.status = 'disable';
-    tryRemoveIntervalSubscription(task);
     removeIntervalSubscription(task);
 
     // Remove task from store and controller.
@@ -103,7 +97,6 @@ export const IntervalTasksManagerProvider = ({
       // Update task state.
       task.intervalSetting = settingObj;
       updateIntervalSubscription(task);
-      tryUpdateDynamicIntervalTask(task);
 
       // Update store and view state.
       adapter.onUpdateSubscription(task);

@@ -17,9 +17,4 @@ export interface IntervalSubscriptionsAdapter {
     addIntervalSubscription?: (task: IntervalSubscription) => void,
     tryAddIntervalSubscription?: (task: IntervalSubscription) => void
   ) => void;
-
-  onRemoveInterval: (
-    task?: IntervalSubscription,
-    tryRemoveIntervalSubscription?: (task: IntervalSubscription) => void
-  ) => void;
 }

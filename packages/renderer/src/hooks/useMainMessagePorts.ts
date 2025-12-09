@@ -69,11 +69,7 @@ export const useMainMessagePorts = () => {
     updateWcTxSignMap,
     verifySigningAccount,
   } = MainCtx.useWalletConnect();
-  const {
-    setRenderedSubscriptions,
-    tryAddIntervalSubscription,
-    tryRemoveIntervalSubscription,
-  } = useManage();
+  const { setRenderedSubscriptions } = useManage();
   const { removeAllForAccount } = useChainEvents();
 
   /**
@@ -461,7 +457,6 @@ export const useMainMessagePorts = () => {
     IntervalsController.insertSubscriptions(parsed, getOnlineMode());
     for (const task of parsed) {
       addIntervalSubscription(task);
-      tryAddIntervalSubscription(task);
       await window.myAPI.sendIntervalTask({
         action: 'interval:task:add',
         data: { serialized: JSON.stringify(task) },
@@ -488,19 +483,15 @@ export const useMainMessagePorts = () => {
       data: { chainId, refId, serialized: JSON.stringify(subs) },
     });
 
+    // Update React state.
+    parsed.forEach((task) => removeIntervalSubscription(task));
+
     // Update managed tasks in intervals controller.
     IntervalsController.removeSubscriptions(parsed, getOnlineMode());
-
-    // Update React and store state.
-    for (const task of parsed) {
-      tryRemoveIntervalSubscription(task);
-      removeIntervalSubscription(task);
-
-      await window.myAPI.sendIntervalTask({
-        action: 'interval:task:remove',
-        data: { serialized: JSON.stringify(task) },
-      });
-    }
+    await window.myAPI.sendIntervalTask({
+      action: 'interval:tasks:remove',
+      data: { chainId, refId },
+    });
   };
 
   /**

@@ -4,7 +4,6 @@
 import { createContext, useEffect, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
 import { useChainEvents } from '../ChainEvents';
-import { useManage } from '../Manage';
 import { getIntervalSubscriptionsAdapter } from './adapters';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
@@ -25,14 +24,39 @@ export const IntervalSubscriptionsProvider = ({
   children: React.ReactNode;
 }) => {
   const adapter = getIntervalSubscriptionsAdapter();
-  const { tryAddIntervalSubscription, tryRemoveIntervalSubscription } =
-    useManage();
   const { activeRefChain } = useChainEvents();
 
   // Active interval subscriptions.
   const [subscriptions, setSubscriptions] = useState<
     Map<ChainID, IntervalSubscription[]>
   >(new Map());
+
+  const getCategorised = (): Map<
+    number /* refId */,
+    IntervalSubscription[]
+  > => {
+    const map = new Map<number, IntervalSubscription[]>();
+    if (!activeRefChain) {
+      return map;
+    }
+    const subs = subscriptions.get(activeRefChain);
+    if (!subs) {
+      return map;
+    }
+    const cmp = (a: IntervalSubscription, b: IntervalSubscription) =>
+      a.chainId === b.chainId &&
+      a.referendumId === b.referendumId &&
+      a.action === b.action;
+
+    for (const sub of subs) {
+      const { referendumId: refId } = sub;
+      if (refId) {
+        const cur = (map.get(refId) ?? []).filter((s) => !cmp(s, sub));
+        map.set(refId, [...cur, sub]);
+      }
+    }
+    return map;
+  };
 
   // Add an interval subscription to the context state.
   const addIntervalSubscription = (task: IntervalSubscription) => {
@@ -64,7 +88,6 @@ export const IntervalSubscriptionsProvider = ({
 
   // Remove an interval subscription from the context state.
   const removeIntervalSubscription = (task: IntervalSubscription) => {
-    adapter.onRemoveInterval(task, tryRemoveIntervalSubscription);
     setSubscriptions((prev) => {
       // NOTE: Relies on referendum ID to filter task for now.
       const { chainId, action, referendumId } = task;
@@ -123,7 +146,7 @@ export const IntervalSubscriptionsProvider = ({
 
   // Get subscriptions from database and set state on mount.
   useEffect(() => {
-    adapter.onMount(addIntervalSubscription, tryAddIntervalSubscription);
+    adapter.onMount(addIntervalSubscription);
   }, []);
 
   // Listen for state syncing messages.
@@ -138,10 +161,7 @@ export const IntervalSubscriptionsProvider = ({
   useEffect(() => {
     const fetch = async () => {
       const tasks = await adapter.getIntervalSubs();
-      tasks.forEach((t) => {
-        addIntervalSubscription(t);
-        tryAddIntervalSubscription(t);
-      });
+      tasks.forEach((t) => addIntervalSubscription(t));
     };
     fetch();
   }, [activeRefChain]);
@@ -152,6 +172,7 @@ export const IntervalSubscriptionsProvider = ({
         subscriptions,
         addIntervalSubscription,
         chainHasIntervalSubscriptions,
+        getCategorised,
         getIntervalSubscriptionsForChain,
         getSortedKeys,
         getTotalIntervalSubscriptionCount,

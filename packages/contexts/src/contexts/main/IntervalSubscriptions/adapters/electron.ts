@@ -19,8 +19,4 @@ export const electronAdapter: IntervalSubscriptionsAdapter = {
   onMount: () => {
     /* empty */
   },
-
-  onRemoveInterval: () => {
-    /* empty */
-  },
 };
