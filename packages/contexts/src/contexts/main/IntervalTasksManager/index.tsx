@@ -29,7 +29,7 @@ export const IntervalTasksManagerProvider = ({
 }) => {
   const adapter = getIntervalTaskManagerAdapter();
   const { getOnlineMode } = useConnections();
-  const { updateIntervalSubscription, removeIntervalSubscription } =
+  const { updateIntervalSubscription, removeIntervalSubscriptions } =
     useIntervalSubscriptions();
 
   // Remove referendum dialog state.
@@ -129,10 +129,7 @@ export const IntervalTasksManagerProvider = ({
     refId: number,
     tasks: IntervalSubscription[]
   ) => {
-    for (const task of structuredClone(tasks)) {
-      task.status = 'disable';
-      removeIntervalSubscription(task);
-    }
+    removeIntervalSubscriptions(chainId, refId);
     adapter.onRemoveAllSubscriptions(chainId, refId, tasks, getOnlineMode());
   };
 

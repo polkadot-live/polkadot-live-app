@@ -54,7 +54,7 @@ export const useMainMessagePorts = () => {
   const { updateEventsOnAccountRename } = useEvents();
   const { ledgerSignSubmit } = MainCtx.useLedgerSigner();
   const { handleInitTreasury } = MainCtx.useTreasuryApi();
-  const { addIntervalSubscription, removeIntervalSubscription } =
+  const { addIntervalSubscription, removeIntervalSubscriptions } =
     useIntervalSubscriptions();
 
   const {
@@ -476,7 +476,7 @@ export const useMainMessagePorts = () => {
     removeSubsForRef(chainId, refId);
 
     // Update React state.
-    parsed.forEach((task) => removeIntervalSubscription(task));
+    removeIntervalSubscriptions(chainId, refId);
 
     // Update controller and store.
     IntervalsController.removeSubscriptions(parsed, getOnlineMode());

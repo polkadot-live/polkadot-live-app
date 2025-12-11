@@ -87,18 +87,15 @@ export const IntervalSubscriptionsProvider = ({
   };
 
   // Remove an interval subscription from the context state.
-  const removeIntervalSubscription = (task: IntervalSubscription) => {
+  const removeIntervalSubscriptions = (chainId: ChainID, refId: number) => {
     setSubscriptions((prev) => {
-      // NOTE: Relies on referendum ID to filter task for now.
-      const { chainId, action, referendumId } = task;
-      const cloned = new Map(prev);
-      const updated = cloned
-        .get(chainId)!
-        .filter(
-          (t) => !(t.action === action && t.referendumId === referendumId)
-        );
-      updated.length ? cloned.set(chainId, updated) : cloned.delete(chainId);
-      return cloned;
+      const cur = prev.get(chainId) || [];
+      const upd = cur.filter(
+        (t) => t.chainId === chainId && t.referendumId === refId
+      );
+      const newMap = new Map(prev);
+      upd.length === 0 ? newMap.delete(chainId) : newMap.set(chainId, upd);
+      return newMap;
     });
   };
 
@@ -131,7 +128,10 @@ export const IntervalSubscriptionsProvider = ({
     const order: ChainID[] = ['Polkadot Asset Hub', 'Kusama Asset Hub'];
     const result: ChainID[] = [];
     for (const chainId of order) {
-      Boolean(subscriptions.has(chainId)) && result.push(chainId);
+      const cur = subscriptions.get(chainId);
+      if (cur?.length) {
+        result.push(chainId);
+      }
     }
     return result;
   };
@@ -176,7 +176,7 @@ export const IntervalSubscriptionsProvider = ({
         getIntervalSubscriptionsForChain,
         getSortedKeys,
         getTotalIntervalSubscriptionCount,
-        removeIntervalSubscription,
+        removeIntervalSubscriptions,
         setSubscriptions,
         updateIntervalSubscription,
       }}
