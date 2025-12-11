@@ -53,12 +53,7 @@ export const TaskHandlerProvider = ({
     const { refId } = refInfo;
     const all = getIntervalSubscriptions(chainId, refInfo);
     const updated = all.map(
-      (t) =>
-        ({
-          ...t,
-          status: 'enable',
-          referendumId: refId,
-        }) as IntervalSubscription
+      (t) => ({ ...t, referendumId: refId }) as IntervalSubscription
     );
     // Cache task data in context.
     updated.forEach((t) => addReferendaSubscription({ ...t }));
