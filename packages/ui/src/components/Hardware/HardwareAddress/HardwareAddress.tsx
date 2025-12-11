@@ -4,7 +4,7 @@
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import { ellipsisFn } from '@w3ux/utils';
 import { EllipsisSpinner } from '../../Spinners';
-import { ActionBtn, HardwareAddressWrapper } from './Wrapper';
+import { ActionBtn, AllNetworksBtn, HardwareAddressWrapper } from './Wrapper';
 import { TooltipRx } from '../../TooltipRx';
 import { FlexColumn, FlexRow } from '@polkadot-live/styles/wrappers';
 import { ChainIcon } from '../../Icons';
@@ -201,6 +201,14 @@ export const HardwareAddress = ({
               </FlexRow>
             </FlexRow>
           ))}
+        <FlexRow>
+          <AllNetworksBtn onClick={() => handleManageAccountClick()}>
+            <FlexRow $gap="0.75rem">
+              <FontAwesomeIcon icon={FA.faBars} />
+              <span>All Networks</span>
+            </FlexRow>
+          </AllNetworksBtn>
+        </FlexRow>
       </FlexColumn>
     </HardwareAddressWrapper>
   );
