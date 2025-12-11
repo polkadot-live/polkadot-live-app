@@ -5,21 +5,8 @@ import type { IntervalTaskManagerAdapter } from './types';
 import type { OneShotReturn } from '@polkadot-live/types';
 
 export const chromeAdapter: IntervalTaskManagerAdapter = {
-  handleRemoveSubscription: async (task, isOnline) => {
-    chrome.runtime.sendMessage({
-      type: 'intervalSubscriptions',
-      task: 'remove',
-      payload: { task, onlineMode: isOnline },
-    });
-    try {
-      chrome.runtime.sendMessage({
-        type: 'intervalSubscriptions',
-        task: 'syncIntervalSubscriptionRemove',
-        payload: { task },
-      });
-    } catch (error) {
-      console.error(error);
-    }
+  onRemoveAllSubscriptions: async () => {
+    /* empty */
   },
 
   handleToggleSubscription: async (task, isOnline) => {
@@ -48,10 +35,6 @@ export const chromeAdapter: IntervalTaskManagerAdapter = {
       task: 'insertSubscriptions',
       payload: { tasks, onlineMode: isOnline },
     });
-  },
-
-  onRemoveSubscription: () => {
-    /* empty */
   },
 
   onRemoveSubscriptions: (tasks, isOnline) => {

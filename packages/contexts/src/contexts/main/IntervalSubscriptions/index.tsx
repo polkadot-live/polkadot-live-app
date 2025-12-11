@@ -131,7 +131,7 @@ export const IntervalSubscriptionsProvider = ({
     const order: ChainID[] = ['Polkadot Asset Hub', 'Kusama Asset Hub'];
     const result: ChainID[] = [];
     for (const chainId of order) {
-      subscriptions.has(chainId) && result.push(chainId);
+      Boolean(subscriptions.has(chainId)) && result.push(chainId);
     }
     return result;
   };

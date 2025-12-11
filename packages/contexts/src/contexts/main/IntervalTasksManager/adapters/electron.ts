@@ -9,20 +9,18 @@ import {
 import type { IntervalTaskManagerAdapter } from './types';
 
 export const electronAdapter: IntervalTaskManagerAdapter = {
-  handleRemoveSubscription: async (task, isOnline) => {
-    task.status === 'enable' &&
-      IntervalsController.removeSubscription(task, isOnline);
-    task.status = 'disable';
+  onRemoveAllSubscriptions: async (chainId, refId, tasks, isOnline) => {
+    IntervalsController.removeSubscriptions(tasks, isOnline);
 
-    // Update OpenGov window subscription state.
+    // Update OpenGov window state.
     ConfigRenderer.portToOpenGov?.postMessage({
-      task: 'openGov:task:removed',
-      data: { serialized: JSON.stringify(task) },
+      task: 'openGov:ref:remove',
+      data: { chainId, refId },
     });
-    // Remove task from store.
+    // Update store.
     await window.myAPI.sendIntervalTask({
-      action: 'interval:task:remove',
-      data: { serialized: JSON.stringify(task) },
+      action: 'interval:tasks:remove',
+      data: { chainId, refId },
     });
   },
 
@@ -44,12 +42,6 @@ export const electronAdapter: IntervalTaskManagerAdapter = {
 
   onInsertSubscriptions: (tasks, isOnline) => {
     IntervalsController.insertSubscriptions(tasks, isOnline);
-  },
-
-  onRemoveSubscription: (task, isOnline) => {
-    if (task.status === 'enable') {
-      IntervalsController.removeSubscription(task, isOnline);
-    }
   },
 
   onRemoveSubscriptions: (tasks, isOnline) => {

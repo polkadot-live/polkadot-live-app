@@ -35,6 +35,21 @@ export const ReferendaSubscriptionsProvider = ({
     new Map<ChainID, number[] /* refIds */>()
   );
 
+  const removeRef = (chainId: ChainID, refId: number) => {
+    setSubscriptions((prev) => {
+      const cur = prev.get(chainId) ?? [];
+      const updated = cur.filter((s) => s.referendumId !== refId);
+      updated.length ? prev.set(chainId, updated) : prev.delete(chainId);
+      return new Map(prev);
+    });
+    setAddedRefsMap((prev) => {
+      const cur = prev.get(chainId) ?? [];
+      const updated = cur.filter((id) => id !== refId);
+      updated.length ? prev.set(chainId, updated) : prev.delete(chainId);
+      return new Map(prev);
+    });
+  };
+
   // Add a task to the context.
   const addReferendaSubscription = (task: IntervalSubscription) => {
     setSubscriptions((prev) => {
@@ -114,9 +129,7 @@ export const ReferendaSubscriptionsProvider = ({
   useEffect(() => {
     adapter.fetchOnMount().then((result) => {
       if (result) {
-        for (const task of result) {
-          addReferendaSubscription(task);
-        }
+        result.forEach((t) => addReferendaSubscription(t));
       }
     });
   }, []);
@@ -139,6 +152,7 @@ export const ReferendaSubscriptionsProvider = ({
         subscriptions,
         addReferendaSubscription,
         isAdded,
+        removeRef,
         removeReferendaSubscription,
         setSubscriptions,
         updateReferendaSubscription,

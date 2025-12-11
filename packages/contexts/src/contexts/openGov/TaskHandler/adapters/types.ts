@@ -4,13 +4,13 @@
 import type { AnyData, IntervalSubscription } from '@polkadot-live/types';
 
 export interface TaskHandlerAdapter {
-  addIntervalSubscriptionsMessage: (
+  addReferendumSubscriptions: (
     refId: number,
     tasks: IntervalSubscription[],
     isOnline: boolean
   ) => void;
   handleAnalytics: (event: string, data: AnyData | null) => void;
-  removeIntervalSubscriptionsMessage: (
+  removeReferendumSubscriptions: (
     refId: number,
     tasks: IntervalSubscription[],
     isOnline: boolean

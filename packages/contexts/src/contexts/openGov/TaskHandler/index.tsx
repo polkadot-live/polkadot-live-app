@@ -49,10 +49,7 @@ export const TaskHandlerProvider = ({
   };
 
   // Handles adding all available subscriptions for a referendum.
-  const addAllIntervalSubscriptions = (
-    chainId: ChainID,
-    refInfo: ReferendaInfo
-  ) => {
+  const addSubscriptions = (chainId: ChainID, refInfo: ReferendaInfo) => {
     const { refId } = refInfo;
     const all = getIntervalSubscriptions(chainId, refInfo);
     const updated = all.map(
@@ -63,22 +60,19 @@ export const TaskHandlerProvider = ({
           referendumId: refId,
         }) as IntervalSubscription
     );
-    // Cache task data in referenda subscriptions context.
-    for (const task of updated) {
-      addReferendaSubscription({ ...task });
-    }
-    adapter.addIntervalSubscriptionsMessage(refId, updated, getOnlineMode());
-    const text = `Subscriptions added for referendum ${refId}.`;
-    const toastId = `add-all-${chainId}-${refId}`;
-    renderToast(text, toastId, 'success');
+    // Cache task data in context.
+    updated.forEach((t) => addReferendaSubscription({ ...t }));
+    adapter.addReferendumSubscriptions(refId, updated, getOnlineMode());
     adapter.handleAnalytics('referenda-subscribe-all', null);
+    renderToast(
+      `Subscriptions added for referendum ${refId}.`,
+      `add-all-${chainId}-${refId}`,
+      'success'
+    );
   };
 
-  // Handles removing all addde subscriptions for a referendum.
-  const removeAllIntervalSubscriptions = (
-    chainId: ChainID,
-    refInfo: ReferendaInfo
-  ) => {
+  // Handles removing all subscriptions for a referendum.
+  const removeSubscriptions = (chainId: ChainID, refInfo: ReferendaInfo) => {
     const { refId } = refInfo;
     const all = getIntervalSubscriptions(chainId, refInfo);
     const updated = all.map(
@@ -89,22 +83,22 @@ export const TaskHandlerProvider = ({
           referendumId: refId,
         }) as IntervalSubscription
     );
-    // Cache task data in referenda subscriptions context.
-    for (const task of updated) {
-      removeReferendaSubscription({ ...task });
-    }
-    adapter.removeIntervalSubscriptionsMessage(refId, updated, getOnlineMode());
-    const text = `Subscriptions removed for referendum ${refId}.`;
-    const toastId = `remove-all-${chainId}-${refId}`;
-    renderToast(text, toastId, 'success');
+    // Cache task data in context.
+    updated.forEach((t) => removeReferendaSubscription({ ...t }));
+    adapter.removeReferendumSubscriptions(refId, updated, getOnlineMode());
     adapter.handleAnalytics('referenda-unsubscribe-all', null);
+    renderToast(
+      `Subscriptions removed for referendum ${refId}.`,
+      `remove-all-${chainId}-${refId}`,
+      'success'
+    );
   };
 
   return (
     <TaskHandlerContext
       value={{
-        addAllIntervalSubscriptions,
-        removeAllIntervalSubscriptions,
+        addSubscriptions,
+        removeSubscriptions,
       }}
     >
       {children}

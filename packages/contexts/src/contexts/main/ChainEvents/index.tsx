@@ -97,10 +97,7 @@ export const ChainEventsProvider = ({
     return subs.filter((s) => s.enabled).length;
   };
 
-  const addSubsForRef = (
-    chainId: ChainID,
-    refId: number
-  ): ChainEventSubscription[] => {
+  const addSubsForRef = (chainId: ChainID, refId: number) => {
     let updated: ChainEventSubscription[] = [];
     setRefSubscriptions((prev) => {
       type T = Map<number, ChainEventSubscription[]>;
@@ -110,13 +107,11 @@ export const ChainEventsProvider = ({
       const newMap = new Map(map).set(refId, updated);
       return new Map(prev).set(chainId, newMap);
     });
-    return updated.filter(({ enabled }) => enabled);
+    const active = updated.filter(({ enabled }) => enabled);
+    adapter.storeInsertForRef(chainId, refId, active);
   };
 
-  const removeSubsForRef = (
-    chainId: ChainID,
-    refId: number
-  ): ChainEventSubscription[] => {
+  const removeSubsForRef = (chainId: ChainID, refId: number) => {
     let removed: ChainEventSubscription[] = [];
 
     setRefSubscriptions((prev) => {
@@ -135,10 +130,12 @@ export const ChainEventsProvider = ({
         newTop.delete(chainId);
         return newTop;
       }
-      // Otherwise, update the chain's map
+      // Otherwise, update the chain's map.
       return new Map(prev).set(chainId, newMap);
     });
-    return removed.filter(({ enabled }) => enabled);
+
+    const active = removed.filter(({ enabled }) => enabled);
+    adapter.storeRemoveForRef(chainId, refId, active);
   };
 
   const getCategorisedRefsForChain = (): Record<
@@ -284,8 +281,8 @@ export const ChainEventsProvider = ({
       return next;
     });
     sub.enabled
-      ? adapter.storeInsertForRef(activeRefChain, refId, sub)
-      : adapter.storeRemoveForRef(activeRefChain, refId, sub);
+      ? adapter.storeInsertForRef(activeRefChain, refId, [sub])
+      : adapter.storeRemoveForRef(activeRefChain, refId, [sub]);
   };
 
   const toggleOsNotifyForRef = (

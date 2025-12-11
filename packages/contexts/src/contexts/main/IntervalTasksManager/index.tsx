@@ -4,10 +4,11 @@
 import { createSafeContextHook, renderToast } from '../../../utils';
 import { useConnections } from '../../common';
 import { useIntervalSubscriptions } from '../IntervalSubscriptions';
-import { createContext } from 'react';
+import { createContext, useState } from 'react';
 import { getIntervalTaskManagerAdapter } from './adapters';
 import { intervalDurationsConfig } from '@polkadot-live/consts/subscriptions/interval';
 import type { AnyFunction } from '@polkadot-live/types/misc';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { IntervalTasksManagerContextInterface } from '../../../types/main';
 import type { ReactNode } from 'react';
@@ -30,6 +31,10 @@ export const IntervalTasksManagerProvider = ({
   const { getOnlineMode } = useConnections();
   const { updateIntervalSubscription, removeIntervalSubscription } =
     useIntervalSubscriptions();
+
+  // Remove referendum dialog state.
+  const [isRemoveRefDialogOpen, setIsRemoveRefDialogOpen] = useState(false);
+  const [refIdToRemove, setRefIdToRemove] = useState<number | null>(null);
 
   // Utility to update an interval task.
   const updateIntervalTask = (task: IntervalSubscription) => {
@@ -65,19 +70,6 @@ export const IntervalTasksManagerProvider = ({
     // Update store and renderer state.
     updateIntervalSubscription(task);
     updateIntervalTask(task);
-  };
-
-  // Handle removing an interval subscription.
-  const handleRemoveIntervalSubscription = async (
-    task: IntervalSubscription
-  ) => {
-    adapter.onRemoveSubscription(task, getOnlineMode());
-    // Set status to disable and update state.
-    task.status = 'disable';
-    removeIntervalSubscription(task);
-
-    // Remove task from store and controller.
-    adapter.handleRemoveSubscription(task, getOnlineMode());
   };
 
   // Handle setting a new interval duration for the subscription.
@@ -132,17 +124,33 @@ export const IntervalTasksManagerProvider = ({
     adapter.onRemoveSubscriptions(tasks, getOnlineMode());
   };
 
+  const removeAllSubscriptions = async (
+    chainId: ChainID,
+    refId: number,
+    tasks: IntervalSubscription[]
+  ) => {
+    for (const task of structuredClone(tasks)) {
+      task.status = 'disable';
+      removeIntervalSubscription(task);
+    }
+    adapter.onRemoveAllSubscriptions(chainId, refId, tasks, getOnlineMode());
+  };
+
   return (
     <IntervalTasksManagerContext
       value={{
+        isRemoveRefDialogOpen,
+        refIdToRemove,
+        setIsRemoveRefDialogOpen,
+        setRefIdToRemove,
         insertSubscriptions,
         handleIntervalToggle,
         handleIntervalNativeCheckbox,
-        handleRemoveIntervalSubscription,
         handleChangeIntervalDuration,
         handleIntervalOneShot,
         handleIntervalAnalytics,
         removeSubscriptions,
+        removeAllSubscriptions,
         updateIntervalTask,
       }}
     >
