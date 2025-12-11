@@ -23,13 +23,11 @@ export interface ChainEventsContextInterface {
   ) => Record<string, ChainEventSubscription[]>;
   getCategorisedRefsForChain: () => Record<number, ChainEventSubscription[]>;
   getEventSubscriptionCount: () => Promise<number>;
+  isApiRequired: (chainId: ChainID) => boolean;
   refChainHasSubs: (chainId: ChainID) => boolean;
   refActiveSubCount: (refId: number) => number;
   removeAllForAccount: (account: FlattenedAccountData) => void;
-  removeSubsForRef: (
-    chainId: ChainID,
-    refId: number
-  ) => ChainEventSubscription[];
+  removeSubsForRef: (chainId: ChainID, refId: number) => void;
   setActiveAccount: React.Dispatch<
     React.SetStateAction<FlattenedAccountData | null>
   >;

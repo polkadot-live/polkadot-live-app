@@ -51,11 +51,11 @@ export interface ChainEventsAdapter {
   storeInsertForRef: (
     chainId: ChainID,
     refId: number,
-    subscription: ChainEventSubscription
+    subscriptions: ChainEventSubscription[]
   ) => void;
   storeRemoveForRef: (
     chainId: ChainID,
     refId: number,
-    subscription: ChainEventSubscription
+    subscriptions: ChainEventSubscription[]
   ) => void;
 }

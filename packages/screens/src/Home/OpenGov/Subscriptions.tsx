@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Accordion from '@radix-ui/react-accordion';
+import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as UI from '@polkadot-live/ui/components';
 import * as Style from '@polkadot-live/styles/wrappers';
 import {
@@ -15,8 +16,8 @@ import {
 import { useState } from 'react';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
+import { DialogManageRef, DialogRemoveRef } from './Dialogs';
 import { IntervalRow } from './IntervalRow';
-import { faCaretLeft, faSplotch } from '@fortawesome/free-solid-svg-icons';
 import { Header } from '../Manage/Subscriptions/Header';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SubscriptionRow } from '../ChainEvents/SubscriptionRow';
@@ -131,12 +132,13 @@ export const Subscriptions = ({
 
   return (
     <>
+      <DialogRemoveRef />
       <UI.ControlsWrapper $sticky={false} style={{ marginBottom: '1.5rem' }}>
         <div className="left">
           <ButtonPrimaryInvert
             className="back-btn"
             text="Back"
-            iconLeft={faCaretLeft}
+            iconLeft={FA.faCaretLeft}
             onClick={() => {
               setActiveRefChain(null);
               setSection(0);
@@ -144,6 +146,9 @@ export const Subscriptions = ({
           />
           <UI.SortControlLabel label={breadcrumb} />
         </div>
+        <Style.FlexRow className="right" style={{ paddingRight: '0.25rem' }}>
+          <DialogManageRef activeRefs={getCategorisedRefsForChain()} />
+        </Style.FlexRow>
       </UI.ControlsWrapper>
 
       {!getOnlineMode() && <UI.OfflineBanner rounded={true} />}
@@ -187,7 +192,7 @@ export const Subscriptions = ({
                             {activeCount(parseInt(refId)) > 0 && (
                               <FontAwesomeIcon
                                 style={{ color: 'var(--accent-primary)' }}
-                                icon={faSplotch}
+                                icon={FA.faSplotch}
                               />
                             )}
                           </Style.FlexRow>

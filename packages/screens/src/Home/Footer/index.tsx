@@ -6,6 +6,7 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import {
   useApiHealth,
+  useChainEvents,
   useChains,
   useConnections,
   useContextProxy,
@@ -32,6 +33,7 @@ export const Footer = () => {
   const { useCtx } = useContextProxy();
   const { appLoading, isConnecting, isAborting } = useCtx('BootstrappingCtx')();
   const { onDisconnectClick, setWorkingEndpoint } = useChains();
+  const { isApiRequired } = useChainEvents();
   const { getOnlineMode, getTheme, cacheGet } = useConnections();
   const { chainHasSubscriptions } = useSubscriptions();
 
@@ -74,7 +76,8 @@ export const Footer = () => {
     cacheGet('extrinsic:building')
       ? false
       : !chainHasSubscriptions(chainId) &&
-        !chainHasIntervalSubscriptions(chainId);
+        !chainHasIntervalSubscriptions(chainId) &&
+        !isApiRequired(chainId);
 
   // Get API disconnect button tooltip.
   const disconnectTooltip = (flattened: FlattenedAPIData) => {

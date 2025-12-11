@@ -9,6 +9,7 @@ export interface ReferendaSubscriptionsContextInterface {
   subscriptions: Map<ChainID, IntervalSubscription[]>;
   addReferendaSubscription: (task: IntervalSubscription) => void;
   isAdded: (referendum: ReferendaInfo, chainId: ChainID) => boolean;
+  removeRef: (chainId: ChainID, refId: number) => void;
   removeReferendaSubscription: (task: IntervalSubscription) => void;
   setSubscriptions: (
     subscriptions: Map<ChainID, IntervalSubscription[]>

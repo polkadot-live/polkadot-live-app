@@ -5,11 +5,8 @@ import type { ChainID } from '@polkadot-live/types/chains';
 import type { ReferendaInfo } from '@polkadot-live/types/openGov';
 
 export interface TaskHandlerContextInterface {
-  addAllIntervalSubscriptions: (
-    chainId: ChainID,
-    referendumInfo: ReferendaInfo
-  ) => void;
-  removeAllIntervalSubscriptions: (
+  addSubscriptions: (chainId: ChainID, referendumInfo: ReferendaInfo) => void;
+  removeSubscriptions: (
     chainId: ChainID,
     referendumInfo: ReferendaInfo
   ) => void;

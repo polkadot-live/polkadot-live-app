@@ -155,21 +155,25 @@ export const electronAdapter: ChainEventsAdapter = {
     ChainEventsService.updateRefScoped(refId, subscription);
   },
 
-  storeInsertForRef: (chainId, refId, subscription) => {
+  storeInsertForRef: (chainId, refId, subscriptions) => {
     window.myAPI.sendChainEventTask({
       action: 'chainEvents:insertRefSubs',
-      data: { chainId, refId, serialized: JSON.stringify([subscription]) },
+      data: { chainId, refId, serialized: JSON.stringify(subscriptions) },
     });
-    ChainEventsService.insertRefScoped(refId, subscription);
+    subscriptions.forEach((s) => ChainEventsService.insertRefScoped(refId, s));
     ChainEventsService.initEventStream(chainId);
   },
 
-  storeRemoveForRef: (chainId, refId, subscription) => {
+  storeRemoveForRef: (chainId, refId, subscriptions) => {
     window.myAPI.sendChainEventTask({
       action: 'chainEvents:removeRefSubs',
-      data: { chainId, refId, serialized: JSON.stringify([subscription]) },
+      data: {
+        chainId,
+        refId,
+        serialized: JSON.stringify(subscriptions),
+      },
     });
-    ChainEventsService.removeRefScoped(refId, subscription);
+    subscriptions.forEach((s) => ChainEventsService.removeRefScoped(refId, s));
     ChainEventsService.tryStopEventsStream(chainId);
   },
 };

@@ -21,12 +21,8 @@ export const useOpenGovMessagePorts = () => {
   const { receiveTracksData, setFetchingTracks } = useTracks();
   const { receiveReferendaData, setFetchingReferenda } = useReferenda();
   const { setTreasuryData, setFetchingTreasuryData } = useTreasury();
-
-  const {
-    addReferendaSubscription,
-    updateReferendaSubscription,
-    removeReferendaSubscription,
-  } = useReferendaSubscriptions();
+  const { addReferendaSubscription, updateReferendaSubscription, removeRef } =
+    useReferendaSubscriptions();
 
   /**
    * @name handleReceivedPort
@@ -90,10 +86,9 @@ export const useOpenGovMessagePorts = () => {
               updateReferendaSubscription(task);
               break;
             }
-            case 'openGov:task:removed': {
-              const { serialized } = ev.data.data;
-              const task: IntervalSubscription = JSON.parse(serialized);
-              removeReferendaSubscription({ ...task });
+            case 'openGov:ref:remove': {
+              const { chainId, refId } = ev.data.data;
+              removeRef(chainId, refId);
               break;
             }
             default: {

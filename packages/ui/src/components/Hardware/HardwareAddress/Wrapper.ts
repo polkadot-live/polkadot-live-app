@@ -30,6 +30,16 @@ const mixinAddressInput = css`
   }
 `;
 
+export const AllNetworksBtn = styled.button`
+  opacity: 0.75;
+  font-size: 1rem;
+  padding: 0.75rem 0.25rem 0;
+
+  &:hover {
+    opacity: 1;
+  }
+`;
+
 export const ActionBtn = styled.button`
   color: var(--text-color-secondary);
   background-color: var(--button-background-primary);

@@ -10,7 +10,7 @@ import type {
 export const intervalDurationsConfig: IntervalSetting[] = [
   { label: '15 minutes', ticksToWait: 1 },
   { label: '30 minutes', ticksToWait: 2 },
-  { label: '1 hour', ticksToWait: 4 },
+  { label: '60 minutes', ticksToWait: 4 },
   { label: '2 hours', ticksToWait: 8 },
   { label: '4 hours', ticksToWait: 16 },
   { label: '6 hours', ticksToWait: 24 },
@@ -23,7 +23,7 @@ export const intervalTasks: IntervalSubscription[] = [
   // Polkadot Asset Hub
   {
     action: 'subscribe:interval:openGov:referendumVotes',
-    intervalSetting: { label: '15 minutes', ticksToWait: 1 },
+    intervalSetting: { label: '60 minutes', ticksToWait: 4 },
     tickCounter: 0,
     category: 'Open Gov',
     chainId: 'Polkadot Asset Hub',
@@ -34,7 +34,7 @@ export const intervalTasks: IntervalSubscription[] = [
   },
   {
     action: 'subscribe:interval:openGov:decisionPeriod',
-    intervalSetting: { label: '15 minutes', ticksToWait: 1 },
+    intervalSetting: { label: '60 minutes', ticksToWait: 4 },
     tickCounter: 0,
     category: 'Open Gov',
     chainId: 'Polkadot Asset Hub',
@@ -45,7 +45,7 @@ export const intervalTasks: IntervalSubscription[] = [
   },
   {
     action: 'subscribe:interval:openGov:referendumThresholds',
-    intervalSetting: { label: '15 minutes', ticksToWait: 1 },
+    intervalSetting: { label: '60 minutes', ticksToWait: 4 },
     tickCounter: 0,
     category: 'Open Gov',
     chainId: 'Polkadot Asset Hub',
@@ -57,7 +57,7 @@ export const intervalTasks: IntervalSubscription[] = [
   // Kusama Asset Hub
   {
     action: 'subscribe:interval:openGov:referendumVotes',
-    intervalSetting: { label: '15 minutes', ticksToWait: 1 },
+    intervalSetting: { label: '60 minutes', ticksToWait: 4 },
     tickCounter: 0,
     category: 'Open Gov',
     chainId: 'Kusama Asset Hub',
@@ -68,7 +68,7 @@ export const intervalTasks: IntervalSubscription[] = [
   },
   {
     action: 'subscribe:interval:openGov:decisionPeriod',
-    intervalSetting: { label: '15 minutes', ticksToWait: 1 },
+    intervalSetting: { label: '60 minutes', ticksToWait: 4 },
     tickCounter: 0,
     category: 'Open Gov',
     chainId: 'Kusama Asset Hub',
@@ -79,7 +79,7 @@ export const intervalTasks: IntervalSubscription[] = [
   },
   {
     action: 'subscribe:interval:openGov:referendumThresholds',
-    intervalSetting: { label: '15 minutes', ticksToWait: 1 },
+    intervalSetting: { label: '60 minutes', ticksToWait: 4 },
     tickCounter: 0,
     category: 'Open Gov',
     chainId: 'Kusama Asset Hub',

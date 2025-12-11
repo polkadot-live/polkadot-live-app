@@ -27,8 +27,7 @@ export const ReferendumRow = ({ referendum }: ReferendumRowProps) => {
   const { cacheGet, getOnlineMode, getTheme } = useConnections();
   const { getProposal, usePolkassemblyApi } = usePolkassembly();
   const { isAdded } = useReferendaSubscriptions();
-  const { addAllIntervalSubscriptions, removeAllIntervalSubscriptions } =
-    useTaskHandler();
+  const { addSubscriptions, removeSubscriptions } = useTaskHandler();
 
   const { refId, refStatus } = referendum;
   const darkMode = cacheGet('mode:dark');
@@ -90,8 +89,8 @@ export const ReferendumRow = ({ referendum }: ReferendumRowProps) => {
                   disabled={!isOnline}
                   onClick={() =>
                     !refAdded
-                      ? addAllIntervalSubscriptions(chainId, referendum)
-                      : removeAllIntervalSubscriptions(chainId, referendum)
+                      ? addSubscriptions(chainId, referendum)
+                      : removeSubscriptions(chainId, referendum)
                   }
                 >
                   <FontAwesomeIcon

@@ -6,9 +6,9 @@ import type { AnyData } from '@polkadot-live/types';
 import type { TaskHandlerAdapter } from './types';
 
 export const electronAdapter: TaskHandlerAdapter = {
-  addIntervalSubscriptionsMessage: (refId, tasks) => {
+  addReferendumSubscriptions: (refId, tasks) => {
     ConfigOpenGov.portOpenGov.postMessage({
-      task: 'openGov:interval:add:multi',
+      task: 'openGov:subscriptions:add',
       data: {
         refId,
         tasks: JSON.stringify(tasks),
@@ -20,9 +20,9 @@ export const electronAdapter: TaskHandlerAdapter = {
     window.myAPI.umamiEvent(event, data);
   },
 
-  removeIntervalSubscriptionsMessage: (refId, tasks) => {
+  removeReferendumSubscriptions: (refId, tasks) => {
     ConfigOpenGov.portOpenGov.postMessage({
-      task: 'openGov:interval:remove:multi',
+      task: 'openGov:subscriptions:remove',
       data: {
         refId,
         tasks: JSON.stringify(tasks),
