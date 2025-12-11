@@ -399,7 +399,24 @@ export const ChainEventsProvider = ({
   const getEventSubscriptionCount = async (): Promise<number> =>
     await adapter.getSubCount();
 
-  const syncStored = async () => setSubscriptions(await adapter.getStored());
+  const syncStored = async () => {
+    if (!activeChain) {
+      return;
+    }
+    const active = (await adapter.getStored()).get(activeChain) ?? [];
+    setSubscriptions((prev) => {
+      let subs: ChainEventSubscription[] = [];
+      const pallets = ChainPallets[activeChain];
+      for (const pallet of pallets) {
+        subs = subs.concat(
+          getEventSubscriptions(activeChain, pallet).map(
+            (a) => active.find((b) => cmp(a, b)) ?? a
+          )
+        );
+      }
+      return new Map(prev).set(activeChain, subs);
+    });
+  };
 
   const syncAccounts = async (accounts: FlattenedAccountData[]) => {
     const map = new Map<string, ChainEventSubscription[]>();
@@ -427,27 +444,16 @@ export const ChainEventsProvider = ({
         for (const [refId, active] of Object.entries(rec[chainId])) {
           const rid = parseInt(refId);
           const cid = chainId as ChainID;
-          const merged = getEventSubscriptionsForRef(cid, rid).map((def) => {
-            const found = active.find((a) => a.id === def.id);
-            return found ? { ...found } : def;
-          });
-          mapRefs.set(parseInt(refId), merged);
+          const merged = getEventSubscriptionsForRef(cid, rid).map(
+            (a) => active.find((b) => cmp(a, b)) ?? a
+          );
+          mapRefs.set(rid, merged);
         }
         next.set(chainId as ChainID, mapRefs);
       }
       return next;
     });
   };
-
-  /**
-   * Sync persisted referenda subscription state.
-   */
-  useEffect(() => {
-    const sync = async () => {
-      await syncRefs();
-    };
-    sync();
-  }, []);
 
   /**
    * Listen to state messages from background worker.
@@ -463,25 +469,7 @@ export const ChainEventsProvider = ({
    * Get chain subscriptions state from store and merge with defaults.
    */
   useEffect(() => {
-    const fetch = async () => {
-      if (!activeChain) {
-        return;
-      }
-      const active = (await adapter.getStored()).get(activeChain) ?? [];
-      setSubscriptions((prev) => {
-        let subs: ChainEventSubscription[] = [];
-        const pallets = ChainPallets[activeChain];
-        for (const pallet of pallets) {
-          subs = subs.concat(
-            getEventSubscriptions(activeChain, pallet).map(
-              (a) => active.find((b) => cmp(a, b)) ?? a
-            )
-          );
-        }
-        return new Map(prev).set(activeChain, subs);
-      });
-    };
-    fetch();
+    syncStored();
   }, [activeChain]);
 
   /**

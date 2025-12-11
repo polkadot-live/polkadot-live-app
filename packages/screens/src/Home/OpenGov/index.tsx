@@ -13,16 +13,16 @@ import { Networks } from './Networks';
 import { Subscriptions } from './Subscriptions';
 
 export const OpenGov = () => {
-  const { setActiveRefChain } = useChainEvents();
+  const { setActiveRefChain, syncRefs } = useChainEvents();
   const [section, setSection] = useState<number>(0);
   const [breadcrumb, setBreadcrumb] = useState<string>('');
 
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    syncRefs();
+    return () => {
       setActiveRefChain(null);
-    },
-    []
-  );
+    };
+  }, []);
 
   return (
     <FlexColumn $rowGap={'1rem'} style={{ height: '100%' }}>
