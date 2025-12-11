@@ -59,6 +59,21 @@ export const ChainEventsProvider = ({
     Map<ChainID, Map<number /* refId */, ChainEventSubscription[]>>
   >(new Map());
 
+  const isApiRequired = (chainId: ChainID) => {
+    // Chain-scoped
+    if (subscriptions.get(chainId)?.some((s) => s.enabled)) {
+      return true;
+    }
+    // Account-scoped
+    for (const [key, subs] of accountSubscriptions.entries()) {
+      if (key.startsWith(chainId + '::') && subs.some((s) => s.enabled)) {
+        return true;
+      }
+    }
+    // Referenda-scoped
+    return refChainHasSubs(chainId);
+  };
+
   const refChainHasSubs = (chainId: ChainID): boolean => {
     const refs = refSubscriptions.get(chainId);
     if (!refs) {
@@ -544,6 +559,7 @@ export const ChainEventsProvider = ({
         getCategorisedForAccount,
         getCategorisedRefsForChain,
         getEventSubscriptionCount,
+        isApiRequired,
         refChainHasSubs,
         refActiveSubCount,
         removeAllForAccount,
