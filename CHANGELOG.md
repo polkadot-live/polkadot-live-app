@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.13.0-beta](https://github.com/polkadot-live/polkadot-live-app/compare/v0.12.0-beta...v0.13.0-beta) (2025-12-14)
+
+
+### Features
+
+* **accounts:** default bookmarks for imported accounts ([#1123](https://github.com/polkadot-live/polkadot-live-app/issues/1123)) ([6f134f1](https://github.com/polkadot-live/polkadot-live-app/commit/6f134f1162adcb67d47c3e303cd1f1600605b361))
+* **extension:** add dropdown to open tabs in tabs header ([#1125](https://github.com/polkadot-live/polkadot-live-app/issues/1125)) ([6a4d128](https://github.com/polkadot-live/polkadot-live-app/commit/6a4d1289118daf1c543d27f4ae37575c731afe25))
+* **extension:** backend for referenda-scoped chain event subscriptions ([#1133](https://github.com/polkadot-live/polkadot-live-app/issues/1133)) ([f9ecc30](https://github.com/polkadot-live/polkadot-live-app/commit/f9ecc305e90bd68d72904ff776c1ce60607ebff5))
+* **extension:** online mode switching ([#1120](https://github.com/polkadot-live/polkadot-live-app/issues/1120)) ([775ce1d](https://github.com/polkadot-live/polkadot-live-app/commit/775ce1d3651dac906ccbd697d39da6b12988aa16))
+* **opengov:** referenda loading optimisations ([#1124](https://github.com/polkadot-live/polkadot-live-app/issues/1124)) ([db883d6](https://github.com/polkadot-live/polkadot-live-app/commit/db883d6f658b8edded4240d61c581d0b96b1f993))
+* **send:** add network selection step and improve send flow ([#1122](https://github.com/polkadot-live/polkadot-live-app/issues/1122)) ([86174e5](https://github.com/polkadot-live/polkadot-live-app/commit/86174e5ec711d7c7d62faf272bc53a76bcacf608))
+* **subscriptions:** account scoped chain event subscriptions ([#1127](https://github.com/polkadot-live/polkadot-live-app/issues/1127)) ([5655b6b](https://github.com/polkadot-live/polkadot-live-app/commit/5655b6b73b569fc08752899b0ed5bb78d79eb860))
+* **subscriptions:** manage active referenda dialog ([#1132](https://github.com/polkadot-live/polkadot-live-app/issues/1132)) ([fdc35dc](https://github.com/polkadot-live/polkadot-live-app/commit/fdc35dcd3e0d71ad2f14e4de1acc50b98cf74103))
+* **subscriptions:** referenda scoped chain event subscriptions ([#1131](https://github.com/polkadot-live/polkadot-live-app/issues/1131)) ([4e6397e](https://github.com/polkadot-live/polkadot-live-app/commit/4e6397eba66e9153a7f1fa5b2a6876e4f92ed800))
+
+
+### Bug Fixes
+
+* **bootstrapping:** fix issues in bootstrap initialization process ([#1130](https://github.com/polkadot-live/polkadot-live-app/issues/1130)) ([2c98750](https://github.com/polkadot-live/polkadot-live-app/commit/2c987507774bcf79aea068ae8ec4022b4bdc94b0))
+* **ci:** increase node memory heap ([#1119](https://github.com/polkadot-live/polkadot-live-app/issues/1119)) ([8aec4f2](https://github.com/polkadot-live/polkadot-live-app/commit/8aec4f26a3b18dac710c75607aea7645b6bdcbb4))
+* **extension:** component font rendering ([#1121](https://github.com/polkadot-live/polkadot-live-app/issues/1121)) ([3a75463](https://github.com/polkadot-live/polkadot-live-app/commit/3a75463bb43a83e962836ab81fe2c0d6c135c47e))
+* **packages:** main dependencies ([#1117](https://github.com/polkadot-live/polkadot-live-app/issues/1117)) ([a438aa6](https://github.com/polkadot-live/polkadot-live-app/commit/a438aa6e75bcd7801c450b9303371ca675b10a84))
+* **ui:** classic subscription switch toggle lag ([#1129](https://github.com/polkadot-live/polkadot-live-app/issues/1129)) ([696dce6](https://github.com/polkadot-live/polkadot-live-app/commit/696dce6a9c5bdd2201c508c962ce5f440a02c0ee))
+
 ## [0.12.0-beta](https://github.com/polkadot-live/polkadot-live-app/compare/v0.11.0-beta...v0.12.0-beta) (2025-11-10)
 
 
