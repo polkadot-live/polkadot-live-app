@@ -4,6 +4,7 @@
 import { compare } from './utils';
 import { DbController } from '../../controllers';
 import { IntervalsController } from '@polkadot-live/core';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { Stores } from '../../controllers';
 
@@ -13,16 +14,6 @@ export const handleAddIntervalSubscriptions = async (
 ) => {
   for (const task of tasks) {
     await handleAddIntervalSubscription(task, onlineMode);
-  }
-};
-
-export const handleRemoveIntervalSubscriptions = async (
-  tasks: IntervalSubscription[],
-  onlineMode: boolean
-) => {
-  for (const task of tasks) {
-    IntervalsController.removeSubscription(task, onlineMode);
-    await handleRemoveIntervalSubscription(task);
   }
 };
 
@@ -56,16 +47,19 @@ export const handleUpdateIntervalSubscription = async (
   }
 };
 
-export const handleRemoveIntervalSubscription = async (
-  task: IntervalSubscription
+export const removeAllSubscriptions = async (
+  chainId: ChainID,
+  refId: number
 ) => {
-  const { chainId } = task;
   const store: Stores = 'intervalSubscriptions';
-  const all = (await DbController.get(store, chainId)) as
+  const fetched = (await DbController.get(store, chainId)) as
     | IntervalSubscription[]
     | undefined;
-  if (all) {
-    const updated = all.filter((t) => !compare(task, t));
-    await DbController.set(store, chainId, updated);
+
+  if (fetched) {
+    const updated = fetched.filter((s) => s.referendumId !== refId);
+    updated.length
+      ? await DbController.set(store, chainId, updated)
+      : await DbController.delete(store, chainId);
   }
 };

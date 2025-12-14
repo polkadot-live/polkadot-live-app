@@ -46,9 +46,10 @@ export const chromeAdapter: ReferendaSubscriptionsAdapter = {
             updateReferendaSubscription(task);
             break;
           }
-          case 'syncIntervalSubscriptionRemove': {
-            const { task }: { task: IntervalSubscription } = message.payload;
-            removeReferendaSubscription(task);
+          case 'syncRemoveAllSubscriptions': {
+            const { tasks }: { tasks: IntervalSubscription[] } =
+              message.payload;
+            tasks.forEach((task) => removeReferendaSubscription(task));
             break;
           }
         }

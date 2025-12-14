@@ -22,14 +22,12 @@ export const DialogRemoveRef = () => {
 
   const onRemoveClick = async () => {
     if (activeRefChain && refIdToRemove) {
-      // Remove ref-scoped subscriptions.
+      // Remove referenda-scoped subscriptions.
       removeSubsForRef(activeRefChain, refIdToRemove);
 
       // Remove interval subscriptions.
       const subs = subscriptions.get(activeRefChain) ?? [];
-      const filtered = subs.filter(
-        (s) => s.referendumId === refIdToRemove && s.status === 'enable'
-      );
+      const filtered = subs.filter((s) => s.referendumId === refIdToRemove);
       await removeAllSubscriptions(activeRefChain, refIdToRemove, filtered);
     }
     setIsRemoveRefDialogOpen(false);

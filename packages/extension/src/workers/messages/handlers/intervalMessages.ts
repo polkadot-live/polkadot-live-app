@@ -3,11 +3,7 @@
 
 import { IntervalsController } from '@polkadot-live/core';
 import {
-  handleAddIntervalSubscription,
-  handleAddIntervalSubscriptions,
   handleGetAllIntervalTasks,
-  handleRemoveIntervalSubscription,
-  handleRemoveIntervalSubscriptions,
   handleUpdateIntervalSubscription,
 } from '../../intervals';
 import type { AnyData } from '@polkadot-live/types/misc';
@@ -18,47 +14,11 @@ export const handleIntervalMessage = (
   sendResponse: (response?: AnyData) => void
 ): boolean => {
   switch (message.task) {
-    case 'add': {
-      const {
-        task,
-        onlineMode,
-      }: { task: IntervalSubscription; onlineMode: boolean } = message.payload;
-      handleAddIntervalSubscription(task, onlineMode);
-      return false;
-    }
-    case 'addMulti': {
-      const {
-        tasks,
-        onlineMode,
-      }: { tasks: IntervalSubscription[]; onlineMode: boolean } =
-        message.payload;
-      handleAddIntervalSubscriptions(tasks, onlineMode);
-      return false;
-    }
     case 'getAll': {
       handleGetAllIntervalTasks().then((result: IntervalSubscription[]) =>
         sendResponse(result)
       );
       return true;
-    }
-    case 'removeMulti': {
-      const {
-        tasks,
-        onlineMode,
-      }: { tasks: IntervalSubscription[]; onlineMode: boolean } =
-        message.payload;
-      handleRemoveIntervalSubscriptions(tasks, onlineMode);
-      return false;
-    }
-    case 'delete': {
-      const {
-        task,
-        onlineMode,
-      }: { task: IntervalSubscription; onlineMode: boolean } = message.payload;
-
-      IntervalsController.removeSubscription(task, onlineMode);
-      handleRemoveIntervalSubscription(task);
-      return false;
     }
     case 'insertSubscription': {
       const {
@@ -75,16 +35,6 @@ export const handleIntervalMessage = (
       }: { tasks: IntervalSubscription[]; onlineMode: boolean } =
         message.payload;
       IntervalsController.insertSubscriptions(tasks, onlineMode);
-      return false;
-    }
-    case 'remove': {
-      const {
-        task,
-        onlineMode,
-      }: { task: IntervalSubscription; onlineMode: boolean } = message.payload;
-      task.status === 'enable' &&
-        IntervalsController.removeSubscription(task, onlineMode);
-      handleRemoveIntervalSubscription(task);
       return false;
     }
     case 'removeSubscription': {

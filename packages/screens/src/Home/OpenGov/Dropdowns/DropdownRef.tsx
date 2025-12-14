@@ -24,7 +24,7 @@ interface DropdownRefProps {
 }
 
 export const DropdownRef = ({ refId }: DropdownRefProps) => {
-  const { getTheme } = useConnections();
+  const { getTheme, openInBrowser } = useConnections();
   const { setIsRemoveRefDialogOpen, setRefIdToRemove } =
     useIntervalTasksManager();
 
@@ -75,7 +75,7 @@ export const DropdownRef = ({ refId }: DropdownRefProps) => {
               if (activeRefChain) {
                 const subdomain = getSubsquareSubdomain(activeRefChain);
                 const uri = `https://${subdomain}.subsquare.io/referenda/${refId}`;
-                window.myAPI.openBrowserURL(uri);
+                openInBrowser(uri);
               }
             }}
           >
@@ -95,7 +95,7 @@ export const DropdownRef = ({ refId }: DropdownRefProps) => {
               if (activeRefChain) {
                 const subdomain = getPolkassemblySubdomain(activeRefChain);
                 const uri = `https://${subdomain}.polkassembly.io/referenda/${refId}`;
-                window.myAPI.openBrowserURL(uri);
+                openInBrowser(uri);
               }
             }}
           >
