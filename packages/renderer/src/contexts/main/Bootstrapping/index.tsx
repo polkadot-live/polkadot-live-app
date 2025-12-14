@@ -101,7 +101,7 @@ export const BootstrappingProvider = ({
    * Initialize event streams.
    */
   const initEventStreams = async () => {
-    // Get stored chain event subscriptions.
+    // Get chain-scoped subscriptions.
     const activeChainSubs = parseMap<ChainID, ChainEventSubscription[]>(
       (await window.myAPI.sendChainEventTask({
         action: 'chainEvents:getAll',
@@ -109,7 +109,7 @@ export const BootstrappingProvider = ({
       })) || '[]'
     );
 
-    // Insert global-scoped subscriptions.
+    // Insert chain-scoped subscriptions.
     for (const [cid, subs] of activeChainSubs.entries()) {
       for (const s of subs) {
         ChainEventsService.insert(cid, s);
@@ -145,7 +145,6 @@ export const BootstrappingProvider = ({
       Record<number, ChainEventSubscription[]>
     > = JSON.parse(recRes);
 
-    const insert = ChainEventsService.insertRefScoped;
     for (const [chainId, recRefs] of Object.entries(recParsed)) {
       for (const [refId, subs] of Object.entries(recRefs)) {
         subs
@@ -153,7 +152,7 @@ export const BootstrappingProvider = ({
           .forEach((s) => {
             const cid = chainId as ChainID;
             !activeChainIds.includes(cid) && activeChainIds.push(cid);
-            insert(parseInt(refId), s);
+            ChainEventsService.insertRefScoped(parseInt(refId), s);
           });
       }
     }

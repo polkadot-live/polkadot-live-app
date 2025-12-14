@@ -6,6 +6,10 @@ import type { ChainEventsAdapter } from './types';
 import type { AnyData, ChainEventSubscription } from '@polkadot-live/types';
 
 export const chromeAdapter: ChainEventsAdapter = {
+  storeRemoveForRef: () => {
+    /** empty */
+  },
+
   listenOnMount: (removeAllForAccount) => {
     const callback = async (message: AnyData) => {
       if (message.type === 'chainEvents') {
@@ -56,7 +60,18 @@ export const chromeAdapter: ChainEventsAdapter = {
     }
   },
 
-  getStoredRefSubsForChain: async () => [],
+  getStoredRefSubsForChain: async (chainId) => {
+    try {
+      return await chrome.runtime.sendMessage({
+        type: 'chainEvents',
+        task: 'getAllRefSubsForChain',
+        payload: { chainId },
+      });
+    } catch (err) {
+      console.error(err);
+      return [];
+    }
+  },
 
   getSubCount: async () =>
     await chrome.runtime.sendMessage({
@@ -134,19 +149,32 @@ export const chromeAdapter: ChainEventsAdapter = {
     });
   },
 
-  getActiveRefIds: async () => [],
-
-  getAllRefSubs: async () => ({}),
-
-  storeInsertForRef: () => {
-    /* empty */
+  toggleNotifyForRef: (chainId, refId, subscription) => {
+    chrome.runtime.sendMessage({
+      type: 'chainEvents',
+      task: 'putRefSub',
+      payload: { refId, subscription },
+    });
   },
 
-  storeRemoveForRef: () => {
-    /* empty */
-  },
+  getActiveRefIds: async (chainId) =>
+    (await chrome.runtime.sendMessage({
+      type: 'chainEvents',
+      task: 'getActiveRefIds',
+      payload: { chainId },
+    })) as number[],
 
-  toggleNotifyForRef: () => {
-    /* empty */
+  getAllRefSubs: async () =>
+    (await chrome.runtime.sendMessage({
+      type: 'chainEvents',
+      task: 'getAllRefSubs',
+    })) as Record<string, Record<number, ChainEventSubscription[]>>,
+
+  storeInsertForRef: (chainId, refId, subscriptions) => {
+    chrome.runtime.sendMessage({
+      type: 'chainEvents',
+      task: 'insertRefSubs',
+      payload: { chainId, refId, subscriptions },
+    });
   },
 };

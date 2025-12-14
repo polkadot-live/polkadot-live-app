@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { DbController } from '../../controllers';
-import { getAllChainEventsForAccount } from '../chainEvents';
+import { getAllChainEventsForAccount, getAllRefSubs } from '../chainEvents';
 import { handleGetAllIntervalTasks } from '../intervals';
 import {
   AccountsController,
@@ -52,12 +52,12 @@ export const initEventSubscriptions = async () => {
     string,
     ChainEventSubscription
   >;
-  // Insert subscriptions.
+  // Insert chain-scoped subscriptions.
   for (const [key, sub] of stored.entries()) {
     const cid = key.split('::')[0] as ChainID;
     ChainEventsService.insert(cid, sub);
   }
-  // Insert stored account-scoped chain event subscriptions.
+  // Insert account-scoped subscriptions.
   const activeChainIds: ChainID[] = [];
   for (const accounts of AccountsController.accounts.values()) {
     for (const account of accounts) {
@@ -69,15 +69,37 @@ export const initEventSubscriptions = async () => {
       }
     }
   }
+  // Insert referenda-scoped subscriptions.
+  for (const [chainId, recRefs] of Object.entries(await getAllRefSubs())) {
+    for (const [refId, subs] of Object.entries(recRefs)) {
+      subs
+        .filter((s) => s.enabled && s.kind === 'referendum')
+        .forEach((s) => {
+          const cid = chainId as ChainID;
+          !activeChainIds.includes(cid) && activeChainIds.push(cid);
+          ChainEventsService.insertRefScoped(parseInt(refId), s);
+        });
+    }
+  }
 };
 
 export const startEventStreams = async () => {
-  // Get active chains for account-scoped subscriptions.
+  // Account-scoped active chains.
   const activeChainIds: ChainID[] = [];
   for (const accounts of AccountsController.accounts.values()) {
     for (const account of accounts) {
       const subs = await getAllChainEventsForAccount(account);
       subs.length && activeChainIds.push(account.chain);
+    }
+  }
+  // Referenda-scoped active chains.
+  for (const recRefs of Object.values(await getAllRefSubs())) {
+    for (const subs of Object.values(recRefs)) {
+      subs
+        .filter((s) => s.enabled && s.kind === 'referendum')
+        .forEach((s) => {
+          !activeChainIds.includes(s.chainId) && activeChainIds.push(s.chainId);
+        });
     }
   }
   // Start event streams.

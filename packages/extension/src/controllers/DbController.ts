@@ -34,6 +34,10 @@ interface MyDB extends DBSchema {
     key: string;
     value: SubscriptionTask[];
   };
+  activeRefIds: {
+    key: 'all';
+    value: string[];
+  };
   chainEvents: {
     /** chainId::pallet::eventName */
     key: string;
@@ -60,6 +64,11 @@ interface MyDB extends DBSchema {
     key: ChainID;
     value: StoredAccount[];
   };
+  referendaChainEvents: {
+    /** chainId::refId::pallet::eventName */
+    key: string;
+    value: ChainEventSubscription;
+  };
   settings: {
     key: string;
     value: boolean;
@@ -70,12 +79,14 @@ export type Stores =
   | 'accountChainEvents'
   | 'accounts'
   | 'accountSubscriptions'
+  | 'activeRefIds'
   | 'chainEvents'
   | 'chainSubscriptions'
   | 'events'
   | 'extrinsics'
   | 'intervalSubscriptions'
   | 'managedAccounts'
+  | 'referendaChainEvents'
   | 'settings';
 
 export class DbController {
@@ -100,12 +111,14 @@ export class DbController {
       upgrade(db) {
         db.createObjectStore('accountChainEvents');
         db.createObjectStore('accountSubscriptions');
+        db.createObjectStore('activeRefIds');
         db.createObjectStore('chainEvents');
         db.createObjectStore('chainSubscriptions');
         db.createObjectStore('events');
         db.createObjectStore('extrinsics');
         db.createObjectStore('intervalSubscriptions');
         db.createObjectStore('managedAccounts');
+        db.createObjectStore('referendaChainEvents');
 
         const accountsStore = db.createObjectStore('accounts');
         for (const key of getSupportedSources()) {

@@ -9,10 +9,7 @@ export const electronAdapter: TaskHandlerAdapter = {
   addReferendumSubscriptions: (refId, tasks) => {
     ConfigOpenGov.portOpenGov.postMessage({
       task: 'openGov:subscriptions:add',
-      data: {
-        refId,
-        tasks: JSON.stringify(tasks),
-      },
+      data: { refId, tasks: JSON.stringify(tasks) },
     });
   },
 
@@ -23,10 +20,7 @@ export const electronAdapter: TaskHandlerAdapter = {
   removeReferendumSubscriptions: (refId, tasks) => {
     ConfigOpenGov.portOpenGov.postMessage({
       task: 'openGov:subscriptions:remove',
-      data: {
-        refId,
-        tasks: JSON.stringify(tasks),
-      },
+      data: { refId, tasks: JSON.stringify(tasks) },
     });
   },
 };

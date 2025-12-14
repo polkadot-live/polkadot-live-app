@@ -112,6 +112,7 @@ export const ChainEventsProvider = ({
     return subs.filter((s) => s.enabled).length;
   };
 
+  // NOTE: Only called in Electron version.
   const addSubsForRef = (chainId: ChainID, refId: number) => {
     let updated: ChainEventSubscription[] = [];
     setRefSubscriptions((prev) => {
@@ -126,6 +127,7 @@ export const ChainEventsProvider = ({
     adapter.storeInsertForRef(chainId, refId, active);
   };
 
+  // NOTE: Called in both Electron and Extension.
   const removeSubsForRef = (chainId: ChainID, refId: number) => {
     let removed: ChainEventSubscription[] = [];
 

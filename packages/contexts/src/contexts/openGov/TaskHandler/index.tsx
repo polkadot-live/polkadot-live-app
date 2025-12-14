@@ -56,8 +56,9 @@ export const TaskHandlerProvider = ({
       (t) => ({ ...t, referendumId: refId }) as IntervalSubscription
     );
     // Cache task data in context.
+    const isOnline = getOnlineMode();
     updated.forEach((t) => addReferendaSubscription({ ...t }));
-    adapter.addReferendumSubscriptions(refId, updated, getOnlineMode());
+    adapter.addReferendumSubscriptions(refId, updated, isOnline, chainId);
     adapter.handleAnalytics('referenda-subscribe-all', null);
     renderToast(
       `Subscriptions added for referendum ${refId}.`,
@@ -79,8 +80,9 @@ export const TaskHandlerProvider = ({
         }) as IntervalSubscription
     );
     // Cache task data in context.
+    const isOnline = getOnlineMode();
     updated.forEach((t) => removeReferendaSubscription({ ...t }));
-    adapter.removeReferendumSubscriptions(refId, updated, getOnlineMode());
+    adapter.removeReferendumSubscriptions(refId, updated, isOnline, chainId);
     adapter.handleAnalytics('referenda-unsubscribe-all', null);
     renderToast(
       `Subscriptions removed for referendum ${refId}.`,

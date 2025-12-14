@@ -6,7 +6,11 @@ import type { IntervalSubscriptionsAdapter } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
 
 export const chromeAdapter: IntervalSubscriptionsAdapter = {
-  getIntervalSubs: async () => [],
+  getIntervalSubs: async () =>
+    (await chrome.runtime.sendMessage({
+      type: 'intervalSubscriptions',
+      task: 'getAll',
+    })) as IntervalSubscription[],
 
   listenOnMount: (setSubscriptions) => {
     const callback = (message: AnyData) => {

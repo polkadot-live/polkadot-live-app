@@ -5,8 +5,31 @@ import type { IntervalTaskManagerAdapter } from './types';
 import type { OneShotReturn } from '@polkadot-live/types';
 
 export const chromeAdapter: IntervalTaskManagerAdapter = {
-  onRemoveAllSubscriptions: async () => {
+  handleAnalytics: () => {
     /* empty */
+  },
+
+  onUpdateSubscription: () => {
+    /* empty */
+  },
+
+  onRemoveAllSubscriptions: async (chainId, refId, tasks) => {
+    chrome.runtime.sendMessage({
+      type: 'subscriptions',
+      task: 'removeReferendumSubscriptions',
+      payload: { chainId, refId },
+    });
+
+    // Sync OpenGov view.
+    try {
+      chrome.runtime.sendMessage({
+        type: 'intervalSubscriptions',
+        task: 'syncRemoveAllSubscriptions',
+        payload: { tasks },
+      });
+    } catch (error) {
+      console.error(error);
+    }
   },
 
   handleToggleSubscription: async (task, isOnline) => {
@@ -16,10 +39,6 @@ export const chromeAdapter: IntervalTaskManagerAdapter = {
         task.status === 'enable' ? 'insertSubscription' : 'removeSubscription',
       payload: { task, onlineMode: isOnline },
     });
-  },
-
-  handleAnalytics: () => {
-    /* empty */
   },
 
   executeOneShot: async (task) =>
@@ -43,10 +62,6 @@ export const chromeAdapter: IntervalTaskManagerAdapter = {
       task: 'removeSubscriptions',
       payload: { tasks, onlineMode: isOnline },
     });
-  },
-
-  onUpdateSubscription: () => {
-    /* empty */
   },
 
   updateTask: (task) => {

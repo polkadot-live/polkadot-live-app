@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createSafeContextHook, renderToast } from '../../../utils';
+import { useChainEvents } from '../ChainEvents';
 import { useConnections } from '../../common';
 import { useIntervalSubscriptions } from '../IntervalSubscriptions';
 import { createContext, useState } from 'react';
@@ -29,6 +30,7 @@ export const IntervalTasksManagerProvider = ({
 }) => {
   const adapter = getIntervalTaskManagerAdapter();
   const { getOnlineMode } = useConnections();
+  const { removeSubsForRef } = useChainEvents();
   const { updateIntervalSubscription, removeIntervalSubscriptions } =
     useIntervalSubscriptions();
 
@@ -130,6 +132,7 @@ export const IntervalTasksManagerProvider = ({
     tasks: IntervalSubscription[]
   ) => {
     removeIntervalSubscriptions(chainId, refId);
+    removeSubsForRef(chainId, refId);
     adapter.onRemoveAllSubscriptions(chainId, refId, tasks, getOnlineMode());
   };
 

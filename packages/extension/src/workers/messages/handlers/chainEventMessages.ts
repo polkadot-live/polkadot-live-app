@@ -3,21 +3,26 @@
 
 import {
   getActiveCount,
+  getActiveRefIds,
   getAllChainEvents,
   getAllChainEventsForAccount,
+  getAllRefSubs,
+  getAllRefSubsForChain,
   putChainEvent,
   putChainEventForAccount,
+  putChainEventsForRef,
   removeAllChainEventsForAccount,
   removeChainEvent,
   removeChainEventForAccount,
   updateChainEvent,
 } from '../../chainEvents';
+import { ChainEventsService } from '@polkadot-live/core';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type {
   ChainEventSubscription,
   FlattenedAccountData,
 } from '@polkadot-live/types';
-import { ChainEventsService } from '@polkadot-live/core';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 export const handleChainEventMessage = (
   message: AnyData,
@@ -28,8 +33,22 @@ export const handleChainEventMessage = (
       getActiveCount().then((res) => sendResponse(res));
       return true;
     }
+    case 'getActiveRefIds': {
+      const { chainId }: { chainId: ChainID } = message.payload;
+      getActiveRefIds(chainId).then((ids) => sendResponse(ids));
+      return true;
+    }
     case 'getAll': {
       getAllChainEvents().then((res) => sendResponse(res));
+      return true;
+    }
+    case 'getAllRefSubs': {
+      getAllRefSubs().then((res) => sendResponse(res));
+      return true;
+    }
+    case 'getAllRefSubsForChain': {
+      const { chainId }: { chainId: ChainID } = message.payload;
+      getAllRefSubsForChain(chainId).then((res) => sendResponse(res));
       return true;
     }
     case 'getAllForAccount': {
@@ -47,6 +66,23 @@ export const handleChainEventMessage = (
       putChainEventForAccount(account, sub).then(() => {
         ChainEventsService.insertForAccount(account, sub);
         ChainEventsService.initEventStream(account.chain);
+      });
+      return false;
+    }
+    case 'insertRefSubs': {
+      const { chainId, refId, subscriptions } = message.payload;
+      const subs = subscriptions as ChainEventSubscription[];
+      putChainEventsForRef(subs).then(() => {
+        subs.forEach((s) => ChainEventsService.insertRefScoped(refId, s));
+        ChainEventsService.initEventStream(chainId);
+      });
+      return false;
+    }
+    case 'putRefSub': {
+      const { refId, subscription } = message.payload;
+      const sub = subscription as ChainEventSubscription;
+      putChainEventsForRef([sub]).then(() => {
+        ChainEventsService.updateRefScoped(refId, sub);
       });
       return false;
     }

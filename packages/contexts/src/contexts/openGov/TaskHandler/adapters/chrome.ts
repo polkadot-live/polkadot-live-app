@@ -4,21 +4,21 @@
 import type { TaskHandlerAdapter } from './types';
 
 export const chromeAdapter: TaskHandlerAdapter = {
-  addReferendumSubscriptions: (_, tasks, isOnline) =>
-    chrome.runtime.sendMessage({
-      type: 'intervalSubscriptions',
-      task: 'addMulti',
-      payload: { tasks, onlineMode: isOnline },
-    }),
-
   handleAnalytics: () => {
     /* empty */
   },
 
-  removeReferendumSubscriptions: (_, tasks, isOnline) =>
+  addReferendumSubscriptions: (refId, tasks, _isOnline, chainId) =>
     chrome.runtime.sendMessage({
-      type: 'intervalSubscriptions',
-      task: 'removeMulti',
-      payload: { tasks, onlineMode: isOnline },
+      type: 'subscriptions',
+      task: 'addReferendumSubscriptions',
+      payload: { chainId, refId, tasks },
+    }),
+
+  removeReferendumSubscriptions: (refId, _tasks, _isOnline, chainId) =>
+    chrome.runtime.sendMessage({
+      type: 'subscriptions',
+      task: 'removeReferendumSubscriptions',
+      payload: { chainId, refId },
     }),
 };
