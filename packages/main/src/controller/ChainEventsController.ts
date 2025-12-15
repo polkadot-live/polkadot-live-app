@@ -43,8 +43,7 @@ export class ChainEventsController {
         break;
       }
       case 'chainEvents:getActiveRefIds': {
-        const { chainId } = task.data;
-        return JSON.stringify(ChainEventsController.getActiveRefIds(chainId));
+        return JSON.stringify(ChainEventsController.getActiveRefIds());
       }
       case 'chainEvents:getAllRefSubs': {
         return ChainEventsController.getAllRefSubs();
@@ -81,17 +80,11 @@ export class ChainEventsController {
     }
   }
 
-  private static getActiveRefIds = (chainId: ChainID): number[] => {
+  private static getActiveRefIds = (): string[] => {
     const key = ChainEventsController.activeRefsKey;
     const raw = (store as Record<string, AnyData>).get(key);
     const cur: string[] = raw ? JSON.parse(raw) : [];
-    return cur
-      .map((active) => {
-        const s = active.split('::');
-        return { cid: s[0] as ChainID, rid: parseInt(s[1]) };
-      })
-      .filter(({ cid }) => cid === chainId)
-      .map(({ rid }) => rid);
+    return cur;
   };
 
   private static getAllRefSubs = (): string => {

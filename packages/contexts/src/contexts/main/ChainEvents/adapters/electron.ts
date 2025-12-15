@@ -30,11 +30,11 @@ export const electronAdapter: ChainEventsAdapter = {
     }
   },
 
-  getActiveRefIds: async (chainId): Promise<number[]> => {
+  getActiveRefIds: async (): Promise<string[]> => {
     try {
       const res = (await window.myAPI.sendChainEventTask({
         action: 'chainEvents:getActiveRefIds',
-        data: { chainId },
+        data: null,
       })) as string;
       return JSON.parse(res);
     } catch (err) {

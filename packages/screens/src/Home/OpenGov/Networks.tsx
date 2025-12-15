@@ -9,7 +9,7 @@ import {
   useConnections,
   useIntervalSubscriptions,
 } from '@polkadot-live/contexts';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ButtonText } from '@polkadot-live/ui/kits/buttons';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { faChevronRight, faSplotch } from '@fortawesome/free-solid-svg-icons';
@@ -18,10 +18,21 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { NetworksProps } from './types';
 
-export const Networks = ({ setBreadcrumb, setSection }: NetworksProps) => {
+export const Networks = ({
+  section,
+  setBreadcrumb,
+  setSection,
+}: NetworksProps) => {
   const { openTab } = useConnections();
-  const { getSortedKeys, subscriptions } = useIntervalSubscriptions();
-  const { refChainHasSubs, setActiveRefChain } = useChainEvents();
+  const { subscriptions, getSortedKeys } = useIntervalSubscriptions();
+  const {
+    activeRefChain,
+    getActiveRefIds,
+    refChainHasSubs,
+    setActiveRefChain,
+  } = useChainEvents();
+
+  const [isReferendaAdded, setIsReferendaAdded] = useState(true);
 
   // Accordion state.
   const [accordionValue, setAccordionValue] = useState<string[]>(['OpenGov']);
@@ -41,6 +52,11 @@ export const Networks = ({ setBreadcrumb, setSection }: NetworksProps) => {
     );
     return hasSmart || hasClassic;
   };
+
+  useEffect(() => {
+    const hasActive = async () => (await getActiveRefIds()).length > 0;
+    hasActive().then((res) => setIsReferendaAdded(res));
+  }, [activeRefChain, section, subscriptions]);
 
   return (
     <div style={{ width: '100%' }}>
@@ -66,7 +82,7 @@ export const Networks = ({ setBreadcrumb, setSection }: NetworksProps) => {
 
               {/** Content */}
               <UI.AccordionContent transparent={true}>
-                {getSortedKeys().length === 0 ? (
+                {!isReferendaAdded ? (
                   <NoOpenGov
                     onClick={() =>
                       openTab('openGov', {

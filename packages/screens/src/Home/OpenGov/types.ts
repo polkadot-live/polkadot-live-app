@@ -8,6 +8,7 @@ export interface IntervalRowProps {
 }
 
 export interface NetworksProps {
+  section: number;
   setBreadcrumb: React.Dispatch<React.SetStateAction<string>>;
   setSection: React.Dispatch<React.SetStateAction<number>>;
 }

@@ -34,8 +34,7 @@ export const handleChainEventMessage = (
       return true;
     }
     case 'getActiveRefIds': {
-      const { chainId }: { chainId: ChainID } = message.payload;
-      getActiveRefIds(chainId).then((ids) => sendResponse(ids));
+      getActiveRefIds().then((ids) => sendResponse(ids));
       return true;
     }
     case 'getAll': {

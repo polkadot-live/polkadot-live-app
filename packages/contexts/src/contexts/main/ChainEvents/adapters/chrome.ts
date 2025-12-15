@@ -157,12 +157,11 @@ export const chromeAdapter: ChainEventsAdapter = {
     });
   },
 
-  getActiveRefIds: async (chainId) =>
+  getActiveRefIds: async () =>
     (await chrome.runtime.sendMessage({
       type: 'chainEvents',
       task: 'getActiveRefIds',
-      payload: { chainId },
-    })) as number[],
+    })) as string[],
 
   getAllRefSubs: async () =>
     (await chrome.runtime.sendMessage({
