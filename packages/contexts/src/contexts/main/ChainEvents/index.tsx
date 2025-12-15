@@ -240,6 +240,12 @@ export const ChainEventsProvider = ({
     a.pallet === b.pallet && a.eventName === b.eventName;
 
   /**
+   * Get active referenda IDs from store.
+   */
+  const getActiveRefIds = async (): Promise<string[]> =>
+    await adapter.getActiveRefIds();
+
+  /**
    * Subscription toggle handler.
    */
   const toggle = async (sub: ChainEventSubscription) => {
@@ -508,7 +514,10 @@ export const ChainEventsProvider = ({
         return;
       }
       // Get active ref subscriptions from store.
-      const activeIds = await adapter.getActiveRefIds(activeRefChain);
+      const activeIds = (await adapter.getActiveRefIds())
+        .filter((id) => id.split('::')[0] === activeRefChain)
+        .map((id) => Number(id.split('::')[1]));
+
       const allActive = await adapter.getStoredRefSubsForChain(activeRefChain);
       const parseRefId = ({ id }: ChainEventSubscription): number =>
         parseInt(id.split('::')[1]);
@@ -546,6 +555,7 @@ export const ChainEventsProvider = ({
         accountSubCountForPallet,
         addSubsForRef,
         countActiveRefSubs,
+        getActiveRefIds,
         getCategorisedForAccount,
         getCategorisedRefsForChain,
         getEventSubscriptionCount,

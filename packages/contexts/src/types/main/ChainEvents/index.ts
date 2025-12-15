@@ -21,6 +21,7 @@ export interface ChainEventsContextInterface {
   getCategorisedForAccount: (
     account: FlattenedAccountData
   ) => Record<string, ChainEventSubscription[]>;
+  getActiveRefIds: () => Promise<string[]>;
   getCategorisedRefsForChain: () => Record<number, ChainEventSubscription[]>;
   getEventSubscriptionCount: () => Promise<number>;
   isApiRequired: (chainId: ChainID) => boolean;

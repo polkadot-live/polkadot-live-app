@@ -85,14 +85,11 @@ export const removeAllChainEventsForAccount = async (
 /**
  * Referenda-scoped.
  */
-export const getActiveRefIds = async (chainId: ChainID): Promise<number[]> => {
+export const getActiveRefIds = async (): Promise<string[]> => {
   const res = (await DbController.get('activeRefIds', 'all')) as
     | string[]
     | undefined;
-
-  return (res ?? [])
-    .filter((id) => id.split('::')[0] === chainId)
-    .map((id) => Number(id.split('::')[1]));
+  return res ?? [];
 };
 
 export const getAllRefSubs = async (): Promise<

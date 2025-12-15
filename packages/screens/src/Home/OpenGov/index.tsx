@@ -54,7 +54,11 @@ export const OpenGov = () => {
           style={{ height: '100%', padding: '0 1rem' }}
         >
           <FlexColumnWrap style={{ alignContent: 'start' }}>
-            <Networks setBreadcrumb={setBreadcrumb} setSection={setSection} />
+            <Networks
+              setBreadcrumb={setBreadcrumb}
+              setSection={setSection}
+              section={section}
+            />
           </FlexColumnWrap>
         </div>
         <div
