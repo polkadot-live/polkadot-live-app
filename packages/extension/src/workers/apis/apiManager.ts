@@ -60,5 +60,4 @@ export const onEndpointChange = async (
 ) => {
   await APIsController.setEndpoint(chainId, endpoint);
   await startApi(chainId);
-  SubscriptionsController.syncState();
 };

@@ -21,7 +21,6 @@ import type {
   LedgerSelectNetworkData,
   RpcSystemChain,
 } from '@polkadot-live/types/chains';
-import type { NodeEndpoint } from '@polkadot-live/types/apis';
 
 type PreReleaseStage = 'alpha' | 'beta' | 'rc' | null;
 
@@ -29,7 +28,7 @@ export const PreRelease: PreReleaseStage = 'beta';
 
 interface Chain {
   endpoints: {
-    rpcs: NodeEndpoint[];
+    rpcs: `wss://${string}`[];
     lightClient: string | undefined;
   };
   units: number;

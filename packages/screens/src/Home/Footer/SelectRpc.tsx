@@ -63,14 +63,10 @@ export const SelectRpc = ({
           onChange={(e) => handleRpcChange(e)}
           disabled={disabled}
         >
+          <option value={'rpc'}>Auto RPC</option>
           {hasLightClientSupport(chainId) && (
             <option value={'smoldot'}>Light Client</option>
           )}
-          {apiData.rpcs.map((rpc, i) => (
-            <option key={i} value={rpc}>
-              {rpc}
-            </option>
-          ))}
         </select>
       </div>
     </SelectRpcWrapper>

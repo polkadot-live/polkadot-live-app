@@ -106,23 +106,5 @@ describe('APIsController', () => {
       expect(APIsController.getStatus(connectedId)).toBe('connected');
       expect(APIsController.getStatus(disconnectedId)).toBe('disconnected');
     });
-
-    it('Should connect to a new endpoint', async () => {
-      const chainId: ChainID = 'Polkadot Relay';
-      const endpoint1 = ChainList.get(chainId)!.endpoints.rpcs[0];
-      const endpoint2 = ChainList.get(chainId)!.endpoints.rpcs[1];
-
-      // Connect to the default endpoint.
-      await APIsController.connectApi(chainId);
-      const client = await APIsController.getConnectedApi(chainId);
-      expect(client?.endpoint).toBe(endpoint1);
-      expect(client?.status()).toBe('connected');
-
-      // Connect to another endpoint.
-      await APIsController.setEndpoint(chainId, endpoint2);
-      await APIsController.connectApi(chainId);
-      expect(client?.endpoint).toBe(endpoint2);
-      expect(client?.status()).toBe('connected');
-    });
   });
 });
