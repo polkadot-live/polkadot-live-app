@@ -20,9 +20,13 @@ export class Api<T extends keyof ClientTypes> {
   api: DedotClient<ClientTypes[T]> | null;
   chainId: ChainID;
   endpoint: NodeEndpoint;
-  rpcs: NodeEndpoint[] = [];
+  rpcs: `wss://${string}`[] = [];
 
-  constructor(endpoint: NodeEndpoint, chainId: ChainID, rpcs: NodeEndpoint[]) {
+  constructor(
+    endpoint: NodeEndpoint,
+    chainId: ChainID,
+    rpcs: `wss://${string}`[]
+  ) {
     this.api = null;
     this.chainId = chainId;
     this.endpoint = endpoint;
@@ -93,38 +97,39 @@ export class Api<T extends keyof ClientTypes> {
           throw new ApiError('ApiConnectAborted');
         }
       };
-
       if (this.api && this.status() !== 'disconnected') {
         return { ack: 'success' };
       }
 
       let provider: WsProvider | SmoldotProvider;
-      if (this.endpoint === 'smoldot') {
-        if (!smoldotClient) {
-          throw new ApiError('SmoldotClientUndefined');
+      switch (this.endpoint) {
+        case 'rpc': {
+          provider = new WsProvider(this.rpcs);
+          break;
         }
+        case 'smoldot': {
+          if (!smoldotClient) {
+            throw new ApiError('SmoldotClientUndefined');
+          }
+          // Smoldot chain arguments.
+          const chainSpec = ChainList.get(this.chainId)!.endpoints.lightClient;
+          if (!chainSpec) {
+            throw new ApiError('LightClientChainSpecUndefined');
+          }
+          throwIfAborted();
+          const potentialRelayChains = await this.getPotentialRelayChains(
+            this.chainId,
+            smoldotClient
+          );
+          throwIfAborted();
+          const chain = await smoldotClient.addChain({
+            chainSpec,
+            potentialRelayChains,
+          });
 
-        // Smoldot chain arguments.
-        const chainSpec = ChainList.get(this.chainId)!.endpoints.lightClient;
-        if (!chainSpec) {
-          throw new ApiError('LightClientChainSpecUndefined');
+          provider = new SmoldotProvider(chain);
+          break;
         }
-
-        throwIfAborted();
-        const potentialRelayChains = await this.getPotentialRelayChains(
-          this.chainId,
-          smoldotClient
-        );
-
-        throwIfAborted();
-        const chain = await smoldotClient.addChain({
-          chainSpec,
-          potentialRelayChains,
-        });
-
-        provider = new SmoldotProvider(chain);
-      } else {
-        provider = new WsProvider(this.endpoint);
       }
 
       throwIfAborted();

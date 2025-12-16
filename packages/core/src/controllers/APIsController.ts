@@ -297,19 +297,17 @@ export class APIsController {
       return;
     }
     const chainMetaData = ChainList.get(chainId)!;
-    const endpoint: NodeEndpoint = chainMetaData.endpoints.rpcs[0];
     const rpcs = chainMetaData.endpoints.rpcs;
 
-    console.log('🤖 Creating new api interface: %o', endpoint);
-    const client = this.getClient(chainId, endpoint, rpcs);
+    console.log('🤖 Creating new api interface: %o', chainId);
+    const client = this.getClient(chainId, rpcs);
     this.clients = [...this.clients, client];
   };
 
   private static getClient = <T extends ChainID>(
     chainId: T,
-    endpoint: NodeEndpoint,
-    rpcs: NodeEndpoint[]
-  ): Api<ChainToKey<T>> => new Api<ChainToKey<T>>(endpoint, chainId, rpcs);
+    rpcs: `wss://${string}`[]
+  ): Api<ChainToKey<T>> => new Api<ChainToKey<T>>('rpc', chainId, rpcs);
 
   /**
    * Determine if a client is connected after a maximum of 15 seconds.

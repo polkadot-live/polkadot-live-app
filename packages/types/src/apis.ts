@@ -18,7 +18,7 @@ import type {
   PaseoPeopleApi,
 } from '@dedot/chaintypes';
 
-export type NodeEndpoint = `wss://${string}` | 'smoldot';
+export type NodeEndpoint = 'rpc' | 'smoldot';
 
 /**
  * API error status codes.
@@ -127,5 +127,5 @@ export interface FlattenedAPIData {
   endpoint: NodeEndpoint;
   chainId: ChainID;
   status: ChainStatus;
-  rpcs: NodeEndpoint[];
+  rpcs: `wss://${string}`[];
 }
