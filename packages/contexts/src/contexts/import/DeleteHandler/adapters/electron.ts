@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ConfigImport } from '@polkadot-live/core';
+import { ConfigTabs } from '@polkadot-live/core';
 import type { DeleteHandlerAdapter } from './types';
 
 export const electronAdapter: DeleteHandlerAdapter = {
@@ -13,7 +13,7 @@ export const electronAdapter: DeleteHandlerAdapter = {
   },
 
   postToMain: (address, chainId) => {
-    ConfigImport.portImport.postMessage({
+    ConfigTabs.portToMain.postMessage({
       task: 'renderer:address:delete',
       data: { address, chainId },
     });

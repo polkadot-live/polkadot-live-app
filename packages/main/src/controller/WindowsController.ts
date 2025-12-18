@@ -59,24 +59,15 @@ export class WindowsController {
     channel: string,
     ipcData: { syncId: SyncID; state: boolean | string },
     includeTabs = true,
-    includeMain = true,
-    includeViews = true
+    includeMain = true
   ) => {
     // Send to main window.
     if (includeMain) {
       this.getWindow('menu')?.webContents?.send(channel, ipcData);
     }
-
     // Send to tabs view.
     if (includeTabs) {
       this.tabsView?.webContents.send(channel, ipcData);
-    }
-
-    // Send to views.
-    if (includeViews) {
-      for (const { view } of this.views) {
-        view.webContents.send(channel, ipcData);
-      }
     }
   };
 
@@ -229,7 +220,6 @@ export class WindowsController {
           : baseWindow.contentView.removeChildView(child);
       }
     }
-
     !added && baseWindow.contentView.addChildView(view);
     !baseWindow.isVisible() && baseWindow.show();
   };
@@ -260,7 +250,6 @@ export class WindowsController {
           return { width: 400, height: 300 };
       }
     };
-
     const { width, height } = getBounds();
     this.base?.window.setSize(width, height);
     this.resizeViews();
@@ -269,20 +258,7 @@ export class WindowsController {
   // Resize views when base window resized.
   static resizeViews = () => {
     const { width, height } = this.base!.window.getContentBounds()!;
-
-    this.tabsView?.setBounds({ x: 0, y: 0, width, height: this.Y_OFFSET });
-
-    const children = this.base!.window.contentView.children;
-    for (const child of children) {
-      if (child !== this.tabsView) {
-        child.setBounds({
-          x: 0,
-          y: this.Y_OFFSET,
-          width,
-          height: Math.max(height - this.Y_OFFSET, 0),
-        });
-      }
-    }
+    this.tabsView?.setBounds({ x: 0, y: 0, width, height });
   };
 
   // Open a view's devTools if in DEBUG mode.
@@ -290,7 +266,6 @@ export class WindowsController {
     if (!process.env['DEBUG']) {
       return;
     }
-
     const view =
       viewId === 'tabs'
         ? this.tabsView
@@ -330,7 +305,6 @@ export class WindowsController {
   // Adds a window to the `active` set.
   static add = (window: BrowserWindow, id: string) => {
     const newWindow: StoredWindow = { window, id, focused: false };
-
     this.active = this.active.reduceRight(
       (acc, curr) => (curr.id === id ? acc : [curr, ...acc]),
       [newWindow]
@@ -378,14 +352,12 @@ export class WindowsController {
         if (currId !== id) {
           continue;
         }
-
         if (id === 'menu') {
           window.hide();
         } else {
           window.close();
           this.remove(id);
         }
-
         break;
       }
     }
@@ -394,26 +366,22 @@ export class WindowsController {
   // Toggle a managed window's visibility.
   static toggleWindowVisible = (id: string) => {
     const window = this.getWindow(id);
-
     if (!window) {
       throw new Error(
         `WindowsController.toggleWindowVisible - Window not found with id: ${id}`
       );
     }
-
     window.isVisible() ? this.hideAndBlur(id) : this.show(id);
   };
 
   // Handle the main window's bounds.
   static persistMenuBounds = () => {
     const mainWindow = this.getWindow('menu');
-
     if (!mainWindow) {
       throw new Error(
         `WindowsController.handleMenuBounds - Main window doesn't exist`
       );
     }
-
     if (mainWindow.isFocused()) {
       (store as Record<string, AnyJson>).set(
         'menu_bounds',
@@ -430,7 +398,6 @@ export class WindowsController {
         `WindowsController.moveToMenuBounds - Main window doesn't exist`
       );
     }
-
     const storeMenuPos: AnyJson = (store as Record<string, AnyJson>).get(
       'menu_bounds'
     );
@@ -444,7 +411,6 @@ export class WindowsController {
     for (const { window } of this.active) {
       window.setVisibleOnAllWorkspaces(flag);
     }
-
     // Apply setting to base window.
     this.base?.window.setVisibleOnAllWorkspaces(flag);
   };

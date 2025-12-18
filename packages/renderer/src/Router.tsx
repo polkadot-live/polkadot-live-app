@@ -1,15 +1,16 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { ContextProxyTab, ContextProxyMain } from './Proxy';
 import {
-  ContextProxyExtrinsics,
-  ContextProxyImport,
-  ContextProxyMain,
-} from './Proxy';
-import { MainInterfaceWrapper } from '@polkadot-live/styles/wrappers';
+  MainInterfaceWrapper,
+  TabViewWrapper,
+} from '@polkadot-live/styles/wrappers';
 import { Overlay, Help } from '@polkadot-live/ui/components';
-import { useHelp, useOverlay } from '@polkadot-live/contexts';
+import { useDebug } from '@ren/hooks/useDebug';
+import { useHelp, useOverlay, useTabs } from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
+import { useTabsMessagePorts } from './hooks/useTabsMessagePorts';
 import { HashRouter, Route, Routes } from 'react-router';
 import { FadeAction } from '@ren/screens/Action';
 import { FadeImport } from '@ren/screens/Import';
@@ -19,57 +20,76 @@ import { Home } from './screens/Home';
 import { ToastContainer } from 'react-toastify';
 import { TabsWrapper } from '@ren/screens/Tabs';
 
+interface VisitedTab {
+  viewId: string;
+  viewNode: React.ReactNode;
+}
+
+const RouteMain = () => (
+  <ContextProxyMain>
+    <Home />
+  </ContextProxyMain>
+);
+
+const RouteTabs = () => {
+  useTabsMessagePorts();
+  useDebug(window.myAPI.getWindowId());
+
+  // Lazy load tabs.
+  const { tabsData, clickedId } = useTabs();
+  const [visitedTabs, setVisitedTabs] = useState<VisitedTab[]>([]);
+
+  const ViewFactory: Record<string, () => React.ReactNode> = {
+    action: () => <FadeAction />,
+    import: () => <FadeImport />,
+    openGov: () => <FadeOpenGov />,
+    settings: () => <FadeSettings />,
+  };
+
+  useEffect(() => {
+    if (clickedId) {
+      const tab = tabsData.find((t) => t.id === clickedId);
+      if (!tab) {
+        return;
+      }
+      const { viewId } = tab;
+      if (visitedTabs.find((t) => t.viewId === viewId)) {
+        return;
+      }
+      const viewNode = ViewFactory[viewId]();
+      setVisitedTabs((prev) => [...prev, { viewId, viewNode }]);
+    }
+  }, [clickedId]);
+
+  const getTabId = (viewId: string): number =>
+    tabsData.find((t) => t.viewId === viewId)?.id ?? -1;
+
+  return (
+    <ContextProxyTab>
+      <TabsWrapper />
+      {visitedTabs
+        .map((t) => ({ ...t, tabId: getTabId(t.viewId) }))
+        .filter((t) => t.tabId !== -1)
+        .map(({ tabId, viewNode }) => (
+          <TabViewWrapper
+            key={tabId}
+            className={clickedId === tabId ? 'ShowTabView' : 'HideTabView'}
+          >
+            {viewNode}
+          </TabViewWrapper>
+        ))}
+    </ContextProxyTab>
+  );
+};
+
 export const RouterInner = () => {
   const { status: helpStatus, definition, closeHelp, setStatus } = useHelp();
   const overlayCtx = useOverlay();
 
-  /**
-   * Return routes for the window being rendered.
-   */
-  const addRoutesForWindow = () => {
-    const windowId = window.myAPI.getWindowId();
-
-    switch (windowId) {
-      case 'main':
-        return (
-          <Route
-            path={'/'}
-            element={
-              <ContextProxyMain>
-                <Home />
-              </ContextProxyMain>
-            }
-          />
-        );
-      case 'import':
-        return (
-          <Route
-            path={'import'}
-            element={
-              <ContextProxyImport>
-                <FadeImport />
-              </ContextProxyImport>
-            }
-          />
-        );
-      case 'settings':
-        return <Route path={'settings'} element={<FadeSettings />} />;
-      case 'action':
-        return (
-          <Route
-            path={'action'}
-            element={
-              <ContextProxyExtrinsics>
-                <FadeAction />
-              </ContextProxyExtrinsics>
-            }
-          />
-        );
-      case 'openGov':
-        return <Route path={'openGov'} element={<FadeOpenGov />} />;
-      default:
-        throw new Error('Window ID not recognized.');
-    }
+  const windowId = window.myAPI.getWindowId();
+  const RouteElements: Record<string, () => React.ReactNode> = {
+    main: () => <RouteMain />,
+    tabs: () => <RouteTabs />,
   };
 
   return (
@@ -82,17 +102,15 @@ export const RouterInner = () => {
       />
       <Overlay overlayCtx={overlayCtx} />
       <ToastContainer stacked />
-      <Routes>{addRoutesForWindow()}</Routes>
+      <Routes>
+        <Route path={'/'} element={RouteElements[windowId]()} />
+      </Routes>
     </MainInterfaceWrapper>
   );
 };
 
 export const Router = () => {
-  const [windowId] = useState<string>(window.myAPI.getWindowId());
-
-  /**
-   * Initialize analytics once.
-   */
+  // Initialize analytics once.
   useEffect(() => {
     window.myAPI.initAnalytics(
       navigator.userAgent,
@@ -103,13 +121,7 @@ export const Router = () => {
 
   return (
     <HashRouter basename="/">
-      {windowId === 'tabs' ? (
-        <Routes>
-          <Route path={'/tabs'} element={<TabsWrapper />} />
-        </Routes>
-      ) : (
-        <RouterInner />
-      )}
+      <RouterInner />
     </HashRouter>
   );
 };

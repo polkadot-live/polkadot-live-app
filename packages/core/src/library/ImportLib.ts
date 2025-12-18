@@ -24,7 +24,7 @@ export const getFromBackupFile = (
  * (main renderer)
  */
 export const postToExtrinsics = (task: string, dataObj: AnyData) => {
-  ConfigRenderer.portToAction?.postMessage({ task, data: dataObj });
+  ConfigRenderer.portToTabs?.postMessage({ task, data: dataObj });
 };
 /**
  * @name postToImport
@@ -32,7 +32,7 @@ export const postToExtrinsics = (task: string, dataObj: AnyData) => {
  * (main renderer)
  */
 export const postToImport = (task: string, dataObj: AnyData) => {
-  ConfigRenderer.portToImport?.postMessage({ task, data: dataObj });
+  ConfigRenderer.portToTabs?.postMessage({ task, data: dataObj });
 };
 
 /**
@@ -41,7 +41,7 @@ export const postToImport = (task: string, dataObj: AnyData) => {
  * (main renderer)
  */
 export const postToOpenGov = (task: string, dataObj: AnyData) => {
-  ConfigRenderer.portToOpenGov?.postMessage({ task, data: dataObj });
+  ConfigRenderer.portToTabs?.postMessage({ task, data: dataObj });
 };
 
 /**
@@ -50,5 +50,5 @@ export const postToOpenGov = (task: string, dataObj: AnyData) => {
  * (main renderer)
  */
 export const postToSettings = (task: string, dataObj: AnyData) => {
-  ConfigRenderer.portToSettings?.postMessage({ task, data: dataObj });
+  ConfigRenderer.portToTabs?.postMessage({ task, data: dataObj });
 };

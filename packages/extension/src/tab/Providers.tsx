@@ -38,6 +38,7 @@ import { withProviders } from '@polkadot-live/ui/hooks';
 export const Providers = withProviders(
   HelpProvider,
   OverlayProvider,
+  TabsProvider,
   ConnectionsProvider,
   SettingFlagsProvider,
   TracksProvider,
@@ -49,7 +50,6 @@ export const Providers = withProviders(
   RenameHandlerProvider,
   DeleteHandlerProvider,
   DialogControlProvider,
-  TabsProvider,
   [LedgerHardwareProvider, { ledgerController: LedgerController }],
   WcFeedbackProvider,
   WalletConnectProvider,

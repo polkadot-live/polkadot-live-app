@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as wc from '@polkadot-live/consts/walletConnect';
-import { ConfigAction, ExtrinsicError, generateUID } from '@polkadot-live/core';
+import { ConfigTabs, ExtrinsicError, generateUID } from '@polkadot-live/core';
 import React, { createContext, useEffect, useRef, useState } from 'react';
 import type { AnyJson } from '@polkadot-live/types/misc';
 import type { TxMetaContextInterface } from '@polkadot-live/contexts/types/action';
@@ -354,7 +354,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       if (!info) {
         throw new ExtrinsicError('ExtrinsicNotFound');
       }
-      ConfigAction.portAction.postMessage({
+      ConfigTabs.portToMain.postMessage({
         task: 'renderer:tx:init',
         data: JSON.stringify(info),
       });
@@ -406,7 +406,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       relayState('extrinsic:building', true);
 
       // Relay building extrinsic flag to app.
-      ConfigAction.portAction.postMessage({
+      ConfigTabs.portToMain.postMessage({
         task: 'renderer:tx:build',
         data: JSON.stringify(info),
       });
@@ -479,7 +479,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       // Send extrinsic info to main renderer and submit.
-      ConfigAction.portAction.postMessage({
+      ConfigTabs.portToMain.postMessage({
         task: 'renderer:tx:vault:submit',
         data: { info: JSON.stringify(info) },
       });
@@ -500,7 +500,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     // Send extrinsic info to main renderer and submit.
-    ConfigAction.portAction.postMessage({
+    ConfigTabs.portToMain.postMessage({
       task: 'renderer:tx:mock:submit',
       data: { info: JSON.stringify(info) },
     });
@@ -585,7 +585,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (extrinsicsRef.current.delete(txId)) {
       // Remove cached transaction in main process.
-      ConfigAction.portAction.postMessage({
+      ConfigTabs.portToMain.postMessage({
         task: 'renderer:tx:delete',
         data: { txId },
       });

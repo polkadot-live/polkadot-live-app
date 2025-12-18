@@ -85,7 +85,7 @@ export class ExtrinsicsController {
       const { txId } = info;
       const estimatedFee = await this.getEstimatedFee(info);
 
-      ConfigRenderer.portToAction?.postMessage({
+      ConfigRenderer.portToTabs?.postMessage({
         task: 'action:tx:setEstimatedFee',
         data: { txId, estimatedFee: estimatedFee.toString() },
       });
@@ -394,7 +394,7 @@ export class ExtrinsicsController {
       }
       case 'electron': {
         // Report status in actions window.
-        ConfigRenderer.portToAction?.postMessage({
+        ConfigRenderer.portToTabs?.postMessage({
           task: 'action:tx:report:status',
           data: txHash ? { status, txId, txHash } : { status, txId },
         });
@@ -427,7 +427,7 @@ export class ExtrinsicsController {
         break;
       }
       case 'electron': {
-        ConfigRenderer.portToAction?.postMessage({
+        ConfigRenderer.portToTabs?.postMessage({
           task: 'action:tx:invalid',
           data: { message },
         });

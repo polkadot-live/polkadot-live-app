@@ -1,39 +1,33 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ConfigOpenGov } from '@polkadot-live/core';
-import { useOpenGovMessagePorts } from '@ren/hooks/useOpenGovMessagePorts';
+import { ConfigTabs } from '@polkadot-live/core';
 import { useEffect } from 'react';
 import { useConnections, useTreasury } from '@polkadot-live/contexts';
-import { useDebug } from '@ren/hooks/useDebug';
 import { FadeInWrapper } from '@polkadot-live/ui/utils';
 import { OpenGov } from '@polkadot-live/screens';
 
 export const FadeOpenGov = () => {
-  // Set up port communication for `openGov` window.
-  useOpenGovMessagePorts();
-  useDebug(window.myAPI.getWindowId());
-
   const { getOnlineMode, stateLoaded } = useConnections();
   const { treasuryChainId, initTreasury } = useTreasury();
 
   // Initialize treasury data when window opens.
   useEffect(() => {
-    if (ConfigOpenGov._portExists) {
+    if (ConfigTabs._portExists) {
       getOnlineMode() && initTreasury(treasuryChainId);
     }
   }, []);
 
   // Initialize treasury data when port is received.
   useEffect(() => {
-    if (ConfigOpenGov._portExists) {
+    if (ConfigTabs._portExists) {
       getOnlineMode() && initTreasury(treasuryChainId);
     }
-  }, [ConfigOpenGov._portExists]);
+  }, [ConfigTabs._portExists]);
 
   // Reload treasury data if app goes online from offline mode.
   useEffect(() => {
-    if (getOnlineMode() && ConfigOpenGov._portExists) {
+    if (getOnlineMode() && ConfigTabs._portExists) {
       initTreasury(treasuryChainId);
     }
   }, [getOnlineMode()]);

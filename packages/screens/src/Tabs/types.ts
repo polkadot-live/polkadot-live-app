@@ -6,7 +6,6 @@ export interface TabProps {
   label: string;
 }
 export interface TabsProps {
-  platform: 'chrome' | 'electron';
   leftButtons?: React.ReactNode;
   onCloseWindow?: () => void;
 }

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createSafeContextHook } from '@polkadot-live/contexts';
-import { ConfigAction } from '@polkadot-live/core';
+import { ConfigTabs } from '@polkadot-live/core';
 import { createContext, useState } from 'react';
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 import type { WcVerifierContextInterface } from '@polkadot-live/contexts/types/action';
@@ -29,7 +29,7 @@ export const WcVerifierProvider = ({
    */
   const checkVerifiedSession = (info: ExtrinsicInfo) => {
     const { chainId, from } = info.actionMeta;
-    ConfigAction.portAction.postMessage({
+    ConfigTabs.portToMain.postMessage({
       task: 'renderer:wc:verify:account',
       data: { chainId, target: from },
     });
@@ -39,7 +39,7 @@ export const WcVerifierProvider = ({
    * Clear signing network state when WcSignOverlay closed.
    */
   const clearSigningNetwork = () =>
-    ConfigAction.portAction.postMessage({
+    ConfigTabs.portToMain.postMessage({
       task: 'renderer:wc:clear:signing-network',
       data: null,
     });
@@ -51,7 +51,7 @@ export const WcVerifierProvider = ({
     setWcAccountVerifying(true);
     const { chainId, from } = info.actionMeta;
 
-    ConfigAction.portAction.postMessage({
+    ConfigTabs.portToMain.postMessage({
       task: 'renderer:wc:connect:action',
       data: { chainId, target: from },
     });

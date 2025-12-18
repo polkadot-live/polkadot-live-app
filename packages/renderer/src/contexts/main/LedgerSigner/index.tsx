@@ -35,7 +35,7 @@ export const LedgerSignerProvider = ({
    */
   const postError = (statusCode: LedgerErrorStatusCode) => {
     const errorData = ledgerErrorMeta[statusCode];
-    ConfigRenderer.portToAction?.postMessage({
+    ConfigRenderer.portToTabs?.postMessage({
       task: 'action:ledger:error',
       data: JSON.stringify(errorData),
     });
@@ -89,7 +89,7 @@ export const LedgerSignerProvider = ({
       ExtrinsicsController.submit(info, silence);
 
       // Close overlay in extrinsics window.
-      ConfigRenderer.portToAction?.postMessage({
+      ConfigRenderer.portToTabs?.postMessage({
         task: 'action:overlay:close',
         data: null,
       });

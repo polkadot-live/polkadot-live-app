@@ -38,7 +38,7 @@ export const CogMenuProvider = ({
     setIsConnecting,
   } = useBootstrapping();
 
-  const { cacheGet, getOnlineMode } = useConnections();
+  const { cacheGet, getOnlineMode, openTab } = useConnections();
   const isConnected = cacheGet('mode:connected');
 
   const { openHelp } = useHelp();
@@ -90,34 +90,26 @@ export const CogMenuProvider = ({
     {
       label: 'Accounts',
       disabled: appLoading,
-      onClick: () => {
-        window.myAPI.openWindow('import');
-        window.myAPI.umamiEvent('window-open-accounts', null);
-      },
+      onClick: () =>
+        openTab('import', { event: 'window-open-accounts', data: null }),
     },
     {
       label: 'Extrinsics',
       disabled: appLoading,
-      onClick: () => {
-        window.myAPI.openWindow('action');
-        window.myAPI.umamiEvent('window-open-extrinsics', null);
-      },
+      onClick: () =>
+        openTab('action', { event: 'window-open-extrinsics', data: null }),
     },
     {
       label: 'OpenGov',
       disabled: appLoading,
-      onClick: () => {
-        window.myAPI.openWindow('openGov');
-        window.myAPI.umamiEvent('window-open-openGov', null);
-      },
+      onClick: () =>
+        openTab('openGov', { event: 'window-open-openGov', data: null }),
     },
     {
       label: 'Settings',
       disabled: appLoading,
-      onClick: () => {
-        window.myAPI.openWindow('settings');
-        window.myAPI.umamiEvent('window-open-settings', null);
-      },
+      onClick: () =>
+        openTab('settings', { event: 'window-open-settings', data: null }),
     },
     {
       label: 'Exit',

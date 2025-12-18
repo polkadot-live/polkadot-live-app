@@ -201,12 +201,15 @@ export const TreasuryProvider = ({
     }
   };
 
+  // Init treasury (Extension).
   useEffect(() => {
-    getOnlineMode() && initTreasury(treasuryChainId);
+    if (!('myAPI' in window) && getOnlineMode()) {
+      initTreasury(treasuryChainId);
+    }
   }, []);
 
   useEffect(() => {
-    if (getOnlineMode()) {
+    if (!('myAPI' in window) && getOnlineMode()) {
       initTreasury(treasuryChainId);
     }
   }, [getOnlineMode()]);

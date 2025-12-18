@@ -31,7 +31,7 @@ export const DropdownOpenTabs = () => {
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
         <span>
-          <TooltipRx side="top" text={'Open Tab'} theme={theme}>
+          <TooltipRx side="bottom" text={'Open Tab'} theme={theme}>
             <TriggerBtn style={{ position: 'relative' }} aria-label="Open Tab">
               <FontAwesomeIcon icon={FA.faPlus} transform={'shrink-2'} />
             </TriggerBtn>

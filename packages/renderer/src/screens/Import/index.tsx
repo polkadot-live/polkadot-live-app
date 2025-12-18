@@ -2,17 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Import } from '@polkadot-live/screens';
-import { useImportMessagePorts } from '@ren/hooks/useImportMessagePorts';
-import { useDebug } from '@ren/hooks/useDebug';
 import { useConnections } from '@polkadot-live/contexts';
 import { FadeInWrapper } from '@polkadot-live/ui/utils';
 
 export const FadeImport = () => {
-  // Set up port communication for `import` window.
-  useImportMessagePorts();
-  useDebug(window.myAPI.getWindowId());
   const { stateLoaded } = useConnections();
-
   return (
     <FadeInWrapper show={stateLoaded}>
       <Import />

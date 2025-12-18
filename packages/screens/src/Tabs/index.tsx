@@ -18,7 +18,7 @@ import { Tab } from './Tab';
 import { TabsWrapper } from './Wrappers';
 import type { TabsProps } from './types';
 
-export const Tabs = ({ leftButtons, platform, onCloseWindow }: TabsProps) => {
+export const Tabs = ({ leftButtons, onCloseWindow }: TabsProps) => {
   const { items, sensors, tabsData } = useTabs();
   const { handleDragStart, handleDragEnd } = useTabs();
 
@@ -39,15 +39,15 @@ export const Tabs = ({ leftButtons, platform, onCloseWindow }: TabsProps) => {
               items={items}
               strategy={horizontalListSortingStrategy}
             >
-              {Number(tabsData.length) === 0 && (
-                <div className="NoTabsOpen">No tabs open.</div>
-              )}
               {tabsData.map(({ id, label }) => (
                 <Tab key={String(id)} id={id} label={label} />
               ))}
             </SortableContext>
           </DndContext>
-          {platform === 'chrome' && <DropdownOpenTabs />}
+          <DropdownOpenTabs />
+          {Number(tabsData.length) === 0 && (
+            <div className="NoTabsOpen">No tabs open.</div>
+          )}
         </div>
       </TabsWrapper>
     </>

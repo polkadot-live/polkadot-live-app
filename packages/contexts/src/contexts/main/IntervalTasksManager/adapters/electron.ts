@@ -13,7 +13,7 @@ export const electronAdapter: IntervalTaskManagerAdapter = {
     IntervalsController.removeSubscriptions(tasks, isOnline);
 
     // Update OpenGov window state.
-    ConfigRenderer.portToOpenGov?.postMessage({
+    ConfigRenderer.portToTabs?.postMessage({
       task: 'openGov:ref:remove',
       data: { chainId, refId },
     });
@@ -53,7 +53,7 @@ export const electronAdapter: IntervalTaskManagerAdapter = {
   },
 
   updateTask: (task) => {
-    ConfigRenderer.portToOpenGov?.postMessage({
+    ConfigRenderer.portToTabs?.postMessage({
       task: 'openGov:task:update',
       data: {
         serialized: JSON.stringify(task),

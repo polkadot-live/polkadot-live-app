@@ -25,7 +25,10 @@ export const OfflineBanner = ({
 }) => (
   <OfflineBannerWrapper
     $gap={'0.75rem'}
-    style={{ borderRadius: rounded ? '0.375rem' : undefined, marginTop }}
+    style={{
+      borderRadius: rounded ? '0.375rem' : undefined,
+      margin: marginTop,
+    }}
   >
     <FontAwesomeIcon icon={faCircleExclamation} transform={'grow-1'} />
     <span>{text || 'Currently offline.'}</span>

@@ -14,11 +14,12 @@ interface ContextProxyProps {
 /**
  * Extrinsics view.
  */
-export const ContextProxyExtrinsics = ({ children }: ContextProxyProps) => {
+export const ContextProxyTab = ({ children }: ContextProxyProps) => {
   const cache = useMemo(
     () =>
       buildCache({
         TxMetaCtx: () => extrinsics.useTxMeta(),
+        WalletConnectImportCtx: () => imports.useWalletConnectImport(),
         WcVerifierCtx: () => extrinsics.useWcVerifier(),
       }),
     []
@@ -38,22 +39,6 @@ export const ContextProxyMain = ({ children }: ContextProxyProps) => {
         BootstrappingCtx: () => main.useBootstrapping(),
         CogMenuCtx: () => main.useCogMenu(),
         WalletConnectCtx: () => main.useWalletConnect(),
-      }),
-    []
-  );
-  return (
-    <ContextProxyProvider initialCache={cache}>{children}</ContextProxyProvider>
-  );
-};
-
-/**
- * Import view.
- */
-export const ContextProxyImport = ({ children }: ContextProxyProps) => {
-  const cache = useMemo(
-    () =>
-      buildCache({
-        WalletConnectImportCtx: () => imports.useWalletConnectImport(),
       }),
     []
   );

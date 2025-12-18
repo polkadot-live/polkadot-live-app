@@ -61,16 +61,14 @@ const getProvidersForWindow = () => {
   const windowId = window.myAPI.getWindowId();
 
   switch (windowId) {
-    case 'tabs': {
-      return withProviders(ConnectionsProvider, TabsProvider)(Theme);
-    }
     case 'main': {
       return withProviders(
         HelpProvider,
+        AppSettingsProvider,
+        TabsProvider,
         OverlayProvider,
         ConnectionsProvider,
         AddressesProvider,
-        AppSettingsProvider,
         // Side nav relies on app settings.
         SideNavProvider,
         ApiHealthProvider,
@@ -93,58 +91,38 @@ const getProvidersForWindow = () => {
         SummaryProvider
       )(Theme);
     }
-    case 'import': {
+    case 'tabs': {
       return withProviders(
         HelpProvider,
         OverlayProvider,
+        TabsProvider,
         ConnectionsProvider,
+        SettingFlagsProvider,
+        TracksProvider,
         ImportAddressesProvider,
         // Requires useAddresses
         RemoveHandlerProvider,
+        // Requires useImportAddresses + useRemoveHandler,
         AccountStatusesProvider,
-        DialogControlProvider,
-        // Requires useAccountStatuses + useAddresses
-        ImportHandlerProvider,
         // Requires useAccountStatuses + useAddresses
         AddHandlerProvider,
         // Requires useAccountStatuses + useAddresses
-        DeleteHandlerProvider,
+        ImportHandlerProvider,
         // Requires useAddresses
         RenameHandlerProvider,
+        DeleteHandlerProvider,
+        DialogControlProvider,
         // Requires useConnections
         LedgerHardwareProvider,
+        WcFeedbackProvider,
         // Requires useConnections
-        WalletConnectImportProvider
-      )(Theme);
-    }
-    case 'settings': {
-      return withProviders(
-        HelpProvider,
-        OverlayProvider,
-        ConnectionsProvider,
-        SettingFlagsProvider
-      )(Theme);
-    }
-    case 'action': {
-      return withProviders(
-        HelpProvider,
-        OverlayProvider,
-        ConnectionsProvider,
-        TxMetaProvider,
+        WalletConnectImportProvider,
         WcVerifierProvider,
         LedgerFeedbackProvider,
-        WcFeedbackProvider
-      )(Theme);
-    }
-    case 'openGov': {
-      return withProviders(
-        HelpProvider,
-        OverlayProvider,
-        ConnectionsProvider,
-        TracksProvider,
+        TxMetaProvider,
         TreasuryProvider,
         PolkassemblyProvider,
-        ReferendaProvider, // Requires usePolkassembly
+        ReferendaProvider,
         ReferendaSubscriptionsProvider,
         TaskHandlerProvider
       )(Theme);

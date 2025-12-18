@@ -112,7 +112,7 @@ export const createMainWindow = () => {
   setWindowMenuVisibility(mainWindow);
 
   // Load correct URL and HTML file.
-  loadUrlWithRoute(mainWindow, { args: { windowId: 'main' } });
+  loadUrlWithRoute(mainWindow, { uri: '/', args: { windowId: 'main' } });
 
   mainWindow.once('ready-to-show', () => {
     // Freeze window if in docked mode.
@@ -214,11 +214,39 @@ export const createBaseWindow = () => {
     preload: PRELOAD_PATH,
   };
   const tabsView = new WebContentsView({ webPreferences });
-  const viewHeight = WindowsController.Y_OFFSET;
-  tabsView.setBounds({ x: 0, y: 0, width: baseWidth, height: viewHeight });
+  tabsView.setBounds({ x: 0, y: 0, width: baseWidth, height: baseHeight });
   tabsView.setBackgroundColor(getWindowBackgroundColor());
-  loadUrlWithRoute(tabsView, { uri: 'tabs', args: { windowId: 'tabs' } });
+  loadUrlWithRoute(tabsView, {
+    uri: '/',
+    args: { windowId: 'tabs' },
+  });
+
   baseWindow.contentView.addChildView(tabsView);
+
+  // Open links with target="_blank" in default browser.
+  tabsView.webContents.setWindowOpenHandler(({ url }) => {
+    shell.openExternal(url);
+    return { action: 'deny' };
+  });
+
+  // Send port to view after DOM is ready.
+  tabsView.webContents.on('dom-ready', () => {
+    const pairId: PortPairID = 'main-tabs' as PortPairID;
+    ConfigMain.initPorts(pairId);
+    const { port1, port2 } = ConfigMain.getPortPair(pairId);
+
+    // Send ports to main window and corresponding view.
+    debug(`🔷 Send port ${pairId} to main`);
+    WindowsController.getWindow('menu')?.webContents.postMessage(
+      'port',
+      { target: 'main-tabs:main' },
+      [port1]
+    );
+    debug(`🔷 Send port ${pairId} to tabs`);
+    tabsView.webContents.postMessage('port', { target: 'main-tabs:tabs' }, [
+      port2,
+    ]);
+  });
 
   // Resize views when base window is resized.
   baseWindow.on('resize', () => {
@@ -258,53 +286,7 @@ export const createBaseWindow = () => {
  */
 export const handleViewOnIPC = (name: string) => {
   ipcMain.on(`${name}:open`, () => {
-    // Show view in base window if it's already created.
-    if (WindowsController.viewExists(name)) {
-      WindowsController.renderView(name);
-      WindowsController.addTab(name);
-      return;
-    }
-
-    // Create the view and add it to the base window.
-    const view = new WebContentsView({
-      webPreferences: {
-        sandbox: true,
-        preload: PRELOAD_PATH,
-      },
-    });
-
-    // Add view to active set and render.
-    view.setBackgroundColor(getWindowBackgroundColor());
-    loadUrlWithRoute(view, { uri: name, args: { windowId: name } });
-    WindowsController.addView(view, name);
-    WindowsController.addTab(name);
-
-    // Open links with target="_blank" in default browser.
-    view.webContents.setWindowOpenHandler(({ url }) => {
-      shell.openExternal(url);
-      return { action: 'deny' };
-    });
-
-    // Send port to view after DOM is ready.
-    view.webContents.on('dom-ready', () => {
-      // Initialise a new port pair.
-      const pairId: PortPairID = `main-${name}` as PortPairID;
-      ConfigMain.initPorts(pairId);
-      const { port1, port2 } = ConfigMain.getPortPair(pairId);
-
-      // Send ports to main window and corresponding view.
-      debug(`🔷 Send port ${pairId} to main`);
-      WindowsController.getWindow('menu')?.webContents.postMessage(
-        'port',
-        { target: `main-${name}:main` },
-        [port1]
-      );
-
-      debug(`🔷 Send port ${pairId} to ${name}`);
-      view.webContents.postMessage('port', { target: `main-${name}:${name}` }, [
-        port2,
-      ]);
-    });
+    WindowsController.base?.window.show();
   });
 };
 

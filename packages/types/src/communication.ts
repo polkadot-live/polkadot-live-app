@@ -30,11 +30,7 @@ export interface TabData {
   viewId: string;
 }
 
-export type PortPairID =
-  | 'main-import'
-  | 'main-action'
-  | 'main-settings'
-  | 'main-openGov';
+export type PortPairID = 'main-tabs';
 
 export interface PortPair {
   port1: Electron.MessagePortMain;

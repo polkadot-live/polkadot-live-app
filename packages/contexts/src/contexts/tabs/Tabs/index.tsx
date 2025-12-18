@@ -186,6 +186,7 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
         items,
         sensors,
         tabsData,
+        addTab,
         setClickedId,
         handleDragStart,
         handleDragEnd,

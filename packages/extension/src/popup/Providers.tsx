@@ -16,6 +16,7 @@ import {
   SideNavProvider,
   SubscriptionsProvider,
   SummaryProvider,
+  TabsProvider,
 } from '@polkadot-live/contexts';
 import { withProviders } from '@polkadot-live/ui/hooks';
 import { BootstrappingProvider, CogMenuProvider } from './contexts';
@@ -24,6 +25,7 @@ import App from './App';
 export const Providers = withProviders(
   HelpProvider,
   AppSettingsProvider,
+  TabsProvider,
   ConnectionsProvider,
   AddressesProvider,
   SideNavProvider,

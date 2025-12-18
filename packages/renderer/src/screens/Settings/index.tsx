@@ -3,18 +3,12 @@
 
 import { useEffect, useState } from 'react';
 import { useConnections } from '@polkadot-live/contexts';
-import { useDebug } from '@ren/hooks/useDebug';
-import { useSettingsMessagePorts } from '@ren/hooks/useSettingsMessagePorts';
 import { FadeInWrapper } from '@polkadot-live/ui/utils';
 import { Settings } from '@polkadot-live/screens';
 import type { OsPlatform } from '@polkadot-live/types/settings';
 
 export const FadeSettings = () => {
-  // Set up port communication for `settings` window.
-  useSettingsMessagePorts();
-  useDebug(window.myAPI.getWindowId());
   const { stateLoaded } = useConnections();
-
   const [osPlatform, setOsPlatform] = useState<OsPlatform | null>(null);
 
   useEffect(() => {

@@ -61,6 +61,7 @@ export const DialogContent = styled(Dialog.Content).attrs<{
   max-width: ${(props) =>
     props.$size === undefined || props.$size === 'sm' ? '500px' : '800px'};
 
+  z-index: 100;
   position: relative;
   border-radius: 4px;
   position: fixed;

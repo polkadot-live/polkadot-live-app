@@ -1,12 +1,12 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ConfigOpenGov } from '@polkadot-live/core';
+import { ConfigTabs } from '@polkadot-live/core';
 import type { ReferendaAdapter } from './types';
 
 export const electronAdapter: ReferendaAdapter = {
   requestReferenda: async (chainId) => {
-    ConfigOpenGov.portOpenGov.postMessage({
+    ConfigTabs.portToMain.postMessage({
       task: 'openGov:referenda:get',
       data: { chainId },
     });

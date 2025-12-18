@@ -11,6 +11,7 @@ import type { ActionMeta } from '@polkadot-live/types/tx';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ConnectionsContextInterface } from '../../../types/common';
 import type { SyncID } from '@polkadot-live/types/communication';
+import { useTabs } from '../../tabs';
 
 export const ConnectionsContext = createContext<
   ConnectionsContextInterface | undefined
@@ -26,6 +27,7 @@ export const ConnectionsProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { tabsData } = useTabs();
   const adapter = getConnectionsAdapter();
 
   /**
@@ -75,7 +77,8 @@ export const ConnectionsProvider = ({
   /**
    * Checks if a tab is open.
    */
-  const isTabOpen = async (tab: string) => await adapter.isTabOpen(tab);
+  const isTabOpen = async (tab: string) =>
+    Boolean(tabsData.find(({ viewId }) => viewId === tab));
 
   /**
    * Message to initialize a transaction in the extrinsics tab.

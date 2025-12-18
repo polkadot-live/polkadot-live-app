@@ -151,10 +151,9 @@ app.whenReady().then(async () => {
   WindowUtils.createBaseWindow();
 
   // Handle child windows.
-  WindowUtils.handleViewOnIPC('import');
-  WindowUtils.handleViewOnIPC('action');
-  WindowUtils.handleViewOnIPC('openGov');
-  WindowUtils.handleViewOnIPC('settings');
+  for (const viewId of ['import', 'action', 'openGov', 'settings']) {
+    WindowUtils.handleViewOnIPC(viewId);
+  }
 
   // ------------------------------
   // Handle Power Changes

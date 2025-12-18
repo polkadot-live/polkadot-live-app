@@ -28,10 +28,7 @@ export class Config {
   private static _themeColorLight = '#eee';
 
   // Cache port pairs to be sent to their respective windows.
-  private static _main_import_ports: PortPair;
-  private static _main_action_ports: PortPair;
-  private static _main_settings_ports: PortPair;
-  private static _main_openGov_ports: PortPair;
+  private static _main_tabs_ports: PortPair;
 
   // Cache Electron objects.
   private static _appTray: Tray | null = null;
@@ -60,17 +57,8 @@ export class Config {
   // Return port pair to facilitate window communication.
   static getPortPair = (id: PortPairID): PortPair => {
     switch (id) {
-      case 'main-import': {
-        return Config._main_import_ports;
-      }
-      case 'main-action': {
-        return Config._main_action_ports;
-      }
-      case 'main-settings': {
-        return Config._main_settings_ports;
-      }
-      case 'main-openGov': {
-        return Config._main_openGov_ports;
+      case 'main-tabs': {
+        return Config._main_tabs_ports;
       }
       default: {
         throw new Error('Port pair id not recognized');
@@ -98,24 +86,9 @@ export class Config {
   // Initialize ports to facilitate communication between the main and other renderers.
   static initPorts(id: PortPairID): void {
     switch (id) {
-      case 'main-import': {
+      case 'main-tabs': {
         const { port1, port2 } = new MessageChannelMain();
-        Config._main_import_ports = { port1, port2 };
-        break;
-      }
-      case 'main-action': {
-        const { port1, port2 } = new MessageChannelMain();
-        Config._main_action_ports = { port1, port2 };
-        break;
-      }
-      case 'main-settings': {
-        const { port1, port2 } = new MessageChannelMain();
-        Config._main_settings_ports = { port1, port2 };
-        break;
-      }
-      case 'main-openGov': {
-        const { port1, port2 } = new MessageChannelMain();
-        Config._main_openGov_ports = { port1, port2 };
+        Config._main_tabs_ports = { port1, port2 };
         break;
       }
       default: {

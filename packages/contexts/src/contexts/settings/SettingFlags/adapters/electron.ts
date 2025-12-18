@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ConfigSettings } from '@polkadot-live/core';
+import { ConfigTabs } from '@polkadot-live/core';
 import type { SettingFlagsAdapter } from './types';
 import type { SettingKey } from '@polkadot-live/types/settings';
 
@@ -23,7 +23,7 @@ export const electronAdapter: SettingFlagsAdapter = {
   },
 
   handleSetting: (setting) => {
-    ConfigSettings.portSettings.postMessage({
+    ConfigTabs.portToMain.postMessage({
       task: 'setting:execute',
       data: { setting },
     });
