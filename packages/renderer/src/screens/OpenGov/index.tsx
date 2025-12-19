@@ -9,28 +9,15 @@ import { OpenGov } from '@polkadot-live/screens';
 
 export const FadeOpenGov = () => {
   const { getOnlineMode, stateLoaded } = useConnections();
-  const { treasuryChainId, initTreasury } = useTreasury();
+  const { fetchingTreasuryData, treasuryChainId, initTreasury } = useTreasury();
+  const isOnline = getOnlineMode();
 
   // Initialize treasury data when window opens.
   useEffect(() => {
-    if (ConfigTabs._portExists) {
-      getOnlineMode() && initTreasury(treasuryChainId);
-    }
-  }, []);
-
-  // Initialize treasury data when port is received.
-  useEffect(() => {
-    if (ConfigTabs._portExists) {
-      getOnlineMode() && initTreasury(treasuryChainId);
-    }
-  }, [ConfigTabs._portExists]);
-
-  // Reload treasury data if app goes online from offline mode.
-  useEffect(() => {
-    if (getOnlineMode() && ConfigTabs._portExists) {
+    if (ConfigTabs._portExists && !fetchingTreasuryData && getOnlineMode()) {
       initTreasury(treasuryChainId);
     }
-  }, [getOnlineMode()]);
+  }, [isOnline]);
 
   return (
     <FadeInWrapper show={stateLoaded}>
