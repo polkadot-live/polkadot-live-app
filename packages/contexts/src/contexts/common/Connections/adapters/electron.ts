@@ -50,8 +50,6 @@ export const electronAdapter: ConnectionsAdapter = {
     }
   },
 
-  isTabOpen: async (tab) => await window.myAPI.isViewOpen(tab),
-
   openInBrowser: (uri: string, analytics?: AnyData) => {
     window.myAPI.openBrowserURL(uri);
     if (analytics) {

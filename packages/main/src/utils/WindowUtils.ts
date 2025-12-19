@@ -221,8 +221,6 @@ export const createBaseWindow = () => {
     args: { windowId: 'tabs' },
   });
 
-  baseWindow.contentView.addChildView(tabsView);
-
   // Open links with target="_blank" in default browser.
   tabsView.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url);
@@ -268,6 +266,7 @@ export const createBaseWindow = () => {
   });
 
   // Have windows controller manage window.
+  baseWindow.contentView.addChildView(tabsView);
   WindowsController.setBaseWindow(baseWindow);
   WindowsController.setTabsView(tabsView);
 

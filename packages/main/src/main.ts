@@ -315,29 +315,6 @@ app.whenReady().then(async () => {
     }
   });
 
-  // Check if a view is currently open.
-  ipcMain.handle('app:view:isOpen', (_, viewId: string) =>
-    WindowsController.viewExists(viewId)
-  );
-
-  // Show a tab.
-  ipcMain.on('app:view:show', (_, viewId: string) => {
-    WindowsController.renderView(viewId);
-  });
-
-  // Destroy a view and its associated tab.
-  ipcMain.on(
-    'app:view:close',
-    (_, destroyViewId: string, showViewId: string | null) => {
-      if (showViewId) {
-        WindowsController.renderView(showViewId);
-      }
-
-      // Destroy view to optimize memory.
-      WindowsController.removeView(destroyViewId);
-    }
-  );
-
   // Open devTools for a view.
   ipcMain.on('app:view:devTools', (_, windowId: string) => {
     WindowsController.openDevTools(windowId);

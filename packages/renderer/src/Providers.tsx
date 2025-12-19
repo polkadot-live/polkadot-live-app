@@ -65,7 +65,6 @@ const getProvidersForWindow = () => {
       return withProviders(
         HelpProvider,
         AppSettingsProvider,
-        TabsProvider,
         OverlayProvider,
         ConnectionsProvider,
         AddressesProvider,

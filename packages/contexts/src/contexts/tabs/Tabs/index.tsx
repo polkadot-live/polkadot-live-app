@@ -140,8 +140,6 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
    */
   const handleTabClick = (id: number) => {
     setClickedId(id);
-    const { viewId } = tabsData.find((t) => t.id === id)!;
-    adapter.onClickTab(viewId);
   };
 
   /**

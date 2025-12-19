@@ -14,12 +14,6 @@ interface StoredWindow {
   focused: boolean;
 }
 
-interface StoredView {
-  view: WebContentsView;
-  id: string;
-  focused: boolean;
-}
-
 interface StoredBase {
   window: BaseWindow;
   id: string;
@@ -30,7 +24,6 @@ export class WindowsController {
   // Managed windows.
   static active: StoredWindow[] = [];
   static base: StoredBase | null = null;
-  static views: StoredView[] = [];
   static tabsView: WebContentsView | null = null;
   private static overlay: BrowserWindow | null = null;
 
@@ -40,10 +33,6 @@ export class WindowsController {
   // Gets a browser window from the `active` set via its id.
   static getWindow = (id: string) =>
     this.active.find((a: StoredWindow) => a.id === id)?.window ?? undefined;
-
-  // Get a managed web contents view.
-  static getView = (viewId: string) =>
-    this.views.find(({ id }) => viewId === id)?.view ?? undefined;
 
   static minimizeWindow = (windowId: string) => {
     windowId === 'main'
@@ -75,9 +64,6 @@ export class WindowsController {
     this.getWindow('menu')?.setBackgroundColor(color);
     this.base?.window.setBackgroundColor(color);
     this.tabsView?.setBackgroundColor(color);
-    for (const { view } of this.views) {
-      view.setBackgroundColor(color);
-    }
   };
 
   /* ---------------------------------------- */
@@ -95,7 +81,6 @@ export class WindowsController {
     if (!window) {
       return null;
     }
-
     const { x, y, width, height } = window.getBounds();
     const overlay = new BrowserWindow({
       alwaysOnTop: true,
@@ -146,23 +131,14 @@ export class WindowsController {
   /* ---------------------------------------- */
 
   static addTab = (viewId: string) => {
-    const getTabLabel = () => {
-      switch (viewId) {
-        case 'action':
-          return 'Extrinsics';
-        case 'import':
-          return 'Accounts';
-        case 'openGov':
-          return 'OpenGov';
-        case 'settings':
-          return 'Settings';
-        default:
-          return 'Unknown';
-      }
+    const Labels: Record<string, string> = {
+      action: 'Extrinsics',
+      import: 'Accounts',
+      openGov: 'OpenGov',
+      settings: 'Settings',
     };
-
     const channel = 'renderer:tab:open';
-    const label = getTabLabel();
+    const label = Labels[viewId];
     this.tabsView?.webContents.send(channel, { id: -1, label, viewId });
   };
 
@@ -170,87 +146,15 @@ export class WindowsController {
   /* Stored Views                             */
   /* ---------------------------------------- */
 
-  // Adds a view to the `active` set and append to base window.
-  static addView = (view: WebContentsView, id: string) => {
-    // TODO: Remove focused field.
-    const newWindow: StoredView = { view, id, focused: false };
-
-    this.views = this.views.reduceRight(
-      (acc, curr) => (curr.id === id ? acc : [curr, ...acc]),
-      [newWindow]
-    );
-
-    // Render this view in base window.
-    this.renderView(id);
-  };
-
-  // Removes a view from the base window.
-  static removeView = (id: string) => {
-    const maybeStoredView = this.views.find((s) => s.id === id);
-
-    if (this.base && maybeStoredView) {
-      const { view } = maybeStoredView;
-      this.base.window.contentView.removeChildView(view);
-      this.views = this.views.filter((s) => s.id !== id);
-
-      // Hide base window if all tabs are closed.
-      if (this.views.length === 0) {
-        this.base.window.hide();
-      }
-    }
-  };
-
-  // Check if view is already created.
-  static viewExists = (viewId: string): boolean =>
-    this.views.find(({ id }) => id === viewId) ? true : false;
-
-  // Render a managed view inside the base window.
-  static renderView = (viewId: string) => {
-    const { view } = this.views.find(({ id }) => id === viewId)!;
-    this.initViewBounds(view);
-
-    const baseWindow = this.base!.window;
-    const children = baseWindow.contentView.children;
-    let added = false;
-
-    for (const child of children) {
-      if (child !== this.tabsView) {
-        child === view
-          ? (added = true)
-          : baseWindow.contentView.removeChildView(child);
-      }
-    }
-    !added && baseWindow.contentView.addChildView(view);
-    !baseWindow.isVisible() && baseWindow.show();
-  };
-
-  // Set view bounds correctly.
-  private static initViewBounds = (view: WebContentsView) => {
-    const { width, height } = this.base!.window.getContentBounds()!;
-
-    view.setBounds({
-      x: 0,
-      y: this.Y_OFFSET,
-      width,
-      height: Math.max(height - this.Y_OFFSET, 0),
-    });
-  };
-
   // Resize base window.
   static resizeBaseWindow = (size: 'small' | 'medium' | 'large' | '') => {
-    const getBounds = () => {
-      switch (size) {
-        case 'small':
-          return { width: 400, height: 750 };
-        case 'medium':
-          return { width: 900, height: 550 };
-        case 'large':
-          return { width: 1200, height: 700 };
-        default:
-          return { width: 400, height: 300 };
-      }
+    const Bounds: Record<string, { width: number; height: number }> = {
+      small: { width: 400, height: 750 },
+      medium: { width: 900, height: 550 },
+      large: { width: 1200, height: 700 },
+      default: { width: 400, height: 300 },
     };
-    const { width, height } = getBounds();
+    const { width, height } = Bounds[size === '' ? 'default' : size];
     this.base?.window.setSize(width, height);
     this.resizeViews();
   };
@@ -266,12 +170,9 @@ export class WindowsController {
     if (!process.env['DEBUG']) {
       return;
     }
-    const view =
-      viewId === 'tabs'
-        ? this.tabsView
-        : this.views.find(({ id }) => id === viewId)?.view;
-
-    view?.webContents.openDevTools();
+    if (viewId === 'tabs') {
+      this.tabsView?.webContents.openDevTools();
+    }
   };
 
   /* ---------------------------------------- */
@@ -279,7 +180,6 @@ export class WindowsController {
   /* ---------------------------------------- */
 
   // A window is in focus.
-  // NOTE: Called for `menu` and `base` windows.
   static focus = (id: string) => {
     if (id === 'base' && this.base) {
       this.base = { ...this.base, focused: true };
@@ -291,7 +191,6 @@ export class WindowsController {
   };
 
   // A window has been blurred.
-  // NOTE: Called for `menu` and `base` windows.
   static blur = (id: string) => {
     if (this.base && id === 'base') {
       this.base = { ...this.base, focused: false };
@@ -317,7 +216,6 @@ export class WindowsController {
   };
 
   // Hide window of a id and remove focus.
-  // TODO: Refactor to work with `main` or `base` windows.
   static hideAndBlur = (id: string) => {
     for (const { window, id: currId } of this.active) {
       if (currId === id) {
