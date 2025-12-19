@@ -2,7 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Dialog from '@radix-ui/react-dialog';
-import { useConnections, useReferenda } from '@polkadot-live/contexts';
+import {
+  useConnections,
+  useDialogControl,
+  useReferenda,
+} from '@polkadot-live/contexts';
 import { useState } from 'react';
 import {
   FlexColumn,
@@ -21,13 +25,16 @@ import type { DialogFindReferendumProps } from './types';
 
 export const DialogFindReferendum = ({ tab }: DialogFindReferendumProps) => {
   const { getTheme } = useConnections();
-  const theme = getTheme();
-
   const { getActiveReferenda, getHistoryReferenda, getItemsPerPage, setPage } =
     useReferenda();
 
-  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const {
+    findReferendumDialogOpen: dialogOpen,
+    setFindReferendumDialogOpen: setDialogOpen,
+  } = useDialogControl();
+
   const [inputVal, setInputVal] = useState<number | null>(null);
+  const theme = getTheme();
 
   /**
    * Utils.

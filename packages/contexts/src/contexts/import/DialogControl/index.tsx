@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
 import type {
   DialogBulkRenameData,
@@ -25,9 +25,18 @@ export const DialogControlProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  // True if any dialog is open.
+  const [dialogIsOpen, setDialogIsOpen] = useState(false);
+
   /**
-   * Rename dialog.
+   * Accounts tab.
    */
+
+  // Import read-only dialog.
+  const [importReadOnlyDialogOpen, setImportReadOnlyDialogOpen] =
+    useState(false);
+
+  // Rename dialog.
   const [renameDialogState, setRenameDialogState] = useState<DialogRenameData>({
     isOpen: false,
     encodedAccount: null,
@@ -39,9 +48,7 @@ export const DialogControlProvider = ({
     setRenameDialogState({ ...data });
   };
 
-  /**
-   * Manage account dialog.
-   */
+  // Manage account dialog.
   const [manageAccountDialogState, setManageAccountDialogState] =
     useState<DialogManageAccountData>({
       isOpen: false,
@@ -52,9 +59,7 @@ export const DialogControlProvider = ({
   const setManageAccountDialogData = (data: DialogManageAccountData) =>
     setManageAccountDialogState({ ...data });
 
-  /**
-   * Bulk rename dialog.
-   */
+  // Bulk rename dialog.
   const [bulkRenameDialogState, setBulkRenameDialogState] =
     useState<DialogBulkRenameData>({
       isOpen: false,
@@ -65,9 +70,7 @@ export const DialogControlProvider = ({
   const setBulkRenameDialogData = (data: DialogBulkRenameData) =>
     setBulkRenameDialogState({ ...data });
 
-  /**
-   * Show address dialog.
-   */
+  // Show address dialog.
   const [showAddressDialogState, setShowAddressDialogState] =
     useState<DialogShowAddressData>({
       isOpen: false,
@@ -78,9 +81,48 @@ export const DialogControlProvider = ({
   const setShowAddressDialogData = (data: DialogShowAddressData) =>
     setShowAddressDialogState({ ...data });
 
+  /**
+   * Extrinsics tab.
+   */
+  const [extrinsicSummaryDialogOpen, setExtrinsicSummaryDialogOpen] =
+    useState<boolean>(false);
+  const [deleteExtrinsicDialogOpen, setDeleteExtrinsicDialogOpen] =
+    useState<boolean>(false);
+
+  /**
+   * OpenGov tab.
+   */
+  const [findReferendumDialogOpen, setFindReferendumDialogOpen] =
+    useState(false);
+
+  const someOpen = () =>
+    [
+      bulkRenameDialogState.isOpen,
+      deleteExtrinsicDialogOpen,
+      extrinsicSummaryDialogOpen,
+      findReferendumDialogOpen,
+      importReadOnlyDialogOpen,
+      manageAccountDialogState.isOpen,
+      renameDialogState.isOpen,
+      showAddressDialogState.isOpen,
+    ].some(Boolean);
+
+  useEffect(() => {
+    setDialogIsOpen(someOpen());
+  }, [someOpen()]);
+
   return (
     <DialogControlContext
       value={{
+        deleteExtrinsicDialogOpen,
+        dialogIsOpen,
+        extrinsicSummaryDialogOpen,
+        findReferendumDialogOpen,
+        importReadOnlyDialogOpen,
+        setDeleteExtrinsicDialogOpen,
+        setExtrinsicSummaryDialogOpen,
+        setFindReferendumDialogOpen,
+        setImportReadOnlyDialogOpen,
         getBulkRenameDialogData,
         getManageAccountDialogData,
         getRenameDialogData,

@@ -28,6 +28,15 @@ export interface DialogShowAddressData {
 }
 
 export interface DialogControlContextInterface {
+  deleteExtrinsicDialogOpen: boolean;
+  dialogIsOpen: boolean;
+  extrinsicSummaryDialogOpen: boolean;
+  findReferendumDialogOpen: boolean;
+  importReadOnlyDialogOpen: boolean;
+  setDeleteExtrinsicDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setExtrinsicSummaryDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setFindReferendumDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setImportReadOnlyDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
   getBulkRenameDialogData: () => DialogBulkRenameData;
   getManageAccountDialogData: () => DialogManageAccountData;
   getRenameDialogData: () => DialogRenameData;
