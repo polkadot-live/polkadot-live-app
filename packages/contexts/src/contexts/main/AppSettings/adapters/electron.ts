@@ -16,14 +16,14 @@ export const electronAdapter: AppSettingsAdapter = {
     // Sync settings view.
     switch (key) {
       case 'setting:docked-window': {
-        ConfigRenderer.portToSettings?.postMessage({
+        ConfigRenderer.portToTabs?.postMessage({
           task: 'settings:set:dockedWindow',
           data: { docked: !cacheRef.current.get(key) },
         });
         break;
       }
       case 'setting:silence-os-notifications': {
-        ConfigRenderer.portToSettings?.postMessage({
+        ConfigRenderer.portToTabs?.postMessage({
           task: 'settings:set:silenceOsNotifications',
           data: { silenced: !cacheRef.current.get(key) },
         });

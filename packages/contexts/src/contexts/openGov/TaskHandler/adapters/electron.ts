@@ -1,13 +1,13 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ConfigOpenGov } from '@polkadot-live/core';
+import { ConfigTabs } from '@polkadot-live/core';
 import type { AnyData } from '@polkadot-live/types';
 import type { TaskHandlerAdapter } from './types';
 
 export const electronAdapter: TaskHandlerAdapter = {
   addReferendumSubscriptions: (refId, tasks) => {
-    ConfigOpenGov.portOpenGov.postMessage({
+    ConfigTabs.portToMain.postMessage({
       task: 'openGov:subscriptions:add',
       data: { refId, tasks: JSON.stringify(tasks) },
     });
@@ -18,7 +18,7 @@ export const electronAdapter: TaskHandlerAdapter = {
   },
 
   removeReferendumSubscriptions: (refId, tasks) => {
-    ConfigOpenGov.portOpenGov.postMessage({
+    ConfigTabs.portToMain.postMessage({
       task: 'openGov:subscriptions:remove',
       data: { refId, tasks: JSON.stringify(tasks) },
     });

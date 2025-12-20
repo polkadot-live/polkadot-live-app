@@ -11,7 +11,6 @@ export interface ConnectionsAdapter {
     setCache: Dispatch<SetStateAction<Map<SyncID, boolean>>>,
     cacheRef: RefObject<Map<SyncID, boolean>>
   ) => (() => void) | null;
-  isTabOpen: (tab: string) => Promise<boolean>;
   initAction: (txMeta: ActionMeta) => void;
   openInBrowser: (uri: string, analytics?: AnyData) => void;
   openTab: (

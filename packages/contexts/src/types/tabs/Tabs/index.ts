@@ -11,6 +11,7 @@ export interface TabsContextInterface {
   items: number[];
   sensors: AnyData;
   tabsData: TabData[];
+  addTab: (tab: TabData) => void;
   setClickedId: React.Dispatch<React.SetStateAction<number | null>>;
   handleDragStart: (event: DragStartEvent) => void;
   handleDragEnd: (event: DragEndEvent) => void;

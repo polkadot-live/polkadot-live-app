@@ -10,12 +10,8 @@ export const electronAdapter: TabsAdapter = {
     /* empty */
   },
 
-  onCloseTab: (closeViewId, showViewId) => {
-    window.myAPI.closeTab(closeViewId, showViewId);
-  },
-
-  onClickTab: (viewId) => {
-    window.myAPI.showTab(viewId);
+  onCloseTab: () => {
+    /* empty */
   },
 
   openTabFromMenu: () => {

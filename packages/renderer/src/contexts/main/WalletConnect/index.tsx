@@ -155,7 +155,7 @@ export const WalletConnectProvider = ({
       }
     );
 
-    ConfigRenderer.portToImport?.postMessage({
+    ConfigRenderer.portToTabs?.postMessage({
       task: 'import:wc:set:fetchedAddresses',
       data: { fetchedAddresses: JSON.stringify(fetchedAddresses) },
     });
@@ -228,11 +228,7 @@ export const WalletConnectProvider = ({
     window.myAPI.relaySharedState('wc:connecting', false);
     window.myAPI.relaySharedState('extrinsic:building', false);
 
-    const port =
-      targetView === 'import'
-        ? ConfigRenderer.portToImport
-        : ConfigRenderer.portToAction;
-
+    const port = ConfigRenderer.portToTabs;
     const data = { uri: wcMetaRef.current!.uri };
     port?.postMessage({ task: `${targetView}:wc:modal:open`, data });
 
@@ -357,7 +353,7 @@ export const WalletConnectProvider = ({
     try {
       const { approved, errorThrown } = verifyResult;
 
-      ConfigRenderer.portToAction?.postMessage({
+      ConfigRenderer.portToTabs?.postMessage({
         task: 'action:wc:approve',
         data: { approved },
       });
@@ -453,7 +449,7 @@ export const WalletConnectProvider = ({
       ExtrinsicsController.submit(info, silence);
 
       // Close overlay in extrinsics window.
-      ConfigRenderer.portToAction?.postMessage({
+      ConfigRenderer.portToTabs?.postMessage({
         task: 'action:overlay:close',
         data: null,
       });
@@ -520,7 +516,7 @@ export const WalletConnectProvider = ({
    */
   const sendToastError = (target: 'import' | 'extrinsics', message: string) => {
     const view = target === 'import' ? 'import' : 'action';
-    ConfigRenderer.portToImport?.postMessage({
+    ConfigRenderer.portToTabs?.postMessage({
       task: `${view}:toast:show`,
       data: {
         message,
@@ -534,7 +530,7 @@ export const WalletConnectProvider = ({
    * Util to send WalletConnect error data to extrinsics window.
    */
   const sendWcError = (message: WalletConnectMeta) => {
-    ConfigRenderer.portToAction?.postMessage({
+    ConfigRenderer.portToTabs?.postMessage({
       task: 'action:wc:error',
       data: message,
     });

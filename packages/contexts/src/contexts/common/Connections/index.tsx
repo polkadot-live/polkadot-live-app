@@ -73,11 +73,6 @@ export const ConnectionsProvider = ({
     adapter.openInBrowser(uri, analytics);
 
   /**
-   * Checks if a tab is open.
-   */
-  const isTabOpen = async (tab: string) => await adapter.isTabOpen(tab);
-
-  /**
    * Message to initialize a transaction in the extrinsics tab.
    */
   const initExtrinsicMsg = (txMeta: ActionMeta) => {
@@ -123,7 +118,6 @@ export const ConnectionsProvider = ({
         getOnlineMode,
         getTheme,
         initExtrinsicMsg,
-        isTabOpen,
         openInBrowser,
         openTab,
         relayState,

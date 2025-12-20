@@ -10,6 +10,7 @@ import * as UI from '@polkadot-live/ui/components';
 import {
   useConnections,
   useContextProxy,
+  useDialogControl,
   useHelp,
 } from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
@@ -28,6 +29,12 @@ import type { ExtrinsicInfo, TxStatus } from '@polkadot-live/types/tx';
 export const Action = () => {
   const { useCtx } = useContextProxy();
   const { openHelp } = useHelp();
+  const {
+    deleteExtrinsicDialogOpen: deleteDialogOpen,
+    extrinsicSummaryDialogOpen: summaryDialogOpen,
+    setDeleteExtrinsicDialogOpen: setDeleteDialogOpen,
+    setExtrinsicSummaryDialogOpen: setSummaryDialogOpen,
+  } = useDialogControl();
 
   // Get state and setters from TxMeta context.
   const {
@@ -62,13 +69,9 @@ export const Action = () => {
   const darkMode = cacheGet('mode:dark');
   const theme = getTheme();
 
-  // Summary dialog.
+  // Dialog data.
   const [summaryInfo, setSummaryInfo] = useState<ExtrinsicInfo | null>(null);
-  const [summaryDialogOpen, setSummaryDialogOpen] = useState<boolean>(false);
-
-  // Delete extrinsic dialog.
   const [deleteInfo, setDeleteInfo] = useState<ExtrinsicInfo | null>(null);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
 
   // Utility to get title based on tx status.
   const getTxStatusTitle = (txStatus: TxStatus): string => {
@@ -118,7 +121,12 @@ export const Action = () => {
             color={darkMode ? '#642763' : '#a772a6'}
             width={'100%'}
             height={2}
-            cssOverride={{ position: 'fixed', top: 0, left: 0, zIndex: 99 }}
+            cssOverride={{
+              position: 'fixed',
+              top: '82px',
+              left: 0,
+              zIndex: 99,
+            }}
             speedMultiplier={0.75}
           />
         )}
@@ -377,7 +385,7 @@ export const Action = () => {
                       info={info}
                       onClickSummary={() => {
                         setSummaryInfo(info);
-                        setSummaryDialogOpen(true);
+                        setDeleteDialogOpen(true);
                       }}
                     />
                   </UI.AccordionContent>

@@ -48,7 +48,7 @@ export const executeLedgerTask = async (
       }
 
       const { accountIndices, chainId }: Target = JSON.parse(serData);
-      const importView = WindowsController.getView('import');
+      const importView = Boolean(WindowsController.tabsView);
       if (process.env.DEBUG) {
         console.debug(accountIndices, chainId, task);
       }

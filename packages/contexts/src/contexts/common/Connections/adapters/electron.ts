@@ -4,7 +4,7 @@
 import { ConfigRenderer } from '@polkadot-live/core';
 import { initSharedState } from '@polkadot-live/consts/sharedState';
 import { setStateWithRef } from '@w3ux/utils';
-import type { ActionMeta, AnyData, SyncID } from '@polkadot-live/types';
+import type { AnyData, SyncID, TabData } from '@polkadot-live/types';
 import type { ConnectionsAdapter } from './types';
 import type { IpcRendererEvent } from 'electron';
 
@@ -33,27 +33,22 @@ export const electronAdapter: ConnectionsAdapter = {
     return null;
   },
 
-  initAction: (txMeta: ActionMeta) => {
-    electronAdapter.isTabOpen('action').then((isOpen) => {
-      if (isOpen) {
-        electronAdapter.openTab('action');
-        ConfigRenderer.portToAction?.postMessage({
-          task: 'action:init',
-          data: JSON.stringify(txMeta),
-        });
-      } else {
-        // Cache pending extrinsic in main process.
-        window.myAPI
-          .sendExtrinsicsTaskAsync({
-            action: 'extrinsics:addPending',
-            data: { serMeta: JSON.stringify(txMeta) },
-          })
-          .then(() => electronAdapter.openTab('action'));
-      }
-    });
+  initAction: (txMeta) => {
+    if (!ConfigRenderer.portToTabs) {
+      // Cache pending extrinsic in main process.
+      window.myAPI.sendExtrinsicsTaskAsync({
+        action: 'extrinsics:addPending',
+        data: { serMeta: JSON.stringify(txMeta) },
+      });
+      electronAdapter.openTab('action');
+    } else {
+      electronAdapter.openTab('action');
+      ConfigRenderer.portToTabs?.postMessage({
+        task: 'action:init',
+        data: JSON.stringify(txMeta),
+      });
+    }
   },
-
-  isTabOpen: async (tab) => await window.myAPI.isViewOpen(tab),
 
   openInBrowser: (uri: string, analytics?: AnyData) => {
     window.myAPI.openBrowserURL(uri);
@@ -63,6 +58,19 @@ export const electronAdapter: ConnectionsAdapter = {
   },
 
   openTab: (tab, analytics) => {
+    const Labels: Record<string, string> = {
+      import: 'Accounts',
+      action: 'Extrinsics',
+      openGov: 'OpenGov',
+      settings: 'Settings',
+    };
+
+    const tabData: TabData = { id: -1, viewId: tab, label: Labels[tab] };
+    ConfigRenderer.portToTabs?.postMessage({
+      task: 'tabs:addTab',
+      data: { tabData },
+    });
+
     window.myAPI.openWindow(tab);
     if (analytics) {
       const { event, data } = analytics;

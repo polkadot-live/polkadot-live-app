@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as wc from '@polkadot-live/consts/walletConnect';
-import { ConfigImport } from '@polkadot-live/core';
+import { ConfigTabs } from '@polkadot-live/core';
 import { createContext, useEffect, useRef, useState } from 'react';
 import {
   createSafeContextHook,
@@ -77,7 +77,7 @@ export const WalletConnectImportProvider = ({
       ({ selected }) => selected === true
     );
 
-    ConfigImport.portImport.postMessage({
+    ConfigTabs.portToMain.postMessage({
       task: 'renderer:wc:connect',
       data: { networks: JSON.stringify(selectedNetworks) },
     });
@@ -87,7 +87,7 @@ export const WalletConnectImportProvider = ({
    * Handle disconnect button click.
    */
   const handleDisconnect = async () => {
-    ConfigImport.portImport.postMessage({
+    ConfigTabs.portToMain.postMessage({
       task: 'renderer:wc:disconnect',
       data: null,
     });
@@ -97,7 +97,7 @@ export const WalletConnectImportProvider = ({
    * Handle fetch button click.
    */
   const handleFetch = () => {
-    ConfigImport.portImport.postMessage({
+    ConfigTabs.portToMain.postMessage({
       task: 'renderer:wc:fetch',
       data: null,
     });

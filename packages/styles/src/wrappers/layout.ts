@@ -168,3 +168,15 @@ export const StatsFooter = styled.section<{ $chainId: ChainID }>`
     }
   }
 `;
+
+export const TabViewWrapper = styled.div`
+  &.ShowTabView {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+  }
+  &.HideTabView {
+    display: none;
+  }
+`;

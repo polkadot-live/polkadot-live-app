@@ -20,6 +20,7 @@ import { renderToast } from '@polkadot-live/ui/utils';
 import { unescape } from '@w3ux/utils';
 import {
   useConnections,
+  useDialogControl,
   useImportAddresses,
   useImportHandler,
 } from '@polkadot-live/contexts';
@@ -28,8 +29,11 @@ export const DialogImportReadOnly = () => {
   const { isAlreadyImported } = useImportAddresses();
   const { getTheme } = useConnections();
   const { handleImportAddress } = useImportHandler();
+  const {
+    importReadOnlyDialogOpen: dialogOpen,
+    setImportReadOnlyDialogOpen: setDialogOpen,
+  } = useDialogControl();
 
-  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [inputVal, setInputVal] = useState<string>('');
   const theme = getTheme();
 
@@ -89,13 +93,11 @@ export const DialogImportReadOnly = () => {
 
       if (result !== null) {
         const [isValid] = result;
-
         if (isValid) {
           return true;
         }
       }
     }
-
     return false;
   };
 

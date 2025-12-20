@@ -165,7 +165,7 @@ export const useMainMessagePorts = () => {
       }
 
       // Send message back to import window to reset account's processing flag.
-      ConfigRenderer.portToImport?.postMessage({
+      ConfigRenderer.portToTabs?.postMessage({
         task: 'import:account:processing',
         data: {
           serEncodedAccount,
@@ -180,7 +180,7 @@ export const useMainMessagePorts = () => {
     } catch (err) {
       const { serEncodedAccount, serGenericAccount } = ev.data.data;
 
-      ConfigRenderer.portToImport?.postMessage({
+      ConfigRenderer.portToTabs?.postMessage({
         task: 'import:account:processing',
         data: {
           serEncodedAccount,
@@ -279,7 +279,7 @@ export const useMainMessagePorts = () => {
     updated.length > 0 && updateEventsOnAccountRename(updated, chainId);
 
     // Update account name in extrinsics window.
-    ConfigRenderer.portToAction?.postMessage({
+    ConfigRenderer.portToTabs?.postMessage({
       task: 'action:account:rename',
       data: { address, chainId, newName },
     });
@@ -325,7 +325,7 @@ export const useMainMessagePorts = () => {
     const result = await ExtrinsicsController.build(info);
     if (result) {
       const { accountNonce, genesisHash, txId, txPayload } = result;
-      ConfigRenderer.portToAction?.postMessage({
+      ConfigRenderer.portToTabs?.postMessage({
         task: 'action:tx:report:data',
         data: { accountNonce, genesisHash, txId, txPayload },
       });
@@ -382,13 +382,13 @@ export const useMainMessagePorts = () => {
       const tracks = api.consts.referenda.tracks;
       const serialized = Core.getSerializedTracks(tracks as T);
 
-      ConfigRenderer.portToOpenGov?.postMessage({
+      ConfigRenderer.portToTabs?.postMessage({
         task: 'openGov:tracks:receive',
         data: { serialized, chainId },
       });
     } catch (e) {
       console.error(e);
-      ConfigRenderer.portToOpenGov?.postMessage({
+      ConfigRenderer.portToTabs?.postMessage({
         task: 'openGov:tracks:receive',
         data: { serialized: null, chainId },
       });
@@ -421,13 +421,13 @@ export const useMainMessagePorts = () => {
           break;
         }
       }
-      ConfigRenderer.portToOpenGov?.postMessage({
+      ConfigRenderer.portToTabs?.postMessage({
         task: 'openGov:referenda:receive',
         data: { json: JSON.stringify(referenda) },
       });
     } catch (e) {
       console.error(e);
-      ConfigRenderer.portToOpenGov?.postMessage({
+      ConfigRenderer.portToTabs?.postMessage({
         task: 'openGov:referenda:receive',
         data: { json: null },
       });
@@ -541,12 +541,14 @@ export const useMainMessagePorts = () => {
     console.log(`received port: ${e.data.target}`);
 
     switch (e.data.target) {
-      case 'main-import:main': {
-        ConfigRenderer.portToImport = e.ports[0];
+      case 'main-tabs:main': {
+        ConfigRenderer.portToTabs = e.ports[0];
 
-        ConfigRenderer.portToImport.onmessage = async (ev: MessageEvent) => {
-          // Message received from `import`.
+        ConfigRenderer.portToTabs.onmessage = async (ev: MessageEvent) => {
           switch (ev.data.task) {
+            /**
+             * Accounts view message.
+             */
             case 'renderer:address:import': {
               await handleImportAddress(ev, false);
               break;
@@ -575,21 +577,9 @@ export const useMainMessagePorts = () => {
               handleFetchWcSessionAddresses();
               break;
             }
-            default: {
-              throw new Error(`Port task not recognized (${ev.data.task})`);
-            }
-          }
-        };
-
-        ConfigRenderer.portToImport.start();
-        break;
-      }
-      case 'main-action:main': {
-        ConfigRenderer.portToAction = e.ports[0];
-
-        ConfigRenderer.portToAction.onmessage = async (ev: MessageEvent) => {
-          // Message received from `action`.
-          switch (ev.data.task) {
+            /**
+             * Extrinsics view message.
+             */
             case 'renderer:tx:init': {
               await handleActionTxInit(ev);
               break;
@@ -646,21 +636,32 @@ export const useMainMessagePorts = () => {
               setSigningChain(null);
               break;
             }
-            default: {
-              throw new Error(`Port task not recognized (${ev.data.task})`);
+            /**
+             * OpenGov view message.
+             */
+            case 'openGov:tracks:get': {
+              await handleGetTracks(ev);
+              break;
             }
-          }
-        };
-
-        ConfigRenderer.portToAction.start();
-        break;
-      }
-      case 'main-settings:main': {
-        ConfigRenderer.portToSettings = e.ports[0];
-
-        ConfigRenderer.portToSettings.onmessage = async (ev: MessageEvent) => {
-          // Message received from `settings`.
-          switch (ev.data.task) {
+            case 'openGov:referenda:get': {
+              await handleGetReferenda(ev);
+              break;
+            }
+            case 'openGov:treasury:init': {
+              await handleInitTreasury(ev);
+              break;
+            }
+            case 'openGov:subscriptions:add': {
+              await addReferendumSubscriptions(ev);
+              break;
+            }
+            case 'openGov:subscriptions:remove': {
+              await removeReferendumSubscriptions(ev);
+              break;
+            }
+            /**
+             * Settings view message.
+             */
             case 'setting:execute': {
               const { setting }: { setting: SettingItem } = ev.data.data;
 
@@ -686,48 +687,13 @@ export const useMainMessagePorts = () => {
               toggleSetting(setting.key);
               break;
             }
+
             default: {
               throw new Error(`Port task not recognized (${ev.data.task})`);
             }
           }
         };
-
-        ConfigRenderer.portToSettings.start();
-        break;
-      }
-      case 'main-openGov:main': {
-        ConfigRenderer.portToOpenGov = e.ports[0];
-
-        ConfigRenderer.portToOpenGov.onmessage = async (ev: MessageEvent) => {
-          // Message received from `openGov`.
-          switch (ev.data.task) {
-            case 'openGov:tracks:get': {
-              await handleGetTracks(ev);
-              break;
-            }
-            case 'openGov:referenda:get': {
-              await handleGetReferenda(ev);
-              break;
-            }
-            case 'openGov:treasury:init': {
-              await handleInitTreasury(ev);
-              break;
-            }
-            case 'openGov:subscriptions:add': {
-              await addReferendumSubscriptions(ev);
-              break;
-            }
-            case 'openGov:subscriptions:remove': {
-              await removeReferendumSubscriptions(ev);
-              break;
-            }
-            default: {
-              throw new Error(`Port task not recognized (${ev.data.task})`);
-            }
-          }
-        };
-
-        ConfigRenderer.portToOpenGov.start();
+        ConfigRenderer.portToTabs.start();
         break;
       }
       default: {

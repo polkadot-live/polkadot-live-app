@@ -67,9 +67,6 @@ export interface PreloadAPI {
   handleOpenTab: (
     callback: (_: IpcRendererEvent, tabData: TabData) => void
   ) => void;
-  showTab: (viewId: string) => void;
-  closeTab: (destroyViewId: string, showViewId: string | null) => void;
-  isViewOpen: (viewId: string) => Promise<boolean>;
 
   doLedgerTask: (
     task: LedgerTask,

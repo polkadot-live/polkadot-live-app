@@ -172,7 +172,7 @@ export const DataBackupProvider = ({
     }
     const p_array: [AccountSource, string][] = JSON.parse(s_addresses);
     const p_map = new Map<AccountSource, string>(p_array);
-    const importWindowOpen = await window.myAPI.isViewOpen('import');
+    const importWindowOpen = Boolean(Core.ConfigRenderer.portToTabs);
     const isOnline = getOnlineMode();
 
     for (const [source, ser] of p_map.entries()) {
@@ -303,7 +303,7 @@ export const DataBackupProvider = ({
     }
 
     // Update state in OpenGov window.
-    if (await window.myAPI.isViewOpen('openGov')) {
+    if (Core.ConfigRenderer.portToTabs) {
       inserts.forEach((t) => {
         Core.postToOpenGov('openGov:task:add', {
           serialized: JSON.stringify(t),

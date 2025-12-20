@@ -72,7 +72,7 @@ export const TreasuryApiProvider = ({
    * @summary Send treasury info to OpenGov view.
    */
   const postTreasuryInfo = (info: IpcTreasuryInfo | null) => {
-    ConfigRenderer.portToOpenGov?.postMessage({
+    ConfigRenderer.portToTabs?.postMessage({
       task: 'openGov:treasury:set',
       data: info,
     });

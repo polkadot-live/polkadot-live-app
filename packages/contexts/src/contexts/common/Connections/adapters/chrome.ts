@@ -39,11 +39,6 @@ export const chromeAdapter: ConnectionsAdapter = {
     return () => chrome.runtime.onMessage.removeListener(callback);
   },
 
-  isTabOpen: async (tab) => {
-    const msg = { type: 'tabs', task: 'isTabOpen', tab };
-    return (await chrome.runtime.sendMessage(msg)) as boolean;
-  },
-
   initAction: (txMeta: ActionMeta) =>
     chrome.runtime.sendMessage({
       type: 'extrinsics',

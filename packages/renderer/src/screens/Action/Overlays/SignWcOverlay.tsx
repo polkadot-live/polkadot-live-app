@@ -3,7 +3,7 @@
 
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import WalletConnectSVG from '@w3ux/extension-assets/WalletConnect.svg?react';
-import { ConfigAction } from '@polkadot-live/core';
+import { ConfigTabs } from '@polkadot-live/core';
 import {
   useConnections,
   useWcFeedback,
@@ -50,8 +50,7 @@ export const SignWcOverlay = ({ info }: SignWcOverlayProps) => {
    */
   const handleSign = () => {
     window.myAPI.relaySharedState('extrinsic:building', true);
-
-    ConfigAction.portAction.postMessage({
+    ConfigTabs.portToMain.postMessage({
       task: 'renderer:wc:sign',
       data: { info: JSON.stringify(info) },
     });
@@ -61,11 +60,10 @@ export const SignWcOverlay = ({ info }: SignWcOverlayProps) => {
    * Cancel a transaction waiting for a signature.
    */
   const handleCancelSign = () => {
-    ConfigAction.portAction.postMessage({
+    ConfigTabs.portToMain.postMessage({
       task: 'renderer:wc:sign:cancel',
       data: { txId: info.txId },
     });
-
     setDisableClose(false);
     setOverlayStatus(0);
     window.myAPI.relaySharedState('extrinsic:building', false);

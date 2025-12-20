@@ -17,11 +17,6 @@ export const handleTabMessage = (
   sendResponse: (response?: AnyData) => void
 ): boolean => {
   switch (message.task) {
-    case 'isTabOpen': {
-      const { tab } = message;
-      sendResponse(Boolean(getActiveTabs().find((t) => t.viewId === tab)));
-      return true;
-    }
     case 'closeTab': {
       const { tab } = message;
       const active = getActiveTabs().filter((t) => t.viewId !== tab);

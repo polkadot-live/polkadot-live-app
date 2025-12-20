@@ -18,64 +18,62 @@ import {
 import {
   FlexColumn,
   MainInterfaceWrapper,
+  TabViewWrapper,
 } from '@polkadot-live/styles/wrappers';
 import { ToastContainer } from 'react-toastify';
 import { useEffect, useState } from 'react';
 import { ContextProxyTab } from './Proxy';
 import './App.scss';
 
+interface VisitedTab {
+  viewId: string;
+  viewNode: React.ReactNode;
+}
+
 export const RouterInner = () => {
   // Lazy load tabs.
   const { tabsData, clickedId } = useTabs();
-  const [visitedTabs, setVisitedTabs] = useState<Set<string>>(new Set([]));
+  const [visitedTabs, setVisitedTabs] = useState<VisitedTab[]>([]);
+
+  const ViewFactory: Record<string, () => React.ReactNode> = {
+    action: () => <Action />,
+    import: () => <Import />,
+    openGov: () => <OpenGov />,
+    settings: () => <Settings platform={'chrome'} />,
+  };
 
   useEffect(() => {
     if (clickedId) {
       const tab = tabsData.find((t) => t.id === clickedId);
-      if (tab) {
-        const { viewId } = tab;
-        setVisitedTabs((prev) => new Set([...prev, viewId]));
+      if (!tab) {
+        return;
       }
+      const { viewId } = tab;
+      if (visitedTabs.find((t) => t.viewId === viewId)) {
+        return;
+      }
+      const viewNode = ViewFactory[viewId]();
+      setVisitedTabs((prev) => [...prev, { viewId, viewNode }]);
     }
   }, [clickedId]);
 
-  const renderView = (viewId: string) => {
-    switch (viewId) {
-      case 'action':
-        return <Action />;
-      case 'import':
-        return <Import />;
-      case 'openGov':
-        return <OpenGov />;
-      case 'settings':
-        return <Settings platform={'chrome'} />;
-    }
-  };
+  const getTabId = (viewId: string): number =>
+    tabsData.find((t) => t.viewId === viewId)?.id ?? -1;
 
   return (
     <ContextProxyTab>
       <FlexColumn $rowGap={'0'} style={{ height: '100vh', width: '100%' }}>
-        <Tabs platform="chrome" />
-        {tabsData
-          .filter((tab) => visitedTabs.has(tab.viewId))
-          .map((tab) => (
-            <div
-              key={tab.id}
-              style={
-                clickedId === tab.id
-                  ? {
-                      display: 'block',
-                      height: '100%',
-                      width: '100%',
-                      overflowY: 'auto',
-                    }
-                  : {
-                      display: 'none',
-                    }
-              }
+        <Tabs />
+        {visitedTabs
+          .map((t) => ({ ...t, tabId: getTabId(t.viewId) }))
+          .filter((t) => t.tabId !== -1)
+          .map(({ tabId, viewNode }) => (
+            <TabViewWrapper
+              key={tabId}
+              className={clickedId === tabId ? 'ShowTabView' : 'HideTabView'}
             >
-              {renderView(tab.viewId)}
-            </div>
+              {viewNode}
+            </TabViewWrapper>
           ))}
       </FlexColumn>
     </ContextProxyTab>

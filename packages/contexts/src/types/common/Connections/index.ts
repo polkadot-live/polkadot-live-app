@@ -13,7 +13,6 @@ export interface ConnectionsContextInterface {
   getTheme: () => typeof themeVariables.darkTheme;
   getOnlineMode: () => boolean;
   initExtrinsicMsg: (txMeta: ActionMeta) => void;
-  isTabOpen: (tab: string) => Promise<boolean>;
   openInBrowser: (uri: string, analytics?: AnyData) => void;
   openTab: (
     tab: string,

@@ -151,10 +151,9 @@ app.whenReady().then(async () => {
   WindowUtils.createBaseWindow();
 
   // Handle child windows.
-  WindowUtils.handleViewOnIPC('import');
-  WindowUtils.handleViewOnIPC('action');
-  WindowUtils.handleViewOnIPC('openGov');
-  WindowUtils.handleViewOnIPC('settings');
+  for (const viewId of ['import', 'action', 'openGov', 'settings']) {
+    WindowUtils.handleViewOnIPC(viewId);
+  }
 
   // ------------------------------
   // Handle Power Changes
@@ -315,29 +314,6 @@ app.whenReady().then(async () => {
       WindowsController.minimizeWindow(windowId);
     }
   });
-
-  // Check if a view is currently open.
-  ipcMain.handle('app:view:isOpen', (_, viewId: string) =>
-    WindowsController.viewExists(viewId)
-  );
-
-  // Show a tab.
-  ipcMain.on('app:view:show', (_, viewId: string) => {
-    WindowsController.renderView(viewId);
-  });
-
-  // Destroy a view and its associated tab.
-  ipcMain.on(
-    'app:view:close',
-    (_, destroyViewId: string, showViewId: string | null) => {
-      if (showViewId) {
-        WindowsController.renderView(showViewId);
-      }
-
-      // Destroy view to optimize memory.
-      WindowsController.removeView(destroyViewId);
-    }
-  );
 
   // Open devTools for a view.
   ipcMain.on('app:view:devTools', (_, windowId: string) => {

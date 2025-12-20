@@ -185,10 +185,6 @@ export const API: PreloadAPI = {
     ipcRenderer.send('app:window:restore', windowId),
 
   handleOpenTab: (callback) => ipcRenderer.on('renderer:tab:open', callback),
-  showTab: (viewId: string) => ipcRenderer.send('app:view:show', viewId),
-  closeTab: (destroyViewId: string, showViewId: string | null) =>
-    ipcRenderer.send('app:view:close', destroyViewId, showViewId),
-  isViewOpen: (viewId) => ipcRenderer.invoke('app:view:isOpen', viewId),
 
   /**
    * Shared state

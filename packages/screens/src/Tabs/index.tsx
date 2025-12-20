@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { version } from '../../package.json';
-import { useTabs } from '@polkadot-live/contexts';
+import { useDialogControl, useTabs } from '@polkadot-live/contexts';
 import { closestCenter, DndContext } from '@dnd-kit/core';
 import {
   horizontalListSortingStrategy,
@@ -18,8 +18,9 @@ import { Tab } from './Tab';
 import { TabsWrapper } from './Wrappers';
 import type { TabsProps } from './types';
 
-export const Tabs = ({ leftButtons, platform, onCloseWindow }: TabsProps) => {
+export const Tabs = ({ leftButtons, onCloseWindow }: TabsProps) => {
   const { items, sensors, tabsData } = useTabs();
+  const { dialogIsOpen } = useDialogControl();
   const { handleDragStart, handleDragEnd } = useTabs();
 
   return (
@@ -39,15 +40,16 @@ export const Tabs = ({ leftButtons, platform, onCloseWindow }: TabsProps) => {
               items={items}
               strategy={horizontalListSortingStrategy}
             >
-              {Number(tabsData.length) === 0 && (
-                <div className="NoTabsOpen">No tabs open.</div>
-              )}
-              {tabsData.map(({ id, label }) => (
-                <Tab key={String(id)} id={id} label={label} />
-              ))}
+              {!dialogIsOpen &&
+                tabsData.map(({ id, label }) => (
+                  <Tab key={String(id)} id={id} label={label} />
+                ))}
             </SortableContext>
           </DndContext>
-          {platform === 'chrome' && <DropdownOpenTabs />}
+          <DropdownOpenTabs />
+          {Number(tabsData.length) === 0 && (
+            <div className="NoTabsOpen">No tabs open.</div>
+          )}
         </div>
       </TabsWrapper>
     </>

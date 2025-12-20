@@ -16,10 +16,6 @@ export const chromeAdapter: TabsAdapter = {
     chrome.runtime.sendMessage(msg);
   },
 
-  onClickTab: () => {
-    /* empty */
-  },
-
   openTabFromMenu: (tab) => {
     chrome.runtime.sendMessage({
       type: 'tabs',

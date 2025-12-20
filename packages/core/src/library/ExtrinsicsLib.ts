@@ -16,9 +16,8 @@ import type { ActionMeta } from '@polkadot-live/types/tx';
 export const initExtrinsicElectron = async (meta: ActionMeta) => {
   // Send extrinsic to action window.
   window.myAPI.relaySharedState('extrinsic:building', true);
-  const extrinsicsViewOpen = await window.myAPI.isViewOpen('action');
 
-  if (!extrinsicsViewOpen) {
+  if (!ConfigRenderer.portToTabs) {
     // Cache pending extrinsic in main process.
     await window.myAPI.sendExtrinsicsTaskAsync({
       action: 'extrinsics:addPending',
@@ -31,7 +30,7 @@ export const initExtrinsicElectron = async (meta: ActionMeta) => {
     });
   } else {
     window.myAPI.openWindow('action');
-    ConfigRenderer.portToAction?.postMessage({
+    ConfigRenderer.portToTabs?.postMessage({
       task: 'action:init',
       data: JSON.stringify(meta),
     });

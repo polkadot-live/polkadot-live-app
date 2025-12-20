@@ -140,8 +140,6 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
    */
   const handleTabClick = (id: number) => {
     setClickedId(id);
-    const { viewId } = tabsData.find((t) => t.id === id)!;
-    adapter.onClickTab(viewId);
   };
 
   /**
@@ -186,6 +184,7 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
         items,
         sensors,
         tabsData,
+        addTab,
         setClickedId,
         handleDragStart,
         handleDragEnd,

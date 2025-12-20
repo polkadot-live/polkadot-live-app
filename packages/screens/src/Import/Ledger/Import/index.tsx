@@ -163,7 +163,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
           color={darkMode ? '#642763' : '#a772a6'}
           width={'100%'}
           height={2}
-          cssOverride={{ position: 'fixed', top: 0, zIndex: 99 }}
+          cssOverride={{ position: 'fixed', top: '82px', zIndex: 99 }}
           speedMultiplier={0.75}
         />
       )}
