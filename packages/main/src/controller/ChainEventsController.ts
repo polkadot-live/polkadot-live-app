@@ -114,7 +114,9 @@ export class ChainEventsController {
       for (const refId of refIds) {
         const key = `${prefix}::${cid}::${refId}`;
         const raw = (store as Record<string, AnyData>).get(key);
-        raw !== undefined && (recRefs[refId] = JSON.parse(raw));
+        raw !== undefined
+          ? (recRefs[refId] = JSON.parse(raw))
+          : (recRefs[refId] = []);
       }
       recResult[cid] = recRefs;
     }

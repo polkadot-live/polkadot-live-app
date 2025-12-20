@@ -91,7 +91,7 @@ export const IntervalSubscriptionsProvider = ({
     setSubscriptions((prev) => {
       const cur = prev.get(chainId) || [];
       const upd = cur.filter(
-        (t) => t.chainId === chainId && t.referendumId === refId
+        (t) => !(t.chainId === chainId && t.referendumId === refId)
       );
       const newMap = new Map(prev);
       upd.length === 0 ? newMap.delete(chainId) : newMap.set(chainId, upd);
