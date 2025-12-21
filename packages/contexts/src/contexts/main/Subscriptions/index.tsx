@@ -58,8 +58,13 @@ export const SubscriptionsProvider = ({
   };
 
   // Determine if there are active subscriptions for a network.
-  const chainHasSubscriptions = (chainId: ChainID) =>
-    Boolean(activeChainMap.get(chainId)) || false;
+  const chainHasSubscriptions = (chainId: ChainID) => {
+    const chainActive = Boolean(activeChainMap.get(chainId));
+    const debugActive = (chainSubscriptionsState.get(chainId) ?? []).some(
+      (s) => s.status === 'enable'
+    );
+    return chainActive || debugActive;
+  };
 
   // Update cached account name for an account's subscription tasks.
   const updateAccountNameInTasks = (key: string, newName: string) => {
