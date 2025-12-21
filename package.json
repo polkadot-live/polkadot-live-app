@@ -5,7 +5,7 @@
   "description": "Decentralised Polkadot Notifications and Chain Interactions on the Desktop.",
   "type": "module",
   "private": true,
-  "main": "packages/main/dist/main.cjs",
+  "main": "packages/main/dist/main.mjs",
   "workspaces": [
     "packages/*"
   ],
