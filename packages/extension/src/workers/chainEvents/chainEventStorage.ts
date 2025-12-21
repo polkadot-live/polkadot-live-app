@@ -141,6 +141,14 @@ export const putChainEventsForRef = async (subs: ChainEventSubscription[]) => {
   }
 };
 
+export const removeChainEventsForRef = async (
+  subs: ChainEventSubscription[]
+) => {
+  for (const s of subs) {
+    await DbController.delete('referendaChainEvents', s.id);
+  }
+};
+
 export const removeAllSubsForRef = async (chainId: ChainID, refId: number) => {
   const cur = await DbController.getAllObjects('referendaChainEvents');
   const tgt = `${chainId}::${refId}`;

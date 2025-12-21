@@ -14,6 +14,7 @@ import {
   removeAllChainEventsForAccount,
   removeChainEvent,
   removeChainEventForAccount,
+  removeChainEventsForRef,
   updateChainEvent,
 } from '../../chainEvents';
 import { ChainEventsService } from '@polkadot-live/core';
@@ -74,6 +75,15 @@ export const handleChainEventMessage = (
       putChainEventsForRef(subs).then(() => {
         subs.forEach((s) => ChainEventsService.insertRefScoped(refId, s));
         ChainEventsService.initEventStream(chainId);
+      });
+      return false;
+    }
+    case 'removeRefSubs': {
+      const { chainId, refId, subscriptions } = message.payload;
+      const subs = subscriptions as ChainEventSubscription[];
+      removeChainEventsForRef(subs).then(() => {
+        subs.forEach((s) => ChainEventsService.removeRefScoped(refId, s));
+        ChainEventsService.tryStopEventsStream(chainId);
       });
       return false;
     }
