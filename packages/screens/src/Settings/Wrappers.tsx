@@ -10,8 +10,8 @@ export const SettingWrapper = styled(motion.div)`
   display: flex;
   width: 100%;
   column-gap: 1rem;
-  padding: 1.15rem 1rem;
-  font-size: 1.15rem;
+  padding: 1rem;
+  font-size: 1.04rem;
 
   .left {
     flex: 1;
@@ -27,6 +27,7 @@ export const SettingWrapper = styled(motion.div)`
   }
   .icon-wrapper {
     ${mixinHelpIcon}
+    margin-top: -1px;
     color: var(--text-dimmed);
     font-size: 1rem;
     transition: color 0.2s ease-out;

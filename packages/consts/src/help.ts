@@ -159,88 +159,77 @@ export const HelpConfig: HelpItems = [
     key: 'help:settings:dockedWindow',
     title: 'Docked Window',
     definition: [
-      "Enabling this setting will display the main window below the app's tray icon with a fixed size and position.",
-      'Turn off this setting to position and size the main window freely.',
+      "When enabled, the main window is displayed below the app's tray icon with a fixed size and position. Disable this setting to freely resize and reposition the main window.",
     ],
   },
   {
     key: 'help:settings:showOnAllWorkspaces',
     title: 'Show On All Workspaces',
     definition: [
-      'Displays Polkadot Live windows on all workspaces. Switching to a different workspace will still show your Polkadot Live windows.',
-      'Turn off this setting to display Polkadot Live on a single workspace.',
+      'Displays Polkadot Live windows across all workspaces. Disable this setting to limit the application to a single workspace.',
     ],
   },
   {
     key: 'help:settings:silenceOsNotifications',
     title: 'Silence OS Notifications',
     definition: [
-      'Enable to silence (not display) native OS notifications application wide.',
-      'This setting is global and will override OS notification settings for individual subscriptions.',
+      'Enables application-wide silencing of native OS notifications. This global setting overrides notification preferences for individual subscriptions.',
     ],
   },
   {
     key: 'help:settings:showDebuggingSubscriptions',
     title: 'Show Debugging Subscriptions',
     definition: [
-      'Show debugging subscriptions under the Subsciptions tab in the main window.',
-      'Allows subscribing to the most recent slot and timestamp of the respective network.',
+      'Shows debugging subscriptions. Enables subscribing to the most recent slot and timestamp on the network.',
     ],
   },
   {
     key: 'help:settings:enableAutomaticSubscriptions',
     title: 'Enable Automatic Subscriptions',
     definition: [
-      'Automatically subscribe to all possible subscriptions for an account when importing it.',
-      'Turn this setting off if you prefer to have no subscriptions turned on for an account after importing it, and wish to turn on individual subscriptions manually.',
+      'Automatically enable all available subscriptions for an account upon import. Disable this setting to start with no subscriptions and manage them individually.',
     ],
   },
   {
     key: 'help:settings:enablePolkassembly',
     title: 'Enable Polkassembly Data',
     definition: [
-      'Use the Polkassembly API to fetch OpenGov metadata including proposal titles and descriptions.',
-      'It is recommended to have this setting on if you wish to browse and subscribe to OpenGov referenda.',
+      'Enables fetching OpenGov metadata from the Polkassembly API, including proposal titles and descriptions. This setting is recommended for browsing and subscribing to OpenGov referenda.',
     ],
   },
   {
     key: 'help:settings:hideDockIcon',
     title: 'Hide Dock Icon',
     definition: [
-      'Turn this setting on to hide the Polkadot Live application icon in the Dock (macOS) or Taskbar (Windows).',
+      'When enabled, the Polkadot Live application icon is hidden from the Dock (macOS) or Taskbar (Windows).',
     ],
   },
   {
     key: 'help:settings:keepOutdatedEvents',
     title: 'Keep Outdated Events',
     definition: [
-      'Turn this setting on if you wish to keep old event items upon receiving a new event item for subscriptions.',
-      'When disabled, outdated event items will be removed when a new event item of the same subscription is received.',
-      'Keep this setting enabled to track past event items for enabled subscriptions. Turning this setting off may be useful for users who have enabled many subscriptions, and only wish to see the most up-to-date notification data.',
+      'Keep this setting enabled to retain old event items when new ones arrive for subscriptions. Disable it to remove outdated items, showing only the latest notifications. This can be useful if you have many subscriptions and prefer to see only current events.',
     ],
   },
   {
     key: 'help:settings:silenceExtrinsicsOsNotifications',
     title: 'Silence OS Notifications for Extrinsics',
     definition: [
-      'Turn on to silence native OS notifications that are shown when submitting extrinsics.',
-      "OS notifications will not be displayed when a submitted extrinsic changes its status, such as when it's included in a block or finalized.",
+      'Enable to silence native OS notifications for submitted extrinsics. Notifications will not appear when an extrinsic changes status, such as when it is included in a block or finalized.',
     ],
   },
   {
     key: 'help:settings:importData',
     title: 'Import Data',
     definition: [
-      'Import a text file that was exported from another Polkadot Live installation to restore your state. Polkadot Live will import accounts, events and subscriptions that are read from the backup file.',
-      "Data read from the backup file will take precedence over the application's current state. This means that accounts will be added or removed from the main window to reflect the imported data. Account names will also update to reflect what is specified in the backup file.",
+      'Restore your Polkadot Live state by importing a backup file. Imported data includes accounts, events, and classic subscriptions.',
     ],
   },
   {
     key: 'help:settings:exportData',
     title: 'Export Data',
     definition: [
-      'Export your Polkadot Live state to a backup file. Your imported addresses, event items, and enabled subscriptions will be written to the backup file.',
-      'Use the corresponding "Import" button in the settings window to read the exported backup file and restore your state in Polkadot Live.',
+      'Export your Polkadot Live state to a backup file. Imported addresses, event items, and enabled classic subscriptions will be saved.',
     ],
   },
   {
@@ -507,31 +496,28 @@ export const HelpConfig: HelpItems = [
     key: 'help:summary:accounts',
     title: 'Accounts Summary',
     definition: [
-      'Displays the total number of accounts that are being managed by the application, along with a breakdown of the import method.',
+      'Displays the total number of accounts managed by the application, along with a breakdown by import method.',
     ],
   },
   {
     key: 'help:summary:events',
     title: 'Events Summary',
     definition: [
-      'The events summary displays the total number of events you have received.',
-      'Separate stat boxes display the total number of events according to the event category.',
+      'Displays the total number of events received. Individual stat boxes display totals by event category.',
     ],
   },
   {
     key: 'help:summary:extrinsics',
     title: 'Extrinsics Summary',
     definition: [
-      'View the total number of pending and finalized extrinsics that are being managed by the application.',
+      'Displays the total number of pending and finalized extrinsics managed by the application.',
     ],
   },
   {
     key: 'help:summary:subscriptions',
     title: 'Subscriptions Summary',
     definition: [
-      'The subscriptions summary displays the total number of your active subscriptions.',
-      'Separate stat boxes display the total number of active subscriptions for each account you have added to the main window.',
-      'The total number of active referenda subscriptions will also be displayed in a separate stat box, providing you have one or more enabled.',
+      'Displays the total number of active subscriptions. Separate stat boxes display active subscriptions per account, along with a dedicated stat box for active referenda subscriptions when enabled.',
     ],
   },
   {

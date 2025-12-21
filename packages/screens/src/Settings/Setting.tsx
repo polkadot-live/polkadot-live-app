@@ -61,12 +61,14 @@ export const Setting = ({ setting }: SettingProps) => {
       </div>
       <div className="right">
         {settingType === 'switch' ? (
-          <Switch
-            size="sm"
-            type="primary"
-            isOn={getSwitchState(setting)}
-            handleToggle={() => handleSwitchToggleOuter()}
-          />
+          <span style={{ scale: '0.83' }}>
+            <Switch
+              size="sm"
+              type="primary"
+              isOn={getSwitchState(setting)}
+              handleToggle={() => handleSwitchToggleOuter()}
+            />
+          </span>
         ) : (
           <div style={{ position: 'relative' }}>
             <ButtonMonoInvert
