@@ -6,6 +6,7 @@ import * as Core from '@polkadot-live/core';
 import { createContext } from 'react';
 import {
   createSafeContextHook,
+  useChainEvents,
   useConnections,
   useEvents,
   useIntervalSubscriptions,
@@ -47,6 +48,7 @@ export const DataBackupProvider = ({
   children: React.ReactNode;
 }) => {
   const { getOnlineMode } = useConnections();
+  const { syncRefs } = useChainEvents();
   const { setEvents } = useEvents();
   const { addIntervalSubscription, updateIntervalSubscription } =
     useIntervalSubscriptions();
@@ -265,10 +267,12 @@ export const DataBackupProvider = ({
    * Import interval task data from backup file.
    */
   const importIntervalData = async (serialized: string): Promise<void> => {
+    const isOnline = getOnlineMode();
     const s_tasks = Core.getFromBackupFile('intervals', serialized);
     if (!s_tasks) {
       return;
     }
+
     // Receive new tasks after persisting them to store.
     const s_data =
       (await window.myAPI.sendIntervalTask({
@@ -285,12 +289,41 @@ export const DataBackupProvider = ({
     const updates: IntervalSubscription[] = JSON.parse(
       map.get('update') || '[]'
     );
-    const isOnline = getOnlineMode();
 
-    // Update manage subscriptions in controller and update React state.
+    // Add interval subscriptions to store.
+    const addIntervalToStore = async (
+      tasks: IntervalSubscription[],
+      op: 'add' | 'update'
+    ) => {
+      for (const task of tasks) {
+        await window.myAPI.sendIntervalTask({
+          action: `interval:task:${op}`,
+          data: { serialized: JSON.stringify(task) },
+        });
+      }
+    };
+
+    // Add active refIds to store.
+    const addActiveRefIds = async (tasks: IntervalSubscription[]) => {
+      const refIds = tasks
+        .map((t) => ({ chainId: t.chainId, refId: t.referendumId }))
+        .filter(({ refId }) => refId !== undefined);
+
+      for (const { chainId, refId } of refIds) {
+        await window.myAPI.sendChainEventTask({
+          action: 'chainEvents:insertRefSubs',
+          data: { chainId, refId, serialized: JSON.stringify([]) },
+        });
+      }
+    };
+
+    // TODO: Import active referenda-scoped chain event subscriptions.
+    // Update managed subscriptions in controller and React state.
     if (inserts.length > 0) {
       IntervalsController.insertSubscriptions(inserts, isOnline);
       inserts.forEach((t) => addIntervalSubscription(t));
+      await addIntervalToStore(inserts, 'add');
+      await addActiveRefIds(inserts);
     }
 
     if (updates.length > 0) {
@@ -300,9 +333,14 @@ export const DataBackupProvider = ({
           IntervalsController.insertSubscription(t, isOnline);
         updateIntervalSubscription(t);
       });
+      await addIntervalToStore(updates, 'update');
+      await addActiveRefIds(updates);
     }
 
-    // Update state in OpenGov window.
+    // Update state in main renderer.
+    await syncRefs();
+
+    // Update state in OpenGov tab.
     if (Core.ConfigRenderer.portToTabs) {
       inserts.forEach((t) => {
         Core.postToOpenGov('openGov:task:add', {

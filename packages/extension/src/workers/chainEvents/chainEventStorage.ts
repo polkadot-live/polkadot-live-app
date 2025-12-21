@@ -89,7 +89,7 @@ export const getActiveRefIds = async (): Promise<string[]> => {
   const res = (await DbController.get('activeRefIds', 'all')) as
     | string[]
     | undefined;
-  return res ?? [];
+  return Array.from(res ?? []);
 };
 
 export const getAllRefSubs = async (): Promise<
@@ -138,6 +138,14 @@ export const getAllRefSubs = async (): Promise<
 export const putChainEventsForRef = async (subs: ChainEventSubscription[]) => {
   for (const s of subs) {
     await DbController.set('referendaChainEvents', s.id, s);
+  }
+};
+
+export const removeChainEventsForRef = async (
+  subs: ChainEventSubscription[]
+) => {
+  for (const s of subs) {
+    await DbController.delete('referendaChainEvents', s.id);
   }
 };
 

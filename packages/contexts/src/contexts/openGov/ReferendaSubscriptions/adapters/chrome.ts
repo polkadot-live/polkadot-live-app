@@ -36,8 +36,7 @@ export const chromeAdapter: ReferendaSubscriptionsAdapter = {
             const { tasks }: { tasks: IntervalSubscription[] } =
               message.payload;
             for (const task of tasks) {
-              removeReferendaSubscription(task);
-              task.status === 'enable' && addReferendaSubscription(task);
+              addReferendaSubscription(task);
             }
             break;
           }

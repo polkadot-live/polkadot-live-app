@@ -201,24 +201,34 @@ export class EventsController {
     const parsed: EventCallback[] = JSON.parse(serialized);
     this.syncAccountNames();
 
-    // Add imported event if it's not a duplicate.
+    // Separate chainEvent and non-chainEvent items.
+    const chainEvents = parsed.filter(
+      ({ who: { origin } }) => origin === 'chainEvent'
+    );
+    const nonChainEvents = parsed.filter(
+      ({ who: { origin } }) => origin !== 'chainEvent'
+    );
+    // Add non-chain events if it's not a duplicate.
     let stored = this.getEventsFromStore();
     let persist = false;
 
-    for (const event of parsed) {
+    for (const event of nonChainEvents) {
       const { events, updated } = pushUniqueEvent(event, stored);
-
       if (updated) {
         stored = events;
         persist = true;
       }
     }
-
+    // Add unique chainEvents.
+    for (const event of chainEvents) {
+      if (!stored.find((e) => e.uid === event.uid)) {
+        stored = [...stored, event];
+      }
+    }
     if (persist) {
       this.persistEventsToStore(stored);
       debug('🔷 Event persisted (%o total in store)', stored.length);
     }
-
     return JSON.stringify(stored);
   }
 

@@ -54,8 +54,11 @@ export const Networks = ({
   };
 
   useEffect(() => {
-    const hasActive = async () => (await getActiveRefIds()).length > 0;
-    hasActive().then((res) => setIsReferendaAdded(res));
+    const fetch = async () => {
+      const activeIds = await getActiveRefIds();
+      setIsReferendaAdded(activeIds.length > 0);
+    };
+    fetch();
   }, [activeRefChain, section, subscriptions]);
 
   return (

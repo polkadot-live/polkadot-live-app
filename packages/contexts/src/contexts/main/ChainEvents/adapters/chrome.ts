@@ -6,10 +6,6 @@ import type { ChainEventsAdapter } from './types';
 import type { AnyData, ChainEventSubscription } from '@polkadot-live/types';
 
 export const chromeAdapter: ChainEventsAdapter = {
-  storeRemoveForRef: () => {
-    /** empty */
-  },
-
   listenOnMount: (removeAllForAccount) => {
     const callback = async (message: AnyData) => {
       if (message.type === 'chainEvents') {
@@ -173,6 +169,13 @@ export const chromeAdapter: ChainEventsAdapter = {
     chrome.runtime.sendMessage({
       type: 'chainEvents',
       task: 'insertRefSubs',
+      payload: { chainId, refId, subscriptions },
+    });
+  },
+  storeRemoveForRef: (chainId, refId, subscriptions) => {
+    chrome.runtime.sendMessage({
+      type: 'chainEvents',
+      task: 'removeRefSubs',
       payload: { chainId, refId, subscriptions },
     });
   },

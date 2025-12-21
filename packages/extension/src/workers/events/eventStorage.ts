@@ -30,7 +30,7 @@ export const updateEventWhoInfo = async (
     EventCallback
   >;
   for (const [uid, e] of events.entries()) {
-    if (e.who.origin === 'chain') {
+    if (e.who.origin !== 'account') {
       continue;
     }
     if (cmp(e.who.data as EventAccountData)) {
