@@ -471,6 +471,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@dedot/chain-specs@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "@dedot/chain-specs@npm:0.5.0"
+  checksum: d142883c6ed6232546b5b6d9e673631cf5dfb92d9781c663557452f0b3b601c0859d79c22b01714787fe1cf1dda11a0516b710d2b38d93288be79daffb792098
+  languageName: node
+  linkType: hard
+
 "@dedot/chaintypes@npm:^0.198.0":
   version: 0.198.0
   resolution: "@dedot/chaintypes@npm:0.198.0"
@@ -3999,13 +4006,6 @@ __metadata:
   version: 4.6.0
   resolution: "@sindresorhus/is@npm:4.6.0"
   checksum: 33b6fb1d0834ec8dd7689ddc0e2781c2bfd8b9c4e4bacbcb14111e0ae00621f2c264b8a7d36541799d74888b5dccdf422a891a5cb5a709ace26325eedc81e22e
-  languageName: node
-  linkType: hard
-
-"@substrate/connect-known-chains@npm:^1.10.3":
-  version: 1.10.3
-  resolution: "@substrate/connect-known-chains@npm:1.10.3"
-  checksum: ae4a73f1ba2c85a4846e12d4032db9917135825b0112f3bf7c4c4ebb94a062ac1e089174e67119e135178755d1485e8461cdf1ace2ebebba1fe132ef4f533ee1
   languageName: node
   linkType: hard
 
@@ -12567,6 +12567,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "polkadot-live@workspace:."
   dependencies:
+    "@dedot/chain-specs": "npm:^0.5.0"
     "@dedot/chaintypes": "npm:^0.198.0"
     "@dnd-kit/core": "npm:^6.1.0"
     "@dnd-kit/modifiers": "npm:^7.0.0"
@@ -12595,7 +12596,6 @@ __metadata:
     "@radix-ui/react-toggle": "npm:^1.1.9"
     "@radix-ui/react-toggle-group": "npm:^1.1.2"
     "@radix-ui/react-tooltip": "npm:^1.1.7"
-    "@substrate/connect-known-chains": "npm:^1.10.3"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.0.1"
