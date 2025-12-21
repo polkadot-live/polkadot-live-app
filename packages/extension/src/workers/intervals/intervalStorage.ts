@@ -28,7 +28,7 @@ export const handleAddIntervalSubscription = async (
   const all =
     ((await DbController.get(store, chainId)) as
       | IntervalSubscription[]
-      | undefined) || [];
+      | undefined) ?? [];
   const updated = all.filter((t) => !compare(task, t));
   await DbController.set(store, chainId, [...updated, task]);
 };

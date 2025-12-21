@@ -89,7 +89,7 @@ export const getActiveRefIds = async (): Promise<string[]> => {
   const res = (await DbController.get('activeRefIds', 'all')) as
     | string[]
     | undefined;
-  return res ?? [];
+  return Array.from(res ?? []);
 };
 
 export const getAllRefSubs = async (): Promise<

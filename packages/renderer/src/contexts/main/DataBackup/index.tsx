@@ -307,7 +307,7 @@ export const DataBackupProvider = ({
     const addActiveRefIds = async (tasks: IntervalSubscription[]) => {
       const refIds = tasks
         .map((t) => ({ chainId: t.chainId, refId: t.referendumId }))
-        .filter((id) => id.refId !== undefined);
+        .filter(({ refId }) => refId !== undefined);
 
       for (const { chainId, refId } of refIds) {
         await window.myAPI.sendChainEventTask({

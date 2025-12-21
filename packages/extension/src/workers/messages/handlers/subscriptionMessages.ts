@@ -58,7 +58,7 @@ export const handleSubscriptionMessage = (
 /**
  * Called when an active referendum is added to the popup window.
  */
-const addReferendumSubscriptions = async (
+export const addReferendumSubscriptions = async (
   chainId: ChainID,
   refId: number,
   tasks: IntervalSubscription[]
@@ -67,7 +67,7 @@ const addReferendumSubscriptions = async (
   type T = string[] | undefined;
   const key = `${chainId}::${refId}`;
   const existing = (await DbController.get('activeRefIds', 'all')) as T;
-  const next = [...(existing ?? []).filter((k) => k !== key), key];
+  const next = Array.from(new Set([...(existing ?? []), key]));
   await DbController.set('activeRefIds', 'all', next);
 
   // Handle interval subscriptions.
