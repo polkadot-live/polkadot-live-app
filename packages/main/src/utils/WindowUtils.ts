@@ -11,7 +11,8 @@ import {
   BaseWindow,
   WebContentsView,
 } from 'electron';
-import path, { resolve, join } from 'path';
+import path, { resolve, join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 import { store } from '@/main';
 import { hideDockIcon, reportOnlineStatus } from '@/utils/SystemUtils';
 import { EventsController } from '@/controller/EventsController';
@@ -22,6 +23,9 @@ import { MainDebug } from './DebugUtils';
 import type { AnyJson } from '@polkadot-live/types/misc';
 import type { PortPairID } from '@polkadot-live/types/communication';
 import type { Rectangle } from 'electron';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const PACKAGES_PATH = join(__dirname, '../..');
 const PRELOAD_PATH = resolve(PACKAGES_PATH, 'preload', 'dist', 'preload.cjs');
@@ -211,6 +215,7 @@ export const createBaseWindow = () => {
 
   // Create tabbed WebContentsView and add to base window.
   const webPreferences = {
+    sandbox: true,
     preload: PRELOAD_PATH,
   };
   const tabsView = new WebContentsView({ webPreferences });

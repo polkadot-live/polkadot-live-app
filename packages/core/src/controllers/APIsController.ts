@@ -100,7 +100,7 @@ export class APIsController {
    * Get timeout duration for RPC or light client connection.
    */
   static getConnectionTimeout = (chainId: ChainID) =>
-    this.getEndpoint(chainId) === 'smoldot' ? 40_000 : 20_000;
+    this.getEndpoint(chainId) === 'smoldot' ? 120_000 : 20_000;
 
   /**
    * Ensure a client is connected.

@@ -10,9 +10,9 @@ import {
   ksmcc3_people,
   westend2,
   westend2_asset_hub,
-  westend_people,
+  westend2_people,
   paseo,
-} from '@substrate/connect-known-chains';
+} from '@dedot/chain-specs';
 import type { AccountSource } from '@polkadot-live/types/accounts';
 import type {
   ChainID,
@@ -272,7 +272,7 @@ export const ChainList = new Map<ChainID, Chain>([
           'wss://people-westend.dotters.network',
           'wss://westend-people-rpc.polkadot.io',
         ],
-        lightClient: westend_people,
+        lightClient: westend2_people,
       },
       units: 12,
       unit: 'WND',

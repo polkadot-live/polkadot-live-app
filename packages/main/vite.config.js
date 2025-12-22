@@ -42,13 +42,13 @@ export default defineConfig({
     minify: process.env.MODE !== 'development',
     lib: {
       entry: join(PACKAGE_ROOT, 'src', 'main.ts'),
-      formats: ['cjs'],
+      formats: ['es'],
     },
     rollupOptions: {
       external,
       output: {
-        entryFileNames: '[name].cjs',
-        format: 'cjs',
+        entryFileNames: '[name].mjs',
+        format: 'es',
       },
     },
     emptyOutDir: true,
