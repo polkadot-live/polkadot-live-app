@@ -14,7 +14,6 @@ const DisplayPayload = ({
   payload,
   size,
   style,
-  timerDelay,
 }: DisplayPayloadProps): React.ReactElement<DisplayPayloadProps> | null => {
   const data = useMemo(
     () => createSignPayload(address, cmd, payload, genesisHash),
@@ -26,13 +25,7 @@ const DisplayPayload = ({
   }
 
   return (
-    <QrDisplay
-      className={className}
-      size={size}
-      style={style}
-      timerDelay={timerDelay}
-      value={data}
-    />
+    <QrDisplay className={className} size={size} style={style} value={data} />
   );
 };
 

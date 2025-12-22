@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { AccountsController } from '../../controllers/AccountsController';
-import { ChainList } from '@polkadot-live/consts/chains';
-import { checkAddress } from '@polkadot/util-crypto';
+import { decodeAddress } from 'dedot/utils';
 import type { Account } from '../../model';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ApiCallEntry } from '@polkadot-live/types/subscriptions';
@@ -11,22 +10,16 @@ import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
 
 /**
- * @name checkValidAddress
- * @summary Verify that an address is encoded to one of the supported networks.
- *
- * @todo Rename to `isValidAddress`
+ * @name isValidAddress
+ * @summary Return whether an address is valid Substrate address.
  */
-export const checkValidAddress = (address: string): boolean => {
-  for (const { prefix } of ChainList.values()) {
-    const result = checkAddress(address, prefix);
-    if (result !== null) {
-      const [isValid] = result;
-      if (isValid) {
-        return true;
-      }
-    }
+export const isValidAddress = (address: string, prefix?: number): boolean => {
+  try {
+    prefix ? decodeAddress(address, undefined, prefix) : decodeAddress(address);
+    return true;
+  } catch {
+    return false;
   }
-  return false;
 };
 
 /**

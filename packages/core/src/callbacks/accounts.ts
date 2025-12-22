@@ -1,6 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { hexToU8a, u8aToString } from 'dedot/utils';
+import { getApiOrThrow, handleEvent } from './utils';
 import { checkAccountWithProperties } from '../library/AccountsLib';
 import { areSortedArraysEqual } from '../library/CommonLib';
 import {
@@ -12,8 +14,6 @@ import {
   getAccountNominatingData,
   getEraRewards,
 } from '../library/AccountsLib/nominating';
-import { getApiOrThrow, handleEvent } from './utils';
-import { u8aToString, u8aUnwrapBytes } from '@polkadot/util';
 import type {
   ApiCallEntry,
   PostCallbackFlags,
@@ -498,7 +498,7 @@ export const callback_nomination_pool_renamed = async (
     const account = checkAccountWithProperties(entry, ['nominationPoolData']);
 
     // Get the received pool name.
-    const poolName: string = u8aToString(u8aUnwrapBytes(data));
+    const poolName: string = u8aToString(hexToU8a(data));
     const cur = account.nominationPoolData!.poolName;
     const isSame = cur === poolName || poolName === '';
 

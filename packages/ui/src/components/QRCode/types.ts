@@ -23,17 +23,10 @@ export interface ScanType {
   signature: HexString;
 }
 
-export interface TimerState {
-  timerDelay: number;
-  timerId: ReturnType<typeof setTimeout> | null;
-}
-
 export interface DisplayProps {
   className?: string | undefined;
   size?: string | number | undefined;
-  skipEncoding?: boolean;
   style?: React.CSSProperties | undefined;
-  timerDelay?: number | undefined;
   value: Uint8Array;
 }
 
@@ -45,7 +38,6 @@ export interface DisplayPayloadProps {
   payload: Uint8Array;
   size?: string | number;
   style?: React.CSSProperties;
-  timerDelay?: number;
 }
 
 /**
