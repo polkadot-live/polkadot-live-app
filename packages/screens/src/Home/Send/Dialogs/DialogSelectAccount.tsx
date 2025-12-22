@@ -6,8 +6,7 @@ import * as Styles from '@polkadot-live/styles/wrappers';
 import * as Icons from '@radix-ui/react-icons';
 import { useConnections } from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
-import { checkAddress } from '@polkadot/util-crypto';
-import { getReadableAccountSource } from '@polkadot-live/core';
+import { getReadableAccountSource, isValidAddress } from '@polkadot-live/core';
 import { Identicon } from '@polkadot-live/ui/components';
 import { ellipsisFn } from '@w3ux/utils';
 import { TriggerSelectAccount } from '.';
@@ -47,32 +46,29 @@ export const DialogSelectAccount = ({
     chainId: sender?.chainId || 'Westend Asset Hub',
   });
 
-  const ChainPrefix = new Map<ChainID, number>([
-    ['Polkadot Asset Hub', 0],
-    ['Kusama Asset Hub', 2],
-    ['Westend Asset Hub', 42],
-  ]);
+  const ChainPrefix: Record<string, number> = {
+    'Polkadot Asset Hub': 0,
+    'Kusama Asset Hub': 2,
+    'Westend Asset Hub': 42,
+  };
 
   /**
    * Util to validate an address.
    */
   const validateAddressInput = () => {
-    const targetChain: ChainID | null =
+    const chainId: ChainID | null =
       accountRole === 'recipient'
         ? sender?.chainId || null
         : (inputVal as SendAccount).chainId;
 
-    const targetPrefixes: number[] = targetChain
-      ? [ChainPrefix.get(targetChain!)!]
-      : [...ChainPrefix.values()];
+    const targetPrefixes: number[] = chainId
+      ? [ChainPrefix[chainId]]
+      : [...Object.values(ChainPrefix)];
 
     for (const prefix of targetPrefixes) {
-      const result = checkAddress(inputVal.address, prefix);
-      if (result !== null) {
-        const [isValid] = result;
-        if (isValid) {
-          return true;
-        }
+      const result = isValidAddress(inputVal.address, prefix);
+      if (result) {
+        return true;
       }
     }
     return false;

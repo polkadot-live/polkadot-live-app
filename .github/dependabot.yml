@@ -24,16 +24,6 @@ updates:
         - "major"
         - "minor"
         - "patch"
-      # Group polkadot package updates.
-      polkadot:
-        applies-to: version-updates
-        dependency-type: "production"
-        patterns:
-        - "@polkadot*"
-        update-types:
-        - "major"
-        - "minor"
-        - "patch"
       # Group typescript-eslint package updates.
       typescript-eslint:
         applies-to: version-updates

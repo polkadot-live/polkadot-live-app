@@ -5,12 +5,13 @@ import { APIsController } from '../../controllers/APIsController';
 import { ChainList, getStakingChains } from '@polkadot-live/consts/chains';
 import {
   toU8a,
+  bnToU8a,
   concatU8a,
   encodeAddress,
   hexToString,
   stringToU8a,
 } from '@dedot/utils';
-import { bnToU8a } from '@polkadot/util';
+
 import type {
   AccountNominationPoolData,
   NominationPoolCommission,
@@ -55,7 +56,7 @@ const getPoolAccounts = (poolId: number, api: DedotStakingClient) => {
       stringToU8a('modl'),
       toU8a(poolsPalletId),
       new Uint8Array([index]),
-      bnToU8a(BigInt(poolId.toString())),
+      bnToU8a(BigInt(poolId.toString())).reverse(), // NOTE: Reversing for little endian
       new Uint8Array(32)
     );
 

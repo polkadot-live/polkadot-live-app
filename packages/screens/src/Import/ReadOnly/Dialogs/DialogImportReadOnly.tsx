@@ -4,7 +4,7 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { useState } from 'react';
-import { checkAddress } from '@polkadot/util-crypto';
+import { isValidAddress } from '@polkadot-live/core';
 import { decodeAddress, u8aToHex } from 'dedot/utils';
 import {
   DialogContent,
@@ -89,13 +89,9 @@ export const DialogImportReadOnly = () => {
    */
   const isInputValid = (address: string): boolean => {
     for (const { prefix } of Object.values(getSupportedChains())) {
-      const result = checkAddress(address, prefix);
-
-      if (result !== null) {
-        const [isValid] = result;
-        if (isValid) {
-          return true;
-        }
+      const result = isValidAddress(address, prefix);
+      if (result) {
+        return true;
       }
     }
     return false;

@@ -4,7 +4,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { QRVieweraWrapper } from '../Wrappers';
 import { ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
-import { checkValidAddress } from '@polkadot-live/core';
+import { isValidAddress } from '@polkadot-live/core';
 import { decodeAddress, u8aToHex } from 'dedot/utils';
 import {
   createImgSize,
@@ -49,7 +49,7 @@ export const Reader = ({
     }
 
     const maybeAddress: string = signature.split(':')?.[1];
-    const isValid = checkValidAddress(maybeAddress);
+    const isValid = isValidAddress(maybeAddress);
 
     if (!isValid) {
       setFeedback('Invalid Address');
