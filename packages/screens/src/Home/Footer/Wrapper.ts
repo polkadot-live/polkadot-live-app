@@ -90,6 +90,22 @@ export const FooterWrapper = styled.div`
     row-gap: 0.75rem;
     padding: 0.5rem 1rem;
   }
+
+  .fade-loop--slow {
+    color: var(--accent-success);
+    font-size: 0.7rem;
+    margin-top: -1px;
+    animation: fadeLoopSlow 4s ease-in-out infinite;
+  }
+  @keyframes fadeLoopSlow {
+    0%,
+    100% {
+      opacity: 0.9;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
 `;
 
 export const NetworkItem = styled.div`

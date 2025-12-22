@@ -41,8 +41,7 @@ export const Networks = ({
   };
 
   useEffect(() => {
-    const sync = async () => await syncStored();
-    sync();
+    syncStored();
   }, []);
 
   return (

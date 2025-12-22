@@ -5,7 +5,6 @@ import * as MainCtx from '@ren/contexts/main';
 import * as Core from '@polkadot-live/core';
 import {
   ConfigRenderer,
-  disconnectAPIs,
   AccountsController,
   APIsController,
   ExtrinsicsController,
@@ -223,9 +222,6 @@ export const useMainMessagePorts = () => {
 
       // Update account subscriptions data.
       SubscriptionsController.syncAccountSubscriptionsState();
-
-      // Disconnect from any API instances that are not currently needed.
-      await disconnectAPIs();
 
       // Transition away from rendering toggles.
       setRenderedSubscriptions({ type: '', tasks: [] });

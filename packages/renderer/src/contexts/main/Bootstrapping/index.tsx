@@ -3,7 +3,6 @@
 
 import React, { createContext, useEffect, useRef, useState } from 'react';
 import {
-  disconnectAPIs,
   AccountsController,
   APIsController,
   ConfigRenderer,
@@ -193,7 +192,6 @@ export const BootstrappingProvider = ({
         connectAPIs,
         initIntervalsController,
         initEventStreams,
-        disconnectAPIs,
       ];
 
       // Always initialize intervals controller.
@@ -251,7 +249,6 @@ export const BootstrappingProvider = ({
     const initTasks: (() => Promise<AnyData>)[] = [
       connectAPIs,
       initEventStreams,
-      disconnectAPIs,
     ];
 
     for (const [index, task] of initTasks.entries()) {
@@ -314,12 +311,8 @@ export const BootstrappingProvider = ({
    * Handle Dedot clients when online mode changes.
    */
   useEffect(() => {
-    const disconnectAll = async () => {
-      await APIsController.closeAll();
-    };
-
     if (!isConnected) {
-      disconnectAll();
+      APIsController.closeAll();
     }
   }, [isConnected]);
 

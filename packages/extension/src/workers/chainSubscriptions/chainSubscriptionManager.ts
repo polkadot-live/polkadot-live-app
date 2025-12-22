@@ -2,11 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { DbController } from '../../controllers';
-import {
-  disconnectAPIs,
-  SubscriptionsController,
-  tryApiDisconnect,
-} from '@polkadot-live/core';
+import { SubscriptionsController } from '@polkadot-live/core';
 import { updateChainSubscription } from './chainSubscriptionStorage';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { Stores } from '../../controllers';
@@ -45,11 +41,8 @@ export const updateChainSubscriptions = async (tasks: SubscriptionTask[]) => {
   }
   // Subscribe to tasks.
   await SubscriptionsController.subscribeChainTasks(tasks);
-  // Disconnect unused APIs.
-  await disconnectAPIs();
 };
 
 export const subscribeChainTask = async (task: SubscriptionTask) => {
   await SubscriptionsController.subscribeChainTasks([task]);
-  await tryApiDisconnect(task);
 };
