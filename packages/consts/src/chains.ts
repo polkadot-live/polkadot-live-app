@@ -52,17 +52,14 @@ export const ChainList = new Map<ChainID, Chain>([
     {
       endpoints: {
         rpcs: [
-          'wss://rpc.ibp.network/polkadot',
-          'wss://rpc.polkadot.io',
-          'wss://apps-rpc.polkadot.io',
-          'wss://polkadot-rpc.dwellir.com',
-          'wss://polkadot-rpc-tn.dwellir.com',
-          'wss://rpc.dotters.network/polkadot',
-          'wss://1rpc.io/dot',
-          'wss://polkadot-public-rpc.blockops.network/ws',
-          'wss://rpc-polkadot.luckyfriday.io',
-          'wss://rockx-dot.w3node.com/polka-public-dot/ws',
           'wss://dot-rpc.stakeworld.io',
+          'wss://polkadot-public-rpc.blockops.network/ws',
+          'wss://polkadot-rpc.publicnode.com',
+          'wss://polkadot.api.onfinality.io/public-ws',
+          'wss://polkadot.dotters.network',
+          'wss://polkadot.public.curie.radiumblock.co/ws',
+          'wss://rpc-polkadot.luckyfriday.io',
+          'wss://rpc.ibp.network/polkadot',
         ],
         lightClient: polkadot,
       },
@@ -76,16 +73,13 @@ export const ChainList = new Map<ChainID, Chain>([
     {
       endpoints: {
         rpcs: [
-          'wss://sys.ibp.network/statemint',
-          'wss://sys.dotters.network/statemint',
-          'wss://sys.ibp.network/asset-hub-polkadot',
-          'wss://asset-hub-polkadot-rpc.dwellir.com',
-          'wss://statemint-rpc-tn.dwellir.com',
-          'wss://polkadot-assethub-rpc.blockops.network/ws',
           'wss://asset-hub-polkadot.dotters.network',
-          'wss://rpc-asset-hub-polkadot.luckyfriday.io',
-          'wss://polkadot-asset-hub-rpc.polkadot.io',
           'wss://dot-rpc.stakeworld.io/assethub',
+          'wss://polkadot-asset-hub-rpc.polkadot.io',
+          'wss://rpc-asset-hub-polkadot.luckyfriday.io',
+          'wss://statemint-rpc-tn.dwellir.com',
+          'wss://statemint.api.onfinality.io/public-ws',
+          'wss://statemint.public.curie.radiumblock.co/ws',
         ],
         lightClient: polkadot_asset_hub,
       },
@@ -99,10 +93,11 @@ export const ChainList = new Map<ChainID, Chain>([
     {
       endpoints: {
         rpcs: [
-          'wss://sys.ibp.network/people-polkadot',
           'wss://people-polkadot.dotters.network',
-          'wss://rpc-people-polkadot.luckyfriday.io',
+          'wss://people-polkadot.public.curie.radiumblock.co/ws',
           'wss://polkadot-people-rpc.polkadot.io',
+          'wss://rpc-people-polkadot.luckyfriday.io',
+          'wss://sys.ibp.network/people-polkadot',
         ],
         lightClient: polkadot_people,
       },
@@ -116,14 +111,13 @@ export const ChainList = new Map<ChainID, Chain>([
     {
       endpoints: {
         rpcs: [
-          'wss://rpc-kusama.luckyfriday.io',
-          'wss://kusama-rpc.polkadot.io',
-          'wss://kusama-rpc.dwellir.com',
+          'wss://ksm-rpc.stakeworld.io',
           'wss://kusama-rpc-tn.dwellir.com',
+          'wss://kusama-rpc.publicnode.com',
+          'wss://kusama.api.onfinality.io/public-ws',
+          'wss://kusama.dotters.network',
+          'wss://rpc-kusama.luckyfriday.io',
           'wss://rpc.ibp.network/kusama',
-          'wss://rpc.dotters.network/kusama',
-          'wss://1rpc.io/ksm',
-          'wss://kusama.public.curie.radiumblock.co/ws',
         ],
         lightClient: ksmcc3,
       },
@@ -137,14 +131,12 @@ export const ChainList = new Map<ChainID, Chain>([
     {
       endpoints: {
         rpcs: [
-          'wss://rpc-asset-hub-kusama.luckyfriday.io',
-          'wss://asset-hub-kusama-rpc.dwellir.com',
-          'wss://sys.ibp.network/asset-hub-kusama',
-          'wss://statemine-rpc-tn.dwellir.com',
           'wss://asset-hub-kusama.dotters.network',
-          'wss://kusama-asset-hub-rpc.polkadot.io',
-          'wss://statemine.public.curie.radiumblock.co/ws',
           'wss://ksm-rpc.stakeworld.io/assethub',
+          'wss://kusama-asset-hub-rpc.polkadot.io',
+          'wss://rpc-asset-hub-kusama.luckyfriday.io',
+          'wss://statemine-rpc-tn.dwellir.com',
+          'wss://statemine.public.curie.radiumblock.co/ws',
         ],
         lightClient: ksmcc3_asset_hub,
       },
@@ -158,12 +150,11 @@ export const ChainList = new Map<ChainID, Chain>([
     {
       endpoints: {
         rpcs: [
-          'wss://sys.ibp.network/people-kusama',
-          'wss://people-kusama-rpc.dwellir.com',
+          'wss://ksm-rpc.stakeworld.io/people',
+          'wss://kusama-people-rpc.polkadot.io',
           'wss://people-kusama.dotters.network',
           'wss://rpc-people-kusama.luckyfriday.io',
-          'wss://kusama-people-rpc.polkadot.io',
-          'wss://ksm-rpc.stakeworld.io/people',
+          'wss://sys.ibp.network/people-kusama',
         ],
         lightClient: ksmcc3_people,
       },
@@ -177,11 +168,11 @@ export const ChainList = new Map<ChainID, Chain>([
     {
       endpoints: {
         rpcs: [
+          'wss://pas-rpc.stakeworld.io',
           'wss://paseo-rpc.dwellir.com',
+          'wss://paseo.dotters.network',
           'wss://paseo.rpc.amforc.com',
           'wss://rpc.ibp.network/paseo',
-          'wss://paseo.dotters.network',
-          'wss://pas-rpc.stakeworld.io',
         ],
         lightClient: paseo,
       },
@@ -195,10 +186,10 @@ export const ChainList = new Map<ChainID, Chain>([
     {
       endpoints: {
         rpcs: [
-          'wss://sys.ibp.network/asset-hub-paseo',
           'wss://asset-hub-paseo-rpc.dwellir.com',
           'wss://asset-hub-paseo.dotters.network',
           'wss://pas-rpc.stakeworld.io/assethub',
+          'wss://sys.ibp.network/asset-hub-paseo',
           'wss://sys.turboflakes.io/asset-hub-paseo',
         ],
         lightClient: undefined,
@@ -213,8 +204,8 @@ export const ChainList = new Map<ChainID, Chain>([
     {
       endpoints: {
         rpcs: [
-          'wss://sys.ibp.network/people-paseo',
           'wss://people-paseo.dotters.network',
+          'wss://people-paseo.rpc.amforc.com',
         ],
         lightClient: undefined,
       },
@@ -228,13 +219,9 @@ export const ChainList = new Map<ChainID, Chain>([
     {
       endpoints: {
         rpcs: [
-          'wss://rpc.ibp.network/westend',
-          'wss://westend-rpc.polkadot.io',
-          'wss://westend-rpc.dwellir.com',
           'wss://westend-rpc-tn.dwellir.com',
-          'wss://rpc.dotters.network/westend',
+          'wss://westend-rpc.polkadot.io',
           'wss://westend.public.curie.radiumblock.co/ws',
-          'wss://rpc-westend.luckyfriday.io',
         ],
         lightClient: westend2,
       },
@@ -250,10 +237,6 @@ export const ChainList = new Map<ChainID, Chain>([
         rpcs: [
           'wss://westend-asset-hub-rpc.polkadot.io',
           'wss://westmint-rpc-tn.dwellir.com',
-          'wss://sys.ibp.network/asset-hub-westend',
-          'wss://asset-hub-westend-rpc.dwellir.com',
-          'wss://asset-hub-westend.dotters.network',
-          'wss://asset-hub-westend.rpc.permanence.io',
         ],
         lightClient: westend2_asset_hub,
       },
@@ -267,9 +250,7 @@ export const ChainList = new Map<ChainID, Chain>([
     {
       endpoints: {
         rpcs: [
-          'wss://sys.ibp.network/people-westend',
           'wss://people-westend-rpc.dwellir.com',
-          'wss://people-westend.dotters.network',
           'wss://westend-people-rpc.polkadot.io',
         ],
         lightClient: westend2_people,
