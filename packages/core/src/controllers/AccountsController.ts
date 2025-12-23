@@ -113,28 +113,20 @@ export class AccountsController {
 
   // Sync live data for all managed accounts.
   static syncAllAccounts = async (api: DedotClientSet, chainId: ChainID) => {
-    let promises = [this.syncAllBalances(api, chainId)];
+    await this.syncAllBalances(api, chainId);
     if (getStakingChains().includes(chainId)) {
-      promises = [
-        ...promises,
-        this.syncAllNominatingData(api as DedotStakingClient, chainId),
-        this.syncAllNominationPoolData(api as DedotStakingClient, chainId),
-      ];
+      await this.syncAllNominatingData(api as DedotStakingClient, chainId);
+      await this.syncAllNominationPoolData(api as DedotStakingClient, chainId);
     }
-    await Promise.all(promises);
   };
 
   // Sync live data for a single managed account.
   static syncAccount = async (account: Account, api: DedotClientSet) => {
-    let promises = [this.syncBalance(account, api)];
+    await this.syncBalance(account, api);
     if (getStakingChains().includes(account.chain)) {
-      promises = [
-        ...promises,
-        this.syncNominationPoolData(account, api as DedotStakingClient),
-        this.syncNominatingData(account, api as DedotStakingClient),
-      ];
+      await this.syncNominationPoolData(account, api as DedotStakingClient);
+      await this.syncNominatingData(account, api as DedotStakingClient);
     }
-    await Promise.all(promises);
   };
 
   // Fetch and build persisted tasks from the store.
@@ -346,9 +338,9 @@ export class AccountsController {
     chainId: ChainID
   ) => {
     console.log(`fetching balances for chain: ${chainId}`);
-    const accounts = this.accounts.get(chainId);
-    if (accounts) {
-      await Promise.all(accounts.map((a) => this.syncBalance(a, api)));
+    const accounts = this.accounts.get(chainId) ?? [];
+    for (const account of accounts) {
+      await this.syncBalance(account, api);
     }
   };
 
@@ -375,9 +367,9 @@ export class AccountsController {
     chainId: ChainID
   ) => {
     console.log(`fetching nominating data for chain: ${chainId}`);
-    const accounts = this.accounts.get(chainId);
-    if (accounts) {
-      await Promise.all(accounts.map((a) => this.syncNominatingData(a, api)));
+    const accounts = this.accounts.get(chainId) ?? [];
+    for (const account of accounts) {
+      await this.syncNominatingData(account, api);
     }
   };
 
@@ -403,11 +395,9 @@ export class AccountsController {
     chainId: ChainID
   ) => {
     console.log(`fetching nomination pool data for chain: ${chainId}`);
-    const accounts = this.accounts.get(chainId);
-    if (accounts) {
-      await Promise.all(
-        accounts.map((a) => this.syncNominationPoolData(a, api))
-      );
+    const accounts = this.accounts.get(chainId) ?? [];
+    for (const account of accounts) {
+      await this.syncNominationPoolData(account, api);
     }
   };
 

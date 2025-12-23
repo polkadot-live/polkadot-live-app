@@ -105,6 +105,9 @@ export const Footer = () => {
       .filter(([chainId]) => chainId.startsWith(ecosystemId))
       .some(([, apiData]) => apiData.status === 'connected');
 
+  const connectionIssueFor = (ecosystemId: EcosystemID): boolean =>
+    failedConnections.keys().some((k) => k.startsWith(ecosystemId));
+
   return (
     <FooterWrapper className={expanded ? 'expanded' : undefined}>
       <section className="status">
@@ -184,10 +187,17 @@ export const Footer = () => {
                             <UI.TriggerHeader style={{ flex: 1 }}>
                               {ecosystemId}
                             </UI.TriggerHeader>
+
+                            {connectionIssueFor(ecosystemId) && (
+                              <FontAwesomeIcon
+                                className="fade-loop---slow warn"
+                                icon={FA.faTriangleExclamation}
+                              />
+                            )}
                             {hasActiveApi(ecosystemId) && (
                               <FontAwesomeIcon
                                 icon={FA.faCircle}
-                                className="fade-loop--slow"
+                                className="fade-loop--slow success"
                               />
                             )}
                             <ChevronDownIcon

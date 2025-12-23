@@ -1,11 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as CommonLib from '../library/CommonLib';
 import { Api } from '../model';
 import { ApiError } from '../errors';
+import { waitMs } from '../library/CommonLib';
 import { ChainList } from '@polkadot-live/consts/chains';
-
 import type * as smoldot from 'smoldot/no-auto-bytecode';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
@@ -73,19 +72,51 @@ export class APIsController {
    */
   static close = async (chainId: ChainID) => {
     const client = this.clients.find((c) => c.chainId === chainId);
-    if (client !== undefined) {
-      // Manually disconnect if system is online (disconnection initiated by user).
-      let isOnline: boolean;
-      if (this.backend === 'electron') {
-        isOnline = await CommonLib.getOnlineStatus(this.backend);
-      } else {
-        isOnline = navigator.onLine;
-      }
-      if (isOnline) {
-        await client.disconnect();
-      }
-      this.updateUiChainState(client);
+    if (!client) {
+      return;
     }
+    const timeout = this.getConnectionTimeout(chainId);
+    const success = await Promise.race([
+      client.disconnect().then(() => true),
+      waitMs(timeout).then(() => false),
+    ]);
+
+    !success && this.reset(chainId);
+    this.updateUiChainState(this.clients.find((c) => c.chainId === chainId)!);
+  };
+
+  /**
+   * Reset throws away a timed-out client and re-creates it.
+   */
+  static reset = (chainId: ChainID) => {
+    this.resetClient(chainId);
+    this.setFailedCache(chainId, new ApiError('ApiConnectTimeout'));
+    this.resetState(chainId);
+  };
+
+  /**
+   * Reset helpers.
+   */
+  static resetClient = (chainId: ChainID) => {
+    this.clients = this.clients.filter((c) => {
+      if (c.chainId === chainId) {
+        c.disconnect();
+        return false;
+      }
+      return true;
+    });
+    this.new(chainId);
+  };
+
+  // Update React state.
+  static resetState = (chainId: ChainID) => {
+    this.syncFailedConnections();
+    this.updateUiChainState(this.clients.find((c) => c.chainId === chainId)!);
+  };
+
+  // Update controller failed cache.
+  static setFailedCache = (chainId: ChainID, error: ApiError) => {
+    this.failedCache.set(chainId, { ack: 'failure', chainId, error });
   };
 
   /**
@@ -100,47 +131,7 @@ export class APIsController {
    * Get timeout duration for RPC or light client connection.
    */
   static getConnectionTimeout = (chainId: ChainID) =>
-    this.getEndpoint(chainId) === 'smoldot' ? 120_000 : 20_000;
-
-  /**
-   * Ensure a client is connected.
-   */
-  static connectApi = async (
-    chainId: ChainID
-  ): Promise<{ ack: 'success' | 'failure'; error?: ApiError }> => {
-    try {
-      const client = this.get(chainId);
-      if (!client) {
-        throw new ApiError('ApiUndefined');
-      } else if (['connected', 'reconnecting'].includes(client.status())) {
-        return { ack: 'failure' };
-      }
-      const controller = new AbortController();
-      const timeout = this.getConnectionTimeout(chainId);
-
-      const { ack, error } = await Promise.race([
-        client.connect(this.smoldotClient, controller.signal),
-        CommonLib.waitMs(timeout).then(() => {
-          controller.abort();
-          return { ack: 'failure', error: new ApiError('ApiConnectTimeout') };
-        }),
-      ]);
-
-      if (ack === 'failure') {
-        throw error || new ApiError('ApiConnectError');
-      }
-      this.set(client);
-      this.updateUiChainState(client);
-
-      return { ack: 'success' };
-    } catch (e) {
-      const error = e instanceof ApiError ? e : new ApiError('ApiConnectError');
-      this.failedCache.set(chainId, { ack: 'failure', chainId, error });
-      this.syncFailedConnections();
-
-      return { ack: 'failure', error };
-    }
-  };
+    this.getEndpoint(chainId) === 'smoldot' ? 120_000 : 10_000;
 
   /**
    * Set and connect to an endpoint for a given client if online.
@@ -149,9 +140,7 @@ export class APIsController {
     chainId: ChainID,
     endpoint: NodeEndpoint
   ): Promise<void> => {
-    const status = this.getStatus(chainId);
-
-    switch (status) {
+    switch (this.getStatus(chainId)) {
       case 'disconnected': {
         this.setClientEndpoint(chainId, endpoint);
         break;
@@ -188,7 +177,7 @@ export class APIsController {
 
         const { ack } = await Promise.race([
           client.connect(this.smoldotClient, controller.signal),
-          CommonLib.waitMs(timeout).then(() => {
+          waitMs(timeout).then(() => {
             controller.abort();
             return { ack: 'failure' };
           }),
@@ -197,7 +186,6 @@ export class APIsController {
         if (ack === 'failure') {
           return null;
         }
-
         // Return the connected instance if connection was successful.
         this.updateUiChainState(this.get(chainId)!);
         return this.castClient(chainId, this.get(chainId)!);
@@ -315,14 +303,12 @@ export class APIsController {
   private static tryConnect = async (chainId: ChainID): Promise<boolean> => {
     const MAX_TRIES = 15;
     const INTERVAL_MS = 1_000;
-
     for (let i = 0; i < MAX_TRIES; ++i) {
       if (this.get(chainId)?.status() === 'connected') {
         return true;
       }
       await new Promise((resolve) => setTimeout(resolve, INTERVAL_MS));
     }
-
     return false;
   };
 
@@ -330,13 +316,19 @@ export class APIsController {
    * Update react state.
    */
   private static updateUiChainState = (client: Api<keyof ClientTypes>) => {
-    if (this.backend === 'electron') {
-      this.cachedSetChains((pv) => pv.set(client.chainId, client.flatten()));
-      this.setUiTrigger(true);
-    } else if (this.backend === 'browser') {
-      const ser = JSON.stringify(client.flatten());
-      const msg = { type: 'api', task: 'state:chain', payload: { ser } };
-      chrome.runtime.sendMessage(msg);
+    switch (this.backend) {
+      case 'browser': {
+        const ser = JSON.stringify(client.flatten());
+        const msg = { type: 'api', task: 'state:chain', payload: { ser } };
+        chrome.runtime.sendMessage(msg);
+        break;
+      }
+      case 'electron': {
+        const c = client;
+        this.cachedSetChains((pv) => new Map(pv).set(c.chainId, c.flatten()));
+        this.setUiTrigger(true);
+        break;
+      }
     }
   };
 

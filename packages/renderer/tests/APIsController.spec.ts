@@ -50,7 +50,7 @@ describe('APIsController', () => {
 
     it('Should successfully connect a client', async () => {
       const chainId: ChainID = 'Polkadot Relay';
-      await APIsController.connectApi(chainId);
+      await APIsController.getConnectedApi(chainId);
       const client = APIsController.clients.find((c) => c.chainId === chainId)!;
 
       expect(client.status()).toBe('connected');
@@ -60,7 +60,7 @@ describe('APIsController', () => {
 
     it('Should close a connected client', async () => {
       const chainId: ChainID = 'Polkadot Relay';
-      await APIsController.connectApi(chainId);
+      await APIsController.getConnectedApi(chainId);
       await APIsController.close(chainId);
 
       const client = APIsController.clients.find((c) => c.chainId === chainId)!;
@@ -71,7 +71,7 @@ describe('APIsController', () => {
     it('Should close all connected clients', async () => {
       // Connect clients and verify connected status.
       const chainIds: ChainID[] = ['Polkadot Relay', 'Kusama Relay'];
-      await Promise.all(chainIds.map((c) => APIsController.connectApi(c)));
+      await Promise.all(chainIds.map((c) => APIsController.getConnectedApi(c)));
       for (const chainId of chainIds) {
         const client = APIsController.clients.find(
           (c) => c.chainId === chainId
@@ -101,7 +101,7 @@ describe('APIsController', () => {
     it('Should provide the status of managed clients', async () => {
       const connectedId: ChainID = 'Polkadot Relay';
       const disconnectedId: ChainID = 'Kusama Relay';
-      await APIsController.connectApi(connectedId);
+      await APIsController.getConnectedApi(connectedId);
 
       expect(APIsController.getStatus(connectedId)).toBe('connected');
       expect(APIsController.getStatus(disconnectedId)).toBe('disconnected');
