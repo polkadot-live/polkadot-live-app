@@ -342,7 +342,6 @@ export class AccountsController {
     if (!accounts.length) {
       return;
     }
-
     const arg = accounts.map((a) => a.address);
     const batch = await api.query.system.account.multi(arg);
     const merged = accounts.map((a, i) => ({ account: a, info: batch[i] }));
@@ -421,11 +420,9 @@ export class AccountsController {
     try {
       const { address } = account;
       const era = (await api.query.staking.activeEra())?.index;
-      if (!era) {
-        return;
-      }
       const nominators = await api.query.staking.nominators(address);
-      if (!nominators) {
+
+      if (!(era && nominators)) {
         account.nominatingData = null;
         await this.set(account);
         return;

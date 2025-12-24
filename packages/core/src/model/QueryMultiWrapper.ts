@@ -285,12 +285,14 @@ export class QueryMultiWrapper {
 
         let result = undefined;
         if (nominators) {
-          const era = (await client.query.staking.activeEra())!.index;
-          result = await getAccountNominatingData(client, {
-            account,
-            era,
-            nominators,
-          });
+          const era = (await client.query.staking.activeEra())?.index;
+          if (era) {
+            result = await getAccountNominatingData(client, {
+              account,
+              era,
+              nominators,
+            });
+          }
         }
         account.nominatingData = result ?? null;
       }
