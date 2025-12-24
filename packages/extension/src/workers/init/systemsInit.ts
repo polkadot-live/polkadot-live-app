@@ -5,7 +5,6 @@ import {
   AccountsController,
   APIsController,
   ChainEventsService,
-  disconnectAPIs,
   IntervalsController,
 } from '@polkadot-live/core';
 import { connectApis, startApi } from '../apis';
@@ -38,7 +37,6 @@ export const initSystems = async () => {
   await startEventStreams();
   eventBus.dispatchEvent(new CustomEvent('initSystems:complete'));
   setSystemsInitialized(true);
-  await disconnectAPIs();
 };
 
 export const handleSwitchToOffline = async () => {

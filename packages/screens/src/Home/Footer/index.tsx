@@ -48,9 +48,9 @@ export const Footer = () => {
 
   // Flag controlling whether footer is expanded.
   const [expanded, setExpanded] = useState<boolean>(false);
-  const [accordionValue, setAccordionValue] = useState<EcosystemID[]>([
-    'Polkadot',
-  ]);
+  const [accordionValue, setAccordionValue] = useState<EcosystemID | undefined>(
+    undefined
+  );
 
   // Get number of connected APIs.
   const connectionsCount = () =>
@@ -94,6 +94,19 @@ export const Footer = () => {
   // Helpers.
   const connectTooltip = ({ status }: FlattenedAPIData) =>
     status === 'connected' ? 'Connected' : 'Connect';
+
+  const getApiDataFor = (ecosystemId: EcosystemID) =>
+    [...chains.entries()].filter(([chainId]) =>
+      chainId.startsWith(ecosystemId)
+    );
+
+  const hasActiveApi = (ecosystemId: EcosystemID): boolean =>
+    [...chains.entries()]
+      .filter(([chainId]) => chainId.startsWith(ecosystemId))
+      .some(([, apiData]) => apiData.status === 'connected');
+
+  const connectionIssueFor = (ecosystemId: EcosystemID): boolean =>
+    failedConnections.keys().some((k) => k.startsWith(ecosystemId));
 
   return (
     <FooterWrapper className={expanded ? 'expanded' : undefined}>
@@ -148,9 +161,10 @@ export const Footer = () => {
             <UI.AccordionWrapper>
               <Accordion.Root
                 className="AccordionRoot"
-                type="multiple"
+                type="single"
+                collapsible={true}
                 value={accordionValue}
-                onValueChange={(val) => setAccordionValue(val as EcosystemID[])}
+                onValueChange={(val) => setAccordionValue(val as EcosystemID)}
               >
                 <FlexColumn $rowGap={'2px'}>
                   {[...getEcosystemChainMap().entries()].map(
@@ -173,6 +187,19 @@ export const Footer = () => {
                             <UI.TriggerHeader style={{ flex: 1 }}>
                               {ecosystemId}
                             </UI.TriggerHeader>
+
+                            {connectionIssueFor(ecosystemId) && (
+                              <FontAwesomeIcon
+                                className="fade-loop---slow warn"
+                                icon={FA.faTriangleExclamation}
+                              />
+                            )}
+                            {hasActiveApi(ecosystemId) && (
+                              <FontAwesomeIcon
+                                icon={FA.faCircle}
+                                className="fade-loop--slow success"
+                              />
+                            )}
                             <ChevronDownIcon
                               className="AccordionChevron"
                               aria-hidden
@@ -183,11 +210,8 @@ export const Footer = () => {
                           transparent={true}
                           className={'AccordionContentNetwork'}
                         >
-                          {[...chains.entries()]
-                            .filter(([chainId]) =>
-                              chainId.startsWith(ecosystemId)
-                            )
-                            .map(([chainId, apiData]) => (
+                          {getApiDataFor(ecosystemId).map(
+                            ([chainId, apiData]) => (
                               <NetworkItem key={`${chainId}`}>
                                 <div className="left">
                                   <h4>{chainId}</h4>
@@ -268,7 +292,8 @@ export const Footer = () => {
                                   </FlexRow>
                                 </div>
                               </NetworkItem>
-                            ))}
+                            )
+                          )}
                         </UI.AccordionContent>
                       </Accordion.Item>
                     )

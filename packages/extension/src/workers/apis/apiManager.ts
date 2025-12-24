@@ -6,6 +6,7 @@ import {
   APIsController,
   ChainEventsService,
   SubscriptionsController,
+  waitMs,
 } from '@polkadot-live/core';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { NodeEndpoint } from '@polkadot-live/types/apis';
@@ -28,13 +29,6 @@ export const closeApi = async (chainId: ChainID) => {
 };
 
 export const startApi = async (chainId: ChainID) => {
-  const { ack } = await APIsController.connectApi(chainId);
-  if (ack === 'success') {
-    await onApiRecover(chainId);
-  }
-};
-
-export const onApiRecover = async (chainId: ChainID) => {
   try {
     if (APIsController.failedCache.has(chainId)) {
       APIsController.failedCache.delete(chainId);
@@ -44,12 +38,23 @@ export const onApiRecover = async (chainId: ChainID) => {
     const res = await APIsController.getConnectedApiOrThrow(chainId);
     const api = res.getApi();
 
-    await AccountsController.syncAllAccounts(api, chainId);
-    await Promise.all([
-      AccountsController.subscribeAccountsForChain(chainId),
-      SubscriptionsController.resubscribeChain(chainId),
+    const sync = async () => {
+      await AccountsController.syncAllAccounts(api, chainId);
+      await AccountsController.subscribeAccountsForChain(chainId);
+      await SubscriptionsController.resubscribeChain(chainId);
+    };
+    const timeout = APIsController.getConnectionTimeout(chainId);
+    const success = await Promise.race([
+      waitMs(timeout).then(() => false),
+      sync().then(() => true),
     ]);
+
+    if (!success) {
+      APIsController.reset(chainId);
+    }
   } catch (error) {
+    APIsController.reset(chainId);
+    APIsController.syncChainConnections();
     console.error(error);
   }
 };

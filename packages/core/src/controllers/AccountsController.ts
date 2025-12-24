@@ -113,28 +113,20 @@ export class AccountsController {
 
   // Sync live data for all managed accounts.
   static syncAllAccounts = async (api: DedotClientSet, chainId: ChainID) => {
-    let promises = [this.syncAllBalances(api, chainId)];
+    await this.syncAllBalances(api, chainId);
     if (getStakingChains().includes(chainId)) {
-      promises = [
-        ...promises,
-        this.syncAllNominatingData(api as DedotStakingClient, chainId),
-        this.syncAllNominationPoolData(api as DedotStakingClient, chainId),
-      ];
+      await this.syncAllNominatingData(api as DedotStakingClient, chainId);
+      await this.syncAllNominationPoolData(api as DedotStakingClient, chainId);
     }
-    await Promise.all(promises);
   };
 
   // Sync live data for a single managed account.
   static syncAccount = async (account: Account, api: DedotClientSet) => {
-    let promises = [this.syncBalance(account, api)];
+    await this.syncBalance(account, api);
     if (getStakingChains().includes(account.chain)) {
-      promises = [
-        ...promises,
-        this.syncNominationPoolData(account, api as DedotStakingClient),
-        this.syncNominatingData(account, api as DedotStakingClient),
-      ];
+      await this.syncNominationPoolData(account, api as DedotStakingClient);
+      await this.syncNominatingData(account, api as DedotStakingClient);
     }
-    await Promise.all(promises);
   };
 
   // Fetch and build persisted tasks from the store.
@@ -346,9 +338,23 @@ export class AccountsController {
     chainId: ChainID
   ) => {
     console.log(`fetching balances for chain: ${chainId}`);
-    const accounts = this.accounts.get(chainId);
-    if (accounts) {
-      await Promise.all(accounts.map((a) => this.syncBalance(a, api)));
+    const accounts = this.accounts.get(chainId) ?? [];
+    if (!accounts.length) {
+      return;
+    }
+    const arg = accounts.map((a) => a.address);
+    const batch = await api.query.system.account.multi(arg);
+    const merged = accounts.map((a, i) => ({ account: a, info: batch[i] }));
+
+    for (const { account, info } of merged) {
+      account.balance = {
+        nonce: BigInt(info.nonce),
+        free: info.data.free,
+        reserved: info.data.reserved,
+        frozen: info.data.frozen,
+      } as AccountBalance;
+
+      await this.set(account);
     }
   };
 
@@ -375,9 +381,34 @@ export class AccountsController {
     chainId: ChainID
   ) => {
     console.log(`fetching nominating data for chain: ${chainId}`);
-    const accounts = this.accounts.get(chainId);
-    if (accounts) {
-      await Promise.all(accounts.map((a) => this.syncNominatingData(a, api)));
+    const accounts = this.accounts.get(chainId) ?? [];
+    if (!accounts.length) {
+      return;
+    }
+    const addresses = accounts.map((a) => a.address);
+    const batch = await api.query.staking.nominators.multi(addresses);
+    const era = (await api.query.staking.activeEra())?.index;
+    if (!era) {
+      return;
+    }
+    const merged = accounts.map((a, i) => ({
+      account: a,
+      nominators: batch[i],
+    }));
+
+    for (const { account, nominators } of merged) {
+      try {
+        if (!nominators) {
+          account.nominatingData = null;
+          await this.set(account);
+          continue;
+        }
+        const data = { account, era, nominators };
+        account.nominatingData = await getAccountNominatingData(api, data);
+        await this.set(account);
+      } catch (err) {
+        console.error(err);
+      }
     }
   };
 
@@ -387,10 +418,17 @@ export class AccountsController {
     api: DedotStakingClient
   ) => {
     try {
-      const maybeNominatingData = await getAccountNominatingData(api, account);
-      account.nominatingData = maybeNominatingData
-        ? { ...maybeNominatingData }
-        : null;
+      const { address } = account;
+      const era = (await api.query.staking.activeEra())?.index;
+      const nominators = await api.query.staking.nominators(address);
+
+      if (!(era && nominators)) {
+        account.nominatingData = null;
+        await this.set(account);
+        return;
+      }
+      const data = { account, era, nominators };
+      account.nominatingData = await getAccountNominatingData(api, data);
       await this.set(account);
     } catch (err) {
       console.error(err);
@@ -403,11 +441,9 @@ export class AccountsController {
     chainId: ChainID
   ) => {
     console.log(`fetching nomination pool data for chain: ${chainId}`);
-    const accounts = this.accounts.get(chainId);
-    if (accounts) {
-      await Promise.all(
-        accounts.map((a) => this.syncNominationPoolData(a, api))
-      );
+    const accounts = this.accounts.get(chainId) ?? [];
+    for (const account of accounts) {
+      await this.syncNominationPoolData(account, api);
     }
   };
 

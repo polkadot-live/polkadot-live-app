@@ -5,6 +5,7 @@ import {
   AccountsController,
   APIsController,
   SubscriptionsController,
+  waitMs,
 } from '@polkadot-live/core';
 import type { ApiHealthAdapter } from './types';
 
@@ -21,31 +22,35 @@ export const electronAdapter: ApiHealthAdapter = {
   },
 
   startApi: async (chainId, failedConnections) => {
-    if (!failedConnections) {
-      return;
-    }
+    try {
+      if (!failedConnections) {
+        return;
+      }
+      if (failedConnections.has(chainId)) {
+        APIsController.failedCache.delete(chainId);
+        APIsController.syncFailedConnections();
+      }
+      // Resync accounts and start subscriptions.
+      const res = await APIsController.getConnectedApiOrThrow(chainId);
+      const api = res.getApi();
 
-    const onApiRecover = async () => {
-      try {
-        if (failedConnections.has(chainId)) {
-          APIsController.failedCache.delete(chainId);
-          APIsController.syncFailedConnections();
-        }
-        // Resync accounts and start subscriptions.
-        const res = await APIsController.getConnectedApiOrThrow(chainId);
-        const api = res.getApi();
-
+      const sync = async () => {
         await AccountsController.syncAllAccounts(api, chainId);
         await AccountsController.subscribeAccountsForChain(chainId);
         await SubscriptionsController.resubscribeChain(chainId);
-      } catch (error) {
-        console.error(error);
-      }
-    };
+      };
+      const timeout = APIsController.getConnectionTimeout(chainId);
+      const success = await Promise.race([
+        waitMs(timeout).then(() => false),
+        sync().then(() => true),
+      ]);
 
-    const { ack } = await APIsController.connectApi(chainId);
-    if (ack === 'success') {
-      await onApiRecover();
+      if (!success) {
+        APIsController.reset(chainId);
+      }
+    } catch (error) {
+      console.error(error);
+      APIsController.reset(chainId);
     }
   },
 };

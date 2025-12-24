@@ -1,12 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import {
-  AccountsController,
-  disconnectAPIs,
-  TaskOrchestrator,
-  tryApiDisconnect,
-} from '@polkadot-live/core';
+import { AccountsController, TaskOrchestrator } from '@polkadot-live/core';
 import { DbController } from '../../controllers';
 import { setAccountSubscriptionsState } from './subscriptionMessaging';
 import type { Account } from '@polkadot-live/core';
@@ -37,8 +32,6 @@ export const updateAccountSubscriptions = async (tasks: SubscriptionTask[]) => {
   if (account.queryMulti) {
     await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
   }
-  // Disconnect unused APIs.
-  await disconnectAPIs();
 };
 
 export const updateAccountSubscription = async (
@@ -61,5 +54,4 @@ export const updateAccountSubscription = async (
 
 export const subscribeAccountTask = async (task: SubscriptionTask) => {
   await AccountsController.subscribeTask(task);
-  await tryApiDisconnect(task);
 };

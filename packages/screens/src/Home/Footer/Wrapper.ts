@@ -18,8 +18,10 @@ export const FooterWrapper = styled.div`
 
   .Header {
     .WarningIcon {
+      font-size: 0.85rem;
+      opacity: 0.85;
       color: var(--accent-warning);
-      margin-top: -2px;
+      margin-top: -1px;
     }
   }
   section {
@@ -90,6 +92,27 @@ export const FooterWrapper = styled.div`
     row-gap: 0.75rem;
     padding: 0.5rem 1rem;
   }
+
+  .success {
+    margin-top: -1px;
+    color: var(--accent-success);
+    font-size: 0.7rem;
+    animation: fadeLoopSlow 4s ease-in-out infinite;
+  }
+  .warn {
+    color: var(--accent-warning);
+    font-size: 0.85rem;
+    animation: fadeLoopSlow 4s ease-in-out infinite;
+  }
+  @keyframes fadeLoopSlow {
+    0%,
+    100% {
+      opacity: 0.9;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
 `;
 
 export const NetworkItem = styled.div`
@@ -111,6 +134,7 @@ export const NetworkItem = styled.div`
 
     .WarningIcon {
       color: var(--accent-warning);
+      font-size: 0.85rem;
       margin-left: 0.4rem;
       margin-top: -2px;
     }

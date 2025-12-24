@@ -21,7 +21,7 @@ import type {
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { EventCallback } from '@polkadot-live/types/reporter';
-import type { QueryMultiWrapper } from '../model';
+import type { Account, QueryMultiWrapper } from '../model';
 import type {
   NominationPoolCommission,
   NominationPoolRoles,
@@ -31,7 +31,11 @@ import type {
   PalletNominationPoolsBondedPoolInner,
   PalletStakingActiveEraInfo,
 } from '@dedot/chaintypes/substrate';
-import type { ClientTypes, DedotClientSet } from '@polkadot-live/types/apis';
+import type {
+  ClientTypes,
+  DedotClientSet,
+  DedotStakingClient,
+} from '@polkadot-live/types/apis';
 import type { DedotClient } from 'dedot';
 
 /**
@@ -749,8 +753,8 @@ export const callback_nominating_exposure = async (
     const { chain: chainId } = account;
     const api = getStakingApi(chainId, await getApiOrThrow(chainId));
 
-    // Update account nominating data.
-    const maybeNominatingData = await getAccountNominatingData(api, account);
+    // Get account nominating data.
+    const maybeNominatingData = await getNominatingData(api, account, era);
 
     // Return if exposure has not changed.
     const exposed = maybeNominatingData ? maybeNominatingData.exposed : false;
@@ -815,8 +819,8 @@ export const callback_nominating_commission = async (
     const prev = account.nominatingData!.validators.map((v) => v.commission);
     let hasChanged = false;
 
-    // Update account nominating data.
-    const maybeNominatingData = await getAccountNominatingData(api, account);
+    // Get account nominating data.
+    const maybeNominatingData = await getNominatingData(api, account, era);
 
     // Return if commissions haven't changed.
     if (maybeNominatingData) {
@@ -885,8 +889,8 @@ export const callback_nominating_nominations = async (
     const prev = account.nominatingData!.validators.map((v) => v.validatorId);
     let hasChanged = false;
 
-    // Update account nominating data.
-    const maybeNominatingData = await getAccountNominatingData(api, account);
+    // Get account nominating data.
+    const maybeNominatingData = await getNominatingData(api, account, era);
 
     // Return if nominations haven't changed.
     if (maybeNominatingData) {
@@ -953,3 +957,21 @@ const getNotificationFlags = (
   isOneShot,
   isEnabled: entry.task.enableOsNotifications,
 });
+
+/**
+ * @name getNominatingData
+ * @summary Returns an account’s nominating data if it is nominating in the current era.
+ */
+const getNominatingData = async (
+  api: DedotStakingClient,
+  account: Account,
+  era: number
+) => {
+  let result = undefined;
+  const nominators = await api.query.staking.nominators(account.address);
+  if (nominators) {
+    const fnData = { account, era, nominators };
+    result = await getAccountNominatingData(api, fnData);
+  }
+  return result;
+};

@@ -75,11 +75,19 @@ export const processOneShotPostCallback = async (
 
   // Sync account nominating data.
   if (syncFlags.syncAccountNominating) {
-    const result = await getAccountNominatingData(
-      api as DedotStakingClient,
-      account
-    );
-    result && (account.nominatingData = result);
+    const client = api as DedotStakingClient;
+    const { address } = account;
+    const nominators = await api.query.staking.nominators(address);
+
+    let result = undefined;
+    if (nominators) {
+      const era = (await client.query.staking.activeEra())?.index;
+      if (era) {
+        const fnData = { account, era, nominators };
+        result = await getAccountNominatingData(client, fnData);
+      }
+    }
+    account.nominatingData = result ?? null;
   }
 
   // Sync account nomination pool data.

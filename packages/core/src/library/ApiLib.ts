@@ -14,6 +14,7 @@ import { ChainEventsService } from '../events';
 /**
  * @name tryApiDisconnect
  * @summary Disconnects from an API instance if its no longer required.
+ * @deprecated
  */
 export const tryApiDisconnect = async (task: SubscriptionTask) => {
   const { chainId, status } = task;
@@ -29,6 +30,7 @@ export const tryApiDisconnect = async (task: SubscriptionTask) => {
 /**
  * @name disconnectAPIs
  * @summary Disconnect from any API instances that are not currently required.
+ * @deprecated
  */
 export const disconnectAPIs = async () => {
   const backend = APIsController.backend;

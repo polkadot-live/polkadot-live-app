@@ -83,13 +83,11 @@ export const getNominationPoolData = async (
   if (!Array.from(ChainList.keys()).includes(account.chain)) {
     return null;
   }
-
   // Return early if account is not currently in a nomination pool.
   const result = await api.query.nominationPools.poolMembers(account.address);
   if (!result) {
     return null;
   }
-
   // Get pool ID and reward address.
   const { poolId } = result;
   const { reward: poolRewardAddress } = getPoolAccounts(poolId, api);
@@ -104,7 +102,6 @@ export const getNominationPoolData = async (
   if (!npResult) {
     return null;
   }
-
   const poolState: string = npResult.state;
   const { depositor, root, nominator, bouncer } = npResult.roles;
   const { changeRate, current, max, throttleFrom } = npResult.commission;

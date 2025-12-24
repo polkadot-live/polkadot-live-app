@@ -3,12 +3,10 @@
 
 import {
   AccountsController,
-  disconnectAPIs,
   executeOneShot,
   SubscriptionsController,
   TaskOrchestrator,
   TaskQueue,
-  tryApiDisconnect,
 } from '@polkadot-live/core';
 import type { FlattenedAccountData } from '@polkadot-live/types';
 import type { SubscriptionsAdapter } from './types';
@@ -125,7 +123,6 @@ export const electronAdapter: SubscriptionsAdapter = {
         return;
       }
     }
-    await tryApiDisconnect(task);
   },
 
   onToggleCategoryTasks: async (
@@ -195,6 +192,5 @@ export const electronAdapter: SubscriptionsAdapter = {
         return;
       }
     }
-    await disconnectAPIs();
   },
 };

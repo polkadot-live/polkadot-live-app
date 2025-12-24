@@ -44,7 +44,7 @@ export const darkTheme = {
   switchDisableColor: '#252525',
 
   /* General: Text */
-  textMainHeading: '#d33079',
+  textMainHeading: '#b1b1b1',
   textHighlight: '#f1f1f1',
   textDimmed: '#4e4e4e',
   textBright: '#ececec',
@@ -167,7 +167,7 @@ export const lightTheme = {
   switchDisableColor: '#cecece',
 
   /* General: Text */
-  textMainHeading: '#d33079',
+  textMainHeading: '#202020',
   textHighlight: '#0e0e0e',
   textDimmed: '#a5a5a5',
   textBright: '#ececec',

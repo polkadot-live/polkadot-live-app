@@ -18,7 +18,6 @@ import {
   AccountsController,
   APIsController,
   ChainEventsService,
-  disconnectAPIs,
   SubscriptionsController,
 } from '@polkadot-live/core';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -134,9 +133,6 @@ export const handleRemoveAddress = async (
 
     // Transition away from rendering toggles.
     sendChromeMessage('subscriptions', 'clearRenderedSubscriptions');
-
-    // Disconnect from any API instances that are not currently needed.
-    await disconnectAPIs();
   } catch (err) {
     console.error(err);
   }
