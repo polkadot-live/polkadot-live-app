@@ -339,8 +339,23 @@ export class AccountsController {
   ) => {
     console.log(`fetching balances for chain: ${chainId}`);
     const accounts = this.accounts.get(chainId) ?? [];
-    for (const account of accounts) {
-      await this.syncBalance(account, api);
+    if (!accounts.length) {
+      return;
+    }
+
+    const arg = accounts.map((a) => a.address);
+    const batch = await api.query.system.account.multi(arg);
+    const merged = accounts.map((a, i) => ({ account: a, info: batch[i] }));
+
+    for (const { account, info } of merged) {
+      account.balance = {
+        nonce: BigInt(info.nonce),
+        free: info.data.free,
+        reserved: info.data.reserved,
+        frozen: info.data.frozen,
+      } as AccountBalance;
+
+      await this.set(account);
     }
   };
 
@@ -368,8 +383,33 @@ export class AccountsController {
   ) => {
     console.log(`fetching nominating data for chain: ${chainId}`);
     const accounts = this.accounts.get(chainId) ?? [];
-    for (const account of accounts) {
-      await this.syncNominatingData(account, api);
+    if (!accounts.length) {
+      return;
+    }
+    const addresses = accounts.map((a) => a.address);
+    const batch = await api.query.staking.nominators.multi(addresses);
+    const era = (await api.query.staking.activeEra())?.index;
+    if (!era) {
+      return;
+    }
+    const merged = accounts.map((a, i) => ({
+      account: a,
+      nominators: batch[i],
+    }));
+
+    for (const { account, nominators } of merged) {
+      try {
+        if (!nominators) {
+          account.nominatingData = null;
+          await this.set(account);
+          continue;
+        }
+        const data = { account, era, nominators };
+        account.nominatingData = await getAccountNominatingData(api, data);
+        await this.set(account);
+      } catch (err) {
+        console.error(err);
+      }
     }
   };
 
@@ -379,10 +419,19 @@ export class AccountsController {
     api: DedotStakingClient
   ) => {
     try {
-      const maybeNominatingData = await getAccountNominatingData(api, account);
-      account.nominatingData = maybeNominatingData
-        ? { ...maybeNominatingData }
-        : null;
+      const { address } = account;
+      const era = (await api.query.staking.activeEra())?.index;
+      if (!era) {
+        return;
+      }
+      const nominators = await api.query.staking.nominators(address);
+      if (!nominators) {
+        account.nominatingData = null;
+        await this.set(account);
+        return;
+      }
+      const data = { account, era, nominators };
+      account.nominatingData = await getAccountNominatingData(api, data);
       await this.set(account);
     } catch (err) {
       console.error(err);

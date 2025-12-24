@@ -3,6 +3,17 @@
 
 import type { ChainID } from './chains';
 
+import type { PalletStakingAsyncNominations as PolkadotAHPalletStakingAsyncNominations } from '@dedot/chaintypes/polkadot-asset-hub';
+import type { PalletStakingAsyncNominations as KusamaAHPalletStakingAsyncNominations } from '@dedot/chaintypes/kusama-asset-hub';
+import type { PalletStakingAsyncNominations as PaseoAHPalletStakingAsyncNominations } from '@dedot/chaintypes/paseo-asset-hub';
+import type { PalletStakingAsyncNominations as WestendAHPalletStakingAsyncNominations } from '@dedot/chaintypes/westend-asset-hub';
+
+export type AccountNominationsData =
+  | PolkadotAHPalletStakingAsyncNominations
+  | KusamaAHPalletStakingAsyncNominations
+  | WestendAHPalletStakingAsyncNominations
+  | PaseoAHPalletStakingAsyncNominations;
+
 export type AccountSource =
   | 'vault'
   | 'ledger'

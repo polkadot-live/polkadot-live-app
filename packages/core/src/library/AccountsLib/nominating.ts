@@ -11,6 +11,7 @@ import type { Account } from '../../model';
 import type { DedotStakingClient } from '@polkadot-live/types/apis';
 import type {
   AccountNominatingData,
+  AccountNominationsData,
   ValidatorData,
 } from '@polkadot-live/types/accounts';
 import type {
@@ -171,10 +172,9 @@ export const getEraRewards = async (
  */
 export const getAccountExposed = async (
   api: DedotStakingClient,
-  era: number,
-  account: Account,
-  validatorData: ValidatorData[]
+  data: { account: Account; era: number; validatorData: ValidatorData[] }
 ): Promise<boolean> => {
+  const { account, era, validatorData } = data;
   const validators = validatorData.map((v) => v.validatorId);
   const prefix = api.consts.system.ss58Prefix;
   let exposed = false;
@@ -183,14 +183,12 @@ export const getAccountExposed = async (
   if (validators.find((vId) => account.address === vId)) {
     return true;
   }
-
   // Get paged data for each nominated validator.
   const results = await Promise.all(
     validators.map((vId) =>
       api.query.staking.erasStakersPaged.entries(era, vId)
     )
   );
-
   // Check if account is exposed in the current era.
   validatorLoop: for (const result of results) {
     let counter = 0;
@@ -219,19 +217,13 @@ export const getAccountExposed = async (
  */
 export const getAccountNominatingData = async (
   api: DedotStakingClient,
-  account: Account
-): Promise<AccountNominatingData | null> => {
-  const nominators = await api.query.staking.nominators(account.address);
-
-  // Return early if account is not nominating.
-  if (!nominators) {
-    return null;
-  }
+  data: { account: Account; era: number; nominators: AccountNominationsData }
+): Promise<AccountNominatingData> => {
+  const { account, era, nominators } = data;
 
   // Get account's nominations.
   const submittedIn = nominators.submittedIn;
   const validators: ValidatorData[] = [];
-  const era = (await api.query.staking.activeEra())!.index;
   const prefix = api.consts.system.ss58Prefix;
 
   for (const validatorId of nominators.targets) {
@@ -242,12 +234,8 @@ export const getAccountNominatingData = async (
   }
 
   // Get exposed flag.
-  const exposed: boolean = await getAccountExposed(
-    api,
-    era,
-    account,
-    validators
-  );
+  const exposeData = { account, era, validatorData: validators };
+  const exposed: boolean = await getAccountExposed(api, exposeData);
 
   return {
     exposed,

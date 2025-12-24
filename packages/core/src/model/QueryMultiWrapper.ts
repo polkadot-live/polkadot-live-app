@@ -279,11 +279,20 @@ export class QueryMultiWrapper {
       }
       // Sync account nominating data.
       if (this.postCallbackSyncFlags.syncAccountNominating) {
-        const result = await getAccountNominatingData(
-          api as DedotStakingClient,
-          account
-        );
-        result && (account.nominatingData = result);
+        const { address } = account;
+        const nominators = await api.query.staking.nominators(address);
+        const client = api as DedotStakingClient;
+
+        let result = undefined;
+        if (nominators) {
+          const era = (await client.query.staking.activeEra())!.index;
+          result = await getAccountNominatingData(client, {
+            account,
+            era,
+            nominators,
+          });
+        }
+        account.nominatingData = result ?? null;
       }
       // Sync account nomination pool data.
       if (this.postCallbackSyncFlags.syncAccountNominationPool) {
