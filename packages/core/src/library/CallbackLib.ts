@@ -83,8 +83,8 @@ export const processOneShotPostCallback = async (
     if (nominators) {
       const era = (await client.query.staking.activeEra())?.index;
       if (era) {
-        const data = { account, era, nominators };
-        result = await getAccountNominatingData(client, data);
+        const fnData = { account, era, nominators };
+        result = await getAccountNominatingData(client, fnData);
       }
     }
     account.nominatingData = result ?? null;

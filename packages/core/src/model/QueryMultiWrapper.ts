@@ -287,11 +287,8 @@ export class QueryMultiWrapper {
         if (nominators) {
           const era = (await client.query.staking.activeEra())?.index;
           if (era) {
-            result = await getAccountNominatingData(client, {
-              account,
-              era,
-              nominators,
-            });
+            const fnData = { account, era, nominators };
+            result = await getAccountNominatingData(client, fnData);
           }
         }
         account.nominatingData = result ?? null;
