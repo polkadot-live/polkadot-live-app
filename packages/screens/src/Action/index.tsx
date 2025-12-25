@@ -385,7 +385,7 @@ export const Action = () => {
                       info={info}
                       onClickSummary={() => {
                         setSummaryInfo(info);
-                        setDeleteDialogOpen(true);
+                        setSummaryDialogOpen(true);
                       }}
                     />
                   </UI.AccordionContent>

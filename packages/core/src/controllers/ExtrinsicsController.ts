@@ -35,6 +35,7 @@ interface VerifyExtrinsicResult {
 export class ExtrinsicsController {
   private static txPayloads = new Map<string, CachedExtrinsicData>();
   static backend: 'browser' | 'electron';
+
   /**
    * Get a payload object (currently required by WalletConnect)
    */

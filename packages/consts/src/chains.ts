@@ -379,6 +379,7 @@ export const getSignSources = (): AccountSource[] => [
 export const getSendChains = (): ChainID[] => [
   'Polkadot Asset Hub',
   'Kusama Asset Hub',
+  'Paseo Asset Hub',
   'Westend Asset Hub',
 ];
 
