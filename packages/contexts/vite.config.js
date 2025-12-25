@@ -30,17 +30,7 @@ export default defineConfig({
   build: {
     emptyOutDir: true,
     lib: {
-      // Each item controls output file names.
-      entry: {
-        index: join(PACKAGE_ROOT, 'src/index.ts'),
-        'types/action': join(PACKAGE_ROOT, 'src/types/action/index.ts'),
-        'types/common': join(PACKAGE_ROOT, 'src/types/common/index.ts'),
-        'types/import': join(PACKAGE_ROOT, 'src/types/import/index.ts'),
-        'types/main': join(PACKAGE_ROOT, 'src/types/main/index.ts'),
-        'types/openGov': join(PACKAGE_ROOT, 'src/types/openGov/index.ts'),
-        'types/settings': join(PACKAGE_ROOT, 'src/types/settings/index.ts'),
-        'types/tabs': join(PACKAGE_ROOT, 'src/types/tabs/index.ts'),
-      },
+      entry: join(PACKAGE_ROOT, 'src/index.ts'),
       formats: ['es'],
       fileName: (format) => `index.${format}.js`,
     },
@@ -65,7 +55,7 @@ export default defineConfig({
   plugins: [
     dts({
       tsconfigPath: join(PACKAGE_ROOT, 'tsconfig.json'),
-      rollupTypes: true,
+      rollupTypes: false,
     }),
     react(),
     svgr(),
