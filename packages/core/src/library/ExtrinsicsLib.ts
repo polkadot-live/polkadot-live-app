@@ -7,7 +7,9 @@ import type {
   ImportedGenericAccount,
   SendAccount,
 } from '@polkadot-live/types/accounts';
+import { getSendChains } from '@polkadot-live/consts/chains';
 import type { ActionMeta } from '@polkadot-live/types/tx';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 /**
  * @name initExtrinsicElectron
@@ -47,11 +49,14 @@ export const fetchSendAccountsBrowser = async () => {
   const arr: [AccountSource, ImportedGenericAccount[]][] = JSON.parse(ser);
   const rec = new Map<AccountSource, ImportedGenericAccount[]>(arr);
   const map = new Map<AccountSource, SendAccount[]>();
+  const sendChains = getSendChains();
 
   for (const [source, genericAccounts] of rec.entries()) {
     const addresses = genericAccounts
       .map(({ encodedAccounts }) =>
-        Object.values(encodedAccounts).map((en) => en)
+        Object.entries(encodedAccounts)
+          .filter(([cid]) => sendChains.includes(cid as ChainID))
+          .map(([, en]) => en)
       )
       .flat();
     const accounts = addresses.map((en) => ({ ...en, source }));
@@ -72,12 +77,15 @@ export const fetchSendAccountsElectron = async () => {
 
   const parsedMap = new Map<AccountSource, string>(JSON.parse(serialized));
   const map = new Map<AccountSource, SendAccount[]>();
+  const sendChains = getSendChains();
 
   for (const [source, ser] of parsedMap.entries()) {
     const parsed: ImportedGenericAccount[] = JSON.parse(ser);
     const addresses = parsed
       .map(({ encodedAccounts }) =>
-        Object.values(encodedAccounts).map((en) => en)
+        Object.entries(encodedAccounts)
+          .filter(([cid]) => sendChains.includes(cid as ChainID))
+          .map(([, en]) => en)
       )
       .flat();
     const accounts = addresses.map((en) => ({ ...en, source }));
