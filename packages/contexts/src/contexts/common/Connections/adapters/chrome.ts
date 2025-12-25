@@ -21,6 +21,22 @@ export const chromeAdapter: ConnectionsAdapter = {
     return map;
   },
 
+  grantCameraPermission: async (): Promise<boolean> => {
+    const status = await navigator.permissions.query({
+      name: 'camera' as PermissionName,
+    });
+    if (status.state === 'granted') {
+      return true;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      stream.getTracks().forEach((track) => track.stop());
+      return true;
+    } catch {
+      return false;
+    }
+  },
+
   listenSharedStateOnMount: (setCache, cacheRef) => {
     const callback = (message: AnyData) => {
       if (message.type === 'sharedState') {

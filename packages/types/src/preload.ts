@@ -12,6 +12,7 @@ import type { LedgerTask, SerLedgerTaskResponse } from './ledger';
 
 export interface PreloadAPI {
   getWindowId: () => string;
+  grantCamera: () => Promise<boolean>;
   getOsPlatform: () => Promise<string>;
   getShowDisclaimer: () => Promise<boolean>;
   copyToClipboard: (text: string) => Promise<void>;

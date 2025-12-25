@@ -6,7 +6,8 @@ import {
   faChevronRight,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useOverlay } from '@polkadot-live/contexts';
+import { renderToast } from '@polkadot-live/ui/utils';
+import { useConnections, useOverlay } from '@polkadot-live/contexts';
 import { useTxMeta } from '@ren/contexts/action';
 import { useMemo, useRef, useState } from 'react';
 import { QRViewerWrapper } from '@polkadot-live/styles/wrappers';
@@ -21,6 +22,7 @@ import type { Html5Qrcode } from 'html5-qrcode';
 import type { SignVaultOverlayProps } from './types';
 
 export const SignVaultOverlay = ({ from, txId }: SignVaultOverlayProps) => {
+  const { grantCameraPermission } = useConnections();
   const { getTxPayload, setTxSignature, getGenesisHash, submitTx } =
     useTxMeta();
   const { setStatus: setOverlayStatus } = useOverlay();
@@ -38,10 +40,6 @@ export const SignVaultOverlay = ({ from, txId }: SignVaultOverlayProps) => {
     if (data) {
       setOverlayStatus(0);
       const signature = `0x${data}`;
-      console.log('> Setting signature:');
-      console.log(signature);
-
-      // Submit transaction.
       setTxSignature(txId, signature);
       submitTx(txId);
     }
@@ -106,7 +104,14 @@ export const SignVaultOverlay = ({ from, txId }: SignVaultOverlayProps) => {
             <ButtonPrimary
               text="I Have Scanned"
               onClick={() => {
-                setStage(2);
+                grantCameraPermission().then((res) => {
+                  if (res) {
+                    setStage(2);
+                    return;
+                  }
+                  const msg = 'Camera Permission Denied';
+                  renderToast(msg, 'toast-error', 'error', 'top-center');
+                });
               }}
               iconRight={faChevronRight}
               iconTransform="shrink-3"

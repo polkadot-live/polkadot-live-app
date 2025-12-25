@@ -12,6 +12,7 @@ export interface ConnectionsContextInterface {
   copyToClipboard: (text: string) => Promise<void>;
   getTheme: () => typeof themeVariables.darkTheme;
   getOnlineMode: () => boolean;
+  grantCameraPermission: () => Promise<boolean>;
   initExtrinsicMsg: (txMeta: ActionMeta) => void;
   openInBrowser: (uri: string, analytics?: AnyData) => void;
   openTab: (
