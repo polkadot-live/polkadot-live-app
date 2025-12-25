@@ -7,7 +7,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useMemo, useRef, useState } from 'react';
-import { useOverlay } from '@polkadot-live/contexts';
+import { useConnections, useOverlay } from '@polkadot-live/contexts';
 import { useTxMeta } from '../../../contexts';
 import { QRViewerWrapper } from '@polkadot-live/styles/wrappers';
 import {
@@ -19,8 +19,10 @@ import {
 import { ButtonPrimary, ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
 import type { Html5Qrcode } from 'html5-qrcode';
 import type { SignVaultOverlayProps } from './types';
+import { renderToast } from '@polkadot-live/ui/utils';
 
 export const SignVaultOverlay = ({ info }: SignVaultOverlayProps) => {
+  const { grantCameraPermission } = useConnections();
   const { getTxPayload, setTxSignature, getGenesisHash, submitTx } =
     useTxMeta();
   const { setStatus: setOverlayStatus } = useOverlay();
@@ -102,7 +104,14 @@ export const SignVaultOverlay = ({ info }: SignVaultOverlayProps) => {
             <ButtonPrimary
               text="I Have Scanned"
               onClick={() => {
-                setStage(2);
+                grantCameraPermission().then((res) => {
+                  if (res) {
+                    setStage(2);
+                    return;
+                  }
+                  const msg = 'Camera Permission Denied';
+                  renderToast(msg, 'toast-error', 'error', 'top-center');
+                });
               }}
               iconRight={faChevronRight}
               iconTransform="shrink-3"

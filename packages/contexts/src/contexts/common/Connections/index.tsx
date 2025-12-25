@@ -89,6 +89,12 @@ export const ConnectionsProvider = ({
   ) => adapter.openTab(tab, analytics);
 
   /**
+   * Grant camera permission.
+   */
+  const grantCameraPermission = async () =>
+    await adapter.grantCameraPermission();
+
+  /**
    * Synchronize with stored flags.
    */
   useEffect(() => {
@@ -116,6 +122,7 @@ export const ConnectionsProvider = ({
         cacheGet,
         copyToClipboard,
         getOnlineMode,
+        grantCameraPermission,
         getTheme,
         initExtrinsicMsg,
         openInBrowser,

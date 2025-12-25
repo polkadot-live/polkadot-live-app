@@ -8,6 +8,7 @@ import {
   SortControlLabel,
 } from '@polkadot-live/ui/components';
 import {
+  useConnections,
   useImportAddresses,
   useImportHandler,
   useOverlay,
@@ -21,11 +22,34 @@ import {
   ButtonPrimaryInvert,
 } from '@polkadot-live/ui/kits/buttons';
 import type { ManageVaultProps } from './types';
+import { renderToast } from '@polkadot-live/ui/utils';
 
 export const Manage = ({ setSection }: ManageVaultProps) => {
+  const { grantCameraPermission } = useConnections();
   const { openOverlayWith, setStatus } = useOverlay();
   const { handleImportAddress } = useImportHandler();
   const { isAlreadyImported } = useImportAddresses();
+
+  const onImportClick = () => {
+    grantCameraPermission().then((res) => {
+      if (!res) {
+        const msg = 'Camera Permission Denied';
+        renderToast(msg, 'toast-error', 'error', 'top-center');
+      } else {
+        openOverlayWith(
+          <ErrorBoundary fallback={<h2>Could not load QR Scanner</h2>}>
+            <Reader
+              handleImportAddress={handleImportAddress}
+              isAlreadyImported={isAlreadyImported}
+              setOverlayStatus={setStatus}
+            />
+          </ErrorBoundary>,
+          'small',
+          true
+        );
+      }
+    });
+  };
 
   return (
     <Styles.PadWrapper>
@@ -53,21 +77,7 @@ export const Manage = ({ setSection }: ManageVaultProps) => {
                 <ButtonText
                   iconLeft={faQrcode}
                   text={'Import'}
-                  onClick={() => {
-                    openOverlayWith(
-                      <ErrorBoundary
-                        fallback={<h2>Could not load QR Scanner</h2>}
-                      >
-                        <Reader
-                          handleImportAddress={handleImportAddress}
-                          isAlreadyImported={isAlreadyImported}
-                          setOverlayStatus={setStatus}
-                        />
-                      </ErrorBoundary>,
-                      'small',
-                      true
-                    );
-                  }}
+                  onClick={() => onImportClick()}
                 />
               </Styles.FlexRow>
             </Styles.ResponsiveRow>

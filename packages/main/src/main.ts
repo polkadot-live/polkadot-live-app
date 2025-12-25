@@ -106,6 +106,25 @@ if (!store.has('version')) {
   }
 }
 
+// Ask for camera permission (Mac OS)
+const grantCameraPermission = async (): Promise<boolean> => {
+  try {
+    if (process.platform !== 'darwin') {
+      return true;
+    }
+    const access = systemPreferences.getMediaAccessStatus('camera');
+    if (access === 'granted') {
+      return true;
+    }
+    const result = await systemPreferences.askForMediaAccess('camera');
+    debug('🔷 Camera permission enabled: %o', result);
+    return result;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+};
+
 app.whenReady().then(async () => {
   // Auto launch app on login.
   const autoLaunch = new AutoLaunch({
@@ -116,16 +135,6 @@ app.whenReady().then(async () => {
       autoLaunch.enable();
     }
   });
-
-  // Ask for camera permission (Mac OS)
-  if (process.platform === 'darwin') {
-    systemPreferences
-      .askForMediaAccess('camera')
-      .then((result) => {
-        debug('🔷 Camera permission enabled: %o', result);
-      })
-      .catch((err) => console.error(err));
-  }
 
   // Hide dock icon if we're on mac OS.
   SettingsController.initialize();
@@ -273,6 +282,8 @@ app.whenReady().then(async () => {
   /**
    * Platform
    */
+
+  ipcMain.handle('app:grantCamera', async () => await grantCameraPermission());
 
   ipcMain.handle('app:platform:get', async () => process.platform as string);
 

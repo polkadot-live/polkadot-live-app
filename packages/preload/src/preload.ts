@@ -101,6 +101,8 @@ export const API: PreloadAPI = {
    * Platform
    */
 
+  grantCamera: async () => await ipcRenderer.invoke('app:grantCamera'),
+
   getOsPlatform: async () => await ipcRenderer.invoke('app:platform:get'),
 
   getShowDisclaimer: async () =>

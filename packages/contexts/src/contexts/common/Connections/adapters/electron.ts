@@ -20,6 +20,8 @@ export const electronAdapter: ConnectionsAdapter = {
     return map;
   },
 
+  grantCameraPermission: async () => await window.myAPI.grantCamera(),
+
   listenSharedStateOnMount: (setCache, cacheRef) => {
     window.myAPI.syncSharedState(
       (

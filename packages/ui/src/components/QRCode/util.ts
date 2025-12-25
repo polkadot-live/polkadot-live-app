@@ -3,6 +3,7 @@
 
 import { concatU8a, decodeAddress, hexToU8a } from '@dedot/utils';
 import { CRYPTO_SR25519, SUBSTRATE_ID } from './constants';
+import type { AnyData } from '@polkadot-live/types/misc';
 
 const isString = (value: unknown): value is string => typeof value === 'string';
 
@@ -27,6 +28,11 @@ export const createSignPayload = (
   genesisHash: string | Uint8Array
 ): Uint8Array => {
   try {
+    const isUint8Array = (data: AnyData): data is Uint8Array =>
+      data instanceof Uint8Array;
+
+    const u8Payload = isUint8Array(payload) ? payload : new Uint8Array(payload);
+
     const u8GenesisHash = isString(genesisHash)
       ? hexToU8a(genesisHash)
       : genesisHash;
@@ -36,7 +42,7 @@ export const createSignPayload = (
       CRYPTO_SR25519,
       new Uint8Array([cmd]),
       decodeAddress(address),
-      payload,
+      u8Payload,
       u8GenesisHash
     );
   } catch (err) {

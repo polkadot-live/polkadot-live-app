@@ -7,6 +7,7 @@ import type { Dispatch, RefObject, SetStateAction } from 'react';
 export interface ConnectionsAdapter {
   copyToClipboard: (text: string) => Promise<void>;
   getSharedStateOnMount: () => Promise<Map<SyncID, boolean>>;
+  grantCameraPermission: () => Promise<boolean>;
   listenSharedStateOnMount: (
     setCache: Dispatch<SetStateAction<Map<SyncID, boolean>>>,
     cacheRef: RefObject<Map<SyncID, boolean>>
