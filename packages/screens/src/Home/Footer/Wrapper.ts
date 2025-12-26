@@ -16,14 +16,6 @@ export const FooterWrapper = styled.div`
   overflow: hidden;
   z-index: 20;
 
-  .Header {
-    .WarningIcon {
-      font-size: 0.85rem;
-      opacity: 0.85;
-      color: var(--accent-warning);
-      margin-top: -1px;
-    }
-  }
   section {
     width: 100%;
   }
@@ -45,7 +37,7 @@ export const FooterWrapper = styled.div`
     }
     button {
       padding: 0.25rem 0.5rem 0.25rem 1rem;
-      opacity: 0.4;
+      opacity: 0.6;
       &:hover {
         opacity: 1;
       }
@@ -132,12 +124,6 @@ export const NetworkItem = styled.div`
     column-gap: 0.5rem;
     padding: 0.25rem 0.5rem;
 
-    .WarningIcon {
-      color: var(--accent-warning);
-      font-size: 0.85rem;
-      margin-left: 0.4rem;
-      margin-top: -2px;
-    }
     > h4 {
       color: var(--text-color-secondary);
       min-width: fit-content;

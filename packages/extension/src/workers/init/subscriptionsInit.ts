@@ -16,8 +16,12 @@ import type { ChainEventSubscription } from '@polkadot-live/types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { Stores } from '../../controllers';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
+import { isSystemsInitialized } from '../state';
 
 export const initAccountSubscriptions = async () => {
+  if (isSystemsInitialized()) {
+    return;
+  }
   type T = Map<string, SubscriptionTask[]>;
   const store = 'accountSubscriptions';
   const active = (await DbController.getAllObjects(store)) as T;
@@ -29,6 +33,9 @@ export const initAccountSubscriptions = async () => {
 };
 
 export const initChainSubscriptions = async () => {
+  if (isSystemsInitialized()) {
+    return;
+  }
   const store: Stores = 'chainSubscriptions';
   const fetched = (await DbController.getAllObjects(store)) as Map<
     string,
@@ -40,6 +47,9 @@ export const initChainSubscriptions = async () => {
 };
 
 export const initIntervalSubscriptions = async () => {
+  if (isSystemsInitialized()) {
+    return;
+  }
   const tasks = await handleGetAllIntervalTasks();
   const isOnline = navigator.onLine;
   IntervalsController.insertSubscriptions(tasks, isOnline);

@@ -27,10 +27,6 @@ export const electronAdapter: ApiHealthAdapter = {
       if (!failedConnections) {
         return;
       }
-      if (failedConnections.has(chainId)) {
-        APIsController.failedCache.delete(chainId);
-        APIsController.syncFailedConnections();
-      }
       // Resync accounts and start subscriptions.
       const res = await APIsController.getConnectedApiOrThrow(chainId);
       const api = res.getApi();
@@ -51,6 +47,13 @@ export const electronAdapter: ApiHealthAdapter = {
       // Reset API if any task timed out.
       if (results.some((ok) => !ok)) {
         APIsController.reset(chainId);
+        return;
+      }
+
+      // Remove from failed connections.
+      if (failedConnections.has(chainId)) {
+        APIsController.failedCache.delete(chainId);
+        APIsController.syncFailedConnections();
       }
     } catch (error) {
       console.error(error);

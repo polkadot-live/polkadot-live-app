@@ -55,6 +55,17 @@ export const BootstrappingProvider = ({
   const refAborted = useRef(false);
   const refSwitchingToOnline = useRef(false);
 
+  const { failedConnections, setReconnectDialogOpen } = useApiHealth();
+
+  /**
+   * Open reconnect dialog on a failed connection.
+   */
+  useEffect(() => {
+    if (failedConnections.size > 0 && !appLoading) {
+      setReconnectDialogOpen(true);
+    }
+  }, [failedConnections, appLoading]);
+
   /**
    * Notify main process there may be a change in connection status.
    */

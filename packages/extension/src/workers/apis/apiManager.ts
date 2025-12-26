@@ -21,7 +21,11 @@ export const connectApis = async () => {
     ...Array.from(ChainEventsService.activeSubscriptions.keys()),
     ...Array.from(ChainEventsService.accountScopedSubscriptions.keys()),
   ];
-  await Promise.all(chainIds.map((c) => startApi(c)));
+  await Promise.all(
+    chainIds
+      .filter((chainId) => APIsController.getStatus(chainId) === 'disconnected')
+      .map((c) => startApi(c))
+  );
   return true;
 };
 
@@ -31,10 +35,6 @@ export const closeApi = async (chainId: ChainID) => {
 
 export const startApi = async (chainId: ChainID) => {
   try {
-    if (APIsController.failedCache.has(chainId)) {
-      APIsController.failedCache.delete(chainId);
-      APIsController.syncFailedConnections();
-    }
     // Resync accounts and start subscriptions.
     const res = await APIsController.getConnectedApiOrThrow(chainId);
     const api = res.getApi();
@@ -55,6 +55,13 @@ export const startApi = async (chainId: ChainID) => {
     // Reset API if any task timed out.
     if (results.some((ok) => !ok)) {
       APIsController.reset(chainId);
+      return;
+    }
+
+    // Remove from failed connections.
+    if (APIsController.failedCache.has(chainId)) {
+      APIsController.failedCache.delete(chainId);
+      APIsController.syncFailedConnections();
     }
   } catch (error) {
     APIsController.reset(chainId);

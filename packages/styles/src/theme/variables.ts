@@ -15,7 +15,7 @@ export const darkTheme = {
   accentSecondary: '#a94a75',
   accentWarning: '#af773d',
   accentWarningBackground: '#af773d',
-  accentSuccess: '#2c7a2c',
+  accentSuccess: '#428F42',
 
   /* General: Borders */
   borderPrimaryColor: '#2e2e2e',
