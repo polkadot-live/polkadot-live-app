@@ -176,7 +176,9 @@ export const BootstrappingProvider = ({
             .map((s) => s.chainId),
         ]),
       ];
-      await Promise.all(chainIds.map((c) => startApi(c)));
+      for (const chainId of chainIds) {
+        await startApi(chainId);
+      }
     }
   };
 

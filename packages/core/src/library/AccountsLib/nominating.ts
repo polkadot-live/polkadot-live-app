@@ -167,48 +167,40 @@ export const getEraRewards = async (
 };
 
 /**
- * @name getAccountExposed
+ * @name getActiveValidators
+ * @summary Returns the set of validator addresses that are elected and active in the given era.
+ */
+const getActiveValidators = async (
+  api: DedotStakingClient,
+  era: number
+): Promise<Set<string>> => {
+  const prefix = api.consts.system.ss58Prefix;
+  const entries = await api.query.staking.erasStakersOverview.entries(era);
+
+  return new Set(
+    entries.map(
+      ([key]) => key[1].address(prefix) // validatorId
+    )
+  );
+};
+
+/**
+ * @name isAccountExposed
  * @summary Return `true` if address is exposed in `era`. Return `false` otherwise.
  */
-export const getAccountExposed = async (
+export const isAccountExposed = async (
   api: DedotStakingClient,
   data: { account: Account; era: number; validatorData: ValidatorData[] }
 ): Promise<boolean> => {
   const { account, era, validatorData } = data;
-  const validators = validatorData.map((v) => v.validatorId);
-  const prefix = api.consts.system.ss58Prefix;
-  let exposed = false;
-
-  // Check if target address is the validator.
-  if (validators.find((vId) => account.address === vId)) {
-    return true;
+  if (!validatorData.length) {
+    return false;
   }
-  // Get paged data for each nominated validator.
-  const results = await Promise.all(
-    validators.map((vId) =>
-      api.query.staking.erasStakersPaged.entries(era, vId)
-    )
+  const active = await getActiveValidators(api, era);
+  return (
+    active.has(account.address) /** account is validator */ ||
+    validatorData.filter((v) => active.has(v.validatorId)).length > 0
   );
-  // Check if account is exposed in the current era.
-  validatorLoop: for (const result of results) {
-    let counter = 0;
-    for (const [, page] of result) {
-      for (const { who } of page.others) {
-        // Move to next validator if account is not in top 512 stakers.
-        if (counter > 512) {
-          continue validatorLoop;
-        }
-        // Account is exposed in this era if its address is found.
-        if (who.address(prefix) === account.address) {
-          exposed = true;
-          break validatorLoop;
-        }
-        counter += 1;
-      }
-    }
-  }
-
-  return exposed;
 };
 
 /**
@@ -223,19 +215,21 @@ export const getAccountNominatingData = async (
 
   // Get account's nominations.
   const submittedIn = nominators.submittedIn;
-  const validators: ValidatorData[] = [];
   const prefix = api.consts.system.ss58Prefix;
 
-  for (const validatorId of nominators.targets) {
-    const address = validatorId.address(prefix);
-    const prefs = await api.query.staking.erasValidatorPrefs([era, address]);
-    const commission: string = perbillToPercent(prefs.commission);
-    validators.push({ validatorId: address, commission });
-  }
+  const validatorIds = nominators.targets.map((v) => v.address(prefix));
+  const prefsList = await api.query.staking.erasValidatorPrefs.multi(
+    validatorIds.map((vId) => [era, vId])
+  );
+
+  const validators: ValidatorData[] = prefsList.map((prefs, i) => ({
+    validatorId: validatorIds[i],
+    commission: perbillToPercent(prefs.commission),
+  }));
 
   // Get exposed flag.
   const exposeData = { account, era, validatorData: validators };
-  const exposed: boolean = await getAccountExposed(api, exposeData);
+  const exposed: boolean = await isAccountExposed(api, exposeData);
 
   return {
     exposed,
