@@ -4,8 +4,9 @@
 import {
   AccountsController,
   APIsController,
+  runSequential,
   SubscriptionsController,
-  waitMs,
+  withTimeout,
 } from '@polkadot-live/core';
 import type { ApiHealthAdapter } from './types';
 
@@ -26,27 +27,33 @@ export const electronAdapter: ApiHealthAdapter = {
       if (!failedConnections) {
         return;
       }
-      if (failedConnections.has(chainId)) {
-        APIsController.failedCache.delete(chainId);
-        APIsController.syncFailedConnections();
-      }
       // Resync accounts and start subscriptions.
       const res = await APIsController.getConnectedApiOrThrow(chainId);
       const api = res.getApi();
 
-      const sync = async () => {
-        await AccountsController.syncAllAccounts(api, chainId);
-        await AccountsController.subscribeAccountsForChain(chainId);
-        await SubscriptionsController.resubscribeChain(chainId);
-      };
-      const timeout = APIsController.getConnectionTimeout(chainId);
-      const success = await Promise.race([
-        waitMs(timeout).then(() => false),
-        sync().then(() => true),
-      ]);
+      // Prepare syncing tasks.
+      const ms = APIsController.getConnectionTimeout(chainId);
+      const tasks = [
+        () => AccountsController.syncAllAccounts(api, chainId),
+        () => AccountsController.subscribeAccountsForChain(chainId),
+        () => SubscriptionsController.resubscribeChain(chainId),
+      ];
 
-      if (!success) {
+      // Run tasks sequentially.
+      const results = await runSequential<boolean>(
+        tasks.map((task) => () => withTimeout(task(), ms))
+      );
+
+      // Reset API if any task timed out.
+      if (results.some((ok) => !ok)) {
         APIsController.reset(chainId);
+        return;
+      }
+
+      // Remove from failed connections.
+      if (failedConnections.has(chainId)) {
+        APIsController.failedCache.delete(chainId);
+        APIsController.syncFailedConnections();
       }
     } catch (error) {
       console.error(error);

@@ -2,7 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import React, { createContext, useEffect, useRef, useState } from 'react';
-import { createSafeContextHook, useConnections } from '@polkadot-live/contexts';
+import {
+  createSafeContextHook,
+  useApiHealth,
+  useConnections,
+} from '@polkadot-live/contexts';
 import { setStateWithRef } from '@w3ux/utils';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { BootstrappingInterface } from './types';
@@ -31,6 +35,17 @@ export const BootstrappingProvider = ({
   const refAppInitialized = useRef(false);
   const refAborted = useRef(false);
   const refSwitchingToOnline = useRef(false);
+
+  const { failedConnections, setReconnectDialogOpen } = useApiHealth();
+
+  /**
+   * Open reconnect dialog on a failed connection.
+   */
+  useEffect(() => {
+    if (failedConnections.size > 0 && !appLoading) {
+      setReconnectDialogOpen(true);
+    }
+  }, [failedConnections, appLoading]);
 
   /**
    * Initialize application systems.

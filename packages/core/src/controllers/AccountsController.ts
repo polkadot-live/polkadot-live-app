@@ -400,11 +400,10 @@ export class AccountsController {
       try {
         if (!nominators) {
           account.nominatingData = null;
-          await this.set(account);
-          continue;
+        } else {
+          const fnData = { account, era, nominators };
+          account.nominatingData = await getAccountNominatingData(api, fnData);
         }
-        const data = { account, era, nominators };
-        account.nominatingData = await getAccountNominatingData(api, data);
         await this.set(account);
       } catch (err) {
         console.error(err);

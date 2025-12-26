@@ -29,6 +29,11 @@ export const ApiHealthProvider = ({
   );
 
   /**
+   * Reconnect chains dialog control.
+   */
+  const [reconnectDialogOpen, setReconnectDialogOpen] = useState(false);
+
+  /**
    * Returns `true` if the chain is currently unavailable due to a failed connection attempt.
    */
   const hasConnectionIssue = (chainId: ChainID): boolean =>
@@ -60,6 +65,8 @@ export const ApiHealthProvider = ({
     <ApiHealthContext
       value={{
         failedConnections,
+        reconnectDialogOpen,
+        setReconnectDialogOpen,
         hasConnectionIssue,
         onEndpointChange,
         setFailedConnections,

@@ -5,8 +5,9 @@ import {
   AccountsController,
   APIsController,
   ChainEventsService,
+  runSequential,
   SubscriptionsController,
-  waitMs,
+  withTimeout,
 } from '@polkadot-live/core';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { NodeEndpoint } from '@polkadot-live/types/apis';
@@ -20,7 +21,11 @@ export const connectApis = async () => {
     ...Array.from(ChainEventsService.activeSubscriptions.keys()),
     ...Array.from(ChainEventsService.accountScopedSubscriptions.keys()),
   ];
-  await Promise.all(chainIds.map((c) => startApi(c)));
+  await Promise.all(
+    chainIds
+      .filter((chainId) => APIsController.getStatus(chainId) === 'disconnected')
+      .map((c) => startApi(c))
+  );
   return true;
 };
 
@@ -30,27 +35,33 @@ export const closeApi = async (chainId: ChainID) => {
 
 export const startApi = async (chainId: ChainID) => {
   try {
-    if (APIsController.failedCache.has(chainId)) {
-      APIsController.failedCache.delete(chainId);
-      APIsController.syncFailedConnections();
-    }
     // Resync accounts and start subscriptions.
     const res = await APIsController.getConnectedApiOrThrow(chainId);
     const api = res.getApi();
 
-    const sync = async () => {
-      await AccountsController.syncAllAccounts(api, chainId);
-      await AccountsController.subscribeAccountsForChain(chainId);
-      await SubscriptionsController.resubscribeChain(chainId);
-    };
-    const timeout = APIsController.getConnectionTimeout(chainId);
-    const success = await Promise.race([
-      waitMs(timeout).then(() => false),
-      sync().then(() => true),
-    ]);
+    // Prepare syncing tasks.
+    const ms = APIsController.getConnectionTimeout(chainId);
+    const tasks = [
+      () => AccountsController.syncAllAccounts(api, chainId),
+      () => AccountsController.subscribeAccountsForChain(chainId),
+      () => SubscriptionsController.resubscribeChain(chainId),
+    ];
 
-    if (!success) {
+    // Run tasks sequentially.
+    const results = await runSequential<boolean>(
+      tasks.map((task) => () => withTimeout(task(), ms))
+    );
+
+    // Reset API if any task timed out.
+    if (results.some((ok) => !ok)) {
       APIsController.reset(chainId);
+      return;
+    }
+
+    // Remove from failed connections.
+    if (APIsController.failedCache.has(chainId)) {
+      APIsController.failedCache.delete(chainId);
+      APIsController.syncFailedConnections();
     }
   } catch (error) {
     APIsController.reset(chainId);

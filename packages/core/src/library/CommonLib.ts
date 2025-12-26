@@ -83,6 +83,33 @@ export const waitMs = async (ms: number, result = false): Promise<boolean> =>
   new Promise<boolean>((resolve) => setTimeout(() => resolve(result), ms));
 
 /**
+ * @name runSequential
+ * @summary Executes an array of async tasks sequentially and returns their results in order.
+ */
+export const runSequential = async <T>(
+  tasks: (() => Promise<T>)[]
+): Promise<T[]> => {
+  const results: T[] = [];
+  for (const task of tasks) {
+    results.push(await task());
+  }
+  return results;
+};
+
+/**
+ * @name withTimeout
+ * @summary Resolves to true if the promise settles before the timeout, otherwise false.
+ */
+export const withTimeout = async (
+  promise: Promise<unknown>,
+  timeoutMs: number
+): Promise<boolean> =>
+  Promise.race([
+    promise.then(() => true).catch(() => false),
+    waitMs(timeoutMs).then(() => false),
+  ]);
+
+/**
  * @name perbillToPercent Converts a Perbill value into a percentage string with fixed decimal places.
  * @param perbill - A bigint or number representing a Perbill (0 to 1_000_000_000).
  * @param decimals - Number of decimal places to display (default: 2).

@@ -56,7 +56,9 @@ export const handleSwitchToOnline = async () => {
     ...Array.from(ChainEventsService.activeSubscriptions.keys()),
     ...Array.from(ChainEventsService.accountScopedSubscriptions.keys()),
   ];
-  await Promise.all(chainIds.map((c) => startApi(c)));
+  for (const chainId of chainIds) {
+    await startApi(chainId);
+  }
   // Re-start interval clock.
   IntervalsController.initIntervals(true);
   // Restart event streams.

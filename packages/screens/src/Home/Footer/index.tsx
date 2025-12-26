@@ -39,8 +39,12 @@ export const Footer = () => {
 
   const { chains, isWorking, onConnectClick, showWorkingSpinner } = useChains();
   const { chainHasIntervalSubscriptions } = useIntervalSubscriptions();
-  const { hasConnectionIssue, failedConnections, onEndpointChange } =
-    useApiHealth();
+  const {
+    hasConnectionIssue,
+    failedConnections,
+    onEndpointChange,
+    setReconnectDialogOpen,
+  } = useApiHealth();
 
   const numFailed = failedConnections.size;
   const isConnected = getOnlineMode();
@@ -129,14 +133,30 @@ export const Footer = () => {
               theme={theme}
             >
               <FontAwesomeIcon
-                className="WarningIcon"
-                transform={'shrink-1'}
+                className="fade-loop---slow warn"
+                transform={'grow-3'}
                 icon={FA.faTriangleExclamation}
               />
             </UI.TooltipRx>
           )}
         </FlexRow>
-        <button type="button" onClick={() => setExpanded(!expanded)}>
+        <UI.TooltipRx
+          side="top"
+          style={{ zIndex: 99 }}
+          text={'Reconnect'}
+          theme={theme}
+        >
+          <button
+            style={{ paddingRight: 0 }}
+            onClick={() => {
+              setExpanded(false);
+              setReconnectDialogOpen(true);
+            }}
+          >
+            <FontAwesomeIcon icon={FA.faPlugCircleExclamation} />
+          </button>
+        </UI.TooltipRx>
+        <button onClick={() => setExpanded(!expanded)}>
           <FontAwesomeIcon
             icon={expanded ? FA.faAngleDown : FA.faAngleUp}
             transform="grow-0"
@@ -192,6 +212,7 @@ export const Footer = () => {
                               <FontAwesomeIcon
                                 className="fade-loop---slow warn"
                                 icon={FA.faTriangleExclamation}
+                                transform={'grow-3'}
                               />
                             )}
                             {hasActiveApi(ecosystemId) && (
@@ -218,7 +239,12 @@ export const Footer = () => {
 
                                   {hasConnectionIssue(chainId) && (
                                     <FontAwesomeIcon
-                                      className="WarningIcon"
+                                      className="fade-loop--slow warn"
+                                      style={{
+                                        paddingLeft: '0.1rem',
+                                        marginTop: '-2px',
+                                      }}
+                                      transform={'grow-2'}
                                       icon={FA.faTriangleExclamation}
                                     />
                                   )}
