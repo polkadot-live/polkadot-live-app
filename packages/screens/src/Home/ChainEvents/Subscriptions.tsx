@@ -36,9 +36,7 @@ export const Subscriptions = ({
   const { getOnlineMode } = useConnections();
   const { hasConnectionIssue } = useApiHealth();
 
-  const [accordionVal, setAccordionVal] = useState<string | undefined>(
-    undefined
-  );
+  const [accordionVal, setAccordionVal] = useState<string>('');
 
   // Utility to determine if a connection issue exists.
   const showConnectionIssue = (): boolean => {

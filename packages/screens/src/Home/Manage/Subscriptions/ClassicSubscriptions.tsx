@@ -69,13 +69,9 @@ export const ClassicSubscriptions = ({
   );
 
   // Accordion state.
-  const [accordionValueAccounts, setAccordionValueAccounts] = useState<
-    string | undefined
-  >(undefined);
-
-  const [accordionValueChains, setAccordionValueChains] = useState<
-    string | undefined
-  >(undefined);
+  const [accordionValueChains, setAccordionValueChains] = useState<string>('');
+  const [accordionValueAccounts, setAccordionValueAccounts] =
+    useState<string>('');
 
   // Handle toggling a subscription task group switch.
   const handleGroupSwitch = async (category: TaskCategory) => {
@@ -106,7 +102,7 @@ export const ClassicSubscriptions = ({
   useEffect(() => {
     if (updateAccordionValue) {
       if (typeClicked === 'account') {
-        setAccordionValueAccounts(undefined);
+        setAccordionValueAccounts('');
       }
     }
   }, [updateAccordionValue]);

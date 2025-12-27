@@ -52,9 +52,7 @@ export const Footer = () => {
   const isConnected = getOnlineMode();
   const theme = getTheme();
 
-  const [accordionValue, setAccordionValue] = useState<EcosystemID | undefined>(
-    undefined
-  );
+  const [accordionValue, setAccordionValue] = useState<EcosystemID | ''>('');
 
   // Get number of connected APIs.
   const connectionsCount = () =>

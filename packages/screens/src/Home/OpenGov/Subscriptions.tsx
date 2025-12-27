@@ -50,9 +50,7 @@ export const Subscriptions = ({
 
   const isImportingData = cacheGet('backup:importing');
 
-  const [accordionValEvents, setAccordionValEvents] = useState<
-    string | undefined
-  >(undefined);
+  const [accordionValEvents, setAccordionValEvents] = useState<string>('');
 
   // Utility to determine if a connection issue exists.
   const showConnectionIssue = (): boolean =>

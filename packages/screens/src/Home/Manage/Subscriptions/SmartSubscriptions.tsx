@@ -21,9 +21,7 @@ export const SmartSubscriptions = () => {
   const { activeAccount, accountSubCountForPallet, getCategorisedForAccount } =
     useChainEvents();
 
-  const [accordionValEvents, setAccordionValEvents] = useState<
-    string | undefined
-  >(undefined);
+  const [accordionValEvents, setAccordionValEvents] = useState<string>('');
 
   return (
     <>
