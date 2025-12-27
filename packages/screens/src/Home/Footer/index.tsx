@@ -40,9 +40,11 @@ export const Footer = () => {
   const { chains, isWorking, onConnectClick, showWorkingSpinner } = useChains();
   const { chainHasIntervalSubscriptions } = useIntervalSubscriptions();
   const {
-    hasConnectionIssue,
     failedConnections,
+    footerIsExpanded,
+    hasConnectionIssue,
     onEndpointChange,
+    setFooterIsExpanded,
     setReconnectDialogOpen,
   } = useApiHealth();
 
@@ -50,8 +52,6 @@ export const Footer = () => {
   const isConnected = getOnlineMode();
   const theme = getTheme();
 
-  // Flag controlling whether footer is expanded.
-  const [expanded, setExpanded] = useState<boolean>(false);
   const [accordionValue, setAccordionValue] = useState<EcosystemID | undefined>(
     undefined
   );
@@ -113,7 +113,7 @@ export const Footer = () => {
     failedConnections.keys().some((k) => k.startsWith(ecosystemId));
 
   return (
-    <FooterWrapper className={expanded ? 'expanded' : undefined}>
+    <FooterWrapper className={footerIsExpanded ? 'expanded' : undefined}>
       <section className="status">
         <div>
           {connectionsCount() ? (
@@ -149,23 +149,23 @@ export const Footer = () => {
           <button
             style={{ paddingRight: 0 }}
             onClick={() => {
-              setExpanded(false);
+              setFooterIsExpanded(false);
               setReconnectDialogOpen(true);
             }}
           >
             <FontAwesomeIcon icon={FA.faPlugCircleExclamation} />
           </button>
         </UI.TooltipRx>
-        <button onClick={() => setExpanded(!expanded)}>
+        <button onClick={() => setFooterIsExpanded(!footerIsExpanded)}>
           <FontAwesomeIcon
-            icon={expanded ? FA.faAngleDown : FA.faAngleUp}
+            icon={footerIsExpanded ? FA.faAngleDown : FA.faAngleUp}
             transform="grow-0"
           />
         </button>
       </section>
 
       {/* Dedot Connections */}
-      {expanded && (
+      {footerIsExpanded && (
         <ScrollWrapper>
           <section className="network-list-wrapper">
             <FlexRow $gap={'0.7rem'} className="TopHeading">

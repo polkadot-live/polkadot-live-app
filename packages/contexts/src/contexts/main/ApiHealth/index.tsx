@@ -34,6 +34,11 @@ export const ApiHealthProvider = ({
   const [reconnectDialogOpen, setReconnectDialogOpen] = useState(false);
 
   /**
+   * Controls whether footer is expanded.
+   */
+  const [footerIsExpanded, setFooterIsExpanded] = useState<boolean>(false);
+
+  /**
    * Returns `true` if the chain is currently unavailable due to a failed connection attempt.
    */
   const hasConnectionIssue = (chainId: ChainID): boolean =>
@@ -65,11 +70,13 @@ export const ApiHealthProvider = ({
     <ApiHealthContext
       value={{
         failedConnections,
+        footerIsExpanded,
         reconnectDialogOpen,
         setReconnectDialogOpen,
         hasConnectionIssue,
         onEndpointChange,
         setFailedConnections,
+        setFooterIsExpanded,
         startApi,
       }}
     >
