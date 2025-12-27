@@ -1,6 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import pLimit from 'p-limit';
 import {
   AccountsController,
   APIsController,
@@ -20,12 +21,10 @@ export const connectApis = async () => {
     ...Array.from(AccountsController.accounts.keys()),
     ...Array.from(ChainEventsService.activeSubscriptions.keys()),
     ...Array.from(ChainEventsService.accountScopedSubscriptions.keys()),
-  ];
-  await Promise.all(
-    chainIds
-      .filter((chainId) => APIsController.getStatus(chainId) === 'disconnected')
-      .map((c) => startApi(c))
-  );
+  ].filter((chainId) => APIsController.getStatus(chainId) === 'disconnected');
+
+  const limit = pLimit(2);
+  await Promise.all(chainIds.map((c) => limit(() => startApi(c))));
   return true;
 };
 
