@@ -22,4 +22,5 @@ export interface NavItemProps {
   label?: string;
   id: number;
   navState: NavState;
+  theme: AnyData;
 }
