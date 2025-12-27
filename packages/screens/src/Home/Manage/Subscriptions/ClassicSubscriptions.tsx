@@ -146,7 +146,7 @@ export const ClassicSubscriptions = ({
                             <span style={{ flex: 1 }}>{category}</span>
                             {subCountForCategory(category) > 0 && (
                               <FontAwesomeIcon
-                                style={{ color: 'var(--accent-primary)' }}
+                                className="splotch"
                                 icon={faSplotch}
                               />
                             )}

@@ -189,7 +189,7 @@ export const Subscriptions = ({
                             <span style={{ flex: 1 }}>Referendum {refId}</span>
                             {activeCount(parseInt(refId)) > 0 && (
                               <FontAwesomeIcon
-                                style={{ color: 'var(--accent-primary)' }}
+                                className="splotch"
                                 icon={FA.faSplotch}
                               />
                             )}

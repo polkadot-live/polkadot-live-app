@@ -45,6 +45,11 @@ body {
   overflow-x: hidden;
   font-weight: normal;
   margin: 0;
+
+  .splotch {
+    color: var(--accent-primary);
+    font-size: 1rem;
+  }
 }
 
 /* Header styling. */

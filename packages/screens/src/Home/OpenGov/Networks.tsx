@@ -115,7 +115,7 @@ export const Networks = ({
                           <Style.FlexRow>
                             {chainHasSubs(chainId) && (
                               <FontAwesomeIcon
-                                style={{ color: 'var(--accent-primary)' }}
+                                className="splotch"
                                 icon={faSplotch}
                               />
                             )}

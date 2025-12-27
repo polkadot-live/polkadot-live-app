@@ -90,8 +90,8 @@ export const Networks = ({
                           <Wrappers.FlexRow>
                             {chainHasSubs(cid) && (
                               <FontAwesomeIcon
+                                className="splotch"
                                 icon={FA.faSplotch}
-                                style={{ color: 'var(--accent-primary)' }}
                               />
                             )}
                             <ButtonText

@@ -122,7 +122,7 @@ export const Subscriptions = ({
                           </span>
                           {activeSubCountForPallet(pallet) > 0 && (
                             <FontAwesomeIcon
-                              style={{ color: 'var(--accent-primary)' }}
+                              className="splotch"
                               icon={faSplotch}
                             />
                           )}
