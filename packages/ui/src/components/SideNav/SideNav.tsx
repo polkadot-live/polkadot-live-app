@@ -21,31 +21,42 @@ export const SideNav = ({
         navState={navState}
         icon={FA.faGaugeSimple}
         label={'Summary'}
+        theme={theme}
       />
       <NavItem
         id={1}
         navState={navState}
         icon={FA.faBarsStaggered}
         label={'Events'}
+        theme={theme}
       />
-      <NavItem id={2} navState={navState} icon={FA.faLink} label={'Chains'} />
+      <NavItem
+        id={2}
+        navState={navState}
+        icon={FA.faLink}
+        label={'Chains'}
+        theme={theme}
+      />
       <NavItem
         id={3}
         navState={navState}
         icon={FA.faCubesStacked}
         label={'Accounts'}
+        theme={theme}
       />
       <NavItem
         id={4}
         navState={navState}
         icon={FA.faComments}
         label={'OpenGov'}
+        theme={theme}
       />
       <NavItem
         id={5}
         navState={navState}
         icon={FA.faPaperPlane}
         label={'Send'}
+        theme={theme}
       />
 
       <NavItemWrapper

@@ -37,7 +37,7 @@ export const TooltipContent = styled(Tooltip.Content).attrs<{
   }
 
   .TooltipArrow {
-    fill: var(--background-primary);
+    fill: var(--tooltip-background);
   }
 
   @keyframes slideUpAndFade {
