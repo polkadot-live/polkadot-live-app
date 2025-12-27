@@ -233,8 +233,8 @@ export const Accounts = ({
                                 <FlexRow>
                                   {accountHasSubs(a) && (
                                     <FontAwesomeIcon
+                                      className="splotch"
                                       icon={FA.faSplotch}
-                                      style={{ color: 'var(--accent-primary)' }}
                                     />
                                   )}
                                   <ButtonText

@@ -1,6 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import pLimit from 'p-limit';
 import React, { createContext, useEffect, useRef, useState } from 'react';
 import {
   AccountsController,
@@ -55,13 +56,15 @@ export const BootstrappingProvider = ({
   const refAborted = useRef(false);
   const refSwitchingToOnline = useRef(false);
 
-  const { failedConnections, setReconnectDialogOpen } = useApiHealth();
+  const { failedConnections, setFooterIsExpanded, setReconnectDialogOpen } =
+    useApiHealth();
 
   /**
    * Open reconnect dialog on a failed connection.
    */
   useEffect(() => {
     if (failedConnections.size > 0 && !appLoading) {
+      setFooterIsExpanded(false);
       setReconnectDialogOpen(true);
     }
   }, [failedConnections, appLoading]);
@@ -187,9 +190,8 @@ export const BootstrappingProvider = ({
             .map((s) => s.chainId),
         ]),
       ];
-      for (const chainId of chainIds) {
-        await startApi(chainId);
-      }
+      const limit = pLimit(2);
+      await Promise.all(chainIds.map((c) => limit(() => startApi(c))));
     }
   };
 

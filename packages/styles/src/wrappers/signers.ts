@@ -110,6 +110,7 @@ export const QRViewerWrapper = styled.div`
     padding: 0.45rem 1.5rem 0.45rem 1.5rem;
 
     span {
+      font-size: 1rem;
       opacity: 0.4;
       &.active {
         opacity: 1;

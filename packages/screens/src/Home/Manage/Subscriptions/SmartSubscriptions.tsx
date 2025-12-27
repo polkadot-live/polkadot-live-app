@@ -21,9 +21,7 @@ export const SmartSubscriptions = () => {
   const { activeAccount, accountSubCountForPallet, getCategorisedForAccount } =
     useChainEvents();
 
-  const [accordionValEvents, setAccordionValEvents] = useState<
-    string | undefined
-  >(undefined);
+  const [accordionValEvents, setAccordionValEvents] = useState<string>('');
 
   return (
     <>
@@ -59,7 +57,7 @@ export const SmartSubscriptions = () => {
                               </span>
                               {accountSubCountForPallet(pallet) > 0 && (
                                 <FontAwesomeIcon
-                                  style={{ color: 'var(--accent-primary)' }}
+                                  className="splotch"
                                   icon={faSplotch}
                                 />
                               )}

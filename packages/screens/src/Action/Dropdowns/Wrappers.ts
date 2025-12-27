@@ -36,10 +36,11 @@ export const IconButton = styled.span`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0.25rem 1.25rem;
+  padding: 0.25rem 0.75rem;
   border-radius: 0.375rem;
   opacity: 0.75;
   height: 100%;
+  font-size: 0.9rem;
 
   &:hover {
     opacity: 1;

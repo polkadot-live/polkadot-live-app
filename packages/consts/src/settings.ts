@@ -6,7 +6,7 @@ import type { SettingItem, SettingKey } from '@polkadot-live/types/settings';
 
 export const getDefaultSettings = () =>
   new Map<SettingKey, boolean>([
-    ['setting:automatic-subscriptions', true],
+    ['setting:automatic-subscriptions', false],
     ['setting:collapse-side-nav', false],
     ['setting:dark-mode', true],
     ['setting:docked-window', false],
