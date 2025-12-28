@@ -55,7 +55,9 @@ export const DialogEventData = () => {
             <ChainListWrapper $theme={theme}>
               <FlexColumn $rowGap={'0.25rem'}>
                 {!encodedInfo?.length ? (
-                  <p style={{ color: theme.accentSuccess }}>No event data.</p>
+                  <p style={{ color: theme.textColorPrimary }}>
+                    No event data.
+                  </p>
                 ) : (
                   encodedInfo.map((item, index) => (
                     <EncodedField key={index} encoded={item} />
