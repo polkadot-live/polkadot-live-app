@@ -7,6 +7,13 @@ import type { AnyData, AnyJson } from './misc';
 import type { ChainID } from './chains';
 import type { TaskAction } from './subscriptions';
 
+// Define again to avoid circular dependency with encoder package.
+interface EncodedValue {
+  tag: 'BigInt' | 'Boolean' | 'Number' | 'AccountId32' | 'Unknown';
+  label: string;
+  value: string;
+}
+
 // Batch notification config.
 export interface BatchConfig {
   interval: number;
@@ -66,6 +73,7 @@ export interface EventCallback {
   txActions: TxAction[];
   uriActions: UriAction[];
   stale: boolean;
+  encodedInfo?: EncodedValue[];
 }
 
 // Notification data

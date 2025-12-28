@@ -10,6 +10,7 @@ import {
   doRemoveOutdatedEvents,
 } from '@polkadot-live/core';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { EncodedValue } from '@polkadot-live/encoder';
 import type {
   DismissEvent,
   EventCallback,
@@ -31,6 +32,13 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Store the currently imported events
   const [events, setEventsState] = useState<EventsState>(new Map());
+
+  // State for event data dialog.
+  const [encodedInfo, setEncodedInfo] = useState<EncodedValue[] | null>(null);
+  const [dataDialogOpen, setDataDialogOpen] = useState(false);
+  const [dataDialogEvent, setDataDialogEvent] = useState<EventCallback | null>(
+    null
+  );
 
   // Set events (on event import).
   const setEvents = (newEvents: EventCallback[]) => {
@@ -248,7 +256,10 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <EventsContext
       value={{
+        dataDialogOpen,
+        dataDialogEvent,
         events,
+        encodedInfo,
         addEvent,
         setEvents,
         dismissEvent,
@@ -258,6 +269,9 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
         updateEventsOnAccountRename,
         markStaleEvent,
         removeOutdatedEvents,
+        setDataDialogOpen,
+        setDataDialogEvent,
+        setEncodedInfo,
         getEventsCount,
         getAllEventCategoryKeys,
         removeEvent,

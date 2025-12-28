@@ -1,6 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { getSs58Prefix } from '@polkadot-live/consts/chains';
+import { encodeRecord } from '@polkadot-live/encoder';
 import { getBalanceText } from '../../library';
 import { getRefUriActions, makeChainEvent } from './utils';
 import { handleEvent } from '../../callbacks/utils';
@@ -44,7 +46,7 @@ const getReferendaNotification = (
       };
     }
     case 'Cancelled': {
-      const { index: refId /*, tally */ } = miscData;
+      const { index: refId } = miscData;
       return {
         title: 'Referendum Canceled',
         subtitle: `${chainId} OpenGov`,
@@ -68,7 +70,7 @@ const getReferendaNotification = (
       };
     }
     case 'Confirmed': {
-      const { index: refId /*, tally */ } = miscData;
+      const { index: refId } = miscData;
       return {
         title: 'Referendum Confirmed',
         subtitle: `${chainId} OpenGov`,
@@ -76,7 +78,7 @@ const getReferendaNotification = (
       };
     }
     case 'DecisionDepositPlaced': {
-      const { index: refId /*, who, amount */ } = miscData;
+      const { index: refId } = miscData;
       return {
         title: 'Decision Deposit Placed',
         subtitle: `${chainId} OpenGov`,
@@ -84,7 +86,7 @@ const getReferendaNotification = (
       };
     }
     case 'DecisionDepositRefunded': {
-      const { index: refId /*, who, amount */ } = miscData;
+      const { index: refId } = miscData;
       return {
         title: 'Decision Deposit Refunded',
         subtitle: `${chainId} OpenGov`,
@@ -92,7 +94,7 @@ const getReferendaNotification = (
       };
     }
     case 'DecisionStarted': {
-      const { index: refId /*, track, proposal, tally */ } = miscData;
+      const { index: refId } = miscData;
       return {
         title: 'Decision Phase Started',
         subtitle: `${chainId} OpenGov`,
@@ -100,7 +102,7 @@ const getReferendaNotification = (
       };
     }
     case 'DepositSlashed': {
-      const { amount /*, who, */ } = miscData;
+      const { amount } = miscData;
       return {
         title: 'Deposit Slashed',
         subtitle: `${chainId} OpenGov`,
@@ -108,7 +110,7 @@ const getReferendaNotification = (
       };
     }
     case 'Killed': {
-      const { index: refId /*, tally */ } = miscData;
+      const { index: refId } = miscData;
       return {
         title: 'Referendum Killed',
         subtitle: `${chainId} OpenGov`,
@@ -116,7 +118,7 @@ const getReferendaNotification = (
       };
     }
     case 'Rejected': {
-      const { index: refId /*, tally */ } = miscData;
+      const { index: refId } = miscData;
       return {
         title: 'Referendum Rejected',
         subtitle: `${chainId} OpenGov`,
@@ -124,7 +126,7 @@ const getReferendaNotification = (
       };
     }
     case 'SubmissionDepositRefunded': {
-      const { index: refId /*, who, amount */ } = miscData;
+      const { index: refId } = miscData;
       return {
         title: 'Submission Deposit Refunded',
         subtitle: `${chainId} OpenGov`,
@@ -132,7 +134,7 @@ const getReferendaNotification = (
       };
     }
     case 'Submitted': {
-      const { index: refId /*, track, proposal */ } = miscData;
+      const { index: refId } = miscData;
       return {
         title: 'Referendum Submitted',
         subtitle: `${chainId} OpenGov`,
@@ -140,7 +142,7 @@ const getReferendaNotification = (
       };
     }
     case 'TimedOut': {
-      const { index: refId /*, tally */ } = miscData;
+      const { index: refId } = miscData;
       return {
         title: 'Referendum Timed Out',
         subtitle: `${chainId} OpenGov`,
@@ -160,6 +162,7 @@ const getReferendaChainEvent = (
 ): EventCallback => {
   const { name: eventName, data: miscData } = palletEvent;
   const ev = makeChainEvent({ chainId, category: 'openGov' }, whoMeta);
+  const ss58Prefix = getSs58Prefix(chainId);
 
   switch (eventName) {
     case 'Approved': {
@@ -167,6 +170,7 @@ const getReferendaChainEvent = (
       ev.title = 'Referendum Approved';
       ev.subtitle = `Referendum ${refId} approved`;
       ev.uriActions = getRefUriActions(chainId, refId);
+      ev.encodedInfo = encodeRecord({ Referendum: [refId] });
       return ev;
     }
     case 'Cancelled': {
@@ -174,6 +178,7 @@ const getReferendaChainEvent = (
       ev.title = 'Referendum Canceled';
       ev.subtitle = `Referendum ${refId} canceled`;
       ev.uriActions = getRefUriActions(chainId, refId);
+      ev.encodedInfo = encodeRecord({ Referendum: [refId] });
       return ev;
     }
     case 'ConfirmAborted': {
@@ -181,6 +186,7 @@ const getReferendaChainEvent = (
       ev.title = `Confirmation Aborted`;
       ev.subtitle = `Referendum ${refId} confirmation aborted`;
       ev.uriActions = getRefUriActions(chainId, refId);
+      ev.encodedInfo = encodeRecord({ Referendum: [refId] });
       return ev;
     }
     case 'ConfirmStarted': {
@@ -188,6 +194,7 @@ const getReferendaChainEvent = (
       ev.title = 'Confirmation Started';
       ev.subtitle = `Referendum ${refId} confirmation started`;
       ev.uriActions = getRefUriActions(chainId, refId);
+      ev.encodedInfo = encodeRecord({ Referendum: [refId] });
       return ev;
     }
     case 'Confirmed': {
@@ -195,20 +202,31 @@ const getReferendaChainEvent = (
       ev.title = 'Referendum Confirmed';
       ev.subtitle = `Referendum ${refId} confirmed`;
       ev.uriActions = getRefUriActions(chainId, refId);
+      ev.encodedInfo = encodeRecord({ Referendum: [refId] });
       return ev;
     }
     case 'DecisionDepositPlaced': {
-      const { index: refId /*, who, amount */ } = miscData;
+      const { index: refId, who, amount } = miscData;
       ev.title = 'Decision Deposit Placed';
       ev.subtitle = `Referendum ${refId} decision deposit placed`;
       ev.uriActions = getRefUriActions(chainId, refId);
+      ev.encodedInfo = encodeRecord({
+        Amount: [amount],
+        Referendum: [refId],
+        Who: [who, { ss58Prefix }],
+      });
       return ev;
     }
     case 'DecisionDepositRefunded': {
-      const { index: refId /*, who, amount */ } = miscData;
+      const { index: refId, who, amount } = miscData;
       ev.title = 'Decision Deposit Refunded';
       ev.subtitle = `Referendum ${refId} decision deposit refunded`;
       ev.uriActions = getRefUriActions(chainId, refId);
+      ev.encodedInfo = encodeRecord({
+        Amount: [amount],
+        Referendum: [refId],
+        Who: [who, { ss58Prefix }],
+      });
       return ev;
     }
     case 'DecisionStarted': {
@@ -216,12 +234,17 @@ const getReferendaChainEvent = (
       ev.title = 'Deciding Phase Started';
       ev.subtitle = `Referendum ${refId} deciding phase started`;
       ev.uriActions = getRefUriActions(chainId, refId);
+      ev.encodedInfo = encodeRecord({ Referendum: [refId] });
       return ev;
     }
     case 'DepositSlashed': {
-      const { amount /*, who, */ } = miscData;
+      const { amount, who } = miscData;
       ev.title = 'Deposit Slashed';
       ev.subtitle = `Deposit of ${getBalanceText(amount, chainId)} slashed`;
+      ev.encodedInfo = encodeRecord({
+        Amount: [amount],
+        Who: [who, { ss58Prefix }],
+      });
       return ev;
     }
     case 'Killed': {
@@ -229,6 +252,7 @@ const getReferendaChainEvent = (
       ev.title = 'Referendum Killed';
       ev.subtitle = `Referendum ${refId} killed`;
       ev.uriActions = getRefUriActions(chainId, refId);
+      ev.encodedInfo = encodeRecord({ Referendum: [refId] });
       return ev;
     }
     case 'Rejected': {
@@ -236,13 +260,19 @@ const getReferendaChainEvent = (
       ev.title = 'Referendum Rejected';
       ev.subtitle = `Referendum ${refId} rejected`;
       ev.uriActions = getRefUriActions(chainId, refId);
+      ev.encodedInfo = encodeRecord({ Referendum: [refId] });
       return ev;
     }
     case 'SubmissionDepositRefunded': {
-      const { index: refId /*, who, amount */ } = miscData;
+      const { index: refId, who, amount } = miscData;
       ev.title = 'Submission Deposit Refunded';
       ev.subtitle = `Referendum ${refId} submission deposit refunded`;
       ev.uriActions = getRefUriActions(chainId, refId);
+      ev.encodedInfo = encodeRecord({
+        Amount: [amount],
+        Referendum: [refId],
+        Who: [who, { ss58Prefix }],
+      });
       return ev;
     }
     case 'Submitted': {
@@ -250,6 +280,7 @@ const getReferendaChainEvent = (
       ev.title = 'Referendum Submitted';
       ev.subtitle = `Referendum ${refId} submitted`;
       ev.uriActions = getRefUriActions(chainId, refId);
+      ev.encodedInfo = encodeRecord({ Referendum: [refId] });
       return ev;
     }
     case 'TimedOut': {
@@ -257,6 +288,7 @@ const getReferendaChainEvent = (
       ev.title = 'Referendum Timed Out';
       ev.subtitle = `Referendum ${refId} timed out`;
       ev.uriActions = getRefUriActions(chainId, refId);
+      ev.encodedInfo = encodeRecord({ Referendum: [refId] });
       return ev;
     }
     default: {

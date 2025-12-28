@@ -2,13 +2,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { EncodedValue } from '@polkadot-live/encoder';
 import type {
   DismissEvent,
   EventCallback,
 } from '@polkadot-live/types/reporter';
 
 export interface EventsContextInterface {
+  dataDialogOpen: boolean;
+  dataDialogEvent: EventCallback | null;
   events: EventsState;
+  encodedInfo: EncodedValue[] | null;
   setEvents: (events: EventCallback[]) => void;
   addEvent: (e: EventCallback) => void;
   dismissEvent: (e: DismissEvent) => void;
@@ -18,6 +22,11 @@ export interface EventsContextInterface {
   updateEventsOnAccountRename: (e: EventCallback[], c: ChainID) => void;
   markStaleEvent: (u: string, c: ChainID) => void;
   removeOutdatedEvents: (e: EventCallback) => void;
+  setDataDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setDataDialogEvent: React.Dispatch<
+    React.SetStateAction<EventCallback | null>
+  >;
+  setEncodedInfo: React.Dispatch<React.SetStateAction<EncodedValue[] | null>>;
   getEventsCount: (category?: string) => number;
   getAllEventCategoryKeys: () => string[];
   removeEvent: (event: EventCallback) => Promise<void>;

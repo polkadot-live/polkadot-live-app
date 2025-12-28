@@ -1,16 +1,16 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as FA from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState, memo } from 'react';
 import { useConnections, useEvents } from '@polkadot-live/contexts';
-import { FlexColumn, FlexRow } from '@polkadot-live/styles/wrappers';
+import {
+  FlexColumn,
+  FlexRow,
+  MenuButton,
+} from '@polkadot-live/styles/wrappers';
 import { AnimatePresence } from 'framer-motion';
 import { EventItem } from './Wrappers';
-import {
-  faTimes,
-  faClock,
-  faCircleNodes,
-} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getEventChainId, renderTimeAgo } from '@polkadot-live/core';
 import { ellipsisFn } from '@w3ux/utils';
@@ -26,10 +26,17 @@ export const Item = memo(function Item({ event }: ItemProps) {
   // The state of the event item display.
   const [display, setDisplay] = useState<'in' | 'fade' | 'out'>('in');
 
-  const { getTheme } = useConnections();
-  const { dismissEvent, removeEvent } = useEvents();
+  const { cacheGet, getTheme } = useConnections();
+  const {
+    dismissEvent,
+    removeEvent,
+    setDataDialogOpen,
+    setEncodedInfo,
+    setDataDialogEvent,
+  } = useEvents();
   const theme = getTheme();
-  const { uid, title, subtitle, txActions, uriActions /*, data*/ } = event;
+  const darkMode = cacheGet('mode:dark');
+  const { uid, title, subtitle, txActions, uriActions, encodedInfo } = event;
 
   // Extract address from event.
   const address =
@@ -122,7 +129,7 @@ export const Item = memo(function Item({ event }: ItemProps) {
                   <TooltipRx text={chainId} theme={theme}>
                     <div className="NetworkBtn">
                       <FontAwesomeIcon
-                        icon={faCircleNodes}
+                        icon={FA.faCircleNodes}
                         transform={'shrink-2'}
                       />
                     </div>
@@ -133,7 +140,10 @@ export const Item = memo(function Item({ event }: ItemProps) {
                     theme={theme}
                   >
                     <div className="TimeAgoBtn">
-                      <FontAwesomeIcon icon={faClock} transform={'shrink-2'} />
+                      <FontAwesomeIcon
+                        icon={FA.faClock}
+                        transform={'shrink-2'}
+                      />
                     </div>
                   </TooltipRx>
 
@@ -141,7 +151,7 @@ export const Item = memo(function Item({ event }: ItemProps) {
                     className="DismissBtn"
                     onClick={async () => await handleDismissEvent()}
                   >
-                    <FontAwesomeIcon icon={faTimes} transform={'grow-2'} />
+                    <FontAwesomeIcon icon={FA.faTimes} transform={'grow-2'} />
                   </div>
                 </FlexRow>
               </FlexRow>
@@ -149,18 +159,37 @@ export const Item = memo(function Item({ event }: ItemProps) {
               <FlexRow>
                 <h5 className="text-ellipsis">{title}</h5>
               </FlexRow>
-              {uriActions.length + txActions.length > 0 ? (
-                <FlexRow style={{ paddingRight: '0.5rem' }}>
+
+              <FlexRow $gap="0.75rem" style={{ paddingRight: '0.5rem' }}>
+                {uriActions.length + txActions.length > 0 && (
                   <ActionsDropdown
                     txActions={txActions}
                     uriActions={uriActions}
                     event={event}
                   />
-                  <p>{subtitle}</p>
-                </FlexRow>
-              ) : (
+                )}
+                {encodedInfo?.length && (
+                  <MenuButton
+                    onClick={() => {
+                      setEncodedInfo(encodedInfo);
+                      setDataDialogEvent(event);
+                      setDataDialogOpen(true);
+                    }}
+                    style={{ width: '32px', height: '18px' }}
+                    $dark={darkMode}
+                    aria-label="Event Data"
+                  >
+                    <TooltipRx text="View Data" side="top" theme={theme}>
+                      <FontAwesomeIcon
+                        className="icon"
+                        icon={FA.faBarsStaggered}
+                        transform={'shrink-2'}
+                      />
+                    </TooltipRx>
+                  </MenuButton>
+                )}
                 <p>{subtitle}</p>
-              )}
+              </FlexRow>
             </FlexColumn>
           </div>
         </EventItem>

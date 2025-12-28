@@ -12,7 +12,7 @@ import { useHelp, useOverlay, useTabs } from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
 import { useTabsMessagePorts } from './hooks/useTabsMessagePorts';
 import { HashRouter, Route, Routes } from 'react-router';
-import { DialogConnectChains } from '@polkadot-live/screens';
+import { DialogConnectChains, DialogEventData } from '@polkadot-live/screens';
 import { FadeAction } from '@ren/screens/Action';
 import { FadeImport } from '@ren/screens/Import';
 import { FadeSettings } from './screens/Settings';
@@ -29,6 +29,7 @@ interface VisitedTab {
 const RouteMain = () => (
   <ContextProxyMain>
     <DialogConnectChains />
+    <DialogEventData />
     <Home />
   </ContextProxyMain>
 );
