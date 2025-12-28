@@ -2379,6 +2379,7 @@ __metadata:
   resolution: "@polkadot-live/contexts@workspace:packages/contexts"
   dependencies:
     "@polkadot-live/core": "workspace:*"
+    "@polkadot-live/encoder": "workspace:*"
     "@polkadot-live/styles": "workspace:*"
     "@polkadot-live/types": "workspace:*"
     "@types/wicg-file-system-access": "npm:^2023.10.7"
@@ -2390,6 +2391,15 @@ __metadata:
   resolution: "@polkadot-live/core@workspace:packages/core"
   dependencies:
     "@polkadot-live/consts": "workspace:*"
+    "@polkadot-live/encoder": "workspace:*"
+    "@polkadot-live/types": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@polkadot-live/encoder@workspace:*, @polkadot-live/encoder@workspace:packages/encoder":
+  version: 0.0.0-use.local
+  resolution: "@polkadot-live/encoder@workspace:packages/encoder"
+  dependencies:
     "@polkadot-live/types": "workspace:*"
   languageName: unknown
   linkType: soft

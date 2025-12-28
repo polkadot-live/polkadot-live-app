@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 export { ChainEvents } from './ChainEvents';
-export { DialogConnectChains } from './Dialogs';
+export { DialogConnectChains, DialogEventData } from './Dialogs';
 export { Events } from './Events';
 export { Footer } from './Footer';
 export { Manage } from './Manage';

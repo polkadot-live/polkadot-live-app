@@ -364,6 +364,9 @@ export const getSupportedChains = (): Record<ChainID, Chain> => {
   return record;
 };
 
+export const getSs58Prefix = (chainId: ChainID) =>
+  ChainList.get(chainId)?.prefix ?? 42;
+
 /**
  * Get account sources capable of signing extrinsics.
  */

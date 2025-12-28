@@ -396,40 +396,42 @@ export class ChainEventsService {
       const { pallet } = event;
       const isSupportedPallet = chainPallets.includes(pallet);
 
-      if (isSupportedPallet) {
-        // Check for active account-scoped subscription.
-        const maybeMeta = ChainEventsService.hasAccountScopedSubscription(
-          chainId,
-          event
-        );
-        // Check for active ref-scoped subscription.
-        const maybeRefMeta = ChainEventsService.hasRefScopedSubscription(
-          chainId,
-          event
-        );
-        // Check for active chain-scoped subscription.
-        const meta = activeMap
-          .get(pallet)
-          ?.find((m) => m.eventName === event.palletEvent.name);
-        const isOn = meta !== undefined;
+      if (!isSupportedPallet) {
+        continue;
+      }
+      // Check for active account-scoped subscription.
+      const maybeMeta = ChainEventsService.hasAccountScopedSubscription(
+        chainId,
+        event
+      );
+      // Check for active ref-scoped subscription.
+      const maybeRefMeta = ChainEventsService.hasRefScopedSubscription(
+        chainId,
+        event
+      );
+      // Check for active chain-scoped subscription.
+      const meta = activeMap
+        .get(pallet)
+        ?.find((m) => m.eventName === event.palletEvent.name);
+      const isOn = meta !== undefined;
 
-        // Dispatch event if active subscription found.
-        if (maybeMeta !== null) {
-          for (const { activeMeta, whoMeta } of maybeMeta) {
-            const osNotify = activeMeta.osNotify;
-            EventQueue.push({ chainId, osNotify, record: item, whoMeta });
-          }
-        } else if (maybeRefMeta) {
-          const { osNotify } = maybeRefMeta;
-          EventQueue.push({ chainId, osNotify, record: item });
-        } else if (isOn) {
-          const osNotify = Boolean(meta?.osNotify);
-          EventQueue.push({ chainId, osNotify, record: item });
+      // Dispatch event if active subscription found.
+      if (maybeMeta !== null) {
+        for (const { activeMeta, whoMeta } of maybeMeta) {
+          const osNotify = activeMeta.osNotify;
+          EventQueue.push({ chainId, osNotify, record: item, whoMeta });
         }
+      } else if (maybeRefMeta) {
+        const { osNotify } = maybeRefMeta;
+        EventQueue.push({ chainId, osNotify, record: item });
+      } else if (isOn) {
+        const osNotify = Boolean(meta?.osNotify);
+        EventQueue.push({ chainId, osNotify, record: item });
       }
     }
   };
 
+  // Instruct handler to dispatch event.
   static processSingleEvent(
     chainId: ChainID,
     osNotify: boolean,

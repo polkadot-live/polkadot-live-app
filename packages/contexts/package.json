@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@polkadot-live/core": "workspace:*",
+    "@polkadot-live/encoder": "workspace:*",
     "@polkadot-live/styles": "workspace:*"
   },
   "devDependencies": {

@@ -3,7 +3,7 @@
 
 import { useConnections, useHelp } from '@polkadot-live/contexts';
 import { Help } from '@polkadot-live/ui/components';
-import { DialogConnectChains } from '@polkadot-live/screens';
+import { DialogConnectChains, DialogEventData } from '@polkadot-live/screens';
 import { MainInterfaceWrapper } from '@polkadot-live/styles/wrappers';
 import { ToastContainer } from 'react-toastify';
 import { Home } from './screens';
@@ -26,6 +26,7 @@ export default function App() {
       <ToastContainer stacked />
       <ContextProxyMain>
         <DialogConnectChains />
+        <DialogEventData />
         <Home />
       </ContextProxyMain>
     </MainInterfaceWrapper>

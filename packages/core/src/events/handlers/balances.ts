@@ -1,7 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ChainList } from '@polkadot-live/consts/chains';
+import { getSs58Prefix } from '@polkadot-live/consts/chains';
+import { encodeRecord } from '@polkadot-live/encoder';
 import { getBalanceText } from '../../library';
 import { handleEvent } from '../../callbacks/utils';
 import { makeChainEvent, notifyTitle } from './utils';
@@ -34,11 +35,14 @@ export const getBalancesPalletScopedAccountsFromEvent = (
   palletEvent: PalletBalancesEvent
 ): string[] => {
   const { name: eventName, data: miscData } = palletEvent;
-  const prefix = ChainList.get(chainId)?.prefix ?? 42;
+  const ss58Prefix = getSs58Prefix(chainId);
   switch (eventName) {
     case 'Transfer': {
       const { from, to } = miscData;
-      return [from.address(prefix).toString(), to.address(prefix).toString()];
+      return [
+        from.address(ss58Prefix).toString(),
+        to.address(ss58Prefix).toString(),
+      ];
     }
     case 'Reserved':
     case 'Unreserved':
@@ -51,7 +55,7 @@ export const getBalancesPalletScopedAccountsFromEvent = (
     case 'Unlocked':
     case 'Frozen':
     case 'Thawed': {
-      return [miscData.who.address(prefix).toString()];
+      return [miscData.who.address(ss58Prefix).toString()];
     }
     default:
       return [];
@@ -67,7 +71,7 @@ const getBalancesNotification = (
 
   switch (eventName) {
     case 'Transfer': {
-      const { amount /*, from, to */ } = miscData;
+      const { amount } = miscData;
       return {
         title: notifyTitle('Transfer', whoMeta),
         subtitle: `${chainId}`,
@@ -75,7 +79,7 @@ const getBalancesNotification = (
       };
     }
     case 'Reserved': {
-      const { /* who, */ amount } = miscData;
+      const { amount } = miscData;
       return {
         title: notifyTitle('Reserved', whoMeta),
         subtitle: `${chainId}`,
@@ -83,7 +87,7 @@ const getBalancesNotification = (
       };
     }
     case 'Unreserved': {
-      const { /* who, */ amount } = miscData;
+      const { amount } = miscData;
       return {
         title: notifyTitle('Unreserved', whoMeta),
         subtitle: `${chainId}`,
@@ -91,7 +95,7 @@ const getBalancesNotification = (
       };
     }
     case 'Deposit': {
-      const { /* who, */ amount } = miscData;
+      const { amount } = miscData;
       return {
         title: notifyTitle('Deposit', whoMeta),
         subtitle: `${chainId}`,
@@ -99,7 +103,7 @@ const getBalancesNotification = (
       };
     }
     case 'Withdraw': {
-      const { /* who, */ amount } = miscData;
+      const { amount } = miscData;
       return {
         title: notifyTitle('Withdraw', whoMeta),
         subtitle: `${chainId}`,
@@ -107,7 +111,7 @@ const getBalancesNotification = (
       };
     }
     case 'Slashed': {
-      const { /* who, */ amount } = miscData;
+      const { amount } = miscData;
       return {
         title: notifyTitle('Slashed', whoMeta),
         subtitle: `${chainId}`,
@@ -115,7 +119,7 @@ const getBalancesNotification = (
       };
     }
     case 'Suspended': {
-      const { /* who, */ amount } = miscData;
+      const { amount } = miscData;
       return {
         title: notifyTitle('Suspended', whoMeta),
         subtitle: `${chainId}`,
@@ -123,7 +127,7 @@ const getBalancesNotification = (
       };
     }
     case 'Restored': {
-      const { /* who, */ amount } = miscData;
+      const { amount } = miscData;
       return {
         title: notifyTitle('Restored', whoMeta),
         subtitle: `${chainId}`,
@@ -131,7 +135,7 @@ const getBalancesNotification = (
       };
     }
     case 'Locked': {
-      const { /* who, */ amount } = miscData;
+      const { amount } = miscData;
       return {
         title: notifyTitle('Locked', whoMeta),
         subtitle: `${chainId}`,
@@ -139,7 +143,7 @@ const getBalancesNotification = (
       };
     }
     case 'Unlocked': {
-      const { /* who, */ amount } = miscData;
+      const { amount } = miscData;
       return {
         title: notifyTitle('Unlocked', whoMeta),
         subtitle: `${chainId}`,
@@ -147,7 +151,7 @@ const getBalancesNotification = (
       };
     }
     case 'Frozen': {
-      const { /* who, */ amount } = miscData;
+      const { amount } = miscData;
       return {
         title: notifyTitle('Frozen', whoMeta),
         subtitle: `${chainId}`,
@@ -155,7 +159,7 @@ const getBalancesNotification = (
       };
     }
     case 'Thawed': {
-      const { /* who, */ amount } = miscData;
+      const { amount } = miscData;
       return {
         title: notifyTitle('Thawed', whoMeta),
         subtitle: `${chainId}`,
@@ -176,77 +180,128 @@ const getBalancesChainEvent = (
 ): EventCallback => {
   const { name: eventName, data: miscData } = palletEvent;
   const ev = makeChainEvent({ chainId, category: 'balances' }, whoMeta);
+  const ss58Prefix = getSs58Prefix(chainId);
+
   switch (eventName) {
     case 'Transfer': {
-      const { amount /*, from, to */ } = miscData;
+      const { amount, from, to } = miscData;
       ev.title = 'Transfer';
       ev.subtitle = `${getBalanceText(amount, chainId)}`;
+      ev.encodedInfo = encodeRecord({
+        Amount: [amount],
+        From: [from, { ss58Prefix }],
+        To: [to, { ss58Prefix }],
+      });
       return ev;
     }
     case 'Reserved': {
-      const { /* who, */ amount } = miscData;
+      const { who, amount } = miscData;
       ev.title = 'Reserved';
       ev.subtitle = `${getBalanceText(amount, chainId)}`;
+      ev.encodedInfo = encodeRecord({
+        Amount: [amount],
+        Who: [who, { ss58Prefix }],
+      });
       return ev;
     }
     case 'Unreserved': {
-      const { /* who, */ amount } = miscData;
+      const { who, amount } = miscData;
       ev.title = 'Unreserved';
       ev.subtitle = `${getBalanceText(amount, chainId)}`;
+      ev.encodedInfo = encodeRecord({
+        Amount: [amount],
+        Who: [who, { ss58Prefix }],
+      });
       return ev;
     }
     case 'Deposit': {
-      const { /* who, */ amount } = miscData;
+      const { who, amount } = miscData;
       ev.title = 'Deposit';
       ev.subtitle = `${getBalanceText(amount, chainId)}`;
+      ev.encodedInfo = encodeRecord({
+        Amount: [amount],
+        Who: [who, { ss58Prefix }],
+      });
       return ev;
     }
     case 'Withdraw': {
-      const { /* who, */ amount } = miscData;
+      const { who, amount } = miscData;
       ev.title = 'Withdraw';
       ev.subtitle = `${getBalanceText(amount, chainId)}`;
+      ev.encodedInfo = encodeRecord({
+        Amount: [amount],
+        Who: [who, { ss58Prefix }],
+      });
       return ev;
     }
     case 'Slashed': {
-      const { /* who, */ amount } = miscData;
+      const { who, amount } = miscData;
       ev.title = 'Slashed';
       ev.subtitle = `${getBalanceText(amount, chainId)}`;
+      ev.encodedInfo = encodeRecord({
+        Amount: [amount],
+        Who: [who, { ss58Prefix }],
+      });
       return ev;
     }
     case 'Suspended': {
-      const { /* who, */ amount } = miscData;
+      const { who, amount } = miscData;
       ev.title = 'Suspended';
       ev.subtitle = `${getBalanceText(amount, chainId)}`;
+      ev.encodedInfo = encodeRecord({
+        Amount: [amount],
+        Who: [who, { ss58Prefix }],
+      });
       return ev;
     }
     case 'Restored': {
-      const { /* who, */ amount } = miscData;
+      const { who, amount } = miscData;
       ev.title = 'Restored';
       ev.subtitle = `${getBalanceText(amount, chainId)}`;
+      ev.encodedInfo = encodeRecord({
+        Amount: [amount],
+        Who: [who, { ss58Prefix }],
+      });
       return ev;
     }
     case 'Locked': {
-      const { /* who, */ amount } = miscData;
+      const { who, amount } = miscData;
       ev.title = 'Locked';
       ev.subtitle = `${getBalanceText(amount, chainId)}`;
+      ev.encodedInfo = encodeRecord({
+        Amount: [amount],
+        Who: [who, { ss58Prefix }],
+      });
       return ev;
     }
     case 'Unlocked': {
-      const { /* who, */ amount } = miscData;
+      const { who, amount } = miscData;
       ev.title = 'Unlocked';
       ev.subtitle = `${getBalanceText(amount, chainId)}`;
+      ev.encodedInfo = encodeRecord({
+        Amount: [amount],
+        Who: [who, { ss58Prefix }],
+      });
       return ev;
     }
     case 'Frozen': {
-      const { /* who, */ amount } = miscData;
+      const { who, amount } = miscData;
       ev.title = 'Frozen';
       ev.subtitle = `${getBalanceText(amount, chainId)}`;
+      ev.encodedInfo = encodeRecord({
+        Amount: [amount],
+        Who: [who, { ss58Prefix }],
+      });
       return ev;
     }
     case 'Thawed': {
-      const { /* who, */ amount } = miscData;
+      const { who, amount } = miscData;
       ev.title = 'Thawed';
       ev.subtitle = `${getBalanceText(amount, chainId)}`;
+      ev.encodedInfo = encodeRecord({
+        Amount: [amount],
+        Who: [who, { ss58Prefix }],
+      });
       return ev;
     }
     default: {

@@ -18,6 +18,9 @@
     "clear:dist": "([ -d \"dist\" ] && rm -fr \"dist\") || true && ([ -d \"node_modules\" ] && rm -fr \"node_modules\") || true",
     "typecheck": "tsc --noEmit"
   },
+  "dependencies": {
+    "@polkadot-live/encoder": "workspace:*"
+  },
   "devDependencies": {
     "@polkadot-live/consts": "workspace:*",
     "@polkadot-live/types": "workspace:*"
