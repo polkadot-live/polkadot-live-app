@@ -119,7 +119,7 @@ const getConvictionVotingChainEvent = (
   whoMeta?: WhoMeta
 ) => {
   const { name: eventName, data: miscData } = palletEvent;
-  const ev = makeChainEvent({ chainId, category: 'voting' }, whoMeta);
+  const ev = makeChainEvent({ chainId, category: 'Voting' }, whoMeta);
   const ss58Prefix = getSs58Prefix(chainId);
 
   switch (eventName) {

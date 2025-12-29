@@ -3,13 +3,17 @@
 
 import type { EventCallback } from '@polkadot-live/types/reporter';
 
+export interface CategoriesProps {
+  setSection: React.Dispatch<React.SetStateAction<number>>;
+}
+
 export interface EventCategoryProps {
   category: string;
   events: EventCallback[];
 }
 
-export interface EventItemProps {
-  event: EventCallback;
+export interface EventsListProps {
+  setSection: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export interface ItemProps {

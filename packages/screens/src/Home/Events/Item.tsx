@@ -68,7 +68,7 @@ export const Item = memo(function Item({ event }: ItemProps) {
   // removing the event _before_ the event transition is finished.
   useEffect(() => {
     if (display === 'out') {
-      dismissEvent({ uid, who: event.who });
+      dismissEvent({ uid });
     }
   }, [display]);
 

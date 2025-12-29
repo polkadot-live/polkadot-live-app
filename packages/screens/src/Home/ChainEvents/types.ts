@@ -2,6 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { ChainEventSubscription } from '@polkadot-live/types';
+import type { ChainID } from '@polkadot-live/types/chains';
+
+export interface NetworksProps {
+  setActiveChain: React.Dispatch<React.SetStateAction<ChainID | null>>;
+  setBreadcrumb: React.Dispatch<React.SetStateAction<string>>;
+  setSection: React.Dispatch<React.SetStateAction<number>>;
+}
 
 export interface SubscriptionsProps {
   breadcrumb: string;

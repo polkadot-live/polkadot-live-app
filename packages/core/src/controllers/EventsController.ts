@@ -54,7 +54,7 @@ export class EventsController {
 
         return {
           uid: '',
-          category: 'openGov',
+          category: 'OpenGov',
           taskAction: action,
           who: {
             origin: 'interval',
@@ -87,7 +87,7 @@ export class EventsController {
 
         return {
           uid: '',
-          category: 'openGov',
+          category: 'OpenGov',
           taskAction: action,
           who: {
             origin: 'interval',
@@ -120,7 +120,7 @@ export class EventsController {
 
         return {
           uid: '',
-          category: 'openGov',
+          category: 'OpenGov',
           taskAction: action,
           who: {
             origin: 'interval',
@@ -165,7 +165,7 @@ export class EventsController {
       case 'subscribe:chain:timestamp': {
         return {
           uid: '',
-          category: 'debugging',
+          category: 'Debugging',
           taskAction: entry.task.action,
           who: {
             origin: 'chain',
@@ -189,7 +189,7 @@ export class EventsController {
       case 'subscribe:chain:currentSlot': {
         return {
           uid: '',
-          category: 'debugging',
+          category: 'Debugging',
           taskAction: entry.task.action,
           who: {
             origin: 'chain',
@@ -221,7 +221,7 @@ export class EventsController {
 
         return {
           uid: '',
-          category: 'balances',
+          category: 'Balances',
           taskAction: entry.task.action,
           who: {
             origin: 'account',
@@ -256,7 +256,7 @@ export class EventsController {
 
         return {
           uid: '',
-          category: 'balances',
+          category: 'Balances',
           taskAction: entry.task.action,
           who: {
             origin: 'account',
@@ -291,7 +291,7 @@ export class EventsController {
 
         return {
           uid: '',
-          category: 'balances',
+          category: 'Balances',
           taskAction: entry.task.action,
           who: {
             origin: 'account',
@@ -326,7 +326,7 @@ export class EventsController {
 
         return {
           uid: '',
-          category: 'balances',
+          category: 'Balances',
           taskAction: entry.task.action,
           who: {
             origin: 'account',
@@ -361,7 +361,7 @@ export class EventsController {
 
         return {
           uid: '',
-          category: 'nominationPools',
+          category: 'Nomination Pools',
           taskAction: entry.task.action,
           who: {
             origin: 'account',
@@ -433,7 +433,7 @@ export class EventsController {
 
         return {
           uid: '',
-          category: 'nominationPools',
+          category: 'Nomination Pools',
           taskAction: entry.task.action,
           who: {
             origin: 'account',
@@ -473,7 +473,7 @@ export class EventsController {
 
         return {
           uid: '',
-          category: 'nominationPools',
+          category: 'Nomination Pools',
           taskAction: entry.task.action,
           who: {
             origin: 'account',
@@ -516,7 +516,7 @@ export class EventsController {
 
         return {
           uid: '',
-          category: 'nominationPools',
+          category: 'Nomination Pools',
           taskAction: entry.task.action,
           who: {
             origin: 'account',
@@ -560,7 +560,7 @@ export class EventsController {
 
         return {
           uid: '',
-          category: 'nominationPools',
+          category: 'Nomination Pools',
           taskAction: entry.task.action,
           who: {
             origin: 'account',
@@ -593,7 +593,7 @@ export class EventsController {
 
         return {
           uid: '',
-          category: 'nominating',
+          category: 'Nominating',
           taskAction: entry.task.action,
           who: {
             origin: 'account',
@@ -637,7 +637,7 @@ export class EventsController {
 
         return {
           uid: '',
-          category: 'nominating',
+          category: 'Nominating',
           taskAction: entry.task.action,
           who: {
             origin: 'account',
@@ -681,7 +681,7 @@ export class EventsController {
 
         return {
           uid: '',
-          category: 'nominating',
+          category: 'Nominating',
           taskAction: entry.task.action,
           who: {
             origin: 'account',
@@ -722,7 +722,7 @@ export class EventsController {
 
         return {
           uid: '',
-          category: 'nominating',
+          category: 'Nominating',
           taskAction: entry.task.action,
           who: {
             origin: 'account',

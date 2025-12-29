@@ -179,7 +179,7 @@ const getBalancesChainEvent = (
   whoMeta?: WhoMeta
 ): EventCallback => {
   const { name: eventName, data: miscData } = palletEvent;
-  const ev = makeChainEvent({ chainId, category: 'balances' }, whoMeta);
+  const ev = makeChainEvent({ chainId, category: 'Balances' }, whoMeta);
   const ss58Prefix = getSs58Prefix(chainId);
 
   switch (eventName) {

@@ -20,6 +20,7 @@ import type {
 import type {
   EventAccountData,
   EventCallback,
+  EventCategory,
   NotificationData,
 } from '@polkadot-live/types/reporter';
 import type { IpcTask } from '@polkadot-live/types/communication';
@@ -56,7 +57,8 @@ export class EventsController {
     for (const event of events) {
       WindowsController.getWindow('menu')?.webContents?.send(
         'renderer:event:new',
-        event
+        event,
+        false // Old event.
       );
     }
   }
@@ -100,7 +102,8 @@ export class EventsController {
 
         WindowsController.getWindow('menu')?.webContents?.send(
           'renderer:event:new',
-          eventWithUid
+          eventWithUid,
+          true // New event.
         );
 
         return;
@@ -155,10 +158,39 @@ export class EventsController {
       case 'events:import': {
         return this.doImport(task.data.events);
       }
+      case 'events:fetch': {
+        const { category }: { category: string } = task.data;
+        return this.fetch(category);
+      }
+      case 'events:counts': {
+        return this.counts();
+      }
       default: {
         return false;
       }
     }
+  }
+
+  /**
+   * @name counts
+   * @summary Return event counts by category.
+   */
+  private static counts() {
+    const result: Partial<Record<EventCategory, number>> = {};
+    for (const { category } of this.getEventsFromStore()) {
+      result[category] = (result[category] ?? 0) + 1;
+    }
+    return JSON.stringify(result);
+  }
+
+  /**
+   * @name fetch
+   * @summary Fetch events from database with a specific category.
+   */
+  private static fetch(category: string) {
+    return JSON.stringify(
+      this.getEventsFromStore().filter((e) => e.category === category)
+    );
   }
 
   /**
@@ -356,7 +388,7 @@ export class EventsController {
    */
   static getBackupData(): string {
     const stored = this.getEventsFromStore();
-    const filtered = stored.filter(({ category }) => category !== 'debugging');
+    const filtered = stored.filter(({ category }) => category !== 'Debugging');
     return JSON.stringify(filtered);
   }
 

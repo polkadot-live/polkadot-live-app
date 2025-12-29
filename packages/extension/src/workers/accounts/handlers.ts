@@ -163,7 +163,6 @@ export const handleRenameAccount = async (enAccount: EncodedAccount) => {
   }
   // Update events in database and react state.
   sendChromeMessage('events', 'updateAccountNames', {
-    chainId,
     updated: await updateEventWhoInfo(address, chainId, newName),
   });
 

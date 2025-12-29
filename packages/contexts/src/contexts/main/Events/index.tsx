@@ -1,25 +1,24 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import React, { createContext, useEffect, useState } from 'react';
+import * as FA from '@fortawesome/free-solid-svg-icons';
+import React, { createContext, useEffect, useRef, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
 import { getEventsAdapter } from './adapters';
+import { setStateWithRef } from '@w3ux/utils';
 import {
   pushUniqueEvent,
-  getEventChainId,
   doRemoveOutdatedEvents,
+  emptyEventCounts,
 } from '@polkadot-live/core';
-import type { ChainID } from '@polkadot-live/types/chains';
 import type { EncodedValue } from '@polkadot-live/encoder';
+import type { EventsContextInterface } from '../../../types/main';
 import type {
   DismissEvent,
   EventCallback,
+  EventCategory,
 } from '@polkadot-live/types/reporter';
-import type {
-  EventsContextInterface,
-  EventsState,
-  SortedChainEvents,
-} from '../../../types/main';
+import { getAllEventCategories } from '@polkadot-live/consts/chains';
 
 export const EventsContext = createContext<EventsContextInterface | undefined>(
   undefined
@@ -30,223 +29,161 @@ export const useEvents = createSafeContextHook(EventsContext, 'EventsContext');
 export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
   const adapter = getEventsAdapter();
 
-  // Store the currently imported events
-  const [events, setEventsState] = useState<EventsState>(new Map());
+  // Events and active category.
+  const [events, setEvents] = useState<EventCallback[]>([]);
+  const [activeCategory, setActiveCategory] = useState<EventCategory | null>(
+    null
+  );
+  const activeCategoryRef = useRef(activeCategory);
 
-  // State for event data dialog.
+  // Counts by category.
+  const [syncCounts, setSyncCounts] = useState(true);
+  const [eventCounts, setEventCounts] =
+    useState<Record<EventCategory, number>>(emptyEventCounts());
+
+  // Event data dialog.
   const [encodedInfo, setEncodedInfo] = useState<EncodedValue[] | null>(null);
   const [dataDialogOpen, setDataDialogOpen] = useState(false);
   const [dataDialogEvent, setDataDialogEvent] = useState<EventCallback | null>(
     null
   );
 
-  // Set events (on event import).
-  const setEvents = (newEvents: EventCallback[]) => {
-    const map: EventsState = new Map();
-    for (const event of newEvents) {
-      const chainId = getEventChainId(event);
-      map.has(chainId)
-        ? map.set(chainId, [...map.get(chainId)!, event])
-        : map.set(chainId, [event]);
-    }
-    setEventsState(map);
-  };
+  const getEventsCount = (category?: EventCategory) =>
+    category
+      ? (eventCounts[category] ?? 0)
+      : Object.values(eventCounts).reduce((acc, n) => acc + n, 0);
 
-  // Remove an event from database.
-  const removeEvent = async (event: EventCallback): Promise<void> => {
-    await adapter.removeEvent(event);
-  };
-
-  // Removes an event item on a specified chain; compares event uid.
-  const dismissEvent = ({ who: { data }, uid }: DismissEvent) => {
-    setEventsState((prev) => {
-      const cloned: EventsState = new Map(prev);
-      const chainId = data.chainId;
-      const filtered = cloned.get(chainId)?.filter((e) => !(e.uid === uid));
-
-      filtered && filtered.length > 0
-        ? cloned.set(chainId, filtered)
-        : cloned.has(chainId) && cloned.delete(chainId);
-
-      return cloned;
+  const decCount = (event: EventCallback) => {
+    setEventCounts((prev) => {
+      const { category: c } = event;
+      return { ...prev, [c]: Math.max((prev[c] ?? 0) - 1, 0) };
     });
   };
 
-  // Remove any outdated events in the state.
-  const removeOutdatedEvents = (event: EventCallback) => {
-    setEventsState((prev) => {
-      const cloned = new Map(prev);
-      const chainId = getEventChainId(event);
-      const all = cloned.get(chainId);
-      if (!all) {
-        return cloned;
-      }
-      const { updated, events: newEvents } = doRemoveOutdatedEvents(event, all);
-      if (updated) {
-        cloned.set(chainId, newEvents);
-      }
-      return cloned;
+  const incCount = (event: EventCallback) => {
+    setEventCounts((prev) => {
+      const { category: c } = event;
+      return { ...prev, [c]: (prev[c] ?? 0) + 1 };
     });
   };
 
-  // Adds an event to the events state.
   const addEvent = (event: EventCallback) => {
-    setEventsState((prev) => {
-      const cloned = new Map(prev);
-      const chainId = getEventChainId(event);
-      let curEvents = cloned.get(chainId);
-
-      if (curEvents !== undefined) {
-        const { events: newEvents } = pushUniqueEvent(event, curEvents);
-        curEvents = newEvents;
-      } else {
-        curEvents = [event];
+    if (event.category === activeCategoryRef.current) {
+      if (pushUniqueEvent(event, events).updated) {
+        setEvents((prev) => [event, ...prev]);
       }
-      cloned.set(chainId, curEvents);
-      return cloned;
-    });
+    }
   };
 
-  // Mark an event as stale.
-  const markStaleEvent = (uid: string, chainId: ChainID) => {
-    setEventsState((prev) => {
-      const cloned = new Map(prev);
-      let curEvents = cloned.get(chainId);
-      if (!curEvents) {
-        return cloned;
-      }
-      curEvents = curEvents.map((e) => {
-        e.uid === uid && (e.stale = true);
-        return e;
+  const changeActiveCategory = (category: EventCategory | null) => {
+    setStateWithRef(category, setActiveCategory, activeCategoryRef);
+  };
+
+  const dismissEvent = ({ uid }: DismissEvent) => {
+    setEvents((prev) => prev.filter((e) => e.uid !== uid));
+  };
+
+  const getSortedEvents = (desc = true): EventCallback[] =>
+    events?.sort((a, b) =>
+      desc ? b.timestamp - a.timestamp : a.timestamp - b.timestamp
+    ) ?? [];
+
+  const markStaleEvent = (uid: string) => {
+    setEvents((prev) =>
+      prev.map((e) => (e.uid === uid && !e.stale ? { ...e, stale: true } : e))
+    );
+  };
+
+  const removeEvent = async (event: EventCallback): Promise<void> => {
+    decCount(event);
+    await adapter.removeEvent(event); // Remove an event from database.
+  };
+
+  const removeOutdatedEvents = (event: EventCallback) => {
+    if (event.category === activeCategory) {
+      setEvents((prev) => {
+        const res = doRemoveOutdatedEvents(event, events);
+        return res.updated ? res.events : prev;
       });
-      cloned.set(chainId, curEvents);
-      return cloned;
-    });
+    }
+    // Sync counts.
+    setSyncCounts(true);
   };
 
-  // Sort all events timestamp order.
-  const sortAllEvents = (newestFirst: boolean): EventCallback[] => {
-    const allEvents: EventCallback[] = [];
-    for (const chainEvents of events.values()) {
-      chainEvents.forEach((e) => allEvents.push({ ...e }));
-    }
-    // Sort the events based on `newestFirst` argument.
-    return newestFirst
-      ? allEvents.sort((x, y) => y.timestamp - x.timestamp)
-      : allEvents.sort((x, y) => x.timestamp - y.timestamp);
-  };
-
-  // Sort all events into categories in timestamp order.
-  const sortAllGroupedEvents = (newestFirst: boolean): SortedChainEvents => {
-    const sortedMap = new Map<string, EventCallback[]>();
-
-    // Get all categories and sort alphabetically.
-    const categories = new Set<string>();
-    for (const chainEvents of events.values()) {
-      chainEvents.forEach((e) => categories.add(e.category));
-    }
-    // Initialize sorted map with ordered categories.
-    Array.from(categories)
-      .sort((x, y) => x.localeCompare(y))
-      .forEach((c) => sortedMap.set(c, []));
-
-    // Categorize events.
-    for (const chainEvents of events.values()) {
-      for (const event of chainEvents) {
-        const { category } = event;
-        sortedMap.has(category)
-          ? sortedMap.set(category, [...sortedMap.get(category)!, event])
-          : sortedMap.set(category, [event]);
-      }
-    }
-    // Sort events by timestamp descending or ascending in each category.
-    for (const [category, categoryEvents] of sortedMap.entries()) {
-      sortedMap.set(
-        category,
-        categoryEvents.sort((x, y) =>
-          newestFirst ? y.timestamp - x.timestamp : x.timestamp - y.timestamp
-        )
+  const setEventsState = (newEvents: EventCallback[]) => {
+    // Set events (on event import).
+    const filtered = newEvents.filter((e) => e.category === activeCategory);
+    if (filtered.length) {
+      setEvents((prev) =>
+        [...prev, ...filtered].sort((a, b) => b.timestamp - a.timestamp)
       );
     }
-    return sortedMap;
   };
 
-  // Order chain events by category and sort them by timestamp.
-  const sortChainEvents = (chain: ChainID): SortedChainEvents => {
-    if (!events.has(chain)) {
-      return new Map();
-    }
-    // Get all events for the chain ID.
-    const cloned = new Map(events);
-    const allEvents = cloned.get(chain)!;
-
-    // Store events by category.
-    const sortedMap = new Map<string, EventCallback[]>();
-    for (const event of allEvents) {
-      const { category } = event;
-      const current = sortedMap.get(category)!;
-
-      sortedMap.has(event.category)
-        ? sortedMap.set(category, [...current, event])
-        : sortedMap.set(category, [event]);
-    }
-    // Sort events by timestamp.
-    for (const category of Array.from(sortedMap.keys())) {
-      const sorted = sortedMap
-        .get(category)!
-        .sort((x, y) => y.timestamp - x.timestamp);
-      sortedMap.set(category, sorted);
-    }
-    return sortedMap;
+  const setRenamedEvents = (updated: EventCallback[]) => {
+    // Update events with a new cached account name.
+    setEvents((prev) =>
+      prev.map((a) => updated.find((b) => a.uid === b.uid) ?? a)
+    );
   };
 
-  // Update events with a new cached account name.
-  const updateEventsOnAccountRename = (
-    updated: EventCallback[],
-    chainId: ChainID
-  ) => {
-    setEventsState((prev) => {
-      const cloned = new Map(prev);
-      let curEvents = cloned.get(chainId);
-      if (curEvents !== undefined) {
-        for (const event of updated) {
-          curEvents = curEvents.map((e) => (e.uid === event.uid ? event : e));
+  const getEventCategoryIcon = (category: EventCategory) => {
+    // Get event category icon.
+    switch (category) {
+      case 'Balances':
+        return FA.faWallet;
+      case 'Nominating':
+        return FA.faArrowUpRightDots;
+      case 'Nomination Pools':
+        return FA.faUsers;
+      case 'OpenGov':
+        return FA.faFileContract;
+      case 'Voting':
+        return FA.faCheckDouble;
+      default:
+        return FA.faCircleNodes;
+    }
+  };
+
+  // Sync event counts by category.
+  useEffect(() => {
+    const sync = async () => {
+      const counts = await adapter.fetchCounts();
+      setEventCounts(() => {
+        const updated = emptyEventCounts();
+        for (const category of getAllEventCategories()) {
+          updated[category] = counts[category] ?? 0;
         }
-        cloned.set(chainId, curEvents);
-        return cloned;
-      } else {
-        return prev;
-      }
-    });
-  };
+        return updated;
+      });
+    };
+    if (syncCounts) {
+      sync();
+      setSyncCounts(false);
+    }
+  }, [syncCounts]);
 
-  // Get event count.
-  const getEventsCount = (category?: string) =>
-    events.size == 0
-      ? 0
-      : category === undefined
-        ? [...sortAllGroupedEvents(true).values()].reduce(
-            (acc, es) => acc + es.length,
-            0
-          )
-        : sortAllGroupedEvents(true).get(category)?.length || 0;
-
-  // Get array of all encoded event categories.
-  const getAllEventCategoryKeys = (): string[] => [
-    'balances',
-    'nominationPools',
-    'nominating',
-    'openGov',
-    'staking',
-    'voting',
-  ];
+  // Re-load events when active category changes.
+  useEffect(() => {
+    if (!activeCategory) {
+      setEvents([]);
+      return;
+    }
+    const sync = async () => {
+      setEvents(await adapter.fetchEvents(activeCategory));
+    };
+    sync();
+  }, [activeCategory]);
 
   // Handle event messages.
   useEffect(() => {
     const removeListener = adapter.listenOnMount(
       markStaleEvent,
-      setEvents,
-      updateEventsOnAccountRename
+      setEventsState,
+      setRenamedEvents,
+      incCount,
+      addEvent,
+      removeOutdatedEvents
     );
     return () => {
       removeListener && removeListener();
@@ -256,25 +193,25 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <EventsContext
       value={{
-        dataDialogOpen,
+        activeCategory,
         dataDialogEvent,
-        events,
+        dataDialogOpen,
         encodedInfo,
+        eventCounts,
         addEvent,
-        setEvents,
+        changeActiveCategory,
         dismissEvent,
-        sortAllEvents,
-        sortAllGroupedEvents,
-        sortChainEvents,
-        updateEventsOnAccountRename,
-        markStaleEvent,
-        removeOutdatedEvents,
-        setDataDialogOpen,
-        setDataDialogEvent,
-        setEncodedInfo,
+        getEventCategoryIcon,
         getEventsCount,
-        getAllEventCategoryKeys,
+        getSortedEvents,
+        markStaleEvent,
         removeEvent,
+        removeOutdatedEvents,
+        setDataDialogEvent,
+        setDataDialogOpen,
+        setEncodedInfo,
+        setEventsState,
+        setRenamedEvents,
       }}
     >
       {children}

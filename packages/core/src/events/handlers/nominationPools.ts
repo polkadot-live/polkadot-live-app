@@ -192,7 +192,7 @@ const getNominationPoolsChainEvent = (
   whoMeta?: WhoMeta
 ) => {
   const { name: eventName, data: miscData } = palletEvent;
-  const ev = makeChainEvent({ chainId, category: 'nominationPools' }, whoMeta);
+  const ev = makeChainEvent({ chainId, category: 'Nomination Pools' }, whoMeta);
   const ss58Prefix = getSs58Prefix(chainId);
 
   switch (eventName) {

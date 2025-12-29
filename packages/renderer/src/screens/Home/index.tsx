@@ -5,7 +5,6 @@ import * as UI from '@polkadot-live/ui/components';
 import * as Ctx from '@ren/contexts/main';
 import { version } from '../../../package.json';
 import {
-  ConfigRenderer,
   initExtrinsicElectron,
   fetchSendAccountsElectron,
   getSpendableBalanceElectron,
@@ -17,7 +16,6 @@ import {
   useAddresses,
   useAppSettings,
   useConnections,
-  useEvents,
   useHelp,
   useSendNative,
   useSideNav,
@@ -39,9 +37,6 @@ import {
   ScrollWrapper,
 } from '@polkadot-live/styles/wrappers';
 import PolkadotIcon from '@polkadot-live/ui/svg/polkadotIcon.svg?react';
-import type { ChainID } from '@polkadot-live/types/chains';
-import type { EventCallback } from '@polkadot-live/types/reporter';
-import type { IpcRendererEvent } from 'electron';
 
 export const Home = () => {
   // Set up port communication for the `main` renderer.
@@ -51,7 +46,6 @@ export const Home = () => {
   useInitIpcHandlers();
 
   const { getAddresses } = useAddresses();
-  const { addEvent, markStaleEvent, removeOutdatedEvents } = useEvents();
   const { openHelp } = useHelp();
 
   const { cacheGet: getSharedState, getTheme } = useConnections();
@@ -69,33 +63,10 @@ export const Home = () => {
   const [platform, setPlatform] = useState<string | null>(null);
 
   useEffect(() => {
-    // Listen for event callbacks.
-    window.myAPI.reportNewEvent(
-      (_: IpcRendererEvent, eventData: EventCallback) => {
-        // Remove any outdated events in the state, if setting enabled.
-        if (!ConfigRenderer.getAppSeting('setting:keep-outdated-events')) {
-          removeOutdatedEvents(eventData);
-        }
-
-        // Add received event to state.
-        addEvent({ ...eventData });
-      }
-    );
-
-    // Listen for stale events.
-    window.myAPI.reportStaleEvent(
-      (_: IpcRendererEvent, uid: string, chainId: ChainID) => {
-        markStaleEvent(uid, chainId);
-      }
-    );
-
-    // Async tasks.
     const initTasks = async () => {
-      // Get OS platform.
       const osPlatform = await window.myAPI.getOsPlatform();
       setPlatform(osPlatform);
     };
-
     initTasks();
   }, []);
 

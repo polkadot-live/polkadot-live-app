@@ -1,15 +1,27 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { removeEvent } from '../../events';
+import { getCounts, getEvents, removeEvent } from '../../events';
 import type { AnyData } from '@polkadot-live/types/misc';
-import type { EventCallback } from '@polkadot-live/types/reporter';
+import type {
+  EventCallback,
+  EventCategory,
+} from '@polkadot-live/types/reporter';
 
 export const handleEventMessage = (
   message: AnyData,
   sendResponse: (response?: AnyData) => void
 ): boolean => {
   switch (message.task) {
+    case 'getCounts': {
+      getCounts().then((res) => sendResponse(res));
+      return true;
+    }
+    case 'getEvents': {
+      const { category }: { category: EventCategory } = message.payload;
+      getEvents(category).then((res) => sendResponse(res));
+      return true;
+    }
     case 'remove': {
       const { event }: { event: EventCallback } = message.payload;
       removeEvent(event).then(() => sendResponse(true));

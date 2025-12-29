@@ -10,14 +10,9 @@ import { ButtonText } from '@polkadot-live/ui/kits/buttons';
 import { ChainPallets } from '@polkadot-live/consts/subscriptions/chainEvents';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { useChainEvents } from '@polkadot-live/contexts';
-import type { ChainID } from '@polkadot-live/types/chains';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-interface NetworksProps {
-  setActiveChain: React.Dispatch<React.SetStateAction<ChainID | null>>;
-  setBreadcrumb: React.Dispatch<React.SetStateAction<string>>;
-  setSection: React.Dispatch<React.SetStateAction<number>>;
-}
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { NetworksProps } from './types';
 
 export const Networks = ({
   setActiveChain,

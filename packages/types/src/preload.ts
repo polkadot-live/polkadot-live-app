@@ -92,7 +92,11 @@ type ApiHideWindow = (id: string) => void;
 type ApiCloseWindow = (id: string) => void;
 
 type ApiReportNewEvent = (
-  callback: (_: IpcRendererEvent, eventData: EventCallback) => void
+  callback: (
+    _: IpcRendererEvent,
+    event: EventCallback,
+    newEvent: boolean
+  ) => void
 ) => Electron.IpcRenderer;
 
 type ApiReportDismissEvent = (
