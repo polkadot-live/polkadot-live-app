@@ -1,7 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { ChainID } from './chains';
 import type { DismissEvent, EventCallback, NotificationData } from './reporter';
 import type { ExportResult, ImportResult } from './backup';
 import type { IpcTask, SyncID, TabData } from './communication';
@@ -122,5 +121,5 @@ type ApiInitializeAppOffline = (
 type ApiShowNotification = (content: NotificationData) => void;
 
 type ApiReportStaleEvent = (
-  callback: (_: IpcRendererEvent, uid: string, chainId: ChainID) => void
+  callback: (_: IpcRendererEvent, uid: string) => void
 ) => Electron.IpcRenderer;

@@ -17,6 +17,7 @@ import type {
   DismissEvent,
   EventCallback,
   EventCategory,
+  EventFetchCursor,
 } from '@polkadot-live/types/reporter';
 import { getAllEventCategories } from '@polkadot-live/consts/chains';
 
@@ -48,6 +49,15 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     null
   );
 
+  // TODO: Loading spinner.
+  // Load more.
+  const PAGE_SIZE = 5;
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  const [cursor, setCursor] = useState<EventFetchCursor | null>(null);
+  const [hasMore, setHasMore] = useState(true);
+  const [sortDesc, setSortDesc] = useState(true);
+  const [loading, setLoading] = useState(false);
+
   const getEventsCount = (category?: EventCategory) =>
     category
       ? (eventCounts[category] ?? 0)
@@ -69,9 +79,10 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
 
   const addEvent = (event: EventCallback) => {
     if (event.category === activeCategoryRef.current) {
-      if (pushUniqueEvent(event, events).updated) {
-        setEvents((prev) => [event, ...prev]);
-      }
+      setEvents((prev) => {
+        const { updated } = pushUniqueEvent(event, prev);
+        return updated ? [event, ...prev] : prev;
+      });
     }
   };
 
@@ -102,7 +113,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
   const removeOutdatedEvents = (event: EventCallback) => {
     if (event.category === activeCategory) {
       setEvents((prev) => {
-        const res = doRemoveOutdatedEvents(event, events);
+        const res = doRemoveOutdatedEvents(event, prev);
         return res.updated ? res.events : prev;
       });
     }
@@ -145,6 +156,30 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const loadMore = async () => {
+    if (loading || !hasMore || !cursor || !activeCategory) {
+      return;
+    }
+    // Set fetched events.
+    const page = await adapter.fetchEvents({
+      category: activeCategory,
+      limit: PAGE_SIZE,
+      order: sortDesc ? 'desc' : 'asc',
+      cursor,
+    });
+    setEvents((prev) => [...prev, ...page]);
+
+    // Update more flag.
+    if (page.length < PAGE_SIZE) {
+      setHasMore(false);
+    }
+    // Update cursor.
+    if (page.length) {
+      const last = page[page.length - 1];
+      setCursor({ timestamp: last.timestamp, uid: last.uid });
+    }
+  };
+
   // Sync event counts by category.
   useEffect(() => {
     const sync = async () => {
@@ -163,17 +198,53 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [syncCounts]);
 
+  useEffect(() => {
+    if (!loadMoreRef.current || !hasMore) {
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setLoading(true);
+          loadMore().finally(() => setLoading(false));
+        }
+      },
+      { rootMargin: '0px 0px 100px 0px' }
+    );
+    observer.observe(loadMoreRef.current);
+    return () => observer.disconnect();
+  }, [loadMore, hasMore]);
+
   // Re-load events when active category changes.
   useEffect(() => {
     if (!activeCategory) {
-      setEvents([]);
       return;
     }
-    const sync = async () => {
-      setEvents(await adapter.fetchEvents(activeCategory));
+    let cancelled = false;
+    const loadInitial = async () => {
+      setLoading(true);
+      const page = await adapter.fetchEvents({
+        category: activeCategory,
+        limit: PAGE_SIZE,
+        order: sortDesc ? 'desc' : 'asc',
+      });
+
+      if (cancelled) {
+        return;
+      }
+
+      setEvents(page);
+      const last = page.length ? page[page.length - 1] : null;
+      setCursor(last ? { timestamp: last.timestamp, uid: last.uid } : null);
+      setHasMore(page.length === PAGE_SIZE);
+      setLoading(false);
     };
-    sync();
-  }, [activeCategory]);
+
+    loadInitial();
+    return () => {
+      cancelled = true;
+    };
+  }, [activeCategory, sortDesc]);
 
   // Handle event messages.
   useEffect(() => {
@@ -198,6 +269,9 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
         dataDialogOpen,
         encodedInfo,
         eventCounts,
+        hasMore,
+        loadMoreRef,
+        sortDesc,
         addEvent,
         changeActiveCategory,
         dismissEvent,
@@ -212,6 +286,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
         setEncodedInfo,
         setEventsState,
         setRenamedEvents,
+        setSortDesc,
       }}
     >
       {children}

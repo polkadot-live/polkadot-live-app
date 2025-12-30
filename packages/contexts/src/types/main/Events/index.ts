@@ -16,6 +16,9 @@ export interface EventsContextInterface {
   dataDialogOpen: boolean;
   encodedInfo: EncodedValue[] | null;
   eventCounts: Record<EventCategory, number>;
+  hasMore: boolean;
+  loadMoreRef: React.RefObject<HTMLDivElement | null>;
+  sortDesc: boolean;
   addEvent: (e: EventCallback) => void;
   changeActiveCategory: (category: EventCategory | null) => void;
   dismissEvent: (e: DismissEvent) => void;
@@ -32,4 +35,5 @@ export interface EventsContextInterface {
   setEncodedInfo: React.Dispatch<React.SetStateAction<EncodedValue[] | null>>;
   setEventsState: (events: EventCallback[]) => void;
   setRenamedEvents: (e: EventCallback[]) => void;
+  setSortDesc: React.Dispatch<React.SetStateAction<boolean>>;
 }

@@ -21,6 +21,7 @@ import type {
   EventAccountData,
   EventCallback,
   EventCategory,
+  EventFetchPayload,
   NotificationData,
 } from '@polkadot-live/types/reporter';
 import type { IpcTask } from '@polkadot-live/types/communication';
@@ -159,8 +160,8 @@ export class EventsController {
         return this.doImport(task.data.events);
       }
       case 'events:fetch': {
-        const { category }: { category: string } = task.data;
-        return this.fetch(category);
+        const { payload }: { payload: EventFetchPayload } = task.data;
+        return this.fetch(payload);
       }
       case 'events:counts': {
         return this.counts();
@@ -187,10 +188,36 @@ export class EventsController {
    * @name fetch
    * @summary Fetch events from database with a specific category.
    */
-  private static fetch(category: string) {
-    return JSON.stringify(
-      this.getEventsFromStore().filter((e) => e.category === category)
-    );
+  private static fetch(payload: EventFetchPayload) {
+    const { category, limit, order, cursor } = payload;
+
+    const all = this.getEventsFromStore()
+      .filter((e) => e.category === category)
+      .sort((a, b) => {
+        if (a.timestamp === b.timestamp) {
+          return order === 'desc'
+            ? b.uid.localeCompare(a.uid)
+            : a.uid.localeCompare(b.uid);
+        }
+        return order === 'desc'
+          ? b.timestamp - a.timestamp
+          : a.timestamp - b.timestamp;
+      });
+
+    if (!cursor) {
+      return JSON.stringify(all.slice(0, limit));
+    }
+
+    const filterDesc = (e: EventCallback) =>
+      e.timestamp < cursor.timestamp ||
+      (e.timestamp === cursor.timestamp && e.uid < cursor.uid);
+
+    const filterAsc = (e: EventCallback) =>
+      e.timestamp > cursor.timestamp ||
+      (e.timestamp === cursor.timestamp && e.uid > cursor.uid);
+
+    const page = all.filter(order === 'desc' ? filterDesc : filterAsc);
+    return JSON.stringify(page.slice(0, limit));
   }
 
   /**

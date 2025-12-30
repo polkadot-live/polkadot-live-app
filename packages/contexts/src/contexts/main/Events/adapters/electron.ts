@@ -3,7 +3,6 @@
 
 import { ConfigRenderer } from '@polkadot-live/core';
 import type { EventsAdapter } from './types';
-import type { EventCategory } from '@polkadot-live/types';
 
 export const electronAdapter: EventsAdapter = {
   removeEvent: async (event) => {
@@ -27,11 +26,11 @@ export const electronAdapter: EventsAdapter = {
     }
   },
 
-  fetchEvents: async (category: EventCategory) => {
+  fetchEvents: async (payload) => {
     try {
       const fetched = (await window.myAPI.sendEventTaskAsync({
         action: 'events:fetch',
-        data: { category },
+        data: { payload },
       })) as string;
 
       return JSON.parse(fetched);
@@ -57,7 +56,7 @@ export const electronAdapter: EventsAdapter = {
       }
       addEvent(event);
     });
-    window.myAPI.reportStaleEvent((_, uid: string /*, chainId: ChainID*/) => {
+    window.myAPI.reportStaleEvent((_, uid: string) => {
       markStaleEvent(uid);
     });
 

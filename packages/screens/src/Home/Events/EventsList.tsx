@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useEvents } from '@polkadot-live/contexts';
-import { useState } from 'react';
 import { faCaretLeft, faSort } from '@fortawesome/free-solid-svg-icons';
 import { getEventChainId } from '@polkadot-live/core';
 import { EventGroup, Wrapper } from './Wrappers';
@@ -17,8 +16,14 @@ import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import type { EventsListProps } from './types';
 
 export const EventsList = ({ setSection }: EventsListProps) => {
-  const { activeCategory, getSortedEvents } = useEvents();
-  const [sortDesc, setSortDesc] = useState(true);
+  const {
+    activeCategory,
+    hasMore,
+    loadMoreRef,
+    sortDesc,
+    getSortedEvents,
+    setSortDesc,
+  } = useEvents();
 
   return (
     <FlexColumn $rowGap="0.75rem" style={{ paddingBottom: '1rem' }}>
@@ -34,7 +39,10 @@ export const EventsList = ({ setSection }: EventsListProps) => {
           className="back-btn"
           text="Back"
           iconLeft={faCaretLeft}
-          onClick={() => setSection(0)}
+          onClick={() => {
+            setSortDesc(true);
+            setSection(0);
+          }}
         />
         <SortControlButton
           isActive={sortDesc}
@@ -60,6 +68,7 @@ export const EventsList = ({ setSection }: EventsListProps) => {
                 />
               ))}
             </div>
+            {hasMore && <div ref={loadMoreRef} />}
           </EventGroup>
         </div>
       </Wrapper>

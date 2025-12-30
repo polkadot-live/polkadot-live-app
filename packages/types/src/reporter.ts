@@ -7,6 +7,18 @@ import type { AnyData, AnyJson } from './misc';
 import type { ChainID } from './chains';
 import type { TaskAction } from './subscriptions';
 
+export interface EventFetchCursor {
+  timestamp: number;
+  uid: string;
+}
+
+export interface EventFetchPayload {
+  category: EventCategory;
+  limit: number;
+  order: 'desc' | 'asc';
+  cursor?: EventFetchCursor;
+}
+
 export type EventCategory =
   | 'Balances'
   | 'Debugging'

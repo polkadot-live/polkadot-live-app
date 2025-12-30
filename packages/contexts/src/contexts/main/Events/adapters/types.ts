@@ -1,11 +1,15 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { EventCallback, EventCategory } from '@polkadot-live/types';
+import type {
+  EventCallback,
+  EventCategory,
+  EventFetchPayload,
+} from '@polkadot-live/types';
 
 export interface EventsAdapter {
   fetchCounts: () => Promise<Partial<Record<EventCategory, number>>>;
-  fetchEvents: (category: EventCategory) => Promise<EventCallback[]>;
+  fetchEvents: (payload: EventFetchPayload) => Promise<EventCallback[]>;
   removeEvent: (event: EventCallback) => Promise<void>;
   listenOnMount: (
     markStaleEvent: (uid: string) => void,

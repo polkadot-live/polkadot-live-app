@@ -3,7 +3,7 @@
 
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { EventsAdapter } from './types';
-import type { EventCallback, EventCategory } from '@polkadot-live/types';
+import type { EventCallback } from '@polkadot-live/types';
 
 export const chromeAdapter: EventsAdapter = {
   fetchCounts: async () => {
@@ -16,10 +16,10 @@ export const chromeAdapter: EventsAdapter = {
     }
   },
 
-  fetchEvents: async (category: EventCategory) => {
+  fetchEvents: async (payload) => {
     try {
-      const payload = { category };
-      const msg = { type: 'events', task: 'getEvents', payload };
+      const { category } = payload;
+      const msg = { type: 'events', task: 'getEvents', payload: { category } };
       return await chrome.runtime.sendMessage(msg);
     } catch (err) {
       console.error(err);
