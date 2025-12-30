@@ -5,7 +5,7 @@ import { getCounts, getEvents, removeEvent } from '../../events';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type {
   EventCallback,
-  EventCategory,
+  EventFetchPayload,
 } from '@polkadot-live/types/reporter';
 
 export const handleEventMessage = (
@@ -18,8 +18,8 @@ export const handleEventMessage = (
       return true;
     }
     case 'getEvents': {
-      const { category }: { category: EventCategory } = message.payload;
-      getEvents(category).then((res) => sendResponse(res));
+      const { payload }: { payload: EventFetchPayload } = message.payload;
+      getEvents(payload).then((res) => sendResponse(res));
       return true;
     }
     case 'remove': {

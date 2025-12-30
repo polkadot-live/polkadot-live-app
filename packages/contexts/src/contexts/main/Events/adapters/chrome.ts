@@ -18,8 +18,7 @@ export const chromeAdapter: EventsAdapter = {
 
   fetchEvents: async (payload) => {
     try {
-      const { category } = payload;
-      const msg = { type: 'events', task: 'getEvents', payload: { category } };
+      const msg = { type: 'events', task: 'getEvents', payload: { payload } };
       return await chrome.runtime.sendMessage(msg);
     } catch (err) {
       console.error(err);
