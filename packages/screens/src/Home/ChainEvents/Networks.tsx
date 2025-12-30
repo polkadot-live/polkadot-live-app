@@ -5,7 +5,7 @@ import * as Accordion from '@radix-ui/react-accordion';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as UI from '@polkadot-live/ui/components';
 import * as Wrappers from '@polkadot-live/styles/wrappers';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ButtonText } from '@polkadot-live/ui/kits/buttons';
 import { ChainPallets } from '@polkadot-live/consts/subscriptions/chainEvents';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
@@ -19,7 +19,7 @@ export const Networks = ({
   setBreadcrumb,
   setSection,
 }: NetworksProps) => {
-  const { subscriptions, syncStored } = useChainEvents();
+  const { subscriptions } = useChainEvents();
   const [accordionValue, setAccordionValue] = useState('Polkadot Asset Hub');
 
   const onChainClick = (chainId: ChainID) => {
@@ -34,10 +34,6 @@ export const Networks = ({
       ? maybeSubs.filter(({ enabled }) => enabled).length > 0
       : false;
   };
-
-  useEffect(() => {
-    syncStored();
-  }, []);
 
   return (
     <div style={{ width: '100%' }}>

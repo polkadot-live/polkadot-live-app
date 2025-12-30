@@ -384,6 +384,13 @@ export const getStakingChains = (): ChainID[] => [
   'Westend Asset Hub',
 ];
 
+export const getAssetHubChains = (): ChainID[] => [
+  'Polkadot Asset Hub',
+  'Kusama Asset Hub',
+  'Paseo Asset Hub',
+  'Westend Asset Hub',
+];
+
 /**
  * Get an array of supported import methods.
  */
