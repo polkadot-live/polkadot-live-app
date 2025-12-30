@@ -14,6 +14,7 @@ import {
   paseo,
 } from '@dedot/chain-specs';
 import type { AccountSource } from '@polkadot-live/types/accounts';
+import type { EventCategory } from '@polkadot-live/types';
 import type {
   ChainID,
   EcosystemID,
@@ -35,17 +36,6 @@ interface Chain {
   unit: string;
   prefix: number;
 }
-
-const CategoryList = new Map([
-  ['balances', { label: 'Balances' }],
-  ['debugging', { label: 'Debugging' }],
-  ['nominationPools', { label: 'Nomination Pools' }],
-  ['nominating', { label: 'Nominating' }],
-  ['openGov', { label: 'OpenGov' }],
-  ['staking', { label: 'Staking' }],
-  ['voting', { label: 'Voting' }],
-]);
-
 export const ChainList = new Map<ChainID, Chain>([
   [
     'Polkadot Relay',
@@ -330,8 +320,6 @@ export const chainCurrency = (chain: ChainID) =>
 export const chainUnits = (chain: ChainID) =>
   (ChainList.get(chain) as Chain).units;
 
-export const getCategory = (category: string) => CategoryList.get(category);
-
 export const getSelectLedgerNetworkData = (): LedgerSelectNetworkData[] => [
   {
     network: 'Polkadot Asset Hub',
@@ -430,3 +418,15 @@ export const getEcosystemChainMap = (): Map<EcosystemID, ChainID[]> =>
  */
 export const hasLightClientSupport = (chainId: ChainID): boolean =>
   ChainList.get(chainId)?.endpoints.lightClient !== undefined;
+
+/**
+ * Get all event categories.
+ */
+export const getAllEventCategories = (): EventCategory[] => [
+  'Balances',
+  'Debugging',
+  'Nominating',
+  'Nomination Pools',
+  'OpenGov',
+  'Voting',
+];

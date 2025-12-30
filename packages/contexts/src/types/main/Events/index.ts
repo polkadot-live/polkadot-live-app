@@ -3,35 +3,39 @@
 
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { EncodedValue } from '@polkadot-live/encoder';
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import type {
   DismissEvent,
   EventCallback,
+  EventCategory,
 } from '@polkadot-live/types/reporter';
 
 export interface EventsContextInterface {
-  dataDialogOpen: boolean;
+  activeCategory: EventCategory | null;
   dataDialogEvent: EventCallback | null;
-  events: EventsState;
+  dataDialogOpen: boolean;
   encodedInfo: EncodedValue[] | null;
-  setEvents: (events: EventCallback[]) => void;
+  eventCounts: Record<EventCategory, number>;
+  hasMore: boolean;
+  loadMoreRef: React.RefObject<HTMLDivElement | null>;
+  sortDesc: boolean;
   addEvent: (e: EventCallback) => void;
+  changeActiveCategory: (category: EventCategory | null) => void;
   dismissEvent: (e: DismissEvent) => void;
-  sortAllEvents: (newestFirst: boolean) => EventCallback[];
-  sortAllGroupedEvents: (newestFirst: boolean) => SortedChainEvents;
-  sortChainEvents: (c: ChainID) => SortedChainEvents;
-  updateEventsOnAccountRename: (e: EventCallback[], c: ChainID) => void;
+  finishLoading: () => void;
+  getEventCategoryIcon: (category: EventCategory) => IconDefinition;
+  getEventsCount: (category?: EventCategory) => number;
+  getSortedEvents: (desc?: boolean) => EventCallback[];
   markStaleEvent: (u: string, c: ChainID) => void;
+  removeEvent: (event: EventCallback) => Promise<void>;
   removeOutdatedEvents: (e: EventCallback) => void;
-  setDataDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setDataDialogEvent: React.Dispatch<
     React.SetStateAction<EventCallback | null>
   >;
+  setDataDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setEncodedInfo: React.Dispatch<React.SetStateAction<EncodedValue[] | null>>;
-  getEventsCount: (category?: string) => number;
-  getAllEventCategoryKeys: () => string[];
-  removeEvent: (event: EventCallback) => Promise<void>;
+  setEventsState: (events: EventCallback[]) => void;
+  setRenamedEvents: (e: EventCallback[]) => void;
+  setSortDesc: React.Dispatch<React.SetStateAction<boolean>>;
+  startLoading: () => void;
 }
-
-export type EventsState = Map<ChainID, EventCallback[]>;
-
-export type SortedChainEvents = Map<string, EventCallback[]>;

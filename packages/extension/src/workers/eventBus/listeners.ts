@@ -32,7 +32,7 @@ eventBus.addEventListener('handleTxStatus', async (e) => {
   }
   const { info, status, isMock }: I = (e as CustomEvent).detail;
   const { txId, txHash, actionMeta } = info;
-  const { eventUid, chainId } = actionMeta;
+  const { eventUid } = actionMeta;
 
   sendChromeMessage(
     'extrinsics',
@@ -48,7 +48,7 @@ eventBus.addEventListener('handleTxStatus', async (e) => {
     if (event) {
       event.stale = true;
       await DbController.set('events', eventUid, event);
-      sendChromeMessage('events', 'staleEvent', { uid: event.uid, chainId });
+      sendChromeMessage('events', 'staleEvent', { uid: event.uid });
     }
   }
 });
@@ -68,10 +68,6 @@ eventBus.addEventListener('initSystems:complete', async () => {
     ser: JSON.stringify(
       Array.from(AccountsController.getAllFlattenedAccountData().entries())
     ),
-  });
-  // Set events state.
-  sendChromeMessage('events', 'setEventsState', {
-    result: await getAllEvents(),
   });
 });
 
@@ -101,6 +97,7 @@ eventBus.addEventListener('processEvent', async (e) => {
   });
 
   // Handle outdated events.
+  let handleOutdated = false;
   const keepOutdated = (await DbController.get(
     'settings',
     'setting:keep-outdated-events'
@@ -110,6 +107,7 @@ eventBus.addEventListener('processEvent', async (e) => {
     const all = await getAllEvents();
     const { updated, events } = doRemoveOutdatedEvents(event, all);
     if (updated) {
+      handleOutdated = true;
       const remove = all.filter((a) => !events.find((b) => b.uid === a.uid));
       for (const { uid: key } of remove) {
         await DbController.delete('events', key);
@@ -136,10 +134,8 @@ eventBus.addEventListener('processEvent', async (e) => {
     await dispatchNotification(event.uid, title, body, subtitle);
   }
 
-  // Set events state.
-  sendChromeMessage('events', 'setEventsState', {
-    result: await getAllEvents(),
-  });
+  // Add to events state.
+  sendChromeMessage('events', 'addEvent', { event, handleOutdated });
 });
 
 eventBus.addEventListener('setManagedAccountsState', async () => {

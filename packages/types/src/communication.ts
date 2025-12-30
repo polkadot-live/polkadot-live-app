@@ -57,6 +57,8 @@ export interface IpcTask {
     | 'connection:init'
     | 'connection:getStatus'
     // Events
+    | 'events:counts'
+    | 'events:fetch'
     | 'events:persist'
     | 'events:remove'
     | 'events:makeStale'

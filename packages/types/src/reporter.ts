@@ -7,6 +7,26 @@ import type { AnyData, AnyJson } from './misc';
 import type { ChainID } from './chains';
 import type { TaskAction } from './subscriptions';
 
+export interface EventFetchCursor {
+  timestamp: number;
+  uid: string;
+}
+
+export interface EventFetchPayload {
+  category: EventCategory;
+  limit: number;
+  order: 'desc' | 'asc';
+  cursor?: EventFetchCursor;
+}
+
+export type EventCategory =
+  | 'Balances'
+  | 'Debugging'
+  | 'Nominating'
+  | 'Nomination Pools'
+  | 'OpenGov'
+  | 'Voting';
+
 // Define again to avoid circular dependency with encoder package.
 interface EncodedValue {
   tag: 'BigInt' | 'Boolean' | 'Number' | 'AccountId32' | 'Unknown';
@@ -60,7 +80,7 @@ export interface UriAction {
 // Callback event interface
 export interface EventCallback {
   uid: string;
-  category: string;
+  category: EventCategory;
   taskAction: TaskAction | string; // TODO: IntervalAction
   who: {
     origin: 'account' | 'chain' | 'chainEvent' | 'interval';
@@ -98,8 +118,4 @@ export interface EventChainData {
 
 export interface DismissEvent {
   uid: string;
-  who: {
-    origin: 'account' | 'chain' | 'chainEvent' | 'interval';
-    data: EventAccountData | EventChainData;
-  };
 }

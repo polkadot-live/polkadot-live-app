@@ -15,7 +15,7 @@ export const getExportData = async (): Promise<string> => {
     type M = Map<string, EventCallback>;
     const fetched = (await DbController.getAllObjects('events')) as M;
     return JSON.stringify(
-      Array.from(fetched.values()).filter((e) => e.category !== 'debugging')
+      Array.from(fetched.values()).filter((e) => e.category !== 'Debugging')
     );
   };
   const getSerExtrinsics = async () => {

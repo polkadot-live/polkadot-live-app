@@ -15,7 +15,7 @@
     "resolveJsonModule": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "allowSyntheticDefaultImports": true,
-    "types": ["node", "vitest/globals"],
+    "types": ["node", "electron", "vitest/globals"],
     "removeComments": true,
     "rootDir": "."
   }

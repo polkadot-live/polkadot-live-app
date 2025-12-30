@@ -2,15 +2,30 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { ChainID } from '@polkadot-live/types/chains';
+import { getAllEventCategories } from '@polkadot-live/consts/chains';
 import type {
   EventAccountData,
   EventCallback,
+  EventCategory,
   EventChainData,
 } from '@polkadot-live/types/reporter';
 import type {
   NominationPoolCommission,
   NominationPoolRoles,
 } from '@polkadot-live/types/accounts';
+
+/**
+ * @name emptyEventCounts
+ * @summary Return empty event counts record.
+ */
+export const emptyEventCounts = (): Record<EventCategory, number> =>
+  getAllEventCategories().reduce(
+    (acc, c) => {
+      acc[c] = 0;
+      return acc;
+    },
+    {} as Record<EventCategory, number>
+  );
 
 /**
  * @name getEventChainId

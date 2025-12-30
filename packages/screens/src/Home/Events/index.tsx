@@ -1,128 +1,55 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Accordion from '@radix-ui/react-accordion';
-import * as UI from '@polkadot-live/ui/components';
-import { useEvents } from '@polkadot-live/contexts';
-import { useState, useMemo } from 'react';
-import { Category } from './Category';
-import { NoEvents } from './NoEvents';
-import { EventGroup, Wrapper } from './Wrappers';
-import { faSort, faLayerGroup } from '@fortawesome/free-solid-svg-icons';
-import { EventItem } from './EventItem';
-import { getEventChainId } from '@polkadot-live/core';
+import { useState } from 'react';
+import { MainHeading } from '@polkadot-live/ui/components';
 import {
-  MainHeading,
-  ControlsWrapper,
-  SortControlButton,
-} from '@polkadot-live/ui/components';
-import { FlexColumn } from '@polkadot-live/styles/wrappers';
+  CarouselWrapper,
+  FlexColumn,
+  FlexColumnWrap,
+} from '@polkadot-live/styles/wrappers';
+import { Categories } from './Categories';
+import { EventsList } from './EventsList';
 
 export const Events = () => {
-  const { events, sortAllGroupedEvents, sortAllEvents } = useEvents();
-
-  /// State for sorting controls.
-  const [newestFirst, setNewestFirst] = useState(true);
-  const [groupingOn, setGroupingOn] = useState(true);
-
-  const sortedGroupedEvents = useMemo(
-    () => sortAllGroupedEvents(newestFirst),
-    [events, newestFirst]
-  );
-
-  const sortedEvents = useMemo(
-    () => sortAllEvents(newestFirst),
-    [events, newestFirst]
-  );
-
-  /// Accordion state.
-  const [accordionValue, setAccordionValue] = useState<string[]>([
-    ...sortedGroupedEvents.keys(),
-  ]);
+  const [section, setSection] = useState<number>(0);
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        rowGap: '0.75rem',
-        padding: '2rem 1rem 1rem',
-      }}
+    <FlexColumn
+      $rowGap={'1rem'}
+      style={{ height: '100%', padding: '2rem 0rem 0' }}
     >
-      <MainHeading>Events</MainHeading>
-
-      {/* Sorting controls */}
-      <ControlsWrapper $padBottom={!groupingOn}>
-        <SortControlButton
-          isActive={newestFirst}
-          isDisabled={false}
-          faIcon={faSort}
-          onClick={() => setNewestFirst(!newestFirst)}
-          onLabel="Newest First"
-          offLabel="Oldest First"
-        />
-        <SortControlButton
-          isActive={groupingOn}
-          isDisabled={false}
-          faIcon={faLayerGroup}
-          onClick={() => setGroupingOn(!groupingOn)}
-          onLabel="Grouping"
-          offLabel="Grouping"
-          fixedWidth={false}
-        />
-      </ControlsWrapper>
-
-      {/* List Events */}
-      <Wrapper>
-        {events.size === 0 && <NoEvents />}
-
+      <MainHeading style={{ padding: '0 1rem' }}>Events</MainHeading>
+      <CarouselWrapper
+        animate={section === 0 ? 'home' : 'next'}
+        transition={{
+          duration: 0.35,
+          type: 'spring',
+          bounce: 0.1,
+        }}
+        onTransitionEnd={() => {
+          /* empty */
+        }}
+        variants={{
+          home: { left: 0 },
+          next: { left: '-100%' },
+        }}
+      >
         <div
-          style={
-            groupingOn
-              ? { display: 'block', width: '100%' }
-              : { display: 'none', width: '100%' }
-          }
+          className="scrollable"
+          style={{ height: '100%', padding: '0 1rem' }}
         >
-          <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
-            <Accordion.Root
-              className="AccordionRoot"
-              type="multiple"
-              value={accordionValue}
-              onValueChange={(val) => setAccordionValue(val as string[])}
-            >
-              <FlexColumn>
-                {Array.from(sortedGroupedEvents.entries()).map(
-                  ([category, categoryEvents]) => (
-                    <Category
-                      key={`${category}_events`}
-                      category={category}
-                      events={categoryEvents}
-                    />
-                  )
-                )}
-              </FlexColumn>
-            </Accordion.Root>
-          </UI.AccordionWrapper>
+          <FlexColumnWrap>
+            <Categories setSection={setSection} />
+          </FlexColumnWrap>
         </div>
         <div
-          style={
-            groupingOn
-              ? { display: 'none', width: '100%' }
-              : { display: 'block', width: '100%' }
-          }
+          className="scrollable"
+          style={{ height: '100%', padding: '0 1rem 1rem' }}
         >
-          <EventGroup>
-            <div className="items-wrapper">
-              {sortedEvents.map((event) => (
-                <EventItem
-                  key={`${getEventChainId(event)}_${event.uid}`}
-                  event={event}
-                />
-              ))}
-            </div>
-          </EventGroup>
+          <EventsList setSection={setSection} />
         </div>
-      </Wrapper>
-    </div>
+      </CarouselWrapper>
+    </FlexColumn>
   );
 };

@@ -15,7 +15,10 @@ import {
   useSummary,
 } from '@polkadot-live/contexts';
 import { getReadableAccountSource } from '@polkadot-live/core';
-import { getCategory, getSupportedSources } from '@polkadot-live/consts/chains';
+import {
+  getAllEventCategories,
+  getSupportedSources,
+} from '@polkadot-live/consts/chains';
 import { useEffect, useState } from 'react';
 import { MainHeading } from '@polkadot-live/ui/components';
 import { FlexColumn, FlexRow } from '@polkadot-live/styles/wrappers';
@@ -30,7 +33,7 @@ export const Summary = () => {
   const { addressMap, extrinsicCounts } = useSummary();
   const { getAllAccounts } = useAddresses();
   const { openTab } = useConnections();
-  const { getEventsCount, getAllEventCategoryKeys } = useEvents();
+  const { getEventsCount, getEventCategoryIcon } = useEvents();
   const { getTotalIntervalSubscriptionCount } = useIntervalSubscriptions();
   const { setSelectedId } = useSideNav();
   const { getClassicSubCount, getTotalSubscriptionCount } = useSubscriptions();
@@ -56,25 +59,6 @@ export const Summary = () => {
 
   const getTotalAccounts = () =>
     Array.from(addressMap.values()).reduce((pv, cur) => (pv += cur.length), 0);
-
-  const getEventIcon = (category: string) => {
-    switch (category) {
-      case 'balances':
-        return FA.faWallet;
-      case 'nominationPools':
-        return FA.faUsers;
-      case 'nominating':
-        return FA.faArrowUpRightDots;
-      case 'openGov':
-        return FA.faFileContract;
-      case 'staking':
-        return FA.faCubesStacked;
-      case 'voting':
-        return FA.faCheckDouble;
-      default:
-        return FA.faCircleNodes;
-    }
-  };
 
   useEffect(() => {
     const fetch = async () => {
@@ -211,15 +195,17 @@ export const Summary = () => {
                       meterValue={getEventsCount()}
                     />
 
-                    {getAllEventCategoryKeys().map((category) => (
-                      <StatItemRow
-                        key={`total_${category}_events`}
-                        kind="event"
-                        category={getCategory(category)?.label ?? 'Unknown'}
-                        meterValue={getEventsCount(category)}
-                        icon={getEventIcon(category)}
-                      />
-                    ))}
+                    {getAllEventCategories()
+                      .filter((c) => c !== 'Debugging')
+                      .map((category) => (
+                        <StatItemRow
+                          key={`total_${category}_events`}
+                          kind="event"
+                          category={category}
+                          meterValue={getEventsCount(category)}
+                          icon={getEventCategoryIcon(category)}
+                        />
+                      ))}
                   </FlexColumn>
                 </UI.StatsSectionWrapper>
               </UI.AccordionContent>

@@ -161,7 +161,7 @@ const getReferendaChainEvent = (
   whoMeta?: WhoMeta
 ): EventCallback => {
   const { name: eventName, data: miscData } = palletEvent;
-  const ev = makeChainEvent({ chainId, category: 'openGov' }, whoMeta);
+  const ev = makeChainEvent({ chainId, category: 'OpenGov' }, whoMeta);
   const ss58Prefix = getSs58Prefix(chainId);
 
   switch (eventName) {

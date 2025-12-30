@@ -50,7 +50,7 @@ export const useMainMessagePorts = () => {
   const { addSubsForRef, removeSubsForRef } = useChainEvents();
   const { updateAccountNameInTasks } = useSubscriptions();
   const { exportDataToBackup, importDataFromBackup } = MainCtx.useDataBackup();
-  const { updateEventsOnAccountRename } = useEvents();
+  const { setRenamedEvents } = useEvents();
   const { ledgerSignSubmit } = MainCtx.useLedgerSigner();
   const { handleInitTreasury } = MainCtx.useTreasuryApi();
   const { addIntervalSubscription, removeIntervalSubscriptions } =
@@ -272,7 +272,7 @@ export const useMainMessagePorts = () => {
 
     // Update events state.
     const updated: EventCallback[] = JSON.parse(serialized);
-    updated.length > 0 && updateEventsOnAccountRename(updated, chainId);
+    updated.length > 0 && setRenamedEvents(updated);
 
     // Update account name in extrinsics window.
     ConfigRenderer.portToTabs?.postMessage({

@@ -142,7 +142,7 @@ const getStakingChainEvent = (
   whoMeta?: WhoMeta
 ) => {
   const { name: eventName, data: miscData } = palletEvent;
-  const ev = makeChainEvent({ chainId, category: 'staking' }, whoMeta);
+  const ev = makeChainEvent({ chainId, category: 'Nominating' }, whoMeta);
   const ss58Prefix = getSs58Prefix(chainId);
 
   switch (eventName) {

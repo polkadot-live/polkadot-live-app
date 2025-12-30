@@ -49,7 +49,7 @@ export const DataBackupProvider = ({
 }) => {
   const { getOnlineMode } = useConnections();
   const { syncRefs } = useChainEvents();
-  const { setEvents } = useEvents();
+  const { setEventsState } = useEvents();
   const { addIntervalSubscription, updateIntervalSubscription } =
     useIntervalSubscriptions();
 
@@ -260,7 +260,7 @@ export const DataBackupProvider = ({
     })) as string;
 
     const parsed: EventCallback[] = JSON.parse(updated);
-    setEvents(parsed);
+    setEventsState(parsed);
   };
 
   /**

@@ -46,7 +46,11 @@ export const SortControlButton: React.FC<SortControlsButtonProps> = ({
         <div className="icon">
           <FontAwesomeIcon
             icon={faIcon}
-            style={iconOnly ? { marginRight: '1rem' } : {}}
+            style={
+              iconOnly
+                ? { fontSize: '1.06rem', marginRight: '1rem' }
+                : { fontSize: '1.06rem' }
+            }
           />
         </div>
       )}
