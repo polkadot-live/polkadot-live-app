@@ -41,7 +41,7 @@ export const Item = memo(function Item({ event }: ItemProps) {
   const { uid, title, subtitle, txActions, uriActions, encodedInfo } = event;
 
   // Used for running the event `onAnimationStart` function exactly once.
-  const showRef = useRef(0);
+  const hasShownRef = useRef(false);
 
   // Extract address from event.
   const address =
@@ -99,8 +99,8 @@ export const Item = memo(function Item({ event }: ItemProps) {
                 : undefined
           }
           onAnimationStart={(definition) => {
-            if (definition === 'show' && showRef.current === 0) {
-              showRef.current += 1;
+            if (definition === 'show' && !hasShownRef.current) {
+              hasShownRef.current = true;
               startLoading();
               setTimeout(() => {
                 finishLoading();

@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useEvents } from '@polkadot-live/contexts';
+import { useConnections, useEvents } from '@polkadot-live/contexts';
 import { faCaretLeft, faSort } from '@fortawesome/free-solid-svg-icons';
 import { getEventChainId } from '@polkadot-live/core';
 import { EventGroup, Wrapper } from './Wrappers';
@@ -10,20 +10,26 @@ import { NoEvents } from './NoEvents';
 import {
   ControlsWrapper,
   SortControlButton,
+  SortControlLabel,
+  TooltipRx,
 } from '@polkadot-live/ui/components';
 import { FlexColumn, FlexRow } from '@polkadot-live/styles/wrappers';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import type { EventsListProps } from './types';
 
 export const EventsList = ({ setSection }: EventsListProps) => {
+  const { getTheme } = useConnections();
   const {
     activeCategory,
+    eventCounts,
     hasMore,
     loadMoreRef,
     sortDesc,
     getSortedEvents,
     setSortDesc,
   } = useEvents();
+
+  const theme = getTheme();
 
   return (
     <FlexColumn $rowGap="0.75rem" style={{ paddingBottom: '1rem' }}>
@@ -44,14 +50,36 @@ export const EventsList = ({ setSection }: EventsListProps) => {
             setSection(0);
           }}
         />
-        <SortControlButton
-          isActive={sortDesc}
-          isDisabled={false}
-          faIcon={faSort}
-          onClick={() => setSortDesc(!sortDesc)}
-          onLabel="Newest First"
-          offLabel="Oldest First"
-        />
+        <TooltipRx theme={theme} text={'Total'}>
+          <span>
+            <SortControlLabel
+              style={{
+                color: 'var(--text-color-secondary)',
+                borderColor: 'var(--border-secondary-color)',
+                padding: '0.35rem 1.25rem',
+                fontSize: '1.06rem',
+                fontWeight: 'bold',
+              }}
+              label={
+                activeCategory ? eventCounts[activeCategory].toString() : '0'
+              }
+            />
+          </span>
+        </TooltipRx>
+        <TooltipRx
+          theme={theme}
+          text={sortDesc ? 'Oldest First' : 'Newest First'}
+        >
+          <span>
+            <SortControlButton
+              fixedWidth={false}
+              isActive={sortDesc}
+              isDisabled={false}
+              faIcon={faSort}
+              onClick={() => setSortDesc(!sortDesc)}
+            />
+          </span>
+        </TooltipRx>
       </ControlsWrapper>
 
       {/* Events */}

@@ -94,8 +94,8 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
   const addEvent = (event: EventCallback) => {
     if (event.category === activeCategoryRef.current) {
       setEvents((prev) => {
-        const { updated } = pushUniqueEvent(event, prev);
-        return updated ? [event, ...prev] : prev;
+        const { updated, events: newEvents } = pushUniqueEvent(event, prev);
+        return updated ? newEvents : prev;
       });
     }
   };
@@ -235,7 +235,6 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     }
     let cancelled = false;
     const loadInitial = async () => {
-      setLoading(true);
       const page = await adapter.fetchEvents({
         category: activeCategory,
         limit: PAGE_SIZE,

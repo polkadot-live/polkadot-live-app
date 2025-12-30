@@ -8,8 +8,12 @@ export const SortControlLabel: React.FC<SortControlLabelProps> = ({
   faIcon,
   label,
   noBorder = false,
+  style,
 }: SortControlLabelProps) => (
-  <div className={`breadcrumb-wrapper${noBorder ? ' no-border' : ''}`}>
+  <div
+    className={`breadcrumb-wrapper${noBorder ? ' no-border' : ''}`}
+    style={style}
+  >
     {faIcon && (
       <div>
         <FontAwesomeIcon icon={faIcon} />

@@ -33,7 +33,7 @@ export const ControlsWrapper = styled.div<{
 
   width: 100%;
   display: flex;
-  column-gap: 1rem;
+  column-gap: 0.75rem;
   margin-bottom: 0.75rem;
 
   .no-border {
