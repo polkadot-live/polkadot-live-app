@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import { useEffect, useState, memo } from 'react';
+import { useEffect, useState, memo, useRef } from 'react';
 import { useConnections, useEvents } from '@polkadot-live/contexts';
 import {
   FlexColumn,
@@ -33,10 +33,15 @@ export const Item = memo(function Item({ event }: ItemProps) {
     setDataDialogOpen,
     setEncodedInfo,
     setDataDialogEvent,
+    startLoading,
+    finishLoading,
   } = useEvents();
   const theme = getTheme();
   const darkMode = cacheGet('mode:dark');
   const { uid, title, subtitle, txActions, uriActions, encodedInfo } = event;
+
+  // Used for running the event `onAnimationStart` function exactly once.
+  const showRef = useRef(0);
 
   // Extract address from event.
   const address =
@@ -93,6 +98,15 @@ export const Item = memo(function Item({ event }: ItemProps) {
                 ? 'hidden'
                 : undefined
           }
+          onAnimationStart={(definition) => {
+            if (definition === 'show' && showRef.current === 0) {
+              showRef.current += 1;
+              startLoading();
+              setTimeout(() => {
+                finishLoading();
+              }, FADE_TRANSITION);
+            }
+          }}
           transition={{
             duration: FADE_TRANSITION * 0.001,
             ease: 'easeInOut',

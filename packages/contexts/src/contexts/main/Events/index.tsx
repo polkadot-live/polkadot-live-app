@@ -57,6 +57,20 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
   const [hasMore, setHasMore] = useState(true);
   const [sortDesc, setSortDesc] = useState(true);
   const [loading, setLoading] = useState(false);
+  const animatingCount = useRef(0);
+
+  const startLoading = () => {
+    animatingCount.current += 1;
+    setLoading(true);
+  };
+
+  const finishLoading = () => {
+    animatingCount.current -= 1;
+    if (animatingCount.current <= 0) {
+      animatingCount.current = 0;
+      setLoading(false);
+    }
+  };
 
   const getEventsCount = (category?: EventCategory) =>
     category
@@ -205,8 +219,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setLoading(true);
-          loadMore().finally(() => setLoading(false));
+          loadMore();
         }
       },
       { rootMargin: '0px 0px 100px 0px' }
@@ -237,7 +250,6 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
       const last = page.length ? page[page.length - 1] : null;
       setCursor(last ? { timestamp: last.timestamp, uid: last.uid } : null);
       setHasMore(page.length === PAGE_SIZE);
-      setLoading(false);
     };
 
     loadInitial();
@@ -275,6 +287,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
         addEvent,
         changeActiveCategory,
         dismissEvent,
+        finishLoading,
         getEventCategoryIcon,
         getEventsCount,
         getSortedEvents,
@@ -287,6 +300,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
         setEventsState,
         setRenamedEvents,
         setSortDesc,
+        startLoading,
       }}
     >
       {children}

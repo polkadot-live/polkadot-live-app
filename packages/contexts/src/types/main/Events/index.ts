@@ -22,6 +22,7 @@ export interface EventsContextInterface {
   addEvent: (e: EventCallback) => void;
   changeActiveCategory: (category: EventCategory | null) => void;
   dismissEvent: (e: DismissEvent) => void;
+  finishLoading: () => void;
   getEventCategoryIcon: (category: EventCategory) => IconDefinition;
   getEventsCount: (category?: EventCategory) => number;
   getSortedEvents: (desc?: boolean) => EventCallback[];
@@ -36,4 +37,5 @@ export interface EventsContextInterface {
   setEventsState: (events: EventCallback[]) => void;
   setRenamedEvents: (e: EventCallback[]) => void;
   setSortDesc: React.Dispatch<React.SetStateAction<boolean>>;
+  startLoading: () => void;
 }
