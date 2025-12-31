@@ -215,26 +215,22 @@ export class SubscriptionsController {
    * @summary Return map of all configured tasks for managed accounts.
    */
   static getAccountSubscriptions(): Map<string, SubscriptionTask[]> {
-    const result = new Map<string, SubscriptionTask[]>();
+    const cmp = (a: SubscriptionTask, b: SubscriptionTask) =>
+      a.action === b.action && a.chainId === b.chainId;
 
-    for (const accounts of AccountsController.accounts.values()) {
-      for (const a of accounts) {
-        const tasks = accountTasks
-          // Filter on account's chain ID.
-          .filter((t) => t.chainId === a.chain)
-          // Fill task arguments.
-          .map((t) => this.getTaskArgsForAccount(a, t))
-          // Merge active tasks.
-          .map(
-            (t) =>
-              (a.getSubscriptionTasks() || []).find(
-                (next) => next.action === t.action && next.chainId === t.chainId
-              ) || t
+    const entries = Array.from(AccountsController.accounts.values()).flatMap(
+      (accounts) =>
+        accounts.map((account) => {
+          const { chain, address } = account;
+          const active = account.getSubscriptionTasks() ?? [];
+          const defaults = this.buildSubscriptions(account, 'disable');
+          const merged = defaults.map(
+            (task) => active.find((a) => cmp(task, a)) ?? task
           );
-        result.set(`${a.chain}:${a.address}`, tasks);
-      }
-    }
-    return result;
+          return [`${chain}:${address}`, merged] as const;
+        })
+    );
+    return new Map(entries);
   }
 
   /**

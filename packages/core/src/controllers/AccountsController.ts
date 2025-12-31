@@ -18,17 +18,16 @@ import type {
   DedotClientSet,
   DedotStakingClient,
 } from '@polkadot-live/types/apis';
-import type { ImportedAccounts } from '../model';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 
 /**
  * A static class to provide an interface for managing imported accounts.
  * @class
- * @property {ImportedAccounts} accounts - list of imported accounts, separated by chain.
+ * @property {Map<ChainID, Account[]>} accounts - list of imported accounts, separated by chain.
  */
 export class AccountsController {
   static backend: 'browser' | 'electron';
-  static accounts: ImportedAccounts = new Map();
+  static accounts = new Map<ChainID, Account[]>();
 
   // React state.
   static cachedSetAddresses: React.Dispatch<
