@@ -265,7 +265,9 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
       setRenamedEvents,
       incCount,
       addEvent,
-      removeOutdatedEvents
+      removeOutdatedEvents,
+      setActiveCategory,
+      setSyncCounts
     );
     return () => {
       removeListener && removeListener();

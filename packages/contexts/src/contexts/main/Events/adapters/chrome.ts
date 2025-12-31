@@ -37,7 +37,9 @@ export const chromeAdapter: EventsAdapter = {
     setRenamedEvents,
     incCount,
     addEvent,
-    removeOutdatedEvents
+    removeOutdatedEvents,
+    setActiveCategory,
+    setSyncCounts
   ) => {
     const callback = (message: AnyData) => {
       if (message.type == 'events') {
@@ -55,6 +57,8 @@ export const chromeAdapter: EventsAdapter = {
           case 'setEventsState': {
             const { result }: { result: EventCallback[] } = message.payload;
             setEventsState(result);
+            setActiveCategory(null);
+            setSyncCounts(true);
             break;
           }
           case 'updateAccountNames': {
