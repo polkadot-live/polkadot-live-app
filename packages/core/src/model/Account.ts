@@ -13,11 +13,6 @@ import type {
 } from '@polkadot-live/types/accounts';
 
 /**
- * Account collection types.
- */
-export type ImportedAccounts = Map<ChainID, Account[]>;
-
-/**
  * Creates an account.
  * @class
  * @property {AccountType} type - the type of account.

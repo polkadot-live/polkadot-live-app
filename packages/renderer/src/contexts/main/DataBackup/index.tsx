@@ -26,7 +26,6 @@ import type {
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { EventCallback } from '@polkadot-live/types/reporter';
 import type { ExportResult, ImportResult } from '@polkadot-live/types/backup';
 import type {
   IntervalSubscription,
@@ -49,7 +48,7 @@ export const DataBackupProvider = ({
 }) => {
   const { getOnlineMode } = useConnections();
   const { syncRefs } = useChainEvents();
-  const { setEventsState } = useEvents();
+  const { setActiveCategory, setSyncCounts } = useEvents();
   const { addIntervalSubscription, updateIntervalSubscription } =
     useIntervalSubscriptions();
 
@@ -254,13 +253,14 @@ export const DataBackupProvider = ({
       return;
     }
     // Send serialized events to main for processing.
-    const updated = (await window.myAPI.sendEventTaskAsync({
+    await window.myAPI.sendEventTaskAsync({
       action: 'events:import',
       data: { events: s_events },
-    })) as string;
+    });
 
-    const parsed: EventCallback[] = JSON.parse(updated);
-    setEventsState(parsed);
+    // Update events state and sync counts.
+    setSyncCounts(true);
+    setActiveCategory(null);
   };
 
   /**

@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MainHeading } from '@polkadot-live/ui/components';
 import {
   CarouselWrapper,
@@ -10,9 +10,17 @@ import {
 } from '@polkadot-live/styles/wrappers';
 import { Categories } from './Categories';
 import { EventsList } from './EventsList';
+import { useEvents } from '@polkadot-live/contexts';
 
 export const Events = () => {
   const [section, setSection] = useState<number>(0);
+  const { activeCategory } = useEvents();
+
+  useEffect(() => {
+    if (activeCategory === null) {
+      setSection(0);
+    }
+  }, [activeCategory]);
 
   return (
     <FlexColumn

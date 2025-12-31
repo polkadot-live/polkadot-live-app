@@ -17,6 +17,10 @@ export interface EventsAdapter {
     setRenamedEvents: (updated: EventCallback[]) => void,
     incCount: (event: EventCallback) => void,
     addEvent: (event: EventCallback) => void,
-    removeOutdatedEvents: (event: EventCallback) => void
+    removeOutdatedEvents: (event: EventCallback) => void,
+    setActiveCategory: React.Dispatch<
+      React.SetStateAction<EventCategory | null>
+    >,
+    setSyncCounts: React.Dispatch<React.SetStateAction<boolean>>
   ) => (() => void) | null;
 }

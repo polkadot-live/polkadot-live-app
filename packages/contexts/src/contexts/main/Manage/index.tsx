@@ -34,30 +34,20 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
 
   // Return subscription tasks mapped by category.
   const getCategorised = (): Map<TaskCategory, SubscriptionTask[]> => {
-    const ordered: TaskCategory[] = ['Balances', 'Chain'];
-    if (activeAccount) {
-      activeAccount.nominatingData && ordered.push('Nominating');
-      activeAccount.nominationPoolData && ordered.push('Nomination Pools');
-    }
-    const { tasks } = renderedSubscriptionsState;
-    const map = new Map<TaskCategory, SubscriptionTask[]>();
-    for (const category of ordered) {
-      map.set(category, []);
-    }
-    for (const task of tasks) {
-      const { category } = task;
-      if (!ordered.includes(task.category)) {
-        continue;
-      }
-      const cur = map.get(category) ?? [];
-      map.set(category, [...cur, task]);
-    }
-    for (const [key, val] of map.entries()) {
-      if (!val.length) {
-        map.delete(key);
-      }
-    }
-    return map;
+    type T = TaskCategory;
+    const ordered: T[] = [
+      'Balances',
+      'Chain',
+      ...(activeAccount?.nominatingData ? ['Nominating' as T] : []),
+      ...(activeAccount?.nominationPoolData ? ['Nomination Pools' as T] : []),
+    ];
+
+    const map = new Map(ordered.map((c) => [c, [] as SubscriptionTask[]]));
+    renderedSubscriptionsState.tasks.forEach((task) => {
+      map.get(task.category)?.push(task);
+    });
+
+    return new Map([...map].filter(([, tasks]) => tasks.length));
   };
 
   // Listen for state messages.

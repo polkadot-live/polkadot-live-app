@@ -3,6 +3,7 @@
 
 import { createContext, useEffect, useState } from 'react';
 import { createSafeContextHook } from '@polkadot-live/contexts';
+import { getAssetHubChains } from '@polkadot-live/consts/chains';
 import { getChainEventAdapter } from './adapters';
 import {
   ChainPallets,
@@ -408,59 +409,58 @@ export const ChainEventsProvider = ({
     await adapter.getSubCount();
 
   const syncStored = async () => {
-    if (!activeChain) {
-      return;
-    }
-    const active = (await adapter.getStored()).get(activeChain) ?? [];
-    setSubscriptions((prev) => {
-      let subs: ChainEventSubscription[] = [];
-      const pallets = ChainPallets[activeChain];
-      for (const pallet of pallets) {
-        subs = subs.concat(
-          getEventSubscriptions(activeChain, pallet).map(
-            (a) => active.find((b) => cmp(a, b)) ?? a
-          )
-        );
-      }
-      return new Map(prev).set(activeChain, subs);
-    });
+    const stored = await adapter.getStored();
+    setSubscriptions(
+      () =>
+        new Map(
+          getAssetHubChains().map((chainId) => {
+            const active = stored.get(chainId) ?? [];
+            const merged = ChainPallets[chainId].flatMap((pallet) =>
+              getEventSubscriptions(chainId, pallet).map(
+                (def) => active.find((a) => cmp(def, a)) ?? def
+              )
+            );
+            return [chainId, merged];
+          })
+        )
+    );
   };
-
   const syncAccounts = async (accounts: FlattenedAccountData[]) => {
-    const map = new Map<string, ChainEventSubscription[]>();
-    for (const account of accounts) {
-      const { address, chain: chainId } = account;
-      const key = `${chainId}::${address}`;
-      const active = await adapter.getStoredForAccount(account);
-      const merged = getEventSubscriptionsForAccount(chainId, account).map(
-        (a) => active.find((b) => cmp(a, b)) ?? a
-      );
-      map.set(key, merged);
-    }
-    setAccountSubscriptions(map);
+    const entries = await Promise.all(
+      accounts.map(async (account) => {
+        const { address, chain: chainId } = account;
+        const key = `${chainId}::${address}`;
+
+        const active = await adapter.getStoredForAccount(account);
+        const merged = getEventSubscriptionsForAccount(chainId, account).map(
+          (def) => active.find((a) => cmp(def, a)) ?? def
+        );
+        return [key, merged] as const;
+      })
+    );
+    setAccountSubscriptions(new Map(entries));
   };
 
   const syncRefs = async () => {
     const rec = await adapter.getAllRefSubs();
-    const chainIds = Object.keys(rec);
-
-    setRefSubscriptions(() => {
-      type T = Map<ChainID, Map<number, ChainEventSubscription[]>>;
-      const next: T = new Map();
-      for (const chainId of chainIds) {
-        const mapRefs = new Map<number, ChainEventSubscription[]>();
-        for (const [refId, active] of Object.entries(rec[chainId])) {
-          const rid = parseInt(refId);
-          const cid = chainId as ChainID;
-          const merged = getEventSubscriptionsForRef(cid, rid).map(
-            (a) => active.find((b) => cmp(a, b)) ?? a
-          );
-          mapRefs.set(rid, merged);
-        }
-        next.set(chainId as ChainID, mapRefs);
-      }
-      return next;
-    });
+    setRefSubscriptions(
+      () =>
+        new Map(
+          Object.entries(rec).map(([chainId, refs]) => [
+            chainId as ChainID,
+            new Map(
+              Object.entries(refs).map(([refId, active]) => {
+                const rid = Number(refId);
+                const merged = getEventSubscriptionsForRef(
+                  chainId as ChainID,
+                  rid
+                ).map((def) => active.find((a) => cmp(def, a)) ?? def);
+                return [rid, merged] as const;
+              })
+            ),
+          ])
+        )
+    );
   };
 
   /**
@@ -523,20 +523,15 @@ export const ChainEventsProvider = ({
         parseInt(id.split('::')[1]);
 
       setRefSubscriptions((prev) => {
-        const next = new Map(prev);
-        const chainMap = new Map(next.get(activeRefChain) ?? new Map());
-        for (const id of activeIds) {
+        const chainMap = new Map(prev.get(activeRefChain) ?? []);
+        activeIds.forEach((id) => {
           const active = allActive.filter((s) => parseRefId(s) === id);
           const merged = getEventSubscriptionsForRef(activeRefChain, id).map(
-            (def) => {
-              const found = active.find((a) => a.id === def.id);
-              return found ? { ...found } : def;
-            }
+            (def) => active.find((a) => a.id === def.id) ?? def
           );
           chainMap.set(id, merged);
-        }
-        next.set(activeRefChain, chainMap);
-        return next;
+        });
+        return new Map(prev).set(activeRefChain, chainMap);
       });
     };
     fetch();
