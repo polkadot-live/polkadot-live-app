@@ -32,10 +32,12 @@ export interface EventsContextInterface {
   setDataDialogEvent: React.Dispatch<
     React.SetStateAction<EventCallback | null>
   >;
+  setActiveCategory: React.Dispatch<React.SetStateAction<EventCategory | null>>;
   setDataDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setEncodedInfo: React.Dispatch<React.SetStateAction<EncodedValue[] | null>>;
   setEventsState: (events: EventCallback[]) => void;
   setRenamedEvents: (e: EventCallback[]) => void;
   setSortDesc: React.Dispatch<React.SetStateAction<boolean>>;
+  setSyncCounts: React.Dispatch<React.SetStateAction<boolean>>;
   startLoading: () => void;
 }

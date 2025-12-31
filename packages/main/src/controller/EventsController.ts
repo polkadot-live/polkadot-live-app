@@ -260,34 +260,33 @@ export class EventsController {
     const parsed: EventCallback[] = JSON.parse(serialized);
     this.syncAccountNames();
 
-    // Separate chainEvent and non-chainEvent items.
-    const chainEvents = parsed.filter(
-      ({ who: { origin } }) => origin === 'chainEvent'
-    );
-    const nonChainEvents = parsed.filter(
-      ({ who: { origin } }) => origin !== 'chainEvent'
-    );
-    // Add non-chain events if it's not a duplicate.
     let stored = this.getEventsFromStore();
     let persist = false;
 
-    for (const event of nonChainEvents) {
-      const { events, updated } = pushUniqueEvent(event, stored);
-      if (updated) {
-        stored = events;
+    const isChainEvent = (e: EventCallback) => e.who.origin === 'chainEvent';
+
+    // Process non-chain events.
+    for (const event of parsed.filter((e) => !isChainEvent(e))) {
+      const res = pushUniqueEvent(event, stored);
+      if (res.updated) {
+        stored = res.events;
         persist = true;
       }
     }
-    // Add unique chainEvents.
-    for (const event of chainEvents) {
-      if (!stored.find((e) => e.uid === event.uid)) {
+    // Process chain events.
+    const storedUids = new Set(stored.map((e) => e.uid));
+    for (const event of parsed.filter(isChainEvent)) {
+      if (!storedUids.has(event.uid)) {
         stored = [...stored, event];
+        storedUids.add(event.uid);
+        persist = true;
       }
     }
     if (persist) {
       this.persistEventsToStore(stored);
       debug('🔷 Event persisted (%o total in store)', stored.length);
     }
+
     return JSON.stringify(stored);
   }
 

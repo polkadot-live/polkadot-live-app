@@ -298,7 +298,9 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
         setEncodedInfo,
         setEventsState,
         setRenamedEvents,
+        setActiveCategory,
         setSortDesc,
+        setSyncCounts,
         startLoading,
       }}
     >
