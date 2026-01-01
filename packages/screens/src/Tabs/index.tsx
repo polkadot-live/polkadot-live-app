@@ -2,7 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { version } from '../../package.json';
-import { useDialogControl, useTabs } from '@polkadot-live/contexts';
+import {
+  useConnections,
+  useDialogControl,
+  useTabs,
+} from '@polkadot-live/contexts';
 import { closestCenter, DndContext } from '@dnd-kit/core';
 import {
   horizontalListSortingStrategy,
@@ -16,16 +20,23 @@ import { DropdownOpenTabs } from './Dropdowns';
 import { Header } from '@polkadot-live/ui/components';
 import { Tab } from './Tab';
 import { TabsWrapper } from './Wrappers';
+import { GITHUB_LATEST_RELEASE_URL } from '@polkadot-live/consts';
 import type { TabsProps } from './types';
 
 export const Tabs = ({ leftButtons, onCloseWindow }: TabsProps) => {
+  const { getTheme, openInBrowser } = useConnections();
   const { items, sensors, tabsData } = useTabs();
   const { dialogIsOpen } = useDialogControl();
   const { handleDragStart, handleDragEnd } = useTabs();
 
   return (
     <>
-      <Header version={version} onCloseWindow={onCloseWindow} />
+      <Header
+        theme={getTheme()}
+        onCloseWindow={onCloseWindow}
+        onClickTag={() => openInBrowser(GITHUB_LATEST_RELEASE_URL)}
+        version={version}
+      />
       <TabsWrapper>
         {leftButtons && leftButtons}
         <div className="inner">

@@ -37,30 +37,49 @@ import {
   ScrollWrapper,
 } from '@polkadot-live/styles/wrappers';
 import PolkadotIcon from '@polkadot-live/ui/svg/polkadotIcon.svg?react';
+import { GITHUB_LATEST_RELEASE_URL } from '@polkadot-live/consts';
 
 export const Home = () => {
-  // Set up port communication for the `main` renderer.
   useMainMessagePorts();
-
-  // Set up app initialization and online/offline switching handlers.
   useInitIpcHandlers();
 
   const { getAddresses } = useAddresses();
-  const { openHelp } = useHelp();
-
-  const { cacheGet: getSharedState, getTheme } = useConnections();
-  const darkMode = getSharedState('mode:dark');
-
   const { cacheGet, toggleSetting } = useAppSettings();
-  const dockToggled = cacheGet('setting:docked-window');
-  const sideNavCollapsed = cacheGet('setting:collapse-side-nav');
-  const silenceOsNotifications = cacheGet('setting:silence-os-notifications');
+  const { openHelp } = useHelp();
+  const {
+    cacheGet: getSharedState,
+    getTheme,
+    openInBrowser,
+  } = useConnections();
 
   const { appLoading } = Ctx.useBootstrapping();
   const cogMenu = Ctx.useCogMenu();
   const sideNav = useSideNav();
 
+  const darkMode = getSharedState('mode:dark');
+  const dockToggled = cacheGet('setting:docked-window');
+  const sideNavCollapsed = cacheGet('setting:collapse-side-nav');
+  const silenceOsNotifications = cacheGet('setting:silence-os-notifications');
+  const theme = getTheme();
+
   const [platform, setPlatform] = useState<string | null>(null);
+
+  const onClickTag = () => {
+    openInBrowser(GITHUB_LATEST_RELEASE_URL);
+  };
+
+  const onDockToggle = () => {
+    if (platform === 'linux') {
+      return;
+    }
+    toggleSetting('setting:docked-window');
+    const event = `setting-toggle-${!dockToggled ? 'on' : 'off'}`;
+    window.myAPI.umamiEvent(event, { setting: 'dock-window' });
+  };
+
+  const onMinimizeWindow = () => {
+    window.myAPI.minimizeWindow(window.myAPI.getWindowId());
+  };
 
   useEffect(() => {
     const initTasks = async () => {
@@ -76,34 +95,15 @@ export const Home = () => {
       const showDisclaimer = await window.myAPI.getShowDisclaimer();
       showDisclaimer && openHelp('help:docs:disclaimer');
     };
-
     if (!appLoading) {
       disclaimerTask();
     }
   }, [appLoading]);
 
-  /// Handle header dock toggle.
-  // TODO: Move to file.
-  const onDockToggle = () => {
-    if (platform === 'linux') {
-      return;
-    }
-    toggleSetting('setting:docked-window');
-
-    // Analytics.
-    const event = `setting-toggle-${!dockToggled ? 'on' : 'off'}`;
-    window.myAPI.umamiEvent(event, { setting: 'dock-window' });
-  };
-
-  /// Handle minimize window button click.
-  // TODO: Move to file.
-  const onMinimizeWindow = () => {
-    window.myAPI.minimizeWindow(window.myAPI.getWindowId());
-  };
-
   return (
     <>
       <UI.Header
+        theme={theme}
         ToggleNode={
           <Classic
             toggled={darkMode}
@@ -120,6 +120,7 @@ export const Home = () => {
         showButtons={true}
         showDock={String(platform) !== 'linux'}
         showMinimize={String(platform) === 'linux'}
+        onClickTag={onClickTag}
         onDockToggle={onDockToggle}
         onMinimizeWindow={onMinimizeWindow}
         version={version}
@@ -138,7 +139,7 @@ export const Home = () => {
       <FixedFlexWrapper>
         {/* Side Navigation */}
         <UI.SideNav
-          theme={getTheme()}
+          theme={theme}
           handleSideNavCollapse={() =>
             toggleSetting('setting:collapse-side-nav')
           }

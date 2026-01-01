@@ -24,6 +24,7 @@ export const HeaderWrapper = styled.div`
     position: relative;
 
     .release {
+      -webkit-app-region: no-drag;
       color: var(--release-badge-color);
       background-color: var(--release-badge-background);
       position: absolute;
@@ -36,8 +37,14 @@ export const HeaderWrapper = styled.div`
       letter-spacing: 0.05rem;
       border-radius: 1.5rem;
       user-select: none;
-    }
 
+      .LatestRelease {
+        cursor: pointer;
+        &:hover {
+          opacity: 0.75;
+        }
+      }
+    }
     .grab {
       height: 2rem;
       display: flex;

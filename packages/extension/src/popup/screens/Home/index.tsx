@@ -4,6 +4,7 @@
 import * as UI from '@polkadot-live/ui/components';
 import * as Ctx from '../../contexts';
 import PolkadotIcon from '@polkadot-live/ui/svg/polkadotIcon.svg?react';
+import { GITHUB_LATEST_RELEASE_URL } from '@polkadot-live/consts';
 import { useEffect } from 'react';
 import { version } from '../../../../package.json';
 import { Classic } from '@theme-toggles/react';
@@ -39,7 +40,13 @@ export const Home = () => {
   const { openHelp } = useHelp();
   const { getAddresses } = useAddresses();
   const { cacheGet, toggleSetting } = useAppSettings();
-  const { cacheGet: getShared, relayState, getTheme } = useConnections();
+  const {
+    cacheGet: getShared,
+    relayState,
+    getTheme,
+    openInBrowser,
+  } = useConnections();
+
   const { appLoading } = Ctx.useBootstrapping();
   const cogMenu = Ctx.useCogMenu();
   const sideNav = useSideNav();
@@ -47,6 +54,7 @@ export const Home = () => {
   const darkMode = getShared('mode:dark') ? true : false;
   const sideNavCollapsed = cacheGet('setting:collapse-side-nav');
   const silenceOsNotifications = cacheGet('setting:silence-os-notifications');
+  const theme = getTheme();
 
   const toggleTheme = () => {
     relayState('mode:dark', !darkMode);
@@ -62,6 +70,7 @@ export const Home = () => {
   return (
     <>
       <UI.Header
+        theme={theme}
         ToggleNode={
           <Classic
             toggled={darkMode}
@@ -70,6 +79,7 @@ export const Home = () => {
             duration={300}
           />
         }
+        onClickTag={() => openInBrowser(GITHUB_LATEST_RELEASE_URL)}
         appLoading={true}
         showButtons={true}
         version={version}
@@ -86,7 +96,7 @@ export const Home = () => {
       </UI.Header>
       <FixedFlexWrapper>
         <UI.SideNav
-          theme={getTheme()}
+          theme={theme}
           handleSideNavCollapse={() =>
             toggleSetting('setting:collapse-side-nav')
           }
