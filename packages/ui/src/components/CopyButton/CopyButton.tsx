@@ -18,12 +18,14 @@ export const CopyButton = ({
   defaultText = 'Copy Address',
   clickedText = 'Copied!',
   iconFontSize,
+  side,
 }: CopyButtonProps) => {
   const [open, setOpen] = useState<boolean>(false);
   const [text, setText] = useState<string>(defaultText);
 
   return (
     <TooltipRx
+      side={side ?? 'top'}
       theme={theme}
       open={open}
       text={text}
