@@ -5,6 +5,19 @@ import { ConfigRenderer } from '@polkadot-live/core';
 import type { EventsAdapter } from './types';
 
 export const electronAdapter: EventsAdapter = {
+  clearAll: async (category) => {
+    try {
+      const res = (await window.myAPI.sendEventTaskAsync({
+        action: 'events:clearAll',
+        data: { category },
+      })) as boolean;
+      return res;
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
+  },
+
   removeEvent: async (event) => {
     await window.myAPI.sendEventTaskAsync({
       action: 'events:remove',

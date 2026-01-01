@@ -4,6 +4,7 @@
 export { ChainEvents } from './ChainEvents';
 export { DialogConnectChains, DialogEventData } from './Dialogs';
 export { Events } from './Events';
+export { DialogClearEvents } from './Events/Dialogs';
 export { Footer } from './Footer';
 export { Manage } from './Manage';
 export { OpenGov as OpenGovHome } from './OpenGov';

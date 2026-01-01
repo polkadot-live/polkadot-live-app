@@ -12,6 +12,7 @@ import type {
 
 export interface EventsContextInterface {
   activeCategory: EventCategory | null;
+  clearDialogOpen: boolean;
   dataDialogEvent: EventCallback | null;
   dataDialogOpen: boolean;
   encodedInfo: EncodedValue[] | null;
@@ -21,6 +22,7 @@ export interface EventsContextInterface {
   sortDesc: boolean;
   addEvent: (e: EventCallback) => void;
   changeActiveCategory: (category: EventCategory | null) => void;
+  clearAll: (category: EventCategory) => Promise<void>;
   dismissEvent: (e: DismissEvent) => void;
   finishLoading: () => void;
   getEventCategoryIcon: (category: EventCategory) => IconDefinition;
@@ -29,6 +31,7 @@ export interface EventsContextInterface {
   markStaleEvent: (u: string, c: ChainID) => void;
   removeEvent: (event: EventCallback) => Promise<void>;
   removeOutdatedEvents: (e: EventCallback) => void;
+  setClearDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setDataDialogEvent: React.Dispatch<
     React.SetStateAction<EventCallback | null>
   >;

@@ -49,6 +49,9 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     null
   );
 
+  // Clear events dialog.
+  const [clearDialogOpen, setClearDialogOpen] = useState(false);
+
   // TODO: Loading spinner.
   // Load more.
   const PAGE_SIZE = 5;
@@ -170,6 +173,15 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const clearAll = async (category: EventCategory) => {
+    const success = await adapter.clearAll(category);
+    if (success) {
+      setActiveCategory(null);
+      setEvents([]);
+      setSyncCounts(true);
+    }
+  };
+
   const loadMore = async () => {
     if (loading || !hasMore || !cursor || !activeCategory) {
       return;
@@ -278,6 +290,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
     <EventsContext
       value={{
         activeCategory,
+        clearDialogOpen,
         dataDialogEvent,
         dataDialogOpen,
         encodedInfo,
@@ -286,6 +299,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
         loadMoreRef,
         sortDesc,
         addEvent,
+        clearAll,
         changeActiveCategory,
         dismissEvent,
         finishLoading,
@@ -295,6 +309,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
         markStaleEvent,
         removeEvent,
         removeOutdatedEvents,
+        setClearDialogOpen,
         setDataDialogEvent,
         setDataDialogOpen,
         setEncodedInfo,
