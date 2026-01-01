@@ -6,7 +6,22 @@ import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   EventAccountData,
   EventCallback,
+  EventCategory,
 } from '@polkadot-live/types/reporter';
+
+export const clearAll = async (category: EventCategory) => {
+  try {
+    const events = await DbController.getAllObjects('events');
+    for (const [uid, e] of (events as Map<string, EventCallback>).entries()) {
+      if (e.category === category) {
+        await DbController.delete('events', uid);
+      }
+    }
+    return true;
+  } catch {
+    return false;
+  }
+};
 
 // TODO: Take into account keep outdated events setting.
 export const persistEvent = async (event: EventCallback) => {

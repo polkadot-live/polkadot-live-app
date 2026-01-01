@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import * as FA from '@fortawesome/free-solid-svg-icons';
 import { useConnections, useEvents } from '@polkadot-live/contexts';
-import { faCaretLeft, faSort } from '@fortawesome/free-solid-svg-icons';
 import { getEventChainId } from '@polkadot-live/core';
 import { EventGroup, Wrapper } from './Wrappers';
 import { Item } from './Item';
@@ -26,6 +26,7 @@ export const EventsList = ({ setSection }: EventsListProps) => {
     loadMoreRef,
     sortDesc,
     getSortedEvents,
+    setClearDialogOpen,
     setSortDesc,
   } = useEvents();
 
@@ -44,7 +45,7 @@ export const EventsList = ({ setSection }: EventsListProps) => {
         <ButtonPrimaryInvert
           className="back-btn"
           text="Back"
-          iconLeft={faCaretLeft}
+          iconLeft={FA.faCaretLeft}
           onClick={() => {
             setSortDesc(true);
             setSection(0);
@@ -75,8 +76,21 @@ export const EventsList = ({ setSection }: EventsListProps) => {
               fixedWidth={false}
               isActive={sortDesc}
               isDisabled={false}
-              faIcon={faSort}
+              faIcon={FA.faSort}
               onClick={() => setSortDesc(!sortDesc)}
+            />
+          </span>
+        </TooltipRx>
+        <TooltipRx theme={theme} text={'Clear All'}>
+          <span>
+            <SortControlButton
+              fixedWidth={false}
+              isActive={true}
+              isDisabled={
+                activeCategory ? eventCounts[activeCategory] === 0 : false
+              }
+              faIcon={FA.faEraser}
+              onClick={() => setClearDialogOpen(true)}
             />
           </span>
         </TooltipRx>

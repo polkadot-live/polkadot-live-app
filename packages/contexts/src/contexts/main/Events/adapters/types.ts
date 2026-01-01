@@ -8,6 +8,7 @@ import type {
 } from '@polkadot-live/types';
 
 export interface EventsAdapter {
+  clearAll: (category: EventCategory) => Promise<boolean>;
   fetchCounts: () => Promise<Partial<Record<EventCategory, number>>>;
   fetchEvents: (payload: EventFetchPayload) => Promise<EventCallback[]>;
   removeEvent: (event: EventCallback) => Promise<void>;

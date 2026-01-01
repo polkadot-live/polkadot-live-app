@@ -6,6 +6,16 @@ import type { EventsAdapter } from './types';
 import type { EventCallback } from '@polkadot-live/types';
 
 export const chromeAdapter: EventsAdapter = {
+  clearAll: async (category) => {
+    try {
+      const msg = { type: 'events', task: 'clearAll', payload: { category } };
+      return await chrome.runtime.sendMessage(msg);
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
+  },
+
   fetchCounts: async () => {
     try {
       const msg = { type: 'events', task: 'getCounts' };

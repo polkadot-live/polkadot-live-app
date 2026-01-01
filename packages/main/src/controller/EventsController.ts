@@ -153,6 +153,9 @@ export class EventsController {
         // Return updated events in serialized form.
         return JSON.stringify(updated);
       }
+      case 'events:clearAll': {
+        return this.clearAll(task.data.category);
+      }
       case 'events:remove': {
         return this.removeEvent(task.data.event);
       }
@@ -170,6 +173,17 @@ export class EventsController {
         return false;
       }
     }
+  }
+
+  /**
+   * @name clearAll
+   * @summary Remove all events in a given cateory.
+   */
+  private static clearAll(category: EventCategory): boolean {
+    this.persistEventsToStore(
+      this.getEventsFromStore().filter((e) => e.category !== category)
+    );
+    return true;
   }
 
   /**
