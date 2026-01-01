@@ -7,11 +7,11 @@ import {
   faCircleChevronDown,
   faTags,
 } from '@fortawesome/free-solid-svg-icons';
+import { FlexRow } from '@polkadot-live/styles/wrappers';
 import { HeaderWrapper } from './Wrapper';
 import { Padlock } from '../Padlock';
-import type { HeaderProps } from './types';
-import { FlexRow } from '@polkadot-live/styles/wrappers';
 import { TooltipRx } from '../TooltipRx';
+import type { HeaderProps } from './types';
 
 export const Header = ({
   theme,
@@ -41,7 +41,7 @@ export const Header = ({
               theme={theme}
               side="bottom"
             >
-              <FontAwesomeIcon icon={faTags} transform={'grow-0'} />
+              <FontAwesomeIcon icon={faTags} />
             </TooltipRx>
           </span>
         )}

@@ -42,9 +42,9 @@ export const Home = () => {
   const { cacheGet, toggleSetting } = useAppSettings();
   const {
     cacheGet: getShared,
-    relayState,
     getTheme,
     openInBrowser,
+    relayState,
   } = useConnections();
 
   const { appLoading } = Ctx.useBootstrapping();
