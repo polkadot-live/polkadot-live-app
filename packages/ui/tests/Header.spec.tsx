@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Header } from '../src/components';
 import userEvent from '@testing-library/user-event';
+import { darkTheme } from '@polkadot-live/styles/theme/variables';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { UserEvent } from '@testing-library/user-event';
 
@@ -18,6 +19,7 @@ describe('Header', () => {
   ) =>
     render(
       <Header
+        theme={darkTheme}
         appLoading={false}
         showButtons={showButtons}
         dockToggled={false}

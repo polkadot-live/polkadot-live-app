@@ -5,12 +5,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faTimes,
   faCircleChevronDown,
+  faTags,
 } from '@fortawesome/free-solid-svg-icons';
+import { FlexRow } from '@polkadot-live/styles/wrappers';
 import { HeaderWrapper } from './Wrapper';
 import { Padlock } from '../Padlock';
+import { TooltipRx } from '../TooltipRx';
 import type { HeaderProps } from './types';
 
 export const Header = ({
+  theme,
   children,
   appLoading,
   showButtons,
@@ -20,15 +24,28 @@ export const Header = ({
   version,
   onCloseWindow,
   onDockToggle,
+  onClickTag,
   onMinimizeWindow,
   ToggleNode,
 }: HeaderProps) => (
   <HeaderWrapper>
     <div className="content-wrapper">
       <div className="grab" />
-      <span data-testid="version" className="release">
-        {version || 'unknown'}
-      </span>
+      <FlexRow data-testid="version" $gap="0.75rem" className="release">
+        <span>{version || 'unknown'}</span>
+        {onClickTag && (
+          <span className="LatestRelease" onClick={() => onClickTag()}>
+            <TooltipRx
+              style={{ zIndex: 25 }}
+              text={'Check Latest Release'}
+              theme={theme}
+              side="bottom"
+            >
+              <FontAwesomeIcon icon={faTags} />
+            </TooltipRx>
+          </span>
+        )}
+      </FlexRow>
       <div className="right">
         {showButtons ? (
           <div className="controls-wrapper">
