@@ -14,6 +14,7 @@ import { ellipsisFn } from '@w3ux/utils';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { ClassicSubscriptions } from './ClassicSubscriptions';
+import { FlexRow } from '@polkadot-live/styles/wrappers';
 import { SmartSubscriptions } from './SmartSubscriptions';
 import type { SubscriptionsProps } from './types';
 
@@ -30,7 +31,7 @@ export const Subscriptions = ({
   );
 
   const { hasConnectionIssue } = useApiHealth();
-  const { getTheme, getOnlineMode } = useConnections();
+  const { copyToClipboard, getTheme, getOnlineMode } = useConnections();
   const { activeAccount } = useChainEvents();
   const { renderedSubscriptions } = useManage();
   const theme = getTheme();
@@ -76,7 +77,21 @@ export const Subscriptions = ({
               side="bottom"
             >
               <span>
-                <UI.SortControlLabel label={breadcrumb} />
+                <UI.SortControlLabel>
+                  <FlexRow>
+                    <span>{breadcrumb}</span>
+                    {typeClicked === 'account' && (
+                      <UI.CopyButton
+                        side="bottom"
+                        iconFontSize={'0.8rem'}
+                        theme={theme}
+                        onCopyClick={async () =>
+                          copyToClipboard(activeAccount.address)
+                        }
+                      />
+                    )}
+                  </FlexRow>
+                </UI.SortControlLabel>
               </span>
             </UI.TooltipRx>
           ) : (

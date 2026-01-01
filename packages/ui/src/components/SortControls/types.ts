@@ -16,9 +16,10 @@ export interface SortControlsButtonProps {
 }
 
 export interface SortControlLabelProps {
-  label: string;
+  label?: string;
   faIcon?: IconDefinition;
   noBorder?: boolean;
   className?: string;
   style?: React.CSSProperties;
+  children?: React.ReactNode;
 }

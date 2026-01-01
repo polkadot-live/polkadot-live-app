@@ -9,6 +9,7 @@ export const SortControlLabel: React.FC<SortControlLabelProps> = ({
   label,
   noBorder = false,
   style,
+  children,
 }: SortControlLabelProps) => (
   <div
     className={`breadcrumb-wrapper${noBorder ? ' no-border' : ''}`}
@@ -19,6 +20,6 @@ export const SortControlLabel: React.FC<SortControlLabelProps> = ({
         <FontAwesomeIcon icon={faIcon} />
       </div>
     )}
-    <span>{label}</span>
+    {children ?? <span>{label ?? ''}</span>}
   </div>
 );

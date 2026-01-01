@@ -9,4 +9,5 @@ export interface CopyButtonProps {
   defaultText?: string;
   clickedText?: string;
   iconFontSize?: string;
+  side?: 'top' | 'left' | 'right' | 'bottom';
 }
