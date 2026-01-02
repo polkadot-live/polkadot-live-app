@@ -4,6 +4,7 @@
 import manifest from './manifest.config.js';
 import react from '@vitejs/plugin-react';
 import svgr from 'vite-plugin-svgr';
+import tsconfigPaths from 'vite-tsconfig-paths';
 import zip from 'vite-plugin-zip-pack';
 import { crx } from '@crxjs/vite-plugin';
 import { defineConfig } from 'vite';
@@ -15,16 +16,30 @@ const PACKAGE_ROOT = __dirname;
 const PROJECT_ROOT = join(PACKAGE_ROOT, '../..');
 const PR = PROJECT_ROOT;
 
+const packageTsconfigPaths: Record<string, string> = {
+  '@polkadot-live/contexts': resolve(PR, 'packages/contexts/tsconfig.json'),
+  '@polkadot-live/consts': resolve(PR, 'packages/consts/tsconfig.json'),
+  '@polkadot-live/core': resolve(PR, 'packages/core/tsconfig.json'),
+  '@polkadot-live/encoder': resolve(PR, 'packages/encoder/tsconfig.json'),
+  '@polkadot-live/screens': resolve(PR, 'packages/screens/tsconfig.json'),
+  '@polkadot-live/styles': resolve(PR, 'packages/styles/tsconfig.json'),
+  '@polkadot-live/types': resolve(PR, 'packages/types/tsconfig.json'),
+  '@polkadot-live/ui': resolve(PR, 'packages/ui/tsconfig.json'),
+};
+
 export default defineConfig({
-  resolve: {
-    alias: {
-      '@ext': `${resolve(__dirname, 'src')}`,
-      '@polkadot-live/consts': resolve(PR, 'packages', 'consts', 'src'),
-      '@polkadot-live/styles': resolve(PR, 'packages', 'styles', 'src'),
-      '@polkadot-live/types': resolve(PR, 'packages', 'types', 'src'),
-    },
+  // Treat packages as source and not dependencies. Needed for CRX + monorepo.
+  optimizeDeps: {
+    exclude: [...Object.keys(packageTsconfigPaths)],
   },
   plugins: [
+    tsconfigPaths({
+      // Ensure Vite resolves paths in packages to understand project structure.
+      projects: [
+        resolve(__dirname, 'tsconfig.json'),
+        ...Object.values(packageTsconfigPaths),
+      ],
+    }),
     nodePolyfills(),
     react(),
     svgr(),
@@ -50,6 +65,9 @@ export default defineConfig({
     outDir: 'dist',
   },
   server: {
+    fs: {
+      allow: [PR],
+    },
     hmr: {
       protocol: 'ws', // Use WebSocket for HMR
       host: 'localhost', // Host for HMR WebSocket

@@ -25,7 +25,8 @@
     "@types/node": "^24.0.15",
     "@vitejs/plugin-react": "^4.7.0",
     "vite-plugin-node-polyfills": "^0.24.0",
-    "vite-plugin-zip-pack": "^1.2.4"
+    "vite-plugin-zip-pack": "^1.2.4",
+    "vite-tsconfig-paths": "^6.0.3"
   },
   "packageManager": "yarn@4.0.2"
 }

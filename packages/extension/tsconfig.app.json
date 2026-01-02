@@ -23,6 +23,18 @@
       "@polkadot-live/consts/*": ["../consts/src/*"],
       "@polkadot-live/styles/*": ["../styles/src/*"],
       "@polkadot-live/types/*": ["../types/src/*"],
+
+      "@polkadot-live/screens": ["../screens/src/index.ts"],
+      "@polkadot-live/screens/*": ["../screens/src/*"],
+
+      "@polkadot-live/ui/components": ["../ui/src/components/index.ts"],
+      "@polkadot-live/ui/components/*": ["../ui/src/components/*"],
+
+      "@polkadot-live/ui/hooks": ["../ui/src/hooks/index.ts"],
+      "@polkadot-live/ui/hooks/*": ["../ui/src/hooks/*"],
+
+      "@polkadot-live/ui/kits/buttons": ["../ui/src/kits/buttons/index.ts"],
+      "@polkadot-live/ui/kits/overlay": ["../ui/src/kits/overlay/index.ts"],
     },
   },
   "include": ["src"]
