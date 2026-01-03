@@ -3,7 +3,7 @@
 
 import { hideDockIcon, showDockIcon } from '../utils/SystemUtils';
 import { store } from '../main';
-import { WindowsController } from '../controller/WindowsController';
+import { WindowsController } from '../controller';
 import { getDefaultSettings } from '@polkadot-live/consts/settings';
 import * as WindowUtils from '../utils/WindowUtils';
 import type { AnyData } from '@polkadot-live/types/misc';

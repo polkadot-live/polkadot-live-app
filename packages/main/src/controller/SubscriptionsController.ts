@@ -3,7 +3,7 @@
 
 import { store } from '../main';
 import { Config as ConfigMain } from '../config/main';
-import { OnlineStatusController } from '../controller/OnlineStatusController';
+import { OnlineStatusController } from '../controller';
 import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {

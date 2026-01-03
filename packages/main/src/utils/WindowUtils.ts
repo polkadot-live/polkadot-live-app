@@ -15,9 +15,11 @@ import path, { resolve, join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { store } from '../main';
 import { hideDockIcon, reportOnlineStatus } from '../utils/SystemUtils';
-import { EventsController } from '../controller/EventsController';
-import { SettingsController } from '../controller/SettingsController';
-import { WindowsController } from '../controller/WindowsController';
+import {
+  EventsController,
+  SettingsController,
+  WindowsController,
+} from '../controller';
 import { Config as ConfigMain } from '../config/main';
 import { MainDebug } from './DebugUtils';
 import type { AnyJson } from '@polkadot-live/types/misc';

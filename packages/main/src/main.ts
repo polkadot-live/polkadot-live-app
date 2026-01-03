@@ -17,19 +17,21 @@ import AutoLaunch from 'auto-launch';
 import unhandled from 'electron-unhandled';
 import { Config as ConfigMain } from './config/main';
 import { SharedState } from './config/SharedState';
-import { AccountsController } from './controller/AccountsController';
-import { AddressesController } from './controller/AddressesController';
-import { AnalyticsController } from './controller/AnalyticsController';
-import { BackupController } from './controller/BackupController';
-import { ChainEventsController } from './controller/ChainEventsController';
-import { ExtrinsicsController } from './controller/ExtrinsicsController';
-import { EventsController } from './controller/EventsController';
-import { IntervalsController } from './controller/IntervalsController';
-import { OnlineStatusController } from './controller/OnlineStatusController';
-import { NotificationsController } from './controller/NotificationsController';
-import { SettingsController } from './controller/SettingsController';
-import { SubscriptionsController } from './controller/SubscriptionsController';
-import { WindowsController } from './controller/WindowsController';
+import {
+  AccountsController,
+  AddressesController,
+  AnalyticsController,
+  BackupController,
+  ChainEventsController,
+  ExtrinsicsController,
+  EventsController,
+  IntervalsController,
+  OnlineStatusController,
+  NotificationsController,
+  SettingsController,
+  SubscriptionsController,
+  WindowsController,
+} from './controller';
 import { MainDebug } from './utils/DebugUtils';
 import { hideDockIcon } from './utils/SystemUtils';
 import { menuTemplate } from './utils/MenuUtils';

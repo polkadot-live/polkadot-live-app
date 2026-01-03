@@ -6,10 +6,12 @@ import { getUid } from '../utils/CryptoUtils';
 import { MainDebug } from '../utils/DebugUtils';
 import { doRemoveOutdatedEvents, pushUniqueEvent } from '@polkadot-live/core';
 import { AddressesController } from './AddressesController';
-import { NotificationsController } from '../controller/NotificationsController';
-import { SettingsController } from '../controller/SettingsController';
-import { SubscriptionsController } from '../controller/SubscriptionsController';
-import { WindowsController } from '../controller/WindowsController';
+import {
+  NotificationsController,
+  SettingsController,
+  SubscriptionsController,
+  WindowsController,
+} from '../controller';
 import type { AnyJson } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
