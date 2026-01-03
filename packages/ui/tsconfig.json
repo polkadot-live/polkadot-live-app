@@ -17,5 +17,6 @@
     "allowSyntheticDefaultImports": true,
     "types": ["node", "electron", "vitest/globals"],
     "removeComments": true,
+    "rootDir": ".",
   }
 }

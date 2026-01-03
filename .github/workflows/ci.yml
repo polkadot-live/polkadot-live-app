@@ -46,6 +46,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: yarn install
       - run: yarn vendors
+      - run: yarn build:encoder
       - run: yarn build:core
       - run: yarn build:ui
       - run: yarn build:screens

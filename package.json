@@ -14,6 +14,7 @@
     "build": "cross-env MODE=production nx run-many -t build --exclude=@polkadot-live/extension",
     "build:core": "nx build:dev @polkadot-live/core",
     "build:contexts": "nx build:dev @polkadot-live/contexts",
+    "build:encoder": "nx build:dev @polkadot-live/encoder",
     "build:screens": "nx build:dev @polkadot-live/screens",
     "build:ui": "nx build:dev @polkadot-live/ui",
     "lint": "nx run-many -t lint",
