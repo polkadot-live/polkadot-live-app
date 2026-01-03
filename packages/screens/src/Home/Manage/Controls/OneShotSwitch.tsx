@@ -4,7 +4,7 @@
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import { useConnections, useSubscriptions } from '@polkadot-live/contexts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { TooltipRx } from '@polkadot-live/ui/components';
+import { TooltipRx } from '@polkadot-live/ui';
 import type { OneShotSwitchProps } from './types';
 
 export const OneShotSwitch = ({

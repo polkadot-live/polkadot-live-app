@@ -7,7 +7,7 @@ import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as Icons from '@radix-ui/react-icons';
 import * as Select from '@radix-ui/react-select';
 import * as Styles from '@polkadot-live/styles/wrappers';
-import * as UI from '@polkadot-live/ui/components';
+import * as UI from '@polkadot-live/ui';
 import {
   useConnections,
   useDialogControl,
@@ -17,11 +17,6 @@ import {
 } from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
 import { BarLoader } from 'react-spinners';
-import { ChainIcon, InfoCard } from '@polkadot-live/ui/components';
-import {
-  ButtonPrimaryInvert,
-  ButtonText,
-} from '@polkadot-live/ui/kits/buttons';
 import { ItemsColumn } from '@polkadot-live/styles/wrappers';
 import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -184,7 +179,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
             >
               <Styles.ResponsiveRow $smWidth="450px">
                 <Styles.FlexRow>
-                  <ButtonPrimaryInvert
+                  <UI.ButtonPrimaryInvert
                     className="back-btn"
                     text="Back"
                     iconLeft={FA.faCaretLeft}
@@ -197,7 +192,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                   <UI.SortControlLabel label="Import Ledger Accounts" />
                 </Styles.FlexRow>
                 <Styles.FlexRow>
-                  <ButtonText
+                  <UI.ButtonText
                     iconLeft={FA.faCaretRight}
                     text={'Ledger Accounts'}
                     disabled={genericAccounts.length === 0}
@@ -265,7 +260,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                       >
                                         <div className="innerRow">
                                           <div>
-                                            <ChainIcon
+                                            <UI.ChainIcon
                                               chainId={network as ChainID}
                                               width={iconWidth}
                                             />
@@ -298,7 +293,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
 
                       {/** Error and Status Messages */}
                       {showConnectStatus && !ledger.deviceConnected && (
-                        <InfoCard
+                        <UI.InfoCard
                           kind={'warning'}
                           icon={FA.faExclamationTriangle}
                         >
@@ -316,17 +311,17 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                           >
                             <FontAwesomeIcon icon={FA.faX} />
                           </button>
-                        </InfoCard>
+                        </UI.InfoCard>
                       )}
 
                       {showConnectStatus &&
                         ledger.selectedNetworkState === '' && (
-                          <InfoCard
+                          <UI.InfoCard
                             kind={'warning'}
                             icon={FA.faExclamationTriangle}
                           >
                             <span>Select a network.</span>
-                          </InfoCard>
+                          </UI.InfoCard>
                         )}
 
                       <UI.InfoCardSteps style={{ marginTop: '0.75rem' }}>
@@ -359,7 +354,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                     </UI.AccordionTrigger>
                     <UI.AccordionContent transparent={true}>
                       {!ledger.deviceConnected ? (
-                        <InfoCard
+                        <UI.InfoCard
                           icon={FA.faCircleDot}
                           iconTransform={'shrink-3'}
                           style={{ marginTop: '0', marginBottom: '0.75rem' }}
@@ -367,7 +362,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                           <span>
                             Connect a Ledger device to view its addresses.
                           </span>
-                        </InfoCard>
+                        </UI.InfoCard>
                       ) : (
                         <>
                           <ItemsColumn>

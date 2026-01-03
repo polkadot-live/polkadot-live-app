@@ -4,7 +4,7 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as Style from '@polkadot-live/styles/wrappers';
-import * as UI from '@polkadot-live/ui/components';
+import * as UI from '@polkadot-live/ui';
 
 import {
   useAccountStatuses,

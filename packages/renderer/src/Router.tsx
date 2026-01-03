@@ -6,7 +6,7 @@ import {
   MainInterfaceWrapper,
   TabViewWrapper,
 } from '@polkadot-live/styles/wrappers';
-import { Overlay, Help } from '@polkadot-live/ui/components';
+import { Overlay, Help } from '@polkadot-live/ui';
 import { useDebug } from './hooks/useDebug';
 import { useHelp, useOverlay, useTabs } from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';

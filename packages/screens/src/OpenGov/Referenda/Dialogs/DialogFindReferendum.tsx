@@ -15,11 +15,10 @@ import {
   DialogTrigger,
   DialogHr,
 } from '@polkadot-live/styles/wrappers';
-import { TooltipRx } from '@polkadot-live/ui/components';
+import { renderToast, TooltipRx } from '@polkadot-live/ui';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationCrosshairs } from '@fortawesome/free-solid-svg-icons';
-import { renderToast } from '@polkadot-live/ui/utils';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { DialogFindReferendumProps } from './types';
 

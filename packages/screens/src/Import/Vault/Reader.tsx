@@ -3,14 +3,14 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { QRVieweraWrapper } from '../Wrappers';
-import { ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
-import { isValidAddress } from '@polkadot-live/core';
-import { decodeAddress, u8aToHex } from 'dedot/utils';
 import {
+  ButtonSecondary,
   createImgSize,
   Html5QrCodePlugin,
   ScanWrapper,
-} from '@polkadot-live/ui/components';
+} from '@polkadot-live/ui';
+import { isValidAddress } from '@polkadot-live/core';
+import { decodeAddress, u8aToHex } from 'dedot/utils';
 import type { Html5Qrcode } from 'html5-qrcode';
 import type { ReaderProps } from './types';
 

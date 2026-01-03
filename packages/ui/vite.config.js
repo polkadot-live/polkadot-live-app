@@ -31,15 +31,7 @@ export default defineConfig({
   build: {
     emptyOutDir: true,
     lib: {
-      // Each item controls output file names.
-      entry: {
-        index: join(PACKAGE_ROOT, 'src/index.ts'),
-        components: join(PACKAGE_ROOT, 'src/components/index.ts'),
-        hooks: join(PACKAGE_ROOT, 'src/hooks/index.ts'),
-        utils: join(PACKAGE_ROOT, 'src/utils/index.ts'),
-        buttons: join(PACKAGE_ROOT, 'src/kits/buttons/index.ts'),
-        overlay: join(PACKAGE_ROOT, 'src/kits/overlay/index.ts'),
-      },
+      entry: join(PACKAGE_ROOT, 'src/index.ts'),
       formats: ['es'],
       fileName: (format) => `index.${format}.js`,
     },

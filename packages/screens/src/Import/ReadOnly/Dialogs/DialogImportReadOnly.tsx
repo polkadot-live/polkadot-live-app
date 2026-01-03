@@ -16,7 +16,7 @@ import {
 import { faAngleRight, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getSupportedChains } from '@polkadot-live/consts/chains';
-import { renderToast } from '@polkadot-live/ui/utils';
+import { renderToast } from '@polkadot-live/ui';
 import { unescape } from '@w3ux/utils';
 import {
   useConnections,

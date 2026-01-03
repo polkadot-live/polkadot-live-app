@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as UI from '@polkadot-live/ui/components';
+import * as UI from '@polkadot-live/ui';
 import { useEffect, useState } from 'react';
 import {
   useApiHealth,
@@ -12,7 +12,6 @@ import {
 } from '@polkadot-live/contexts';
 import { ellipsisFn } from '@w3ux/utils';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
-import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { ClassicSubscriptions } from './ClassicSubscriptions';
 import { FlexRow } from '@polkadot-live/styles/wrappers';
 import { SmartSubscriptions } from './SmartSubscriptions';
@@ -64,7 +63,7 @@ export const Subscriptions = ({
     <>
       <UI.ControlsWrapper $sticky={false} style={{ marginBottom: '1.5rem' }}>
         <div className="left">
-          <ButtonPrimaryInvert
+          <UI.ButtonPrimaryInvert
             className="back-btn"
             text="Back"
             iconLeft={faCaretLeft}

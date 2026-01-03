@@ -14,7 +14,7 @@ import {
 } from '@polkadot-live/contexts';
 import { decodeAddress, encodeAddress, u8aToHex } from 'dedot/utils';
 import { getSdkError } from '@walletconnect/utils';
-import { renderToast } from '@polkadot-live/ui/utils';
+import { renderToast } from '@polkadot-live/ui';
 import { handleWcError } from '../utils';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';

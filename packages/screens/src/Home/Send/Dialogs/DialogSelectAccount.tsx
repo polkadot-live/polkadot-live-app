@@ -7,7 +7,7 @@ import * as Icons from '@radix-ui/react-icons';
 import { useConnections } from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
 import { getReadableAccountSource, isValidAddress } from '@polkadot-live/core';
-import { Identicon } from '@polkadot-live/ui/components';
+import { Identicon } from '@polkadot-live/ui';
 import { ellipsisFn } from '@w3ux/utils';
 import { TriggerSelectAccount } from '.';
 import {

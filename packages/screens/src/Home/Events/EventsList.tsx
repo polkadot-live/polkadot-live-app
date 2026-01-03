@@ -8,13 +8,13 @@ import { EventGroup, Wrapper } from './Wrappers';
 import { Item } from './Item';
 import { NoEvents } from './NoEvents';
 import {
+  ButtonPrimaryInvert,
   ControlsWrapper,
   SortControlButton,
   SortControlLabel,
   TooltipRx,
-} from '@polkadot-live/ui/components';
+} from '@polkadot-live/ui';
 import { FlexColumn, FlexRow } from '@polkadot-live/styles/wrappers';
-import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import type { EventsListProps } from './types';
 
 export const EventsList = ({ setSection }: EventsListProps) => {

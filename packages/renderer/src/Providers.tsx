@@ -55,7 +55,7 @@ import { WalletConnectImportProvider } from './contexts/import';
 
 // Other imports.
 import { Theme } from './Theme';
-import { withProviders } from '@polkadot-live/ui/hooks';
+import { withProviders } from '@polkadot-live/ui';
 
 const getProvidersForWindow = () => {
   const windowId = window.myAPI.getWindowId();

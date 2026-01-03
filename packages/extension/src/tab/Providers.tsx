@@ -33,7 +33,7 @@ import {
   WalletConnectImportProvider,
   WcVerifierProvider,
 } from './contexts';
-import { withProviders } from '@polkadot-live/ui/hooks';
+import { withProviders } from '@polkadot-live/ui';
 
 export const Providers = withProviders(
   HelpProvider,

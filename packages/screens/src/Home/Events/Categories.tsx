@@ -3,10 +3,9 @@
 
 import * as Accordion from '@radix-ui/react-accordion';
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import * as UI from '@polkadot-live/ui/components';
+import * as UI from '@polkadot-live/ui';
 import * as Wrappers from '@polkadot-live/styles/wrappers';
 import { useState } from 'react';
-import { ButtonText } from '@polkadot-live/ui/kits/buttons';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEvents } from '@polkadot-live/contexts';
@@ -80,7 +79,7 @@ export const Categories = ({ setSection }: CategoriesProps) => {
                               >
                                 {eventCounts[category] ?? 0}
                               </span>
-                              <ButtonText
+                              <UI.ButtonText
                                 text=""
                                 iconRight={FA.faChevronRight}
                                 iconTransform="shrink-3"

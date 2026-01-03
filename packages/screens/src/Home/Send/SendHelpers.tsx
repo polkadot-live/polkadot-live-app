@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Select from '@radix-ui/react-select';
-import * as UI from '@polkadot-live/ui/components';
+import * as UI from '@polkadot-live/ui';
 import * as Styles from '@polkadot-live/styles/wrappers';
 import { useConnections } from '@polkadot-live/contexts';
 import { ellipsisFn } from '@w3ux/utils';

@@ -7,7 +7,7 @@ import {
   useOverlay,
   useTabs,
 } from '@polkadot-live/contexts';
-import { Help, Overlay } from '@polkadot-live/ui/components';
+import { Help, Overlay } from '@polkadot-live/ui';
 import {
   Action,
   Import,

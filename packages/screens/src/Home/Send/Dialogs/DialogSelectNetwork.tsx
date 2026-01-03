@@ -7,7 +7,7 @@ import * as Icons from '@radix-ui/react-icons';
 import { useConnections } from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
 import { getSendChains } from '@polkadot-live/consts/chains';
-import { ChainIcon } from '@polkadot-live/ui/components';
+import { ChainIcon } from '@polkadot-live/ui';
 import {
   AddressesWrapper,
   AddressItem,

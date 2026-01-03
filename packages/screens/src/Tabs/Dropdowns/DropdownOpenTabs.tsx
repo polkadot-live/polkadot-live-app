@@ -5,7 +5,7 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as Styles from '@polkadot-live/styles/wrappers';
 import { useConnections, useTabs } from '@polkadot-live/contexts';
-import { TooltipRx } from '@polkadot-live/ui/components';
+import { TooltipRx } from '@polkadot-live/ui';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { TriggerBtn } from './Wrappers';
 

@@ -3,7 +3,7 @@
 
 import { Import } from '@polkadot-live/screens';
 import { useConnections } from '@polkadot-live/contexts';
-import { FadeInWrapper } from '@polkadot-live/ui/utils';
+import { FadeInWrapper } from '@polkadot-live/ui';
 
 export const FadeImport = () => {
   const { stateLoaded } = useConnections();

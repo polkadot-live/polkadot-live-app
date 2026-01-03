@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Accordion from '@radix-ui/react-accordion';
-import * as UI from '@polkadot-live/ui/components';
+import * as UI from '@polkadot-live/ui';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import {
   useAddresses,
@@ -20,7 +20,6 @@ import {
   getSupportedSources,
 } from '@polkadot-live/consts/chains';
 import { useEffect, useState } from 'react';
-import { MainHeading } from '@polkadot-live/ui/components';
 import { FlexColumn, FlexRow } from '@polkadot-live/styles/wrappers';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { SideTriggerButton } from './Wrappers';
@@ -90,7 +89,7 @@ export const Summary = () => {
       }}
     >
       {/* Title */}
-      <MainHeading>Summary</MainHeading>
+      <UI.MainHeading>Summary</UI.MainHeading>
 
       <FlexRow $gap={'0.75rem'}>
         <OpenViewButton

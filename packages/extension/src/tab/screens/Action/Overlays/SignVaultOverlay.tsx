@@ -11,13 +11,14 @@ import { useConnections, useOverlay } from '@polkadot-live/contexts';
 import { useTxMeta } from '../../../contexts';
 import { QRViewerWrapper } from '@polkadot-live/styles/wrappers';
 import {
+  ButtonPrimary,
+  ButtonSecondary,
   Html5QrCodePlugin,
   QrDisplayPayload,
   ScanWrapper,
   createImgSize,
-} from '@polkadot-live/ui/components';
-import { ButtonPrimary, ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
-import { renderToast } from '@polkadot-live/ui/utils';
+  renderToast,
+} from '@polkadot-live/ui';
 import type { Html5Qrcode } from 'html5-qrcode';
 import type { SignVaultOverlayProps } from './types';
 

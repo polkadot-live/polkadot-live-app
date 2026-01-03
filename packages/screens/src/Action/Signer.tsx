@@ -6,7 +6,7 @@ import {
   useContextProxy,
   useOverlay,
 } from '@polkadot-live/contexts';
-import { ButtonSubmit } from '@polkadot-live/ui/kits/buttons';
+import { ButtonSubmit } from '@polkadot-live/ui';
 import { faSquarePen } from '@fortawesome/free-solid-svg-icons';
 import type { SubmitProps } from './types';
 

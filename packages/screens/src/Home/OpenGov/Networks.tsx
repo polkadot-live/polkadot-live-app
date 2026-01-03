@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Accordion from '@radix-ui/react-accordion';
-import * as UI from '@polkadot-live/ui/components';
+import * as UI from '@polkadot-live/ui';
 import * as Style from '@polkadot-live/styles/wrappers';
 import {
   useChainEvents,
@@ -10,10 +10,8 @@ import {
   useIntervalSubscriptions,
 } from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
-import { ButtonText } from '@polkadot-live/ui/kits/buttons';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { faChevronRight, faSplotch } from '@fortawesome/free-solid-svg-icons';
-import { NoOpenGov } from '@polkadot-live/ui/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { NetworksProps } from './types';
@@ -86,7 +84,7 @@ export const Networks = ({
               {/** Content */}
               <UI.AccordionContent transparent={true}>
                 {!isReferendaAdded ? (
-                  <NoOpenGov
+                  <UI.NoOpenGov
                     onClick={() =>
                       openTab('openGov', {
                         event: 'window-open-openGov',
@@ -119,7 +117,7 @@ export const Networks = ({
                                 icon={faSplotch}
                               />
                             )}
-                            <ButtonText
+                            <UI.ButtonText
                               text=""
                               iconRight={faChevronRight}
                               iconTransform="shrink-3"

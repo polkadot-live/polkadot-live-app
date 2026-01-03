@@ -10,9 +10,8 @@ import {
   useWcFeedback,
 } from '@polkadot-live/contexts';
 import { useWalletConnect, useWcVerifier } from '../../../contexts';
-import { ButtonPrimary, ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
+import { ButtonPrimary, ButtonSecondary, InfoCard } from '@polkadot-live/ui';
 import { FlexRow, WcOverlayWrapper } from '@polkadot-live/styles/wrappers';
-import { InfoCard } from '@polkadot-live/ui/components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { PuffLoader } from 'react-spinners';
 import type { SignWcOverlayProps } from './types';

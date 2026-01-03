@@ -1,7 +1,5 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-export * from './components';
-export * from './hooks';
-export * from './kits';
-export * from './utils';
+export * from './buttons';
+export * from './overlay';

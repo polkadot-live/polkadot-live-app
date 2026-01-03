@@ -8,7 +8,7 @@ import {
   useConnections,
   useHelp,
 } from '@polkadot-live/contexts';
-import { renderToast } from '@polkadot-live/ui/utils';
+import { renderToast } from '@polkadot-live/ui';
 import { useBootstrapping } from '../Bootstrapping';
 import type { CogMenuContextInterface } from './types';
 import type { MenuItemData } from '@polkadot-live/types/menu';

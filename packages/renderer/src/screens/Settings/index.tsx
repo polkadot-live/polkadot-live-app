@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import { useConnections } from '@polkadot-live/contexts';
-import { FadeInWrapper } from '@polkadot-live/ui/utils';
+import { FadeInWrapper } from '@polkadot-live/ui';
 import { Settings } from '@polkadot-live/screens';
 import type { OsPlatform } from '@polkadot-live/types/settings';
 

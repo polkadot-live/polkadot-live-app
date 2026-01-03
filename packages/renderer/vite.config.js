@@ -47,13 +47,6 @@ const getAliasConfig = () => {
 
   const pfx = '@polkadot-live';
   const devDeps = [
-    [`${pfx}/ui/kits/overlay`, `${srcUi}/kits/overlay/index.ts`],
-    [`${pfx}/ui/kits/buttons`, `${srcUi}/kits/buttons/index.ts`],
-    [`${pfx}/ui/utils`, `${srcUi}/utils`],
-    [`${pfx}/ui/styles`, `${srcUi}/styles`],
-    [`${pfx}/ui/hooks`, `${srcUi}/hooks`],
-    [`${pfx}/ui/contexts`, `${srcUi}/contexts`],
-    [`${pfx}/ui/components`, `${srcUi}/components`],
     [`${pfx}/ui/scss/buttons`, `${srcUi}/kits/buttons`],
     [`${pfx}/ui/scss/overlay`, `${srcUi}/kits/overlay`],
     [`${pfx}/ui`, srcUi],

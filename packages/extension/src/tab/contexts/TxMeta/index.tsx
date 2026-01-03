@@ -22,9 +22,8 @@ import {
   useConnections,
   useOverlay,
 } from '@polkadot-live/contexts';
-import { renderToast } from '@polkadot-live/ui/utils';
+import { ChainIcon, renderToast } from '@polkadot-live/ui';
 import { WalletConnectModal } from '@walletconnect/modal';
-import { ChainIcon } from '@polkadot-live/ui/components';
 import {
   SignLedgerOverlay,
   SignVaultOverlay,

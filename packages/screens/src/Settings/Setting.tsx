@@ -4,8 +4,7 @@
 import { faInfo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SettingWrapper } from './Wrappers';
-import { EllipsisSpinner, Switch } from '@polkadot-live/ui/components';
-import { ButtonMonoInvert } from '@polkadot-live/ui/kits/buttons';
+import { ButtonMonoInvert, EllipsisSpinner, Switch } from '@polkadot-live/ui';
 import {
   useConnections,
   useHelp,

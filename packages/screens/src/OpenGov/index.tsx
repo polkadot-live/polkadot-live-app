@@ -1,9 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as UI from '@polkadot-live/ui/components';
+import * as UI from '@polkadot-live/ui';
 import * as Styles from '@polkadot-live/styles/wrappers';
-import * as Kits from '@polkadot-live/ui/kits/overlay';
 import { useState } from 'react';
 import { useConnections, useHelp } from '@polkadot-live/contexts';
 import { Overview } from './Overview';
@@ -17,8 +16,8 @@ export const OpenGov = () => {
   const [sectionContent, setSectionContent] = useState('');
 
   return (
-    <Kits.ModalSection type="carousel" style={{ height: '100%' }}>
-      <Kits.ModalMotionTwoSection
+    <UI.ModalSection type="carousel" style={{ height: '100%' }}>
+      <UI.ModalMotionTwoSection
         style={{ height: '100%' }}
         animate={section === 0 ? 'home' : 'next'}
         transition={{
@@ -60,7 +59,7 @@ export const OpenGov = () => {
             <Referenda setSection={setSection} />
           )}
         </section>
-      </Kits.ModalMotionTwoSection>
-    </Kits.ModalSection>
+      </UI.ModalMotionTwoSection>
+    </UI.ModalSection>
   );
 };

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Accordion from '@radix-ui/react-accordion';
-import * as UI from '@polkadot-live/ui/components';
+import * as UI from '@polkadot-live/ui';
 import { useEffect, useState } from 'react';
 import {
   useApiHealth,
@@ -19,10 +19,10 @@ import {
 } from '@polkadot-live/styles/wrappers';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { ClassicSubscription } from './ClassicSubscription';
-import type { ClassicSubscriptionsProps } from './types';
-import type { SubscriptionTask, TaskCategory } from '@polkadot-live/types';
 import { faSplotch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import type { ClassicSubscriptionsProps } from './types';
+import type { SubscriptionTask, TaskCategory } from '@polkadot-live/types';
 
 export const ClassicSubscriptions = ({
   typeClicked,

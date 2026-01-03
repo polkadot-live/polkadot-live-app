@@ -15,11 +15,10 @@ import {
   useRenameHandler,
 } from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
-import { TooltipRx } from '@polkadot-live/ui/components';
+import { renderToast, TooltipRx } from '@polkadot-live/ui';
 import { NetworkLabel } from './NetworkLabel';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
-import { renderToast } from '@polkadot-live/ui/utils';
 import { unescape } from '@w3ux/utils';
 import type { FormEvent } from 'react';
 import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';

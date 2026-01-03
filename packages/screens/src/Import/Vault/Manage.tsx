@@ -1,12 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as UI from '@polkadot-live/ui/components';
+import * as UI from '@polkadot-live/ui';
 import * as Styles from '@polkadot-live/styles/wrappers';
-import {
-  ControlsWrapper,
-  SortControlLabel,
-} from '@polkadot-live/ui/components';
 import {
   useConnections,
   useImportAddresses,
@@ -17,12 +13,8 @@ import { faQrcode, faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Listing } from '../Addresses';
 import { Reader } from './Reader';
-import {
-  ButtonText,
-  ButtonPrimaryInvert,
-} from '@polkadot-live/ui/kits/buttons';
+import { renderToast } from '@polkadot-live/ui';
 import type { ManageVaultProps } from './types';
-import { renderToast } from '@polkadot-live/ui/utils';
 
 export const Manage = ({ setSection }: ManageVaultProps) => {
   const { grantCameraPermission } = useConnections();
@@ -58,30 +50,30 @@ export const Manage = ({ setSection }: ManageVaultProps) => {
           <UI.ActionItem showIcon={false} text={'Vault Accounts'} />
 
           {/* Top Controls */}
-          <ControlsWrapper
+          <UI.ControlsWrapper
             $padWrapper={true}
             $padBottom={false}
             style={{ padding: '1rem 0 0 0', marginBottom: 0 }}
           >
             <Styles.ResponsiveRow $smWidth="360px">
               <Styles.FlexRow>
-                <ButtonPrimaryInvert
+                <UI.ButtonPrimaryInvert
                   className="back-btn"
                   text="Back"
                   iconLeft={faCaretLeft}
                   onClick={() => setSection(0)}
                 />
-                <SortControlLabel label="Vault Accounts" />
+                <UI.SortControlLabel label="Vault Accounts" />
               </Styles.FlexRow>
               <Styles.FlexRow>
-                <ButtonText
+                <UI.ButtonText
                   iconLeft={faQrcode}
                   text={'Import'}
                   onClick={() => onImportClick()}
                 />
               </Styles.FlexRow>
             </Styles.ResponsiveRow>
-          </ControlsWrapper>
+          </UI.ControlsWrapper>
         </section>
 
         {/* Address List */}

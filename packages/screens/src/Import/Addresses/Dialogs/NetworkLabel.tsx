@@ -3,7 +3,7 @@
 
 import styled from 'styled-components';
 import { FlexRow } from '@polkadot-live/styles/wrappers';
-import { ChainIcon } from '@polkadot-live/ui/components';
+import { ChainIcon } from '@polkadot-live/ui';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 

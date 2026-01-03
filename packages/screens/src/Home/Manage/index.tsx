@@ -9,7 +9,7 @@ import {
   FlexColumn,
   FlexColumnWrap,
 } from '@polkadot-live/styles/wrappers';
-import { MainHeading } from '@polkadot-live/ui/components';
+import { MainHeading } from '@polkadot-live/ui';
 import { Subscriptions } from './Subscriptions';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ManageProps } from './types';

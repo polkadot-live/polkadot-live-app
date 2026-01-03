@@ -4,7 +4,7 @@
 import * as Styles from '@polkadot-live/styles/wrappers';
 import { useConnections } from '@polkadot-live/contexts';
 import { ellipsisFn } from '@w3ux/utils';
-import { Identicon } from '@polkadot-live/ui/components';
+import { Identicon } from '@polkadot-live/ui';
 import { SelectedAddressItem } from './Wrappers';
 import type { SendAccount, SendRecipient } from '@polkadot-live/types/accounts';
 import type { TriggerSelectAccountProps } from '.';

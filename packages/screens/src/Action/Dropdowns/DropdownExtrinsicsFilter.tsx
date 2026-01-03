@@ -9,7 +9,7 @@ import {
   FlexRow,
 } from '@polkadot-live/styles/wrappers';
 import { useConnections, useContextProxy } from '@polkadot-live/contexts';
-import { CheckboxRx, TooltipRx } from '@polkadot-live/ui/components';
+import { CheckboxRx, TooltipRx } from '@polkadot-live/ui';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FilterButton } from './Wrappers';
 

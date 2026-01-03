@@ -1,17 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as UI from '@polkadot-live/ui/components';
+import * as UI from '@polkadot-live/ui';
 import * as Styles from '@polkadot-live/styles/wrappers';
-
-import {
-  ControlsWrapper,
-  SortControlLabel,
-} from '@polkadot-live/ui/components';
-import {
-  ButtonText,
-  ButtonPrimaryInvert,
-} from '@polkadot-live/ui/kits/buttons';
 import { Listing } from '../Addresses';
 import { faCaretLeft, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 
@@ -29,14 +20,14 @@ export const Manage = ({
       <section>
         <UI.ActionItem showIcon={false} text={'WalletConnect Accounts'} />
         {/* Top Controls */}
-        <ControlsWrapper
+        <UI.ControlsWrapper
           $padWrapper={true}
           $padBottom={false}
           style={{ padding: '1rem 0 0 0', marginBottom: 0 }}
         >
           <Styles.ResponsiveRow $smWidth="500px">
             <Styles.FlexRow>
-              <ButtonPrimaryInvert
+              <UI.ButtonPrimaryInvert
                 className="back-btn"
                 text="Back"
                 iconLeft={faCaretLeft}
@@ -44,17 +35,17 @@ export const Manage = ({
                   setSection(0);
                 }}
               />
-              <SortControlLabel label="WalletConnect Accounts" />
+              <UI.SortControlLabel label="WalletConnect Accounts" />
             </Styles.FlexRow>
             <Styles.FlexRow>
-              <ButtonText
+              <UI.ButtonText
                 iconLeft={faCaretRight}
                 text={'Import'}
                 onClick={() => setShowImportUi(true)}
               />
             </Styles.FlexRow>
           </Styles.ResponsiveRow>
-        </ControlsWrapper>
+        </UI.ControlsWrapper>
       </section>
 
       {/* Address List */}

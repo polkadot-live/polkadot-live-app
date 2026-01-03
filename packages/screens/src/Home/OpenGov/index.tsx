@@ -8,7 +8,7 @@ import {
   FlexColumn,
   FlexColumnWrap,
 } from '@polkadot-live/styles/wrappers';
-import { MainHeading } from '@polkadot-live/ui/components';
+import { MainHeading } from '@polkadot-live/ui';
 import { Networks } from './Networks';
 import { Subscriptions } from './Subscriptions';
 

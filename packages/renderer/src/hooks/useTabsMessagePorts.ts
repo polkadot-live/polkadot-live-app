@@ -21,7 +21,7 @@ import {
   useWcFeedback,
 } from '@polkadot-live/contexts';
 import { useTxMeta, useWcVerifier } from '../contexts/action';
-import { renderToast } from '@polkadot-live/ui/utils';
+import { renderToast } from '@polkadot-live/ui';
 import type { ActionMeta, TxStatus } from '@polkadot-live/types/tx';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { LedgerErrorMeta } from '@polkadot-live/types/ledger';

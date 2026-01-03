@@ -3,9 +3,7 @@
 
 import * as Accordion from '@radix-ui/react-accordion';
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import * as UI from '@polkadot-live/ui/components';
-import { ButtonText } from '@polkadot-live/ui/kits/buttons';
-import { NoAccounts } from '@polkadot-live/ui/utils';
+import * as UI from '@polkadot-live/ui';
 import {
   useAppSettings,
   useChainEvents,
@@ -194,7 +192,7 @@ export const Accounts = ({
 
                   <UI.AccordionContent transparent={true}>
                     {chainId === 'Empty' ? (
-                      <NoAccounts
+                      <UI.NoAccounts
                         onClick={() =>
                           openTab('import', {
                             event: 'window-open-accounts',
@@ -237,7 +235,7 @@ export const Accounts = ({
                                       icon={FA.faSplotch}
                                     />
                                   )}
-                                  <ButtonText
+                                  <UI.ButtonText
                                     text=""
                                     iconRight={FA.faChevronRight}
                                     iconTransform="shrink-3"
@@ -280,7 +278,7 @@ export const Accounts = ({
                             </div>
                           </div>
                           <div>
-                            <ButtonText
+                            <UI.ButtonText
                               text=""
                               iconRight={FA.faChevronRight}
                               iconTransform="shrink-3"

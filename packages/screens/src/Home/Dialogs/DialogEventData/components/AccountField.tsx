@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useConnections } from '@polkadot-live/contexts';
-import { CopyButton, Identicon } from '@polkadot-live/ui/components';
+import { CopyButton, Identicon } from '@polkadot-live/ui';
 import { ellipsisFn } from '@w3ux/utils';
 import { FlexRow } from '@polkadot-live/styles/wrappers';
 import { FieldLayout } from './FieldLayout';
