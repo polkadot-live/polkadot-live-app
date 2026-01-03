@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { HardwareStatusBarWrapper } from './Wrapper';
-import { ButtonHelp } from '../../../kits/buttons/ButtonHelp';
-import { ButtonMonoInvert } from '../../../kits/buttons/ButtonMonoInvert';
-import { ButtonPrimaryInvert } from '../../../kits/buttons/ButtonPrimaryInvert';
+import {
+  ButtonHelp,
+  ButtonMonoInvert,
+  ButtonPrimaryInvert,
+} from '../../../kits/buttons';
 import type { HardwareStatusBarProps } from './types';
 
 export const HardwareStatusBar = ({

@@ -3,8 +3,6 @@
 
 import pkg from './package.json';
 import pkgRoot from '../../package.json';
-import svgr from 'vite-plugin-svgr';
-import react from '@vitejs/plugin-react-swc';
 import dts from 'vite-plugin-dts';
 import { defineConfig } from 'vite';
 import { join } from 'path';
@@ -23,11 +21,7 @@ export default defineConfig({
   root: PACKAGE_ROOT,
   envDir: PROJECT_ROOT,
   base: './',
-  server: {
-    fs: {
-      strict: true,
-    },
-  },
+  server: { fs: { strict: true } },
   build: {
     emptyOutDir: true,
     lib: {
@@ -35,8 +29,8 @@ export default defineConfig({
       formats: ['es'],
       fileName: (format) => `index.${format}.js`,
     },
-    minify: isProd,
     reportCompressedSize: false,
+    minify: isProd,
     rollupOptions: {
       // Exclude dependencies from the bundle.
       external: [
@@ -45,10 +39,7 @@ export default defineConfig({
         ...Object.keys(pkgRoot.dependencies || {}),
         ...Object.keys(pkgRoot.peerDependencies || {}),
       ],
-      output: {
-        dir: 'dist',
-        entryFileNames: '[name].[format].js',
-      },
+      output: { dir: 'dist' },
     },
     sourcemap: !isProd,
     target: `chrome${chrome}`,
@@ -56,9 +47,7 @@ export default defineConfig({
   plugins: [
     dts({
       tsconfigPath: join(PACKAGE_ROOT, 'tsconfig.json'),
-      rollupTypes: false,
+      rollupTypes: true,
     }),
-    react(),
-    svgr(),
   ],
 });

@@ -27,6 +27,7 @@ export default {
     'packages/preload/dist',
     'packages/renderer/dist',
     'packages/core/dist',
+    'packages/encoder/dist',
     'packages/ui/dist',
     'packages/screens/dist',
     'package.json',

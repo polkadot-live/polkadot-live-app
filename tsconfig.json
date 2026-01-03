@@ -20,6 +20,7 @@
     "baseUrl": ".",
     "paths": {
       "@polkadot-live/consts/*": ["./packages/consts/src/*"],
+      "@polkadot-live/encoder/*": ["./packages/encoder/src/*"],
       "@polkadot-live/styles/*": ["./packages/styles/src/*"],
       "@polkadot-live/types/*": ["./packages/types/src/*"],
 

@@ -37,8 +37,8 @@ export default defineConfig({
         components: join(PACKAGE_ROOT, 'src/components/index.ts'),
         hooks: join(PACKAGE_ROOT, 'src/hooks/index.ts'),
         utils: join(PACKAGE_ROOT, 'src/utils/index.ts'),
-        buttons: join(PACKAGE_ROOT, 'src/kits/Buttons/index.ts'),
-        overlay: join(PACKAGE_ROOT, 'src/kits/Overlay/index.ts'),
+        buttons: join(PACKAGE_ROOT, 'src/kits/buttons/index.ts'),
+        overlay: join(PACKAGE_ROOT, 'src/kits/overlay/index.ts'),
       },
       formats: ['es'],
       fileName: (format) => `index.${format}.js`,
@@ -71,14 +71,14 @@ export default defineConfig({
     viteStaticCopy({
       targets: [
         {
-          src: join(PACKAGE_ROOT, 'src/kits/Buttons/**/*.scss').replace(
+          src: join(PACKAGE_ROOT, 'src/kits/buttons/**/*.scss').replace(
             /\\/g,
             '/'
           ),
           dest: 'scss/buttons',
         },
         {
-          src: join(PACKAGE_ROOT, 'src/kits/Overlay/**/*.scss').replace(
+          src: join(PACKAGE_ROOT, 'src/kits/overlay/**/*.scss').replace(
             /\\/g,
             '/'
           ),

@@ -40,6 +40,7 @@ const getAliasConfig = () => {
   const srcCore = resolve(PR, 'core', 'src');
   const srcConsts = resolve(PR, 'consts', 'src');
   const srcContexts = resolve(PR, 'contexts', 'src');
+  const srcEncoder = resolve(PR, 'encoder', 'src');
   const srcScreens = resolve(PR, 'screens', 'src');
   const srcStyles = resolve(PR, 'styles', 'src');
   const srcTypes = resolve(PR, 'types', 'src');
@@ -53,12 +54,13 @@ const getAliasConfig = () => {
     [`${pfx}/ui/hooks`, `${srcUi}/hooks`],
     [`${pfx}/ui/contexts`, `${srcUi}/contexts`],
     [`${pfx}/ui/components`, `${srcUi}/components`],
-    [`${pfx}/ui/scss/buttons`, `${srcUi}/kits/Buttons`],
-    [`${pfx}/ui/scss/overlay`, `${srcUi}/kits/Overlay`],
+    [`${pfx}/ui/scss/buttons`, `${srcUi}/kits/buttons`],
+    [`${pfx}/ui/scss/overlay`, `${srcUi}/kits/overlay`],
     [`${pfx}/ui`, srcUi],
     [`${pfx}/core`, srcCore],
     [`${pfx}/consts`, srcConsts],
     [`${pfx}/contexts`, srcContexts],
+    [`${pfx}/encoder`, srcEncoder],
     [`${pfx}/screens`, srcScreens],
     [`${pfx}/styles`, srcStyles],
     [`${pfx}/types`, srcTypes],
