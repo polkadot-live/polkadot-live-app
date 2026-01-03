@@ -47,8 +47,8 @@ jobs:
       - run: yarn install
       - run: yarn vendors
       - run: yarn build:encoder
-      - run: yarn build:contexts
       - run: yarn build:core
+      - run: yarn build:contexts
       - run: yarn build:ui
       - run: yarn build:screens
       - run: yarn lint
