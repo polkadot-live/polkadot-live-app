@@ -11,7 +11,7 @@ import {
   useHelp,
 } from '@polkadot-live/contexts';
 import { renderToast } from '@polkadot-live/ui';
-import type { CogMenuContextInterface } from '@polkadot-live/contexts/types/main';
+import type { CogMenuContextInterface } from '@polkadot-live/contexts';
 import type { MenuItemData } from '@polkadot-live/types/menu';
 
 export const CogMenuContext = createContext<

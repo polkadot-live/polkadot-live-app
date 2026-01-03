@@ -23,11 +23,7 @@ export default defineConfig({
   root: PACKAGE_ROOT,
   envDir: PROJECT_ROOT,
   base: './',
-  server: {
-    fs: {
-      strict: true,
-    },
-  },
+  server: { fs: { strict: true } },
   build: {
     emptyOutDir: true,
     lib: {

@@ -5,7 +5,7 @@ import { createSafeContextHook } from '@polkadot-live/contexts';
 import { ConfigTabs } from '@polkadot-live/core';
 import { createContext, useState } from 'react';
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
-import type { WcVerifierContextInterface } from '@polkadot-live/contexts/types/action';
+import type { WcVerifierContextInterface } from '@polkadot-live/contexts';
 
 export const WcVerifierContext = createContext<
   WcVerifierContextInterface | undefined

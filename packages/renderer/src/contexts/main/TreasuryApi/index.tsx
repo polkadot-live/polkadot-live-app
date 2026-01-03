@@ -14,7 +14,7 @@ import type { ChainID } from '@polkadot-live/types/chains';
 import type { ClientTypes } from '@polkadot-live/types/apis';
 import type { DedotClient } from 'dedot';
 import type { IpcTreasuryInfo } from '@polkadot-live/types/treasury';
-import type { TreasuryApiContextInterface } from '@polkadot-live/contexts/types/main';
+import type { TreasuryApiContextInterface } from '@polkadot-live/contexts';
 
 export const TreasuryApiContext = createContext<
   TreasuryApiContextInterface | undefined

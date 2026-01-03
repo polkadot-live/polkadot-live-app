@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useAccountStatuses } from '../AccountStatuses';
-import { useAddresses } from '../Addresses';
+import { useImportAddresses } from '../Addresses';
 import { createSafeContextHook } from '../../../utils';
 import { createContext } from 'react';
 import { getDeleteHandlerAdapter } from './adapters';
@@ -29,7 +29,7 @@ export const DeleteHandlerProvider = ({
 }) => {
   const adapter = getDeleteHandlerAdapter();
   const { deleteAccountStatus } = useAccountStatuses();
-  const { handleAddressDelete } = useAddresses();
+  const { handleAddressDelete } = useImportAddresses();
 
   /**
    * Permanently delete a generic account.

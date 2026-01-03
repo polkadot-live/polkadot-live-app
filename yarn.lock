@@ -2378,6 +2378,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@polkadot-live/contexts@workspace:packages/contexts"
   dependencies:
+    "@polkadot-live/consts": "workspace:*"
     "@polkadot-live/core": "workspace:*"
     "@polkadot-live/encoder": "workspace:*"
     "@polkadot-live/styles": "workspace:*"

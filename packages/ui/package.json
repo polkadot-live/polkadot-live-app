@@ -7,7 +7,10 @@
     "dist/**"
   ],
   "exports": {
-    ".": "./dist/index.es.js",
+    ".": {
+      "import": "./dist/index.es.js",
+      "types": "./dist/index.es.d.ts"
+    },
     "./scss/buttons/*": "./dist/scss/buttons/*",
     "./scss/overlay/*": "./dist/scss/overlay/*",
     "./svg/*": "./dist/svg/*"

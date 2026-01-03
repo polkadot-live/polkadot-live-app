@@ -34,18 +34,18 @@
     "noEmitOnError": true,
   },
   "include": [
-    "eslint.config.cjs",
     "packages/**/*.ts",
     "packages/**/*.js",
     "packages/**/*.tsx",
-    "scripts/**/*",
     "vite.base.config.ts"
   ],
   "exclude": [
     "dist",
+    "eslint.config.cjs",
     "node_modules",
     "**/*/node_modules",
     "**/*/dist",
-    ".vite/**/*"
+    "**/*/vite.config.js",
+    ".vite/**/*",
   ],
 }

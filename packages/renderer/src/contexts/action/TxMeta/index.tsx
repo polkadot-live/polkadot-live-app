@@ -5,7 +5,7 @@ import * as wc from '@polkadot-live/consts/walletConnect';
 import { ConfigTabs, ExtrinsicError, generateUID } from '@polkadot-live/core';
 import React, { createContext, useEffect, useRef, useState } from 'react';
 import type { AnyJson } from '@polkadot-live/types/misc';
-import type { TxMetaContextInterface } from '@polkadot-live/contexts/types/action';
+import type { TxMetaContextInterface } from '@polkadot-live/contexts';
 import type {
   ActionMeta,
   AddressInfo,

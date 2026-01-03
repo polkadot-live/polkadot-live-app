@@ -8,7 +8,7 @@ import type {
 } from '@polkadot-live/types';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { SendNativeHookInterface } from '@polkadot-live/contexts/types/main';
+import type { SendNativeHookInterface } from '@polkadot-live/contexts';
 
 export interface AddressWithTooltipProps {
   theme: AnyData;

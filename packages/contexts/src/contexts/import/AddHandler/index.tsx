@@ -3,7 +3,7 @@
 
 import { createSafeContextHook } from '../../../utils';
 import { useAccountStatuses } from '../AccountStatuses';
-import { useAddresses } from '../Addresses';
+import { useImportAddresses } from '../Addresses';
 import { useConnections } from '../../common';
 import { createContext } from 'react';
 import { getAddHandlerAdapter } from './adapters';
@@ -30,7 +30,7 @@ export const AddHandlerProvider = ({
   const adapter = getAddHandlerAdapter();
   const { getOnlineMode } = useConnections();
   const { setStatusForAccount } = useAccountStatuses();
-  const { handleAddressUpdate } = useAddresses();
+  const { handleAddressUpdate } = useImportAddresses();
 
   /**
    * Update generic account imported to main window.

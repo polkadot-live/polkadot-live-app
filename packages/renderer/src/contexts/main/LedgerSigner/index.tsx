@@ -13,7 +13,7 @@ import { decodeAddress, u8aToHex } from 'dedot/utils';
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 import type { HexString } from 'dedot/utils';
 import type { LedgerErrorStatusCode } from '@polkadot-live/types/ledger';
-import type { LedgerSignerContextInterface } from '@polkadot-live/contexts/types/main';
+import type { LedgerSignerContextInterface } from '@polkadot-live/contexts';
 
 export const LedgerSignerContext = createContext<
   LedgerSignerContextInterface | undefined
