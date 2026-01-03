@@ -21,7 +21,7 @@ import {
   SignLedgerOverlay,
   SignVaultOverlay,
   SignWcOverlay,
-} from '@ren/screens/Action/Overlays';
+} from '../../../screens/Action/Overlays';
 import {
   createSafeContextHook,
   useConnections,

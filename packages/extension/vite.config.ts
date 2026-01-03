@@ -66,7 +66,7 @@ export default defineConfig({
   },
   server: {
     fs: {
-      allow: [PR],
+      allow: [PROJECT_ROOT],
     },
     hmr: {
       protocol: 'ws', // Use WebSocket for HMR

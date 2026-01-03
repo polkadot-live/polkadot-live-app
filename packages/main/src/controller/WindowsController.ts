@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { store } from '@/main';
+import { store } from '../main';
 import { BrowserWindow } from 'electron';
 import type { AnyJson } from '@polkadot-live/types/misc';
 import type { BaseWindow, WebContentsView } from 'electron';

@@ -17,9 +17,9 @@ import {
   createImgSize,
 } from '@polkadot-live/ui/components';
 import { ButtonPrimary, ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
+import { renderToast } from '@polkadot-live/ui/utils';
 import type { Html5Qrcode } from 'html5-qrcode';
 import type { SignVaultOverlayProps } from './types';
-import { renderToast } from '@polkadot-live/ui/utils';
 
 export const SignVaultOverlay = ({ info }: SignVaultOverlayProps) => {
   const { grantCameraPermission } = useConnections();

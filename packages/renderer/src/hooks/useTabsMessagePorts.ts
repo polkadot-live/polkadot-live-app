@@ -3,7 +3,7 @@
 
 import { ConfigTabs, getTracks } from '@polkadot-live/core';
 import { useEffect } from 'react';
-import { useWalletConnectImport } from '@ren/contexts/import';
+import { useWalletConnectImport } from '../contexts/import';
 import {
   useAccountStatuses,
   useConnections,
@@ -20,7 +20,7 @@ import {
   useTreasury,
   useWcFeedback,
 } from '@polkadot-live/contexts';
-import { useTxMeta, useWcVerifier } from '@ren/contexts/action';
+import { useTxMeta, useWcVerifier } from '../contexts/action';
 import { renderToast } from '@polkadot-live/ui/utils';
 import type { ActionMeta, TxStatus } from '@polkadot-live/types/tx';
 import type { ChainID } from '@polkadot-live/types/chains';

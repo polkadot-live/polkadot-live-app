@@ -24,6 +24,7 @@ import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 import type { WalletConnectContextInterface } from '@polkadot-live/contexts/types/main';
 import type {
   WalletConnectMeta,
+  WcErrorStatusCode,
   WcFetchedAddress,
   WcSelectNetwork,
 } from '@polkadot-live/types/walletConnect';
@@ -500,7 +501,9 @@ export const WalletConnectProvider = ({
     }
 
     if (error instanceof WcError) {
-      const feedback = wc.wcErrorFeedback[error.statusCode];
+      const feedback =
+        wc.wcErrorFeedback[error.statusCode as WcErrorStatusCode];
+
       origin === 'extrinsics'
         ? sendWcError(feedback)
         : sendToastError(origin, feedback.body.msg);

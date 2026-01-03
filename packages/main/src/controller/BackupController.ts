@@ -1,13 +1,13 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { SharedState } from '@/config/SharedState';
+import { SharedState } from '../config/SharedState';
 import { dialog } from 'electron';
 import { promises as fsPromises } from 'fs';
-import { AddressesController } from '@/controller/AddressesController';
-import { EventsController } from '@/controller/EventsController';
-import { ExtrinsicsController } from '@/controller/ExtrinsicsController';
-import { IntervalsController } from '@/controller/IntervalsController';
+import { AddressesController } from '../controller/AddressesController';
+import { EventsController } from '../controller/EventsController';
+import { ExtrinsicsController } from '../controller/ExtrinsicsController';
+import { IntervalsController } from '../controller/IntervalsController';
 import { SubscriptionsController } from './SubscriptionsController';
 import { WindowsController } from './WindowsController';
 import { version } from '../../package.json';

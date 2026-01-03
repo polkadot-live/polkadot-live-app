@@ -10,7 +10,7 @@ import {
   useOverlay,
 } from '@polkadot-live/contexts';
 import { useEffect } from 'react';
-import { useWcVerifier } from '@ren/contexts/action';
+import { useWcVerifier } from '../../../contexts/action';
 import { ButtonPrimary, ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
 import { FlexRow, WcOverlayWrapper } from '@polkadot-live/styles/wrappers';
 import { InfoCard } from '@polkadot-live/ui/components';

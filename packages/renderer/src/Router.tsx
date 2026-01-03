@@ -7,7 +7,7 @@ import {
   TabViewWrapper,
 } from '@polkadot-live/styles/wrappers';
 import { Overlay, Help } from '@polkadot-live/ui/components';
-import { useDebug } from '@ren/hooks/useDebug';
+import { useDebug } from './hooks/useDebug';
 import { useHelp, useOverlay, useTabs } from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
 import { useTabsMessagePorts } from './hooks/useTabsMessagePorts';
@@ -17,13 +17,13 @@ import {
   DialogConnectChains,
   DialogEventData,
 } from '@polkadot-live/screens';
-import { FadeAction } from '@ren/screens/Action';
-import { FadeImport } from '@ren/screens/Import';
+import { FadeAction } from './screens/Action';
+import { FadeImport } from './screens/Import';
 import { FadeSettings } from './screens/Settings';
 import { FadeOpenGov } from './screens/OpenGov';
 import { Home } from './screens/Home';
 import { ToastContainer } from 'react-toastify';
-import { TabsWrapper } from '@ren/screens/Tabs';
+import { TabsWrapper } from './screens/Tabs';
 
 interface VisitedTab {
   viewId: string;

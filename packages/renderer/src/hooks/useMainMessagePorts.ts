@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as MainCtx from '@ren/contexts/main';
+import * as MainCtx from '../contexts/main';
 import * as Core from '@polkadot-live/core';
 import {
   ConfigRenderer,

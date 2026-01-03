@@ -1,9 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as ConfigMain } from '@/config/main';
+import { Config as ConfigMain } from '../config/main';
 import { getSupportedSources } from '@polkadot-live/consts/chains';
-import { store } from '@/main';
+import { store } from '../main';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { IpcTask } from '@polkadot-live/types/communication';
 import type {

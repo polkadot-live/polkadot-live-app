@@ -12,7 +12,6 @@
     "esModuleInterop": true,
     "noImplicitAny": true,
     "sourceMap": true,
-    "outDir": "dist",
     "resolveJsonModule": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "allowSyntheticDefaultImports": true,
@@ -20,9 +19,21 @@
     /* Paths are relative to base URL */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./packages/main/src/*"],
-      "@ren/*": ["./packages/renderer/src/*"],
-      "@ext/*": ["./packages/extension/src/*"],
+      "@polkadot-live/consts/*": ["./packages/consts/src/*"],
+      "@polkadot-live/styles/*": ["./packages/styles/src/*"],
+      "@polkadot-live/types/*": ["./packages/types/src/*"],
+
+      "@polkadot-live/screens": ["./packages/screens/src/index.ts"],
+      "@polkadot-live/screens/*": ["./packages/screens/src/*"],
+
+      "@polkadot-live/ui/components": ["./packages/ui/src/components/index.ts"],
+      "@polkadot-live/ui/components/*": ["./packages/ui/src/components/*"],
+
+      "@polkadot-live/ui/hooks": ["./packages/ui/src/hooks/index.ts"],
+      "@polkadot-live/ui/hooks/*": ["./packages/ui/src/hooks/*"],
+
+      "@polkadot-live/ui/kits/buttons": ["./packages/ui/src/kits/buttons/index.ts"],
+      "@polkadot-live/ui/kits/overlay": ["./packages/ui/src/kits/overlay/index.ts"],
     },
     "declarationMap": false,
     "noEmitOnError": true,

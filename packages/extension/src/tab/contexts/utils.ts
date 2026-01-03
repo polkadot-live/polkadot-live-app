@@ -4,7 +4,10 @@
 import * as wc from '@polkadot-live/consts/walletConnect';
 import { WcError } from '@polkadot-live/core';
 import type { AnyData } from '@polkadot-live/types/misc';
-import type { WalletConnectMeta } from '@polkadot-live/types/walletConnect';
+import type {
+  WalletConnectMeta,
+  WcErrorStatusCode,
+} from '@polkadot-live/types/walletConnect';
 
 /**
  * Handle a WalletConnect error.
@@ -18,7 +21,7 @@ export const handleWcError = (
     return wc.wcErrorFeedback['WcCatchAll'];
   }
   if (error instanceof WcError) {
-    return wc.wcErrorFeedback[error.statusCode];
+    return wc.wcErrorFeedback[error.statusCode as WcErrorStatusCode];
   }
   return error.code === -32000
     ? wc.wcErrorFeedback['WcCanceledTx']

@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { chrome } from '../../.electron-vendors.cache.json';
+import { node } from '../../.electron-vendors.cache.json';
 import { external } from '../../vite.base.config';
 import { defineConfig } from 'vite';
 import { join } from 'path';
@@ -23,7 +23,7 @@ export default defineConfig({
   build: {
     ssr: true,
     sourcemap: 'inline',
-    target: `chrome${chrome}`,
+    target: `node${node}`,
     outDir: 'dist',
     assetsDir: '.',
     minify: process.env.MODE !== 'development',

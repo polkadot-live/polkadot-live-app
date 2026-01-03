@@ -8,7 +8,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { renderToast } from '@polkadot-live/ui/utils';
 import { useConnections, useOverlay } from '@polkadot-live/contexts';
-import { useTxMeta } from '@ren/contexts/action';
+import { useTxMeta } from '../../../contexts/action';
 import { useMemo, useRef, useState } from 'react';
 import { QRViewerWrapper } from '@polkadot-live/styles/wrappers';
 import {
