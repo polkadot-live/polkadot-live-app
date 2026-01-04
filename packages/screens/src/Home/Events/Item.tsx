@@ -4,11 +4,7 @@
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState, memo, useRef } from 'react';
 import { useConnections, useEvents } from '@polkadot-live/contexts';
-import {
-  FlexColumn,
-  FlexRow,
-  MenuButton,
-} from '@polkadot-live/styles';
+import { FlexColumn, FlexRow, MenuButton } from '@polkadot-live/styles';
 import { AnimatePresence } from 'framer-motion';
 import { EventItem } from './Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
