@@ -10,10 +10,10 @@ import {
   useHelp,
   useIntervalTasksManager,
 } from '@polkadot-live/contexts';
-import { TaskEntryWrapper } from '@polkadot-live/styles/wrappers';
+import { TaskEntryWrapper } from '@polkadot-live/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
-import { Switch, TooltipRx } from '@polkadot-live/ui/components';
+import { Switch, TooltipRx } from '@polkadot-live/ui';
 import { getShortIntervalLabel } from '@polkadot-live/core';
 import { intervalDurationsConfig } from '@polkadot-live/consts/subscriptions/interval';
 import type { IntervalRowProps } from './types';

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Accordion from '@radix-ui/react-accordion';
-import * as UI from '@polkadot-live/ui/components';
+import * as UI from '@polkadot-live/ui';
 import { useState } from 'react';
 import { useChainEvents } from '@polkadot-live/contexts';
 import { getReadablePallet } from '@polkadot-live/consts/subscriptions/chainEvents';
@@ -14,7 +14,7 @@ import {
   FlexColumn,
   FlexRow,
   ItemsColumn,
-} from '@polkadot-live/styles/wrappers';
+} from '@polkadot-live/styles';
 import { SubscriptionRow } from '../../ChainEvents/SubscriptionRow';
 
 export const SmartSubscriptions = () => {

@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as UI from '@polkadot-live/ui/components';
-import * as Ctx from '@ren/contexts/main';
+import * as UI from '@polkadot-live/ui';
+import * as Ctx from '../../contexts/main';
 import { version } from '../../../package.json';
 import {
   initExtrinsicElectron,
@@ -10,8 +10,8 @@ import {
   getSpendableBalanceElectron,
 } from '@polkadot-live/core';
 import { useEffect, useState } from 'react';
-import { useInitIpcHandlers } from '@ren/hooks/useInitIpcHandlers';
-import { useMainMessagePorts } from '@ren/hooks/useMainMessagePorts';
+import { useInitIpcHandlers } from '../../hooks/useInitIpcHandlers';
+import { useMainMessagePorts } from '../../hooks/useMainMessagePorts';
 import {
   useAddresses,
   useAppSettings,
@@ -35,7 +35,7 @@ import {
   BodyInterfaceWrapper,
   FixedFlexWrapper,
   ScrollWrapper,
-} from '@polkadot-live/styles/wrappers';
+} from '@polkadot-live/styles';
 import PolkadotIcon from '@polkadot-live/ui/svg/polkadotIcon.svg?react';
 import { GITHUB_LATEST_RELEASE_URL } from '@polkadot-live/consts';
 

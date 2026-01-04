@@ -4,7 +4,7 @@
 import { ConfigTabs } from '@polkadot-live/core';
 import { useEffect } from 'react';
 import { useConnections, useTreasury } from '@polkadot-live/contexts';
-import { FadeInWrapper } from '@polkadot-live/ui/utils';
+import { FadeInWrapper } from '@polkadot-live/ui';
 import { OpenGov } from '@polkadot-live/screens';
 
 export const FadeOpenGov = () => {

@@ -20,7 +20,7 @@ import type {
   DataBackupContextInterface,
   ImportFunc,
   RemoveFunc,
-} from '@polkadot-live/contexts/types/main';
+} from '@polkadot-live/contexts';
 import type {
   AccountSource,
   ImportedGenericAccount,

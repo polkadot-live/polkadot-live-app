@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useEffect } from 'react';
-import { useBootstrapping } from '@ren/contexts/main';
+import { useBootstrapping } from '../contexts/main';
 
 export const useInitIpcHandlers = () => {
   const {

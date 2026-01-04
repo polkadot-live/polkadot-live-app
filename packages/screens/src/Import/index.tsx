@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as UI from '@polkadot-live/ui/components';
+import * as UI from '@polkadot-live/ui';
 import React, { useEffect, useState } from 'react';
 import { useConnections, useHelp } from '@polkadot-live/contexts';
 import { Home } from './Home';
@@ -9,10 +9,6 @@ import { ImportReadOnly } from './ReadOnly';
 import { ImportVault } from './Vault';
 import { ImportLedger } from './Ledger';
 import { ImportWalletConnect } from './WalletConnect';
-import {
-  ModalMotionTwoSection,
-  ModalSection,
-} from '@polkadot-live/ui/kits/overlay';
 import type { AccountSource } from '@polkadot-live/types/accounts';
 import type { ImportScreenProps } from './types';
 
@@ -50,8 +46,8 @@ export const Import = () => {
   }, [section]);
 
   return (
-    <ModalSection type="carousel" style={{ height: '100%' }}>
-      <ModalMotionTwoSection
+    <UI.ModalSection type="carousel" style={{ height: '100%' }}>
+      <UI.ModalMotionTwoSection
         style={{ height: '100%' }}
         animate={section === 0 ? 'home' : 'next'}
         transition={{
@@ -108,7 +104,7 @@ export const Import = () => {
             </UI.ScrollableMax>
           )}
         </div>
-      </ModalMotionTwoSection>
-    </ModalSection>
+      </UI.ModalMotionTwoSection>
+    </UI.ModalSection>
   );
 };

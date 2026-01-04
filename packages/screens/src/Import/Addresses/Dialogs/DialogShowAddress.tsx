@@ -9,8 +9,8 @@ import {
   DialogHr,
   FlexColumn,
   FlexRow,
-} from '@polkadot-live/styles/wrappers';
-import { CopyButton } from '@polkadot-live/ui/components';
+} from '@polkadot-live/styles';
+import { CopyButton } from '@polkadot-live/ui';
 import styled from 'styled-components';
 import type { DialogShowAddressProps } from './types';
 

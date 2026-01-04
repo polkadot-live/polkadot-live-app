@@ -1,13 +1,12 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { node } from '../../.electron-vendors.cache.json';
-import { external } from '../../vite.base.config';
 import eslint from 'vite-plugin-eslint';
 import svgr from 'vite-plugin-svgr';
+import { node } from '../../.electron-vendors.cache.json';
+import { external } from '../../vite.base.config';
 import { defineConfig } from 'vite';
 import { join } from 'node:path';
-import { resolve } from 'path';
 
 const PACKAGE_ROOT = __dirname;
 const PROJECT_ROOT = join(PACKAGE_ROOT, '../..');
@@ -25,17 +24,10 @@ export default defineConfig({
     browserField: false,
     // List of fields in package.json to try when resolving a package's entry point.
     mainFields: ['module', 'jsnext:main', 'jsnext'],
-    // Import aliases.
-    alias: [
-      {
-        find: '@',
-        replacement: resolve(PACKAGE_ROOT, 'src'),
-      },
-    ],
   },
   build: {
     ssr: true,
-    sourcemap: 'inline',
+    sourcemap: false,
     target: `node${node}`,
     outDir: 'dist',
     assetsDir: '.',

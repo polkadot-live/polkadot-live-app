@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   DropdownMenuContent,
   MenuButton,
-} from '@polkadot-live/styles/wrappers';
+} from '@polkadot-live/styles';
 import type { EventAccountData } from '@polkadot-live/types/reporter';
 import type { AccountSource } from '@polkadot-live/types/accounts';
 import type { ActionMeta } from '@polkadot-live/types/tx';

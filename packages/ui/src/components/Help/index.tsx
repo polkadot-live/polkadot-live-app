@@ -7,10 +7,10 @@ import { useEffect } from 'react';
 import { ActiveDefinition } from './Items/ActiveDefinition';
 
 /** Kits */
-import { ButtonPrimaryInvert } from '../../kits/Buttons/ButtonPrimaryInvert';
-import { CanvasContainer } from '../../kits/Overlay/structure/CanvasContainer';
-import { CanvasScroll } from '../../kits/Overlay/structure/CanvasScroll';
-import { ModalContent } from '../../kits/Overlay/structure/ModalContent';
+import { ButtonPrimaryInvert } from '../../kits/buttons';
+import { CanvasContainer } from '../../kits/overlay/structure/CanvasContainer';
+import { CanvasScroll } from '../../kits/overlay/structure/CanvasScroll';
+import { ModalContent } from '../../kits/overlay/structure/ModalContent';
 import type { HelpProps } from './types';
 
 export const Help = ({

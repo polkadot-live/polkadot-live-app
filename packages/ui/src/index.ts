@@ -3,6 +3,5 @@
 
 export * from './components';
 export * from './hooks';
-export * from './kits/Buttons/';
-export * from './kits/Icons/IconWarning';
-export * from './kits/Overlay';
+export * from './kits';
+export * from './utils';

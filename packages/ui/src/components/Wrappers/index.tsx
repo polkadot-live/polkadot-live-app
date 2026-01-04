@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { MaxContainer, Scrollable } from '@polkadot-live/styles/wrappers';
+import { MaxContainer, Scrollable } from '@polkadot-live/styles';
 
 export interface ScrollableMaxProps {
   children: React.ReactNode;

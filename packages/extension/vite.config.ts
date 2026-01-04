@@ -13,16 +13,55 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 const PACKAGE_ROOT = __dirname;
 const PROJECT_ROOT = join(PACKAGE_ROOT, '../..');
-const PR = PROJECT_ROOT;
+
+const packageNames: string[] = [
+  '@polkadot-live/contexts',
+  '@polkadot-live/consts',
+  '@polkadot-live/core',
+  '@polkadot-live/encoder',
+  '@polkadot-live/screens',
+  '@polkadot-live/styles',
+  '@polkadot-live/types',
+  '@polkadot-live/ui',
+];
+
+const getAliasConfig = () => {
+  if (process.env.MODE === 'production') {
+    return [];
+  }
+  const alias = (find: string, path: string) => ({
+    find,
+    replacement: resolve(__dirname, path),
+  });
+
+  const pfx = '@polkadot-live';
+  return [
+    alias(`${pfx}/consts`, '../consts/src'),
+    alias(`${pfx}/core`, '../core/src'),
+    alias(`${pfx}/contexts`, '../contexts/src'),
+    alias(`${pfx}/encoder`, '../encoder/src'),
+    alias(`${pfx}/screens`, '../screens/src'),
+    alias(`${pfx}/types`, '../types/src'),
+
+    alias(`${pfx}/ui/scss/buttons`, '../ui/src/kits/buttons'),
+    alias(`${pfx}/ui/scss/overlay`, '../ui/src/kits/overlay'),
+    alias(`${pfx}/ui/svg`, '../ui/src/svg'),
+    alias(`${pfx}/ui`, '../ui/src'),
+
+    alias(`${pfx}/styles/accents`, '../styles/src/accents'),
+    alias(`${pfx}/styles/partials`, '../styles/src/partials'),
+    alias(`${pfx}/styles/theme`, '../styles/src/theme'),
+    alias(`${pfx}/styles`, '../styles/src'),
+  ];
+};
 
 export default defineConfig({
   resolve: {
-    alias: {
-      '@ext': `${resolve(__dirname, 'src')}`,
-      '@polkadot-live/consts': resolve(PR, 'packages', 'consts', 'src'),
-      '@polkadot-live/styles': resolve(PR, 'packages', 'styles', 'src'),
-      '@polkadot-live/types': resolve(PR, 'packages', 'types', 'src'),
-    },
+    alias: getAliasConfig(),
+  },
+  // Treat packages as source and not dependencies. Needed for CRX + monorepo.
+  optimizeDeps: {
+    exclude: packageNames,
   },
   plugins: [
     nodePolyfills(),
@@ -50,6 +89,9 @@ export default defineConfig({
     outDir: 'dist',
   },
   server: {
+    fs: {
+      allow: [PROJECT_ROOT],
+    },
     hmr: {
       protocol: 'ws', // Use WebSocket for HMR
       host: 'localhost', // Host for HMR WebSocket

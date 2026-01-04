@@ -7,7 +7,7 @@ import { useWalletConnect } from '../WalletConnect';
 import { WcError } from '@polkadot-live/core';
 import { handleWcError } from '../utils';
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
-import type { WcVerifierContextInterface } from '@polkadot-live/contexts/types/action';
+import type { WcVerifierContextInterface } from '@polkadot-live/contexts';
 
 export const WcVerifierContext = createContext<
   WcVerifierContextInterface | undefined

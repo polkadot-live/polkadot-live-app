@@ -8,7 +8,7 @@ import {
   DialogContent,
   DialogHr,
   FlexColumn,
-} from '@polkadot-live/styles/wrappers';
+} from '@polkadot-live/styles';
 import { ChainListWrapper } from '../Wrappers';
 import { EncodedField } from './components';
 

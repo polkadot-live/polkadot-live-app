@@ -3,15 +3,14 @@
   "version": "0.12.0-beta",
   "type": "module",
   "private": true,
+  "files": [
+    "dist/**"
+  ],
   "exports": {
-    ".": "./src/index.ts",
-    "./types/action": "./src/types/action/index.ts",
-    "./types/common": "./src/types/common/index.ts",
-    "./types/import": "./src/types/import/index.ts",
-    "./types/main": "./src/types/main/index.ts",
-    "./types/openGov": "./src/types/openGov/index.ts",
-    "./types/settings": "./src/types/settings/index.ts",
-    "./types/tabs": "./src/types/tabs/index.ts"
+    ".": {
+      "import": "./dist/index.es.js",
+      "types": "./dist/src/index.d.ts"
+    }
   },
   "scripts": {
     "build": "cross-env MODE=production vite build --config vite.config.js",
@@ -22,6 +21,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@polkadot-live/consts": "workspace:*",
     "@polkadot-live/core": "workspace:*",
     "@polkadot-live/encoder": "workspace:*",
     "@polkadot-live/styles": "workspace:*"

@@ -6,6 +6,7 @@ import { DbController } from '../../controllers';
 import { decodeAddress, u8aToHex } from 'dedot/utils';
 import { getSupportedSources } from '@polkadot-live/consts/chains';
 import type {
+  AccountBalance,
   AccountSource,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
@@ -26,7 +27,7 @@ export const handleGetSpendableBalance = async (
 ): Promise<bigint> => {
   const api = (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
   const ed = api.consts.balances.existentialDeposit;
-  const balance = await getBalance(api, address, chainId);
+  const balance = (await getBalance(api, address, chainId)) as AccountBalance;
   const { free } = balance;
 
   const max = (a: bigint, b: bigint): bigint => (a > b ? a : b);

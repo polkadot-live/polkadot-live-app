@@ -8,7 +8,7 @@ import {
 import { createContext } from 'react';
 import { createSafeContextHook, renderToast } from '../../../utils';
 import { useAccountStatuses } from '../AccountStatuses';
-import { useAddresses } from '../Addresses';
+import { useImportAddresses } from '../Addresses';
 import { useConnections } from '../../common';
 import { decodeAddress, encodeAddress, u8aToHex } from 'dedot/utils';
 import { getImportHandlerAdapter } from './adapters';
@@ -38,7 +38,7 @@ export const ImportHandlerProvider = ({
   const adapter = getImportHandlerAdapter();
   const { getOnlineMode } = useConnections();
   const { setStatusForAccount } = useAccountStatuses();
-  const { handleAddressImport, getDefaultName } = useAddresses();
+  const { handleAddressImport, getDefaultName } = useImportAddresses();
 
   /**
    * Set default bookmarks on account import.

@@ -1,9 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as main from '@ren/contexts/main';
-import * as imports from '@ren/contexts/import';
-import * as extrinsics from '@ren/contexts/action';
+import * as main from './contexts/main';
+import * as imports from './contexts/import';
+import * as extrinsics from './contexts/action';
 import { useMemo } from 'react';
 import { buildCache, ContextProxyProvider } from '@polkadot-live/contexts';
 

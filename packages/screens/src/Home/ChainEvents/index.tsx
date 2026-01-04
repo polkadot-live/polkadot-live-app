@@ -6,8 +6,8 @@ import {
   CarouselWrapper,
   FlexColumn,
   FlexColumnWrap,
-} from '@polkadot-live/styles/wrappers';
-import { MainHeading } from '@polkadot-live/ui/components';
+} from '@polkadot-live/styles';
+import { MainHeading } from '@polkadot-live/ui';
 import { Networks } from './Networks';
 import { Subscriptions } from './Subscriptions';
 import { useChainEvents } from '@polkadot-live/contexts';

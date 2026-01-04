@@ -17,7 +17,7 @@ import {
   restrictToParentElement,
 } from '@dnd-kit/modifiers';
 import { DropdownOpenTabs } from './Dropdowns';
-import { Header } from '@polkadot-live/ui/components';
+import { Header } from '@polkadot-live/ui';
 import { Tab } from './Tab';
 import { TabsWrapper } from './Wrappers';
 import { GITHUB_LATEST_RELEASE_URL } from '@polkadot-live/consts';

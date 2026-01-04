@@ -1,9 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { store } from '@/main';
-import { Config as ConfigMain } from '@/config/main';
-import { OnlineStatusController } from '@/controller/OnlineStatusController';
+import { store } from '../main';
+import { Config as ConfigMain } from '../config/main';
+import { OnlineStatusController } from '../controller';
 import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {

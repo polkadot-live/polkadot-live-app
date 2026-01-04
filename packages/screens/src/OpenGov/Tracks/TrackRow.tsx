@@ -13,7 +13,7 @@ import {
   faHashtag,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { FlexRow } from '@polkadot-live/styles/wrappers';
+import { FlexRow } from '@polkadot-live/styles';
 import type { HelpItemKey } from '@polkadot-live/types/help';
 import type { TrackRowProps } from '../types';
 

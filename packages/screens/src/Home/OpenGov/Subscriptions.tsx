@@ -3,8 +3,8 @@
 
 import * as Accordion from '@radix-ui/react-accordion';
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import * as UI from '@polkadot-live/ui/components';
-import * as Style from '@polkadot-live/styles/wrappers';
+import * as UI from '@polkadot-live/ui';
+import * as Style from '@polkadot-live/styles';
 import {
   useApiHealth,
   useChainEvents,
@@ -14,7 +14,6 @@ import {
   useIntervalTasksManager,
 } from '@polkadot-live/contexts';
 import { useState } from 'react';
-import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { DialogManageRef, DialogRemoveRef } from './Dialogs';
 import { IntervalRow } from './IntervalRow';
@@ -133,7 +132,7 @@ export const Subscriptions = ({
       <DialogRemoveRef />
       <UI.ControlsWrapper $sticky={false} style={{ marginBottom: '1.5rem' }}>
         <div className="left">
-          <ButtonPrimaryInvert
+          <UI.ButtonPrimaryInvert
             className="back-btn"
             text="Back"
             iconLeft={FA.faCaretLeft}

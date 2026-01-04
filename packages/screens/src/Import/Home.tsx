@@ -1,14 +1,14 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as UI from '@polkadot-live/ui/components';
+import * as UI from '@polkadot-live/ui';
 import {
   faExternalLinkAlt,
   faCircleDot,
 } from '@fortawesome/free-solid-svg-icons';
 import { ContentWrapper } from '../Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { GridTwoCol } from '@polkadot-live/styles/wrappers';
+import { GridTwoCol } from '@polkadot-live/styles';
 import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
 import WalletConnectSVG from '@w3ux/extension-assets/WalletConnect.svg?react';
 import LedgerLogoSVG from '@w3ux/extension-assets/Ledger.svg?react';

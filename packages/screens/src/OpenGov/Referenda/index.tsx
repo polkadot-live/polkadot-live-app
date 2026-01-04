@@ -1,15 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as UI from '@polkadot-live/ui/components';
-import * as Styles from '@polkadot-live/styles/wrappers';
+import * as UI from '@polkadot-live/ui';
+import * as Styles from '@polkadot-live/styles';
 import * as Tabs from '@radix-ui/react-tabs';
 import * as Wrappers from './Wrappers';
-import {
-  ControlsWrapper,
-  SortControlButton,
-} from '@polkadot-live/ui/components';
-import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import {
   faCaretLeft,
   faArrowsRotate,
@@ -233,8 +228,11 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
             <Styles.FlexColumn>
               <UI.ActionItem showIcon={false} text={`${chainId} Referenda`} />
               {/* Sorting controls */}
-              <ControlsWrapper className="ReferendaControls" $padBottom={true}>
-                <ButtonPrimaryInvert
+              <UI.ControlsWrapper
+                className="ReferendaControls"
+                $padBottom={true}
+              >
+                <UI.ButtonPrimaryInvert
                   className="back-btn"
                   text="Back"
                   iconLeft={faCaretLeft}
@@ -257,7 +255,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                   }
                 >
                   <span>
-                    <SortControlButton
+                    <UI.SortControlButton
                       isActive={true}
                       isDisabled={fetchingReferenda || !getOnlineMode()}
                       onClick={() => handleRefetchReferenda()}
@@ -267,7 +265,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                     />
                   </span>
                 </UI.TooltipRx>
-              </ControlsWrapper>
+              </UI.ControlsWrapper>
             </Styles.FlexColumn>
           </section>
 

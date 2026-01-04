@@ -8,8 +8,8 @@ import {
   CarouselWrapper,
   FlexColumn,
   FlexColumnWrap,
-} from '@polkadot-live/styles/wrappers';
-import { MainHeading } from '@polkadot-live/ui/components';
+} from '@polkadot-live/styles';
+import { MainHeading } from '@polkadot-live/ui';
 import { Subscriptions } from './Subscriptions';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ManageProps } from './types';

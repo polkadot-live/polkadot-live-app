@@ -7,7 +7,7 @@ import {
   useOverlay,
   useTabs,
 } from '@polkadot-live/contexts';
-import { Help, Overlay } from '@polkadot-live/ui/components';
+import { Help, Overlay } from '@polkadot-live/ui';
 import {
   Action,
   Import,
@@ -19,7 +19,7 @@ import {
   FlexColumn,
   MainInterfaceWrapper,
   TabViewWrapper,
-} from '@polkadot-live/styles/wrappers';
+} from '@polkadot-live/styles';
 import { ToastContainer } from 'react-toastify';
 import { useEffect, useState } from 'react';
 import { ContextProxyTab } from './Proxy';

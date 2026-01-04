@@ -3,7 +3,7 @@
 
 import { Delete } from '../Actions';
 import { DropdownAccount } from './Dropdowns';
-import { HardwareAddress } from '@polkadot-live/ui/components';
+import { HardwareAddress } from '@polkadot-live/ui';
 import {
   useAccountStatuses,
   useAddHandler,

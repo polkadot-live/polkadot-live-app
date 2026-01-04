@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import * as Styles from '@polkadot-live/styles/wrappers';
-import * as UI from '@polkadot-live/ui/components';
+import * as Styles from '@polkadot-live/styles';
+import * as UI from '@polkadot-live/ui';
 import { useConnections, useHelp } from '@polkadot-live/contexts';
 import { ellipsisFn } from '@w3ux/utils';
 import { StatItemRowWrapper } from './Wrappers';

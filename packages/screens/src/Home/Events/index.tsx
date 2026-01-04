@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useEffect, useState } from 'react';
-import { MainHeading } from '@polkadot-live/ui/components';
+import { MainHeading } from '@polkadot-live/ui';
 import {
   CarouselWrapper,
   FlexColumn,
   FlexColumnWrap,
-} from '@polkadot-live/styles/wrappers';
+} from '@polkadot-live/styles';
 import { Categories } from './Categories';
 import { EventsList } from './EventsList';
 import { useEvents } from '@polkadot-live/contexts';

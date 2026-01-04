@@ -15,26 +15,28 @@ import { executeLedgerTask, USBController } from './ledger';
 import Store from 'electron-store';
 import AutoLaunch from 'auto-launch';
 import unhandled from 'electron-unhandled';
-import { Config as ConfigMain } from '@/config/main';
+import { Config as ConfigMain } from './config/main';
 import { SharedState } from './config/SharedState';
-import { AccountsController } from '@/controller/AccountsController';
-import { AddressesController } from '@/controller/AddressesController';
-import { AnalyticsController } from '@/controller/AnalyticsController';
-import { BackupController } from '@/controller/BackupController';
-import { ChainEventsController } from '@/controller/ChainEventsController';
-import { ExtrinsicsController } from '@/controller/ExtrinsicsController';
-import { EventsController } from '@/controller/EventsController';
-import { IntervalsController } from '@/controller/IntervalsController';
-import { OnlineStatusController } from '@/controller/OnlineStatusController';
-import { NotificationsController } from '@/controller/NotificationsController';
-import { SettingsController } from '@/controller/SettingsController';
-import { SubscriptionsController } from '@/controller/SubscriptionsController';
-import { WindowsController } from '@/controller/WindowsController';
-import { MainDebug } from '@/utils/DebugUtils';
-import { hideDockIcon } from '@/utils/SystemUtils';
-import { menuTemplate } from '@/utils/MenuUtils';
+import {
+  AccountsController,
+  AddressesController,
+  AnalyticsController,
+  BackupController,
+  ChainEventsController,
+  ExtrinsicsController,
+  EventsController,
+  IntervalsController,
+  OnlineStatusController,
+  NotificationsController,
+  SettingsController,
+  SubscriptionsController,
+  WindowsController,
+} from './controller';
+import { MainDebug } from './utils/DebugUtils';
+import { hideDockIcon } from './utils/SystemUtils';
+import { menuTemplate } from './utils/MenuUtils';
 import { version } from '../package.json';
-import * as WindowUtils from '@/utils/WindowUtils';
+import * as WindowUtils from './utils/WindowUtils';
 import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
 import type { IpcTask, SyncID } from '@polkadot-live/types/communication';
 import type { NotificationData } from '@polkadot-live/types/reporter';

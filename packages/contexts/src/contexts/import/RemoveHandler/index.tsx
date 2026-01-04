@@ -4,7 +4,7 @@
 import { createContext } from 'react';
 import { createSafeContextHook } from '../../../utils';
 import { getRemoveHandlerAdapter } from './adapters';
-import { useAddresses } from '../Addresses';
+import { useImportAddresses } from '../Addresses';
 import type {
   EncodedAccount,
   ImportedGenericAccount,
@@ -27,7 +27,7 @@ export const RemoveHandlerProvider = ({
   children: React.ReactNode;
 }) => {
   const adapter = getRemoveHandlerAdapter();
-  const { handleAddressUpdate } = useAddresses();
+  const { handleAddressUpdate } = useImportAddresses();
 
   /**
    * Removed generic account from main window.

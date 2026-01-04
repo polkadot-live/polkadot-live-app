@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as UI from '@polkadot-live/ui/components';
+import * as UI from '@polkadot-live/ui';
 import * as Accordion from '@radix-ui/react-accordion';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import {
@@ -17,7 +17,7 @@ import {
   FlexColumn,
   FlexRow,
   ScrollWrapper,
-} from '@polkadot-live/styles/wrappers';
+} from '@polkadot-live/styles';
 import { faCircle as faCircleRegular } from '@fortawesome/free-regular-svg-icons';
 import { getEcosystemChainMap } from '@polkadot-live/consts/chains';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

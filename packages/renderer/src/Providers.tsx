@@ -9,10 +9,10 @@ import {
   LedgerSignerProvider,
   TreasuryApiProvider,
   WalletConnectProvider,
-} from '@ren/contexts/main';
+} from './contexts/main';
 
 // Actions window contexts.
-import { TxMetaProvider, WcVerifierProvider } from '@ren/contexts/action';
+import { TxMetaProvider, WcVerifierProvider } from './contexts/action';
 
 // Import window contexts.
 import {
@@ -51,11 +51,11 @@ import {
   TreasuryProvider,
   WcFeedbackProvider,
 } from '@polkadot-live/contexts';
-import { WalletConnectImportProvider } from '@ren/contexts/import';
+import { WalletConnectImportProvider } from './contexts/import';
 
 // Other imports.
 import { Theme } from './Theme';
-import { withProviders } from '@polkadot-live/ui/hooks';
+import { withProviders } from '@polkadot-live/ui';
 
 const getProvidersForWindow = () => {
   const windowId = window.myAPI.getWindowId();

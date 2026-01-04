@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Dialog from '@radix-ui/react-dialog';
-import * as Styles from '@polkadot-live/styles/wrappers';
+import * as Styles from '@polkadot-live/styles';
 import { useConnections, useContextProxy } from '@polkadot-live/contexts';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import type { DialogDeleteExtrinsicProps } from './types';

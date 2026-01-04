@@ -7,7 +7,7 @@ import {
   renderToast,
   validateAccountName,
 } from '../../../utils';
-import { useAddresses } from '../Addresses';
+import { useImportAddresses } from '../Addresses';
 import { getRenameHandlerAdapter } from './adapters';
 import type { RenameHandlerContextInterface } from '../../../types/import';
 import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';
@@ -27,7 +27,7 @@ export const RenameHandlerProvider = ({
   children: React.ReactNode;
 }) => {
   const adapter = getRenameHandlerAdapter();
-  const { handleAddressImport, isUniqueAccountName } = useAddresses();
+  const { handleAddressImport, isUniqueAccountName } = useImportAddresses();
 
   /**
    * Rename handler for generic and encoded accounts.

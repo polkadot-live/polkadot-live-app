@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import styled from 'styled-components';
-import { mixinHelpIcon } from '@polkadot-live/styles/wrappers';
+import { mixinHelpIcon } from '@polkadot-live/styles';
 
 export const NavCardWrapper = styled.div<{ $thin?: boolean }>`
   background-color: var(--background-primary);

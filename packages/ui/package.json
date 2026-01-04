@@ -7,25 +7,9 @@
     "dist/**"
   ],
   "exports": {
-    "./components": {
-      "import": "./dist/components.es.js",
-      "types": "./dist/components.d.ts"
-    },
-    "./hooks": {
-      "import": "./dist/hooks.es.js",
-      "types": "./dist/hooks.d.ts"
-    },
-    "./utils": {
-      "import": "./dist/utils.es.js",
-      "types": "./dist/utils.d.ts"
-    },
-    "./kits/buttons": {
-      "import": "./dist/buttons.es.js",
-      "types": "./dist/buttons.d.ts"
-    },
-    "./kits/overlay": {
-      "import": "./dist/overlay.es.js",
-      "types": "./dist/overlay.d.ts"
+    ".": {
+      "import": "./dist/index.es.js",
+      "types": "./dist/index.es.d.ts"
     },
     "./scss/buttons/*": "./dist/scss/buttons/*",
     "./scss/overlay/*": "./dist/scss/overlay/*",

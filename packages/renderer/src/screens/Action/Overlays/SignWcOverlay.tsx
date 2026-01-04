@@ -10,10 +10,9 @@ import {
   useOverlay,
 } from '@polkadot-live/contexts';
 import { useEffect } from 'react';
-import { useWcVerifier } from '@ren/contexts/action';
-import { ButtonPrimary, ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
-import { FlexRow, WcOverlayWrapper } from '@polkadot-live/styles/wrappers';
-import { InfoCard } from '@polkadot-live/ui/components';
+import { useWcVerifier } from '../../../contexts/action';
+import { ButtonPrimary, ButtonSecondary, InfoCard } from '@polkadot-live/ui';
+import { FlexRow, WcOverlayWrapper } from '@polkadot-live/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { PuffLoader } from 'react-spinners';
 import type { SignWcOverlayProps } from './types';

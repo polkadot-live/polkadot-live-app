@@ -3,7 +3,7 @@
 
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
-import { mixinHelpIcon } from '@polkadot-live/styles/wrappers';
+import { mixinHelpIcon } from '@polkadot-live/styles';
 
 export const StickyHeading = styled.h5<{ $padLeft?: string }>`
   color: var(--text-color-secondary);

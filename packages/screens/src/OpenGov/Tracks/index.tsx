@@ -1,15 +1,14 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as UI from '@polkadot-live/ui/components';
-import * as Styles from '@polkadot-live/styles/wrappers';
+import * as UI from '@polkadot-live/ui';
+import * as Styles from '@polkadot-live/styles';
 import { useConnections, useHelp, useTracks } from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
 import {
   faArrowDownShortWide,
   faCaretLeft,
 } from '@fortawesome/free-solid-svg-icons';
-import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import { PuffLoader } from 'react-spinners';
 import { StickyHeadingsRow, TrackRow } from './TrackRow';
 import type { TracksProps } from '../types';
@@ -56,7 +55,7 @@ export const Tracks = ({ setSection }: TracksProps) => {
             />
             {/* Sorting controls */}
             <UI.ControlsWrapper $padBottom={true}>
-              <ButtonPrimaryInvert
+              <UI.ButtonPrimaryInvert
                 disabled={fetchingTracks}
                 className="back-btn"
                 text="Back"

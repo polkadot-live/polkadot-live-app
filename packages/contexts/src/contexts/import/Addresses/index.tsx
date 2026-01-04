@@ -10,18 +10,18 @@ import type {
   AccountSource,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
-import type { AddressesContextInterface } from '../../../types/import';
+import type { ImportAddressesContextInterface } from '../../../types/import';
 
-export const AddressesContext = createContext<
-  AddressesContextInterface | undefined
+export const ImportAddressesContext = createContext<
+  ImportAddressesContextInterface | undefined
 >(undefined);
 
-export const useAddresses = createSafeContextHook(
-  AddressesContext,
-  'AddressesContext'
+export const useImportAddresses = createSafeContextHook(
+  ImportAddressesContext,
+  'ImportAddressesContext'
 );
 
-export const AddressesProvider = ({
+export const ImportAddressesProvider = ({
   children,
 }: {
   children: React.ReactNode;
@@ -185,7 +185,7 @@ export const AddressesProvider = ({
   }, []);
 
   return (
-    <AddressesContext
+    <ImportAddressesContext
       value={{
         getAccounts,
         getDefaultName,
@@ -198,6 +198,6 @@ export const AddressesProvider = ({
       }}
     >
       {children}
-    </AddressesContext>
+    </ImportAddressesContext>
   );
 };

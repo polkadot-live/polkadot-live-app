@@ -1,10 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ButtonMono, ButtonMonoInvert } from '@polkadot-live/ui/kits/buttons';
+import { ButtonMono, ButtonMonoInvert, Identicon } from '@polkadot-live/ui';
 import { ConfirmWrapper } from './Wrappers';
-import { Identicon } from '@polkadot-live/ui/components';
-import { FlexColumn, FlexRow } from '@polkadot-live/styles/wrappers';
+import { FlexColumn, FlexRow } from '@polkadot-live/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ellipsisFn } from '@w3ux/utils';
 import { faKey } from '@fortawesome/free-solid-svg-icons';

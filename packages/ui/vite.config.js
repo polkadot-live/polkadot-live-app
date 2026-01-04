@@ -23,23 +23,11 @@ export default defineConfig({
   root: PACKAGE_ROOT,
   envDir: PROJECT_ROOT,
   base: './',
-  server: {
-    fs: {
-      strict: true,
-    },
-  },
+  server: { fs: { strict: true } },
   build: {
     emptyOutDir: true,
     lib: {
-      // Each item controls output file names.
-      entry: {
-        index: join(PACKAGE_ROOT, 'src/index.ts'),
-        components: join(PACKAGE_ROOT, 'src/components/index.ts'),
-        hooks: join(PACKAGE_ROOT, 'src/hooks/index.ts'),
-        utils: join(PACKAGE_ROOT, 'src/utils/index.ts'),
-        buttons: join(PACKAGE_ROOT, 'src/kits/Buttons/index.ts'),
-        overlay: join(PACKAGE_ROOT, 'src/kits/Overlay/index.ts'),
-      },
+      entry: join(PACKAGE_ROOT, 'src/index.ts'),
       formats: ['es'],
       fileName: (format) => `index.${format}.js`,
     },
@@ -71,14 +59,14 @@ export default defineConfig({
     viteStaticCopy({
       targets: [
         {
-          src: join(PACKAGE_ROOT, 'src/kits/Buttons/**/*.scss').replace(
+          src: join(PACKAGE_ROOT, 'src/kits/buttons/**/*.scss').replace(
             /\\/g,
             '/'
           ),
           dest: 'scss/buttons',
         },
         {
-          src: join(PACKAGE_ROOT, 'src/kits/Overlay/**/*.scss').replace(
+          src: join(PACKAGE_ROOT, 'src/kits/overlay/**/*.scss').replace(
             /\\/g,
             '/'
           ),

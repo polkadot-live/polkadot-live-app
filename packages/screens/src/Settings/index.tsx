@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Accordion from '@radix-ui/react-accordion';
-import * as UI from '@polkadot-live/ui/components';
-import * as Styles from '@polkadot-live/styles/wrappers';
+import * as UI from '@polkadot-live/ui';
+import * as Styles from '@polkadot-live/styles';
 import { Setting } from './Setting';
 import { SettingsList } from '@polkadot-live/consts/settings';
 import { useState } from 'react';

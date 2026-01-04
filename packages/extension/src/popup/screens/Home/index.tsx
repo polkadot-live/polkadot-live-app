@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as UI from '@polkadot-live/ui/components';
+import * as UI from '@polkadot-live/ui';
 import * as Ctx from '../../contexts';
 import PolkadotIcon from '@polkadot-live/ui/svg/polkadotIcon.svg?react';
 import { GITHUB_LATEST_RELEASE_URL } from '@polkadot-live/consts';
@@ -34,7 +34,7 @@ import {
   BodyInterfaceWrapper,
   FixedFlexWrapper,
   ScrollWrapper,
-} from '@polkadot-live/styles/wrappers';
+} from '@polkadot-live/styles';
 
 export const Home = () => {
   const { openHelp } = useHelp();

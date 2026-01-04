@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ContentWrapper, HeightWrapper, OverlayWrapper } from './Wrappers';
-import type { OverlayContextInterface } from '@polkadot-live/contexts/types/common';
+import type { OverlayContextInterface } from '@polkadot-live/contexts';
 
 export const Overlay = ({
   overlayCtx,

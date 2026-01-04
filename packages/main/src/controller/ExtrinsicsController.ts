@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as ImportUtils from '@/utils/ImportUtils';
-import { store } from '@/main';
+import * as ImportUtils from '../utils/ImportUtils';
+import { store } from '../main';
 import type { AnyJson } from '@polkadot-live/types/misc';
 import type {
   ExTransferKeepAliveData,

@@ -4,7 +4,7 @@
 import { chainCurrency, chainUnits } from '@polkadot-live/consts/chains';
 import { formatDecimal } from '@polkadot-live/core';
 import { ellipsisFn, planckToUnit } from '@w3ux/utils';
-import { TriggerHeader } from '@polkadot-live/ui/components';
+import { TriggerHeader } from '@polkadot-live/ui';
 import type {
   ExTransferKeepAliveData,
   ExtrinsicInfo,

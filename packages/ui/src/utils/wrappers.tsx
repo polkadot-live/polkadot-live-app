@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import styled from 'styled-components';
-import { ButtonMonoInvert } from '../kits/Buttons';
+import { ButtonMonoInvert } from '../kits/buttons';
 import { faLink } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
 

@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type * as themeVariables from '@polkadot-live/styles/theme/variables';
+import type * as themeVariables from '@polkadot-live/styles';
 import type { ActionMeta } from '@polkadot-live/types/tx';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { SyncID } from '@polkadot-live/types/communication';

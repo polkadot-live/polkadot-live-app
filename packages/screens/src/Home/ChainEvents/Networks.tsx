@@ -3,10 +3,9 @@
 
 import * as Accordion from '@radix-ui/react-accordion';
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import * as UI from '@polkadot-live/ui/components';
-import * as Wrappers from '@polkadot-live/styles/wrappers';
+import * as UI from '@polkadot-live/ui';
+import * as Wrappers from '@polkadot-live/styles';
 import { useState } from 'react';
-import { ButtonText } from '@polkadot-live/ui/kits/buttons';
 import { ChainPallets } from '@polkadot-live/consts/subscriptions/chainEvents';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { useChainEvents } from '@polkadot-live/contexts';
@@ -85,7 +84,7 @@ export const Networks = ({
                                 icon={FA.faSplotch}
                               />
                             )}
-                            <ButtonText
+                            <UI.ButtonText
                               text=""
                               iconRight={FA.faChevronRight}
                               iconTransform="shrink-3"

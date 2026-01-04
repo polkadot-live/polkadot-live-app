@@ -9,7 +9,7 @@ import {
 } from '@polkadot-live/contexts';
 import { Loader } from './Loader';
 import { renderOrigin } from '@polkadot-live/core';
-import { FlexRow } from '@polkadot-live/styles/wrappers';
+import { FlexRow } from '@polkadot-live/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHashtag } from '@fortawesome/free-solid-svg-icons';
 import { ReferendumDropdownMenu } from '../Dropdowns';

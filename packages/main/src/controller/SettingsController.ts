@@ -1,11 +1,11 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { hideDockIcon, showDockIcon } from '@/utils/SystemUtils';
-import { store } from '@/main';
-import { WindowsController } from '@/controller/WindowsController';
+import { hideDockIcon, showDockIcon } from '../utils/SystemUtils';
+import { store } from '../main';
+import { WindowsController } from '../controller';
 import { getDefaultSettings } from '@polkadot-live/consts/settings';
-import * as WindowUtils from '@/utils/WindowUtils';
+import * as WindowUtils from '../utils/WindowUtils';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { IpcTask } from '@polkadot-live/types/communication';
 import type { SettingKey } from '@polkadot-live/types/settings';

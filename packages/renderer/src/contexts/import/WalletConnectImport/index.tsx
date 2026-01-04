@@ -10,7 +10,7 @@ import {
   useImportHandler,
 } from '@polkadot-live/contexts';
 import { WalletConnectModal } from '@walletconnect/modal';
-import type { WalletConnectImportContextInterface } from '@polkadot-live/contexts/types/import';
+import type { WalletConnectImportContextInterface } from '@polkadot-live/contexts';
 import type {
   WcFetchedAddress,
   WcSelectNetwork,

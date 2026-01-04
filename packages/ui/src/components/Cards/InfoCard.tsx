@@ -4,7 +4,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ScreenInfoCardWrapper, InfoCardWrapper } from './InfoCard.styles';
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import { FlexColumn } from '@polkadot-live/styles/wrappers';
+import { FlexColumn } from '@polkadot-live/styles';
 
 export interface InfoCardProps {
   children: React.ReactNode;

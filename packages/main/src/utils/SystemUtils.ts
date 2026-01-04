@@ -1,8 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { WindowsController } from '@/controller/WindowsController';
-import { OnlineStatusController } from '@/controller/OnlineStatusController';
+import { OnlineStatusController, WindowsController } from '../controller';
 import { app } from 'electron';
 import type { AnyFunction } from '@polkadot-live/types/misc';
 

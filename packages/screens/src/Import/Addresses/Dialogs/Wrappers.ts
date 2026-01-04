@@ -1,10 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Style from '@polkadot-live/styles/wrappers';
+import * as Style from '@polkadot-live/styles';
 import * as Toggle from '@radix-ui/react-toggle';
 import styled from 'styled-components';
-import type { darkTheme } from '@polkadot-live/styles/theme/variables';
+import type { darkTheme } from '@polkadot-live/styles';
 
 export const ActionBtn = styled.button.attrs<{ $theme: typeof darkTheme }>(
   (props) => ({

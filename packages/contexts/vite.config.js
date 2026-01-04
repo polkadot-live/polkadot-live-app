@@ -1,17 +1,18 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import dts from 'vite-plugin-dts';
 import pkg from './package.json';
 import pkgRoot from '../../package.json';
-import svgr from 'vite-plugin-svgr';
 import react from '@vitejs/plugin-react-swc';
-import dts from 'vite-plugin-dts';
+import svgr from 'vite-plugin-svgr';
+import { chrome } from '../../.electron-vendors.cache.json';
 import { defineConfig } from 'vite';
 import { join } from 'path';
-import { chrome } from '../../.electron-vendors.cache.json';
 
 const PACKAGE_ROOT = __dirname;
 const PROJECT_ROOT = join(PACKAGE_ROOT, '../..');
+const isProd = process.env.MODE === 'production';
 
 /**
  * @type {import('vite').UserConfig}
@@ -22,11 +23,7 @@ export default defineConfig({
   root: PACKAGE_ROOT,
   envDir: PROJECT_ROOT,
   base: './',
-  server: {
-    fs: {
-      strict: true,
-    },
-  },
+  server: { fs: { strict: true } },
   build: {
     emptyOutDir: true,
     lib: {
@@ -34,7 +31,7 @@ export default defineConfig({
       formats: ['es'],
       fileName: (format) => `index.${format}.js`,
     },
-    minify: process.env.MODE === 'production',
+    minify: isProd,
     reportCompressedSize: false,
     rollupOptions: {
       // Exclude dependencies from the bundle.
@@ -49,7 +46,7 @@ export default defineConfig({
         entryFileNames: '[name].[format].js',
       },
     },
-    sourcemap: process.env.MODE !== 'production',
+    sourcemap: !isProd,
     target: `chrome${chrome}`,
   },
   plugins: [

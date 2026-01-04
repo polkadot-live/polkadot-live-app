@@ -29,51 +29,42 @@ const PROJECT_ROOT = join(PACKAGE_ROOT, '../..');
  */
 
 const getAliasConfig = () => {
-  let alias = [
-    {
-      find: '@ren',
-      replacement: resolve(PACKAGE_ROOT, 'src'),
-    },
-  ];
-
-  if (process.env.MODE === 'development') {
-    // Map alias paths to the package.json exports to align development and production.
-    const srcUi = resolve(PROJECT_ROOT, 'packages', 'ui', 'src');
-    const srcCore = resolve(PROJECT_ROOT, 'packages', 'core', 'src');
-    const srcConsts = resolve(PROJECT_ROOT, 'packages', 'consts', 'src');
-    const srcContexts = resolve(PROJECT_ROOT, 'packages', 'contexts', 'src');
-    const srcScreens = resolve(PROJECT_ROOT, 'packages', 'screens', 'src');
-    const srcStyles = resolve(PROJECT_ROOT, 'packages', 'styles', 'src');
-    const srcTypes = resolve(PROJECT_ROOT, 'packages', 'types', 'src');
-
-    const devDeps = [
-      ['@polkadot-live/ui/kits/overlay', `${srcUi}/kits/Overlay/index.ts`],
-      ['@polkadot-live/ui/kits/buttons', `${srcUi}/kits/Buttons/index.ts`],
-      ['@polkadot-live/ui/utils', `${srcUi}/utils`],
-      ['@polkadot-live/ui/styles', `${srcUi}/styles`],
-      ['@polkadot-live/ui/hooks', `${srcUi}/hooks`],
-      ['@polkadot-live/ui/contexts', `${srcUi}/contexts`],
-      ['@polkadot-live/ui/components', `${srcUi}/components`],
-      ['@polkadot-live/ui/scss/buttons', `${srcUi}/kits/Buttons`],
-      ['@polkadot-live/ui/scss/overlay', `${srcUi}/kits/Overlay`],
-      ['@polkadot-live/ui', srcUi],
-      ['@polkadot-live/core', srcCore],
-      ['@polkadot-live/consts', srcConsts],
-      ['@polkadot-live/contexts', srcContexts],
-      ['@polkadot-live/screens', srcScreens],
-      ['@polkadot-live/styles', srcStyles],
-      ['@polkadot-live/types', srcTypes],
-    ];
-
-    const devAlias = devDeps.map(([find, path]) => ({
-      find,
-      replacement: resolve(PROJECT_ROOT, path),
-    }));
-
-    alias = alias.concat(devAlias);
+  let alias = [];
+  if (process.env.MODE !== 'development') {
+    return alias;
   }
 
-  return alias;
+  // Map alias paths to the package.json exports to align development and production.
+  const PR = `${PROJECT_ROOT}/packages`;
+  const srcUi = resolve(PR, 'ui', 'src');
+  const srcCore = resolve(PR, 'core', 'src');
+  const srcConsts = resolve(PR, 'consts', 'src');
+  const srcContexts = resolve(PR, 'contexts', 'src');
+  const srcEncoder = resolve(PR, 'encoder', 'src');
+  const srcScreens = resolve(PR, 'screens', 'src');
+  const srcStyles = resolve(PR, 'styles', 'src');
+  const srcTypes = resolve(PR, 'types', 'src');
+
+  const pfx = '@polkadot-live';
+  const devDeps = [
+    [`${pfx}/ui/scss/buttons`, `${srcUi}/kits/buttons`],
+    [`${pfx}/ui/scss/overlay`, `${srcUi}/kits/overlay`],
+    [`${pfx}/ui`, srcUi],
+    [`${pfx}/core`, srcCore],
+    [`${pfx}/consts`, srcConsts],
+    [`${pfx}/contexts`, srcContexts],
+    [`${pfx}/encoder`, srcEncoder],
+    [`${pfx}/screens`, srcScreens],
+    [`${pfx}/styles`, srcStyles],
+    [`${pfx}/types`, srcTypes],
+  ];
+
+  const devAlias = devDeps.map(([find, path]) => ({
+    find,
+    replacement: resolve(PROJECT_ROOT, path),
+  }));
+
+  return alias.concat(devAlias);
 };
 
 /**
@@ -87,15 +78,16 @@ export default defineConfig({
   base: './',
   server: {
     fs: {
+      allow: [PROJECT_ROOT],
       strict: true,
     },
   },
   resolve: {
-    preserveSymlinks: true,
     alias: getAliasConfig(),
+    preserveSymlinks: true,
   },
   build: {
-    sourcemap: true,
+    sourcemap: process.env.MODE === 'development',
     minify: process.env.MODE !== 'development',
     target: `chrome${chrome}`,
     outDir: 'dist',

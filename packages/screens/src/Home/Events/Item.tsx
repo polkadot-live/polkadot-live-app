@@ -8,13 +8,13 @@ import {
   FlexColumn,
   FlexRow,
   MenuButton,
-} from '@polkadot-live/styles/wrappers';
+} from '@polkadot-live/styles';
 import { AnimatePresence } from 'framer-motion';
 import { EventItem } from './Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getEventChainId, renderTimeAgo } from '@polkadot-live/core';
 import { ellipsisFn } from '@w3ux/utils';
-import { Identicon, TooltipRx } from '@polkadot-live/ui/components';
+import { Identicon, TooltipRx } from '@polkadot-live/ui';
 import { DividerVerticalIcon } from '@radix-ui/react-icons';
 import { ActionsDropdown } from './Dropdowns';
 import type { EventAccountData } from '@polkadot-live/types/reporter';

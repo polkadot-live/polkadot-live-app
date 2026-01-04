@@ -6,6 +6,7 @@ import { createRoot } from 'react-dom/client';
 
 // Package styles.
 import '@theme-toggles/react/css/Classic.css';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Library styles.
 import '@polkadot-live/ui/scss/buttons/index.scss';

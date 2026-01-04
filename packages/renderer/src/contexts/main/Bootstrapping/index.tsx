@@ -23,7 +23,7 @@ import {
 import { setStateWithRef } from '@w3ux/utils';
 import { startWithWorker } from 'dedot/smoldot/with-worker';
 import type { AnyData } from '@polkadot-live/types/misc';
-import type { BootstrappingInterface } from '@polkadot-live/contexts/types/main';
+import type { BootstrappingInterface } from '@polkadot-live/contexts';
 import type { ChainEventSubscription } from '@polkadot-live/types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';

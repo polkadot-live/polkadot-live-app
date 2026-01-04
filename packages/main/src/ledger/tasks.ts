@@ -7,10 +7,10 @@ import {
   handleLedgerTaskError,
   serializeTaskResponse,
 } from '@polkadot-live/core';
-import { MainDebug } from '@/utils/DebugUtils';
+import { MainDebug } from '../utils/DebugUtils';
 import { PolkadotGenericApp, supportedApps } from '@zondax/ledger-substrate';
 import { USBController } from './controller';
-import { WindowsController } from '@/controller/WindowsController';
+import { WindowsController } from '../controller';
 import { withTimeout } from './utils';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {

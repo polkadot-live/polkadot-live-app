@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Dialog from '@radix-ui/react-dialog';
-import * as Styles from '@polkadot-live/styles/wrappers';
+import * as Styles from '@polkadot-live/styles';
 import * as Icons from '@radix-ui/react-icons';
 import { useConnections } from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
 import { getSendChains } from '@polkadot-live/consts/chains';
-import { ChainIcon } from '@polkadot-live/ui/components';
+import { ChainIcon } from '@polkadot-live/ui';
 import {
   AddressesWrapper,
   AddressItem,

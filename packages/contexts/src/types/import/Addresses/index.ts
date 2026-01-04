@@ -6,7 +6,7 @@ import type {
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
 
-export interface AddressesContextInterface {
+export interface ImportAddressesContextInterface {
   getAccounts: (source: AccountSource) => ImportedGenericAccount[];
   getDefaultName: () => string;
   getNextNames: (len: number) => string[];

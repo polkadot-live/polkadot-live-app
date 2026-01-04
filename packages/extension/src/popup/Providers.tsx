@@ -17,7 +17,7 @@ import {
   SubscriptionsProvider,
   SummaryProvider,
 } from '@polkadot-live/contexts';
-import { withProviders } from '@polkadot-live/ui/hooks';
+import { withProviders } from '@polkadot-live/ui';
 import { BootstrappingProvider, CogMenuProvider } from './contexts';
 import App from './App';
 

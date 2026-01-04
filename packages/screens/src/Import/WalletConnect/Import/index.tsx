@@ -1,19 +1,14 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as UI from '@polkadot-live/ui/components';
-import * as Styles from '@polkadot-live/styles/wrappers';
+import * as UI from '@polkadot-live/ui';
+import * as Styles from '@polkadot-live/styles';
 import * as AccordionRx from '@radix-ui/react-accordion';
 import * as Checkbox from '@radix-ui/react-checkbox';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 
 import { BarLoader } from 'react-spinners';
 import { CheckIcon, ChevronDownIcon } from '@radix-ui/react-icons';
-import {
-  ButtonPrimaryInvert,
-  ButtonText,
-} from '@polkadot-live/ui/kits/buttons';
-import { ChainIcon, InfoCard } from '@polkadot-live/ui/components';
 import {
   useConnections,
   useContextProxy,
@@ -130,7 +125,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
             >
               <Styles.ResponsiveRow $smWidth="500px">
                 <Styles.FlexRow>
-                  <ButtonPrimaryInvert
+                  <UI.ButtonPrimaryInvert
                     className="back-btn"
                     text="Back"
                     iconLeft={FA.faCaretLeft}
@@ -141,7 +136,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                   <UI.SortControlLabel label="Import WalletConnect Accounts" />
                 </Styles.FlexRow>
                 <Styles.FlexRow>
-                  <ButtonText
+                  <UI.ButtonText
                     iconLeft={FA.faCaretRight}
                     text={'WalletConnect Accounts'}
                     disabled={wcAddresses.length === 0}
@@ -184,7 +179,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                               $gap={'0.5rem'}
                               style={{ flex: 1 }}
                             >
-                              <InfoCard
+                              <UI.InfoCard
                                 icon={FA.faCircleDot}
                                 iconTransform={'shrink-3'}
                                 style={{ margin: '0', flex: 1 }}
@@ -192,7 +187,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                 <span>
                                   An existing session has been detected.
                                 </span>
-                              </InfoCard>
+                              </UI.InfoCard>
                             </Styles.FlexRow>
                             <Styles.FlexRow
                               className="SmAlignStart"
@@ -234,7 +229,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                           <Styles.ItemsColumn>
                             {wcNetworks.map(({ chainId, selected }, i) => (
                               <ImportAddressRow key={i}>
-                                <ChainIcon chainId={chainId} width={18} />
+                                <UI.ChainIcon chainId={chainId} width={18} />
                                 <div className="addressInfo">
                                   <h2>{chainId}</h2>
                                 </div>
@@ -272,7 +267,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                           </Styles.ItemsColumn>
                           <Styles.FlexColumn style={{ marginTop: '0.5rem' }}>
                             <Styles.FlexRow $gap={'0.5rem'}>
-                              <InfoCard
+                              <UI.InfoCard
                                 icon={FA.faCircleDot}
                                 iconTransform={'shrink-3'}
                                 style={{ margin: '0', flex: 1 }}
@@ -281,7 +276,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                   Select your target networks and click Connect
                                   to fetch addresses via WalletConnect.
                                 </span>
-                              </InfoCard>
+                              </UI.InfoCard>
 
                               {/** Connect Button */}
                               <WcSessionButton
@@ -316,7 +311,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                     </UI.AccordionTrigger>
                     <UI.AccordionContent transparent={true}>
                       {wcFetchedAddresses.length === 0 ? (
-                        <InfoCard
+                        <UI.InfoCard
                           icon={FA.faCircleDot}
                           iconTransform={'shrink-3'}
                           style={{ marginTop: '0', marginBottom: '0.75rem' }}
@@ -324,7 +319,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                           <span>
                             Establish a WalletConnect session to view addresses.
                           </span>
-                        </InfoCard>
+                        </UI.InfoCard>
                       ) : (
                         <>
                           <Styles.ItemsColumn>

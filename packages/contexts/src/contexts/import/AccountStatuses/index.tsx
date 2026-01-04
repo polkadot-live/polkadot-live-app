@@ -3,7 +3,7 @@
 
 import { createContext, useEffect, useRef, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
-import { useAddresses } from '../Addresses';
+import { useImportAddresses } from '../Addresses';
 import { useRemoveHandler } from '../RemoveHandler';
 import { getAccountStatusesAdapter } from './adapters';
 import { getSupportedSources } from '@polkadot-live/consts/chains';
@@ -38,7 +38,7 @@ export const AccountStatusesProvider = ({
   children: React.ReactNode;
 }) => {
   const adapter = getAccountStatusesAdapter();
-  const { getAccounts } = useAddresses();
+  const { getAccounts } = useImportAddresses();
   const { handleRemoveAddress } = useRemoveHandler();
 
   /**

@@ -2,11 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Accordion from '@radix-ui/react-accordion';
-import * as UI from '@polkadot-live/ui/components';
+import * as UI from '@polkadot-live/ui';
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import { FlexColumn, FlexRow } from '@polkadot-live/styles/wrappers';
+import { FlexColumn, FlexRow } from '@polkadot-live/styles';
 import { chainCurrency } from '@polkadot-live/consts/chains';
-import { MainHeading } from '@polkadot-live/ui/components';
 import { useConnections } from '@polkadot-live/contexts';
 import { useState } from 'react';
 import { ellipsisFn } from '@w3ux/utils';
@@ -92,7 +91,7 @@ export const Send = ({
 
   return (
     <FlexColumn style={{ padding: '2rem 1rem' }}>
-      <MainHeading>Send</MainHeading>
+      <UI.MainHeading>Send</UI.MainHeading>
       {!getOnlineMode() && <UI.OfflineBanner rounded={true} />}
 
       <FlexColumn $rowGap={'0.5rem'} style={{ marginBottom: '1rem' }}>

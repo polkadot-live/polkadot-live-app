@@ -1,19 +1,18 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as UI from '@polkadot-live/ui/components';
+import * as UI from '@polkadot-live/ui';
 import {
   useConnections,
   useLedgerFeedback,
   useOverlay,
 } from '@polkadot-live/contexts';
 import { useEffect } from 'react';
-import { ButtonPrimary, ButtonSecondary } from '@polkadot-live/ui/kits/buttons';
 import {
   LedgerOverlayWrapper,
   FlexColumn,
   FlexRow,
-} from '@polkadot-live/styles/wrappers';
+} from '@polkadot-live/styles';
 import { PuffLoader } from 'react-spinners';
 import {
   faChevronRight,
@@ -73,7 +72,7 @@ export const SignLedgerOverlay = ({ info }: SignLedgerOverlayProps) => {
       </FlexColumn>
 
       <FlexRow $gap={'1rem'}>
-        <ButtonSecondary
+        <UI.ButtonSecondary
           text="Cancel"
           marginLeft
           disabled={isBuildingExtrinsic || isSigning}
@@ -83,7 +82,7 @@ export const SignLedgerOverlay = ({ info }: SignLedgerOverlayProps) => {
           }}
         />
 
-        <ButtonPrimary
+        <UI.ButtonPrimary
           text="Sign"
           disabled={isBuildingExtrinsic || isSigning}
           onClick={() => handleSign(info)}

@@ -7,7 +7,7 @@ import {
   useConnections,
   useIntervalTasksManager,
 } from '@polkadot-live/contexts';
-import { DropdownMenuContent } from '@polkadot-live/styles/wrappers';
+import { DropdownMenuContent } from '@polkadot-live/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   getPolkassemblySubdomain,

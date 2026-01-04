@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   DropdownMenuContent,
   MenuButton,
-} from '@polkadot-live/styles/wrappers';
+} from '@polkadot-live/styles';
 import {
   faEllipsis,
   faUpRightFromSquare,

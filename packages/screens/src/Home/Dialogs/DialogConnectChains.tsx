@@ -15,7 +15,7 @@ import {
   DialogHr,
   FlexColumn,
   FlexRow,
-} from '@polkadot-live/styles/wrappers';
+} from '@polkadot-live/styles';
 import { ChainListWrapper } from './Wrappers';
 import { PuffLoader } from 'react-spinners';
 import type { ChainID } from '@polkadot-live/types/chains';

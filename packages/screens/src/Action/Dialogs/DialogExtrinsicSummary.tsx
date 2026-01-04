@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Dialog from '@radix-ui/react-dialog';
-import * as Styles from '@polkadot-live/styles/wrappers';
+import * as Styles from '@polkadot-live/styles';
 import { chainCurrency, chainUnits } from '@polkadot-live/consts/chains';
 import { formatDecimal } from '@polkadot-live/core';
 import { useConnections } from '@polkadot-live/contexts';
@@ -10,7 +10,7 @@ import { Cross2Icon } from '@radix-ui/react-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTableList } from '@fortawesome/free-solid-svg-icons';
 import { ellipsisFn, planckToUnit } from '@w3ux/utils';
-import { CopyButton, Identicon, TooltipRx } from '@polkadot-live/ui/components';
+import { CopyButton, Identicon, TooltipRx } from '@polkadot-live/ui';
 import { truncateDecimalPlaces } from '../Helpers';
 import { InfoPanel } from './Wrappers';
 import type { ExTransferKeepAliveData } from '@polkadot-live/types/tx';

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Accordion from '@radix-ui/react-accordion';
-import * as UI from '@polkadot-live/ui/components';
+import * as UI from '@polkadot-live/ui';
 import {
   ChainPallets,
   getReadablePallet,
@@ -17,12 +17,11 @@ import {
   useChainEvents,
   useConnections,
 } from '@polkadot-live/contexts';
-import { ButtonPrimaryInvert } from '@polkadot-live/ui/kits/buttons';
 import {
   FlexColumn,
   FlexRow,
   ItemsColumn,
-} from '@polkadot-live/styles/wrappers';
+} from '@polkadot-live/styles';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChainEventSubscription } from '@polkadot-live/types';
 import type { SubscriptionsProps } from './types';
@@ -71,7 +70,7 @@ export const Subscriptions = ({
     <>
       <UI.ControlsWrapper $sticky={false} style={{ marginBottom: '1.5rem' }}>
         <div className="left">
-          <ButtonPrimaryInvert
+          <UI.ButtonPrimaryInvert
             className="back-btn"
             text="Back"
             iconLeft={faCaretLeft}

@@ -7,7 +7,7 @@ import {
   faCircleChevronDown,
   faTags,
 } from '@fortawesome/free-solid-svg-icons';
-import { FlexRow } from '@polkadot-live/styles/wrappers';
+import { FlexRow } from '@polkadot-live/styles';
 import { HeaderWrapper } from './Wrapper';
 import { Padlock } from '../Padlock';
 import { TooltipRx } from '../TooltipRx';
