@@ -13,14 +13,14 @@ jobs:
     - name: Configure Git to use LF line endings
       run: git config --global core.autocrlf input
 
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
-    - uses: actions/setup-node@v4
+    - uses: actions/setup-node@v6
       with:
         cache: 'yarn'
         node-version: 23.x
     
-    - uses: actions/setup-python@v5
+    - uses: actions/setup-python@v6
       with:
         python-version: '3.10'
 
