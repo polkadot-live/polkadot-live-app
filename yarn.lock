@@ -2414,6 +2414,7 @@ __metadata:
     "@polkadot-live/consts": "workspace:*"
     "@polkadot-live/contexts": "workspace:*"
     "@polkadot-live/core": "workspace:*"
+    "@polkadot-live/encoder": "workspace:*"
     "@polkadot-live/screens": "workspace:*"
     "@polkadot-live/styles": "workspace:*"
     "@polkadot-live/types": "workspace:*"
@@ -2425,7 +2426,6 @@ __metadata:
     idb: "npm:^8.0.3"
     vite-plugin-node-polyfills: "npm:^0.24.0"
     vite-plugin-zip-pack: "npm:^1.2.4"
-    vite-tsconfig-paths: "npm:^6.0.3"
   languageName: unknown
   linkType: soft
 
@@ -2472,6 +2472,7 @@ __metadata:
   dependencies:
     "@polkadot-live/consts": "workspace:*"
     "@polkadot-live/contexts": "workspace:*"
+    "@polkadot-live/styles": "workspace:*"
     "@polkadot-live/types": "workspace:*"
     "@polkadot-live/ui": "workspace:*"
     vite-plugin-dts: "npm:^4.5.3"
@@ -2481,6 +2482,8 @@ __metadata:
 "@polkadot-live/styles@workspace:*, @polkadot-live/styles@workspace:packages/styles":
   version: 0.0.0-use.local
   resolution: "@polkadot-live/styles@workspace:packages/styles"
+  dependencies:
+    "@polkadot-live/types": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -15534,22 +15537,6 @@ __metadata:
     vite:
       optional: true
   checksum: 6228f23155ea25d92b1e1702284cf8dc52ad3c683c5ca691edd5a4c82d2913e7326d00708cef1cbfde9bb226261df0e0a12e03ef1d43b6a92d8f02b483ef37e3
-  languageName: node
-  linkType: hard
-
-"vite-tsconfig-paths@npm:^6.0.3":
-  version: 6.0.3
-  resolution: "vite-tsconfig-paths@npm:6.0.3"
-  dependencies:
-    debug: "npm:^4.1.1"
-    globrex: "npm:^0.1.2"
-    tsconfck: "npm:^3.0.3"
-  peerDependencies:
-    vite: "*"
-  peerDependenciesMeta:
-    vite:
-      optional: true
-  checksum: 75cfe470f1ec0e776b2aec1d2e71316d5e1214f485fce7daaed4e4789d6f667881fb85d98129b6463a5b70c7524ef258b401c4871ed8b6318ac45cc892ee778a
   languageName: node
   linkType: hard
 

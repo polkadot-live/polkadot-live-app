@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as UI from '@polkadot-live/ui';
-import * as Styles from '@polkadot-live/styles/wrappers';
+import * as Styles from '@polkadot-live/styles';
 import * as AccordionRx from '@radix-ui/react-accordion';
 import * as Checkbox from '@radix-ui/react-checkbox';
 import * as FA from '@fortawesome/free-solid-svg-icons';

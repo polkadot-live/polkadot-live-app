@@ -6,7 +6,7 @@ import {
   CarouselWrapper,
   FlexColumn,
   FlexColumnWrap,
-} from '@polkadot-live/styles/wrappers';
+} from '@polkadot-live/styles';
 import { MainHeading } from '@polkadot-live/ui';
 import { Networks } from './Networks';
 import { Subscriptions } from './Subscriptions';

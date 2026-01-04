@@ -12,7 +12,7 @@ import {
   LedgerOverlayWrapper,
   FlexColumn,
   FlexRow,
-} from '@polkadot-live/styles/wrappers';
+} from '@polkadot-live/styles';
 import { PuffLoader } from 'react-spinners';
 import {
   faChevronRight,

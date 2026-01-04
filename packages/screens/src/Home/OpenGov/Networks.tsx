@@ -3,7 +3,7 @@
 
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui';
-import * as Style from '@polkadot-live/styles/wrappers';
+import * as Style from '@polkadot-live/styles';
 import {
   useChainEvents,
   useConnections,

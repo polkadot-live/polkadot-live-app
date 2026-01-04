@@ -27,6 +27,7 @@ export default {
     'packages/encoder/dist',
     'packages/ui/dist',
     'packages/screens/dist',
+    'packages/styles/dist',
     'package.json',
     ...(await findFilesThatShouldBeExcluded()),
   ],

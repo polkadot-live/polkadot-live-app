@@ -11,7 +11,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { faAngleLeft, faQrcode } from '@fortawesome/free-solid-svg-icons';
 import { Reader } from './Reader';
 import { SplashWrapper } from '../Wrappers';
-import { FlexRow } from '@polkadot-live/styles/wrappers';
+import { FlexRow } from '@polkadot-live/styles';
 import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
 import type { VaultSplashProps } from './types';
 

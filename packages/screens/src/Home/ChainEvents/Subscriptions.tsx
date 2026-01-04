@@ -21,7 +21,7 @@ import {
   FlexColumn,
   FlexRow,
   ItemsColumn,
-} from '@polkadot-live/styles/wrappers';
+} from '@polkadot-live/styles';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChainEventSubscription } from '@polkadot-live/types';
 import type { SubscriptionsProps } from './types';

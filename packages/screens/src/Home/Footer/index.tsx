@@ -17,7 +17,7 @@ import {
   FlexColumn,
   FlexRow,
   ScrollWrapper,
-} from '@polkadot-live/styles/wrappers';
+} from '@polkadot-live/styles';
 import { faCircle as faCircleRegular } from '@fortawesome/free-regular-svg-icons';
 import { getEcosystemChainMap } from '@polkadot-live/consts/chains';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

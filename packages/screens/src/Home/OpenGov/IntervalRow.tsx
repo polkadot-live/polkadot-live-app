@@ -10,7 +10,7 @@ import {
   useHelp,
   useIntervalTasksManager,
 } from '@polkadot-live/contexts';
-import { TaskEntryWrapper } from '@polkadot-live/styles/wrappers';
+import { TaskEntryWrapper } from '@polkadot-live/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
 import { Switch, TooltipRx } from '@polkadot-live/ui';

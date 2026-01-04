@@ -9,7 +9,7 @@ import {
   useSubscriptions,
 } from '@polkadot-live/contexts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { TaskEntryWrapper } from '@polkadot-live/styles/wrappers';
+import { TaskEntryWrapper } from '@polkadot-live/styles';
 import { Switch, TooltipRx } from '@polkadot-live/ui';
 import { NotificationsSwitch, OneShotSwitch } from '../Controls';
 import type { ClassicSubscriptionProps } from './types';

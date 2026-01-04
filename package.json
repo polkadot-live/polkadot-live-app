@@ -16,6 +16,7 @@
     "build:contexts": "nx build:dev @polkadot-live/contexts",
     "build:encoder": "nx build:dev @polkadot-live/encoder",
     "build:screens": "nx build:dev @polkadot-live/screens",
+    "build:styles": "nx build:dev @polkadot-live/styles",
     "build:ui": "nx build:dev @polkadot-live/ui",
     "lint": "nx run-many -t lint",
     "lint:check": "eslint .",

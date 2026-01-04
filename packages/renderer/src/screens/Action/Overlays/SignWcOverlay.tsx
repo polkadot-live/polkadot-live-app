@@ -12,7 +12,7 @@ import {
 import { useEffect } from 'react';
 import { useWcVerifier } from '../../../contexts/action';
 import { ButtonPrimary, ButtonSecondary, InfoCard } from '@polkadot-live/ui';
-import { FlexRow, WcOverlayWrapper } from '@polkadot-live/styles/wrappers';
+import { FlexRow, WcOverlayWrapper } from '@polkadot-live/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { PuffLoader } from 'react-spinners';
 import type { SignWcOverlayProps } from './types';

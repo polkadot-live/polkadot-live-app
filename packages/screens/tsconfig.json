@@ -1,22 +1,22 @@
 {
   "compilerOptions": {
-    "module": "ESNext",
+    "rootDir": ".",
     "target": "ESNext",
+    "module": "ESNext",
     "moduleResolution": "Bundler",
-    "checkJs": false,
-    "strict": true,
-    "allowJs": true,
     "jsx": "react-jsx",
-    "skipLibCheck": true,
-    "esModuleInterop": true,
+    "strict": true,
     "noImplicitAny": true,
-    "sourceMap": false,
-    "outDir": "dist",
-    "resolveJsonModule": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
-    "types": ["vite-plugin-svgr/client", "vitest/globals"],
-    "removeComments": true,
-    "rootDir": "."
-  }
+    "esModuleInterop": true,
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
+    "skipLibCheck": true,
+    "types": ["vite-plugin-svgr/client"]
+  },
+  "include": ["index.d.ts", "src/**/*.{ts,tsx}"],
+  "exclude": ["dist", "node_modules"]
 }

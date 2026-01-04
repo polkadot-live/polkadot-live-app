@@ -35,7 +35,7 @@ import {
   BodyInterfaceWrapper,
   FixedFlexWrapper,
   ScrollWrapper,
-} from '@polkadot-live/styles/wrappers';
+} from '@polkadot-live/styles';
 import PolkadotIcon from '@polkadot-live/ui/svg/polkadotIcon.svg?react';
 import { GITHUB_LATEST_RELEASE_URL } from '@polkadot-live/consts';
 

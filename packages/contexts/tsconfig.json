@@ -1,22 +1,20 @@
 {
   "compilerOptions": {
+    "rootDir": ".",
     "module": "ESNext",
     "target": "ESNext",
     "moduleResolution": "Bundler",
     "checkJs": false,
     "strict": true,
-    "allowJs": true,
     "jsx": "react-jsx",
     "skipLibCheck": true,
     "esModuleInterop": true,
     "noImplicitAny": true,
-    "sourceMap": false,
-    "outDir": "dist",
     "resolveJsonModule": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "allowSyntheticDefaultImports": true,
-    "types": ["chrome", "electron", "wicg-file-system-access", "vitest/globals"],
-    "removeComments": true,
-    "rootDir": "."
-  }
+    "types": ["chrome", "electron", "wicg-file-system-access"],
+  },
+  "include": ["index.d.ts", "src"],
+  "exclude": ["dist", "node_modules"]
 }

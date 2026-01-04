@@ -1,9 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as themeVariables from '@polkadot-live/styles/theme/variables';
 import { createSafeContextHook } from '../../../utils';
 import { createContext, useEffect, useRef, useState } from 'react';
+import { darkTheme, lightTheme } from '@polkadot-live/styles';
 import { getConnectionsAdapter } from './adapters';
 import { initSharedState } from '@polkadot-live/consts/sharedState';
 import { setStateWithRef } from '@w3ux/utils';
@@ -55,10 +55,8 @@ export const ConnectionsProvider = ({
   /**
    * Get theme object.
    */
-  const getTheme = (): typeof themeVariables.darkTheme => {
-    const { darkTheme, lightTheme } = themeVariables;
-    return cacheGet('mode:dark') ? darkTheme : lightTheme;
-  };
+  const getTheme = (): typeof darkTheme =>
+    cacheGet('mode:dark') ? darkTheme : lightTheme;
 
   /**
    * Copy to clipboard.

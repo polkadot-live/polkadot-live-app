@@ -4,7 +4,7 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { useConnections, useDialogControl } from '@polkadot-live/contexts';
 import { ActionBtn } from '../Dialogs/Wrappers';
-import { DropdownMenuContent } from '@polkadot-live/styles/wrappers';
+import { DropdownMenuContent } from '@polkadot-live/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getSubscanSubdomain } from '@polkadot-live/consts/chains';
 import {

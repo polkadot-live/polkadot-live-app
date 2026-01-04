@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import styled from 'styled-components';
-import type { darkTheme } from '@polkadot-live/styles/theme/variables';
+import type { darkTheme } from '@polkadot-live/styles';
 
 export const ChainListWrapper = styled.div.attrs<{
   $theme: typeof darkTheme;

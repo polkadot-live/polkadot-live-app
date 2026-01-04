@@ -3,7 +3,7 @@
 
 import * as Select from '@radix-ui/react-select';
 import * as UI from '@polkadot-live/ui';
-import * as Styles from '@polkadot-live/styles/wrappers';
+import * as Styles from '@polkadot-live/styles';
 import { useConnections } from '@polkadot-live/contexts';
 import { ellipsisFn } from '@w3ux/utils';
 import { PuffLoader } from 'react-spinners';

@@ -22,6 +22,7 @@
   "dependencies": {
     "@polkadot-live/consts": "workspace:*",
     "@polkadot-live/contexts": "workspace:*",
+    "@polkadot-live/styles": "workspace:*",
     "@polkadot-live/ui": "workspace:*"
   },
   "devDependencies": {

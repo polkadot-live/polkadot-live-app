@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import styled from 'styled-components';
-import 'react-toastify/dist/ReactToastify.css';
 import type { ChainID } from '@polkadot-live/types/chains';
 
 // The outer-most component wrapping the app.

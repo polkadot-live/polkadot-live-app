@@ -9,7 +9,7 @@ import {
   useHelp,
 } from '@polkadot-live/contexts';
 import { Switch, TooltipRx } from '@polkadot-live/ui';
-import { FlexRow, TaskEntryWrapper } from '@polkadot-live/styles/wrappers';
+import { FlexRow, TaskEntryWrapper } from '@polkadot-live/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { SubscriptionRowProps } from './types';
 

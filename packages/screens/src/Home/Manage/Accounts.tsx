@@ -20,7 +20,7 @@ import {
   ItemsColumn,
   ItemEntryWrapper,
   FlexRow,
-} from '@polkadot-live/styles/wrappers';
+} from '@polkadot-live/styles';
 import { getSupportedChains } from '@polkadot-live/consts/chains';
 import type { AccountsProps } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';

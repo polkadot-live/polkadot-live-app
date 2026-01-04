@@ -4,7 +4,6 @@
 import manifest from './manifest.config.js';
 import react from '@vitejs/plugin-react';
 import svgr from 'vite-plugin-svgr';
-import tsconfigPaths from 'vite-tsconfig-paths';
 import zip from 'vite-plugin-zip-pack';
 import { crx } from '@crxjs/vite-plugin';
 import { defineConfig } from 'vite';
@@ -14,32 +13,57 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 const PACKAGE_ROOT = __dirname;
 const PROJECT_ROOT = join(PACKAGE_ROOT, '../..');
-const PR = PROJECT_ROOT;
 
-const packageTsconfigPaths: Record<string, string> = {
-  '@polkadot-live/contexts': resolve(PR, 'packages/contexts/tsconfig.json'),
-  '@polkadot-live/consts': resolve(PR, 'packages/consts/tsconfig.json'),
-  '@polkadot-live/core': resolve(PR, 'packages/core/tsconfig.json'),
-  '@polkadot-live/encoder': resolve(PR, 'packages/encoder/tsconfig.json'),
-  '@polkadot-live/screens': resolve(PR, 'packages/screens/tsconfig.json'),
-  '@polkadot-live/styles': resolve(PR, 'packages/styles/tsconfig.json'),
-  '@polkadot-live/types': resolve(PR, 'packages/types/tsconfig.json'),
-  '@polkadot-live/ui': resolve(PR, 'packages/ui/tsconfig.json'),
+const packageNames: string[] = [
+  '@polkadot-live/contexts',
+  '@polkadot-live/consts',
+  '@polkadot-live/core',
+  '@polkadot-live/encoder',
+  '@polkadot-live/screens',
+  '@polkadot-live/styles',
+  '@polkadot-live/types',
+  '@polkadot-live/ui',
+];
+
+const getAliasConfig = () => {
+  if (process.env.MODE === 'production') {
+    return [];
+  }
+  const alias = (find: string, path: string) => ({
+    find,
+    replacement: resolve(__dirname, path),
+  });
+
+  const pfx = '@polkadot-live'
+  return [
+    alias(`${pfx}/consts`, '../consts/src'),
+    alias(`${pfx}/core`, '../core/src'),
+    alias(`${pfx}/contexts`, '../contexts/src'),
+    alias(`${pfx}/encoder`, '../encoder/src'),
+    alias(`${pfx}/screens`, '../screens/src'),
+    alias(`${pfx}/types`, '../types/src'),
+
+    alias(`${pfx}/ui/scss/buttons`, '../ui/src/kits/buttons'),
+    alias(`${pfx}/ui/scss/overlay`, '../ui/src/kits/overlay'),
+    alias(`${pfx}/ui/svg`, '../ui/src/svg'),
+    alias(`${pfx}/ui`, '../ui/src'),
+
+    alias(`${pfx}/styles/accents`, '../styles/src/accents'),
+    alias(`${pfx}/styles/partials`, '../styles/src/partials'),
+    alias(`${pfx}/styles/theme`, '../styles/src/theme'),
+    alias(`${pfx}/styles`, '../styles/src'),
+  ];
 };
 
 export default defineConfig({
+  resolve: {
+    alias:  getAliasConfig(),
+  },
   // Treat packages as source and not dependencies. Needed for CRX + monorepo.
   optimizeDeps: {
-    exclude: [...Object.keys(packageTsconfigPaths)],
+    exclude: packageNames,
   },
   plugins: [
-    tsconfigPaths({
-      // Ensure Vite resolves paths in packages to understand project structure.
-      projects: [
-        resolve(__dirname, 'tsconfig.json'),
-        ...Object.values(packageTsconfigPaths),
-      ],
-    }),
     nodePolyfills(),
     react(),
     svgr(),

@@ -16,7 +16,7 @@ import {
   FlexColumn,
   FlexRow,
   ItemsColumn,
-} from '@polkadot-live/styles/wrappers';
+} from '@polkadot-live/styles';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { ClassicSubscription } from './ClassicSubscription';
 import { faSplotch } from '@fortawesome/free-solid-svg-icons';

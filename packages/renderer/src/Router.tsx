@@ -5,7 +5,7 @@ import { ContextProxyTab, ContextProxyMain } from './Proxy';
 import {
   MainInterfaceWrapper,
   TabViewWrapper,
-} from '@polkadot-live/styles/wrappers';
+} from '@polkadot-live/styles';
 import { Overlay, Help } from '@polkadot-live/ui';
 import { useDebug } from './hooks/useDebug';
 import { useHelp, useOverlay, useTabs } from '@polkadot-live/contexts';

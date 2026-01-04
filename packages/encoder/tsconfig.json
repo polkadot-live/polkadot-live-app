@@ -1,22 +1,19 @@
 {
   "compilerOptions": {
-    "module": "ESNext",
+    "rootDir": ".",
     "target": "ESNext",
+    "module": "ESNext",
     "moduleResolution": "Bundler",
-    "checkJs": false,
     "strict": true,
-    "allowJs": true,
-    "jsx": "react-jsx",
-    "skipLibCheck": true,
-    "esModuleInterop": true,
     "noImplicitAny": true,
-    "sourceMap": false,
-    "outDir": "dist",
     "resolveJsonModule": true,
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "allowSyntheticDefaultImports": true,
-    "types": ["vitest/globals"],
-    "removeComments": true,
-    "rootDir": "."
-  }
+    "esModuleInterop": true,
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
+    "skipLibCheck": true,
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["dist", "node_modules"]
 }

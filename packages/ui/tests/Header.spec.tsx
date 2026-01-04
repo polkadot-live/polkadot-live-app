@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Header } from '../src/components';
 import userEvent from '@testing-library/user-event';
-import { darkTheme } from '@polkadot-live/styles/theme/variables';
+import { darkTheme } from '@polkadot-live/styles';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { UserEvent } from '@testing-library/user-event';
 

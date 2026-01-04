@@ -6,7 +6,7 @@ import * as Checkbox from '@radix-ui/react-checkbox';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as Icons from '@radix-ui/react-icons';
 import * as Select from '@radix-ui/react-select';
-import * as Styles from '@polkadot-live/styles/wrappers';
+import * as Styles from '@polkadot-live/styles';
 import * as UI from '@polkadot-live/ui';
 import {
   useConnections,
@@ -17,7 +17,7 @@ import {
 } from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
 import { BarLoader } from 'react-spinners';
-import { ItemsColumn } from '@polkadot-live/styles/wrappers';
+import { ItemsColumn } from '@polkadot-live/styles';
 import { ellipsisFn } from '@w3ux/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ConnectButton } from './Wrappers';

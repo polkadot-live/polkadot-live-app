@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useMemo, useRef, useState } from 'react';
 import { useConnections, useOverlay } from '@polkadot-live/contexts';
 import { useTxMeta } from '../../../contexts';
-import { QRViewerWrapper } from '@polkadot-live/styles/wrappers';
+import { QRViewerWrapper } from '@polkadot-live/styles';
 import {
   ButtonPrimary,
   ButtonSecondary,

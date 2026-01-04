@@ -20,21 +20,19 @@
     "noUncheckedSideEffectImports": true,
     "baseUrl": ".",
     "paths": {
-      "@polkadot-live/consts/*": ["../consts/src/*"],
-      "@polkadot-live/styles/*": ["../styles/src/*"],
-      "@polkadot-live/types/*": ["../types/src/*"],
+      "@polkadot-live/consts": ["./packages/consts/src/index.ts"],
+      "@polkadot-live/contexts": ["./packages/contexts/src/index.ts"],
+      "@polkadot-live/core": ["./packages/core/src/index.ts"],
+      "@polkadot-live/encoder": ["./packages/encoder/src/index.ts"],
+      "@polkadot-live/screens": ["./packages/screens/src/index.ts"],
+      "@polkadot-live/styles": ["./packages/styles/src/index.ts"],
+      "@polkadot-live/types": ["./packages/types/src/index.ts"],
+      "@polkadot-live/ui": ["./packages/ui/src/index.ts"],
 
-      "@polkadot-live/screens": ["../screens/src/index.ts"],
-      "@polkadot-live/screens/*": ["../screens/src/*"],
-
-      "@polkadot-live/ui/components": ["../ui/src/components/index.ts"],
-      "@polkadot-live/ui/components/*": ["../ui/src/components/*"],
-
-      "@polkadot-live/ui/hooks": ["../ui/src/hooks/index.ts"],
-      "@polkadot-live/ui/hooks/*": ["../ui/src/hooks/*"],
-
-      "@polkadot-live/ui/kits/buttons": ["../ui/src/kits/buttons/index.ts"],
-      "@polkadot-live/ui/kits/overlay": ["../ui/src/kits/overlay/index.ts"],
+      "@polkadot-live/consts/*": ["./packages/consts/src/*"],
+      "@polkadot-live/styles/*": ["./packages/styles/src/*"],
+      "@polkadot-live/types/*": ["./packages/types/src/*"],
+      "@polkadot-live/ui/*": ["./packages/ui/src/*"],
     },
   },
   "include": ["src"]

@@ -18,7 +18,7 @@ import {
   DialogTrigger,
   FlexColumn,
   FlexRow,
-} from '@polkadot-live/styles/wrappers';
+} from '@polkadot-live/styles';
 import { GearTriggerWrapper, ReferendaListWrapper } from './Wrappers';
 import type { ChainEventSubscription } from '@polkadot-live/types';
 

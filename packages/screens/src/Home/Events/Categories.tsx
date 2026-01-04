@@ -4,7 +4,7 @@
 import * as Accordion from '@radix-ui/react-accordion';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import * as UI from '@polkadot-live/ui';
-import * as Wrappers from '@polkadot-live/styles/wrappers';
+import * as Wrappers from '@polkadot-live/styles';
 import { useState } from 'react';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

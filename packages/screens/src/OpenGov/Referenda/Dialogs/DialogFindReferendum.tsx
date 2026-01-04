@@ -14,7 +14,7 @@ import {
   DialogContent,
   DialogTrigger,
   DialogHr,
-} from '@polkadot-live/styles/wrappers';
+} from '@polkadot-live/styles';
 import { renderToast, TooltipRx } from '@polkadot-live/ui';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

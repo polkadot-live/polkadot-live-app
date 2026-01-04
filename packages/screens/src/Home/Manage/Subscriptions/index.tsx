@@ -13,7 +13,7 @@ import {
 import { ellipsisFn } from '@w3ux/utils';
 import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import { ClassicSubscriptions } from './ClassicSubscriptions';
-import { FlexRow } from '@polkadot-live/styles/wrappers';
+import { FlexRow } from '@polkadot-live/styles';
 import { SmartSubscriptions } from './SmartSubscriptions';
 import type { SubscriptionsProps } from './types';
 

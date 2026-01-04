@@ -14,7 +14,7 @@ import {
   SortControlLabel,
   TooltipRx,
 } from '@polkadot-live/ui';
-import { FlexColumn, FlexRow } from '@polkadot-live/styles/wrappers';
+import { FlexColumn, FlexRow } from '@polkadot-live/styles';
 import type { EventsListProps } from './types';
 
 export const EventsList = ({ setSection }: EventsListProps) => {

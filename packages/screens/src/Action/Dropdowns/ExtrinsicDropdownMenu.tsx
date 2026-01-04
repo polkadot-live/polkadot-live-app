@@ -5,7 +5,7 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import { useConnections, useContextProxy } from '@polkadot-live/contexts';
-import { DropdownMenuContent } from '@polkadot-live/styles/wrappers';
+import { DropdownMenuContent } from '@polkadot-live/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconButton } from './Wrappers';
 import type { ExtrinsicDropdownMenuProps } from './types';

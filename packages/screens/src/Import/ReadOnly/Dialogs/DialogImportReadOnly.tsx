@@ -12,7 +12,7 @@ import {
   DialogTrigger,
   FlexColumn,
   FlexRow,
-} from '@polkadot-live/styles/wrappers';
+} from '@polkadot-live/styles';
 import { faAngleRight, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getSupportedChains } from '@polkadot-live/consts/chains';

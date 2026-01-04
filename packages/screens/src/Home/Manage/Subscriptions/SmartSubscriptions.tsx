@@ -14,7 +14,7 @@ import {
   FlexColumn,
   FlexRow,
   ItemsColumn,
-} from '@polkadot-live/styles/wrappers';
+} from '@polkadot-live/styles';
 import { SubscriptionRow } from '../../ChainEvents/SubscriptionRow';
 
 export const SmartSubscriptions = () => {

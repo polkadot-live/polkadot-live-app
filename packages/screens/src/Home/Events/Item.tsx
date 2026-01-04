@@ -8,7 +8,7 @@ import {
   FlexColumn,
   FlexRow,
   MenuButton,
-} from '@polkadot-live/styles/wrappers';
+} from '@polkadot-live/styles';
 import { AnimatePresence } from 'framer-motion';
 import { EventItem } from './Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

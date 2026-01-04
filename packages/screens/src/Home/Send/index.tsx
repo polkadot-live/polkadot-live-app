@@ -4,7 +4,7 @@
 import * as Accordion from '@radix-ui/react-accordion';
 import * as UI from '@polkadot-live/ui';
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import { FlexColumn, FlexRow } from '@polkadot-live/styles/wrappers';
+import { FlexColumn, FlexRow } from '@polkadot-live/styles';
 import { chainCurrency } from '@polkadot-live/consts/chains';
 import { useConnections } from '@polkadot-live/contexts';
 import { useState } from 'react';

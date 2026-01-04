@@ -34,7 +34,7 @@ import {
   BodyInterfaceWrapper,
   FixedFlexWrapper,
   ScrollWrapper,
-} from '@polkadot-live/styles/wrappers';
+} from '@polkadot-live/styles';
 
 export const Home = () => {
   const { openHelp } = useHelp();

@@ -18,7 +18,7 @@ import {
 import { useConnections, useOverlay } from '@polkadot-live/contexts';
 import { useTxMeta } from '../../../contexts/action';
 import { useMemo, useRef, useState } from 'react';
-import { QRViewerWrapper } from '@polkadot-live/styles/wrappers';
+import { QRViewerWrapper } from '@polkadot-live/styles';
 import type { Html5Qrcode } from 'html5-qrcode';
 import type { SignVaultOverlayProps } from './types';
 

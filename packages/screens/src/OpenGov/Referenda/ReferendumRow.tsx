@@ -18,7 +18,7 @@ import {
 } from '@polkadot-live/contexts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { TooltipRx } from '@polkadot-live/ui';
-import { FlexRow, MenuButton } from '@polkadot-live/styles/wrappers';
+import { FlexRow, MenuButton } from '@polkadot-live/styles';
 import { ReferendumDropdownMenu } from '../Dropdowns';
 import type { ReferendumRowProps } from '../types';
 

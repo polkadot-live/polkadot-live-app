@@ -20,7 +20,7 @@ import {
   getSupportedSources,
 } from '@polkadot-live/consts/chains';
 import { useEffect, useState } from 'react';
-import { FlexColumn, FlexRow } from '@polkadot-live/styles/wrappers';
+import { FlexColumn, FlexRow } from '@polkadot-live/styles';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { SideTriggerButton } from './Wrappers';
 import { OpenViewButton } from './OpenViewButton';

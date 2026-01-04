@@ -7,7 +7,7 @@ import {
   CarouselWrapper,
   FlexColumn,
   FlexColumnWrap,
-} from '@polkadot-live/styles/wrappers';
+} from '@polkadot-live/styles';
 import { Categories } from './Categories';
 import { EventsList } from './EventsList';
 import { useEvents } from '@polkadot-live/contexts';

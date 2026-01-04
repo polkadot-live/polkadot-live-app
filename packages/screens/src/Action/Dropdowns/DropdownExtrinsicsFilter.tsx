@@ -7,7 +7,7 @@ import {
   DropdownMenuContent,
   FlexColumn,
   FlexRow,
-} from '@polkadot-live/styles/wrappers';
+} from '@polkadot-live/styles';
 import { useConnections, useContextProxy } from '@polkadot-live/contexts';
 import { CheckboxRx, TooltipRx } from '@polkadot-live/ui';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

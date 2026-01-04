@@ -8,7 +8,7 @@ import {
   DialogConnectChains,
   DialogEventData,
 } from '@polkadot-live/screens';
-import { MainInterfaceWrapper } from '@polkadot-live/styles/wrappers';
+import { MainInterfaceWrapper } from '@polkadot-live/styles';
 import { ToastContainer } from 'react-toastify';
 import { Home } from './screens';
 import './App.scss';
