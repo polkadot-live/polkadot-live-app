@@ -34,7 +34,7 @@ const getAliasConfig = () => {
     replacement: resolve(__dirname, path),
   });
 
-  const pfx = '@polkadot-live'
+  const pfx = '@polkadot-live';
   return [
     alias(`${pfx}/consts`, '../consts/src'),
     alias(`${pfx}/core`, '../core/src'),
@@ -57,7 +57,7 @@ const getAliasConfig = () => {
 
 export default defineConfig({
   resolve: {
-    alias:  getAliasConfig(),
+    alias: getAliasConfig(),
   },
   // Treat packages as source and not dependencies. Needed for CRX + monorepo.
   optimizeDeps: {

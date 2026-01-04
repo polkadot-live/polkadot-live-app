@@ -23,6 +23,7 @@ export default {
     'packages/main/dist',
     'packages/preload/dist',
     'packages/renderer/dist',
+    'packages/contexts/dist',
     'packages/core/dist',
     'packages/encoder/dist',
     'packages/ui/dist',

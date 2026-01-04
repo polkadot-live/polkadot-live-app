@@ -3,6 +3,9 @@
   "version": "0.12.0-beta",
   "type": "module",
   "private": true,
+  "files": [
+    "dist/**"
+  ],
   "main": "./dist/index.es.js",
   "exports": {
     "import": "./dist/index.es.js",
