@@ -6,6 +6,7 @@
     "moduleResolution": "Bundler",
     "strict": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "types": ["chrome", "react"],
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
