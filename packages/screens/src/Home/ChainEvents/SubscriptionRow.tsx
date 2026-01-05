@@ -39,7 +39,7 @@ export const SubscriptionRow = ({ subscription }: SubscriptionRowProps) => {
               >
                 <FontAwesomeIcon icon={FA.faInfo} transform={'shrink-1'} />
               </div>
-              {label}
+              <span className="text-ellipsis">{label}</span>
             </h3>
           </div>
         </div>
