@@ -95,26 +95,10 @@ export const Send = ({
       {!getOnlineMode() && <UI.OfflineBanner rounded={true} />}
 
       <FlexColumn $rowGap={'0.5rem'} style={{ marginBottom: '1rem' }}>
-        <UI.InfoCard icon={FA.faInfoCircle} style={{ marginTop: '0' }}>
-          <FlexColumn>
-            <div>Send native tokens to a recipient on the same network.</div>
-          </FlexColumn>
-        </UI.InfoCard>
-
+        <UI.ScreenInfoCard>
+          <div>Send native tokens to a recipient on the same network.</div>
+        </UI.ScreenInfoCard>
         <FlexColumn $rowGap={'0.5rem'}>
-          <UI.InfoCard
-            icon={FA.faWarning}
-            style={{ color: 'var(--accent-warning)', marginTop: '0' }}
-          >
-            <FlexColumn>
-              <div
-                style={{ lineHeight: '1.5rem', color: 'var(--accent-warning)' }}
-              >
-                This release supports transfers of up to <b>100</b> native
-                tokens.
-              </div>
-            </FlexColumn>
-          </UI.InfoCard>
           <div>
             <ProgressBar value={progress} max={100} />
           </div>

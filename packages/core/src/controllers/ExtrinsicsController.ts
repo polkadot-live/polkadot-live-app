@@ -4,8 +4,7 @@
 import * as $ from '@dedot/shape';
 import { ConfigRenderer } from '../config';
 import { APIsController, BusDispatcher } from '../controllers';
-import { ChainList, chainUnits } from '@polkadot-live/consts/chains';
-import { unitToPlanck } from '@w3ux/utils';
+import { ChainList } from '@polkadot-live/consts/chains';
 import { concatU8a, hexToU8a, u8aToHex } from 'dedot/utils';
 import { MerkleizedMetadata } from 'dedot/merkleized-metadata';
 import { ExtrinsicError } from '../errors';
@@ -24,8 +23,6 @@ import type {
   TxStatus,
 } from '@polkadot-live/types/tx';
 import type { SignerPayloadRaw } from 'dedot/types';
-
-const TOKEN_TRANSFER_LIMIT = '100';
 
 interface VerifyExtrinsicResult {
   isValid: boolean;
@@ -118,18 +115,10 @@ export class ExtrinsicsController {
         const spendable = BigInt(
           await getSpendableBalanceElectron(from, chainId)
         );
-
-        // NOTE: Limit send amount to 100 tokens in pre-releases.
-        const biLimit = unitToPlanck(TOKEN_TRANSFER_LIMIT, chainUnits(chainId));
-        const checkA = sendAmount <= biLimit;
-        const checkB = spendable >= sendAmount + fee;
-        const isValid = checkA && checkB;
-
+        const isValid = spendable >= sendAmount + fee;
         return isValid
           ? { isValid }
-          : !checkA
-            ? { isValid, reason: 'Transfer limit of 100 tokens' }
-            : { isValid, reason: 'Insufficient balance' };
+          : { isValid, reason: 'Insufficient balance' };
       }
       case 'nominationPools_pendingRewards_withdraw':
       case 'nominationPools_pendingRewards_bond': {

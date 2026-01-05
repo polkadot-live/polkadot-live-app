@@ -24,8 +24,6 @@ import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChangeEvent } from 'react';
 import type { SendNativeHookInterface } from '../types/main';
 
-const TOKEN_TRANSFER_LIMIT = 100;
-
 export const useSendNative = (
   initExtrinsic: (meta: ActionMeta) => Promise<void>,
   fetchSendAccounts: () => Promise<Map<AccountSource, SendAccount[]>>,
@@ -82,7 +80,7 @@ export const useSendNative = (
 
     const sendAmountPlanck: string = unitToPlanck(
       formatDecimal(sendAmount),
-      chainUnits(sender.chainId)
+      chainUnits(sendNetwork)
     ).toString();
 
     // Specific data for transfer extrinsic.
@@ -156,12 +154,7 @@ export const useSendNative = (
         setValidAmount(false);
         return;
       }
-      // NOTE: Limit send amount to 100 tokens in pre-releases.
-      if (Number(amount) > TOKEN_TRANSFER_LIMIT) {
-        setSendAmount(amount);
-        setValidAmount(false);
-        return;
-      }
+
       // Check if send amount is less than spendable amount.
       const units = chainUnits(sender.chainId);
       const amountAsPlanck = unitToPlanck(amount, units);
@@ -198,8 +191,7 @@ export const useSendNative = (
     receiver === null ||
     sendAmount === '0' ||
     sendAmount === '' ||
-    // NOTE: Limit token transfers to 100 tokens in pre-releases.
-    (!isNaN(Number(sendAmount)) && Number(sendAmount) > TOKEN_TRANSFER_LIMIT) ||
+    isNaN(Number(sendAmount)) ||
     !getSendChains().includes(sender.chainId) ||
     !validAmount ||
     summaryComplete;
