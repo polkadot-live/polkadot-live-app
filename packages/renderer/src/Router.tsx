@@ -2,10 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ContextProxyTab, ContextProxyMain } from './Proxy';
-import {
-  MainInterfaceWrapper,
-  TabViewWrapper,
-} from '@polkadot-live/styles';
+import { MainInterfaceWrapper, TabViewWrapper } from '@polkadot-live/styles';
 import { Overlay, Help } from '@polkadot-live/ui';
 import { useDebug } from './hooks/useDebug';
 import { useHelp, useOverlay, useTabs } from '@polkadot-live/contexts';

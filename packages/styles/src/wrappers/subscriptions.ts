@@ -219,15 +219,14 @@ export const TaskEntryWrapper = styled(motion.div)`
           display: flex;
           align-items: center;
           flex: 1;
+          min-width: 0;
+          margin-right: 1rem;
 
           h3 {
             display: flex;
             align-items: center;
             column-gap: 0.5rem;
             width: 100%;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
             margin: 0;
             font-size: 1.05rem;
 

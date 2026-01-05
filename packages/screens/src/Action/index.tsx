@@ -125,7 +125,6 @@ export const Action = () => {
               position: 'fixed',
               top: '82px',
               left: 0,
-              zIndex: 99,
             }}
             speedMultiplier={0.75}
           />

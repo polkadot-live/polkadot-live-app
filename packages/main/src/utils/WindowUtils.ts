@@ -12,7 +12,7 @@ import {
   WebContentsView,
 } from 'electron';
 import path, { resolve, join, dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL, URLSearchParams } from 'url';
 import { store } from '../main';
 import { hideDockIcon, reportOnlineStatus } from '../utils/SystemUtils';
 import {
@@ -306,21 +306,24 @@ const loadUrlWithRoute = (
 ) => {
   // Dev server routes start with /#/
   // Production routes start with #/
-  const uri = options.uri || '';
-  const route = `${uri}${
-    options.args ? `?${new URLSearchParams(options.args).toString()}` : ''
-  }`;
+  const uri = options.uri ?? '';
+  const search = options.args
+    ? `?${new URLSearchParams(options.args).toString()}`
+    : '';
+  const route = `${uri}${search}`;
+  const cont = window instanceof BrowserWindow ? window : window.webContents;
 
   if (process.env.VITE_DEV_SERVER_URL) {
     // Development: load from vite dev server.
-    const cont = window instanceof BrowserWindow ? window : window.webContents;
     cont.loadURL(`${process.env.VITE_DEV_SERVER_URL}/#/${route}`);
   } else {
     // Production: load from app build.
-    const cont = window instanceof BrowserWindow ? window : window.webContents;
-    cont.loadURL(
-      `file://${path.join(__dirname, `../../renderer/dist/index.html#${route}`)}`
+    const indexHtmlPath = path.join(
+      __dirname,
+      '../../renderer/dist/index.html'
     );
+    const fileUrl = pathToFileURL(indexHtmlPath).toString();
+    cont.loadURL(`${fileUrl}#${route}`);
   }
 };
 
