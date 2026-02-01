@@ -4918,9 +4918,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@w3ux/react-polkicon@npm:^3.3.0":
-  version: 3.3.0
-  resolution: "@w3ux/react-polkicon@npm:3.3.0"
+"@w3ux/react-polkicon@npm:^3.4.0":
+  version: 3.4.0
+  resolution: "@w3ux/react-polkicon@npm:3.4.0"
   dependencies:
     "@w3ux/crypto": "npm:^1.2.1"
     "@w3ux/utils": "npm:^2.3.0"
@@ -4928,7 +4928,7 @@ __metadata:
   peerDependencies:
     react: ^19.1.0
     react-dom: ^19.1.0
-  checksum: 196685592e9028571bcdbb36a134d4a011a86c339a4f13ead13318ca8c6ece47691fed09b656aa71bda71e770a76aaab819e94e6b169d3e26bd0aede60901238
+  checksum: 55f12920e50d89c9c1410b394598171ad0e6643405fd1783a7e2fcef831e60569b7f9bd8653e618ec85ba6a0b07832ba6b705ca82d38b2bef14da420424f351f
   languageName: node
   linkType: hard
 
@@ -12176,7 +12176,7 @@ __metadata:
     "@vitest/pretty-format": "npm:^3.1.2"
     "@vitest/ui": "npm:^3.1.2"
     "@w3ux/extension-assets": "npm:^2.3.1"
-    "@w3ux/react-polkicon": "npm:^3.3.0"
+    "@w3ux/react-polkicon": "npm:^3.4.0"
     "@w3ux/utils": "npm:^2.3.0"
     "@walletconnect/modal": "npm:^2.7.0"
     "@walletconnect/universal-provider": "npm:^2.17.3"
