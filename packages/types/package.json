@@ -27,8 +27,7 @@
     "./chains/polkadot": "./src/chains/polkadot.ts"
   },
   "scripts": {
-    "clear:dist": "([ -d \"dist\" ] && rm -fr \"dist\") || true && ([ -d \"node_modules\" ] && rm -fr \"node_modules\") || true",
-    "typecheck": "tsc --noEmit"
+    "clear:dist": "([ -d \"dist\" ] && rm -fr \"dist\") || true && ([ -d \"node_modules\" ] && rm -fr \"node_modules\") || true"
   },
   "packageManager": "yarn@4.0.2"
 }
