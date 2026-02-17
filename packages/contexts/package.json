@@ -17,7 +17,6 @@
     "build:dev": "cross-env MODE=development vite build --config vite.config.js",
     "clear:dist": "[ -d \"node_modules\" ] && rm -fr \"node_modules\" || true",
     "clear": "([ -d \"dist\" ] && rm -fr \"dist\") || true && ([ -d \"node_modules\" ] && rm -fr \"node_modules\") || true",
-    "lint": "eslint --fix ./src",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

@@ -7,33 +7,6 @@ updates:
       interval: monthly
     open-pull-requests-limit: 10
     groups:
-      # Group eslint package updates.
-      eslint:
-        applies-to: version-updates
-        dependency-type: "development"
-        patterns:
-        - "eslint"
-        - "eslint-config-prettier"
-        - "eslint-import-resolver-typescript"
-        - "eslint-plugin-import"
-        - "eslint-plugin-prettier"
-        - "eslint-plugin-react"
-        - "eslint-plugin-react-hooks"
-        - "eslint-plugin-unused-imports"
-        update-types:
-        - "major"
-        - "minor"
-        - "patch"
-      # Group typescript-eslint package updates.
-      typescript-eslint:
-        applies-to: version-updates
-        dependency-type: "development"
-        patterns:
-        - "@typescript-eslint*"
-        update-types:
-        - "major"
-        - "minor"
-        - "patch"
       # Group w3ux package updates.
       w3ux:
         applies-to: version-updates

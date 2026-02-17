@@ -9,7 +9,6 @@
   ],
   "scripts": {
     "build": "vite build --config vite.config.js",
-    "lint": "eslint --fix ./src",
     "clear:dist": "([ -d \"dist\" ] && rm -fr \"dist\") || true",
     "clear": "([ -d \"node_modules\" ] && rm -fr \"node_modules\") || true",
     "typecheck": "tsc --noEmit",
