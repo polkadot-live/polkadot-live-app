@@ -4505,26 +4505,33 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@w3ux/react-polkicon@npm:^3.3.0":
-  version: 3.3.0
-  resolution: "@w3ux/react-polkicon@npm:3.3.0"
+"@w3ux/react-polkicon@npm:^4.0.2":
+  version: 4.0.2
+  resolution: "@w3ux/react-polkicon@npm:4.0.2"
   dependencies:
     "@w3ux/crypto": "npm:^1.2.1"
-    "@w3ux/utils": "npm:^2.3.0"
-    dedot: "npm:^1.0.2"
+    "@w3ux/util-dedot": "npm:^1.0.0"
   peerDependencies:
+    dedot: ^1
     react: ^19.1.0
     react-dom: ^19.1.0
-  checksum: 196685592e9028571bcdbb36a134d4a011a86c339a4f13ead13318ca8c6ece47691fed09b656aa71bda71e770a76aaab819e94e6b169d3e26bd0aede60901238
+  checksum: 785674b9064319e00714a857d0c693348c460686cea5523d0d0f4c9bc83c543284adc5453c17f4c72e40f3b8e15a30edcf820a34c965e2f1c1376b27c02358d0
   languageName: node
   linkType: hard
 
-"@w3ux/utils@npm:^2.3.0":
-  version: 2.3.0
-  resolution: "@w3ux/utils@npm:2.3.0"
-  dependencies:
-    dedot: "npm:^1.0.2"
-  checksum: 16c327bf48e02647304853d7393e2bca87fae459d4f38f95b5164a8dd6b880dd3a2093088b875610138ac843dc168d75ee2547fdc219c67b64d502e754c2ade6
+"@w3ux/util-dedot@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@w3ux/util-dedot@npm:1.0.0"
+  peerDependencies:
+    dedot: ^1
+  checksum: 53d9ec171ca7bdbc2616df7c1fd181b8d3be9510767b4c909affa56cce38baf9270942d0048826a6b1950162ba9e676f6582e56e41408f4de8f37e073200acd5
+  languageName: node
+  linkType: hard
+
+"@w3ux/utils@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "@w3ux/utils@npm:3.1.1"
+  checksum: e8e22cae0bfed6b9637c9b512a4b02526dea9910375b982f07b4fe7e2064d1ec778a1ab8ee6fe0004fb2aec9fca2714d6457cb15e16fb188a5de693f4866d531
   languageName: node
   linkType: hard
 
@@ -10640,8 +10647,8 @@ __metadata:
     "@vitest/pretty-format": "npm:^3.1.2"
     "@vitest/ui": "npm:^3.1.2"
     "@w3ux/extension-assets": "npm:^2.3.1"
-    "@w3ux/react-polkicon": "npm:^3.3.0"
-    "@w3ux/utils": "npm:^2.3.0"
+    "@w3ux/react-polkicon": "npm:^4.0.2"
+    "@w3ux/utils": "npm:^3.1.1"
     "@walletconnect/modal": "npm:^2.7.0"
     "@walletconnect/universal-provider": "npm:^2.17.3"
     "@walletconnect/utils": "npm:^2.17.3"
