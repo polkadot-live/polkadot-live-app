@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useMemo } from 'react';
 import { buildCache, ContextProxyProvider } from '@polkadot-live/contexts';
+import { useMemo } from 'react';
 import {
   useTxMeta,
   useWalletConnect,
@@ -23,7 +23,7 @@ export const ContextProxyTab = ({ children }: ContextProxyProps) => {
         WcVerifierCtx: () => useWcVerifier(),
         TxMetaCtx: () => useTxMeta(),
       }),
-    []
+    [],
   );
   return (
     <ContextProxyProvider initialCache={cache}>{children}</ContextProxyProvider>

@@ -11,14 +11,18 @@ export const withProviders =
   (WrappedComponent: AnyElement) =>
   (props: AnyElement) =>
     providers.reduceRight(
-      (acc: AnyElement, prov: AnyElement) => {
+      (acc: AnyElement, prov: AnyElement, index: number) => {
         let Provider = prov;
         if (Array.isArray(prov)) {
           Provider = prov[0];
-          return <Provider {...prov[1]}>{acc}</Provider>;
+          return (
+            <Provider key={index} {...prov[1]}>
+              {acc}
+            </Provider>
+          );
         }
 
-        return <Provider>{acc}</Provider>;
+        return <Provider key={index}>{acc}</Provider>;
       },
-      <WrappedComponent {...props} />
+      <WrappedComponent {...props} />,
     );

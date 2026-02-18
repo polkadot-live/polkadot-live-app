@@ -4,8 +4,8 @@
 import { createContext, useEffect, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
 import { getApiHealthAdapter } from './adapters';
-import type { ApiConnectResult, NodeEndpoint } from '@polkadot-live/types/apis';
 import type { ApiError } from '@polkadot-live/core';
+import type { ApiConnectResult, NodeEndpoint } from '@polkadot-live/types/apis';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ApiHealthContextInterface } from '../../../types/main';
 
@@ -15,7 +15,7 @@ export const ApiHealthContext = createContext<
 
 export const useApiHealth = createSafeContextHook(
   ApiHealthContext,
-  'ApiHealthContext'
+  'ApiHealthContext',
 );
 
 export const ApiHealthProvider = ({
@@ -25,7 +25,7 @@ export const ApiHealthProvider = ({
 }) => {
   const adapter = getApiHealthAdapter();
   const [failedConnections, setFailedConnections] = useState(
-    new Map<ChainID, ApiConnectResult<ApiError>>()
+    new Map<ChainID, ApiConnectResult<ApiError>>(),
   );
 
   /**
@@ -62,7 +62,7 @@ export const ApiHealthProvider = ({
   useEffect(() => {
     const removeListener = adapter.onMount(setFailedConnections);
     return () => {
-      removeListener && removeListener();
+      removeListener?.();
     };
   }, []);
 

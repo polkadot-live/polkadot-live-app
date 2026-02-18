@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { DbController } from '../../controllers';
 import { getFromBackupFile } from '@polkadot-live/core';
+import { DbController } from '../../controllers';
 import { handlePersistExtrinsic } from '../extrinsics';
 import { sendChromeMessage } from '../utils';
 import type {
@@ -55,7 +55,7 @@ export const importExtrinsicsData = async (contents: string) => {
 
   // Persist unique extrinsics to store.
   const append = parsed.filter(
-    (a) => !Array.from(fetched.values()).find((b) => compareExtrinsics(a, b))
+    (a) => !Array.from(fetched.values()).find((b) => compareExtrinsics(a, b)),
   );
   for (const info of append) {
     await handlePersistExtrinsic(info);
@@ -92,10 +92,10 @@ const compareExtrinsics = (a: ExtrinsicInfo, b: ExtrinsicInfo) => {
 
   return a.txId === b.txId
     ? true
-    : aFrom === bFrom &&
+    : !!(
+        aFrom === bFrom &&
         aAction === bAction &&
         aAction !== whiteListed &&
         a.txStatus !== 'finalized'
-      ? true
-      : false;
+      );
 };

@@ -1,25 +1,25 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ContextProxyTab, ContextProxyMain } from './Proxy';
-import { MainInterfaceWrapper, TabViewWrapper } from '@polkadot-live/styles';
-import { Overlay, Help } from '@polkadot-live/ui';
-import { useDebug } from './hooks/useDebug';
 import { useHelp, useOverlay, useTabs } from '@polkadot-live/contexts';
-import { useEffect, useState } from 'react';
-import { useTabsMessagePorts } from './hooks/useTabsMessagePorts';
-import { HashRouter, Route, Routes } from 'react-router';
 import {
   DialogClearEvents,
   DialogConnectChains,
   DialogEventData,
 } from '@polkadot-live/screens';
-import { FadeAction } from './screens/Action';
-import { FadeImport } from './screens/Import';
-import { FadeSettings } from './screens/Settings';
-import { FadeOpenGov } from './screens/OpenGov';
-import { Home } from './screens/Home';
+import { MainInterfaceWrapper, TabViewWrapper } from '@polkadot-live/styles';
+import { Help, Overlay } from '@polkadot-live/ui';
+import { useEffect, useState } from 'react';
+import { HashRouter, Route, Routes } from 'react-router';
 import { ToastContainer } from 'react-toastify';
+import { useDebug } from './hooks/useDebug';
+import { useTabsMessagePorts } from './hooks/useTabsMessagePorts';
+import { ContextProxyMain, ContextProxyTab } from './Proxy';
+import { FadeAction } from './screens/Action';
+import { Home } from './screens/Home';
+import { FadeImport } from './screens/Import';
+import { FadeOpenGov } from './screens/OpenGov';
+import { FadeSettings } from './screens/Settings';
 import { TabsWrapper } from './screens/Tabs';
 
 interface VisitedTab {
@@ -120,7 +120,7 @@ export const Router = () => {
     window.myAPI.initAnalytics(
       navigator.userAgent,
       window.myAPI.getWindowId(),
-      navigator.language
+      navigator.language,
     );
   }, []);
 

@@ -2,15 +2,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import { ellipsisFn } from '@w3ux/utils';
-import { EllipsisSpinner } from '../../Spinners';
-import { ActionBtn, AllNetworksBtn, HardwareAddressWrapper } from './Wrapper';
-import { TooltipRx } from '../../TooltipRx';
-import { FlexColumn, FlexRow } from '@polkadot-live/styles';
-import { ChainIcon } from '../../Icons';
-import { CopyButton } from '../../CopyButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FlexColumn, FlexRow } from '@polkadot-live/styles';
+import { ellipsisFn } from '@w3ux/utils';
+import { CopyButton } from '../../CopyButton';
+import { ChainIcon } from '../../Icons';
+import { EllipsisSpinner } from '../../Spinners';
+import { TooltipRx } from '../../TooltipRx';
 import { ViewAddressIcon } from '../../ViewAddressIcon';
+import { ActionBtn, AllNetworksBtn, HardwareAddressWrapper } from './Wrapper';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { HardwareAddressProps } from './types';
 

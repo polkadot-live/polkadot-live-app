@@ -3,9 +3,9 @@
 
 import { faExternalLinkAlt as faExt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ItemWrapper } from '../Wrappers';
 import { motion } from 'framer-motion';
 import { useCallback } from 'react';
+import { ItemWrapper } from '../Wrappers';
 import type { ExternalProps } from './types';
 
 export const External = ({ width, title, url, website }: ExternalProps) => {

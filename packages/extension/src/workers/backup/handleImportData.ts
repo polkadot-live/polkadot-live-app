@@ -1,12 +1,12 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { sendChromeMessage } from '../utils';
 import { importAccountTaskData, updateTaskEntries } from './accountTaskImport';
 import { importAddressData } from './addressImport';
 import { importEventData } from './eventImport';
 import { importExtrinsicsData } from './extrinsicImport';
 import { importIntervalData } from './intervalImport';
-import { sendChromeMessage } from '../utils';
 
 export const handleImportData = async (contents: string, isOnline: boolean) => {
   try {

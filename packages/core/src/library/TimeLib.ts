@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { formatDuration } from 'date-fns';
 import { rmCommas } from '@w3ux/utils';
+import { formatDuration } from 'date-fns';
 import type { ChainID } from '@polkadot-live/types/chains';
 
 /**
@@ -37,7 +37,7 @@ export const formatBlocksToTime = (chainId: ChainID, blocks: string) => {
   const secondsPerBlock =
     chainId === 'Polkadot Asset Hub' || chainId === 'Kusama Asset Hub' ? 6 : 0;
 
-  const seconds = parseInt(rmCommas(blocks)) * secondsPerBlock;
+  const seconds = parseInt(rmCommas(blocks), 10) * secondsPerBlock;
   const days = Math.floor(seconds / (60 * 60 * 24));
   const hours = Math.floor((seconds % (60 * 60 * 24)) / (60 * 60));
   const minutes = Math.floor((seconds % (60 * 60)) / 60);

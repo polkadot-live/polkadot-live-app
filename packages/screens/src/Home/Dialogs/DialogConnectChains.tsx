@@ -1,9 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Dialog from '@radix-ui/react-dialog';
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import { Cross2Icon } from '@radix-ui/react-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   useApiHealth,
@@ -16,8 +14,10 @@ import {
   FlexColumn,
   FlexRow,
 } from '@polkadot-live/styles';
-import { ChainListWrapper } from './Wrappers';
+import * as Dialog from '@radix-ui/react-dialog';
+import { Cross2Icon } from '@radix-ui/react-icons';
 import { PuffLoader } from 'react-spinners';
+import { ChainListWrapper } from './Wrappers';
 import type { ChainID } from '@polkadot-live/types/chains';
 
 export const DialogConnectChains = () => {
@@ -77,6 +77,7 @@ export const DialogConnectChains = () => {
                       <PuffLoader size={16} color={theme.textColorSecondary} />
                     )}
                     <button
+                      type="button"
                       onClick={() => onConnectClick(chainId)}
                       className="Dialog__Button"
                       disabled={isWorking(chainId as ChainID) || !isConnected}

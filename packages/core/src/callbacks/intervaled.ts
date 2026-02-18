@@ -1,35 +1,35 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Utils from '../library/OpenGovLib';
-import BigNumber from 'bignumber.js';
 import { rmCommas } from '@w3ux/utils';
-import { formatBlocksToTime } from '../library/TimeLib';
-import { getApiOrThrow, handleEvent } from './utils';
+import BigNumber from 'bignumber.js';
 import {
   APIsController,
   EventsController,
   NotificationsController,
 } from '../controllers';
+import * as Utils from '../library/OpenGovLib';
+import { formatBlocksToTime } from '../library/TimeLib';
+import { getApiOrThrow, handleEvent } from './utils';
+import type { PalletReferendaTrackDetails } from '@dedot/chaintypes/substrate';
 import type { DedotOpenGovClient } from '@polkadot-live/types/apis';
-import type { NotificationData } from '@polkadot-live/types/reporter';
 import type {
   OneShotReturn,
   RefDeciding,
   ReferendumStatus,
 } from '@polkadot-live/types/openGov';
+import type { NotificationData } from '@polkadot-live/types/reporter';
 import type {
   IntervalSubscription,
   NotificationPolicy,
 } from '@polkadot-live/types/subscriptions';
-import type { PalletReferendaTrackDetails } from '@dedot/chaintypes/substrate';
 
 /// Debugging function.
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// biome-ignore lint/correctness/noUnusedVariables: Keep `logOneShot` for future debugging of one-shot executions.
 const logOneShot = (task: IntervalSubscription) => {
   const { action, chainId, referendumId } = task;
   console.log(
-    `---> Execute: ${action} for ref ${referendumId} on chain ${chainId}`
+    `---> Execute: ${action} for ref ${referendumId} on chain ${chainId}`,
   );
 };
 
@@ -39,7 +39,7 @@ const logOneShot = (task: IntervalSubscription) => {
  */
 export const executeIntervaledOneShot = async (
   task: IntervalSubscription,
-  policy: NotificationPolicy = 'default'
+  policy: NotificationPolicy = 'default',
 ): Promise<OneShotReturn> => {
   try {
     const { action, chainId, referendumId } = task;
@@ -80,7 +80,7 @@ export const executeIntervaledOneShot = async (
 const oneShot_openGov_referendumVotes = async (
   task: IntervalSubscription,
   policy: NotificationPolicy = 'default',
-  api: DedotOpenGovClient
+  api: DedotOpenGovClient,
 ): Promise<OneShotReturn> => {
   const { referendumId } = task;
   if (!referendumId) {
@@ -133,7 +133,7 @@ const oneShot_openGov_referendumVotes = async (
 const oneShot_openGov_decisionPeriod = async (
   task: IntervalSubscription,
   policy: NotificationPolicy = 'default',
-  api: DedotOpenGovClient
+  api: DedotOpenGovClient,
 ): Promise<OneShotReturn> => {
   const { chainId, referendumId } = task;
   if (!referendumId) {
@@ -153,7 +153,7 @@ const oneShot_openGov_decisionPeriod = async (
   };
 
   const info = Utils.serializeReferendumInfo(
-    result.value as ReferendumStatus
+    result.value as ReferendumStatus,
   ) as RefDeciding;
   if (!info.deciding) {
     return { success: false, message: 'Referendum not in decision period.' };
@@ -212,7 +212,7 @@ const oneShot_openGov_decisionPeriod = async (
 const oneShot_openGov_thresholds = async (
   task: IntervalSubscription,
   policy: NotificationPolicy = 'default',
-  api: DedotOpenGovClient
+  api: DedotOpenGovClient,
 ): Promise<OneShotReturn> => {
   const { referendumId } = task;
   if (!referendumId) {
@@ -223,7 +223,7 @@ const oneShot_openGov_thresholds = async (
     return { success: false, message: 'Referendum is not ongoing.' };
   }
   const info = Utils.serializeReferendumInfo(
-    result.value as ReferendumStatus
+    result.value as ReferendumStatus,
   ) as RefDeciding;
   if (!info.deciding) {
     return { success: false, message: 'Referendum not being decided.' };
@@ -243,7 +243,7 @@ const oneShot_openGov_thresholds = async (
   const thresholds = await Utils.getMinApprovalSupport(
     api,
     { refId: referendumId, refStatus: 'Deciding', info },
-    track
+    track,
   );
 
   if (!thresholds) {
@@ -282,7 +282,7 @@ const oneShot_openGov_thresholds = async (
  */
 const getNotificationFlags = (
   task: IntervalSubscription,
-  policy: NotificationPolicy
+  policy: NotificationPolicy,
 ): { isOneShot: boolean; isEnabled: boolean } => ({
   isOneShot: policy === 'one-shot',
   isEnabled: task.enableOsNotifications,

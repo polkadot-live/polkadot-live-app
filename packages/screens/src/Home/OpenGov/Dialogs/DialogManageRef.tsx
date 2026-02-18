@@ -1,12 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Dialog from '@radix-ui/react-dialog';
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import { Cross2Icon } from '@radix-ui/react-icons';
-import { useState } from 'react';
 import { faGear } from '@fortawesome/free-solid-svg-icons';
-import { DropdownRef } from '../Dropdowns';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   useConnections,
@@ -19,6 +15,10 @@ import {
   FlexColumn,
   FlexRow,
 } from '@polkadot-live/styles';
+import * as Dialog from '@radix-ui/react-dialog';
+import { Cross2Icon } from '@radix-ui/react-icons';
+import { useState } from 'react';
+import { DropdownRef } from '../Dropdowns';
 import { GearTriggerWrapper, ReferendaListWrapper } from './Wrappers';
 import type { ChainEventSubscription } from '@polkadot-live/types';
 
@@ -84,8 +84,9 @@ export const DialogManageRef = ({ activeRefs }: DialogManageReferendaProps) => {
                     </div>
                     <FlexRow>
                       <button
+                        type="button"
                         onClick={() => {
-                          setRefIdToRemove(parseInt(refId));
+                          setRefIdToRemove(parseInt(refId, 10));
                           setIsRemoveRefDialogOpen(true);
                         }}
                         className="Dialog__Button"
@@ -96,7 +97,7 @@ export const DialogManageRef = ({ activeRefs }: DialogManageReferendaProps) => {
                           transform={'shrink-2'}
                         />
                       </button>
-                      <DropdownRef refId={parseInt(refId)} />
+                      <DropdownRef refId={parseInt(refId, 10)} />
                     </FlexRow>
                   </FlexRow>
                 ))}

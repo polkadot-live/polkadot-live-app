@@ -1,12 +1,12 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { APIsController } from '@polkadot-live/core';
 import { ChainList } from '@polkadot-live/consts/chains';
+import { APIsController } from '@polkadot-live/core';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Api } from '@polkadot-live/core';
-import type { ChainID } from '@polkadot-live/types/chains';
 import type { ClientTypes } from '@polkadot-live/types/apis';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 describe('APIsController', () => {
   describe('Initialization', () => {
@@ -74,7 +74,7 @@ describe('APIsController', () => {
       await Promise.all(chainIds.map((c) => APIsController.getConnectedApi(c)));
       for (const chainId of chainIds) {
         const client = APIsController.clients.find(
-          (c) => c.chainId === chainId
+          (c) => c.chainId === chainId,
         )!;
         expect(client.status()).toBe('connected');
       }
@@ -83,7 +83,7 @@ describe('APIsController', () => {
       await APIsController.closeAll();
       for (const chainId of chainIds) {
         const client = APIsController.clients.find(
-          (c) => c.chainId === chainId
+          (c) => c.chainId === chainId,
         )!;
         expect(client.status()).toBe('disconnected');
         expect(client.api).toBeNull();

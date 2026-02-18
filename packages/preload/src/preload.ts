@@ -5,9 +5,9 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
 import { contextBridge, ipcRenderer } from 'electron';
+import type { IpcTask, SyncID } from '@polkadot-live/types/communication';
 import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
 import type { PreloadAPI } from '@polkadot-live/types/preload';
-import type { IpcTask, SyncID } from '@polkadot-live/types/communication';
 import type { SettingKey } from '@polkadot-live/types/settings';
 
 if (!process.env.VITEST) {
@@ -38,14 +38,15 @@ export const API: PreloadAPI = {
     // Regular expression to match URL parameters
     const regex = /[?&]([^=#]+)=([^&#]*)/g;
 
-    let match;
-    while ((match = regex.exec(urlString)) !== null) {
+    let match = regex.exec(urlString);
+    while (match !== null) {
       const paramName = match[1];
       const paramValue = match[2];
 
       if (paramName === 'windowId') {
         return paramValue;
       }
+      match = regex.exec(urlString);
     }
     return '';
   },

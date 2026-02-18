@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { AnyData, IntervalSubscription } from '@polkadot-live/types';
-import type { IntervalSubscriptionsAdapter } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { IntervalSubscriptionsAdapter } from './types';
 
 export const chromeAdapter: IntervalSubscriptionsAdapter = {
   getIntervalSubs: async () =>
@@ -46,7 +46,9 @@ export const chromeAdapter: IntervalSubscriptionsAdapter = {
         task: 'getAll',
       })
       .then((tasks: IntervalSubscription[]) => {
-        tasks.forEach((t) => addIntervalSubscription(t));
+        tasks.forEach((t) => {
+          addIntervalSubscription(t);
+        });
       });
   },
 };

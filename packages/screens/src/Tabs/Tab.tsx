@@ -1,13 +1,13 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { TabWrapper } from './Wrappers';
-import { useSortable } from '@dnd-kit/sortable';
 import { useTabs } from '@polkadot-live/contexts';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import { TabWrapper } from './Wrappers';
 import type { TabProps } from './types';
 
 export const Tab: React.FC<TabProps> = ({ id, label }: TabProps) => {
@@ -26,7 +26,7 @@ export const Tab: React.FC<TabProps> = ({ id, label }: TabProps) => {
    * Handle tab click.
    */
   const handleClick = (
-    event: React.MouseEvent<HTMLSpanElement, MouseEvent>
+    event: React.MouseEvent<HTMLSpanElement, MouseEvent>,
   ) => {
     event.stopPropagation();
     if (clickedId !== id) {
@@ -37,7 +37,9 @@ export const Tab: React.FC<TabProps> = ({ id, label }: TabProps) => {
   /**
    * Handle close tab.
    */
-  const handleClose = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleClose = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
     event.stopPropagation();
     handleTabClose(id);
   };
@@ -60,12 +62,16 @@ export const Tab: React.FC<TabProps> = ({ id, label }: TabProps) => {
         onClick={handleClick}
       >
         <div className="inner">
-          <span role="button" className="label">
+          <button type="button" className="label">
             {label}
-          </span>
-          <div className="btn-close" onClick={handleClose}>
+          </button>
+          <button
+            type="button"
+            className="btn-close"
+            onClick={(e) => handleClose(e)}
+          >
             <FontAwesomeIcon icon={faXmark} transform={'shrink-2'} />
-          </div>
+          </button>
         </div>
         <AnimatePresence>
           {id === clickedId && (

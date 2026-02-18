@@ -1,9 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { CheckboxRootSimple } from '@polkadot-live/styles';
 import * as Checkbox from '@radix-ui/react-checkbox';
 import { CheckIcon } from '@radix-ui/react-icons';
-import { CheckboxRootSimple } from '@polkadot-live/styles';
 import type { CheckboxRxProps } from './types';
 
 export const CheckboxRx = ({ selected, theme, onChecked }: CheckboxRxProps) => (

@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { use } from 'react';
 import { ContextError } from '@polkadot-live/core';
+import { use } from 'react';
 import { toast, Zoom } from 'react-toastify';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ToastOptions, ToastPosition } from 'react-toastify';
@@ -18,7 +18,7 @@ export const createSafeContextHook =
   };
 
 export const buildCache = (
-  entries: Record<string, () => AnyData>
+  entries: Record<string, () => AnyData>,
 ): Map<string, () => AnyData> => {
   const cache = new Map<string, () => AnyData>();
   Object.entries(entries).forEach(([key, value]) => {
@@ -31,7 +31,7 @@ export const renderToast = (
   message: string,
   toastId: string,
   toastType: 'error' | 'success',
-  position?: ToastPosition
+  position?: ToastPosition,
 ) => {
   const args: ToastOptions<unknown> = {
     position: position ? position : 'top-center',

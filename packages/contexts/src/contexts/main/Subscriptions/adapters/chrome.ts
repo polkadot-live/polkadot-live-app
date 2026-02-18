@@ -3,8 +3,8 @@
 
 import { parseMap } from '@polkadot-live/core';
 import type { AnyData, SubscriptionTask } from '@polkadot-live/types';
-import type { SubscriptionsAdapter } from './types';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { SubscriptionsAdapter } from './types';
 
 export const chromeAdapter: SubscriptionsAdapter = {
   executeOneShot: async (task) =>
@@ -34,7 +34,7 @@ export const chromeAdapter: SubscriptionsAdapter = {
     setAccountSubscriptionsState,
     setChainSubscriptionsState,
     updateAccountNameInTasks,
-    setActiveChainMap
+    setActiveChainMap,
   ) => {
     if (!setActiveChainMap) {
       return null;
@@ -57,7 +57,7 @@ export const chromeAdapter: SubscriptionsAdapter = {
               message.payload;
 
             setAccountSubscriptionsState(
-              parseMap<string, SubscriptionTask[]>(subscriptions)
+              parseMap<string, SubscriptionTask[]>(subscriptions),
             );
             setActiveChainMap(parseMap<ChainID, number>(activeChains));
             break;
@@ -88,13 +88,13 @@ export const chromeAdapter: SubscriptionsAdapter = {
     task,
     taskType,
     renderedSubscriptions,
-    setRenderedSubscriptions
+    setRenderedSubscriptions,
   ) => {
     await chromeAdapter.toggleSubscription(
       task,
       taskType,
       renderedSubscriptions,
-      setRenderedSubscriptions
+      setRenderedSubscriptions,
     );
   },
 
@@ -102,11 +102,11 @@ export const chromeAdapter: SubscriptionsAdapter = {
     task,
     taskType,
     renderedSubscriptions,
-    setRenderedSubscriptions
+    setRenderedSubscriptions,
   ) => {
     const newStatus = task.status === 'enable' ? 'disable' : 'enable';
     task.status = newStatus;
-    task.enableOsNotifications = newStatus === 'enable' ? true : false;
+    task.enableOsNotifications = newStatus === 'enable';
 
     const cmp = (a: SubscriptionTask, b: SubscriptionTask) =>
       a.action === b.action && a.chainId === b.chainId;
@@ -115,7 +115,7 @@ export const chromeAdapter: SubscriptionsAdapter = {
       setRenderedSubscriptions({
         type: taskType,
         tasks: renderedSubscriptions.tasks.map((a) =>
-          cmp(task, a) ? task : a
+          cmp(task, a) ? task : a,
         ),
       });
     }
@@ -148,7 +148,7 @@ export const chromeAdapter: SubscriptionsAdapter = {
     isOn,
     renderedSubscriptions,
     getTaskType,
-    setRenderedSubscriptions
+    setRenderedSubscriptions,
   ) => {
     // Get all tasks with the target status.
     const targetStatus = isOn ? 'enable' : 'disable';
@@ -158,7 +158,7 @@ export const chromeAdapter: SubscriptionsAdapter = {
       .filter((t) => t.category === category && t.status === targetStatus)
       .map((t) => {
         t.status = t.status === 'enable' ? 'disable' : 'enable';
-        t.enableOsNotifications = t.status === 'enable' ? true : false;
+        t.enableOsNotifications = t.status === 'enable';
         return t;
       })
       .sort((a, b) => a.label.localeCompare(b.label));
@@ -178,7 +178,7 @@ export const chromeAdapter: SubscriptionsAdapter = {
       setRenderedSubscriptions({
         type: taskType,
         tasks: renderedSubscriptions.tasks.map(
-          (a) => tasks.find((b) => cmp(a, b)) || a
+          (a) => tasks.find((b) => cmp(a, b)) || a,
         ),
       });
     }

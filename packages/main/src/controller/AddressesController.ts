@@ -1,47 +1,47 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as ConfigMain } from '../config/main';
 import { getSupportedSources } from '@polkadot-live/consts/chains';
+import { Config as ConfigMain } from '../config/main';
 import { store } from '../main';
-import type { AnyData } from '@polkadot-live/types/misc';
-import type { IpcTask } from '@polkadot-live/types/communication';
 import type {
   AccountSource,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { IpcTask } from '@polkadot-live/types/communication';
+import type { AnyData } from '@polkadot-live/types/misc';
 
 export class AddressesController {
   /**
    * @name process
    * @summary Process an address IPC task.
    */
-  static process(task: IpcTask): string | void {
+  static process(task: IpcTask): string | undefined {
     switch (task.action) {
       case 'raw-account:delete': {
-        this.delete(task);
+        AddressesController.delete(task);
         break;
       }
       case 'raw-account:get': {
-        return this.get(task);
+        return AddressesController.get(task);
       }
       case 'raw-account:get:ledger-meta': {
-        return this.getLedgerMeta(task);
+        return AddressesController.getLedgerMeta(task);
       }
       case 'raw-account:getAll': {
-        return this.getAll();
+        return AddressesController.getAll();
       }
       case 'raw-account:persist': {
-        this.persist(task);
+        AddressesController.persist(task);
         break;
       }
       case 'raw-account:import': {
-        this.doImport(task);
+        AddressesController.doImport(task);
         break;
       }
       case 'raw-account:update': {
-        this.update(task);
+        AddressesController.update(task);
         break;
       }
     }
@@ -55,7 +55,9 @@ export class AddressesController {
     const map = new Map<AccountSource, string>();
     for (const source of getSupportedSources()) {
       const key = ConfigMain.getStorageKey(source);
-      const addresses = store.has(key) ? this.getFromStore(key) : '[]';
+      const addresses = store.has(key)
+        ? AddressesController.getFromStore(key)
+        : '[]';
       map.set(source, addresses);
     }
 
@@ -74,8 +76,8 @@ export class AddressesController {
 
     const { chainId, publicKeyHex }: Target = JSON.parse(task.data.serialized);
     const key = ConfigMain.getStorageKey('ledger');
-    const account = this.getStoredAddresses(key).find(
-      (a) => a.publicKeyHex === publicKeyHex
+    const account = AddressesController.getStoredAddresses(key).find(
+      (a) => a.publicKeyHex === publicKeyHex,
     );
 
     const result = account
@@ -94,12 +96,12 @@ export class AddressesController {
     const { publicKeyHex, source } = account;
     const key = ConfigMain.getStorageKey(source);
     const ser = JSON.stringify(
-      this.getStoredAddresses(key).map((a) =>
-        a.publicKeyHex === publicKeyHex ? account : a
-      )
+      AddressesController.getStoredAddresses(key).map((a) =>
+        a.publicKeyHex === publicKeyHex ? account : a,
+      ),
     );
 
-    this.setInStore(key, ser);
+    AddressesController.setInStore(key, ser);
   }
 
   /**
@@ -110,12 +112,12 @@ export class AddressesController {
     const { publicKeyHex, source } = task.data;
     const key = ConfigMain.getStorageKey(source);
     const ser = JSON.stringify(
-      this.getStoredAddresses(key).filter(
-        (a) => a.publicKeyHex !== publicKeyHex
-      )
+      AddressesController.getStoredAddresses(key).filter(
+        (a) => a.publicKeyHex !== publicKeyHex,
+      ),
     );
 
-    this.setInStore(key, ser);
+    AddressesController.setInStore(key, ser);
   }
 
   /**
@@ -127,7 +129,7 @@ export class AddressesController {
 
     for (const source of getSupportedSources()) {
       const key = ConfigMain.getStorageKey(source);
-      const fetched = this.getStoredAddresses(key);
+      const fetched = AddressesController.getStoredAddresses(key);
       if (fetched.length === 0) {
         continue;
       }
@@ -142,7 +144,7 @@ export class AddressesController {
    */
   static getAllBySource(source: AccountSource): ImportedGenericAccount[] {
     const key = ConfigMain.getStorageKey(source);
-    return this.getStoredAddresses(key);
+    return AddressesController.getStoredAddresses(key);
   }
 
   /**
@@ -152,7 +154,7 @@ export class AddressesController {
   private static get(task: IpcTask): string {
     const { source } = task.data;
     const key = ConfigMain.getStorageKey(source);
-    return store.has(key) ? this.getFromStore(key) : '[]';
+    return store.has(key) ? AddressesController.getFromStore(key) : '[]';
   }
 
   /**
@@ -164,13 +166,13 @@ export class AddressesController {
     const genericAccount: ImportedGenericAccount = JSON.parse(serialized);
     const { publicKeyHex } = genericAccount;
 
-    if (this.isAlreadyPersisted(publicKeyHex)) {
-      this.update({
+    if (AddressesController.isAlreadyPersisted(publicKeyHex)) {
+      AddressesController.update({
         action: 'raw-account:update',
         data: { serialized: JSON.stringify(genericAccount) },
       });
     } else {
-      this.persist({
+      AddressesController.persist({
         action: 'raw-account:persist',
         data: { serialized },
       });
@@ -188,9 +190,12 @@ export class AddressesController {
       const { source, publicKeyHex } = genericAccount;
       const key = ConfigMain.getStorageKey(source);
 
-      if (!this.isAlreadyPersisted(publicKeyHex)) {
-        const stored = this.getStoredAddresses(key);
-        this.setInStore(key, JSON.stringify([...stored, genericAccount]));
+      if (!AddressesController.isAlreadyPersisted(publicKeyHex)) {
+        const stored = AddressesController.getStoredAddresses(key);
+        AddressesController.setInStore(
+          key,
+          JSON.stringify([...stored, genericAccount]),
+        );
       }
     } catch (err) {
       console.log(err);
@@ -206,7 +211,9 @@ export class AddressesController {
   }
 
   private static getStoredAddresses(key: string): ImportedGenericAccount[] {
-    return store.has(key) ? JSON.parse(this.getFromStore(key)) : [];
+    return store.has(key)
+      ? JSON.parse(AddressesController.getFromStore(key))
+      : [];
   }
 
   private static isAlreadyPersisted(publicKeyHex: string): boolean {
@@ -217,7 +224,7 @@ export class AddressesController {
       'wallet-connect',
     ] as AccountSource[]) {
       const key = ConfigMain.getStorageKey(source);
-      const stored = this.getStoredAddresses(key);
+      const stored = AddressesController.getStoredAddresses(key);
 
       if (stored.find((a) => a.publicKeyHex === publicKeyHex)) {
         return true;

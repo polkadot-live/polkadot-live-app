@@ -3,8 +3,8 @@
 
 import { chainCurrency, chainUnits } from '@polkadot-live/consts/chains';
 import { formatDecimal } from '@polkadot-live/core';
-import { ellipsisFn, planckToUnit } from '@w3ux/utils';
 import { TriggerHeader } from '@polkadot-live/ui';
+import { ellipsisFn, planckToUnit } from '@w3ux/utils';
 import type {
   ExTransferKeepAliveData,
   ExtrinsicInfo,

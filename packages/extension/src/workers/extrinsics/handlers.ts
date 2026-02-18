@@ -1,20 +1,20 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { DbController, LedgerController } from '../../controllers';
 import {
   ExtrinsicsController,
   handleLedgerTaskError,
   LedgerTxError,
 } from '@polkadot-live/core';
-import { getAccountLedgerMeta } from '../accounts';
 import { hexToU8a } from 'dedot/utils';
+import { DbController, LedgerController } from '../../controllers';
+import { getAccountLedgerMeta } from '../accounts';
+import type { LedgerTaskResponse } from '@polkadot-live/types/ledger';
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 import type { HexString } from 'dedot/utils';
-import type { LedgerTaskResponse } from '@polkadot-live/types/ledger';
 
 export const handleGetEstimatedFee = async (
-  info: ExtrinsicInfo
+  info: ExtrinsicInfo,
 ): Promise<string> =>
   (await ExtrinsicsController.getEstimatedFee(info)).toString();
 
@@ -45,7 +45,7 @@ export const handleSubmitMockExtrinsic = async (info: ExtrinsicInfo) => {
 };
 
 export const handleLedgerSignSubmit = async (
-  info: ExtrinsicInfo
+  info: ExtrinsicInfo,
 ): Promise<LedgerTaskResponse> => {
   try {
     const { chainId, from } = info.actionMeta;

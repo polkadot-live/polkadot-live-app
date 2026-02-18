@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { PalletReferendaReferendumStatus as PolkadotRefStatus } from '@dedot/chaintypes/polkadot-asset-hub';
 import type { PalletReferendaReferendumStatus as KusamaRefStatus } from '@dedot/chaintypes/kusama-asset-hub';
+import type { PalletReferendaReferendumStatus as PolkadotRefStatus } from '@dedot/chaintypes/polkadot-asset-hub';
 import type { ChainID } from './chains';
 
 export type RefInQueue = RefOngoing; // inQueue: true

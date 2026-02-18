@@ -1,9 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { getFromBackupFile } from '@polkadot-live/core';
 import { DbController } from '../../controllers';
 import { getAllEvents } from '../events';
-import { getFromBackupFile } from '@polkadot-live/core';
 import { sendChromeMessage } from '../utils';
 import type {
   EventAccountData,

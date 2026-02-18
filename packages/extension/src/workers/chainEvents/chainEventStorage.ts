@@ -3,12 +3,12 @@
 
 import { ChainEventsService } from '@polkadot-live/core';
 import { DbController } from '../../controllers';
-import type { ChainID } from '@polkadot-live/types/chains';
-import type { Stores } from '../../controllers';
 import type {
   ChainEventSubscription,
   FlattenedAccountData,
 } from '@polkadot-live/types';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { Stores } from '../../controllers';
 
 const cmp = (a: ChainEventSubscription, b: ChainEventSubscription) =>
   a.pallet === b.pallet && a.eventName === b.eventName;
@@ -41,7 +41,7 @@ export const updateChainEvent = async (sub: ChainEventSubscription) => {
  */
 export const putChainEventForAccount = async (
   account: FlattenedAccountData,
-  sub: ChainEventSubscription
+  sub: ChainEventSubscription,
 ) => {
   const { address, chain: chainId } = account;
   const store: Stores = 'accountChainEvents';
@@ -56,7 +56,7 @@ export const putChainEventForAccount = async (
 
 export const removeChainEventForAccount = async (
   account: FlattenedAccountData,
-  sub: ChainEventSubscription
+  sub: ChainEventSubscription,
 ) => {
   const { address, chain: chainId } = account;
   const store: Stores = 'accountChainEvents';
@@ -74,7 +74,7 @@ export const removeChainEventForAccount = async (
 };
 
 export const removeAllChainEventsForAccount = async (
-  account: FlattenedAccountData
+  account: FlattenedAccountData,
 ) => {
   const { address, chain: chainId } = account;
   const store: Stores = 'accountChainEvents';
@@ -142,7 +142,7 @@ export const putChainEventsForRef = async (subs: ChainEventSubscription[]) => {
 };
 
 export const removeChainEventsForRef = async (
-  subs: ChainEventSubscription[]
+  subs: ChainEventSubscription[],
 ) => {
   for (const s of subs) {
     await DbController.delete('referendaChainEvents', s.id);

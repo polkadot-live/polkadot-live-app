@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { DbController } from '../../controllers';
 import { getFromBackupFile, IntervalsController } from '@polkadot-live/core';
+import { DbController } from '../../controllers';
 import {
   handleAddIntervalSubscription,
   handleGetAllIntervalTasks,
@@ -14,7 +14,7 @@ import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 
 export const importIntervalData = async (
   contents: string,
-  isOnline: boolean
+  isOnline: boolean,
 ) => {
   const serIntervals = getFromBackupFile('intervals', contents);
   if (!serIntervals) {
@@ -33,8 +33,8 @@ export const importIntervalData = async (
           (t) =>
             t.action === action &&
             t.chainId === chainId &&
-            t.referendumId === referendumId
-        )
+            t.referendumId === referendumId,
+        ),
     );
   };
 
@@ -56,8 +56,8 @@ export const importIntervalData = async (
       (value, index, self) =>
         index ===
         self.findIndex(
-          (v) => v.chainId === value.chainId && v.refId === value.refId
-        )
+          (v) => v.chainId === value.chainId && v.refId === value.refId,
+        ),
     )
     .map(({ chainId, refId }) => `${chainId}::${refId}`);
 

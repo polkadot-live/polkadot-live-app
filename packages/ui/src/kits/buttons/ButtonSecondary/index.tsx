@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { onMouseHandlers } from '../Utils';
 import { appendOr, appendOrEmpty } from '@w3ux/utils';
-import type { ButtonCommonProps, ButtonIconProps } from '../types';
+import { onMouseHandlers } from '../Utils';
 import type { ComponentBaseWithClassName } from '../../../types';
+import type { ButtonCommonProps, ButtonIconProps } from '../types';
 
 export type ButtonSecondaryProps = ComponentBaseWithClassName &
   ButtonIconProps &
@@ -41,10 +41,10 @@ export const ButtonSecondary = ({
   <button
     className={`btn-secondary${appendOr(lg, 'lg', 'sm')}${appendOrEmpty(
       grow,
-      'grow'
+      'grow',
     )}${appendOrEmpty(marginRight, 'm-right')}${appendOrEmpty(
       marginLeft,
-      'm-left'
+      'm-left',
     )}${appendOrEmpty(marginX, 'm-x')}${className ? ` ${className}` : ''}`}
     style={style}
     type="button"

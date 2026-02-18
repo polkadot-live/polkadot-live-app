@@ -1,11 +1,11 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { getUnixTime } from 'date-fns';
 import {
   getPolkassemblySubdomain,
   getSubsquareSubdomain,
 } from '@polkadot-live/consts/chains';
+import { getUnixTime } from 'date-fns';
 import type {
   EventAccountData,
   EventCallback,
@@ -17,7 +17,7 @@ import type { EventMeta, WhoMeta } from '../types';
 
 export const getRefUriActions = (
   chainId: ChainID,
-  refId: number
+  refId: number,
 ): UriAction[] => [
   {
     label: 'Subsquare',
@@ -31,7 +31,7 @@ export const getRefUriActions = (
 
 export const makeChainEvent = (
   meta: EventMeta,
-  whoMeta?: WhoMeta
+  whoMeta?: WhoMeta,
 ): EventCallback => {
   const { category, chainId, subtitle, title, txActions, uriActions, data } =
     meta;

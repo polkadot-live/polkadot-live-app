@@ -1,24 +1,24 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { openDB } from 'idb';
-import { getDefaultSettings } from '@polkadot-live/consts/settings';
 import { getSupportedSources } from '@polkadot-live/consts/chains';
-import type { AnyData } from '@polkadot-live/types/misc';
+import { getDefaultSettings } from '@polkadot-live/consts/settings';
+import { openDB } from 'idb';
+import type { ChainEventSubscription } from '@polkadot-live/types';
 import type {
   AccountSource,
   ImportedGenericAccount,
   StoredAccount,
 } from '@polkadot-live/types/accounts';
-import type { ChainEventSubscription } from '@polkadot-live/types';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { DBSchema, IDBPDatabase } from 'idb';
+import type { AnyData } from '@polkadot-live/types/misc';
 import type { EventCallback } from '@polkadot-live/types/reporter';
-import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 import type {
   IntervalSubscription,
   SubscriptionTask,
 } from '@polkadot-live/types/subscriptions';
+import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
+import type { DBSchema, IDBPDatabase } from 'idb';
 
 interface MyDB extends DBSchema {
   accountChainEvents: {
@@ -97,17 +97,17 @@ export class DbController {
    * Get database.
    */
   private static getDb(): IDBPDatabase<MyDB> {
-    if (!this.db) {
+    if (!DbController.db) {
       throw new Error('Database undefined');
     }
-    return this.db;
+    return DbController.db;
   }
 
   /**
    * Initialized database.
    */
   static async initialize() {
-    this.db = await openDB<MyDB>(this.DB_NAME, 1, {
+    DbController.db = await openDB<MyDB>(DbController.DB_NAME, 1, {
       upgrade(db) {
         db.createObjectStore('accountChainEvents');
         db.createObjectStore('accountSubscriptions');
@@ -137,21 +137,21 @@ export class DbController {
    * Get value from database.
    */
   static async get(store: Stores, key: string) {
-    return this.getDb().get(store, key);
+    return DbController.getDb().get(store, key);
   }
 
   /**
    * Set value in databse.
    */
   static async set(store: Stores, key: string, value: AnyData) {
-    await this.getDb().put(store, value, key);
+    await DbController.getDb().put(store, value, key);
   }
 
   /**
    * Delete value in database.
    */
   static async delete(store: Stores, key: string) {
-    await this.getDb().delete(store, key);
+    await DbController.getDb().delete(store, key);
   }
 
   /**
@@ -159,7 +159,9 @@ export class DbController {
    */
   static async getAll(store: Stores) {
     const map = new Map();
-    let cursor = await this.getDb().transaction(store).store.openCursor();
+    let cursor = await DbController.getDb()
+      .transaction(store)
+      .store.openCursor();
     while (cursor) {
       map.set(cursor.key, cursor.value);
       cursor = await cursor.continue();
@@ -169,7 +171,9 @@ export class DbController {
 
   static async getAllObjects(store: Stores): Promise<Map<AnyData, AnyData>> {
     const map = new Map();
-    let cursor = await this.getDb().transaction(store).store.openCursor();
+    let cursor = await DbController.getDb()
+      .transaction(store)
+      .store.openCursor();
     while (cursor) {
       map.set(cursor.key, cursor.value);
       cursor = await cursor.continue();

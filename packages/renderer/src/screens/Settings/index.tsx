@@ -1,10 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useEffect, useState } from 'react';
 import { useConnections } from '@polkadot-live/contexts';
-import { FadeInWrapper } from '@polkadot-live/ui';
 import { Settings } from '@polkadot-live/screens';
+import { FadeInWrapper } from '@polkadot-live/ui';
+import { useEffect, useState } from 'react';
 import type { OsPlatform } from '@polkadot-live/types/settings';
 
 export const FadeSettings = () => {

@@ -1,37 +1,37 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { DbController } from '../../controllers';
-import { dispatchNotification } from '../notifications';
-import { eventBus } from '../eventBus';
-import {
-  persistManagedAccount,
-  removeManagedAccount,
-} from '../managedAccounts';
-import { sendChromeMessage } from '../utils';
-import {
-  setAccountSubscriptionsState,
-  updateAccountSubscriptions,
-} from '../subscriptions';
-import { updateEventWhoInfo } from '../events';
 import {
   AccountsController,
   APIsController,
   ChainEventsService,
   SubscriptionsController,
 } from '@polkadot-live/core';
-import type { ChainID } from '@polkadot-live/types/chains';
+import { DbController } from '../../controllers';
+import { removeAllChainEventsForAccount } from '../chainEvents';
+import { eventBus } from '../eventBus';
+import { updateEventWhoInfo } from '../events';
+import {
+  persistManagedAccount,
+  removeManagedAccount,
+} from '../managedAccounts';
+import { dispatchNotification } from '../notifications';
+import {
+  setAccountSubscriptionsState,
+  updateAccountSubscriptions,
+} from '../subscriptions';
+import { sendChromeMessage } from '../utils';
 import type {
   EncodedAccount,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
-import { removeAllChainEventsForAccount } from '../chainEvents';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 export const handleImportAddress = async (
   generic: ImportedGenericAccount,
   encoded: EncodedAccount,
   onlineMode: boolean,
-  fromBackup: boolean
+  fromBackup: boolean,
 ) => {
   const relayFlag = (key: string, value: boolean) =>
     sendChromeMessage('sharedState', 'relay', { key, value });
@@ -103,7 +103,7 @@ export const handleImportAddress = async (
 
 export const handleRemoveAddress = async (
   address: string,
-  chainId: ChainID
+  chainId: ChainID,
 ) => {
   try {
     const account = AccountsController.get(chainId, address);

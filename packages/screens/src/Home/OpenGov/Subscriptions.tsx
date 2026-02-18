@@ -1,10 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Accordion from '@radix-ui/react-accordion';
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import * as UI from '@polkadot-live/ui';
-import * as Style from '@polkadot-live/styles';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   useApiHealth,
   useChainEvents,
@@ -13,13 +11,15 @@ import {
   useIntervalSubscriptions,
   useIntervalTasksManager,
 } from '@polkadot-live/contexts';
-import { useState } from 'react';
+import * as Style from '@polkadot-live/styles';
+import * as UI from '@polkadot-live/ui';
+import * as Accordion from '@radix-ui/react-accordion';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
+import { useState } from 'react';
+import { SubscriptionRow } from '../ChainEvents/SubscriptionRow';
+import { Header } from '../Manage/Subscriptions/Header';
 import { DialogManageRef, DialogRemoveRef } from './Dialogs';
 import { IntervalRow } from './IntervalRow';
-import { Header } from '../Manage/Subscriptions/Header';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { SubscriptionRow } from '../ChainEvents/SubscriptionRow';
 import type { SubscriptionsProps } from './types';
 
 export const Subscriptions = ({
@@ -63,7 +63,7 @@ export const Subscriptions = ({
     }
     const chainSubs = subscriptions.get(activeRefChain) ?? [];
     const classic = chainSubs.filter(
-      (s) => s.referendumId === refId && s.status === 'enable'
+      (s) => s.referendumId === refId && s.status === 'enable',
     ).length;
     return smart + classic;
   };
@@ -82,8 +82,8 @@ export const Subscriptions = ({
     // A "global" toggle is set if all of its tasks are enabled.
     for (const [refId, subs] of getCategorised().entries()) {
       const allToggled = subs.reduce(
-        (acc, task) => (acc ? (task.status === 'enable' ? true : false) : acc),
-        true
+        (acc, task) => (acc ? task.status === 'enable' : acc),
+        true,
       );
       map.set(refId, allToggled);
     }
@@ -102,7 +102,7 @@ export const Subscriptions = ({
 
     const tasks = subs
       .filter(
-        (t) => t.referendumId === referendumId && t.status === targetStatus
+        (t) => t.referendumId === referendumId && t.status === targetStatus,
       )
       .map((t) => {
         t.status = t.status === 'enable' ? 'disable' : 'enable';
@@ -186,7 +186,7 @@ export const Subscriptions = ({
                         <UI.TriggerHeader>
                           <Style.FlexRow>
                             <span style={{ flex: 1 }}>Referendum {refId}</span>
-                            {activeCount(parseInt(refId)) > 0 && (
+                            {activeCount(parseInt(refId, 10)) > 0 && (
                               <FontAwesomeIcon
                                 className="splotch"
                                 icon={FA.faSplotch}
@@ -208,15 +208,15 @@ export const Subscriptions = ({
                                 type="primary"
                                 isOn={
                                   getOpenGovGlobalToggles().get(
-                                    parseInt(refId)
+                                    parseInt(refId, 10),
                                   ) || false
                                 }
                                 handleToggle={async () =>
                                   await toggleGlobalSwitch(
-                                    parseInt(refId),
+                                    parseInt(refId, 10),
                                     getOpenGovGlobalToggles().get(
-                                      parseInt(refId)
-                                    ) || false
+                                      parseInt(refId, 10),
+                                    ) || false,
                                   )
                                 }
                               />
@@ -225,7 +225,7 @@ export const Subscriptions = ({
                         </Style.FlexRow>
 
                         {Array.from(getCategorised().entries())
-                          .filter(([rid]) => parseInt(refId) === rid)
+                          .filter(([rid]) => parseInt(refId, 10) === rid)
                           .map(([referendumId, intervalTasks]) => (
                             <Style.ItemsColumn key={`classic-${referendumId}`}>
                               {intervalTasks
@@ -251,7 +251,7 @@ export const Subscriptions = ({
                       </Style.FlexColumn>
                     </UI.AccordionContent>
                   </Accordion.Item>
-                )
+                ),
               )}
             </Style.FlexColumn>
           </Accordion.Root>

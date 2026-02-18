@@ -1,8 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Dialog from '@radix-ui/react-dialog';
-import { Cross2Icon } from '@radix-ui/react-icons';
 import { useConnections, useDialogControl } from '@polkadot-live/contexts';
 import {
   DialogContent,
@@ -11,6 +9,8 @@ import {
   FlexRow,
 } from '@polkadot-live/styles';
 import { CopyButton } from '@polkadot-live/ui';
+import * as Dialog from '@radix-ui/react-dialog';
+import { Cross2Icon } from '@radix-ui/react-icons';
 import styled from 'styled-components';
 import type { DialogShowAddressProps } from './types';
 

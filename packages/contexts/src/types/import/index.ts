@@ -6,7 +6,7 @@ export * from './AddHandler';
 export * from './Addresses';
 export * from './DeleteHandler';
 export * from './ImportHandler';
-export * from './RemoveHandler';
 export * from './LedgerHardware';
+export * from './RemoveHandler';
 export * from './RenameHandler';
 export * from './WalletConnectImport';

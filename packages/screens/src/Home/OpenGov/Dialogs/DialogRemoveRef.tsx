@@ -1,15 +1,15 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Dialog from '@radix-ui/react-dialog';
-import * as Styles from '@polkadot-live/styles';
-import { Cross2Icon } from '@radix-ui/react-icons';
 import {
   useChainEvents,
   useConnections,
   useIntervalSubscriptions,
   useIntervalTasksManager,
 } from '@polkadot-live/contexts';
+import * as Styles from '@polkadot-live/styles';
+import * as Dialog from '@radix-ui/react-dialog';
+import { Cross2Icon } from '@radix-ui/react-icons';
 
 export const DialogRemoveRef = () => {
   const { getTheme } = useConnections();
@@ -62,6 +62,7 @@ export const DialogRemoveRef = () => {
                   Cancel
                 </Dialog.Close>
                 <button
+                  type="button"
                   className="Dialog__Button Danger"
                   onClick={async () => await onRemoveClick()}
                   style={{ flex: 1 }}

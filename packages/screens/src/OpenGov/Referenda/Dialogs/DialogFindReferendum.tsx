@@ -1,24 +1,24 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Dialog from '@radix-ui/react-dialog';
+import { faLocationCrosshairs } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   useConnections,
   useDialogControl,
   useReferenda,
 } from '@polkadot-live/contexts';
-import { useState } from 'react';
 import {
+  DialogContent,
+  DialogHr,
+  DialogTrigger,
   FlexColumn,
   FlexRow,
-  DialogContent,
-  DialogTrigger,
-  DialogHr,
 } from '@polkadot-live/styles';
 import { renderToast, TooltipRx } from '@polkadot-live/ui';
+import * as Dialog from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLocationCrosshairs } from '@fortawesome/free-solid-svg-icons';
+import { useState } from 'react';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { DialogFindReferendumProps } from './types';
 
@@ -39,7 +39,7 @@ export const DialogFindReferendum = ({ tab }: DialogFindReferendumProps) => {
    * Utils.
    */
   const isInvalidNumber = (value: AnyData): boolean =>
-    isNaN(value) || typeof value !== 'number';
+    Number.isNaN(value) || typeof value !== 'number';
 
   const isStrictPositiveInteger = (value: string): boolean =>
     /^\d+$/.test(value);

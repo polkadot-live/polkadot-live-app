@@ -25,17 +25,17 @@ export class ConfigRenderer {
 
   // Accessors for `tabs` port.
   static get portToTabs(): MessagePort | null {
-    return this._portToTabs ?? null;
+    return ConfigRenderer._portToTabs ?? null;
   }
   static set portToTabs(port: MessagePort) {
-    this._portToTabs = port;
+    ConfigRenderer._portToTabs = port;
   }
 
   // Accessors for `_abortConnecting` flag.
   static get abortConnecting(): boolean {
-    return this._abortConnecting;
+    return ConfigRenderer._abortConnecting;
   }
   static set abortConnecting(flag: boolean) {
-    this._abortConnecting = flag;
+    ConfigRenderer._abortConnecting = flag;
   }
 }

@@ -5,7 +5,7 @@ export const dispatchNotification = async (
   id: string,
   title: string,
   body: string,
-  subtitle?: string
+  subtitle?: string,
 ) => {
   await requestNotificationPermission();
   chrome.notifications.create(id, {

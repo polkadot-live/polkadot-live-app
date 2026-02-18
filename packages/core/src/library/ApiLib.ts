@@ -1,15 +1,15 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { ChainList } from '@polkadot-live/consts/chains';
 import {
   AccountsController,
   APIsController,
   SubscriptionsController,
 } from '../controllers';
-import { ChainList } from '@polkadot-live/consts/chains';
+import { ChainEventsService } from '../events';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
-import { ChainEventsService } from '../events';
 
 /**
  * @name tryApiDisconnect
@@ -49,7 +49,7 @@ export const disconnectAPIs = async () => {
     await Promise.all(
       Array.from(ChainList.keys())
         .filter((c) => !isApiRequired(c))
-        .map((c) => APIsController.close(c))
+        .map((c) => APIsController.close(c)),
     );
   }
 };

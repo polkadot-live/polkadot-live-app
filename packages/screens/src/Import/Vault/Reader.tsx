@@ -1,16 +1,16 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { QRVieweraWrapper } from '../Wrappers';
+import { isValidAddress } from '@polkadot-live/core';
 import {
   ButtonSecondary,
   createImgSize,
   Html5QrCodePlugin,
   ScanWrapper,
 } from '@polkadot-live/ui';
-import { isValidAddress } from '@polkadot-live/core';
 import { decodeAddress, u8aToHex } from 'dedot/utils';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { QRVieweraWrapper } from '../Wrappers';
 import type { Html5Qrcode } from 'html5-qrcode';
 import type { ReaderProps } from './types';
 
@@ -67,7 +67,10 @@ export const Reader = ({
   };
 
   // Handle new vault address to local storage and close overlay.
-  const handleVaultImport = async (publicKeyHex: string, enAddress: string) => {
+  const handleVaultImport = async (
+    _publicKeyHex: string,
+    enAddress: string,
+  ) => {
     await handleImportAddress(enAddress, 'vault');
     setImported(true);
   };

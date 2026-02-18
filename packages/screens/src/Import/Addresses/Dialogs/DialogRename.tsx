@@ -1,27 +1,27 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Dialog from '@radix-ui/react-dialog';
+import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  useConnections,
+  useDialogControl,
+  useRenameHandler,
+} from '@polkadot-live/contexts';
 import {
   DialogContent,
   DialogHr,
   FlexColumn,
   FlexRow,
 } from '@polkadot-live/styles';
-import { Cross2Icon } from '@radix-ui/react-icons';
-import {
-  useConnections,
-  useDialogControl,
-  useRenameHandler,
-} from '@polkadot-live/contexts';
-import { useEffect, useState } from 'react';
 import { renderToast, TooltipRx } from '@polkadot-live/ui';
-import { NetworkLabel } from './NetworkLabel';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
+import * as Dialog from '@radix-ui/react-dialog';
+import { Cross2Icon } from '@radix-ui/react-icons';
 import { unescape } from '@w3ux/utils';
-import type { FormEvent } from 'react';
+import { useEffect, useState } from 'react';
+import { NetworkLabel } from './NetworkLabel';
 import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';
+import type { FormEvent } from 'react';
 
 export const DialogRename = () => {
   const { getTheme } = useConnections();

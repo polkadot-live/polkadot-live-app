@@ -1,9 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import type { EventCallback } from '@polkadot-live/types';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { EventsAdapter } from './types';
-import type { EventCallback } from '@polkadot-live/types';
 
 export const chromeAdapter: EventsAdapter = {
   clearAll: async (category) => {
@@ -49,10 +49,10 @@ export const chromeAdapter: EventsAdapter = {
     addEvent,
     removeOutdatedEvents,
     setActiveCategory,
-    setSyncCounts
+    setSyncCounts,
   ) => {
     const callback = (message: AnyData) => {
-      if (message.type == 'events') {
+      if (message.type === 'events') {
         switch (message.task) {
           case 'addEvent': {
             interface I {

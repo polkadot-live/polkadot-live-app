@@ -5,10 +5,10 @@ import { createContext, useEffect, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
 import type {
   DialogBulkRenameData,
+  DialogControlContextInterface,
   DialogManageAccountData,
   DialogRenameData,
   DialogShowAddressData,
-  DialogControlContextInterface,
 } from './types';
 
 export const DialogControlContext = createContext<
@@ -17,7 +17,7 @@ export const DialogControlContext = createContext<
 
 export const useDialogControl = createSafeContextHook(
   DialogControlContext,
-  'DialogControlContext'
+  'DialogControlContext',
 );
 
 export const DialogControlProvider = ({

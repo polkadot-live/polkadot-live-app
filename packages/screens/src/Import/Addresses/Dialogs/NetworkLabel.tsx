@@ -1,16 +1,16 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import styled from 'styled-components';
 import { FlexRow } from '@polkadot-live/styles';
 import { ChainIcon } from '@polkadot-live/ui';
-import type { AnyData } from '@polkadot-live/types/misc';
+import styled from 'styled-components';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { AnyData } from '@polkadot-live/types/misc';
 
 const NetworkLabelWrapper = styled(FlexRow).attrs<{ $hide?: boolean }>(
   (props) => ({
     $hide: props.$hide,
-  })
+  }),
 )`
   min-width: 140px;
   .Label {

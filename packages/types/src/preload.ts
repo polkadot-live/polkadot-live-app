@@ -1,13 +1,15 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { DismissEvent, EventCallback, NotificationData } from './reporter';
+// biome-ignore-all lint/suspicious/noConfusingVoidType: Allow void in some places for better readability.
+
+import type { IpcRendererEvent } from 'electron';
 import type { ExportResult, ImportResult } from './backup';
 import type { IpcTask, SyncID, TabData } from './communication';
-import type { IpcRendererEvent } from 'electron';
-import type { AnyData } from './misc';
-import type { SettingKey } from './settings';
 import type { LedgerTask, SerLedgerTaskResponse } from './ledger';
+import type { AnyData } from './misc';
+import type { DismissEvent, EventCallback, NotificationData } from './reporter';
+import type { SettingKey } from './settings';
 
 export interface PreloadAPI {
   getWindowId: () => string;
@@ -45,7 +47,7 @@ export interface PreloadAPI {
   openWindow: (id: string) => Promise<void>;
   resizeBaseWindow: (size: 'small' | 'medium' | 'large' | '') => void;
   onBaseWindowResized: (
-    callback: (_: IpcRendererEvent) => void
+    callback: (_: IpcRendererEvent) => void,
   ) => Electron.IpcRenderer;
 
   openDevTools: (windowId: string) => void;
@@ -59,18 +61,18 @@ export interface PreloadAPI {
   syncSharedState: (
     callback: (
       _: IpcRendererEvent,
-      data: { syncId: SyncID; state: string | boolean }
-    ) => void
+      data: { syncId: SyncID; state: string | boolean },
+    ) => void,
   ) => void;
   relaySharedState: (syncId: SyncID, state: string | boolean) => void;
 
   handleOpenTab: (
-    callback: (_: IpcRendererEvent, tabData: TabData) => void
+    callback: (_: IpcRendererEvent, tabData: TabData) => void,
   ) => void;
 
   doLedgerTask: (
     task: LedgerTask,
-    serialized: string
+    serialized: string,
   ) => Promise<SerLedgerTaskResponse>;
 
   requestImportedAccounts: ApiEmptyRequest;
@@ -94,12 +96,12 @@ type ApiReportNewEvent = (
   callback: (
     _: IpcRendererEvent,
     event: EventCallback,
-    newEvent: boolean
-  ) => void
+    newEvent: boolean,
+  ) => void,
 ) => Electron.IpcRenderer;
 
 type ApiReportDismissEvent = (
-  callback: (_: IpcRendererEvent, eventData: DismissEvent) => void
+  callback: (_: IpcRendererEvent, eventData: DismissEvent) => void,
 ) => Electron.IpcRenderer;
 
 type ApiOpenBrowserWindow = (url: string) => void;
@@ -111,15 +113,15 @@ type ApiOpenBrowserWindow = (url: string) => void;
 type ApiInitializeApp = (callback: (_: IpcRendererEvent) => void) => void;
 
 type ApiInitializeAppOnline = (
-  callback: (_: IpcRendererEvent) => Promise<void>
+  callback: (_: IpcRendererEvent) => Promise<void>,
 ) => void;
 
 type ApiInitializeAppOffline = (
-  callback: (_: IpcRendererEvent) => Promise<void>
+  callback: (_: IpcRendererEvent) => Promise<void>,
 ) => void;
 
 type ApiShowNotification = (content: NotificationData) => void;
 
 type ApiReportStaleEvent = (
-  callback: (_: IpcRendererEvent, uid: string) => void
+  callback: (_: IpcRendererEvent, uid: string) => void,
 ) => Electron.IpcRenderer;

@@ -1,20 +1,20 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-export { useAddresses, AddressesProvider } from './Addresses';
-export { useAppSettings, AppSettingsProvider } from './AppSettings';
-export { useApiHealth, ApiHealthProvider } from './ApiHealth';
-export { useChains, ChainsProvider } from './Chains';
-export { useChainEvents, ChainEventsProvider } from './ChainEvents';
-export { useEvents, EventsProvider } from './Events';
+export { AddressesProvider, useAddresses } from './Addresses';
+export { ApiHealthProvider, useApiHealth } from './ApiHealth';
+export { AppSettingsProvider, useAppSettings } from './AppSettings';
+export { ChainEventsProvider, useChainEvents } from './ChainEvents';
+export { ChainsProvider, useChains } from './Chains';
+export { EventsProvider, useEvents } from './Events';
 export {
-  useIntervalSubscriptions,
   IntervalSubscriptionsProvider,
+  useIntervalSubscriptions,
 } from './IntervalSubscriptions';
 export {
-  useIntervalTasksManager,
   IntervalTasksManagerProvider,
+  useIntervalTasksManager,
 } from './IntervalTasksManager';
-export { useSubscriptions, SubscriptionsProvider } from './Subscriptions';
-export { useSummary, SummaryProvider } from './Summary';
-export { useManage, ManageProvider } from './Manage';
+export { ManageProvider, useManage } from './Manage';
+export { SubscriptionsProvider, useSubscriptions } from './Subscriptions';
+export { SummaryProvider, useSummary } from './Summary';

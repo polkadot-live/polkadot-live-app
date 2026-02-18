@@ -6,12 +6,12 @@ import {
   handleFetchTracks,
   handleInitTreasury,
 } from '../../governance';
-import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { AnyData } from '@polkadot-live/types/misc';
 
 export const handleOpenGovMessage = (
   message: AnyData,
-  sendResponse: (response?: AnyData) => void
+  sendResponse: (response?: AnyData) => void,
 ): boolean => {
   switch (message.task) {
     case 'fetchTracks': {

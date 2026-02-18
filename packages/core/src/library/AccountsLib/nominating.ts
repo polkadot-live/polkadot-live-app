@@ -1,23 +1,22 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import BigNumber from 'bignumber.js';
-import { perbillToPercent } from '../CommonLib';
-import { AccountId32 } from 'dedot/codecs';
 import { rmCommas } from '@w3ux/utils';
-import type { AnyData } from '@polkadot-live/types/misc';
-
-import type { Account } from '../../model';
-import type { DedotStakingClient } from '@polkadot-live/types/apis';
+import BigNumber from 'bignumber.js';
+import { AccountId32 } from 'dedot/codecs';
+import { perbillToPercent } from '../CommonLib';
+import type {
+  SpStakingExposurePage,
+  SpStakingPagedExposureMetadata,
+} from '@dedot/chaintypes/substrate';
 import type {
   AccountNominatingData,
   AccountNominationsData,
   ValidatorData,
 } from '@polkadot-live/types/accounts';
-import type {
-  SpStakingExposurePage,
-  SpStakingPagedExposureMetadata,
-} from '@dedot/chaintypes/substrate';
+import type { DedotStakingClient } from '@polkadot-live/types/apis';
+import type { AnyData } from '@polkadot-live/types/misc';
+import type { Account } from '../../model';
 
 interface ValidatorOverviewData {
   total: string;
@@ -33,7 +32,7 @@ interface ValidatorOverviewData {
 export const getEraRewards = async (
   address: string,
   api: DedotStakingClient,
-  era: number
+  era: number,
 ) => {
   const showDebug = false;
   const eraPayoutResult = await api.query.staking.erasValidatorReward(era);
@@ -48,7 +47,7 @@ export const getEraRewards = async (
   // Asynchronously cache validator metadata in map.
   const asyncAddValidatorInfo = async (
     keys: [number, AccountId32],
-    info: SpStakingPagedExposureMetadata
+    info: SpStakingPagedExposureMetadata,
   ) => {
     validators.set(keys[1].address(prefix), {
       total: info.total.toString(),
@@ -59,7 +58,7 @@ export const getEraRewards = async (
   };
 
   await Promise.all(
-    overview.map(([keys, value]) => asyncAddValidatorInfo(keys, value))
+    overview.map(([keys, value]) => asyncAddValidatorInfo(keys, value)),
   );
 
   // Map <validatorId, stakedAmount[]>
@@ -88,7 +87,7 @@ export const getEraRewards = async (
 
   // Dedot implements batching from version 0.9.5 for processing hundreds of async queries.
   const eraStakersPaged = await Promise.all(
-    validatorIds.map((v) => api.query.staking.erasStakersPaged.entries(era, v))
+    validatorIds.map((v) => api.query.staking.erasStakersPaged.entries(era, v)),
   );
 
   // Check if account has stake for each validator.
@@ -96,7 +95,7 @@ export const getEraRewards = async (
     eraStakersPaged.map(async (page) => {
       const vs = await asyncSetValidatorAddressStake(page);
       return { vid: page[0][0][1].address(prefix), stake: vs };
-    })
+    }),
   );
 
   // Set account stake in map.
@@ -115,18 +114,18 @@ export const getEraRewards = async (
   const commissions = new Map<string, string>();
   const vs = Array.from(addressStake.keys());
   const prefs = await Promise.all(
-    vs.map((v) => api.query.staking.erasValidatorPrefs([era, v]))
+    vs.map((v) => api.query.staking.erasValidatorPrefs([era, v])),
   );
-  prefs.forEach((p, i) =>
-    commissions.set(vs[i], perbillToPercent(p.commission))
-  );
+  prefs.forEach((p, i) => {
+    commissions.set(vs[i], perbillToPercent(p.commission));
+  });
 
   // Calculate unclaimed rewards for each nominated validator.
   let totalRewards = new BigNumber(0);
   for (const v of vs) {
     // Parse commission to big number.
     const commission = new BigNumber(
-      commissions.get(v)!.replace(/%/g, '')
+      commissions.get(v)!.replace(/%/g, ''),
     ).multipliedBy(0.01);
 
     // Get total staked amount by the address.
@@ -141,7 +140,7 @@ export const getEraRewards = async (
     // Calculate available validator rewards for the era based on reward points.
     const totalRewardPoints = new BigNumber(eraRewardPoints.total.toString());
     const pointsData = eraRewardPoints.individual.find(
-      (i) => i[0].address(prefix) === v
+      (i) => i[0].address(prefix) === v,
     )!;
 
     const validatorRewardPoints = new BigNumber(pointsData[1]);
@@ -172,15 +171,15 @@ export const getEraRewards = async (
  */
 const getActiveValidators = async (
   api: DedotStakingClient,
-  era: number
+  era: number,
 ): Promise<Set<string>> => {
   const prefix = api.consts.system.ss58Prefix;
   const entries = await api.query.staking.erasStakersOverview.entries(era);
 
   return new Set(
     entries.map(
-      ([key]) => key[1].address(prefix) // validatorId
-    )
+      ([key]) => key[1].address(prefix), // validatorId
+    ),
   );
 };
 
@@ -190,7 +189,7 @@ const getActiveValidators = async (
  */
 export const isAccountExposed = async (
   api: DedotStakingClient,
-  data: { account: Account; era: number; validatorData: ValidatorData[] }
+  data: { account: Account; era: number; validatorData: ValidatorData[] },
 ): Promise<boolean> => {
   const { account, era, validatorData } = data;
   if (!validatorData.length) {
@@ -209,7 +208,7 @@ export const isAccountExposed = async (
  */
 export const getAccountNominatingData = async (
   api: DedotStakingClient,
-  data: { account: Account; era: number; nominators: AccountNominationsData }
+  data: { account: Account; era: number; nominators: AccountNominationsData },
 ): Promise<AccountNominatingData> => {
   const { account, era, nominators } = data;
 
@@ -219,7 +218,7 @@ export const getAccountNominatingData = async (
 
   const validatorIds = nominators.targets.map((v) => v.address(prefix));
   const prefsList = await api.query.staking.erasValidatorPrefs.multi(
-    validatorIds.map((vId) => [era, vId])
+    validatorIds.map((vId) => [era, vId]),
   );
 
   const validators: ValidatorData[] = prefsList.map((prefs, i) => ({
@@ -245,10 +244,11 @@ export const getAccountNominatingData = async (
  * @todo Verify function is correct if used in future.
  * @deprecated
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
+// biome-ignore lint/correctness/noUnusedVariables: Keep for debugging and future use.
 const getPagedErasStakers = async (api: DedotStakingClient, era: string) => {
   const overview = await api.query.staking.erasStakersOverview.entries(
-    Number(era)
+    Number(era),
   );
 
   const prefix = api.consts.system.ss58Prefix;
@@ -256,12 +256,11 @@ const getPagedErasStakers = async (api: DedotStakingClient, era: string) => {
     (prev: Record<string, AnyData>, [keys, value]) => {
       const validator = keys[1].address(prefix);
       const { own, total } = value;
-      return {
-        ...prev,
+      return Object.assign(prev, {
         [validator]: { own: own.toString(), total: total.toString() },
-      };
+      });
     },
-    {}
+    {},
   );
 
   const validatorKeys = Object.keys(validators);
@@ -269,9 +268,9 @@ const getPagedErasStakers = async (api: DedotStakingClient, era: string) => {
     validatorKeys.map((v) =>
       api.query.staking.erasStakersPaged.entries(
         Number(era),
-        new AccountId32(v)
-      )
-    )
+        new AccountId32(v),
+      ),
+    ),
   );
 
   const result: AnyData[] = [];
@@ -290,7 +289,7 @@ const getPagedErasStakers = async (api: DedotStakingClient, era: string) => {
             o.map(({ who, value }) => ({
               who: who.address(prefix),
               value: rmCommas(value.toString()),
-            }))
+            })),
           );
     }, []);
 

@@ -1,19 +1,16 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+// biome-ignore-all lint/suspicious/noExplicitAny: Allow any in this file for better flexibility, as these are just general types used across the app.
+
 export type ContextErrorStatusCode = 'ContextUndefined';
 
-// eslint-disable-next-line
 export type AnyData = any;
 
-// eslint-disable-next-line
 export type AnyWindow = any;
 
-// eslint-disable-next-line
 export type AnyJson = any;
 
-//eslint-disable-next-line
 export type AnyElement = any;
 
-//eslint-disable-next-line
 export type AnyFunction = any;

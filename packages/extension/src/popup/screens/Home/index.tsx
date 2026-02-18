@@ -1,40 +1,40 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as UI from '@polkadot-live/ui';
-import * as Ctx from '../../contexts';
-import PolkadotIcon from '@polkadot-live/ui/svg/polkadotIcon.svg?react';
 import { GITHUB_LATEST_RELEASE_URL } from '@polkadot-live/consts';
-import { useEffect } from 'react';
-import { version } from '../../../../package.json';
-import { Classic } from '@theme-toggles/react';
-import {
-  Events,
-  Footer,
-  OpenGovHome,
-  Manage,
-  Send,
-  Summary,
-  ChainEvents,
-} from '@polkadot-live/screens';
 import {
   useAddresses,
-  useConnections,
   useAppSettings,
+  useConnections,
+  useHelp,
   useSendNative,
   useSideNav,
-  useHelp,
 } from '@polkadot-live/contexts';
 import {
   fetchSendAccountsBrowser,
   getSpendableBalanceBrowser,
 } from '@polkadot-live/core';
 import {
+  ChainEvents,
+  Events,
+  Footer,
+  Manage,
+  OpenGovHome,
+  Send,
+  Summary,
+} from '@polkadot-live/screens';
+import {
   BackgroundIconWrapper,
   BodyInterfaceWrapper,
   FixedFlexWrapper,
   ScrollWrapper,
 } from '@polkadot-live/styles';
+import * as UI from '@polkadot-live/ui';
+import PolkadotIcon from '@polkadot-live/ui/svg/polkadotIcon.svg?react';
+import { Classic } from '@theme-toggles/react';
+import { useEffect } from 'react';
+import { version } from '../../../../package.json';
+import * as Ctx from '../../contexts';
 
 export const Home = () => {
   const { openHelp } = useHelp();
@@ -51,7 +51,7 @@ export const Home = () => {
   const cogMenu = Ctx.useCogMenu();
   const sideNav = useSideNav();
 
-  const darkMode = getShared('mode:dark') ? true : false;
+  const darkMode = !!getShared('mode:dark');
   const sideNavCollapsed = cacheGet('setting:collapse-side-nav');
   const silenceOsNotifications = cacheGet('setting:silence-os-notifications');
   const theme = getTheme();

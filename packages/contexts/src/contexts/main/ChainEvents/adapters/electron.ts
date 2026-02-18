@@ -14,7 +14,7 @@ export const electronAdapter: ChainEventsAdapter = {
       (await window.myAPI.sendChainEventTask({
         action: 'chainEvents:getAll',
         data: null,
-      })) ?? '[]'
+      })) ?? '[]',
     ),
 
   getStoredForAccount: async (account): Promise<ChainEventSubscription[]> => {
@@ -76,7 +76,7 @@ export const electronAdapter: ChainEventsAdapter = {
       action: 'chainEvents:getActiveCount',
       data: null,
     });
-    return res ? parseInt(res) : 0;
+    return res ? parseInt(res, 10) : 0;
   },
 
   getSubCountForAccount: async (account) => {
@@ -160,7 +160,9 @@ export const electronAdapter: ChainEventsAdapter = {
       action: 'chainEvents:insertRefSubs',
       data: { chainId, refId, serialized: JSON.stringify(subscriptions) },
     });
-    subscriptions.forEach((s) => ChainEventsService.insertRefScoped(refId, s));
+    subscriptions.forEach((s) => {
+      ChainEventsService.insertRefScoped(refId, s);
+    });
     ChainEventsService.initEventStream(chainId);
   },
 
@@ -173,7 +175,9 @@ export const electronAdapter: ChainEventsAdapter = {
         serialized: JSON.stringify(subscriptions),
       },
     });
-    subscriptions.forEach((s) => ChainEventsService.removeRefScoped(refId, s));
+    subscriptions.forEach((s) => {
+      ChainEventsService.removeRefScoped(refId, s);
+    });
     ChainEventsService.tryStopEventsStream(chainId);
   },
 };

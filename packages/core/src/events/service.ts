@@ -1,13 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { APIsController } from '../controllers';
-import { EventQueue } from './queue';
 import { ChainPallets } from '@polkadot-live/consts/subscriptions/chainEvents';
+import { APIsController } from '../controllers';
 import { PalletHandlers, ScopedAccountGetters } from './handlers';
-import type { ChainID } from '@polkadot-live/types/chains';
-import type { Unsub } from 'dedot/types';
-import type { WhoMeta } from './types';
+import { EventQueue } from './queue';
 import type {
   AccountSource,
   AnyData,
@@ -17,6 +14,9 @@ import type {
   FrameSystemEventRecord,
   RuntimeEvent,
 } from '@polkadot-live/types';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { Unsub } from 'dedot/types';
+import type { WhoMeta } from './types';
 
 interface ActiveMeta {
   eventName: string;
@@ -36,8 +36,8 @@ export class ChainEventsService {
         [cid as ChainID, { active: false, unsub: null }] as [
           ChainID,
           ServiceStatus,
-        ]
-    )
+        ],
+    ),
   );
 
   // Cache chain-scoped event subscriptions.
@@ -145,7 +145,7 @@ export class ChainEventsService {
   // Account-scoped.
   static insertForAccount = (
     account: FlattenedAccountData,
-    sub: ChainEventSubscription
+    sub: ChainEventSubscription,
   ) => {
     const { chain: chainId } = account;
     const { pallet, eventName, osNotify } = sub;
@@ -178,7 +178,7 @@ export class ChainEventsService {
 
   static removeForAccount = (
     account: FlattenedAccountData,
-    sub: ChainEventSubscription
+    sub: ChainEventSubscription,
   ) => {
     const { chain: chainId } = account;
     const { pallet, eventName } = sub;
@@ -230,7 +230,7 @@ export class ChainEventsService {
 
   static updateForAccount = (
     account: FlattenedAccountData,
-    sub: ChainEventSubscription
+    sub: ChainEventSubscription,
   ) => {
     const { chain: chainId } = account;
     const { pallet, eventName, osNotify } = sub;
@@ -298,7 +298,7 @@ export class ChainEventsService {
   // Init events stream for a network.
   static initEventStream = async (chainId: ChainID) => {
     const status = ChainEventsService.serviceStatus.get(chainId);
-    if (status && status.active) {
+    if (status?.active) {
       return;
     }
     const client = await APIsController.getConnectedApi(chainId);
@@ -314,7 +314,7 @@ export class ChainEventsService {
 
   static hasRefScopedSubscription = (
     chainId: ChainID,
-    event: RuntimeEvent
+    event: RuntimeEvent,
   ): { osNotify: boolean } | null => {
     const { pallet, palletEvent } = event;
     if (pallet !== 'Referenda') {
@@ -342,7 +342,7 @@ export class ChainEventsService {
   // Determine if an event has an account-scoped subscription.
   static hasAccountScopedSubscription = (
     chainId: ChainID,
-    event: RuntimeEvent
+    event: RuntimeEvent,
   ): { activeMeta: ActiveMeta; whoMeta: WhoMeta }[] | null => {
     const { pallet, palletEvent } = event;
     const scoped = ChainEventsService.accountScopedSubscriptions;
@@ -385,7 +385,7 @@ export class ChainEventsService {
   // Process events for a specific chain.
   static handleEvents = (
     chainId: ChainID,
-    events: FrameSystemEventRecord[]
+    events: FrameSystemEventRecord[],
   ) => {
     // Support pallets for this network.
     const chainPallets: string[] = ChainPallets[chainId];
@@ -402,12 +402,12 @@ export class ChainEventsService {
       // Check for active account-scoped subscription.
       const maybeMeta = ChainEventsService.hasAccountScopedSubscription(
         chainId,
-        event
+        event,
       );
       // Check for active ref-scoped subscription.
       const maybeRefMeta = ChainEventsService.hasRefScopedSubscription(
         chainId,
-        event
+        event,
       );
       // Check for active chain-scoped subscription.
       const meta = activeMap
@@ -436,12 +436,12 @@ export class ChainEventsService {
     chainId: ChainID,
     osNotify: boolean,
     record: FrameSystemEventRecord,
-    whoMeta?: WhoMeta
+    whoMeta?: WhoMeta,
   ) {
     const { event }: { event: RuntimeEvent } = record;
     const { pallet, palletEvent } = event;
     const handler = PalletHandlers[pallet];
-    handler && handler(chainId, osNotify, palletEvent, whoMeta);
+    handler?.(chainId, osNotify, palletEvent, whoMeta);
   }
 
   // Stop events stream for a network.
@@ -452,7 +452,7 @@ export class ChainEventsService {
     }
     if (status.active && status.unsub) {
       const { unsub } = status;
-      unsub && unsub();
+      unsub?.();
       ChainEventsService.serviceStatus.set(chainId, {
         active: false,
         unsub: null,
@@ -466,7 +466,7 @@ export class ChainEventsService {
     const refs = ChainEventsService.refScopedSubscriptions;
 
     const chainIds = Array.from(
-      new Set([...global.keys(), ...accounts.keys(), ...refs.keys()])
+      new Set([...global.keys(), ...accounts.keys(), ...refs.keys()]),
     );
     for (const chainId of chainIds) {
       ChainEventsService.stopEventsStream(chainId);

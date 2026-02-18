@@ -9,12 +9,12 @@ import {
   setPendingTabData,
 } from '../../state';
 import { isMainTabOpen, sendChromeMessage } from '../../utils';
-import type { AnyData } from '@polkadot-live/types/misc';
 import type { TabData } from '@polkadot-live/types/communication';
+import type { AnyData } from '@polkadot-live/types/misc';
 
 export const handleTabMessage = (
   message: AnyData,
-  sendResponse: (response?: AnyData) => void
+  sendResponse: (response?: AnyData) => void,
 ): boolean => {
   switch (message.task) {
     case 'closeTab': {

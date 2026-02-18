@@ -1,12 +1,11 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import eslint from 'vite-plugin-eslint';
+import { join } from 'node:path';
+import { defineConfig } from 'vite';
 import svgr from 'vite-plugin-svgr';
 import { node } from '../../.electron-vendors.cache.json';
 import { external } from '../../vite.base.config';
-import { defineConfig } from 'vite';
-import { join } from 'node:path';
 
 const PACKAGE_ROOT = __dirname;
 const PROJECT_ROOT = join(PACKAGE_ROOT, '../..');
@@ -46,5 +45,5 @@ export default defineConfig({
     emptyOutDir: true,
     reportCompressedSize: false,
   },
-  plugins: [eslint(), svgr()],
+  plugins: [svgr()],
 });

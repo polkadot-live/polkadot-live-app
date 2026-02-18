@@ -13,9 +13,9 @@ export interface ImportHandlerContextInterface {
     source: AccountSource,
     accountName?: string,
     ledgerMeta?: LedgerMetadata,
-    showToast?: boolean
+    showToast?: boolean,
   ) => Promise<void>;
   handleImportAddressFromBackup: (
-    genericAccount: ImportedGenericAccount
+    genericAccount: ImportedGenericAccount,
   ) => Promise<void>;
 }

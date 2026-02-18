@@ -3,16 +3,16 @@
 
 import { createContext, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
-import type { SideNavProviderProps } from './types';
 import type { SideNavContextInterface } from '../../../types/common';
+import type { SideNavProviderProps } from './types';
 
 const SideNavContext = createContext<SideNavContextInterface | undefined>(
-  undefined
+  undefined,
 );
 
 export const useSideNav = createSafeContextHook(
   SideNavContext,
-  'SideNavContext'
+  'SideNavContext',
 );
 
 export const SideNavProvider = ({ children }: SideNavProviderProps) => {

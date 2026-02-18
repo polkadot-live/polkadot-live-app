@@ -1,16 +1,16 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ConfigRenderer } from '@polkadot-live/core';
-import { useBootstrapping } from '../Bootstrapping';
-import { createContext } from 'react';
 import {
   createSafeContextHook,
   useAppSettings,
   useConnections,
   useHelp,
 } from '@polkadot-live/contexts';
+import { ConfigRenderer } from '@polkadot-live/core';
 import { renderToast } from '@polkadot-live/ui';
+import { createContext } from 'react';
+import { useBootstrapping } from '../Bootstrapping';
 import type { CogMenuContextInterface } from '@polkadot-live/contexts';
 import type { MenuItemData } from '@polkadot-live/types/menu';
 
@@ -20,7 +20,7 @@ export const CogMenuContext = createContext<
 
 export const useCogMenu = createSafeContextHook(
   CogMenuContext,
-  'CogMenuContext'
+  'CogMenuContext',
 );
 
 export const CogMenuProvider = ({

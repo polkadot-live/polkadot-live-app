@@ -8,6 +8,6 @@ export interface ReferendaSubscriptionsAdapter {
   listenOnMount: (
     addReferendaSubscription?: (task: IntervalSubscription) => void,
     removeReferendaSubscription?: (task: IntervalSubscription) => void,
-    updateReferendaSubscription?: (task: IntervalSubscription) => void
+    updateReferendaSubscription?: (task: IntervalSubscription) => void,
   ) => (() => void) | null;
 }

@@ -8,7 +8,7 @@ import type { Stores } from '../../../controllers';
 
 export const handleDbMessage = (
   message: AnyData,
-  sendResponse: (response?: AnyData) => void
+  sendResponse: (response?: AnyData) => void,
 ): boolean => {
   switch (message.task) {
     case 'settings:get': {

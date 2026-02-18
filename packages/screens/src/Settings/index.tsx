@@ -1,14 +1,14 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Accordion from '@radix-ui/react-accordion';
-import * as UI from '@polkadot-live/ui';
-import * as Styles from '@polkadot-live/styles';
-import { Setting } from './Setting';
 import { SettingsList } from '@polkadot-live/consts/settings';
-import { useState } from 'react';
-import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { useHelp } from '@polkadot-live/contexts';
+import * as Styles from '@polkadot-live/styles';
+import * as UI from '@polkadot-live/ui';
+import * as Accordion from '@radix-ui/react-accordion';
+import { ChevronDownIcon } from '@radix-ui/react-icons';
+import { useState } from 'react';
+import { Setting } from './Setting';
 import type { OsPlatform, SettingItem } from '@polkadot-live/types/settings';
 import type { SettingsProps } from './types';
 
@@ -55,7 +55,7 @@ export const Settings = ({ platform }: SettingsProps) => {
     for (const [category, settings] of map.entries()) {
       map.set(
         category,
-        settings.sort((a, b) => a.title.localeCompare(b.title))
+        settings.sort((a, b) => a.title.localeCompare(b.title)),
       );
     }
     // Remove any empty categories.
@@ -102,7 +102,7 @@ export const Settings = ({ platform }: SettingsProps) => {
                         </Styles.ItemsColumn>
                       </UI.AccordionContent>
                     </Accordion.Item>
-                  )
+                  ),
                 )}
               </Styles.FlexColumn>
             </Accordion.Root>

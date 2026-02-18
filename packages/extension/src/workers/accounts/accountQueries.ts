@@ -1,10 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { APIsController, getBalance } from '@polkadot-live/core';
-import { DbController } from '../../controllers';
-import { decodeAddress, u8aToHex } from 'dedot/utils';
 import { getSupportedSources } from '@polkadot-live/consts/chains';
+import { APIsController, getBalance } from '@polkadot-live/core';
+import { decodeAddress, u8aToHex } from 'dedot/utils';
+import { DbController } from '../../controllers';
 import type {
   AccountBalance,
   AccountSource,
@@ -23,7 +23,7 @@ export const getAllAccounts = async (): Promise<string> => {
 
 export const handleGetSpendableBalance = async (
   address: string,
-  chainId: ChainID
+  chainId: ChainID,
 ): Promise<bigint> => {
   const api = (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
   const ed = api.consts.balances.existentialDeposit;
@@ -38,7 +38,7 @@ export const getAccountLedgerMeta = async (chainId: ChainID, from: string) => {
   const publicKeyHex = u8aToHex(decodeAddress(from));
   const accounts = (await DbController.get(
     'accounts',
-    'ledger'
+    'ledger',
   )) as ImportedGenericAccount[];
   const account = accounts.find((a) => a.publicKeyHex === publicKeyHex);
   const result = account

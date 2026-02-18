@@ -1,11 +1,11 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { getDefaultSettings } from '@polkadot-live/consts/settings';
+import { setStateWithRef } from '@w3ux/utils';
 import { createContext, useEffect, useRef, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
 import { getAppSettingsAdapter } from './adapters';
-import { getDefaultSettings } from '@polkadot-live/consts/settings';
-import { setStateWithRef } from '@w3ux/utils';
 import type { SettingKey } from '@polkadot-live/types/settings';
 import type { AppSettingsContextInterface } from '../../../types/main';
 
@@ -15,7 +15,7 @@ export const AppSettingsContext = createContext<
 
 export const useAppSettings = createSafeContextHook(
   AppSettingsContext,
-  'AppSettingsContext'
+  'AppSettingsContext',
 );
 
 export const AppSettingsProvider = ({

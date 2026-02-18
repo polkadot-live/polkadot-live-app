@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import http2 from 'http2';
+import http2 from 'node:http2';
 import { WindowsController } from './WindowsController';
 import type { IpcTask } from '@polkadot-live/types/communication';
 
@@ -13,16 +13,16 @@ export class OnlineStatusController {
    * @name processAsync
    * @summary Handle connection tasks received from renderer and return a value.
    */
-  static async processAsync(task: IpcTask): Promise<boolean | void> {
+  static async processAsync(task: IpcTask): Promise<boolean | undefined> {
     switch (task.action) {
       // Handle initializing online status controller.
       case 'connection:init': {
-        await this.initialize();
+        await OnlineStatusController.initialize();
         return;
       }
       // Get connection status and send to frontend.
       case 'connection:getStatus': {
-        return this.getStatus();
+        return OnlineStatusController.getStatus();
       }
     }
   }
@@ -32,7 +32,7 @@ export class OnlineStatusController {
    * @summary Returns the cached online status.
    */
   static getStatus(): boolean {
-    return this.onlineStatus;
+    return OnlineStatusController.onlineStatus;
   }
 
   /**
@@ -62,7 +62,8 @@ export class OnlineStatusController {
    * @summary Set connection status and start connection polling loop.
    */
   static async initialize() {
-    this.onlineStatus = await this.isConnected();
+    OnlineStatusController.onlineStatus =
+      await OnlineStatusController.isConnected();
     //this.startPollLoop();
   }
 
@@ -88,6 +89,8 @@ export class OnlineStatusController {
    * @summary Calls a connection handling function after a set interval for
    * handling offline and online status changes.
    */
+
+  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: Keep for now.
   private static startPollLoop = () => {
     const interval = 5000;
     this.intervalId = setInterval(this.handleStatusChange, interval);
@@ -97,6 +100,8 @@ export class OnlineStatusController {
    * @name stopPoll
    * @summary Stop the connection polling interval.
    */
+
+  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: Keep for now.
   private static stopPollLoop = async () =>
     this.intervalId && clearInterval(this.intervalId);
 
@@ -132,7 +137,7 @@ export class OnlineStatusController {
    */
   private static async initializeOffline() {
     WindowsController.getWindow('menu')?.webContents?.send(
-      'renderer:app:initialize:offline'
+      'renderer:app:initialize:offline',
     );
   }
 
@@ -142,7 +147,7 @@ export class OnlineStatusController {
    */
   private static async initializeOnline() {
     WindowsController.getWindow('menu')?.webContents?.send(
-      'renderer:app:initialize:online'
+      'renderer:app:initialize:online',
     );
   }
 }

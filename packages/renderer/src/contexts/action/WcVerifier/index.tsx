@@ -4,8 +4,8 @@
 import { createSafeContextHook } from '@polkadot-live/contexts';
 import { ConfigTabs } from '@polkadot-live/core';
 import { createContext, useState } from 'react';
-import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 import type { WcVerifierContextInterface } from '@polkadot-live/contexts';
+import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 
 export const WcVerifierContext = createContext<
   WcVerifierContextInterface | undefined
@@ -13,7 +13,7 @@ export const WcVerifierContext = createContext<
 
 export const useWcVerifier = createSafeContextHook(
   WcVerifierContext,
-  'WcVerifierContext'
+  'WcVerifierContext',
 );
 
 export const WcVerifierProvider = ({

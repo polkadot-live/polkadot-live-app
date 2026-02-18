@@ -1,13 +1,13 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { AccountsController } from '../../controllers/AccountsController';
 import { decodeAddress } from 'dedot/utils';
-import type { Account } from '../../model';
+import { AccountsController } from '../../controllers/AccountsController';
+import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { ApiCallEntry } from '@polkadot-live/types/subscriptions';
-import type { ChainID } from '@polkadot-live/types/chains';
-import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
+import type { Account } from '../../model';
 
 /**
  * @name isValidAddress
@@ -32,15 +32,16 @@ export const isValidAddress = (address: string, prefix?: number): boolean => {
  */
 export const checkAccountWithProperties = (
   entry: ApiCallEntry,
-  properties: (keyof Account)[]
+  properties: (keyof Account)[],
 ): Account => {
   // Check for account existence and fetch it.
   if (!entry.task.account) {
     throw new Error('checkAccountWithProperties: Account not found');
   }
-
-  // eslint-disable-next-line prettier/prettier
-  const { chainId, account: { address } } = entry.task;
+  const {
+    chainId,
+    account: { address },
+  } = entry.task;
   const account = AccountsController.get(chainId, address);
 
   if (account === undefined) {
@@ -81,7 +82,7 @@ export const checkAccountWithProperties = (
  */
 export const checkFlattenedAccountProperties = (
   entry: ApiCallEntry,
-  properties: (keyof FlattenedAccountData)[]
+  properties: (keyof FlattenedAccountData)[],
 ) => {
   // Check for account existence.
   if (!entry.task.account) {
@@ -91,7 +92,7 @@ export const checkFlattenedAccountProperties = (
   // Utility to access an instance property dynamically.
   const getProperty = (
     instance: FlattenedAccountData,
-    key: keyof FlattenedAccountData
+    key: keyof FlattenedAccountData,
   ): AnyData => {
     switch (key) {
       case 'nominationPoolData':
@@ -127,7 +128,7 @@ export const checkFlattenedAccountProperties = (
  */
 export const getFlattenedAccount = (
   address: string,
-  chainId: ChainID
+  chainId: ChainID,
 ): FlattenedAccountData => {
   const account = AccountsController.get(chainId, address);
   if (!account) {

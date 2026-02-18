@@ -1,10 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AnyData } from '@polkadot-live/types/misc';
-import type { ChainID } from '@polkadot-live/types/chains';
 import type { LedgerMetadata } from '@polkadot-live/types/accounts';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { LedgerResponse } from '@polkadot-live/types/ledger';
+import type { AnyData } from '@polkadot-live/types/misc';
 
 export interface RawLedgerAddress {
   address: string;
@@ -30,7 +30,7 @@ export interface LedgerHardwareContextInterface {
   clearCaches: (
     clearReceived: boolean,
     clearSelected: boolean,
-    clearStatusCodes: boolean
+    clearStatusCodes: boolean,
   ) => void;
   disableConnect: () => boolean;
   fetchLedgerAddresses: (network: ChainID, offset: number) => Promise<void>;
@@ -44,6 +44,6 @@ export interface LedgerHardwareContextInterface {
   updateSelectedAddresses: (
     checked: boolean,
     pk: string,
-    accountName: string
+    accountName: string,
   ) => void;
 }

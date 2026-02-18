@@ -9,7 +9,7 @@ import type { darkTheme } from '@polkadot-live/styles';
 export const ActionBtn = styled.button.attrs<{ $theme: typeof darkTheme }>(
   (props) => ({
     $theme: props.$theme,
-  })
+  }),
 )`
   color: ${({ $theme }) => $theme.textColorSecondary};
   background-color: ${({ $theme }) => $theme.buttonBackgroundPrimary};
@@ -115,7 +115,7 @@ export const ControlsRow = styled(Style.FlexRow).attrs<{
  * Radix-UI toggle button.
  */
 export const ToggleRx = styled(Toggle.Root).attrs<{ $theme: typeof darkTheme }>(
-  (props) => ({ $theme: props.$theme })
+  (props) => ({ $theme: props.$theme }),
 )`
   background-color: ${({ $theme }) => $theme.buttonBackgroundPrimary};
   color: ${({ $theme }) => $theme.textColorPrimary};

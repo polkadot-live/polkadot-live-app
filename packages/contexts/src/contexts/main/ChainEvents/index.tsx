@@ -1,21 +1,21 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { createContext, useEffect, useState } from 'react';
-import { createSafeContextHook } from '../../../utils';
 import { getAssetHubChains } from '@polkadot-live/consts/chains';
-import { getChainEventAdapter } from './adapters';
 import {
   ChainPallets,
   getEventSubscriptions,
   getEventSubscriptionsForAccount,
   getEventSubscriptionsForRef,
 } from '@polkadot-live/consts/subscriptions/chainEvents';
-import type { ChainID } from '@polkadot-live/types/chains';
+import { createContext, useEffect, useState } from 'react';
+import { createSafeContextHook } from '../../../utils';
+import { getChainEventAdapter } from './adapters';
 import type {
   ChainEventSubscription,
   FlattenedAccountData,
 } from '@polkadot-live/types';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChainEventsContextInterface } from '../../../types/main';
 
 export const ChainEventsContext = createContext<
@@ -24,7 +24,7 @@ export const ChainEventsContext = createContext<
 
 export const useChainEvents = createSafeContextHook(
   ChainEventsContext,
-  'ChainEventsContext'
+  'ChainEventsContext',
 );
 
 export const ChainEventsProvider = ({
@@ -67,7 +67,7 @@ export const ChainEventsProvider = ({
     }
     // Account-scoped
     for (const [key, subs] of accountSubscriptions.entries()) {
-      if (key.startsWith(chainId + '::') && subs.some((s) => s.enabled)) {
+      if (key.startsWith(`${chainId}::`) && subs.some((s) => s.enabled)) {
         return true;
       }
     }
@@ -173,12 +173,12 @@ export const ChainEventsProvider = ({
         .map(([refId, subs]) => [
           refId,
           [...subs].sort((a, b) => a.label.localeCompare(b.label)),
-        ])
+        ]),
     );
   };
 
   const getCategorisedForAccount = (
-    account: FlattenedAccountData
+    account: FlattenedAccountData,
   ): Record<string, ChainEventSubscription[]> => {
     const { address, chain: chainId } = account;
     const key = `${chainId}::${address}`;
@@ -288,7 +288,7 @@ export const ChainEventsProvider = ({
     if (!activeRefChain) {
       return;
     }
-    const refId = parseInt(sub.id.split('::')[1]);
+    const refId = parseInt(sub.id.split('::')[1], 10);
     sub.enabled = !sub.enabled;
     setRefSubscriptions((prev) => {
       const next = new Map(prev);
@@ -311,12 +311,12 @@ export const ChainEventsProvider = ({
 
   const toggleOsNotifyForRef = (
     sub: ChainEventSubscription,
-    updateStore = true
+    updateStore = true,
   ) => {
     if (!activeRefChain) {
       return;
     }
-    const refId = parseInt(sub.id.split('::')[1]);
+    const refId = parseInt(sub.id.split('::')[1], 10);
     sub.osNotify = !sub.osNotify;
     setRefSubscriptions((prev) => {
       const next = new Map(prev);
@@ -355,7 +355,7 @@ export const ChainEventsProvider = ({
 
   const toggleOsNotifyForChain = (
     sub: ChainEventSubscription,
-    updateStore = true
+    updateStore = true,
   ) => {
     if (!activeChain) {
       return;
@@ -390,7 +390,7 @@ export const ChainEventsProvider = ({
 
   const toggleOsNotifyForAccount = (
     sub: ChainEventSubscription,
-    updateStore = true
+    updateStore = true,
   ) => {
     if (!activeAccount) {
       return;
@@ -417,12 +417,12 @@ export const ChainEventsProvider = ({
             const active = stored.get(chainId) ?? [];
             const merged = ChainPallets[chainId].flatMap((pallet) =>
               getEventSubscriptions(chainId, pallet).map(
-                (def) => active.find((a) => cmp(def, a)) ?? def
-              )
+                (def) => active.find((a) => cmp(def, a)) ?? def,
+              ),
             );
             return [chainId, merged];
-          })
-        )
+          }),
+        ),
     );
   };
   const syncAccounts = async (accounts: FlattenedAccountData[]) => {
@@ -433,10 +433,10 @@ export const ChainEventsProvider = ({
 
         const active = await adapter.getStoredForAccount(account);
         const merged = getEventSubscriptionsForAccount(chainId, account).map(
-          (def) => active.find((a) => cmp(def, a)) ?? def
+          (def) => active.find((a) => cmp(def, a)) ?? def,
         );
         return [key, merged] as const;
-      })
+      }),
     );
     setAccountSubscriptions(new Map(entries));
   };
@@ -453,13 +453,13 @@ export const ChainEventsProvider = ({
                 const rid = Number(refId);
                 const merged = getEventSubscriptionsForRef(
                   chainId as ChainID,
-                  rid
+                  rid,
                 ).map((def) => active.find((a) => cmp(def, a)) ?? def);
                 return [rid, merged] as const;
-              })
+              }),
             ),
-          ])
-        )
+          ]),
+        ),
     );
   };
 
@@ -469,7 +469,7 @@ export const ChainEventsProvider = ({
   useEffect(() => {
     const removeListener = adapter.listenOnMount(removeAllForAccount);
     return () => {
-      removeListener && removeListener();
+      removeListener?.();
     };
   }, []);
 
@@ -496,7 +496,7 @@ export const ChainEventsProvider = ({
         const { address, chain: chainId } = activeAccount;
         const subs = getEventSubscriptionsForAccount(
           chainId,
-          activeAccount
+          activeAccount,
         ).map((a) => active.find((b) => cmp(a, b)) ?? a);
         const key = `${chainId}::${address}`;
         return new Map(prev).set(key, subs);
@@ -520,14 +520,14 @@ export const ChainEventsProvider = ({
 
       const allActive = await adapter.getStoredRefSubsForChain(activeRefChain);
       const parseRefId = ({ id }: ChainEventSubscription): number =>
-        parseInt(id.split('::')[1]);
+        parseInt(id.split('::')[1], 10);
 
       setRefSubscriptions((prev) => {
         const chainMap = new Map(prev.get(activeRefChain) ?? []);
         activeIds.forEach((id) => {
           const active = allActive.filter((s) => parseRefId(s) === id);
           const merged = getEventSubscriptionsForRef(activeRefChain, id).map(
-            (def) => active.find((a) => a.id === def.id) ?? def
+            (def) => active.find((a) => a.id === def.id) ?? def,
           );
           chainMap.set(id, merged);
         });

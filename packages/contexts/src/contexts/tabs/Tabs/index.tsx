@@ -1,22 +1,22 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
-import { createContext, useEffect, useRef, useState } from 'react';
-import { createSafeContextHook } from '../../../utils';
-import { getTabsAdapter } from './adapters';
 import {
   KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
-import type { DragStartEvent, DragEndEvent } from '@dnd-kit/core';
+import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
+import { createContext, useEffect, useRef, useState } from 'react';
+import { createSafeContextHook } from '../../../utils';
+import { getTabsAdapter } from './adapters';
+import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import type { TabData } from '@polkadot-live/types/communication';
 import type { TabsContextInterface } from '../../../types/tabs';
 
 export const TabsContext = createContext<TabsContextInterface | undefined>(
-  undefined
+  undefined,
 );
 
 export const useTabs = createSafeContextHook(TabsContext, 'TabsContext');
@@ -35,16 +35,13 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
    */
   const addTab = (tab: TabData) => {
     const found = tabsDataRef.current.find(
-      ({ viewId }) => viewId === tab.viewId
+      ({ viewId }) => viewId === tab.viewId,
     );
     if (found !== undefined) {
       setClickedId(found.id);
     } else {
       let tabId = Number(tabsDataRef.current.length) + 1;
-      const takenIds = tabsDataRef.current.reduce(
-        (acc, item) => [...acc, item.id],
-        [] as number[]
-      );
+      const takenIds = tabsDataRef.current.map((item) => item.id);
       while (takenIds.includes(tabId)) {
         tabId += 1;
       }
@@ -88,7 +85,7 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const removeListener = adapter.listenOnMount(addTab);
     return () => {
-      removeListener && removeListener();
+      removeListener?.();
     };
   }, []);
 
@@ -103,7 +100,7 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
 
   /**
@@ -152,15 +149,17 @@ export const TabsProvider = ({ children }: { children: React.ReactNode }) => {
 
     // Get index of next tab to show.
     let showIndex: number | null = null;
-    items.length > 1 &&
-      (showIndex = itemIndex === 0 ? itemIndex + 1 : itemIndex - 1);
+    if (items.length > 1) {
+      const val = itemIndex === 0 ? itemIndex + 1 : itemIndex - 1;
+      showIndex = val;
+    }
     const maybeShowViewId: string | null =
       showIndex !== null ? tabsData.at(showIndex)!.viewId : null;
 
     // If the destroyed tab is in focus, give focus to the next tab to show.
     if (maybeShowViewId !== null && clickedId === id) {
       const { id: showId } = filtered.find(
-        (t) => t.viewId === maybeShowViewId
+        (t) => t.viewId === maybeShowViewId,
       )!;
       setClickedId(showId);
     }

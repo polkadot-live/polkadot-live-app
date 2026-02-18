@@ -1,21 +1,17 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Accordion from '@radix-ui/react-accordion';
-import * as UI from '@polkadot-live/ui';
-import { useState } from 'react';
-import { useChainEvents } from '@polkadot-live/contexts';
-import { getReadablePallet } from '@polkadot-live/consts/subscriptions/chainEvents';
-import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSplotch } from '@fortawesome/free-solid-svg-icons';
-import { Header } from './Header';
-import {
-  FlexColumn,
-  FlexRow,
-  ItemsColumn,
-} from '@polkadot-live/styles';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { getReadablePallet } from '@polkadot-live/consts/subscriptions/chainEvents';
+import { useChainEvents } from '@polkadot-live/contexts';
+import { FlexColumn, FlexRow, ItemsColumn } from '@polkadot-live/styles';
+import * as UI from '@polkadot-live/ui';
+import * as Accordion from '@radix-ui/react-accordion';
+import { ChevronDownIcon } from '@radix-ui/react-icons';
+import { useState } from 'react';
 import { SubscriptionRow } from '../../ChainEvents/SubscriptionRow';
+import { Header } from './Header';
 
 export const SmartSubscriptions = () => {
   const { activeAccount, accountSubCountForPallet, getCategorisedForAccount } =
@@ -77,7 +73,7 @@ export const SmartSubscriptions = () => {
                         </ItemsColumn>
                       </UI.AccordionContent>
                     </Accordion.Item>
-                  )
+                  ),
                 )}
               </FlexColumn>
             </Accordion.Root>

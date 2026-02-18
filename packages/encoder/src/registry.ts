@@ -1,13 +1,13 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { isAccountId32 } from './guards';
 import {
   accountId32Encoder,
   bigintEncoder,
   booleanEncoder,
   numberEncoder,
 } from './encoders';
+import { isAccountId32 } from './guards';
 import type { AccountId32 } from 'dedot/codecs';
 import type { EncoderEntry } from './types';
 

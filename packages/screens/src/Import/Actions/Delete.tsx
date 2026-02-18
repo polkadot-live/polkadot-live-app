@@ -1,12 +1,12 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ButtonMono, ButtonMonoInvert, Identicon } from '@polkadot-live/ui';
-import { ConfirmWrapper } from './Wrappers';
-import { FlexColumn, FlexRow } from '@polkadot-live/styles';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ellipsisFn } from '@w3ux/utils';
 import { faKey } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FlexColumn, FlexRow } from '@polkadot-live/styles';
+import { ButtonMono, ButtonMonoInvert, Identicon } from '@polkadot-live/ui';
+import { ellipsisFn } from '@w3ux/utils';
+import { ConfirmWrapper } from './Wrappers';
 import type { DeleteProps } from './types';
 
 export const Delete = ({

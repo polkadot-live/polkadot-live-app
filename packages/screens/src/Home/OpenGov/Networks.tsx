@@ -1,18 +1,18 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Accordion from '@radix-ui/react-accordion';
-import * as UI from '@polkadot-live/ui';
-import * as Style from '@polkadot-live/styles';
+import { faChevronRight, faSplotch } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   useChainEvents,
   useConnections,
   useIntervalSubscriptions,
 } from '@polkadot-live/contexts';
-import { useEffect, useState } from 'react';
+import * as Style from '@polkadot-live/styles';
+import * as UI from '@polkadot-live/ui';
+import * as Accordion from '@radix-ui/react-accordion';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { faChevronRight, faSplotch } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useEffect, useState } from 'react';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { NetworksProps } from './types';
 
@@ -46,7 +46,7 @@ export const Networks = ({
   const chainHasSubs = (chainId: ChainID): boolean => {
     const hasSmart = refChainHasSubs(chainId);
     const hasClassic = Boolean(
-      subscriptions.get(chainId)?.find((s) => s.status === 'enable')
+      subscriptions.get(chainId)?.find((s) => s.status === 'enable'),
     );
     return hasSmart || hasClassic;
   };

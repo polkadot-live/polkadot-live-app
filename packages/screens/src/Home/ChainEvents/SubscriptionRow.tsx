@@ -2,15 +2,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import { useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   useChainEvents,
   useConnections,
   useHelp,
 } from '@polkadot-live/contexts';
-import { Switch, TooltipRx } from '@polkadot-live/ui';
 import { FlexRow, TaskEntryWrapper } from '@polkadot-live/styles';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Switch, TooltipRx } from '@polkadot-live/ui';
+import { useEffect } from 'react';
 import type { SubscriptionRowProps } from './types';
 
 export const SubscriptionRow = ({ subscription }: SubscriptionRowProps) => {
@@ -32,13 +32,14 @@ export const SubscriptionRow = ({ subscription }: SubscriptionRowProps) => {
         <div style={{ flex: 1 }}>
           <div className="content">
             <h3>
-              <div
+              <button
+                type="button"
                 className="icon-wrapper"
                 style={{ marginRight: '0.5rem' }}
                 onClick={() => helpKey && openHelp(helpKey)}
               >
                 <FontAwesomeIcon icon={FA.faInfo} transform={'shrink-1'} />
-              </div>
+              </button>
               <span className="text-ellipsis">{label}</span>
             </h3>
           </div>
@@ -47,6 +48,7 @@ export const SubscriptionRow = ({ subscription }: SubscriptionRowProps) => {
           <FlexRow $gap="1.75rem">
             {/* Notification Checkbox */}
             <button
+              type="button"
               disabled={!enabled}
               style={{
                 opacity: osNotify ? '1' : '0.3',

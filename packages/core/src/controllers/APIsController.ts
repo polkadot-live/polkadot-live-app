@@ -1,12 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Api } from '../model';
+import { ChainList } from '@polkadot-live/consts/chains';
 import { ApiError } from '../errors';
 import { waitMs } from '../library/CommonLib';
-import { ChainList } from '@polkadot-live/consts/chains';
-import type * as smoldot from 'smoldot/no-auto-bytecode';
-import type { ChainID } from '@polkadot-live/types/chains';
+import { Api } from '../model';
 import type {
   ApiConnectResult,
   ChainToKey,
@@ -14,6 +12,8 @@ import type {
   FlattenedAPIData,
   NodeEndpoint,
 } from '@polkadot-live/types/apis';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type * as smoldot from 'smoldot/no-auto-bytecode';
 
 export class APIsController {
   static backend: 'browser' | 'electron';
@@ -138,7 +138,7 @@ export class APIsController {
    */
   static setEndpoint = async (
     chainId: ChainID,
-    endpoint: NodeEndpoint
+    endpoint: NodeEndpoint,
   ): Promise<void> => {
     switch (this.getStatus(chainId)) {
       case 'disconnected': {
@@ -255,7 +255,7 @@ export class APIsController {
    */
   private static set = (client: Api<keyof ClientTypes>) =>
     (this.clients = this.clients.map((c) =>
-      c.chainId === client.chainId ? client : c
+      c.chainId === client.chainId ? client : c,
     ));
 
   /**
@@ -263,7 +263,7 @@ export class APIsController {
    */
   private static setClientEndpoint = (
     chainId: ChainID,
-    endpoint: NodeEndpoint
+    endpoint: NodeEndpoint,
   ) => {
     const client = this.get(chainId)!;
     client.endpoint = endpoint;
@@ -294,7 +294,7 @@ export class APIsController {
 
   private static getClient = <T extends ChainID>(
     chainId: T,
-    rpcs: `wss://${string}`[]
+    rpcs: `wss://${string}`[],
   ): Api<ChainToKey<T>> => new Api<ChainToKey<T>>('rpc', chainId, rpcs);
 
   /**

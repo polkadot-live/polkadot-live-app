@@ -1,14 +1,15 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import React, { createContext, useEffect, useRef, useState } from 'react';
 import {
   createSafeContextHook,
   useApiHealth,
   useConnections,
 } from '@polkadot-live/contexts';
 import { setStateWithRef } from '@w3ux/utils';
+import { createContext, useEffect, useRef, useState } from 'react';
 import type { AnyData } from '@polkadot-live/types/misc';
+import type React from 'react';
 import type { BootstrappingInterface } from './types';
 
 export const BootstrappingContext = createContext<
@@ -17,7 +18,7 @@ export const BootstrappingContext = createContext<
 
 export const useBootstrapping = createSafeContextHook(
   BootstrappingContext,
-  'BootstrappingContext'
+  'BootstrappingContext',
 );
 
 export const BootstrappingProvider = ({

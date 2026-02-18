@@ -1,22 +1,22 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { DbController } from '../../controllers';
-import { dispatchNotification } from '../notifications';
-import { eventBus } from '.';
-import { getActiveChains, getAllAccountSubscriptions } from '../subscriptions';
-import { getAllEvents, persistEvent } from '../events';
 import {
   AccountsController,
   doRemoveOutdatedEvents,
   pushUniqueEvent,
 } from '@polkadot-live/core';
+import { DbController } from '../../controllers';
+import { getAllEvents, persistEvent } from '../events';
+import { dispatchNotification } from '../notifications';
+import { getActiveChains, getAllAccountSubscriptions } from '../subscriptions';
 import { sendChromeMessage } from '../utils';
-import type { ExtrinsicInfo, TxStatus } from '@polkadot-live/types/tx';
+import { eventBus } from '.';
 import type {
   EventCallback,
   NotificationData,
 } from '@polkadot-live/types/reporter';
+import type { ExtrinsicInfo, TxStatus } from '@polkadot-live/types/tx';
 
 eventBus.addEventListener('showNotification', (e) => {
   const { title, body }: { title: string; body: string } = (e as CustomEvent)
@@ -37,7 +37,7 @@ eventBus.addEventListener('handleTxStatus', async (e) => {
   sendChromeMessage(
     'extrinsics',
     'reportTxStatus',
-    txHash ? { status, txId, txHash } : { status, txId }
+    txHash ? { status, txId, txHash } : { status, txId },
   );
 
   if (eventUid && status === 'finalized' && !isMock) {
@@ -66,7 +66,7 @@ eventBus.addEventListener('initSystems:complete', async () => {
   // Set managed accounts state.
   sendChromeMessage('managedAccounts', 'setAccountsState', {
     ser: JSON.stringify(
-      Array.from(AccountsController.getAllFlattenedAccountData().entries())
+      Array.from(AccountsController.getAllFlattenedAccountData().entries()),
     ),
   });
 });
@@ -100,7 +100,7 @@ eventBus.addEventListener('processEvent', async (e) => {
   let handleOutdated = false;
   const keepOutdated = (await DbController.get(
     'settings',
-    'setting:keep-outdated-events'
+    'setting:keep-outdated-events',
   )) as boolean;
 
   if (!keepOutdated) {
@@ -126,7 +126,7 @@ eventBus.addEventListener('processEvent', async (e) => {
   const { isOneShot, isEnabled } = showNotification;
   const silenced = (await DbController.get(
     'settings',
-    'setting:silence-os-notifications'
+    'setting:silence-os-notifications',
   )) as boolean;
   const notify = isOneShot ? true : silenced ? false : isEnabled;
   if (isOneShot || (updated && notify)) {
@@ -141,7 +141,7 @@ eventBus.addEventListener('processEvent', async (e) => {
 eventBus.addEventListener('setManagedAccountsState', async () => {
   sendChromeMessage('managedAccounts', 'setAccountsState', {
     ser: JSON.stringify(
-      Array.from(AccountsController.getAllFlattenedAccountData().entries())
+      Array.from(AccountsController.getAllFlattenedAccountData().entries()),
     ),
   });
 });

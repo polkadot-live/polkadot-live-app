@@ -19,7 +19,7 @@ export interface ReaderProps {
     source: AccountSource,
     accountName?: string,
     ledgerMeta?: LedgerMetadata,
-    showToast?: boolean
+    showToast?: boolean,
   ) => Promise<void>;
   isAlreadyImported: (targetPubKeyHex: string) => boolean;
   setOverlayStatus: (s: number) => void;

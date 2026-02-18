@@ -1,26 +1,26 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { version } from '../../package.json';
+import { closestCenter, DndContext } from '@dnd-kit/core';
+import {
+  restrictToHorizontalAxis,
+  restrictToParentElement,
+} from '@dnd-kit/modifiers';
+import {
+  horizontalListSortingStrategy,
+  SortableContext,
+} from '@dnd-kit/sortable';
+import { GITHUB_LATEST_RELEASE_URL } from '@polkadot-live/consts';
 import {
   useConnections,
   useDialogControl,
   useTabs,
 } from '@polkadot-live/contexts';
-import { closestCenter, DndContext } from '@dnd-kit/core';
-import {
-  horizontalListSortingStrategy,
-  SortableContext,
-} from '@dnd-kit/sortable';
-import {
-  restrictToHorizontalAxis,
-  restrictToParentElement,
-} from '@dnd-kit/modifiers';
-import { DropdownOpenTabs } from './Dropdowns';
 import { Header } from '@polkadot-live/ui';
+import { version } from '../../package.json';
+import { DropdownOpenTabs } from './Dropdowns';
 import { Tab } from './Tab';
 import { TabsWrapper } from './Wrappers';
-import { GITHUB_LATEST_RELEASE_URL } from '@polkadot-live/consts';
 import type { TabsProps } from './types';
 
 export const Tabs = ({ leftButtons, onCloseWindow }: TabsProps) => {

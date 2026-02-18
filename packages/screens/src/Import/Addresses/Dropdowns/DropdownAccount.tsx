@@ -1,17 +1,17 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { useConnections, useDialogControl } from '@polkadot-live/contexts';
-import { ActionBtn } from '../Dialogs/Wrappers';
-import { DropdownMenuContent } from '@polkadot-live/styles';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { getSubscanSubdomain } from '@polkadot-live/consts/chains';
 import {
   faCaretRight,
   faEllipsis,
   faUpRightFromSquare,
 } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { getSubscanSubdomain } from '@polkadot-live/consts/chains';
+import { useConnections, useDialogControl } from '@polkadot-live/contexts';
+import { DropdownMenuContent } from '@polkadot-live/styles';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import { ActionBtn } from '../Dialogs/Wrappers';
 import type { DropdownAccountProps } from './types';
 
 /**
@@ -52,7 +52,7 @@ export const DropdownAccount = ({
             </ActionBtn>
           )}
           {triggerSize === 'lg' && (
-            <button className="Dialog__Button">
+            <button type="button" className="Dialog__Button">
               <FontAwesomeIcon icon={faEllipsis} transform={'grow-2'} />
             </button>
           )}

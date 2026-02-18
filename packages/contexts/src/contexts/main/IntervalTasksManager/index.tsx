@@ -1,18 +1,18 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { createSafeContextHook, renderToast } from '../../../utils';
-import { useChainEvents } from '../ChainEvents';
-import { useConnections } from '../../common';
-import { useIntervalSubscriptions } from '../IntervalSubscriptions';
-import { createContext, useState } from 'react';
-import { getIntervalTaskManagerAdapter } from './adapters';
 import { intervalDurationsConfig } from '@polkadot-live/consts/subscriptions/interval';
-import type { AnyFunction } from '@polkadot-live/types/misc';
+import { createContext, useState } from 'react';
+import { createSafeContextHook, renderToast } from '../../../utils';
+import { useConnections } from '../../common';
+import { useChainEvents } from '../ChainEvents';
+import { useIntervalSubscriptions } from '../IntervalSubscriptions';
+import { getIntervalTaskManagerAdapter } from './adapters';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { AnyFunction } from '@polkadot-live/types/misc';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
-import type { IntervalTasksManagerContextInterface } from '../../../types/main';
 import type { ReactNode } from 'react';
+import type { IntervalTasksManagerContextInterface } from '../../../types/main';
 
 export const IntervalTasksManagerContext = createContext<
   IntervalTasksManagerContextInterface | undefined
@@ -20,7 +20,7 @@ export const IntervalTasksManagerContext = createContext<
 
 export const useIntervalTasksManager = createSafeContextHook(
   IntervalTasksManagerContext,
-  'IntervalTasksManagerContext'
+  'IntervalTasksManagerContext',
 );
 
 export const IntervalTasksManagerProvider = ({
@@ -63,7 +63,7 @@ export const IntervalTasksManagerProvider = ({
   // Handle clicking os notifications toggle for interval subscriptions.
   const handleIntervalNativeCheckbox = async (
     task: IntervalSubscription,
-    flag: boolean
+    flag: boolean,
   ) => {
     const checked: boolean = flag;
     task.enableOsNotifications = checked;
@@ -78,11 +78,11 @@ export const IntervalTasksManagerProvider = ({
   const handleChangeIntervalDuration = async (
     event: React.ChangeEvent<HTMLSelectElement>,
     task: IntervalSubscription,
-    setIntervalSetting: (ticksToWait: number) => void
+    setIntervalSetting: (ticksToWait: number) => void,
   ) => {
-    const newSetting: number = parseInt(event.target.value);
+    const newSetting: number = parseInt(event.target.value, 10);
     const settingObj = intervalDurationsConfig.find(
-      (setting) => setting.ticksToWait === newSetting
+      (setting) => setting.ticksToWait === newSetting,
     );
     if (settingObj) {
       // TODO: call useEffect in row component.
@@ -101,7 +101,7 @@ export const IntervalTasksManagerProvider = ({
   // Handle a one-shot event for a subscription task.
   const handleIntervalOneShot = async (
     task: IntervalSubscription,
-    setOneShotProcessing: AnyFunction
+    setOneShotProcessing: AnyFunction,
   ) => {
     setOneShotProcessing(true);
     const { success, message } = await adapter.executeOneShot(task);
@@ -129,7 +129,7 @@ export const IntervalTasksManagerProvider = ({
   const removeAllSubscriptions = async (
     chainId: ChainID,
     refId: number,
-    tasks: IntervalSubscription[]
+    tasks: IntervalSubscription[],
   ) => {
     removeIntervalSubscriptions(chainId, refId);
     removeSubsForRef(chainId, refId);

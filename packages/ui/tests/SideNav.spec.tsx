@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 import { SideNav } from '../src/components';
 import type { AnyData } from '@polkadot-live/types/misc';
 
@@ -18,7 +18,11 @@ const NUM_ITEMS = 3;
 describe('SideNav', () => {
   const renderSideNav = (navState: NavState) =>
     render(
-      <SideNav theme={{}} handleSideNavCollapse={vi.fn()} navState={navState} />
+      <SideNav
+        theme={{}}
+        handleSideNavCollapse={vi.fn()}
+        navState={navState}
+      />,
     );
 
   it('should render nav item headings when expanded', () => {
@@ -53,7 +57,7 @@ describe('SideNav', () => {
     });
 
     expect(
-      screen.queryByTestId(`item-${selectedId}-selected`)
+      screen.queryByTestId(`item-${selectedId}-selected`),
     ).toBeInTheDocument();
 
     expect(screen.queryByTestId('item-0-selected')).not.toBeInTheDocument();

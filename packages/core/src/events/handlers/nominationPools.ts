@@ -3,18 +3,18 @@
 
 import { getSs58Prefix } from '@polkadot-live/consts/chains';
 import { encodeRecord } from '@polkadot-live/encoder';
-import { getBalanceText } from '../../library';
 import { handleEvent } from '../../callbacks/utils';
+import { getBalanceText } from '../../library';
 import { makeChainEvent, notifyTitle } from './utils';
-import type { ChainID } from '@polkadot-live/types/chains';
 import type { PalletNominationPoolsEvent } from '@polkadot-live/types';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { WhoMeta } from '../types';
 
 export const handleNominationPoolsEvent = (
   chainId: ChainID,
   osNotify: boolean,
   palletEvent: PalletNominationPoolsEvent,
-  whoMeta?: WhoMeta
+  whoMeta?: WhoMeta,
 ) => {
   try {
     handleEvent({
@@ -24,7 +24,7 @@ export const handleNominationPoolsEvent = (
         notification: getNominationPoolsNotification(
           chainId,
           palletEvent,
-          whoMeta
+          whoMeta,
         ),
         showNotification: { isOneShot: false, isEnabled: osNotify },
       },
@@ -36,7 +36,7 @@ export const handleNominationPoolsEvent = (
 
 export const getNominationPoolsPalletScopedAccountsFromEvent = (
   chainId: ChainID,
-  palletEvent: PalletNominationPoolsEvent
+  palletEvent: PalletNominationPoolsEvent,
 ): string[] => {
   const { name: eventName, data: miscData } = palletEvent;
   const ss58Prefix = getSs58Prefix(chainId);
@@ -56,7 +56,7 @@ export const getNominationPoolsPalletScopedAccountsFromEvent = (
 const getNominationPoolsNotification = (
   chainId: ChainID,
   palletEvent: PalletNominationPoolsEvent,
-  whoMeta?: WhoMeta
+  whoMeta?: WhoMeta,
 ) => {
   const { name: eventName, data: miscData } = palletEvent;
   switch (eventName) {
@@ -189,7 +189,7 @@ const getNominationPoolsNotification = (
 const getNominationPoolsChainEvent = (
   chainId: ChainID,
   palletEvent: PalletNominationPoolsEvent,
-  whoMeta?: WhoMeta
+  whoMeta?: WhoMeta,
 ) => {
   const { name: eventName, data: miscData } = palletEvent;
   const ev = makeChainEvent({ chainId, category: 'Nomination Pools' }, whoMeta);

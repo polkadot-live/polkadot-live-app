@@ -2,15 +2,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import { useEffect, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   useConnections,
   useHelp,
   useSubscriptions,
 } from '@polkadot-live/contexts';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { TaskEntryWrapper } from '@polkadot-live/styles';
 import { Switch, TooltipRx } from '@polkadot-live/ui';
+import { useEffect, useState } from 'react';
 import { NotificationsSwitch, OneShotSwitch } from '../Controls';
 import type { ClassicSubscriptionProps } from './types';
 
@@ -26,7 +26,7 @@ export const ClassicSubscription = ({
   const [isToggled, setIsToggled] = useState<boolean>(task.status === 'enable');
   const [oneShotProcessing, setOneShotProcessing] = useState(false);
   const [nativeChecked, setNativeChecked] = useState(
-    task.enableOsNotifications
+    task.enableOsNotifications,
   );
 
   useEffect(() => {
@@ -48,12 +48,13 @@ export const ClassicSubscription = ({
         <div>
           <div className="content">
             <h3>
-              <div
+              <button
+                type="button"
                 className="icon-wrapper"
                 onClick={() => openHelp(task.helpKey)}
               >
                 <FontAwesomeIcon icon={FA.faInfo} transform={'shrink-1'} />
-              </div>
+              </button>
               {task.label}
             </h3>
           </div>

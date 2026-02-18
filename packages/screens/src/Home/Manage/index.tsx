@@ -1,19 +1,19 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useState } from 'react';
 import { useManage } from '@polkadot-live/contexts';
-import { Accounts } from './Accounts';
 import {
   CarouselWrapper,
   FlexColumn,
   FlexColumnWrap,
 } from '@polkadot-live/styles';
 import { MainHeading } from '@polkadot-live/ui';
+import { useState } from 'react';
+import { Accounts } from './Accounts';
 import { Subscriptions } from './Subscriptions';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { ManageProps } from './types';
 import type { SubscriptionTaskType } from '@polkadot-live/types/subscriptions';
+import type { ManageProps } from './types';
 
 export const Manage = ({ addresses }: ManageProps) => {
   const { setRenderedSubscriptions } = useManage();

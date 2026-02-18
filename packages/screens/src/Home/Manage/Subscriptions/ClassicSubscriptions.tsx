@@ -1,9 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Accordion from '@radix-ui/react-accordion';
-import * as UI from '@polkadot-live/ui';
-import { useEffect, useState } from 'react';
+import { faSplotch } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   useApiHealth,
   useConnections,
@@ -11,18 +10,15 @@ import {
   useManage,
   useSubscriptions,
 } from '@polkadot-live/contexts';
-import { Header } from './Header';
-import {
-  FlexColumn,
-  FlexRow,
-  ItemsColumn,
-} from '@polkadot-live/styles';
+import { FlexColumn, FlexRow, ItemsColumn } from '@polkadot-live/styles';
+import * as UI from '@polkadot-live/ui';
+import * as Accordion from '@radix-ui/react-accordion';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
+import { useEffect, useState } from 'react';
 import { ClassicSubscription } from './ClassicSubscription';
-import { faSplotch } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import type { ClassicSubscriptionsProps } from './types';
+import { Header } from './Header';
 import type { SubscriptionTask, TaskCategory } from '@polkadot-live/types';
+import type { ClassicSubscriptionsProps } from './types';
 
 export const ClassicSubscriptions = ({
   typeClicked,
@@ -45,8 +41,8 @@ export const ClassicSubscriptions = ({
     // A category toggle is set if all of its tasks are enabled.
     for (const [category, tasks] of getCategorised().entries()) {
       const allToggled = tasks.reduce(
-        (acc, task) => (acc ? (task.status === 'enable' ? true : false) : acc),
-        true
+        (acc, task) => (acc ? task.status === 'enable' : acc),
+        true,
       );
       map.set(category, allToggled);
     }
@@ -65,7 +61,7 @@ export const ClassicSubscriptions = ({
 
   // Categorised tasks state.
   const [categorisedTasks, setCategorisedTasks] = useState(
-    new Map<TaskCategory, SubscriptionTask[]>(getCategorised())
+    new Map<TaskCategory, SubscriptionTask[]>(getCategorised()),
   );
 
   // Accordion state.
@@ -83,15 +79,13 @@ export const ClassicSubscriptions = ({
   const getDisabled = (task: SubscriptionTask) => {
     const apiFailed = hasConnectionIssue(task.chainId);
     const isOffline = !getOnlineMode();
-    return isOffline || isConnecting || isImportingData || apiFailed
-      ? true
-      : false;
+    return !!(isOffline || isConnecting || isImportingData || apiFailed);
   };
 
   // Re-cache categorised tasks when subscription data changes.
   useEffect(() => {
     setCategorisedTasks(getCategorised());
-    if (section === 1 && renderedSubscriptions.type == '') {
+    if (section === 1 && renderedSubscriptions.type === '') {
       setSection(0);
     } else if (typeClicked === 'chain') {
       setAccordionValueChains('Chain');
@@ -186,7 +180,7 @@ export const ClassicSubscriptions = ({
                       </ItemsColumn>
                     </UI.AccordionContent>
                   </Accordion.Item>
-                )
+                ),
               )}
             </FlexColumn>
           </Accordion.Root>

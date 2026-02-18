@@ -1,12 +1,12 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { build, createServer } from 'vite';
+import { spawn } from 'node:child_process';
 import electronPath from 'electron';
-import { spawn } from 'child_process';
+import { build, createServer } from 'vite';
 
 /** @type 'production' | 'development' */
-const mode = (process.env.MODE = process.env.MODE || 'development');
+const mode = process.env.MODE ?? 'development';
 
 /** @type {import('vite').LogLevel} */
 const logLevel = 'warn';

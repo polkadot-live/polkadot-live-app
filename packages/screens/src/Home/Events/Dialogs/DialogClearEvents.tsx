@@ -1,9 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Dialog from '@radix-ui/react-dialog';
-import * as Styles from '@polkadot-live/styles';
 import { useConnections, useEvents } from '@polkadot-live/contexts';
+import * as Styles from '@polkadot-live/styles';
+import * as Dialog from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
 
 export const DialogClearEvents = () => {
@@ -49,6 +49,7 @@ export const DialogClearEvents = () => {
                   Cancel
                 </Dialog.Close>
                 <button
+                  type="button"
                   className="Dialog__Button Danger"
                   onClick={async () => onDeleteClick()}
                   style={{ flex: 1 }}

@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { TabsAdapter } from './types';
 import type { AnyData, TabData } from '@polkadot-live/types';
+import type { TabsAdapter } from './types';
 
 export const chromeAdapter: TabsAdapter = {
   onMount: async (addTab) => {

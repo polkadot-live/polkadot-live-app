@@ -39,7 +39,7 @@ export interface PortPair {
 
 export interface IpcTask {
   action: // Addresses
-  | 'raw-account:add'
+    | 'raw-account:add'
     | 'raw-account:delete'
     | 'raw-account:get'
     | 'raw-account:get:ledger-meta'

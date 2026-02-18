@@ -27,7 +27,7 @@ export const electronAdapter: SubscriptionsAdapter = {
       return count;
     }
     const getSubscriptionCountForAccount = (
-      flattened: FlattenedAccountData
+      flattened: FlattenedAccountData,
     ): number => {
       const { address, chain } = flattened;
       const account = AccountsController.get(chain, address);
@@ -60,7 +60,7 @@ export const electronAdapter: SubscriptionsAdapter = {
       // Update tasks in query multi wrapper.
       const account = AccountsController.get(
         task.chainId,
-        task.account.address
+        task.account.address,
       );
       if (account) {
         account.queryMulti?.setOsNotificationsFlag(task);
@@ -80,7 +80,7 @@ export const electronAdapter: SubscriptionsAdapter = {
     // Invert the task status.
     const newStatus = task.status === 'enable' ? 'disable' : 'enable';
     task.status = newStatus;
-    task.enableOsNotifications = newStatus === 'enable' ? true : false;
+    task.enableOsNotifications = newStatus === 'enable';
     SubscriptionsController.updateTaskState(task);
 
     const p = async () =>
@@ -129,7 +129,7 @@ export const electronAdapter: SubscriptionsAdapter = {
     category,
     isOn,
     renderedSubscriptions,
-    getTaskType
+    getTaskType,
   ) => {
     const targetStatus = isOn ? 'enable' : 'disable';
 
@@ -138,7 +138,7 @@ export const electronAdapter: SubscriptionsAdapter = {
       .filter((t) => t.category === category && t.status === targetStatus)
       .map((t) => {
         t.status = t.status === 'enable' ? 'disable' : 'enable';
-        t.enableOsNotifications = t.status === 'enable' ? true : false;
+        t.enableOsNotifications = t.status === 'enable';
         return t;
       })
       .sort((a, b) => a.label.localeCompare(b.label));

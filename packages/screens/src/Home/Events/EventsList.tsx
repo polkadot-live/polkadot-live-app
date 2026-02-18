@@ -4,9 +4,7 @@
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import { useConnections, useEvents } from '@polkadot-live/contexts';
 import { getEventChainId } from '@polkadot-live/core';
-import { EventGroup, Wrapper } from './Wrappers';
-import { Item } from './Item';
-import { NoEvents } from './NoEvents';
+import { FlexColumn, FlexRow } from '@polkadot-live/styles';
 import {
   ButtonPrimaryInvert,
   ControlsWrapper,
@@ -14,7 +12,9 @@ import {
   SortControlLabel,
   TooltipRx,
 } from '@polkadot-live/ui';
-import { FlexColumn, FlexRow } from '@polkadot-live/styles';
+import { Item } from './Item';
+import { NoEvents } from './NoEvents';
+import { EventGroup, Wrapper } from './Wrappers';
 import type { EventsListProps } from './types';
 
 export const EventsList = ({ setSection }: EventsListProps) => {

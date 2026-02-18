@@ -9,7 +9,7 @@ import type {
 export interface AddHandlerAdapter {
   postToMain: (
     encodedAccount: EncodedAccount,
-    genericAccount: ImportedGenericAccount
+    genericAccount: ImportedGenericAccount,
   ) => void;
   updateAddressInStore: (account: ImportedGenericAccount) => Promise<void>;
 }

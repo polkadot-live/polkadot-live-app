@@ -1,8 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { faClock } from '@fortawesome/free-regular-svg-icons';
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import { useEffect, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { intervalDurationsConfig } from '@polkadot-live/consts/subscriptions/interval';
 import {
   useApiHealth,
   useConnections,
@@ -10,12 +12,10 @@ import {
   useHelp,
   useIntervalTasksManager,
 } from '@polkadot-live/contexts';
-import { TaskEntryWrapper } from '@polkadot-live/styles';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClock } from '@fortawesome/free-regular-svg-icons';
-import { Switch, TooltipRx } from '@polkadot-live/ui';
 import { getShortIntervalLabel } from '@polkadot-live/core';
-import { intervalDurationsConfig } from '@polkadot-live/consts/subscriptions/interval';
+import { TaskEntryWrapper } from '@polkadot-live/styles';
+import { Switch, TooltipRx } from '@polkadot-live/ui';
+import { useEffect, useState } from 'react';
 import type { IntervalRowProps } from './types';
 
 export const IntervalRow = ({ task }: IntervalRowProps) => {
@@ -36,10 +36,10 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
   const [oneShotProcessing, setOneShotProcessing] = useState(false);
   const [intervalClicked, setIntervalClicked] = useState(false);
   const [intervalSetting, setIntervalSetting] = useState(
-    task.intervalSetting.ticksToWait
+    task.intervalSetting.ticksToWait,
   );
   const [nativeChecked, setNativeChecked] = useState(
-    task.enableOsNotifications
+    task.enableOsNotifications,
   );
 
   const isImportingData = cacheGet('backup:importing');
@@ -50,7 +50,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
     isConnecting ||
       !getOnlineMode() ||
       hasConnectionIssue(task.chainId) ||
-      isImportingData
+      isImportingData,
   );
 
   const handleToggle = async () => {
@@ -107,7 +107,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
       isConnecting ||
         !getOnlineMode() ||
         hasConnectionIssue(task.chainId) ||
-        isImportingData
+        isImportingData,
     );
   }, [failedConnections, isConnecting, isOnlineMode, isImportingData]);
 
@@ -136,12 +136,13 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
         <div>
           <div className="content">
             <h3>
-              <div
+              <button
+                type="button"
                 className="icon-wrapper"
                 onClick={() => openHelp(task.helpKey)}
               >
                 <FontAwesomeIcon icon={FA.faInfo} transform={'shrink-1'} />
-              </div>
+              </button>
               {task.label}
             </h3>
           </div>
@@ -160,7 +161,8 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
           <div className="interval-wrapper ">
             {!intervalClicked || isDisabled ? (
               <TooltipRx text={'Set Interval'} theme={theme}>
-                <div
+                <button
+                  type="button"
                   className="badge-container"
                   onClick={() =>
                     setIntervalClicked((prev) => (isDisabled ? prev : !prev))
@@ -180,7 +182,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
                     icon={faClock}
                     transform={'grow-0'}
                   />
-                </div>
+                </button>
               </TooltipRx>
             ) : (
               <div className="select-wrapper">
@@ -214,7 +216,8 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
           {/* Native OS Notification Checkbox */}
           <TooltipRx text={'OS Notifications'} theme={theme}>
             <div className="native-wrapper">
-              <div
+              <button
+                type="button"
                 className="native-content"
                 onClick={async () => await handleNativeCheckbox()}
               >
@@ -240,7 +243,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
                     />
                   </div>
                 )}
-              </div>
+              </button>
             </div>
           </TooltipRx>
 

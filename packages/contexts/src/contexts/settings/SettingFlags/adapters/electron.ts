@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ConfigTabs } from '@polkadot-live/core';
-import type { SettingFlagsAdapter } from './types';
 import type { SettingKey } from '@polkadot-live/types/settings';
+import type { SettingFlagsAdapter } from './types';
 
 export const electronAdapter: SettingFlagsAdapter = {
   syncOnMount: async (): Promise<Map<SettingKey, boolean>> =>

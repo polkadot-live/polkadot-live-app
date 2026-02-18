@@ -1,9 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { mixinHelpIcon } from '@polkadot-live/styles';
 import styled from 'styled-components';
 import { getChainIdColor } from './utils';
-import { mixinHelpIcon } from '@polkadot-live/styles';
 import type { ChainID } from '@polkadot-live/types/chains';
 
 export const TreasuryStatCardWrapper = styled.div<{ $chainId: ChainID }>`

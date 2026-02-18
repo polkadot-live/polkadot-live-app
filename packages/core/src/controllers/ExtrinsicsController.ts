@@ -2,20 +2,19 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as $ from '@dedot/shape';
+import { ChainList } from '@polkadot-live/consts/chains';
+import { ExtraSignedExtension } from 'dedot';
+import { MerkleizedMetadata } from 'dedot/merkleized-metadata';
+import { concatU8a, hexToU8a, u8aToHex } from 'dedot/utils';
 import { ConfigRenderer } from '../config';
 import { APIsController, BusDispatcher } from '../controllers';
-import { ChainList } from '@polkadot-live/consts/chains';
-import { concatU8a, hexToU8a, u8aToHex } from 'dedot/utils';
-import { MerkleizedMetadata } from 'dedot/merkleized-metadata';
 import { ExtrinsicError } from '../errors';
-import { ExtraSignedExtension } from 'dedot';
 import {
   getAddressNonce,
   getNominationPoolRewards,
   getSpendableBalanceElectron,
 } from '../library/AccountsLib';
 import type { AnyData } from '@polkadot-live/types/misc';
-import type { HexString } from 'dedot/utils';
 import type {
   ActionMeta,
   CachedExtrinsicData,
@@ -23,6 +22,7 @@ import type {
   TxStatus,
 } from '@polkadot-live/types/tx';
 import type { SignerPayloadRaw } from 'dedot/types';
+import type { HexString } from 'dedot/utils';
 
 interface VerifyExtrinsicResult {
   isValid: boolean;
@@ -98,7 +98,7 @@ export class ExtrinsicsController {
    * For example, check account balance is sufficient, etc.
    */
   static verifyExtrinsic = async (
-    info: ExtrinsicInfo
+    info: ExtrinsicInfo,
   ): Promise<VerifyExtrinsicResult> => {
     // Check estimated fee exists.
     const { estimatedFee } = info;
@@ -113,7 +113,7 @@ export class ExtrinsicsController {
         const fee = BigInt(estimatedFee);
         const sendAmount: bigint = args[1];
         const spendable = BigInt(
-          await getSpendableBalanceElectron(from, chainId)
+          await getSpendableBalanceElectron(from, chainId),
         );
         const isValid = spendable >= sendAmount + fee;
         return isValid
@@ -123,7 +123,7 @@ export class ExtrinsicsController {
       case 'nominationPools_pendingRewards_withdraw':
       case 'nominationPools_pendingRewards_bond': {
         const spendable = BigInt(
-          await getSpendableBalanceElectron(from, chainId)
+          await getSpendableBalanceElectron(from, chainId),
         );
         const fee = BigInt(estimatedFee);
 
@@ -194,7 +194,7 @@ export class ExtrinsicsController {
         rawPayload = extra.toRawPayload(tx.callHex);
         const payload = extra.toPayload(tx.callHex);
         const proof = merkleizer.proofForExtrinsicPayload(
-          rawPayload.data as HexString
+          rawPayload.data as HexString,
         );
         this.txPayloads.set(txId, {
           ...cached,
@@ -265,7 +265,7 @@ export class ExtrinsicsController {
   static mockSubmit = (
     info: ExtrinsicInfo,
     silence: boolean,
-    interval = 3000
+    interval = 3000,
   ) => {
     let mockStatus: TxStatus = 'submitted';
     this.postTxStatus(mockStatus, info);
@@ -278,7 +278,7 @@ export class ExtrinsicsController {
           !silence &&
             this.showNotification(
               'Transaction Submitted',
-              'Transaction has been submitted and is processing.'
+              'Transaction has been submitted and is processing.',
             );
           break;
         }
@@ -337,7 +337,7 @@ export class ExtrinsicsController {
             !silence &&
               this.showNotification(
                 'Transaction Submitted',
-                'Transaction has been submitted and is processing.'
+                'Transaction has been submitted and is processing.',
               );
             break;
           }
@@ -369,7 +369,7 @@ export class ExtrinsicsController {
   private static postTxStatus = (
     status: TxStatus,
     info: ExtrinsicInfo,
-    isMock = false
+    isMock = false,
   ) => {
     const {
       txId,

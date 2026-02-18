@@ -1,10 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as UI from '@polkadot-live/ui';
-import * as Styles from '@polkadot-live/styles';
-import { Listing } from '../Addresses';
 import { faCaretLeft, faCaretRight } from '@fortawesome/free-solid-svg-icons';
+import * as Styles from '@polkadot-live/styles';
+import * as UI from '@polkadot-live/ui';
+import { Listing } from '../Addresses';
 
 interface ImportWcManageProps {
   setSection: React.Dispatch<React.SetStateAction<number>>;

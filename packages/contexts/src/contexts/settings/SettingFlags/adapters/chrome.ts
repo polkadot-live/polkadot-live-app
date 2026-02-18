@@ -1,6 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { renderToast } from '../../../../utils';
 import {
   getNewFileHandle,
   isFileSystemAccessApiSupported,
@@ -8,9 +9,8 @@ import {
   verifyPermission,
   writeFile,
 } from './fileSystem';
-import { renderToast } from '../../../../utils';
-import type { SettingFlagsAdapter } from './types';
 import type { SettingKey } from '@polkadot-live/types/settings';
+import type { SettingFlagsAdapter } from './types';
 
 export const chromeAdapter: SettingFlagsAdapter = {
   syncOnMount: async (): Promise<Map<SettingKey, boolean>> => {

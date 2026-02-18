@@ -1,11 +1,11 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import pkg from '../package.json' with { type: 'json' };
-import mapWorkspaces from '@npmcli/map-workspaces';
-import { resolve, matchesGlob, sep, join } from 'node:path';
-import { pathToFileURL } from 'node:url';
 import { readdirSync } from 'node:fs';
+import { join, matchesGlob, resolve, sep } from 'node:path';
+import { pathToFileURL } from 'node:url';
+import mapWorkspaces from '@npmcli/map-workspaces';
+import pkg from '../package.json' with { type: 'json' };
 
 /**
  * By default, electron-builder copies each package into the output compilation entirety,
@@ -110,7 +110,7 @@ export async function findFilesThatShouldBeExcluded() {
 
     // Transform excluded paths into `!node_modules/<package-name>/<file-name>`.
     filesToExclude = filesToExclude.map((f) =>
-      join('!node_modules', name, f.replace(path + sep, ''))
+      join('!node_modules', name, f.replace(path + sep, '')),
     );
 
     allFilesToExclude.push(...filesToExclude);

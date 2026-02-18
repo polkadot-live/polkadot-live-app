@@ -1,9 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { ChainID } from '@polkadot-live/types/chains';
-import type { EncodedValue } from '@polkadot-live/encoder';
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import type { EncodedValue } from '@polkadot-live/encoder';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   DismissEvent,
   EventCallback,
@@ -25,6 +25,7 @@ export interface EventsContextInterface {
   clearAll: (category: EventCategory) => Promise<void>;
   dismissEvent: (e: DismissEvent) => void;
   finishLoading: () => void;
+
   getEventCategoryIcon: (category: EventCategory) => IconDefinition;
   getEventsCount: (category?: EventCategory) => number;
   getSortedEvents: (desc?: boolean) => EventCallback[];

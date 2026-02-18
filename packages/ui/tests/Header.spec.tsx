@@ -1,11 +1,11 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { describe, expect, it, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import { Header } from '../src/components';
-import userEvent from '@testing-library/user-event';
 import { darkTheme } from '@polkadot-live/styles';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { describe, expect, it, vi } from 'vitest';
+import { Header } from '../src/components';
 import type { AnyData } from '@polkadot-live/types/misc';
 import type { UserEvent } from '@testing-library/user-event';
 
@@ -15,7 +15,7 @@ describe('Header', () => {
   const renderHeader = (
     showButtons: boolean,
     onCloseWindow?: AnyData,
-    onDockToggle?: AnyData
+    onDockToggle?: AnyData,
   ) =>
     render(
       <Header
@@ -26,13 +26,13 @@ describe('Header', () => {
         version={mockVersion}
         onCloseWindow={onCloseWindow}
         onDockToggle={onDockToggle}
-      />
+      />,
     );
 
   const checkCalledOnClick = async (
     fn: AnyData,
     testId: string,
-    user: UserEvent
+    user: UserEvent,
   ) => {
     const button = screen.queryByTestId(testId) as HTMLElement;
     expect(button).toBeInTheDocument();

@@ -6,19 +6,19 @@ import {
   faChevronRight,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useMemo, useRef, useState } from 'react';
 import { useConnections, useOverlay } from '@polkadot-live/contexts';
-import { useTxMeta } from '../../../contexts';
 import { QRViewerWrapper } from '@polkadot-live/styles';
 import {
   ButtonPrimary,
   ButtonSecondary,
+  createImgSize,
   Html5QrCodePlugin,
   QrDisplayPayload,
-  ScanWrapper,
-  createImgSize,
   renderToast,
+  ScanWrapper,
 } from '@polkadot-live/ui';
+import { useMemo, useRef, useState } from 'react';
+import { useTxMeta } from '../../../contexts';
 import type { Html5Qrcode } from 'html5-qrcode';
 import type { SignVaultOverlayProps } from './types';
 

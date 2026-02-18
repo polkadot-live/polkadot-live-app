@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { ComponentBase } from '../../../types';
 import type { FunctionComponent, SVGProps } from 'react';
+import type { ComponentBase } from '../../../types';
 
 export type HardwareStatusBarProps = ComponentBase & {
   // whether to animate in the status bar.

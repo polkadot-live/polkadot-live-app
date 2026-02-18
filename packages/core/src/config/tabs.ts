@@ -11,14 +11,14 @@ export class ConfigTabs {
   static _portExists = false;
 
   static get portToMain(): MessagePort {
-    if (!this._portToMain) {
+    if (!ConfigTabs._portToMain) {
       throw new Error('_portToMain still undefined');
     }
-    return this._portToMain;
+    return ConfigTabs._portToMain;
   }
 
   static set portToMain(port: MessagePort) {
-    this._portToMain = port;
-    this._portExists = true;
+    ConfigTabs._portToMain = port;
+    ConfigTabs._portExists = true;
   }
 }

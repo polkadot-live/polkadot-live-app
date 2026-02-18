@@ -1,17 +1,17 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { createContext } from 'react';
+import { createSafeContextHook } from '../../../utils';
 import { useAccountStatuses } from '../AccountStatuses';
 import { useImportAddresses } from '../Addresses';
-import { createSafeContextHook } from '../../../utils';
-import { createContext } from 'react';
 import { getDeleteHandlerAdapter } from './adapters';
 import type {
   AccountSource,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
-import type { DeleteHandlerContextInterface } from '../../../types/import';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { DeleteHandlerContextInterface } from '../../../types/import';
 
 export const DeleteHandlerContext = createContext<
   DeleteHandlerContextInterface | undefined
@@ -19,7 +19,7 @@ export const DeleteHandlerContext = createContext<
 
 export const useDeleteHandler = createSafeContextHook(
   DeleteHandlerContext,
-  'DeleteHandlerContext'
+  'DeleteHandlerContext',
 );
 
 export const DeleteHandlerProvider = ({
@@ -35,13 +35,13 @@ export const DeleteHandlerProvider = ({
    * Permanently delete a generic account.
    */
   const handleDeleteAddress = async (
-    genericAccount: ImportedGenericAccount
+    genericAccount: ImportedGenericAccount,
   ): Promise<boolean> => {
     const { publicKeyHex, source } = genericAccount;
     let goBack = false;
 
     for (const { address, chainId } of Object.values(
-      genericAccount.encodedAccounts
+      genericAccount.encodedAccounts,
     )) {
       deleteAccountStatus(`${chainId}:${address}`, source);
       if (!goBack) {

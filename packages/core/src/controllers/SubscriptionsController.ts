@@ -1,18 +1,18 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { QueryMultiWrapper } from '../model/QueryMultiWrapper';
-import { TaskOrchestrator } from '../orchestrators/TaskOrchestrator';
-import { AccountsController } from '../controllers';
 import { accountTasks } from '@polkadot-live/consts/subscriptions/account';
 import { chainTasks } from '@polkadot-live/consts/subscriptions/chain';
+import { AccountsController } from '../controllers';
 import { compareTasks } from '../library';
-import type { Account } from '../model';
+import { QueryMultiWrapper } from '../model/QueryMultiWrapper';
+import { TaskOrchestrator } from '../orchestrators/TaskOrchestrator';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   SubscriptionTask,
   WrappedSubscriptionTasks,
 } from '@polkadot-live/types/subscriptions';
+import type { Account } from '../model';
 
 /**
  * Key naming convention of subscription tasks in store:
@@ -118,7 +118,7 @@ export class SubscriptionsController {
    * @summary Fetch and build persisted chain subscription tasks from store. (electron)
    */
   static async initChainSubscriptions() {
-    if (this.backend === 'electron') {
+    if (SubscriptionsController.backend === 'electron') {
       // Send IPC message to get chain tasks from store.
       const serialized =
         (await window.myAPI.sendSubscriptionTask({
@@ -128,7 +128,10 @@ export class SubscriptionsController {
 
       // Add tasks to wrapper.
       const tasks: SubscriptionTask[] = JSON.parse(serialized);
-      await TaskOrchestrator.buildTasks(tasks, this.chainSubscriptions);
+      await TaskOrchestrator.buildTasks(
+        tasks,
+        SubscriptionsController.chainSubscriptions,
+      );
     }
   }
 
@@ -137,8 +140,12 @@ export class SubscriptionsController {
    * @summary Run managed chain subscriptions. Called when the app goes into online mode.
    */
   static async resubscribeChains() {
-    const tasks = this.chainSubscriptions.getSubscriptionTasks();
-    await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions);
+    const tasks =
+      SubscriptionsController.chainSubscriptions.getSubscriptionTasks();
+    await TaskOrchestrator.subscribeTasks(
+      tasks,
+      SubscriptionsController.chainSubscriptions,
+    );
   }
 
   /**
@@ -146,10 +153,13 @@ export class SubscriptionsController {
    * @summary Re-subscribe to tasks for a particular chain.
    */
   static async resubscribeChain(chainId: ChainID) {
-    const tasks = this.chainSubscriptions
+    const tasks = SubscriptionsController.chainSubscriptions
       .getSubscriptionTasks()
       .filter((task) => task.chainId === chainId);
-    await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions);
+    await TaskOrchestrator.subscribeTasks(
+      tasks,
+      SubscriptionsController.chainSubscriptions,
+    );
   }
 
   /**
@@ -157,7 +167,10 @@ export class SubscriptionsController {
    * @summary Subscribe to a batch of chain tasks.
    */
   static async subscribeChainTasks(tasks: SubscriptionTask[]) {
-    await TaskOrchestrator.subscribeTasks(tasks, this.chainSubscriptions);
+    await TaskOrchestrator.subscribeTasks(
+      tasks,
+      SubscriptionsController.chainSubscriptions,
+    );
   }
 
   /**
@@ -166,7 +179,7 @@ export class SubscriptionsController {
    * @returns {boolean} Represents if API instance is required for the provided chainID.
    */
   static requiresChainApi(chainId: ChainID) {
-    return this.chainSubscriptions.requiresChainApi(chainId);
+    return SubscriptionsController.chainSubscriptions.requiresChainApi(chainId);
   }
 
   /**
@@ -175,7 +188,8 @@ export class SubscriptionsController {
    * a chain. Active subscriptions need to be included in the array.
    */
   static getChainSubscriptions() {
-    const activeTasks = this.chainSubscriptions.getSubscriptionTasks();
+    const activeTasks =
+      SubscriptionsController.chainSubscriptions.getSubscriptionTasks();
     // TODO: Populate inactive tasks with their correct arguments.
     // No chain API calls so far require arguments.
     const supportedChains: ChainID[] = [
@@ -186,12 +200,12 @@ export class SubscriptionsController {
 
     // Merge active tasks into default tasks array.
     const filtered = chainTasks.filter((t) =>
-      supportedChains.includes(t.chainId)
+      supportedChains.includes(t.chainId),
     );
     const allTasks = activeTasks
       ? filtered.map((t) => {
           const found = activeTasks.find(
-            (a) => t.action === a.action && t.chainId === a.chainId
+            (a) => t.action === a.action && t.chainId === a.chainId,
           );
           return found ? found : t;
         })
@@ -223,12 +237,15 @@ export class SubscriptionsController {
         accounts.map((account) => {
           const { chain, address } = account;
           const active = account.getSubscriptionTasks() ?? [];
-          const defaults = this.buildSubscriptions(account, 'disable');
+          const defaults = SubscriptionsController.buildSubscriptions(
+            account,
+            'disable',
+          );
           const merged = defaults.map(
-            (task) => active.find((a) => cmp(task, a)) ?? task
+            (task) => active.find((a) => cmp(task, a)) ?? task,
           );
           return [`${chain}:${address}`, merged] as const;
-        })
+        }),
     );
     return new Map(entries);
   }
@@ -243,14 +260,14 @@ export class SubscriptionsController {
       .map((t) => this.getTaskArgsForAccount(account, t))
       .map((t) => {
         const found = active.find(
-          (a) => a.action === t.action && a.chainId === t.chainId
+          (a) => a.action === t.action && a.chainId === t.chainId,
         );
         return found ? found : t;
       });
 
   static mergeActiveChainTasks = (
     active: SubscriptionTask[],
-    chainId: ChainID
+    chainId: ChainID,
   ): SubscriptionTask[] =>
     !active.length
       ? chainTasks.filter((t) => t.chainId === chainId)
@@ -258,7 +275,7 @@ export class SubscriptionsController {
           .filter((t) => t.chainId === chainId)
           .map((t) => {
             const found = active.find(
-              (a) => a.action === t.action && a.chainId === t.chainId
+              (a) => a.action === t.action && a.chainId === t.chainId,
             );
             return found ? found : t;
           });
@@ -269,7 +286,7 @@ export class SubscriptionsController {
    */
   static buildSubscriptions = (
     account: Account,
-    status: 'enable' | 'disable'
+    status: 'enable' | 'disable',
   ) => {
     const isNominating = account.nominatingData !== null;
     const isInPool = account.nominationPoolData !== null;
@@ -282,7 +299,7 @@ export class SubscriptionsController {
           ? { ...t, status: isNominating ? status : 'disable' }
           : t.category === 'Nomination Pools'
             ? { ...t, status: isInPool ? status : 'disable' }
-            : { ...t, status }
+            : { ...t, status },
       );
   };
 
@@ -292,7 +309,7 @@ export class SubscriptionsController {
    */
   static getTaskArgsForAccount = (
     account: Account,
-    taskTemplate: SubscriptionTask
+    taskTemplate: SubscriptionTask,
   ) => {
     const task = {
       ...taskTemplate,

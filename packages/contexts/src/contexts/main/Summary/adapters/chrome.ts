@@ -13,7 +13,7 @@ export const chromeAdapter: SummaryAdapter = {
     addressMapRef,
     extrinsicCountsRef,
     setAddressMap,
-    setExtrinsicCounts
+    setExtrinsicCounts,
   ) => {
     const [r1, r2] = await Promise.all([
       chrome.runtime.sendMessage({

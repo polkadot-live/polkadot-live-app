@@ -1,17 +1,17 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { createContext } from 'react';
 import { createSafeContextHook } from '../../../utils';
+import { useConnections } from '../../common';
 import { useAccountStatuses } from '../AccountStatuses';
 import { useImportAddresses } from '../Addresses';
-import { useConnections } from '../../common';
-import { createContext } from 'react';
 import { getAddHandlerAdapter } from './adapters';
-import type { AddHandlerContextInterface } from '../../../types/import';
 import type {
   EncodedAccount,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
+import type { AddHandlerContextInterface } from '../../../types/import';
 
 export const AddHandlerContext = createContext<
   AddHandlerContextInterface | undefined
@@ -19,7 +19,7 @@ export const AddHandlerContext = createContext<
 
 export const useAddHandler = createSafeContextHook(
   AddHandlerContext,
-  'AddHandlerContext'
+  'AddHandlerContext',
 );
 
 export const AddHandlerProvider = ({
@@ -37,7 +37,7 @@ export const AddHandlerProvider = ({
    */
   const handleAddAddress = async (
     encodedAccount: EncodedAccount,
-    genericAccount: ImportedGenericAccount
+    genericAccount: ImportedGenericAccount,
   ) => {
     const { address, chainId } = encodedAccount;
     const { encodedAccounts, source } = genericAccount;
@@ -61,7 +61,7 @@ export const AddHandlerProvider = ({
    */
   const handleBookmarkToggle = async (
     encodedAccount: EncodedAccount,
-    genericAccount: ImportedGenericAccount
+    genericAccount: ImportedGenericAccount,
   ) => {
     const { chainId, isBookmarked } = encodedAccount;
     encodedAccount.isBookmarked = !isBookmarked;
@@ -84,7 +84,7 @@ export const AddHandlerProvider = ({
    */
   const postToMain = (
     encodedAccount: EncodedAccount,
-    genericAccount: ImportedGenericAccount
+    genericAccount: ImportedGenericAccount,
   ) => {
     adapter.postToMain(encodedAccount, genericAccount);
   };

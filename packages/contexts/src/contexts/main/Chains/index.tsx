@@ -1,17 +1,18 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import React, { createContext, useEffect, useState } from 'react';
+import { ChainList } from '@polkadot-live/consts/chains';
+import { createContext, useEffect, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
 import { useApiHealth } from '../ApiHealth';
-import { ChainList } from '@polkadot-live/consts/chains';
 import { getChainsAdapter } from './adapters';
-import type { ChainID } from '@polkadot-live/types/chains';
-import type { ChainsContextInterface } from '../../../types/main';
 import type { FlattenedAPIData } from '@polkadot-live/types/apis';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type React from 'react';
+import type { ChainsContextInterface } from '../../../types/main';
 
 export const ChainsContext = createContext<ChainsContextInterface | undefined>(
-  undefined
+  undefined,
 );
 
 export const useChains = createSafeContextHook(ChainsContext, 'ChainsContext');
@@ -25,11 +26,11 @@ export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
    * Chains connected with Dedot.
    */
   const [chains, setChains] = useState<Map<ChainID, FlattenedAPIData>>(
-    new Map()
+    new Map(),
   );
 
   const base = new Map<ChainID, boolean>(
-    Array.from(ChainList.keys()).map((c) => [c, false])
+    Array.from(ChainList.keys()).map((c) => [c, false]),
   );
 
   const [workingConnects, setWorkingConnects] = useState(new Map(base));
@@ -105,7 +106,7 @@ export const ChainsProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const removeListener = adapter.listenOnMount(setChains, setUiTrigger);
     return () => {
-      removeListener && removeListener();
+      removeListener?.();
     };
   }, []);
 

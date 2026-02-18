@@ -1,10 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { NavCardThin } from '../src/components';
 import userEvent from '@testing-library/user-event';
+import { describe, expect, it, vi } from 'vitest';
+import { NavCardThin } from '../src/components';
 
 describe('NavCardThin', () => {
   const containerClass = 'methodCard';
@@ -15,7 +15,7 @@ describe('NavCardThin', () => {
         onClick={vi.fn()}
         childrenLogo={<span>Logo</span>}
         childrenSubtitle={<span>Subtitle</span>}
-      />
+      />,
     );
 
   it('should render the provided title text', () => {
@@ -43,7 +43,7 @@ describe('NavCardThin', () => {
         onClick={mockOnClick}
         childrenLogo={<span>Logo</span>}
         childrenSubtitle={<span>Subtitle</span>}
-      />
+      />,
     );
 
     const cardElement = container.getElementsByClassName(containerClass)[0];

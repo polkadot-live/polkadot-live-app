@@ -11,7 +11,7 @@ import type { ChainID } from '@polkadot-live/types/chains';
 export const getRecipientAccounts = (
   addressMap: Map<AccountSource, SendAccount[]>,
   sendNetwork: ChainID | null,
-  sender: SendAccount | null
+  sender: SendAccount | null,
 ): SendAccount[] => {
   let result: SendAccount[] = [];
   for (const addresses of addressMap.values()) {
@@ -29,7 +29,7 @@ export const getRecipientAccounts = (
  */
 export const getSenderAccounts = (
   addressMap: Map<AccountSource, SendAccount[]>,
-  sendNetwork: ChainID | null
+  sendNetwork: ChainID | null,
 ): SendAccount[] => {
   let result: SendAccount[] = [];
   for (const source of getSignSources()) {
@@ -54,7 +54,7 @@ export const removeLeadingZeros = (value: string): string => {
 
   // If the first character is ".", prepend "0"
   if (cleaned.startsWith('.')) {
-    cleaned = '0' + cleaned;
+    cleaned = `0${cleaned}`;
   }
   // Ensure empty string returns "0"
   return cleaned || '0';

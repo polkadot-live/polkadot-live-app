@@ -11,7 +11,7 @@ export interface AccountStatusesContextInterface {
   setStatusForAccount: (
     key: string,
     source: AccountSource,
-    status: boolean
+    status: boolean,
   ) => void;
   getStatusForAccount: (key: string, source: AccountSource) => boolean | null;
   deleteAccountStatus: (key: string, source: AccountSource) => void;

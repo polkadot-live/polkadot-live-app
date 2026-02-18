@@ -1,9 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import PolkadotIcon from '../../svg/polkadotIcon.svg?react';
 import KusamaIcon from '../../svg/kusamaIcon.svg?react';
 import PaseoIcon from '../../svg/paseoIcon.svg?react';
+import PolkadotIcon from '../../svg/polkadotIcon.svg?react';
 import WestendIcon from '../../svg/westendIcon.svg?react';
 import type { ChainIconProps } from './types';
 

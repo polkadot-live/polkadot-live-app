@@ -11,7 +11,7 @@ import type { AnyData } from '@polkadot-live/types/misc';
  */
 export const getFromBackupFile = (
   key: string,
-  serialized: string
+  serialized: string,
 ): string | undefined => {
   const s_array: [string, string][] = JSON.parse(serialized);
   const s_map = new Map<string, string>(s_array);

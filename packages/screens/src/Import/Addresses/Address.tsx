@@ -1,9 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Delete } from '../Actions';
-import { DropdownAccount } from './Dropdowns';
-import { HardwareAddress } from '@polkadot-live/ui';
 import {
   useAccountStatuses,
   useAddHandler,
@@ -13,8 +10,11 @@ import {
   useOverlay,
   useRemoveHandler,
 } from '@polkadot-live/contexts';
-import type { AddressProps } from './types';
+import { HardwareAddress } from '@polkadot-live/ui';
+import { Delete } from '../Actions';
+import { DropdownAccount } from './Dropdowns';
 import type { EncodedAccount } from '@polkadot-live/types/accounts';
+import type { AddressProps } from './types';
 
 export const Address = ({ genericAccount, setSection }: AddressProps) => {
   const { publicKeyHex, source } = genericAccount;
@@ -72,7 +72,7 @@ export const Address = ({ genericAccount, setSection }: AddressProps) => {
             handleDeleteAddress={handleDeleteAddress}
             setSection={setSection}
             setStatus={setStatus}
-          />
+          />,
         )
       }
     />

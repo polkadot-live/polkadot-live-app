@@ -1,12 +1,12 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { HardwareStatusBarWrapper } from './Wrapper';
 import {
   ButtonHelp,
   ButtonMonoInvert,
   ButtonPrimaryInvert,
 } from '../../../kits/buttons';
+import { HardwareStatusBarWrapper } from './Wrapper';
 import type { HardwareStatusBarProps } from './types';
 
 export const HardwareStatusBar = ({

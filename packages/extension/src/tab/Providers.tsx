@@ -1,16 +1,14 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import App from './App';
-import { LedgerController } from '../controllers';
 import {
   AccountStatusesProvider,
-  ImportAddressesProvider,
   AddHandlerProvider,
   ConnectionsProvider,
   DeleteHandlerProvider,
   DialogControlProvider,
   HelpProvider,
+  ImportAddressesProvider,
   ImportHandlerProvider,
   LedgerFeedbackProvider,
   LedgerHardwareProvider,
@@ -27,13 +25,15 @@ import {
   TreasuryProvider,
   WcFeedbackProvider,
 } from '@polkadot-live/contexts';
+import { withProviders } from '@polkadot-live/ui';
+import { LedgerController } from '../controllers';
+import App from './App';
 import {
   TxMetaProvider,
-  WalletConnectProvider,
   WalletConnectImportProvider,
+  WalletConnectProvider,
   WcVerifierProvider,
 } from './contexts';
-import { withProviders } from '@polkadot-live/ui';
 
 export const Providers = withProviders(
   HelpProvider,
@@ -61,5 +61,5 @@ export const Providers = withProviders(
   PolkassemblyProvider,
   ReferendaProvider,
   ReferendaSubscriptionsProvider,
-  TaskHandlerProvider
+  TaskHandlerProvider,
 )(App);

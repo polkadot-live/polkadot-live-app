@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { HelpItemKey } from '@polkadot-live/types/help';
 import type { PalletReferendaCurve } from '@dedot/chaintypes/substrate';
+import type { HelpItemKey } from '@polkadot-live/types/help';
 
 /**
  * @name Track
@@ -32,7 +32,7 @@ export class Track {
     preparePeriod: string,
     trackId: string,
     minApproval: PalletReferendaCurve,
-    minSupport: PalletReferendaCurve
+    minSupport: PalletReferendaCurve,
   ) {
     this._confirmPeriod = confirmPeriod;
     this._decisionDeposit = decisionDeposit;
@@ -41,7 +41,7 @@ export class Track {
     this._minEnactmentPeriod = minEnactmentPeriod;
     this._preparePeriod = preparePeriod;
     this._trackName = trackName;
-    this._trackId = parseInt(trackId);
+    this._trackId = parseInt(trackId, 10);
     this._label = Track.getReadableTrackName(this._trackId);
     this._helpKey = Track.getHelpKeyWithTrackId(this._trackId);
 

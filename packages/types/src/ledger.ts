@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { PolkadotGenericApp } from '@zondax/ledger-substrate';
-import type { AnyData } from './misc';
 import type {
   GenericeResponseAddress,
   ResponseVersion,
 } from '@zondax/ledger-substrate/dist/common';
+import type { AnyData } from './misc';
 
 export type LedgerTask = 'get_address' | 'close_polkadot' | 'ledger_sign';
 
@@ -23,13 +23,13 @@ export interface ILedgerController {
   getAddress: (
     app: PolkadotGenericApp,
     index: number,
-    ss58Prefix: number
+    ss58Prefix: number,
   ) => Promise<GenericeResponseAddress>;
   signPayload: (
     app: PolkadotGenericApp,
     index: number,
     payload: Uint8Array,
-    txMetadata: Uint8Array
+    txMetadata: Uint8Array,
   ) => Promise<LedgerTaskResult>;
   unmount: () => Promise<void>;
 }

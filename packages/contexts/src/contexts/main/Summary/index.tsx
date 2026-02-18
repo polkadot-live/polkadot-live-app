@@ -8,8 +8,8 @@ import type {
   AccountSource,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
-import type { SummaryContextInterface } from '../../../types/main';
 import type { TxStatus } from '@polkadot-live/types/tx';
+import type { SummaryContextInterface } from '../../../types/main';
 
 export const SummaryContext = createContext<
   SummaryContextInterface | undefined
@@ -17,7 +17,7 @@ export const SummaryContext = createContext<
 
 export const useSummary = createSafeContextHook(
   SummaryContext,
-  'SummaryContext'
+  'SummaryContext',
 );
 
 export const SummaryProvider = ({
@@ -29,13 +29,13 @@ export const SummaryProvider = ({
 
   // Addresses fetched from main process.
   const [addressMap, setAddressMap] = useState(
-    new Map<AccountSource, ImportedGenericAccount[]>()
+    new Map<AccountSource, ImportedGenericAccount[]>(),
   );
   const addressMapRef = useRef<typeof addressMap>(addressMap);
 
   // Extrinsic counts.
   const [extrinsicCounts, setExtrinsicCounts] = useState(
-    new Map<TxStatus, number>()
+    new Map<TxStatus, number>(),
   );
   const extrinsicCountsRef = useRef(extrinsicCounts);
 
@@ -46,7 +46,7 @@ export const SummaryProvider = ({
         addressMapRef,
         extrinsicCountsRef,
         setAddressMap,
-        setExtrinsicCounts
+        setExtrinsicCounts,
       );
     };
     fetch();

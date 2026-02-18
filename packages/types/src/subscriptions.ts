@@ -1,10 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { ChainID } from './chains';
-import type { AnyFunction, AnyData } from './misc';
 import type { FlattenedAccountData } from './accounts';
+import type { ChainID } from './chains';
 import type { HelpItemKey } from './help';
+import type { AnyData, AnyFunction } from './misc';
 
 /// Where `default` reads the tasks `enableOsNotifications` field.
 export type NotificationPolicy = 'default' | 'none' | 'one-shot';

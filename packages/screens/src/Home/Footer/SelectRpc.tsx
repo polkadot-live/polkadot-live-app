@@ -1,9 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { hasLightClientSupport } from '@polkadot-live/consts/chains';
 import { useState } from 'react';
 import { SelectRpcWrapper } from './Wrapper';
-import { hasLightClientSupport } from '@polkadot-live/consts/chains';
 import type { NodeEndpoint } from '@polkadot-live/types/apis';
 import type { SelectRpcProps } from './types';
 
@@ -22,9 +22,9 @@ export const SelectRpc = ({
    * Handle RPC change.
    */
   const handleRpcChange = async (
-    event: React.ChangeEvent<HTMLSelectElement>
+    event: React.ChangeEvent<HTMLSelectElement>,
   ) => {
-    setWorkingEndpoint && setWorkingEndpoint(chainId, true);
+    setWorkingEndpoint?.(chainId, true);
     const newEndpoint = event.target.value as NodeEndpoint;
 
     // Exit early if endpoint hasn't changed.
@@ -37,7 +37,7 @@ export const SelectRpc = ({
 
     // Re-connect and subscribe to active tasks.
     await onEndpointChange(chainId, newEndpoint);
-    setWorkingEndpoint && setWorkingEndpoint(chainId, false);
+    setWorkingEndpoint?.(chainId, false);
   };
 
   /**

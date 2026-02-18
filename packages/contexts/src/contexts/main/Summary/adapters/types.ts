@@ -13,8 +13,8 @@ export interface SummaryAdapter {
     addressMapRef: RefObject<Map<AccountSource, ImportedGenericAccount[]>>,
     extrinsicCountsRef: RefObject<Map<TxStatus, number>>,
     setAddressMap: (
-      value: SetStateAction<Map<AccountSource, ImportedGenericAccount[]>>
+      value: SetStateAction<Map<AccountSource, ImportedGenericAccount[]>>,
     ) => void,
-    setExtrinsicCounts: (value: SetStateAction<Map<TxStatus, number>>) => void
+    setExtrinsicCounts: (value: SetStateAction<Map<TxStatus, number>>) => void,
   ) => Promise<void>;
 }

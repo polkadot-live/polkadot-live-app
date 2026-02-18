@@ -1,9 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as UI from '@polkadot-live/ui';
-import * as Accordion from '@radix-ui/react-accordion';
+import { faCircle as faCircleRegular } from '@fortawesome/free-regular-svg-icons';
 import * as FA from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { getEcosystemChainMap } from '@polkadot-live/consts/chains';
 import {
   useApiHealth,
   useChainEvents,
@@ -13,21 +14,16 @@ import {
   useIntervalSubscriptions,
   useSubscriptions,
 } from '@polkadot-live/contexts';
-import {
-  FlexColumn,
-  FlexRow,
-  ScrollWrapper,
-} from '@polkadot-live/styles';
-import { faCircle as faCircleRegular } from '@fortawesome/free-regular-svg-icons';
-import { getEcosystemChainMap } from '@polkadot-live/consts/chains';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState } from 'react';
-import { FooterWrapper, NetworkItem } from './Wrapper';
-import { SelectRpc } from './SelectRpc';
-import { PuffLoader } from 'react-spinners';
+import { FlexColumn, FlexRow, ScrollWrapper } from '@polkadot-live/styles';
+import * as UI from '@polkadot-live/ui';
+import * as Accordion from '@radix-ui/react-accordion';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import type { EcosystemID } from '@polkadot-live/types/chains';
+import { useState } from 'react';
+import { PuffLoader } from 'react-spinners';
+import { SelectRpc } from './SelectRpc';
+import { FooterWrapper, NetworkItem } from './Wrapper';
 import type { FlattenedAPIData } from '@polkadot-live/types/apis';
+import type { EcosystemID } from '@polkadot-live/types/chains';
 
 export const Footer = () => {
   const { useCtx } = useContextProxy();
@@ -99,7 +95,7 @@ export const Footer = () => {
 
   const getApiDataFor = (ecosystemId: EcosystemID) =>
     [...chains.entries()].filter(([chainId]) =>
-      chainId.startsWith(ecosystemId)
+      chainId.startsWith(ecosystemId),
     );
 
   const hasActiveApi = (ecosystemId: EcosystemID): boolean =>
@@ -145,6 +141,7 @@ export const Footer = () => {
           theme={theme}
         >
           <button
+            type="button"
             style={{ paddingRight: 0 }}
             onClick={() => {
               setFooterIsExpanded(false);
@@ -154,7 +151,10 @@ export const Footer = () => {
             <FontAwesomeIcon icon={FA.faPlugCircleExclamation} />
           </button>
         </UI.TooltipRx>
-        <button onClick={() => setFooterIsExpanded(!footerIsExpanded)}>
+        <button
+          type="button"
+          onClick={() => setFooterIsExpanded(!footerIsExpanded)}
+        >
           <FontAwesomeIcon
             icon={footerIsExpanded ? FA.faAngleDown : FA.faAngleUp}
             transform="grow-0"
@@ -269,6 +269,7 @@ export const Footer = () => {
                                         theme={theme}
                                       >
                                         <button
+                                          type="button"
                                           onClick={async () =>
                                             await onConnectClick(chainId)
                                           }
@@ -295,9 +296,10 @@ export const Footer = () => {
                                         theme={theme}
                                       >
                                         <button
+                                          type="button"
                                           onClick={async () =>
                                             await onDisconnectClick(
-                                              apiData.chainId
+                                              apiData.chainId,
                                             )
                                           }
                                           disabled={
@@ -316,11 +318,11 @@ export const Footer = () => {
                                   </FlexRow>
                                 </div>
                               </NetworkItem>
-                            )
+                            ),
                           )}
                         </UI.AccordionContent>
                       </Accordion.Item>
-                    )
+                    ),
                   )}
                 </FlexColumn>
               </Accordion.Root>

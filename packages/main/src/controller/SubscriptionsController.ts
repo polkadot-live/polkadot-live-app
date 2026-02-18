@@ -1,16 +1,16 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { store } from '../main';
 import { Config as ConfigMain } from '../config/main';
 import { OnlineStatusController } from '../controller';
-import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
-import type { ChainID } from '@polkadot-live/types/chains';
+import { store } from '../main';
 import type {
   FlattenedAccountData,
   StoredAccount,
 } from '@polkadot-live/types/accounts';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { IpcTask } from '@polkadot-live/types/communication';
+import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 
 /**
@@ -34,17 +34,17 @@ export class SubscriptionsController {
    * @name process
    * @summary Process a subscription IPC task.
    */
-  static process(task: IpcTask): string | void {
+  static process(task: IpcTask): string | undefined {
     switch (task.action) {
       // Get an account's persisted tasks in serialized form.
       case 'subscriptions:account:getAll': {
         const { address, chainId }: { address: string; chainId: ChainID } =
           task.data.data;
-        return this.get(address, chainId);
+        return SubscriptionsController.get(address, chainId);
       }
       // Get persisted chain subscription tasks.
       case 'subscriptions:chain:getAll': {
-        const ser = this.getChainTasks();
+        const ser = SubscriptionsController.getChainTasks();
         return ser === '[]' ? '' : ser;
       }
       // Update a persisted account subscription task.
@@ -52,17 +52,18 @@ export class SubscriptionsController {
         const account: FlattenedAccountData = JSON.parse(task.data.serAccount);
         const subTask: SubscriptionTask = JSON.parse(task.data.serTask);
         const { address, chain: chainId } = account;
-        this.update(subTask, address, chainId);
+        SubscriptionsController.update(subTask, address, chainId);
         return;
       }
       // Import tasks from a backup text file.
       case 'subscriptions:account:import': {
-        return this.doImport(task);
+        SubscriptionsController.doImport(task);
+        return;
       }
       // Update a persisted chain subscription task.
       case 'subscriptions:chain:update': {
         const { serTask }: { serTask: string } = task.data;
-        this.updateChainTask(JSON.parse(serTask));
+        SubscriptionsController.updateChainTask(JSON.parse(serTask));
         return;
       }
     }
@@ -93,7 +94,7 @@ export class SubscriptionsController {
    * @summary Persist new tasks to store and return them to renderer to process.
    * Receives serialized tasks from an exported backup file.
    */
-  private static doImport(ipcTask: IpcTask): void {
+  private static doImport(ipcTask: IpcTask) {
     const { serialized }: { serialized: string } = ipcTask.data;
     const s_array: [string, string][] = JSON.parse(serialized);
     const s_map = new Map<string, string>(s_array);
@@ -102,12 +103,17 @@ export class SubscriptionsController {
     for (const [key, serTasks] of s_map.entries()) {
       // Clear persisted tasks for an account.
       const [chainId, address] = key.split(':', 2);
-      this.clearAccountTasksInStore(address, chainId as ChainID);
+      SubscriptionsController.clearAccountTasksInStore(
+        address,
+        chainId as ChainID,
+      );
 
       // Persist backed up tasks to store if online.
       if (OnlineStatusController.getStatus()) {
         const received: SubscriptionTask[] = JSON.parse(serTasks);
-        received.forEach((t) => this.update(t, address, t.chainId));
+        received.forEach((t) => {
+          SubscriptionsController.update(t, address, t.chainId);
+        });
       }
     }
   }
@@ -145,12 +151,12 @@ export class SubscriptionsController {
   private static update(
     task: SubscriptionTask,
     address: string,
-    chainId: ChainID
+    chainId: ChainID,
   ) {
-    const ser = this.get(address, task.chainId);
+    const ser = SubscriptionsController.get(address, task.chainId);
     const tasks: SubscriptionTask[] = ser === '' ? [] : JSON.parse(ser);
     const key = ConfigMain.getSubscriptionsStorageKeyFor(address, chainId);
-    this.updateTask(tasks, task, key);
+    SubscriptionsController.updateTask(tasks, task, key);
   }
 
   /**
@@ -159,8 +165,10 @@ export class SubscriptionsController {
    */
   private static updateChainTask(task: SubscriptionTask) {
     const key = ConfigMain.getChainSubscriptionsStorageKey();
-    const tasks: SubscriptionTask[] = JSON.parse(this.getChainTasks());
-    this.updateTask(tasks, task, key);
+    const tasks: SubscriptionTask[] = JSON.parse(
+      SubscriptionsController.getChainTasks(),
+    );
+    SubscriptionsController.updateTask(tasks, task, key);
   }
 
   /**
@@ -169,7 +177,7 @@ export class SubscriptionsController {
    */
   static clearAccountTasksInStore(address: string, chainId: ChainID) {
     (store as Record<string, AnyJson>).delete(
-      ConfigMain.getSubscriptionsStorageKeyFor(address, chainId)
+      ConfigMain.getSubscriptionsStorageKeyFor(address, chainId),
     );
   }
 
@@ -180,9 +188,9 @@ export class SubscriptionsController {
   static updateCachedAccountNameForTasks(
     address: string,
     chainId: ChainID,
-    newName: string
+    newName: string,
   ) {
-    const ser = this.get(address, chainId);
+    const ser = SubscriptionsController.get(address, chainId);
     const parsed: SubscriptionTask[] = ser === '' ? [] : JSON.parse(ser);
 
     if (parsed.length === 0) {
@@ -208,25 +216,26 @@ export class SubscriptionsController {
    */
   private static exists(tasks: SubscriptionTask[], task: SubscriptionTask) {
     return tasks.some(
-      (t) => t.action === task.action && t.chainId === t.chainId
+      (t) => t.action === task.action && t.chainId === task.chainId,
     );
   }
 
   static updateTask(
     tasks: SubscriptionTask[],
     task: SubscriptionTask,
-    key: string
+    key: string,
   ) {
     if (task.status === 'enable') {
       // Remove task from array if it already exists.
-      this.exists(tasks, task) &&
-        (tasks = this.removeTaskFromArray(tasks, task));
+      if (SubscriptionsController.exists(tasks, task)) {
+        tasks = SubscriptionsController.removeTaskFromArray(tasks, task);
+      }
 
       tasks.push(task);
     } else {
       // Otherwise, remove the task.
       tasks = tasks.filter(
-        (t) => !(t.action === task.action && t.chainId === task.chainId)
+        (t) => !(t.action === task.action && t.chainId === task.chainId),
       );
     }
 
@@ -236,10 +245,10 @@ export class SubscriptionsController {
 
   private static removeTaskFromArray(
     tasks: SubscriptionTask[],
-    task: SubscriptionTask
+    task: SubscriptionTask,
   ) {
     return tasks.filter(
-      (t) => !(t.action === task.action && t.chainId === task.chainId)
+      (t) => !(t.action === task.action && t.chainId === task.chainId),
     );
   }
 }

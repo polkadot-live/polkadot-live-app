@@ -1,18 +1,18 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { ChainID } from '@polkadot-live/types/chains';
 import { getAllEventCategories } from '@polkadot-live/consts/chains';
+import type {
+  NominationPoolCommission,
+  NominationPoolRoles,
+} from '@polkadot-live/types/accounts';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   EventAccountData,
   EventCallback,
   EventCategory,
   EventChainData,
 } from '@polkadot-live/types/reporter';
-import type {
-  NominationPoolCommission,
-  NominationPoolRoles,
-} from '@polkadot-live/types/accounts';
 
 /**
  * @name emptyEventCounts
@@ -24,7 +24,7 @@ export const emptyEventCounts = (): Record<EventCategory, number> =>
       acc[c] = 0;
       return acc;
     },
-    {} as Record<EventCategory, number>
+    {} as Record<EventCategory, number>,
   );
 
 /**
@@ -41,7 +41,7 @@ export const getEventChainId = (event: EventCallback): ChainID =>
  */
 export const doRemoveOutdatedEvents = (
   event: EventCallback,
-  all: EventCallback[]
+  all: EventCallback[],
 ): { updated: boolean; events: EventCallback[] } => {
   const { address, chainId } = event.who.data as EventAccountData;
   const { taskAction } = event;
@@ -96,7 +96,7 @@ export const doRemoveOutdatedEvents = (
  */
 export const pushUniqueEvent = (
   event: EventCallback,
-  events: EventCallback[]
+  events: EventCallback[],
 ): { events: EventCallback[]; updated: boolean } => {
   // Initially mark the event to push.
   let push = true;
@@ -181,7 +181,7 @@ export const pushUniqueEvent = (
  */
 const filter_account_balance_free = (
   events: EventCallback[],
-  event: EventCallback
+  event: EventCallback,
 ) => {
   let isUnique = true;
   const aWho = event.who.data as EventAccountData;
@@ -212,7 +212,7 @@ const filter_account_balance_free = (
  */
 const filter_account_balance_frozen = (
   events: EventCallback[],
-  event: EventCallback
+  event: EventCallback,
 ) => {
   let isUnique = true;
   const aWho = event.who.data as EventAccountData;
@@ -243,7 +243,7 @@ const filter_account_balance_frozen = (
  */
 const filter_account_balance_reserved = (
   events: EventCallback[],
-  event: EventCallback
+  event: EventCallback,
 ) => {
   let isUnique = true;
   const aWho = event.who.data as EventAccountData;
@@ -274,7 +274,7 @@ const filter_account_balance_reserved = (
  */
 const filter_account_balance_spendable = (
   events: EventCallback[],
-  event: EventCallback
+  event: EventCallback,
 ) => {
   let isUnique = true;
   const aWho = event.who.data as EventAccountData;
@@ -306,7 +306,7 @@ const filter_account_balance_spendable = (
  */
 const filter_nomination_pool_rewards = (
   events: EventCallback[],
-  event: EventCallback
+  event: EventCallback,
 ) => {
   let isUnique = true;
   const aWho = event.who.data as EventAccountData;
@@ -352,7 +352,7 @@ const filter_nomination_pool_rewards = (
  */
 const filter_nomination_pool_state = (
   events: EventCallback[],
-  event: EventCallback
+  event: EventCallback,
 ) => {
   let isUnique = true;
   const aWho = event.who.data as EventAccountData;
@@ -384,7 +384,7 @@ const filter_nomination_pool_state = (
  */
 const filter_nomination_pool_renamed = (
   events: EventCallback[],
-  event: EventCallback
+  event: EventCallback,
 ): boolean => {
   let isUnique = true;
   const aWho = event.who.data as EventAccountData;
@@ -416,7 +416,7 @@ const filter_nomination_pool_renamed = (
  */
 const filter_nomination_pool_roles = (
   events: EventCallback[],
-  event: EventCallback
+  event: EventCallback,
 ): boolean => {
   let isUnique = true;
   const aWho = event.who.data as EventAccountData;
@@ -451,7 +451,7 @@ const filter_nomination_pool_roles = (
  */
 const filter_nomination_pool_commission = (
   events: EventCallback[],
-  event: EventCallback
+  event: EventCallback,
 ): boolean => {
   let isUnique = true;
   const aWho = event.who.data as EventAccountData;
@@ -486,7 +486,7 @@ const filter_nomination_pool_commission = (
  */
 const filter_nominating_era_rewards = (
   events: EventCallback[],
-  event: EventCallback
+  event: EventCallback,
 ): boolean => {
   let isUnique = true;
   const aWho = event.who.data as EventAccountData;
@@ -519,7 +519,7 @@ const filter_nominating_era_rewards = (
  */
 const filter_nominating_exposure = (
   events: EventCallback[],
-  event: EventCallback
+  event: EventCallback,
 ): boolean => {
   let isUnique = true;
   const aWho = event.who.data as EventAccountData;
@@ -552,7 +552,7 @@ const filter_nominating_exposure = (
  */
 const filter_nominating_commission = (
   events: EventCallback[],
-  event: EventCallback
+  event: EventCallback,
 ): boolean => {
   let isUnique = true;
   const aWho = event.who.data as EventAccountData;
@@ -585,7 +585,7 @@ const filter_nominating_commission = (
  */
 const filter_nominating_nominations = (
   events: EventCallback[],
-  event: EventCallback
+  event: EventCallback,
 ): boolean => {
   let isUnique = true;
   const aWho = event.who.data as EventAccountData;
@@ -618,7 +618,7 @@ const filter_nominating_nominations = (
  */
 const filter_openGov_referendumVotes = (
   events: EventCallback[],
-  event: EventCallback
+  event: EventCallback,
 ): boolean => {
   let isUnique = true;
 
@@ -657,7 +657,7 @@ const filter_openGov_referendumVotes = (
  */
 const filter_openGov_decisionPeriod = (
   events: EventCallback[],
-  event: EventCallback
+  event: EventCallback,
 ): boolean => {
   let isUnique = true;
   const aData: { referendumId: number; formattedTime: string } = event.data;
@@ -689,7 +689,7 @@ const filter_openGov_decisionPeriod = (
  */
 const filter_openGov_referendumThresholds = (
   events: EventCallback[],
-  event: EventCallback
+  event: EventCallback,
 ): boolean => {
   let isUnique = true;
 

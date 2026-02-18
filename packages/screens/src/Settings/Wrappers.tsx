@@ -1,9 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { mixinHelpIcon } from '@polkadot-live/styles';
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
-import { mixinHelpIcon } from '@polkadot-live/styles';
 
 export const SettingWrapper = styled(motion.div)`
   position: relative;

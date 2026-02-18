@@ -10,6 +10,6 @@ export interface ImportHandlerAdapter {
   persist: (genericAccount: ImportedGenericAccount) => Promise<void>;
   postToMain: (
     genericAccount: ImportedGenericAccount,
-    encodedAccount: EncodedAccount
+    encodedAccount: EncodedAccount,
   ) => void;
 }

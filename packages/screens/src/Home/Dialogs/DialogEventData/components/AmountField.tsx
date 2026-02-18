@@ -1,11 +1,11 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { FieldLayout } from './FieldLayout';
-import { useEvents } from '@polkadot-live/contexts';
 import { chainCurrency, chainUnits } from '@polkadot-live/consts/chains';
+import { useEvents } from '@polkadot-live/contexts';
 import { planckToUnit } from '@w3ux/utils';
 import { truncateDecimalPlaces } from '../../../../Action/Helpers';
+import { FieldLayout } from './FieldLayout';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { FieldProps } from './types';
 

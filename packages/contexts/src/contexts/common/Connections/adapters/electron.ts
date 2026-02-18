@@ -1,12 +1,12 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ConfigRenderer } from '@polkadot-live/core';
 import { initSharedState } from '@polkadot-live/consts/sharedState';
+import { ConfigRenderer } from '@polkadot-live/core';
 import { setStateWithRef } from '@w3ux/utils';
 import type { AnyData, SyncID, TabData } from '@polkadot-live/types';
-import type { ConnectionsAdapter } from './types';
 import type { IpcRendererEvent } from 'electron';
+import type { ConnectionsAdapter } from './types';
 
 export const electronAdapter: ConnectionsAdapter = {
   copyToClipboard: async (text) => await window.myAPI.copyToClipboard(text),
@@ -26,11 +26,11 @@ export const electronAdapter: ConnectionsAdapter = {
     window.myAPI.syncSharedState(
       (
         _: IpcRendererEvent,
-        { syncId, state }: { syncId: SyncID; state: string | boolean }
+        { syncId, state }: { syncId: SyncID; state: string | boolean },
       ) => {
         const map = new Map(cacheRef.current).set(syncId, state as boolean);
         setStateWithRef(map, setCache, cacheRef);
-      }
+      },
     );
     return null;
   },

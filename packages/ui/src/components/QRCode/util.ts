@@ -25,7 +25,7 @@ export const createSignPayload = (
   address: string,
   cmd: number,
   payload: Uint8Array,
-  genesisHash: string | Uint8Array
+  genesisHash: string | Uint8Array,
 ): Uint8Array => {
   try {
     const isUint8Array = (data: AnyData): data is Uint8Array =>
@@ -43,7 +43,7 @@ export const createSignPayload = (
       new Uint8Array([cmd]),
       decodeAddress(address),
       u8Payload,
-      u8GenesisHash
+      u8GenesisHash,
     );
   } catch (err) {
     console.error(err);
@@ -52,7 +52,7 @@ export const createSignPayload = (
 };
 
 export const createImgSize = (
-  size?: string | number
+  size?: string | number,
 ): Record<string, string> => {
   if (!size) {
     return {

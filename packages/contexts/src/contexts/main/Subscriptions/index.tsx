@@ -2,19 +2,19 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createContext, useEffect, useState } from 'react';
-import { useAddresses } from '../Addresses';
 import { createSafeContextHook, renderToast } from '../../../utils';
+import { useAddresses } from '../Addresses';
 import { useManage } from '../Manage';
-import type { ChainID } from '@polkadot-live/types/chains';
+import { getSubscriptionsAdapter } from './adapters';
 import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
-import type { ReactNode } from 'react';
-import type { SubscriptionsContextInterface } from '../../../types/main';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   SubscriptionTask,
   SubscriptionTaskType,
   TaskCategory,
 } from '@polkadot-live/types/subscriptions';
-import { getSubscriptionsAdapter } from './adapters';
+import type { ReactNode } from 'react';
+import type { SubscriptionsContextInterface } from '../../../types/main';
 
 export const SubscriptionsContext = createContext<
   SubscriptionsContextInterface | undefined
@@ -22,7 +22,7 @@ export const SubscriptionsContext = createContext<
 
 export const useSubscriptions = createSafeContextHook(
   SubscriptionsContext,
-  'SubscriptionsContext'
+  'SubscriptionsContext',
 );
 
 export const SubscriptionsProvider = ({
@@ -45,7 +45,7 @@ export const SubscriptionsProvider = ({
   >(new Map());
 
   const [activeChainMap, setActiveChainMap] = useState<Map<ChainID, number>>(
-    new Map()
+    new Map(),
   );
 
   const accountHasSubs = (account: FlattenedAccountData) => {
@@ -61,7 +61,7 @@ export const SubscriptionsProvider = ({
   const chainHasSubscriptions = (chainId: ChainID) => {
     const chainActive = Boolean(activeChainMap.get(chainId));
     const debugActive = (chainSubscriptionsState.get(chainId) ?? []).some(
-      (s) => s.status === 'enable'
+      (s) => s.status === 'enable',
     );
     return chainActive || debugActive;
   };
@@ -75,7 +75,7 @@ export const SubscriptionsProvider = ({
     setAccountSubscriptionsState((prev) => {
       prev.set(
         key,
-        tasks.map((t) => ({ ...t, account: { ...t.account!, name: newName } }))
+        tasks.map((t) => ({ ...t, account: { ...t.account!, name: newName } })),
       );
       return prev;
     });
@@ -100,7 +100,7 @@ export const SubscriptionsProvider = ({
       isOn,
       renderedSubscriptions,
       getTaskType,
-      setRenderedSubscriptions
+      setRenderedSubscriptions,
     );
   };
 
@@ -110,14 +110,14 @@ export const SubscriptionsProvider = ({
       task,
       getTaskType(task),
       renderedSubscriptions,
-      setRenderedSubscriptions
+      setRenderedSubscriptions,
     );
   };
 
   // Handle task update on notification checkbox click.
   const onNotificationToggle = async (
     checked: boolean,
-    task: SubscriptionTask
+    task: SubscriptionTask,
   ) => {
     adapter.toggleTaskNotifications(task, checked);
   };
@@ -126,7 +126,7 @@ export const SubscriptionsProvider = ({
   const onOneShot = async (
     task: SubscriptionTask,
     setOneShotProcessing: React.Dispatch<React.SetStateAction<boolean>>,
-    nativeChecked: boolean
+    nativeChecked: boolean,
   ) => {
     setOneShotProcessing(true);
     task.enableOsNotifications = nativeChecked;
@@ -163,10 +163,10 @@ export const SubscriptionsProvider = ({
       setAccountSubscriptionsState,
       setChainSubscriptionsState,
       updateAccountNameInTasks,
-      setActiveChainMap
+      setActiveChainMap,
     );
     return () => {
-      removeListener && removeListener();
+      removeListener?.();
     };
   }, []);
 

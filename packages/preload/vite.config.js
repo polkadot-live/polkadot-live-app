@@ -1,10 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { join } from 'node:path';
+import { defineConfig } from 'vite';
 import { node } from '../../.electron-vendors.cache.json';
 import { external } from '../../vite.base.config';
-import { defineConfig } from 'vite';
-import { join } from 'path';
 
 const PACKAGE_ROOT = __dirname;
 const PROJECT_ROOT = join(PACKAGE_ROOT, '../..');

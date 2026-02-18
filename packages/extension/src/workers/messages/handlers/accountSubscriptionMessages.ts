@@ -14,7 +14,7 @@ import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 
 export const handleAccountSubscriptionMessage = (
   message: AnyData,
-  sendResponse: (response?: AnyData) => void
+  sendResponse: (response?: AnyData) => void,
 ): boolean => {
   switch (message.task) {
     case 'update': {
@@ -26,8 +26,8 @@ export const handleAccountSubscriptionMessage = (
       } else {
         updateAccountSubscription(account, task).then(() =>
           subscribeAccountTask(task).then(() =>
-            setAccountSubscriptionsState().then(() => sendResponse(true))
-          )
+            setAccountSubscriptionsState().then(() => sendResponse(true)),
+          ),
         );
       }
       return true;
@@ -35,7 +35,7 @@ export const handleAccountSubscriptionMessage = (
     case 'updateMany': {
       const { tasks }: { tasks: SubscriptionTask[] } = message.payload;
       updateAccountSubscriptions(tasks).then(() =>
-        setAccountSubscriptionsState().then(() => sendResponse(true))
+        setAccountSubscriptionsState().then(() => sendResponse(true)),
       );
       return true;
     }

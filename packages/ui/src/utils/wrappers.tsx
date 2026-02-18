@@ -1,10 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import styled from 'styled-components';
-import { ButtonMonoInvert } from '../kits/buttons';
 import { faLink } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
+import styled from 'styled-components';
+import { ButtonMonoInvert } from '../kits/buttons';
 
 /**
  * @name FadeInWrapper

@@ -2,15 +2,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { QueryMultiWrapper } from '../model';
-import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   AccountBalance,
+  AccountJson,
+  AccountNominatingData,
+  AccountNominationPoolData,
   AccountSource,
   FlattenedAccountData,
-  AccountNominationPoolData,
-  AccountNominatingData,
-  AccountJson,
 } from '@polkadot-live/types/accounts';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 /**
  * Creates an account.
@@ -37,7 +37,7 @@ export class Account {
     chain: ChainID,
     source: AccountSource,
     address: string,
-    name: string
+    name: string,
   ) {
     this._source = source;
     this._address = address;

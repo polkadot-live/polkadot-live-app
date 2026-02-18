@@ -1,13 +1,13 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { hideDockIcon, showDockIcon } from '../utils/SystemUtils';
-import { store } from '../main';
-import { WindowsController } from '../controller';
 import { getDefaultSettings } from '@polkadot-live/consts/settings';
+import { WindowsController } from '../controller';
+import { store } from '../main';
+import { hideDockIcon, showDockIcon } from '../utils/SystemUtils';
 import * as WindowUtils from '../utils/WindowUtils';
-import type { AnyData } from '@polkadot-live/types/misc';
 import type { IpcTask } from '@polkadot-live/types/communication';
+import type { AnyData } from '@polkadot-live/types/misc';
 import type { SettingKey } from '@polkadot-live/types/settings';
 
 export class SettingsController {
@@ -61,8 +61,8 @@ export class SettingsController {
     switch (task.action) {
       case 'settings:handle': {
         const { key, val }: { key: SettingKey; val: boolean } = task.data;
-        this.set(key, val);
-        this.handle(key, val);
+        SettingsController.set(key, val);
+        SettingsController.handle(key, val);
         break;
       }
     }
@@ -95,12 +95,16 @@ export class SettingsController {
       return;
     }
 
-    const flag = Boolean(this.settingsCache.get('setting:show-all-workspaces'));
+    const flag = Boolean(
+      SettingsController.settingsCache.get('setting:show-all-workspaces'),
+    );
     WindowsController.setVisibleOnAllWorkspaces(flag);
 
     // Re-hide dock if we're on macOS.
     // Electron will show the dock icon after calling the workspaces API.
-    const hideDock = Boolean(this.settingsCache.get('setting:hide-dock-icon'));
+    const hideDock = Boolean(
+      SettingsController.settingsCache.get('setting:hide-dock-icon'),
+    );
     hideDock && hideDockIcon();
   }
 }

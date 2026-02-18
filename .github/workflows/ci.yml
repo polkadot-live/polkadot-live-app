@@ -52,4 +52,4 @@ jobs:
       - run: yarn build:contexts
       - run: yarn build:ui
       - run: yarn build:screens
-      - run: yarn lint
+      - run: yarn lint:check

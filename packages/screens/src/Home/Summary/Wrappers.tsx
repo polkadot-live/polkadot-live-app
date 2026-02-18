@@ -1,13 +1,13 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useHelp } from '@polkadot-live/contexts';
 import { faCaretRight, faInfo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useHelp } from '@polkadot-live/contexts';
 import { FlexRow } from '@polkadot-live/styles';
 import { ShiftingMeter, StatItemWrapper } from '@polkadot-live/ui';
-import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import styled from 'styled-components';
 import type { HelpItemKey } from '@polkadot-live/types/help';
 
 export const HoverGradient = styled(motion.span).attrs<{
@@ -109,9 +109,13 @@ export const StatItem = ({
       <div>
         <h3>{title}</h3>
         {helpKey && (
-          <div className="help" onClick={() => openHelp(helpKey)}>
+          <button
+            type="button"
+            className="help"
+            onClick={() => openHelp(helpKey)}
+          >
             <FontAwesomeIcon icon={faInfo} />
-          </div>
+          </button>
         )}
       </div>
       <span>

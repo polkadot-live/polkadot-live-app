@@ -5,12 +5,12 @@ import { getLedgerAppName } from '@polkadot-live/consts/chains';
 import { handleLedgerTaskError } from '@polkadot-live/core';
 import { supportedApps } from '@zondax/ledger-substrate';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { LedgerFetchAddressResult } from './types';
 import type {
   ILedgerController,
   LedgerResult,
   LedgerTaskResponse,
 } from '@polkadot-live/types/ledger';
+import type { LedgerFetchAddressResult } from './types';
 
 /**
  * @name getLedgerAddresses
@@ -19,14 +19,14 @@ import type {
 export const getLedgerAddresses = async (
   indices: number[],
   chainId: ChainID,
-  controller: ILedgerController
+  controller: ILedgerController,
 ): Promise<LedgerFetchAddressResult> => {
   try {
     const { app, deviceModel } = await controller.initialize();
     const { id, productName } = deviceModel;
     const appName = getLedgerAppName(chainId as ChainID);
     const { ss58_addr_type: ss58Prefix } = supportedApps.find(
-      (a) => a.name === appName
+      (a) => a.name === appName,
     )!;
 
     const results: LedgerResult[] = [];
@@ -49,7 +49,7 @@ export const getLedgerAddresses = async (
  */
 export const getLedgerTaskResponse = (
   result: LedgerFetchAddressResult,
-  accountIndices: number[]
+  accountIndices: number[],
 ): LedgerTaskResponse => {
   if (result.success) {
     return {

@@ -4,13 +4,12 @@
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { useAnimation } from 'framer-motion';
 import { useEffect } from 'react';
-import { ActiveDefinition } from './Items/ActiveDefinition';
-
 /** Kits */
 import { ButtonPrimaryInvert } from '../../kits/buttons';
 import { CanvasContainer } from '../../kits/overlay/structure/CanvasContainer';
 import { CanvasScroll } from '../../kits/overlay/structure/CanvasScroll';
 import { ModalContent } from '../../kits/overlay/structure/ModalContent';
+import { ActiveDefinition } from './Items/ActiveDefinition';
 import type { HelpProps } from './types';
 
 export const Help = ({

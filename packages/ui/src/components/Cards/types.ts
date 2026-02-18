@@ -1,9 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AnyFunction } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { HelpItemKey } from '@polkadot-live/types/help';
+import type { AnyFunction } from '@polkadot-live/types/misc';
 
 export interface NavCardBaseProps {
   // TItle of the card.

@@ -11,7 +11,7 @@ import type {
 
 export const handleEventMessage = (
   message: AnyData,
-  sendResponse: (response?: AnyData) => void
+  sendResponse: (response?: AnyData) => void,
 ): boolean => {
   switch (message.task) {
     case 'clearAll': {

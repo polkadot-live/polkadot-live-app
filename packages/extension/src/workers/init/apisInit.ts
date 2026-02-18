@@ -3,8 +3,8 @@
 
 import { APIsController } from '@polkadot-live/core';
 import { sendChromeMessage } from '../utils';
-import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAPIData } from '@polkadot-live/types/apis';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 export const initAPIs = async () => {
   await APIsController.initialize('browser');

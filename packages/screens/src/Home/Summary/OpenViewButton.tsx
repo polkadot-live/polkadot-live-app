@@ -1,11 +1,11 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useConnections } from '@polkadot-live/contexts';
-import { useState } from 'react';
-import { AnimatePresence } from 'framer-motion';
-import { FlexColumn } from '@polkadot-live/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useConnections } from '@polkadot-live/contexts';
+import { FlexColumn } from '@polkadot-live/styles';
+import { AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
 import { HoverGradient, OpenViewButtonWrapper } from './Wrappers';
 import type { OpenViewButtonProps } from './types';
 

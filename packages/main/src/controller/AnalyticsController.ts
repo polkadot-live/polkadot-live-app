@@ -14,14 +14,15 @@ export class AnalyticsController {
    */
   static initialize(agent: string, windowId: string, language: string) {
     if (process.env.DISABLE_ANALYTICS !== undefined) {
-      this.enabled = false;
+      AnalyticsController.enabled = false;
       return;
     }
 
-    if (!this.umami) {
-      this.umami = new Umami(agent, language);
-      this.enabled = true;
-      windowId !== 'tabs' && this.umami.view(`/${windowId}`, { data: {} });
+    if (!AnalyticsController.umami) {
+      AnalyticsController.umami = new Umami(agent, language);
+      AnalyticsController.enabled = true;
+      windowId !== 'tabs' &&
+        AnalyticsController.umami.view(`/${windowId}`, { data: {} });
     }
   }
 
@@ -30,10 +31,10 @@ export class AnalyticsController {
    * @summary Send an umami tracking event.
    */
   static async track(event: string, data?: AnyData) {
-    if (!this.enabled || !this.umami) {
+    if (!AnalyticsController.enabled || !AnalyticsController.umami) {
       return;
     }
 
-    this.umami.event(event, { data: data ? data : {} });
+    AnalyticsController.umami.event(event, { data: data ? data : {} });
   }
 }

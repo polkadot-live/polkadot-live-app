@@ -1,18 +1,18 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { getSupportedSources } from '@polkadot-live/consts/chains';
+import { setStateWithRef } from '@w3ux/utils';
 import { createContext, useEffect, useRef, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
 import { useImportAddresses } from '../Addresses';
 import { useRemoveHandler } from '../RemoveHandler';
 import { getAccountStatusesAdapter } from './adapters';
-import { getSupportedSources } from '@polkadot-live/consts/chains';
-import { setStateWithRef } from '@w3ux/utils';
-import type { AccountStatusesContextInterface } from '../../../types/import';
 import type {
   AccountSource,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
+import type { AccountStatusesContextInterface } from '../../../types/import';
 
 export const AccountStatusesContext = createContext<
   AccountStatusesContextInterface | undefined
@@ -29,7 +29,7 @@ export const AccountStatusesContext = createContext<
  */
 export const useAccountStatuses = createSafeContextHook(
   AccountStatusesContext,
-  'AccountStatusesContext'
+  'AccountStatusesContext',
 );
 
 export const AccountStatusesProvider = ({
@@ -45,7 +45,7 @@ export const AccountStatusesProvider = ({
    * Processing status map.
    */
   const [statusMap, setStatusMap] = useState(
-    new Map<AccountSource, Map<string, boolean>>()
+    new Map<AccountSource, Map<string, boolean>>(),
   );
   const statusMapRef = useRef(statusMap);
 
@@ -69,10 +69,10 @@ export const AccountStatusesProvider = ({
     // Set up message listener for extension.
     const removeListener = adapter.listenOnMount(
       setStatusForAccount,
-      handleRemoveAddress
+      handleRemoveAddress,
     );
     return () => {
-      removeListener && removeListener();
+      removeListener?.();
     };
   }, []);
 
@@ -82,7 +82,7 @@ export const AccountStatusesProvider = ({
   const setStatusForAccount = (
     key: string,
     source: AccountSource,
-    status: boolean
+    status: boolean,
   ) => {
     const sourceMap = statusMap.get(source) || new Map<string, boolean>();
     const updated = new Map(sourceMap).set(key, status);

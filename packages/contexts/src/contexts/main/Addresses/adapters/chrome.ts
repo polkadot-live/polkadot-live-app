@@ -2,20 +2,20 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { setStateWithRef } from '@w3ux/utils';
-import type { AddressesAdapter } from './types';
-import type { ChainID } from '@polkadot-live/types/chains';
 import type { AnyData, FlattenedAccountData } from '@polkadot-live/types';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { AddressesAdapter } from './types';
 
 export const chromeAdapter: AddressesAdapter = {
   importAddress: async (
-    accountName,
+    _accountName,
     fromBackup,
     addressesRef,
-    setAddresses
+    setAddresses,
   ) => {
     const msg = { type: 'managedAccounts', task: 'getAll' };
     const arr: [ChainID, FlattenedAccountData[]][] = JSON.parse(
-      (await chrome.runtime.sendMessage(msg)) as string
+      (await chrome.runtime.sendMessage(msg)) as string,
     );
     const map = new Map<ChainID, FlattenedAccountData[]>(arr);
     setStateWithRef(map, setAddresses, addressesRef);

@@ -1,10 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { NavCard } from '../src/components';
 import userEvent from '@testing-library/user-event';
+import { describe, expect, it, vi } from 'vitest';
+import { NavCard } from '../src/components';
 
 describe('NavCard', () => {
   const containerClass = 'methodCard';
@@ -17,7 +17,7 @@ describe('NavCard', () => {
         openHelp={vi.fn()}
         childrenLogo={<span>Logo</span>}
         childrenSubtitle={<a href="url1">Subtitle</a>}
-      />
+      />,
     );
 
   it('should render the provided title text', () => {
@@ -55,7 +55,7 @@ describe('NavCard', () => {
         helpKey="help:import:ledger"
         childrenLogo={<span>Logo</span>}
         childrenSubtitle={<a href="url1">Subtitle</a>}
-      />
+      />,
     );
 
     const helpIcon = screen.getByTestId('help-icon');
@@ -77,7 +77,7 @@ describe('NavCard', () => {
         helpKey="help:import:ledger"
         childrenLogo={<span>Logo</span>}
         childrenSubtitle={<a href="url1">Subtitle</a>}
-      />
+      />,
     );
 
     const cardElement = container.getElementsByClassName(containerClass)[0];

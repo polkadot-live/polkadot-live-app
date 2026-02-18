@@ -1,9 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { useImportAddresses } from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
 import { Import } from './Import';
-import { useImportAddresses } from '@polkadot-live/contexts';
 import { Manage } from './Manage';
 
 interface ImportWalletConnectProps {
@@ -17,7 +17,7 @@ export const ImportWalletConnect = ({
   const genericAccounts = getAccounts('wallet-connect');
 
   const [showImportUi, setShowImportUi] = useState<boolean>(
-    genericAccounts.length === 0
+    genericAccounts.length === 0,
   );
 
   /**

@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import { useConnections, useSubscriptions } from '@polkadot-live/contexts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useConnections, useSubscriptions } from '@polkadot-live/contexts';
 import { TooltipRx } from '@polkadot-live/ui';
 import type { OneShotSwitchProps } from './types';
 

@@ -18,7 +18,7 @@ import type {
 
 export const importAddressData = async (
   contents: string,
-  isOnline: boolean
+  isOnline: boolean,
 ) => {
   const serAddresses = getFromBackupFile('addresses', contents);
   if (!serAddresses) {

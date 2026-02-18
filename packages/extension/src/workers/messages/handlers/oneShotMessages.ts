@@ -10,7 +10,7 @@ import type {
 
 export const handleOneShotMessage = (
   message: AnyData,
-  sendResponse: (response?: AnyData) => void
+  sendResponse: (response?: AnyData) => void,
 ): boolean => {
   switch (message.task) {
     case 'execute': {
@@ -21,7 +21,7 @@ export const handleOneShotMessage = (
     case 'executeInterval': {
       const { task }: { task: IntervalSubscription } = message.payload;
       executeIntervaledOneShot(task, 'one-shot').then((result) =>
-        sendResponse(result)
+        sendResponse(result),
       );
       return true;
     }

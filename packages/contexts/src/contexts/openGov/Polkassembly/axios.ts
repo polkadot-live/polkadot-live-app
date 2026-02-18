@@ -24,7 +24,7 @@ export class AxiosPool {
 
   /// Accessors
   static get api(): AxiosInstance {
-    return this._axiosApi;
+    return AxiosPool._axiosApi;
   }
 
   /// Initialise
@@ -32,29 +32,29 @@ export class AxiosPool {
     console.log('>> Initialise axios pool');
 
     // Axios request interceptor.
-    this._axiosApi.interceptors.request.use(
+    AxiosPool._axiosApi.interceptors.request.use(
       (config) =>
         new Promise((resolve) => {
           const interval = setInterval(() => {
-            if (this._pending < this.MAX_REQUEST_COUNT) {
-              this._pending++;
+            if (AxiosPool._pending < AxiosPool.MAX_REQUEST_COUNT) {
+              AxiosPool._pending++;
               clearInterval(interval);
               resolve(config);
             }
-          }, this.INTERVAL_MS);
-        })
+          }, AxiosPool.INTERVAL_MS);
+        }),
     );
 
     // Axios response interceptor.
-    this._axiosApi.interceptors.response.use(
+    AxiosPool._axiosApi.interceptors.response.use(
       (response) => {
-        this._pending = Math.max(0, this._pending - 1);
+        AxiosPool._pending = Math.max(0, AxiosPool._pending - 1);
         return Promise.resolve(response);
       },
       (error) => {
-        this._pending = Math.max(0, this._pending - 1);
+        AxiosPool._pending = Math.max(0, AxiosPool._pending - 1);
         return Promise.reject(error);
-      }
+      },
     );
   }
 }

@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { DbController } from '../../controllers';
 import { ExtrinsicsController } from '@polkadot-live/core';
+import { DbController } from '../../controllers';
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 
 export const handlePersistExtrinsic = async (info: ExtrinsicInfo) => {

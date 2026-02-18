@@ -1,9 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type React from 'react';
 import type { HexString } from '@dedot/utils';
 import type { Html5Qrcode } from 'html5-qrcode';
+import type React from 'react';
 
 export interface Html5QrScannerProps {
   fps: number;

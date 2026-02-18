@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { ChainID } from '@polkadot-live/types/chains';
 import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   SubscriptionTask,
   SubscriptionTaskType,
@@ -19,11 +19,11 @@ export interface SubscriptionsContextInterface {
   onOneShot: (
     task: SubscriptionTask,
     setOneShotProcessing: React.Dispatch<React.SetStateAction<boolean>>,
-    nativeChecked: boolean
+    nativeChecked: boolean,
   ) => Promise<void>;
   onNotificationToggle: (
     checked: boolean,
-    task: SubscriptionTask
+    task: SubscriptionTask,
   ) => Promise<void>;
   updateAccountNameInTasks: (key: string, newName: string) => void;
   handleQueuedToggle: (task: SubscriptionTask) => Promise<void>;

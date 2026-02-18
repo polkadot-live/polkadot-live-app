@@ -6,7 +6,7 @@ import type { LedgerResponse } from '@polkadot-live/types/ledger';
 // Formats a title and subtitle depending on the Ledger code received.
 export const getDisplayFromLedgerCode = (
   statusCode: string,
-  inStatusBar = false
+  inStatusBar = false,
 ) => {
   let title;
   let subtitle = null;
@@ -54,7 +54,7 @@ export const getDisplayFromLedgerCode = (
 // `DeviceNotConnected` error returned by other tasks.
 export const determineStatusFromCode = (
   response: LedgerResponse | null,
-  inStatusBar: boolean
+  inStatusBar: boolean,
 ) => {
   if (!response) {
     return getDisplayFromLedgerCode('', inStatusBar);

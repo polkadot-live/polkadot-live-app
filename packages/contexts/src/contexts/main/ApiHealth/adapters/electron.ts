@@ -41,7 +41,7 @@ export const electronAdapter: ApiHealthAdapter = {
 
       // Run tasks sequentially.
       const results = await runSequential<boolean>(
-        tasks.map((task) => () => withTimeout(task(), ms))
+        tasks.map((task) => () => withTimeout(task(), ms)),
       );
 
       // Reset API if any task timed out.

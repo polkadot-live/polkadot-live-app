@@ -11,12 +11,12 @@ import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 
 export const handleIntervalMessage = (
   message: AnyData,
-  sendResponse: (response?: AnyData) => void
+  sendResponse: (response?: AnyData) => void,
 ): boolean => {
   switch (message.task) {
     case 'getAll': {
       handleGetAllIntervalTasks().then((result: IntervalSubscription[]) =>
-        sendResponse(result)
+        sendResponse(result),
       );
       return true;
     }
@@ -57,7 +57,7 @@ export const handleIntervalMessage = (
     case 'update': {
       const { task }: { task: IntervalSubscription } = message.payload;
       handleUpdateIntervalSubscription(task).then(() =>
-        IntervalsController.updateSubscription(task)
+        IntervalsController.updateSubscription(task),
       );
       return false;
     }

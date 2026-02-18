@@ -1,18 +1,18 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ButtonMonoInvert, ButtonPrimary } from '@polkadot-live/ui';
+import { faAngleLeft, faQrcode } from '@fortawesome/free-solid-svg-icons';
 import {
   useImportAddresses,
   useImportHandler,
   useOverlay,
 } from '@polkadot-live/contexts';
-import { ErrorBoundary } from 'react-error-boundary';
-import { faAngleLeft, faQrcode } from '@fortawesome/free-solid-svg-icons';
-import { Reader } from './Reader';
-import { SplashWrapper } from '../Wrappers';
 import { FlexRow } from '@polkadot-live/styles';
+import { ButtonMonoInvert, ButtonPrimary } from '@polkadot-live/ui';
 import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { SplashWrapper } from '../Wrappers';
+import { Reader } from './Reader';
 import type { VaultSplashProps } from './types';
 
 export const Splash = ({ setSection }: VaultSplashProps) => {
@@ -55,7 +55,7 @@ export const Splash = ({ setSection }: VaultSplashProps) => {
                       setOverlayStatus={setStatus}
                     />
                   </ErrorBoundary>,
-                  'small'
+                  'small',
                 );
               }}
             />

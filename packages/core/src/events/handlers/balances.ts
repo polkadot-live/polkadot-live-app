@@ -3,18 +3,18 @@
 
 import { getSs58Prefix } from '@polkadot-live/consts/chains';
 import { encodeRecord } from '@polkadot-live/encoder';
-import { getBalanceText } from '../../library';
 import { handleEvent } from '../../callbacks/utils';
+import { getBalanceText } from '../../library';
 import { makeChainEvent, notifyTitle } from './utils';
-import type { ChainID } from '@polkadot-live/types/chains';
 import type { EventCallback, PalletBalancesEvent } from '@polkadot-live/types';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { WhoMeta } from '../types';
 
 export const handleBalancesEvent = (
   chainId: ChainID,
   osNotify: boolean,
   palletEvent: PalletBalancesEvent,
-  whoMeta?: WhoMeta
+  whoMeta?: WhoMeta,
 ) => {
   try {
     handleEvent({
@@ -32,7 +32,7 @@ export const handleBalancesEvent = (
 
 export const getBalancesPalletScopedAccountsFromEvent = (
   chainId: ChainID,
-  palletEvent: PalletBalancesEvent
+  palletEvent: PalletBalancesEvent,
 ): string[] => {
   const { name: eventName, data: miscData } = palletEvent;
   const ss58Prefix = getSs58Prefix(chainId);
@@ -65,7 +65,7 @@ export const getBalancesPalletScopedAccountsFromEvent = (
 const getBalancesNotification = (
   chainId: ChainID,
   palletEvent: PalletBalancesEvent,
-  whoMeta?: WhoMeta
+  whoMeta?: WhoMeta,
 ) => {
   const { name: eventName, data: miscData } = palletEvent;
 
@@ -176,7 +176,7 @@ const getBalancesNotification = (
 const getBalancesChainEvent = (
   chainId: ChainID,
   palletEvent: PalletBalancesEvent,
-  whoMeta?: WhoMeta
+  whoMeta?: WhoMeta,
 ): EventCallback => {
   const { name: eventName, data: miscData } = palletEvent;
   const ev = makeChainEvent({ chainId, category: 'Balances' }, whoMeta);

@@ -2,17 +2,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import { useEffect, useState, memo, useRef } from 'react';
-import { useConnections, useEvents } from '@polkadot-live/contexts';
-import { FlexColumn, FlexRow, MenuButton } from '@polkadot-live/styles';
-import { AnimatePresence } from 'framer-motion';
-import { EventItem } from './Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useConnections, useEvents } from '@polkadot-live/contexts';
 import { getEventChainId, renderTimeAgo } from '@polkadot-live/core';
-import { ellipsisFn } from '@w3ux/utils';
+import { FlexColumn, FlexRow, MenuButton } from '@polkadot-live/styles';
 import { Identicon, TooltipRx } from '@polkadot-live/ui';
 import { DividerVerticalIcon } from '@radix-ui/react-icons';
+import { ellipsisFn } from '@w3ux/utils';
+import { AnimatePresence } from 'framer-motion';
+import { memo, useEffect, useRef, useState } from 'react';
 import { ActionsDropdown } from './Dropdowns';
+import { EventItem } from './Wrappers';
 import type { EventAccountData } from '@polkadot-live/types/reporter';
 import type { ItemProps } from './types';
 
@@ -157,12 +157,13 @@ export const Item = memo(function Item({ event }: ItemProps) {
                     </div>
                   </TooltipRx>
 
-                  <div
+                  <button
+                    type="button"
                     className="DismissBtn"
                     onClick={async () => await handleDismissEvent()}
                   >
                     <FontAwesomeIcon icon={FA.faTimes} transform={'grow-2'} />
-                  </div>
+                  </button>
                 </FlexRow>
               </FlexRow>
 

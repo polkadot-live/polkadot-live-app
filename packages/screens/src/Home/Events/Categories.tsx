@@ -1,15 +1,15 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Accordion from '@radix-ui/react-accordion';
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import * as UI from '@polkadot-live/ui';
-import * as Wrappers from '@polkadot-live/styles';
-import { useState } from 'react';
-import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEvents } from '@polkadot-live/contexts';
 import { getAllEventCategories } from '@polkadot-live/consts/chains';
+import { useEvents } from '@polkadot-live/contexts';
+import * as Wrappers from '@polkadot-live/styles';
+import * as UI from '@polkadot-live/ui';
+import * as Accordion from '@radix-ui/react-accordion';
+import { ChevronDownIcon } from '@radix-ui/react-icons';
+import { useState } from 'react';
 import type { EventCategory } from '@polkadot-live/types';
 import type { CategoriesProps } from './types';
 

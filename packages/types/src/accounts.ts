@@ -1,12 +1,11 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { ChainID } from './chains';
-
-import type { PalletStakingAsyncNominations as PolkadotAHPalletStakingAsyncNominations } from '@dedot/chaintypes/polkadot-asset-hub';
 import type { PalletStakingAsyncNominations as KusamaAHPalletStakingAsyncNominations } from '@dedot/chaintypes/kusama-asset-hub';
 import type { PalletStakingAsyncNominations as PaseoAHPalletStakingAsyncNominations } from '@dedot/chaintypes/paseo-asset-hub';
+import type { PalletStakingAsyncNominations as PolkadotAHPalletStakingAsyncNominations } from '@dedot/chaintypes/polkadot-asset-hub';
 import type { PalletStakingAsyncNominations as WestendAHPalletStakingAsyncNominations } from '@dedot/chaintypes/westend-asset-hub';
+import type { ChainID } from './chains';
 
 export type AccountNominationsData =
   | PolkadotAHPalletStakingAsyncNominations

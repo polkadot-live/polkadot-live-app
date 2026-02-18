@@ -9,7 +9,7 @@ const DEFAULT_LABEL = 'Unknown';
 
 export function encodeValue(
   value: unknown,
-  options: EncodeContext
+  options: EncodeContext,
 ): EncodedValue {
   for (const { guard, encoder } of encoders) {
     if (guard(value)) {
@@ -31,5 +31,5 @@ export function encodeValue(
 
 export const encodeRecord = (rec: Record<string, AnyData>): EncodedValue[] =>
   Object.entries(rec).map(([label, data]) =>
-    encodeValue(data[0], data[1] ? { ...data[1], label } : { label })
+    encodeValue(data[0], data[1] ? { ...data[1], label } : { label }),
   );

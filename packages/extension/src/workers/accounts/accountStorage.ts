@@ -10,7 +10,7 @@ import type {
 
 export const deleteAccount = async (
   publicKeyHex: string,
-  source: AccountSource
+  source: AccountSource,
 ): Promise<boolean> => {
   try {
     const all = ((await DbController.get('accounts', source)) ||
@@ -48,7 +48,7 @@ export const updateAccount = async (account: ImportedGenericAccount) => {
       | ImportedGenericAccount[]
       | undefined;
     const updated = (all || []).map((a) =>
-      a.publicKeyHex === publicKeyHex ? account : a
+      a.publicKeyHex === publicKeyHex ? account : a,
     );
     await DbController.set('accounts', source, updated);
     return true;

@@ -1,14 +1,13 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { getReferendaAdapter } from './adapters';
+import { setStateWithRef } from '@w3ux/utils';
 import { createContext, useCallback, useEffect, useRef, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
 import { useConnections } from '../../common';
 import { usePolkassembly } from '../Polkassembly';
-import { setStateWithRef } from '@w3ux/utils';
+import { getReferendaAdapter } from './adapters';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { ReferendaContextInterface } from '../../../types/openGov';
 import type {
   PagedReferenda,
   RefDeciding,
@@ -17,6 +16,7 @@ import type {
   RefOngoing,
   RefStatus,
 } from '@polkadot-live/types/openGov';
+import type { ReferendaContextInterface } from '../../../types/openGov';
 
 const PAGINATION_ACTIVE_ITEMS_PER_PAGE = 10;
 const PAGINATION_HISTORY_ITEMS_PER_PAGE = 15;
@@ -27,7 +27,7 @@ export const ReferendaContext = createContext<
 
 export const useReferenda = createSafeContextHook(
   ReferendaContext,
-  'ReferendaContext'
+  'ReferendaContext',
 );
 
 export const ReferendaProvider = ({
@@ -43,7 +43,7 @@ export const ReferendaProvider = ({
   // Referenda data received from API.
   const [refTrigger, setRefTrigger] = useState(false);
   const [referendaMap, setReferendaMap] = useState(
-    new Map<ChainID, ReferendaInfo[]>()
+    new Map<ChainID, ReferendaInfo[]>(),
   );
 
   // The current rendered tab.
@@ -69,7 +69,7 @@ export const ReferendaProvider = ({
     new Map<ChainID, string | null>([
       ['Polkadot Asset Hub', null],
       ['Kusama Asset Hub', null],
-    ])
+    ]),
   );
   const trackFilterRef = useRef(trackFilter);
 
@@ -109,20 +109,20 @@ export const ReferendaProvider = ({
   const setFilterOption = (
     tab: 'active' | 'history',
     filter: RefStatus,
-    selected: boolean
+    selected: boolean,
   ) => {
     setPage(1, tab);
 
     switch (tab) {
       case 'active': {
         setActiveStatusFilters((pv) =>
-          pv.map((f) => (f.filter === filter ? { ...f, selected } : f))
+          pv.map((f) => (f.filter === filter ? { ...f, selected } : f)),
         );
         break;
       }
       case 'history': {
         setHistoryStatusFilters((pv) =>
-          pv.map((f) => (f.filter === filter ? { ...f, selected } : f))
+          pv.map((f) => (f.filter === filter ? { ...f, selected } : f)),
         );
         break;
       }
@@ -183,7 +183,7 @@ export const ReferendaProvider = ({
       const len = items ? items.length : 1;
       return Math.ceil(len / getItemsPerPage(directory));
     },
-    [referendaMap, trackFilter, activeStatusFilters, historyStatusFilters]
+    [referendaMap, trackFilter, activeStatusFilters, historyStatusFilters],
   );
 
   // Get referenda data for a specific page.
@@ -216,7 +216,7 @@ export const ReferendaProvider = ({
       activePagedReferenda.pageCount,
       historyPagedReferenda.page,
       historyPagedReferenda.pageCount,
-    ]
+    ],
   );
 
   // Controls the ellipsis box display.
@@ -228,7 +228,7 @@ export const ReferendaProvider = ({
     setStateWithRef(
       chainId,
       setActiveReferendaChainId,
-      activeReferendaChainRef
+      activeReferendaChainRef,
     );
 
     // Fetch referenda if cached data doesn't exist for the chain.
@@ -348,7 +348,7 @@ export const ReferendaProvider = ({
     if (trigger) {
       const newVal = trackFilter.set(
         activeReferendaChainRef.current,
-        val === undefined ? null : val
+        val === undefined ? null : val,
       );
       setStateWithRef(newVal, setTrackFilter, trackFilterRef);
       setTrackFilterTrigger({ trigger: false, val: null });
@@ -414,7 +414,7 @@ export const ReferendaProvider = ({
       // Reset status filters.
       setActiveStatusFilters((pv) => pv.map((f) => ({ ...f, selected: true })));
       setHistoryStatusFilters((pv) =>
-        pv.map((f) => ({ ...f, selected: true }))
+        pv.map((f) => ({ ...f, selected: true })),
       );
       setRefTrigger(true);
     };

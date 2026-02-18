@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useEffect, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
+import { useEffect, useRef } from 'react';
 import type { Html5QrScannerProps } from './types';
 
 export const Html5QrCodePlugin = ({
@@ -23,7 +23,7 @@ export const Html5QrCodePlugin = ({
 
     Html5Qrcode.getCameras()
       .then((devices) => {
-        if (devices && devices.length) {
+        if (devices?.length) {
           const cameraId = devices[0].id;
 
           html5QrCode
@@ -39,7 +39,7 @@ export const Html5QrCodePlugin = ({
               (errorMessage) => {
                 // parse error
                 qrCodeErrorCallback(errorMessage);
-              }
+              },
             )
             .catch((err) => {
               console.error(err);

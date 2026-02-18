@@ -1,14 +1,14 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCircleChevronLeft,
   faCircleChevronRight,
   faCircleDot,
 } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useState } from 'react';
 import { InfoCardStepsWrapper } from './InfoCardSteps.styles';
 
 export const InfoCardSteps = ({
@@ -51,13 +51,18 @@ export const InfoCardSteps = ({
     <InfoCardStepsWrapper className={className} style={style}>
       {getSteps()[stepIndex]}
       <div>
-        <button disabled={stepIndex === 0} onClick={() => clickChev('prev')}>
+        <button
+          type="button"
+          disabled={stepIndex === 0}
+          onClick={() => clickChev('prev')}
+        >
           <FontAwesomeIcon className="chev" icon={faCircleChevronLeft} />
         </button>
         <span>
           {stepIndex + 1} of {totalSteps}
         </span>
         <button
+          type="button"
           disabled={stepIndex === totalSteps - 1}
           onClick={() => clickChev('next')}
         >

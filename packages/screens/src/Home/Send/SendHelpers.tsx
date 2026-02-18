@@ -1,15 +1,15 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Select from '@radix-ui/react-select';
-import * as UI from '@polkadot-live/ui';
-import * as Styles from '@polkadot-live/styles';
+import { faCaretDown, faCircleCheck } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useConnections } from '@polkadot-live/contexts';
+import * as Styles from '@polkadot-live/styles';
+import * as UI from '@polkadot-live/ui';
+import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
+import * as Select from '@radix-ui/react-select';
 import { ellipsisFn } from '@w3ux/utils';
 import { PuffLoader } from 'react-spinners';
-import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretDown, faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 import { NextStepArrowWrapper, ProgressBarWrapper } from './Wrappers';
 import type {
   AccountNameWithTooltipProps,
@@ -148,7 +148,7 @@ export const NextStepArrow = ({
   onClick: () => void;
 }) => (
   <NextStepArrowWrapper $complete={complete}>
-    <button disabled={!complete} onClick={() => onClick()}>
+    <button type="button" disabled={!complete} onClick={() => onClick()}>
       <FontAwesomeIcon icon={faCaretDown} transform={'shrink-6'} />
     </button>
   </NextStepArrowWrapper>

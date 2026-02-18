@@ -13,7 +13,7 @@ export const chromeAdapter: LedgerHardwareAdapter = {
     const result = await getLedgerAddresses(
       accountIndices,
       chainId,
-      controller!
+      controller!,
     );
     return getLedgerTaskResponse(result, accountIndices);
   },
@@ -26,7 +26,7 @@ export const chromeAdapter: LedgerHardwareAdapter = {
         statusCode,
         device: { id: device.id!, productName: device.productName! },
         body,
-      })
+      }),
     );
     return { received, options };
   },

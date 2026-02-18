@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { appendOr, appendOrEmpty } from '@w3ux/utils';
 import { motion } from 'framer-motion';
 import { onMouseHandlers } from '../Utils';
-import { appendOr, appendOrEmpty } from '@w3ux/utils';
-import type { ButtonCommonProps, ButtonIconProps } from '../types';
 import type { ComponentBaseWithClassName } from '../../../types';
+import type { ButtonCommonProps, ButtonIconProps } from '../types';
 
 export type ButtonSubmitProps = ComponentBaseWithClassName &
   ButtonIconProps &
@@ -50,10 +50,10 @@ export const ButtonSubmit = ({
     whileTap={{ scale: !disabled ? 0.98 : 1 }}
     className={`btn-submit${appendOr(lg, 'lg', 'sm')}${appendOrEmpty(
       colorSecondary,
-      'secondary-color'
+      'secondary-color',
     )}${appendOrEmpty(grow, 'grow')}${appendOrEmpty(marginRight, 'm-right')}${appendOrEmpty(
       marginLeft,
-      'm-left'
+      'm-left',
     )}${appendOrEmpty(marginX, 'm-x')}${appendOrEmpty(pulse, 'pulse')}${
       className ? ` ${className}` : ''
     }`}

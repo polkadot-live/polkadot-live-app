@@ -1,14 +1,14 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Dialog from '@radix-ui/react-dialog';
-import * as Styles from '@polkadot-live/styles';
-import * as Icons from '@radix-ui/react-icons';
 import { useConnections } from '@polkadot-live/contexts';
-import { useEffect, useState } from 'react';
 import { getReadableAccountSource, isValidAddress } from '@polkadot-live/core';
+import * as Styles from '@polkadot-live/styles';
 import { Identicon } from '@polkadot-live/ui';
+import * as Dialog from '@radix-ui/react-dialog';
+import * as Icons from '@radix-ui/react-icons';
 import { ellipsisFn } from '@w3ux/utils';
+import { useEffect, useState } from 'react';
 import { TriggerSelectAccount } from '.';
 import {
   AccountSourceBadge,
@@ -19,10 +19,10 @@ import {
   InputWrapper,
   TriggerButton,
 } from './Wrappers';
-import type { DialogSelectAccountProps } from './types';
-import type { ChangeEvent } from 'react';
-import type { ChainID } from '@polkadot-live/types/chains';
 import type { SendAccount, SendRecipient } from '@polkadot-live/types/accounts';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { ChangeEvent } from 'react';
+import type { DialogSelectAccountProps } from './types';
 
 export const DialogSelectAccount = ({
   accounts,
@@ -79,9 +79,7 @@ export const DialogSelectAccount = ({
    */
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const val = event.target.value.trim();
-    const managed = accounts.find(({ address }) => address === val)
-      ? true
-      : false;
+    const managed = !!accounts.find(({ address }) => address === val);
     setRecipientFilter(val);
     setInputVal({
       accountName: ellipsisFn(val, 5),

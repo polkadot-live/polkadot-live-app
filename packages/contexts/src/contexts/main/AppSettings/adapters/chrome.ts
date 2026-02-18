@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { setStateWithRef } from '@w3ux/utils';
-import type { AppSettingsAdapter } from './types';
 import type { SettingKey } from '@polkadot-live/types';
+import type { AppSettingsAdapter } from './types';
 
 export const chromeAdapter: AppSettingsAdapter = {
   onMount: async () => {

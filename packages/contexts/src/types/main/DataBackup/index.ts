@@ -5,7 +5,7 @@ import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 
 export type ImportFunc = (
   ev: MessageEvent,
-  fromBackup: boolean
+  fromBackup: boolean,
 ) => Promise<void>;
 
 export type RemoveFunc = (ev: MessageEvent) => Promise<void>;
@@ -16,6 +16,6 @@ export interface DataBackupContextInterface {
   exportDataToBackup: () => Promise<void>;
   importDataFromBackup: (
     handleImportAddress: ImportFunc,
-    handleRemoveAddress: RemoveFunc
+    handleRemoveAddress: RemoveFunc,
   ) => Promise<void>;
 }

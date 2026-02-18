@@ -4,15 +4,15 @@
 import { createContext, useRef } from 'react';
 import { createSafeContextHook } from '../../utils';
 import type { AnyData } from '@polkadot-live/types/misc';
-import type { ContextProxyInterface, ContextValue, ContextsMap } from './types';
+import type { ContextProxyInterface, ContextsMap, ContextValue } from './types';
 
 export const ContextProxy = createContext<ContextProxyInterface | undefined>(
-  undefined
+  undefined,
 );
 
 export const useContextProxy = createSafeContextHook(
   ContextProxy,
-  'ContextProxy'
+  'ContextProxy',
 );
 
 export interface ContextProxyProviderProps {

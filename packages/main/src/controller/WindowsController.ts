@@ -1,11 +1,11 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { store } from '../main';
 import { BrowserWindow } from 'electron';
+import { store } from '../main';
+import type { SyncID } from '@polkadot-live/types/communication';
 import type { AnyJson } from '@polkadot-live/types/misc';
 import type { BaseWindow, WebContentsView } from 'electron';
-import type { SyncID } from '@polkadot-live/types/communication';
 
 // A window helper to manage which windows are open and their current state.
 interface StoredWindow {
@@ -48,7 +48,7 @@ export class WindowsController {
     channel: string,
     ipcData: { syncId: SyncID; state: boolean | string },
     includeTabs = true,
-    includeMain = true
+    includeMain = true,
   ) => {
     // Send to main window.
     if (includeMain) {
@@ -167,7 +167,7 @@ export class WindowsController {
 
   // Open a view's devTools if in DEBUG mode.
   static openDevTools = (viewId: string) => {
-    if (!process.env['DEBUG']) {
+    if (!process.env.DEBUG) {
       return;
     }
     if (viewId === 'tabs') {
@@ -185,7 +185,7 @@ export class WindowsController {
       this.base = { ...this.base, focused: true };
     } else if (id !== 'base') {
       this.active = this.active.map((a: StoredWindow) =>
-        a.id === id ? { ...a, focused: true } : a
+        a.id === id ? { ...a, focused: true } : a,
       );
     }
   };
@@ -196,7 +196,7 @@ export class WindowsController {
       this.base = { ...this.base, focused: false };
     } else if (id !== 'base') {
       this.active = this.active.map((a: StoredWindow) =>
-        a.id === id ? { ...a, focused: false } : a
+        a.id === id ? { ...a, focused: false } : a,
       );
     }
   };
@@ -205,8 +205,13 @@ export class WindowsController {
   static add = (window: BrowserWindow, id: string) => {
     const newWindow: StoredWindow = { window, id, focused: false };
     this.active = this.active.reduceRight(
-      (acc, curr) => (curr.id === id ? acc : [curr, ...acc]),
-      [newWindow]
+      (acc, curr) => {
+        if (curr.id !== id) {
+          acc.unshift(curr);
+        }
+        return acc;
+      },
+      [newWindow],
     );
   };
 
@@ -266,7 +271,7 @@ export class WindowsController {
     const window = this.getWindow(id);
     if (!window) {
       throw new Error(
-        `WindowsController.toggleWindowVisible - Window not found with id: ${id}`
+        `WindowsController.toggleWindowVisible - Window not found with id: ${id}`,
       );
     }
     window.isVisible() ? this.hideAndBlur(id) : this.show(id);
@@ -277,13 +282,13 @@ export class WindowsController {
     const mainWindow = this.getWindow('menu');
     if (!mainWindow) {
       throw new Error(
-        `WindowsController.handleMenuBounds - Main window doesn't exist`
+        `WindowsController.handleMenuBounds - Main window doesn't exist`,
       );
     }
     if (mainWindow.isFocused()) {
       (store as Record<string, AnyJson>).set(
         'menu_bounds',
-        mainWindow.getBounds()
+        mainWindow.getBounds(),
       );
     }
   };
@@ -293,11 +298,11 @@ export class WindowsController {
     const mainWindow = this.getWindow('menu');
     if (!mainWindow) {
       throw new Error(
-        `WindowsController.moveToMenuBounds - Main window doesn't exist`
+        `WindowsController.moveToMenuBounds - Main window doesn't exist`,
       );
     }
     const storeMenuPos: AnyJson = (store as Record<string, AnyJson>).get(
-      'menu_bounds'
+      'menu_bounds',
     );
     if (storeMenuPos?.x && storeMenuPos?.y) {
       mainWindow.setPosition(storeMenuPos.x, storeMenuPos.y, false);

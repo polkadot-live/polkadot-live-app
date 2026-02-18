@@ -1,20 +1,20 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import AutoLaunch from 'auto-launch';
 import {
   app,
   clipboard,
   ipcMain,
+  Menu,
   powerMonitor,
   protocol,
   shell,
   systemPreferences,
-  Menu,
 } from 'electron';
-import { executeLedgerTask, USBController } from './ledger';
 import Store from 'electron-store';
-import AutoLaunch from 'auto-launch';
 import unhandled from 'electron-unhandled';
+import { version } from '../package.json';
 import { Config as ConfigMain } from './config/main';
 import { SharedState } from './config/SharedState';
 import {
@@ -23,24 +23,24 @@ import {
   AnalyticsController,
   BackupController,
   ChainEventsController,
-  ExtrinsicsController,
   EventsController,
+  ExtrinsicsController,
   IntervalsController,
-  OnlineStatusController,
   NotificationsController,
+  OnlineStatusController,
   SettingsController,
   SubscriptionsController,
   WindowsController,
 } from './controller';
+import { executeLedgerTask, USBController } from './ledger';
 import { MainDebug } from './utils/DebugUtils';
-import { hideDockIcon } from './utils/SystemUtils';
 import { menuTemplate } from './utils/MenuUtils';
-import { version } from '../package.json';
+import { hideDockIcon } from './utils/SystemUtils';
 import * as WindowUtils from './utils/WindowUtils';
-import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
 import type { IpcTask, SyncID } from '@polkadot-live/types/communication';
-import type { NotificationData } from '@polkadot-live/types/reporter';
 import type { LedgerTask } from '@polkadot-live/types/ledger';
+import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
+import type { NotificationData } from '@polkadot-live/types/reporter';
 
 const debug = MainDebug;
 
@@ -213,7 +213,7 @@ app.whenReady().then(async () => {
    */
 
   ipcMain.handle('main:raw-account', async (_, task: IpcTask) =>
-    AddressesController.process(task)
+    AddressesController.process(task),
   );
 
   /**
@@ -222,7 +222,7 @@ app.whenReady().then(async () => {
 
   ipcMain.handle(
     'main:task:account',
-    async (_, task: IpcTask) => await AccountsController.process(task)
+    async (_, task: IpcTask) => await AccountsController.process(task),
   );
 
   /**
@@ -230,11 +230,11 @@ app.whenReady().then(async () => {
    */
 
   ipcMain.on('main:task:event', (_, task: IpcTask): void =>
-    EventsController.process(task)
+    EventsController.process(task),
   );
 
   ipcMain.handle('main:task:event:async', async (_, task: IpcTask) =>
-    EventsController.processAsync(task)
+    EventsController.processAsync(task),
   );
 
   /**
@@ -242,7 +242,7 @@ app.whenReady().then(async () => {
    */
 
   ipcMain.handle('main:task:extrinsics:async', async (_, task: IpcTask) =>
-    ExtrinsicsController.processAsync(task)
+    ExtrinsicsController.processAsync(task),
   );
 
   /**
@@ -251,7 +251,7 @@ app.whenReady().then(async () => {
 
   ipcMain.handle(
     'main:task:connection:async',
-    async (_, task: IpcTask) => await OnlineStatusController.processAsync(task)
+    async (_, task: IpcTask) => await OnlineStatusController.processAsync(task),
   );
 
   /**
@@ -259,15 +259,15 @@ app.whenReady().then(async () => {
    */
 
   ipcMain.handle('main:task:subscription', async (_, task: IpcTask) =>
-    SubscriptionsController.process(task)
+    SubscriptionsController.process(task),
   );
 
   ipcMain.handle('main:task:interval', async (_, task: IpcTask) =>
-    IntervalsController.process(task)
+    IntervalsController.process(task),
   );
 
   ipcMain.handle('main:task:chainEvents', (_, task: IpcTask) =>
-    ChainEventsController.process(task)
+    ChainEventsController.process(task),
   );
 
   /**
@@ -278,7 +278,7 @@ app.whenReady().then(async () => {
     'app:notification:show',
     (_, { title, body, subtitle }: NotificationData) => {
       NotificationsController.showNotification(title, body, subtitle);
-    }
+    },
   );
 
   /**
@@ -290,7 +290,7 @@ app.whenReady().then(async () => {
   ipcMain.handle('app:platform:get', async () => process.platform as string);
 
   ipcMain.handle('main:clipboard:copy', async (_, text) =>
-    clipboard.writeText(text)
+    clipboard.writeText(text),
   );
 
   /**
@@ -299,7 +299,7 @@ app.whenReady().then(async () => {
 
   // Reize base window.
   ipcMain.on('app:base:resize', (_, size) =>
-    WindowsController.resizeBaseWindow(size)
+    WindowsController.resizeBaseWindow(size),
   );
 
   // Hides a window by its key.
@@ -338,11 +338,11 @@ app.whenReady().then(async () => {
    */
 
   ipcMain.on('main:task:settings', (_, task: IpcTask) =>
-    SettingsController.process(task)
+    SettingsController.process(task),
   );
 
   ipcMain.handle('app:settings:get', async () =>
-    SettingsController.getAppSettings()
+    SettingsController.getAppSettings(),
   );
 
   /**
@@ -352,7 +352,7 @@ app.whenReady().then(async () => {
   ipcMain.handle(
     'app:sharedState:get',
     async (_, syncId: SyncID): Promise<string | boolean> =>
-      SharedState.get(syncId)
+      SharedState.get(syncId),
   );
 
   ipcMain.on(
@@ -375,7 +375,7 @@ app.whenReady().then(async () => {
         case 'mode:dark': {
           // Set the background color for all open windows and views.
           WindowsController.setWindowsBackgroundColor(
-            state ? ConfigMain.themeColorDark : ConfigMain.themeColorLight
+            state ? ConfigMain.themeColorDark : ConfigMain.themeColorLight,
           );
           SharedState.set(syncId, state as boolean);
           break;
@@ -391,7 +391,7 @@ app.whenReady().then(async () => {
         syncId,
         state,
       });
-    }
+    },
   );
 
   /**
@@ -402,7 +402,7 @@ app.whenReady().then(async () => {
   ipcMain.handle(
     'app:ledger:task',
     async (_, task: LedgerTask, serData: string) =>
-      await executeLedgerTask(task, serData)
+      await executeLedgerTask(task, serData),
   );
 
   /**
@@ -412,13 +412,13 @@ app.whenReady().then(async () => {
   // Export a data-file.
   ipcMain.handle(
     'app:data:export',
-    async () => await BackupController.export()
+    async () => await BackupController.export(),
   );
 
   // Import a data-file.
   ipcMain.handle(
     'app:data:import',
-    async () => await BackupController.import()
+    async () => await BackupController.import(),
   );
 
   /**
@@ -429,7 +429,7 @@ app.whenReady().then(async () => {
     'app:analytics:init',
     (_, agent: string, windowId: string, lang: string) => {
       AnalyticsController.initialize(agent, windowId, lang);
-    }
+    },
   );
 
   ipcMain.on('app:umami:event', async (_, event: string, data: AnyData) => {

@@ -1,11 +1,11 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as main from './contexts/main';
-import * as imports from './contexts/import';
-import * as extrinsics from './contexts/action';
-import { useMemo } from 'react';
 import { buildCache, ContextProxyProvider } from '@polkadot-live/contexts';
+import { useMemo } from 'react';
+import * as extrinsics from './contexts/action';
+import * as imports from './contexts/import';
+import * as main from './contexts/main';
 
 interface ContextProxyProps {
   children: React.ReactNode;
@@ -22,7 +22,7 @@ export const ContextProxyTab = ({ children }: ContextProxyProps) => {
         WalletConnectImportCtx: () => imports.useWalletConnectImport(),
         WcVerifierCtx: () => extrinsics.useWcVerifier(),
       }),
-    []
+    [],
   );
   return (
     <ContextProxyProvider initialCache={cache}>{children}</ContextProxyProvider>
@@ -40,7 +40,7 @@ export const ContextProxyMain = ({ children }: ContextProxyProps) => {
         CogMenuCtx: () => main.useCogMenu(),
         WalletConnectCtx: () => main.useWalletConnect(),
       }),
-    []
+    [],
   );
   return (
     <ContextProxyProvider initialCache={cache}>{children}</ContextProxyProvider>

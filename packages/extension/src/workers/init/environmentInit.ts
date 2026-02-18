@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { DbController } from '../../controllers';
-import { sendChromeMessage } from '../utils';
 import { getSharedState, isSystemsInitialized, setSharedState } from '../state';
+import { sendChromeMessage } from '../utils';
 import type { SyncID } from '@polkadot-live/types/communication';
 
 export const initOnlineMode = async () => {

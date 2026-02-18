@@ -10,7 +10,7 @@ export interface ConnectionsAdapter {
   grantCameraPermission: () => Promise<boolean>;
   listenSharedStateOnMount: (
     setCache: Dispatch<SetStateAction<Map<SyncID, boolean>>>,
-    cacheRef: RefObject<Map<SyncID, boolean>>
+    cacheRef: RefObject<Map<SyncID, boolean>>,
   ) => (() => void) | null;
   initAction: (txMeta: ActionMeta) => void;
   openInBrowser: (uri: string, analytics?: AnyData) => void;
@@ -19,7 +19,7 @@ export interface ConnectionsAdapter {
     analytics?: {
       event: string;
       data: AnyData | null;
-    }
+    },
   ) => void;
   relayState: (syncId: SyncID, state: boolean | string) => void;
   umamiEvent: (event: string, data: AnyData) => void;

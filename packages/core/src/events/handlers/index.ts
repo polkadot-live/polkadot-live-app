@@ -2,16 +2,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import {
-  handleBalancesEvent,
   getBalancesPalletScopedAccountsFromEvent,
+  handleBalancesEvent,
 } from './balances';
 import {
-  handleConvictionVotingEvent,
   getConvictionVotingPalletScopedAccountsFromEvent,
+  handleConvictionVotingEvent,
 } from './convictionVoting';
 import {
-  handleNominationPoolsEvent,
   getNominationPoolsPalletScopedAccountsFromEvent,
+  handleNominationPoolsEvent,
 } from './nominationPools';
 import { handleReferendaEvent } from './referenda';
 import {
@@ -34,31 +34,31 @@ export const PalletHandlers: Record<string, AnyData> = {
     chainId: ChainID,
     osNotify: boolean,
     palletEvent: PalletBalancesEvent,
-    whoMeta?: WhoMeta
+    whoMeta?: WhoMeta,
   ) => handleBalancesEvent(chainId, osNotify, palletEvent, whoMeta),
   ConvictionVoting: (
     chainId: ChainID,
     osNotify: boolean,
     palletEvent: PalletConvictionVotingEvent,
-    whoMeta?: WhoMeta
+    whoMeta?: WhoMeta,
   ) => handleConvictionVotingEvent(chainId, osNotify, palletEvent, whoMeta),
   NominationPools: (
     chainId: ChainID,
     osNotify: boolean,
     palletEvent: PalletNominationPoolsEvent,
-    whoMeta?: WhoMeta
+    whoMeta?: WhoMeta,
   ) => handleNominationPoolsEvent(chainId, osNotify, palletEvent, whoMeta),
   Referenda: (
     chainId: ChainID,
     osNotify: boolean,
     palletEvent: PalletReferendaEvent,
-    whoMeta?: WhoMeta
+    whoMeta?: WhoMeta,
   ) => handleReferendaEvent(chainId, osNotify, palletEvent, whoMeta),
   Staking: (
     chainId: ChainID,
     osNotify: boolean,
     palletEvent: PalletStakingEvent,
-    whoMeta?: WhoMeta
+    whoMeta?: WhoMeta,
   ) => handleStakingEvent(chainId, osNotify, palletEvent, whoMeta),
 };
 
@@ -67,11 +67,11 @@ export const ScopedAccountGetters: Record<string, AnyData> = {
     getBalancesPalletScopedAccountsFromEvent(chainId, palletEvent),
   ConvictionVoting: (
     chainId: ChainID,
-    palletEvent: PalletConvictionVotingEvent
+    palletEvent: PalletConvictionVotingEvent,
   ) => getConvictionVotingPalletScopedAccountsFromEvent(chainId, palletEvent),
   NominationPools: (
     chainId: ChainID,
-    palletEvent: PalletNominationPoolsEvent
+    palletEvent: PalletNominationPoolsEvent,
   ) => getNominationPoolsPalletScopedAccountsFromEvent(chainId, palletEvent),
   Staking: (chainId: ChainID, palletEvent: PalletStakingEvent) =>
     getStakingPalletScopedAccountsFromEvent(chainId, palletEvent),

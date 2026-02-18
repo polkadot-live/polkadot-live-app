@@ -13,7 +13,7 @@ import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 
 export const handleChainSubscriptionMessage = (
   message: AnyData,
-  sendResponse: (response?: AnyData) => void
+  sendResponse: (response?: AnyData) => void,
 ): boolean => {
   switch (message.task) {
     case 'getAll': {
@@ -26,15 +26,15 @@ export const handleChainSubscriptionMessage = (
       const { task }: { task: SubscriptionTask } = message.payload;
       updateChainSubscription(task).then(() =>
         subscribeChainTask(task).then(() =>
-          setChainSubscriptionsState().then(() => sendResponse(true))
-        )
+          setChainSubscriptionsState().then(() => sendResponse(true)),
+        ),
       );
       return true;
     }
     case 'updateMany': {
       const { tasks }: { tasks: SubscriptionTask[] } = message.payload;
       updateChainSubscriptions(tasks).then(() =>
-        setChainSubscriptionsState().then(() => sendResponse(true))
+        setChainSubscriptionsState().then(() => sendResponse(true)),
       );
       return true;
     }

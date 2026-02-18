@@ -6,15 +6,15 @@ import { encodeRecord } from '@polkadot-live/encoder';
 import { ellipsisFn } from '@w3ux/utils';
 import { handleEvent } from '../../callbacks/utils';
 import { makeChainEvent, notifyTitle } from './utils';
-import type { ChainID } from '@polkadot-live/types/chains';
 import type { PalletConvictionVotingEvent } from '@polkadot-live/types';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { WhoMeta } from '../types';
 
 export const handleConvictionVotingEvent = (
   chainId: ChainID,
   osNotify: boolean,
   palletEvent: PalletConvictionVotingEvent,
-  whoMeta?: WhoMeta
+  whoMeta?: WhoMeta,
 ) => {
   try {
     handleEvent({
@@ -24,7 +24,7 @@ export const handleConvictionVotingEvent = (
         notification: getConvictionVotingNotification(
           chainId,
           palletEvent,
-          whoMeta
+          whoMeta,
         ),
         showNotification: { isOneShot: false, isEnabled: osNotify },
       },
@@ -36,7 +36,7 @@ export const handleConvictionVotingEvent = (
 
 export const getConvictionVotingPalletScopedAccountsFromEvent = (
   chainId: ChainID,
-  palletEvent: PalletConvictionVotingEvent
+  palletEvent: PalletConvictionVotingEvent,
 ): string[] => {
   const { name: eventName, data: miscData } = palletEvent;
   const ss58Prefix = getSs58Prefix(chainId);
@@ -67,7 +67,7 @@ export const getConvictionVotingPalletScopedAccountsFromEvent = (
 const getConvictionVotingNotification = (
   chainId: ChainID,
   palletEvent: PalletConvictionVotingEvent,
-  whoMeta?: WhoMeta
+  whoMeta?: WhoMeta,
 ) => {
   const { name: eventName, data: miscData } = palletEvent;
   switch (eventName) {
@@ -116,7 +116,7 @@ const getConvictionVotingNotification = (
 const getConvictionVotingChainEvent = (
   chainId: ChainID,
   palletEvent: PalletConvictionVotingEvent,
-  whoMeta?: WhoMeta
+  whoMeta?: WhoMeta,
 ) => {
   const { name: eventName, data: miscData } = palletEvent;
   const ev = makeChainEvent({ chainId, category: 'Voting' }, whoMeta);

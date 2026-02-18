@@ -24,7 +24,7 @@ export const arraysAreEqual = <T>(array1: T[], array2: T[]): boolean => {
  */
 export const areSortedArraysEqual = (
   arr1: string[],
-  arr2: string[]
+  arr2: string[],
 ): boolean => {
   if (arr1.length !== arr2.length) {
     return false;
@@ -51,7 +51,7 @@ export const generateUID = (): string => {
 
   // Convert to a hexadecimal string.
   return Array.from(array, (byte) => byte.toString(16).padStart(2, '0')).join(
-    ''
+    '',
   );
 };
 
@@ -87,7 +87,7 @@ export const waitMs = async (ms: number, result = false): Promise<boolean> =>
  * @summary Executes an array of async tasks sequentially and returns their results in order.
  */
 export const runSequential = async <T>(
-  tasks: (() => Promise<T>)[]
+  tasks: (() => Promise<T>)[],
 ): Promise<T[]> => {
   const results: T[] = [];
   for (const task of tasks) {
@@ -102,7 +102,7 @@ export const runSequential = async <T>(
  */
 export const withTimeout = async (
   promise: Promise<unknown>,
-  timeoutMs: number
+  timeoutMs: number,
 ): Promise<boolean> =>
   Promise.race([
     promise.then(() => true).catch(() => false),
@@ -117,7 +117,7 @@ export const withTimeout = async (
  */
 export const perbillToPercent = (
   perbill: bigint | number,
-  decimals = 2
+  decimals = 2,
 ): string => {
   const BILLION = 1_000_000_000n;
   const value = typeof perbill === 'number' ? BigInt(perbill) : perbill;

@@ -20,7 +20,7 @@ export const PolkassemblyContext = createContext<
 
 export const usePolkassembly = createSafeContextHook(
   PolkassemblyContext,
-  'PolkassemblyContext'
+  'PolkassemblyContext',
 );
 
 export const PolkassemblyProvider = ({
@@ -35,7 +35,7 @@ export const PolkassemblyProvider = ({
   // Util to fetch a proposal's metadata.
   const fetchProposalMeta = async (
     chainId: ChainID,
-    postId: number
+    postId: number,
   ): Promise<ProposalMeta> => {
     // Header requires `polkadot` or `kusama`.
     const network = chainId.startsWith('Polkadot') ? 'polkadot' : 'kusama';
@@ -60,7 +60,7 @@ export const PolkassemblyProvider = ({
   // Fetch proposal data after referenda have been loaded in referenda context.
   const fetchProposals = async (
     chainId: ChainID,
-    referenda: ReferendaInfo[]
+    referenda: ReferendaInfo[],
   ) => {
     const cached = proposalsMap.get(chainId) || [];
     const cachedIds = new Set(Array.from(cached.keys()));

@@ -1,12 +1,12 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { AnimatePresence, motion } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { NavItemWrapper } from './SideNav.styles';
+import { AnimatePresence, motion } from 'framer-motion';
 import { TooltipRx } from '../TooltipRx';
-import type { NavItemProps } from './SideNav.types';
+import { NavItemWrapper } from './SideNav.styles';
 import type { AnyData } from '@polkadot-live/types/misc';
+import type { NavItemProps } from './SideNav.types';
 
 const TooltipWrapper = ({
   isCollapsed,

@@ -1,9 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { DbController } from '../../controllers';
-import { getAllChainEventsForAccount, getAllRefSubs } from '../chainEvents';
-import { handleGetAllIntervalTasks } from '../intervals';
 import {
   AccountsController,
   ChainEventsService,
@@ -12,11 +9,14 @@ import {
   SubscriptionsController,
   TaskOrchestrator,
 } from '@polkadot-live/core';
+import { DbController } from '../../controllers';
+import { getAllChainEventsForAccount, getAllRefSubs } from '../chainEvents';
+import { handleGetAllIntervalTasks } from '../intervals';
+import { isSystemsInitialized } from '../state';
 import type { ChainEventSubscription } from '@polkadot-live/types';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { Stores } from '../../controllers';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
-import { isSystemsInitialized } from '../state';
+import type { Stores } from '../../controllers';
 
 export const initAccountSubscriptions = async () => {
   if (isSystemsInitialized()) {
@@ -87,7 +87,7 @@ export const initEventSubscriptions = async () => {
         .forEach((s) => {
           const cid = chainId as ChainID;
           !activeChainIds.includes(cid) && activeChainIds.push(cid);
-          ChainEventsService.insertRefScoped(parseInt(refId), s);
+          ChainEventsService.insertRefScoped(parseInt(refId, 10), s);
         });
     }
   }

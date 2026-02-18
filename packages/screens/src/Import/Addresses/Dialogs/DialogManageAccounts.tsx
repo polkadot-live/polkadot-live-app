@@ -1,11 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Dialog from '@radix-ui/react-dialog';
+import { faBookmark } from '@fortawesome/free-regular-svg-icons';
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import * as Style from '@polkadot-live/styles';
-import * as UI from '@polkadot-live/ui';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   useAccountStatuses,
   useAddHandler,
@@ -13,17 +11,17 @@ import {
   useDialogControl,
   useRemoveHandler,
 } from '@polkadot-live/contexts';
-import { ControlsRow, EncodedAddressesWrapper, ToggleRx } from './Wrappers';
+import * as Style from '@polkadot-live/styles';
+import * as UI from '@polkadot-live/ui';
+import * as Dialog from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
-import { DropdownAccount } from '../Dropdowns';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBookmark } from '@fortawesome/free-regular-svg-icons';
 import { ellipsisFn } from '@w3ux/utils';
 import { useState } from 'react';
-
+import { DropdownAccount } from '../Dropdowns';
+import { ControlsRow, EncodedAddressesWrapper, ToggleRx } from './Wrappers';
+import type { EncodedAccount } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { DialogManageAccountsProps } from './types';
-import type { EncodedAccount } from '@polkadot-live/types/accounts';
 
 export const DialogManageAccounts = ({
   genericAccount,
@@ -122,6 +120,7 @@ export const DialogManageAccounts = ({
                       {showBookmarks && (
                         <UI.TooltipRx text={'Bookmark'} theme={theme}>
                           <button
+                            type="button"
                             className="Dialog__Button"
                             onClick={async () => await handleBookmarkClick(a)}
                           >
@@ -182,6 +181,7 @@ export const DialogManageAccounts = ({
                           >
                             <div style={{ position: 'relative' }}>
                               <button
+                                type="button"
                                 className="Dialog__Button"
                                 onClick={async () =>
                                   await handleRemoveSubscriptions(a)
@@ -204,6 +204,7 @@ export const DialogManageAccounts = ({
                                 }}
                               >
                                 <button
+                                  type="button"
                                   className="Dialog__Button"
                                   disabled={!isConnected}
                                 >
@@ -230,6 +231,7 @@ export const DialogManageAccounts = ({
                                 >
                                   <div style={{ position: 'relative' }}>
                                     <button
+                                      type="button"
                                       className="Dialog__Button"
                                       onClick={async () =>
                                         await handleAddSubscriptions(a)
@@ -257,7 +259,7 @@ export const DialogManageAccounts = ({
                         />
                       </Style.FlexRow>
                     </Style.FlexRow>
-                  )
+                  ),
                 )}
               </Style.FlexColumn>
             </EncodedAddressesWrapper>

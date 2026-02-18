@@ -8,9 +8,7 @@
     "./*": "./src/*.ts"
   },
   "scripts": {
-    "lint": "eslint --fix && npx prettier --write ./src",
-    "clear:dist": "([ -d \"dist\" ] && rm -fr \"dist\") || true && ([ -d \"node_modules\" ] && rm -fr \"node_modules\") || true",
-    "typecheck": "tsc --noEmit"
+    "clear:dist": "([ -d \"dist\" ] && rm -fr \"dist\") || true && ([ -d \"node_modules\" ] && rm -fr \"node_modules\") || true"
   },
   "devDependencies": {
     "@polkadot-live/types": "workspace:*"

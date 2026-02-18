@@ -1,19 +1,19 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as UI from '@polkadot-live/ui';
 import {
-  faExternalLinkAlt,
   faCircleDot,
+  faExternalLinkAlt,
 } from '@fortawesome/free-solid-svg-icons';
-import { ContentWrapper } from '../Wrappers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useHelp } from '@polkadot-live/contexts';
 import { GridTwoCol } from '@polkadot-live/styles';
+import * as UI from '@polkadot-live/ui';
+import LedgerLogoSVG from '@w3ux/extension-assets/Ledger.svg?react';
 import PolkadotVaultSVG from '@w3ux/extension-assets/PolkadotVault.svg?react';
 import WalletConnectSVG from '@w3ux/extension-assets/WalletConnect.svg?react';
-import LedgerLogoSVG from '@w3ux/extension-assets/Ledger.svg?react';
 import { useEffect } from 'react';
-import { useHelp } from '@polkadot-live/contexts';
+import { ContentWrapper } from '../Wrappers';
 import type { AccountSource } from '@polkadot-live/types/accounts';
 import type { HomeProps } from './types';
 
@@ -23,7 +23,7 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
   /// Handle clicking on an import method card.
   const handleClick = (
     event: React.MouseEvent<HTMLElement>,
-    source: AccountSource
+    source: AccountSource,
   ) => {
     let target = event.target as HTMLElement | null;
 
@@ -42,7 +42,7 @@ export const Home = ({ setSection, setSource }: HomeProps) => {
   useEffect(() => {
     const applyBorders = () => {
       const cards = document.querySelectorAll(
-        '.methodCard'
+        '.methodCard',
       ) as NodeListOf<HTMLElement>;
 
       cards.forEach((card, i) => {

@@ -6,7 +6,8 @@ import type { PadlockProps } from './types';
 
 export const Padlock = ({ locked, onClick }: PadlockProps) => (
   <PadlockWrapper>
-    <div
+    <button
+      type="button"
       className={`padlock ${locked ? '' : 'green'}`}
       style={{ marginLeft: '0.15rem', marginTop: '0.25rem' }}
       onClick={onClick}
@@ -25,6 +26,6 @@ export const Padlock = ({ locked, onClick }: PadlockProps) => (
           strokeWidth="3.5"
         />
       </svg>
-    </div>
+    </button>
   </PadlockWrapper>
 );
