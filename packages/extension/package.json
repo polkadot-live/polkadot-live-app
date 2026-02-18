@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build"
   },
   "dependencies": {
-    "@ledgerhq/hw-transport-webhid": "^6.30.8",
+    "@ledgerhq/hw-transport-webhid": "^6.31.0",
     "@polkadot-live/consts": "workspace:*",
     "@polkadot-live/contexts": "workspace:*",
     "@polkadot-live/core": "workspace:*",
