@@ -3,11 +3,10 @@
 
 import { getDefaultSettings } from '@polkadot-live/consts/settings';
 import { WindowsController } from '../controller';
-import { store } from '../main';
+import { SettingsRepository } from '../db';
 import { hideDockIcon, showDockIcon } from '../utils/SystemUtils';
 import * as WindowUtils from '../utils/WindowUtils';
 import type { IpcTask } from '@polkadot-live/types/communication';
-import type { AnyData } from '@polkadot-live/types/misc';
 import type { SettingKey } from '@polkadot-live/types/settings';
 
 export class SettingsController {
@@ -17,18 +16,19 @@ export class SettingsController {
   private static settingsCache = getDefaultSettings();
 
   /**
-   * Initialize settings cache by fetching persisted settings from store.
+   * Initialize settings cache by fetching persisted settings from the database.
    */
   static initialize = () => {
     const defaults = getDefaultSettings();
+    const persisted = SettingsRepository.getAll();
 
-    for (const key of defaults.keys()) {
-      if (store.has(key)) {
-        const val = (store as Record<string, AnyData>).get(key) as boolean;
-        this.settingsCache.set(key, val);
+    for (const [key, defaultValue] of defaults.entries()) {
+      if (persisted.has(key)) {
+        this.settingsCache.set(key, persisted.get(key)!);
       } else {
-        const val = defaults.get(key)!;
-        (store as Record<string, AnyData>).set(key, val);
+        // Insert any new setting keys that were not in the database yet.
+        SettingsRepository.set(key, defaultValue);
+        this.settingsCache.set(key, defaultValue);
       }
     }
   };
@@ -40,11 +40,11 @@ export class SettingsController {
     Boolean(this.settingsCache.get(key));
 
   /**
-   * Set a cached value.
+   * Set a cached value and persist to the database.
    */
   static set = (key: SettingKey, value: boolean) => {
     this.settingsCache.set(key, value);
-    (store as Record<string, AnyData>).set(key, value);
+    SettingsRepository.set(key, value);
   };
 
   /**

@@ -35,6 +35,7 @@ export default {
     'package.json',
     ...(await findFilesThatShouldBeExcluded()),
   ],
+  asarUnpack: ['**/node_modules/better-sqlite3/**'],
   npmRebuild: true,
 
   /** Publishing */

@@ -32,6 +32,7 @@ import {
   SubscriptionsController,
   WindowsController,
 } from './controller';
+import { DatabaseManager, SettingsRepository } from './db';
 import { executeLedgerTask, USBController } from './ledger';
 import { MainDebug } from './utils/DebugUtils';
 import { menuTemplate } from './utils/MenuUtils';
@@ -138,6 +139,10 @@ app.whenReady().then(async () => {
     }
   });
 
+  // Initialize SQLite database and repositories.
+  DatabaseManager.initialize(app.getPath('userData'));
+  SettingsRepository.initialize();
+
   // Hide dock icon if we're on mac OS.
   SettingsController.initialize();
   const appHideDockIcon = SettingsController.get('setting:hide-dock-icon');
@@ -178,6 +183,11 @@ app.whenReady().then(async () => {
   // Emitted when system is resuming.
   powerMonitor.on('resume', async () => {
     await OnlineStatusController.handleResume();
+  });
+
+  // Close the database cleanly before the app exits.
+  app.on('will-quit', () => {
+    DatabaseManager.close();
   });
 
   // ------------------------------
