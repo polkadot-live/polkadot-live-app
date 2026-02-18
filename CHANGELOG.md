@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.0-beta](https://github.com/polkadot-live/polkadot-live-app/compare/v0.13.0-beta...v0.14.0-beta) (2026-02-18)
+
+
+### Features
+
+* **tooling:** biome migration ([#1171](https://github.com/polkadot-live/polkadot-live-app/issues/1171)) ([0f3ab12](https://github.com/polkadot-live/polkadot-live-app/commit/0f3ab122fd0e98adfdd4dddb3d962ced31bec481))
+
 ## [0.13.0-beta](https://github.com/polkadot-live/polkadot-live-app/compare/v0.12.0-beta...v0.13.0-beta) (2026-01-05)
 
 
