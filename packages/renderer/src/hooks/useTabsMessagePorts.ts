@@ -1,9 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ConfigTabs, getTracks } from '@polkadot-live/core';
-import { useEffect } from 'react';
-import { useWalletConnectImport } from '../contexts/import';
 import {
   useAccountStatuses,
   useConnections,
@@ -20,15 +17,11 @@ import {
   useTreasury,
   useWcFeedback,
 } from '@polkadot-live/contexts';
-import { useTxMeta, useWcVerifier } from '../contexts/action';
+import { ConfigTabs, getTracks } from '@polkadot-live/core';
 import { renderToast } from '@polkadot-live/ui';
-import type { ActionMeta, TxStatus } from '@polkadot-live/types/tx';
-import type { ChainID } from '@polkadot-live/types/chains';
-import type { LedgerErrorMeta } from '@polkadot-live/types/ledger';
-import type {
-  WalletConnectMeta,
-  WcFetchedAddress,
-} from '@polkadot-live/types/walletConnect';
+import { useEffect } from 'react';
+import { useTxMeta, useWcVerifier } from '../contexts/action';
+import { useWalletConnectImport } from '../contexts/import';
 import type {
   AccountSource,
   EncodedAccount,
@@ -38,6 +31,13 @@ import type {
   SerializedTrackItem,
   TabData,
 } from '@polkadot-live/types';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { LedgerErrorMeta } from '@polkadot-live/types/ledger';
+import type { ActionMeta, TxStatus } from '@polkadot-live/types/tx';
+import type {
+  WalletConnectMeta,
+  WcFetchedAddress,
+} from '@polkadot-live/types/walletConnect';
 
 export const useTabsMessagePorts = () => {
   const { addTab, tabsData } = useTabs();
@@ -302,7 +302,7 @@ export const useTabsMessagePorts = () => {
               setStatusForAccount(
                 `${chainId}:${address}`,
                 generic.source,
-                status
+                status,
               );
 
               if (!success) {
@@ -328,7 +328,7 @@ export const useTabsMessagePorts = () => {
             }
             case 'import:wc:set:fetchedAddresses': {
               const parsed: WcFetchedAddress[] = JSON.parse(
-                ev.data.data.fetchedAddresses
+                ev.data.data.fetchedAddresses,
               );
               setWcFetchedAddresses(parsed);
               break;

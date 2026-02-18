@@ -2,6 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import {
+  getPolkassemblySubdomain,
+  getSubscanSubdomain,
+  getSubsquareSubdomain,
+} from '@polkadot-live/consts/chains';
+import { getUnixTime } from 'date-fns';
+import {
   checkAccountWithProperties,
   checkFlattenedAccountProperties,
   getFlattenedAccount,
@@ -13,27 +19,20 @@ import {
   getNominationPoolRolesText,
   getNominationPoolStateText,
 } from '../library/TextLib';
-import { getUnixTime } from 'date-fns';
-import {
-  getPolkassemblySubdomain,
-  getSubscanSubdomain,
-  getSubsquareSubdomain,
-} from '@polkadot-live/consts/chains';
-
-import type { AnyData } from '@polkadot-live/types/misc';
 import type {
   NominationPoolCommission,
   NominationPoolRoles,
 } from '@polkadot-live/types/accounts';
-import type {
-  IntervalSubscription,
-  ApiCallEntry,
-} from '@polkadot-live/types/subscriptions';
+import type { AnyData } from '@polkadot-live/types/misc';
 import type {
   EventAccountData,
   EventCallback,
   EventChainData,
 } from '@polkadot-live/types/reporter';
+import type {
+  ApiCallEntry,
+  IntervalSubscription,
+} from '@polkadot-live/types/subscriptions';
 
 export class EventsController {
   /**
@@ -42,7 +41,7 @@ export class EventsController {
    */
   static getIntervalEvent(
     task: IntervalSubscription,
-    miscData: AnyData
+    miscData: AnyData,
   ): EventCallback {
     switch (task.action) {
       case 'subscribe:interval:openGov:referendumVotes': {

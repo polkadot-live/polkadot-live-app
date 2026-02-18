@@ -14,7 +14,8 @@ export const NotificationsSwitch = ({
   const { onNotificationToggle } = useSubscriptions();
 
   return (
-    <div
+    <button
+      type="button"
       className="native-content"
       onClick={async () =>
         !isDisabled(task) &&
@@ -45,6 +46,6 @@ export const NotificationsSwitch = ({
           />
         </div>
       )}
-    </div>
+    </button>
   );
 };

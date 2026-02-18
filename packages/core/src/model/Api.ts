@@ -1,20 +1,19 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ApiError } from '../errors';
 import {
   ChainList,
   getChainIdFromRpcChain,
 } from '@polkadot-live/consts/chains';
 import { DedotClient, SmoldotProvider, WsProvider } from 'dedot';
-
-import type * as smoldot from 'smoldot/no-auto-bytecode';
-import type { ChainID, RpcSystemChain } from '@polkadot-live/types/chains';
+import { ApiError } from '../errors';
 import type {
   ClientTypes,
   FlattenedAPIData,
   NodeEndpoint,
 } from '@polkadot-live/types/apis';
+import type { ChainID, RpcSystemChain } from '@polkadot-live/types/chains';
+import type * as smoldot from 'smoldot/no-auto-bytecode';
 
 export class Api<T extends keyof ClientTypes> {
   api: DedotClient<ClientTypes[T]> | null;
@@ -25,7 +24,7 @@ export class Api<T extends keyof ClientTypes> {
   constructor(
     endpoint: NodeEndpoint,
     chainId: ChainID,
-    rpcs: `wss://${string}`[]
+    rpcs: `wss://${string}`[],
   ) {
     this.api = null;
     this.chainId = chainId;
@@ -55,7 +54,7 @@ export class Api<T extends keyof ClientTypes> {
    */
   getPotentialRelayChains = async (
     chainId: ChainID,
-    client: smoldot.Client
+    client: smoldot.Client,
   ) => {
     switch (chainId) {
       case 'Polkadot Asset Hub':
@@ -89,7 +88,7 @@ export class Api<T extends keyof ClientTypes> {
    */
   connect = async (
     smoldotClient: smoldot.Client | null,
-    signal: AbortSignal
+    signal: AbortSignal,
   ): Promise<{ ack: 'success' | 'failure'; error?: ApiError }> => {
     try {
       const throwIfAborted = () => {
@@ -119,7 +118,7 @@ export class Api<T extends keyof ClientTypes> {
           throwIfAborted();
           const potentialRelayChains = await this.getPotentialRelayChains(
             this.chainId,
-            smoldotClient
+            smoldotClient,
           );
           throwIfAborted();
           const chain = await smoldotClient.addChain({

@@ -1,16 +1,16 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import TransportNodeHid from '@ledgerhq/hw-transport-node-hid';
 import { usb } from 'usb';
 import { verifyLedgerDevice, withTimeout } from './utils';
-import TransportNodeHid from '@ledgerhq/hw-transport-node-hid';
-import type { AnyFunction } from '@polkadot-live/types/misc';
+import type Transport from '@ledgerhq/hw-transport';
 import type {
   LedgerErrorStatusCode,
   LedgerPolkadotApp,
   LedgerTaskResult,
 } from '@polkadot-live/types';
-import type Transport from '@ledgerhq/hw-transport';
+import type { AnyFunction } from '@polkadot-live/types/misc';
 
 const genericErrorMsg = 'Generic error.';
 
@@ -53,7 +53,9 @@ export class USBController {
    * Cache the Ledger Polkadot app for later use when signing extrinsics.
    */
   static cachePolkadotApp = (appData: LedgerPolkadotApp) => {
-    this.appCache && (this.appCache = null);
+    if (this.appCache) {
+      this.appCache = null;
+    }
     this.appCache = appData;
   };
 
@@ -111,7 +113,7 @@ export class USBController {
    * Get transport error.
    */
   static getLedgerError = (
-    errorType: LedgerErrorStatusCode
+    errorType: LedgerErrorStatusCode,
   ): LedgerTaskResult => {
     const error = new Error(genericErrorMsg);
     error.name = errorType;

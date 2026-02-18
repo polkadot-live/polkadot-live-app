@@ -1,12 +1,12 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import * as Styles from '@polkadot-live/styles';
-import { useConnections, useTabs } from '@polkadot-live/contexts';
-import { TooltipRx } from '@polkadot-live/ui';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useConnections, useTabs } from '@polkadot-live/contexts';
+import * as Styles from '@polkadot-live/styles';
+import { TooltipRx } from '@polkadot-live/ui';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { TriggerBtn } from './Wrappers';
 
 const MenuItem = ({ label, viewId }: { label: string; viewId: string }) => {

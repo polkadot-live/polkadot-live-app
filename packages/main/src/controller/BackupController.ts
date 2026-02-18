@@ -1,10 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { SharedState } from '../config/SharedState';
+import { promises as fsPromises } from 'node:fs';
 import { dialog } from 'electron';
-import { promises as fsPromises } from 'fs';
 import { version } from '../../package.json';
+import { SharedState } from '../config/SharedState';
 import {
   AddressesController,
   EventsController,
@@ -67,7 +67,7 @@ export class BackupController {
 
     if (!canceled && filePath) {
       try {
-        const serialized = this.getExportData();
+        const serialized = BackupController.getExportData();
         await fsPromises.writeFile(filePath, serialized, {
           encoding: 'utf8',
         });

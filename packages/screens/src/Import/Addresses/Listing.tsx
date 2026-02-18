@@ -1,23 +1,22 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Accordion from '@radix-ui/react-accordion';
-import * as UI from '@polkadot-live/ui';
-import * as Styles from '@polkadot-live/styles';
-
 import { useDialogControl, useImportAddresses } from '@polkadot-live/contexts';
-import { useState } from 'react';
-import { Address } from './Address';
+import * as Styles from '@polkadot-live/styles';
+import * as UI from '@polkadot-live/ui';
+import * as Accordion from '@radix-ui/react-accordion';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
+import { useState } from 'react';
 import {
   DialogBulkRename,
   DialogManageAccounts,
   DialogRename,
   DialogShowAddress,
 } from '../Addresses/Dialogs';
+import { Address } from './Address';
+import type { ImportedGenericAccount } from '@polkadot-live/types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ManageAccountsProps } from './types';
-import type { ImportedGenericAccount } from '@polkadot-live/types';
 
 export const Listing = ({ source, setSection }: ManageAccountsProps) => {
   const { getAccounts } = useImportAddresses();
@@ -84,19 +83,17 @@ export const Listing = ({ source, setSection }: ManageAccountsProps) => {
               <UI.AccordionContent transparent={true}>
                 <Styles.ItemsColumn>
                   {genericAccounts.length ? (
-                    <>
-                      {genericAccounts
-                        .sort((a, b) =>
-                          a.accountName.localeCompare(b.accountName)
-                        )
-                        .map((genericAccount) => (
-                          <Address
-                            key={`address_${genericAccount.accountName}`}
-                            genericAccount={genericAccount}
-                            setSection={setSection}
-                          />
-                        ))}
-                    </>
+                    genericAccounts
+                      .sort((a, b) =>
+                        a.accountName.localeCompare(b.accountName),
+                      )
+                      .map((genericAccount) => (
+                        <Address
+                          key={`address_${genericAccount.accountName}`}
+                          genericAccount={genericAccount}
+                          setSection={setSection}
+                        />
+                      ))
                   ) : (
                     <Styles.EmptyWrapper>
                       <div>

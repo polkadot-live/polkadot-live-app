@@ -34,7 +34,7 @@ export const removeEvent = async (event: EventCallback) =>
 export const updateEventWhoInfo = async (
   address: string,
   chainId: ChainID,
-  newName: string
+  newName: string,
 ): Promise<EventCallback[]> => {
   const cmp = (a: EventAccountData) =>
     a.address === address && a.chainId === chainId && a.accountName !== newName;

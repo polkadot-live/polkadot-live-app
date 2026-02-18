@@ -1,29 +1,29 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Dialog from '@radix-ui/react-dialog';
+import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  useConnections,
+  useDialogControl,
+  useRenameHandler,
+} from '@polkadot-live/contexts';
 import {
   DialogContent,
   DialogHr,
   FlexColumn,
   FlexRow,
 } from '@polkadot-live/styles';
-import { Cross2Icon } from '@radix-ui/react-icons';
-import { NetworkLabel } from './NetworkLabel';
-import {
-  useConnections,
-  useDialogControl,
-  useRenameHandler,
-} from '@polkadot-live/contexts';
-import { useEffect, useState } from 'react';
 import { renderToast, TooltipRx } from '@polkadot-live/ui';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
+import * as Dialog from '@radix-ui/react-dialog';
+import { Cross2Icon } from '@radix-ui/react-icons';
 import { unescape } from '@w3ux/utils';
-import type { ChainID } from '@polkadot-live/types/chains';
-import type { DialogBulkRenameProps } from './types';
-import type { FormEvent } from 'react';
+import { useEffect, useState } from 'react';
+import { NetworkLabel } from './NetworkLabel';
 import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { FormEvent } from 'react';
+import type { DialogBulkRenameProps } from './types';
 
 export const DialogBulkRename = ({ genericAccount }: DialogBulkRenameProps) => {
   const { accountName, encodedAccounts } = genericAccount;
@@ -134,7 +134,7 @@ export const DialogBulkRename = ({ genericAccount }: DialogBulkRenameProps) => {
    */
   const handleEncodedChange = (
     e: FormEvent<HTMLInputElement>,
-    chainId: ChainID
+    chainId: ChainID,
   ) => {
     let val = e.currentTarget.value || '';
     val = unescape(val);
@@ -146,7 +146,7 @@ export const DialogBulkRename = ({ genericAccount }: DialogBulkRenameProps) => {
    */
   const resetEncodedEditing = (chainId: ChainID) => {
     setEncodedNames((prev) =>
-      new Map(prev).set(chainId, encodedAccounts[chainId].alias)
+      new Map(prev).set(chainId, encodedAccounts[chainId].alias),
     );
   };
 
@@ -279,7 +279,7 @@ export const DialogBulkRename = ({ genericAccount }: DialogBulkRenameProps) => {
                       </FlexRow>
                     </FlexRow>
                   </form>
-                )
+                ),
               )}
             </FlexColumn>
 

@@ -1,13 +1,13 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { faSquarePen } from '@fortawesome/free-solid-svg-icons';
 import {
   useConnections,
   useContextProxy,
   useOverlay,
 } from '@polkadot-live/contexts';
 import { ButtonSubmit } from '@polkadot-live/ui';
-import { faSquarePen } from '@fortawesome/free-solid-svg-icons';
 import type { SubmitProps } from './types';
 
 export const Signer = ({

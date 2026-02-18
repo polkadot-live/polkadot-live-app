@@ -5,14 +5,14 @@ import { createContext, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
 import { useConnections, useOverlay } from '../../common';
 import { getLedgerFeedbackAdapter } from './adapters';
-import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
-import type { LedgerFeedbackContextInterface } from '../../../types/action';
 import type {
   LedgerErrorMeta,
   LedgerErrorStatusCode,
   LedgerFeedbackMessage,
   LedgerTask,
 } from '@polkadot-live/types/ledger';
+import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
+import type { LedgerFeedbackContextInterface } from '../../../types/action';
 
 export const LedgerFeedbackContext = createContext<
   LedgerFeedbackContextInterface | undefined
@@ -20,7 +20,7 @@ export const LedgerFeedbackContext = createContext<
 
 export const useLedgerFeedback = createSafeContextHook(
   LedgerFeedbackContext,
-  'LedgerFeedbackContext'
+  'LedgerFeedbackContext',
 );
 
 export const LedgerFeedbackProvider = ({
@@ -91,7 +91,7 @@ export const LedgerFeedbackProvider = ({
       setDisableClose,
       setIsSigning,
       setOverlayStatus,
-      setMessage
+      setMessage,
     );
   };
 

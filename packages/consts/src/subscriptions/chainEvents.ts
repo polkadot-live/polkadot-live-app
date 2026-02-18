@@ -359,7 +359,7 @@ const Pallets: Record<
 
 export const getEventSubscriptions = <P extends PalletName>(
   chainId: ChainID,
-  pallet: P
+  pallet: P,
 ): ChainEventSubscription[] =>
   Object.entries(Pallets[pallet]).map(([eventName, { helpKey, label }]) => ({
     id: `${chainId}::${pallet}::${eventName}`,
@@ -375,7 +375,7 @@ export const getEventSubscriptions = <P extends PalletName>(
 
 export const getEventSubscriptionsForAccount = <P extends PalletName>(
   chainId: ChainID,
-  flattened: FlattenedAccountData
+  flattened: FlattenedAccountData,
 ): ChainEventSubscription[] => {
   // Determine pallets.
   const { nominationPoolData, nominatingData } = flattened;
@@ -384,45 +384,41 @@ export const getEventSubscriptionsForAccount = <P extends PalletName>(
   nominatingData && pallets.push('Staking');
 
   // Return array of subscriptions for account.
-  return pallets
-    .map((pallet) =>
-      Object.entries(Pallets[pallet])
-        .filter(([, { scope }]) => scope.includes('account'))
-        .map(([eventName, { helpKey, label }]) => ({
-          id: `${chainId}::${flattened.address}::${pallet}::${eventName}`,
-          kind: 'account' as EventSubKind,
-          chainId,
-          enabled: false,
-          eventName: eventName as EventName<P>,
-          helpKey,
-          label,
-          osNotify: false,
-          pallet,
-        }))
-    )
-    .flat();
+  return pallets.flatMap((pallet) =>
+    Object.entries(Pallets[pallet])
+      .filter(([, { scope }]) => scope.includes('account'))
+      .map(([eventName, { helpKey, label }]) => ({
+        id: `${chainId}::${flattened.address}::${pallet}::${eventName}`,
+        kind: 'account' as EventSubKind,
+        chainId,
+        enabled: false,
+        eventName: eventName as EventName<P>,
+        helpKey,
+        label,
+        osNotify: false,
+        pallet,
+      })),
+  );
 };
 
 export const getEventSubscriptionsForRef = (
   chainId: ChainID,
-  refId: number
+  refId: number,
 ): ChainEventSubscription[] => {
   const pallets = ['Referenda'];
-  return pallets
-    .map((pallet) =>
-      Object.entries(Pallets[pallet])
-        .filter(([, { scope }]) => scope.includes('referendum'))
-        .map(([eventName, { helpKey, label }]) => ({
-          id: `${chainId}::${refId}::${pallet}::${eventName}`,
-          kind: 'referendum' as EventSubKind,
-          chainId,
-          enabled: false,
-          eventName,
-          helpKey,
-          label,
-          osNotify: false,
-          pallet,
-        }))
-    )
-    .flat();
+  return pallets.flatMap((pallet) =>
+    Object.entries(Pallets[pallet])
+      .filter(([, { scope }]) => scope.includes('referendum'))
+      .map(([eventName, { helpKey, label }]) => ({
+        id: `${chainId}::${refId}::${pallet}::${eventName}`,
+        kind: 'referendum' as EventSubKind,
+        chainId,
+        enabled: false,
+        eventName,
+        helpKey,
+        label,
+        osNotify: false,
+        pallet,
+      })),
+  );
 };

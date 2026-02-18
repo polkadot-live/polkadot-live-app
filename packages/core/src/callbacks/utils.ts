@@ -1,9 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { IpcTask } from '@polkadot-live/types/communication';
 import { APIsController, BusDispatcher } from '../controllers';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { IpcTask } from '@polkadot-live/types/communication';
 import type {
   EventCallback,
   NotificationData,

@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { createSafeContextHook, useWcFeedback } from '@polkadot-live/contexts';
-import { createContext, useState } from 'react';
-import { useWalletConnect } from '../WalletConnect';
 import { WcError } from '@polkadot-live/core';
+import { createContext, useState } from 'react';
 import { handleWcError } from '../utils';
-import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
+import { useWalletConnect } from '../WalletConnect';
 import type { WcVerifierContextInterface } from '@polkadot-live/contexts';
+import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 
 export const WcVerifierContext = createContext<
   WcVerifierContextInterface | undefined
@@ -15,7 +15,7 @@ export const WcVerifierContext = createContext<
 
 export const useWcVerifier = createSafeContextHook(
   WcVerifierContext,
-  'WcVerifierContext'
+  'WcVerifierContext',
 );
 
 export const WcVerifierProvider = ({
@@ -55,7 +55,7 @@ export const WcVerifierProvider = ({
   };
 
   const handleVerificationCheck = async (
-    info: ExtrinsicInfo
+    info: ExtrinsicInfo,
   ): Promise<{ approved: boolean; errorThrown: boolean }> => {
     const { chainId, from } = info.actionMeta;
     setSigningChain(chainId);
@@ -84,7 +84,7 @@ export const WcVerifierProvider = ({
       await wcEstablishSessionForExtrinsic(from, chainId);
       const { approved, errorThrown } = await verifySigningAccount(
         from,
-        chainId
+        chainId,
       );
       if (approved) {
         setWcAccountApproved(approved);

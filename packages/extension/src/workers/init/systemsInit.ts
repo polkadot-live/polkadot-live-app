@@ -9,10 +9,11 @@ import {
 } from '@polkadot-live/core';
 import { connectApis, startApi } from '../apis';
 import { eventBus } from '../eventBus';
-import { initAPIs } from './apisInit';
-import { initManagedAccounts } from './accountsInit';
-import { initOnlineMode, initTheme } from './environmentInit';
 import { setSharedState, setSystemsInitialized } from '../state';
+import { setAccountSubscriptionsState } from '../subscriptions';
+import { initManagedAccounts } from './accountsInit';
+import { initAPIs } from './apisInit';
+import { initOnlineMode, initTheme } from './environmentInit';
 import {
   initAccountSubscriptions,
   initChainSubscriptions,
@@ -20,7 +21,6 @@ import {
   initIntervalSubscriptions,
   startEventStreams,
 } from './subscriptionsInit';
-import { setAccountSubscriptionsState } from '../subscriptions';
 
 export const initSystems = async () => {
   await initOnlineMode();

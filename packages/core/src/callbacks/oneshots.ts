@@ -7,16 +7,16 @@ import {
   getPostCallbackFlags,
   processOneShotPostCallback,
 } from '../library/CallbackLib';
+import type { DedotClientSet } from '@polkadot-live/types/apis';
 import type {
   ApiCallEntry,
   PostCallbackFlags,
   SubscriptionTask,
 } from '@polkadot-live/types/subscriptions';
 import type { Account } from '../model';
-import type { DedotClientSet } from '@polkadot-live/types/apis';
 
 export const executeOneShot = async (
-  task: SubscriptionTask
+  task: SubscriptionTask,
 ): Promise<boolean> => {
   const { chainId } = task;
 
@@ -108,7 +108,7 @@ const getTaskAccount = (task: SubscriptionTask): Account | null =>
 const postOneShotCallback = async (
   api: DedotClientSet,
   account: Account,
-  flags: PostCallbackFlags
+  flags: PostCallbackFlags,
 ) => {
   await processOneShotPostCallback(api, account, flags);
   const flattened = account.flatten();
@@ -122,13 +122,17 @@ const postOneShotCallback = async (
 const oneShot_account_balance_free = async (
   task: SubscriptionTask,
   api: DedotClientSet,
-  flags: PostCallbackFlags
+  flags: PostCallbackFlags,
 ): Promise<boolean> => {
   const { address } = task.account!;
   const data = await api.query.system.account(address);
   const entry: ApiCallEntry = { curVal: null, task };
-  // eslint-disable-next-line prettier/prettier
-  return await Callbacks.callback_account_balance_free(data, entry, flags, true);
+  return await Callbacks.callback_account_balance_free(
+    data,
+    entry,
+    flags,
+    true,
+  );
 };
 
 /**
@@ -138,13 +142,17 @@ const oneShot_account_balance_free = async (
 const oneShot_account_balance_frozen = async (
   task: SubscriptionTask,
   api: DedotClientSet,
-  flags: PostCallbackFlags
+  flags: PostCallbackFlags,
 ): Promise<boolean> => {
   const { address } = task.account!;
   const data = await api.query.system.account(address);
   const entry: ApiCallEntry = { curVal: null, task };
-  // eslint-disable-next-line prettier/prettier
-  return await Callbacks.callback_account_balance_frozen(data, entry, flags, true);
+  return await Callbacks.callback_account_balance_frozen(
+    data,
+    entry,
+    flags,
+    true,
+  );
 };
 
 /**
@@ -154,13 +162,17 @@ const oneShot_account_balance_frozen = async (
 const oneShot_account_balance_reserved = async (
   task: SubscriptionTask,
   api: DedotClientSet,
-  flags: PostCallbackFlags
+  flags: PostCallbackFlags,
 ): Promise<boolean> => {
   const { address } = task.account!;
   const data = await api.query.system.account(address);
   const entry: ApiCallEntry = { curVal: null, task };
-  // eslint-disable-next-line prettier/prettier
-  return await Callbacks.callback_account_balance_reserved(data, entry, flags, true);
+  return await Callbacks.callback_account_balance_reserved(
+    data,
+    entry,
+    flags,
+    true,
+  );
 };
 
 /**
@@ -170,13 +182,17 @@ const oneShot_account_balance_reserved = async (
 const oneShot_account_balance_spendable = async (
   task: SubscriptionTask,
   api: DedotClientSet,
-  flags: PostCallbackFlags
+  flags: PostCallbackFlags,
 ): Promise<boolean> => {
   const { address } = task.account!;
   const data = await api.query.system.account(address);
   const entry: ApiCallEntry = { curVal: null, task };
-  // eslint-disable-next-line prettier/prettier
-  return await Callbacks.callback_account_balance_spendable(data, entry, flags, true);
+  return await Callbacks.callback_account_balance_spendable(
+    data,
+    entry,
+    flags,
+    true,
+  );
 };
 
 /**
@@ -185,7 +201,7 @@ const oneShot_account_balance_spendable = async (
  */
 const oneShot_nomination_pool_rewards = async (
   task: SubscriptionTask,
-  flags: PostCallbackFlags
+  flags: PostCallbackFlags,
 ): Promise<boolean> => {
   const entry: ApiCallEntry = { curVal: null, task };
   return await Callbacks.callback_nomination_pool_rewards(entry, flags, true);
@@ -198,13 +214,17 @@ const oneShot_nomination_pool_rewards = async (
 const oneShot_nomination_pool_state = async (
   task: SubscriptionTask,
   api: DedotClientSet,
-  flags: PostCallbackFlags
+  flags: PostCallbackFlags,
 ): Promise<boolean> => {
   const arg = Number(task.actionArgs![0]);
   const data = await api.query.nominationPools.bondedPools(arg);
   const entry: ApiCallEntry = { curVal: null, task };
-  // eslint-disable-next-line prettier/prettier
-  return await Callbacks.callback_nomination_pool_state(data, entry, flags, true);
+  return await Callbacks.callback_nomination_pool_state(
+    data,
+    entry,
+    flags,
+    true,
+  );
 };
 
 /**
@@ -214,13 +234,17 @@ const oneShot_nomination_pool_state = async (
 const oneShot_nomination_pool_renamed = async (
   task: SubscriptionTask,
   api: DedotClientSet,
-  flags: PostCallbackFlags
+  flags: PostCallbackFlags,
 ): Promise<boolean> => {
   const arg = Number(task.actionArgs![0]);
   const data = await api.query.nominationPools.metadata(arg);
   const entry: ApiCallEntry = { curVal: null, task };
-  // eslint-disable-next-line prettier/prettier
-  return await Callbacks.callback_nomination_pool_renamed(data, entry, flags, true);
+  return await Callbacks.callback_nomination_pool_renamed(
+    data,
+    entry,
+    flags,
+    true,
+  );
 };
 
 /**
@@ -230,13 +254,17 @@ const oneShot_nomination_pool_renamed = async (
 const oneShot_nomination_pool_roles = async (
   task: SubscriptionTask,
   api: DedotClientSet,
-  flags: PostCallbackFlags
+  flags: PostCallbackFlags,
 ): Promise<boolean> => {
   const arg = Number(task.actionArgs![0]);
   const data = await api.query.nominationPools.bondedPools(arg);
   const entry: ApiCallEntry = { curVal: null, task };
-  // eslint-disable-next-line prettier/prettier
-  return await Callbacks.callback_nomination_pool_roles(data, entry, flags, true);
+  return await Callbacks.callback_nomination_pool_roles(
+    data,
+    entry,
+    flags,
+    true,
+  );
 };
 
 /**
@@ -246,13 +274,17 @@ const oneShot_nomination_pool_roles = async (
 const oneShot_nomination_pool_commission = async (
   task: SubscriptionTask,
   api: DedotClientSet,
-  flags: PostCallbackFlags
+  flags: PostCallbackFlags,
 ): Promise<boolean> => {
   const arg = Number(task.actionArgs![0]);
   const data = await api.query.nominationPools.bondedPools(arg);
   const entry: ApiCallEntry = { curVal: null, task };
-  // eslint-disable-next-line prettier/prettier
-  return await Callbacks.callback_nomination_pool_commission(data, entry, flags, true);
+  return await Callbacks.callback_nomination_pool_commission(
+    data,
+    entry,
+    flags,
+    true,
+  );
 };
 
 /**
@@ -260,7 +292,7 @@ const oneShot_nomination_pool_commission = async (
  * @summary One-shot call to fetch an account's nominating pending paypouts.
  */
 const oneShot_nominating_era_rewards = async (
-  task: SubscriptionTask
+  task: SubscriptionTask,
 ): Promise<boolean> => {
   const entry: ApiCallEntry = { curVal: null, task };
   return await Callbacks.callback_nominating_era_rewards(entry, true);
@@ -273,7 +305,7 @@ const oneShot_nominating_era_rewards = async (
 const oneShot_nominating_exposure = async (
   task: SubscriptionTask,
   api: DedotClientSet,
-  flags: PostCallbackFlags
+  flags: PostCallbackFlags,
 ): Promise<boolean> => {
   const entry: ApiCallEntry = { curVal: null, task };
   const data = await api.query.staking.activeEra();
@@ -287,12 +319,16 @@ const oneShot_nominating_exposure = async (
 const oneShot_nominating_commission = async (
   task: SubscriptionTask,
   api: DedotClientSet,
-  flags: PostCallbackFlags
+  flags: PostCallbackFlags,
 ): Promise<boolean> => {
   const data = await api.query.staking.activeEra();
   const entry: ApiCallEntry = { curVal: null, task };
-  // eslint-disable-next-line prettier/prettier
-  return await Callbacks.callback_nominating_commission(data, entry, flags, true);
+  return await Callbacks.callback_nominating_commission(
+    data,
+    entry,
+    flags,
+    true,
+  );
 };
 
 /**
@@ -302,10 +338,14 @@ const oneShot_nominating_commission = async (
 const oneShot_nominating_nominations = async (
   task: SubscriptionTask,
   api: DedotClientSet,
-  flags: PostCallbackFlags
+  flags: PostCallbackFlags,
 ): Promise<boolean> => {
   const data = await api.query.staking.activeEra();
   const entry: ApiCallEntry = { curVal: null, task };
-  // eslint-disable-next-line prettier/prettier
-  return await Callbacks.callback_nominating_nominations(data, entry, flags, true);
+  return await Callbacks.callback_nominating_nominations(
+    data,
+    entry,
+    flags,
+    true,
+  );
 };

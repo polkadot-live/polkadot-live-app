@@ -2,6 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 export * from './balances';
-export * from './utils';
 export * from './nominating';
 export * from './nominationPools';
+export * from './utils';

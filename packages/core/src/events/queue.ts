@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ChainEventsService } from './service';
-import type { ChainID } from '@polkadot-live/types/chains';
 import type { FrameSystemEventRecord } from '@polkadot-live/types';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { WhoMeta } from './types';
 
 interface QueueItem {
@@ -20,28 +20,32 @@ export class EventQueue {
   private static maxQueueSize = 500;
 
   static push(item: QueueItem) {
-    if (this.queue.length > this.maxQueueSize) {
+    if (EventQueue.queue.length > EventQueue.maxQueueSize) {
       console.warn('EventQueue overflow: trimming oldest events');
-      this.queue.splice(0, this.queue.length - this.maxQueueSize);
+      EventQueue.queue.splice(
+        0,
+        EventQueue.queue.length - EventQueue.maxQueueSize,
+      );
     }
-    this.queue.push(item);
-    this.process();
+    EventQueue.queue.push(item);
+    EventQueue.process();
   }
 
   private static async process() {
-    if (this.isProcessing) {
+    if (EventQueue.isProcessing) {
       return;
     }
-    this.isProcessing = true;
+    EventQueue.isProcessing = true;
 
-    while (this.queue.length > 0) {
+    while (EventQueue.queue.length > 0) {
       try {
-        const { chainId, osNotify, record, whoMeta } = this.queue.shift()!;
+        const { chainId, osNotify, record, whoMeta } =
+          EventQueue.queue.shift()!;
         ChainEventsService.processSingleEvent(
           chainId,
           osNotify,
           record,
-          whoMeta
+          whoMeta,
         );
         // Yield control to allow UI updates to flush.
         if (EventQueue.delay > 0) {
@@ -51,6 +55,6 @@ export class EventQueue {
         console.error('Error processing event', err);
       }
     }
-    this.isProcessing = false;
+    EventQueue.isProcessing = false;
   }
 }

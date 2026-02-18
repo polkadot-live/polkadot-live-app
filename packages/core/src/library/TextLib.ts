@@ -1,10 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { perbillToPercent } from '../library/CommonLib';
 import { chainCurrency, chainUnits } from '@polkadot-live/consts/chains';
-import { formatDistanceToNow } from 'date-fns';
 import { planckToUnit, rmCommas } from '@w3ux/utils';
+import { formatDistanceToNow } from 'date-fns';
+import { perbillToPercent } from '../library/CommonLib';
 import type {
   AccountSource,
   NominationPoolCommission,
@@ -18,7 +18,7 @@ import type { ChainID } from '@polkadot-live/types/chains';
  */
 export const getNominationPoolRolesText = (
   curState: NominationPoolRoles,
-  prevState: NominationPoolRoles
+  prevState: NominationPoolRoles,
 ): string => {
   // Add changed roles to an array.
   const changedRoles: string[] = [];
@@ -34,10 +34,10 @@ export const getNominationPoolRolesText = (
   const text =
     changedRoles.length === 0
       ? 'Roles remain unchanged.'
-      : changedRoles.reduce(
+      : `${changedRoles.reduce(
           (acc, r) => (acc === '' ? `${acc} ${r}` : `${acc} + ${r}`),
-          ''
-        ) + ' changed.';
+          '',
+        )} changed.`;
 
   return text;
 };
@@ -48,7 +48,7 @@ export const getNominationPoolRolesText = (
  */
 export const getNominationPoolRenamedText = (
   curName: string,
-  prevName: string
+  prevName: string,
 ): string =>
   curName !== prevName
     ? `Changed from ${prevName} to ${curName}`
@@ -60,7 +60,7 @@ export const getNominationPoolRenamedText = (
  */
 export const getNominationPoolStateText = (
   curState: string,
-  prevState: string
+  prevState: string,
 ): string =>
   curState !== prevState
     ? `Changed from ${prevState} to ${curState}.`
@@ -118,7 +118,7 @@ export const formatChainUnits = (units: string, chainId: ChainID) => {
   // Include regex to remove trailing zeros after decimal point.
   const asUnit: string = planckToUnit(
     BigInt(rmCommas(units)),
-    chainUnits(chainId)
+    chainUnits(chainId),
   );
 
   const formatted: string = truncateDecimals(asUnit, 2)
@@ -135,7 +135,7 @@ export const formatChainUnits = (units: string, chainId: ChainID) => {
 export const getBalanceText = (
   balance: bigint | string,
   chainId: ChainID,
-  decimals = 5
+  decimals = 5,
 ): string => {
   const asUnit = planckToUnit(balance, chainUnits(chainId));
   const truncated = truncateDecimals(asUnit, decimals);
@@ -181,7 +181,7 @@ export const getShortIntervalLabel = (ticksToWait: number) => {
  */
 export const getNominationPoolCommissionText = (
   cur: NominationPoolCommission,
-  prev: NominationPoolCommission
+  prev: NominationPoolCommission,
 ) => {
   const hasCommission = cur.current !== undefined;
   const fmtCommission = hasCommission

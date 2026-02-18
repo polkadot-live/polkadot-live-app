@@ -1,12 +1,11 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { ActionMeta } from './tx';
 import type { AnyJson } from './misc';
 import type { EventAccountData, EventChainData } from './reporter';
 import type { TaskAction } from './subscriptions';
+import type { ActionMeta } from './tx';
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace V05Alpha {
   export interface EventAction {
     uri: string;

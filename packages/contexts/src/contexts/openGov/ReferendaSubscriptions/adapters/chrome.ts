@@ -16,7 +16,7 @@ export const chromeAdapter: ReferendaSubscriptionsAdapter = {
   listenOnMount: (
     addReferendaSubscription,
     removeReferendaSubscription,
-    updateReferendaSubscription
+    updateReferendaSubscription,
   ) => {
     // Return early if setters not provided.
     if (
@@ -48,7 +48,9 @@ export const chromeAdapter: ReferendaSubscriptionsAdapter = {
           case 'syncRemoveAllSubscriptions': {
             const { tasks }: { tasks: IntervalSubscription[] } =
               message.payload;
-            tasks.forEach((task) => removeReferendaSubscription(task));
+            tasks.forEach((task) => {
+              removeReferendaSubscription(task);
+            });
             break;
           }
         }

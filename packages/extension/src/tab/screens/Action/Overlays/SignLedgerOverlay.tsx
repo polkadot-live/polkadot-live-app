@@ -1,26 +1,26 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as UI from '@polkadot-live/ui';
-import {
-  useConnections,
-  useLedgerFeedback,
-  useOverlay,
-} from '@polkadot-live/contexts';
-import { useEffect } from 'react';
-import {
-  LedgerOverlayWrapper,
-  FlexColumn,
-  FlexRow,
-} from '@polkadot-live/styles';
-import { PuffLoader } from 'react-spinners';
 import {
   faChevronRight,
   faExclamationTriangle,
   faX,
 } from '@fortawesome/free-solid-svg-icons';
-import LedgerLogoSVG from '@w3ux/extension-assets/Ledger.svg?react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  useConnections,
+  useLedgerFeedback,
+  useOverlay,
+} from '@polkadot-live/contexts';
+import {
+  FlexColumn,
+  FlexRow,
+  LedgerOverlayWrapper,
+} from '@polkadot-live/styles';
+import * as UI from '@polkadot-live/ui';
+import LedgerLogoSVG from '@w3ux/extension-assets/Ledger.svg?react';
+import { useEffect } from 'react';
+import { PuffLoader } from 'react-spinners';
 import type { SignLedgerOverlayProps } from './types';
 
 export const SignLedgerOverlay = ({ info }: SignLedgerOverlayProps) => {
@@ -56,7 +56,11 @@ export const SignLedgerOverlay = ({ info }: SignLedgerOverlayProps) => {
             </span>
             {ledgerFeedback.text}
           </span>
-          <button className="dismiss" onClick={() => clearFeedback()}>
+          <button
+            type="button"
+            className="dismiss"
+            onClick={() => clearFeedback()}
+          >
             <FontAwesomeIcon icon={faX} />
           </button>
         </UI.InfoCard>

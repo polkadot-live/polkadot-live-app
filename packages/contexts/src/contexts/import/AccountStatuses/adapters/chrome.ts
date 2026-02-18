@@ -1,12 +1,12 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { renderToast } from '../../../../utils';
 import type {
   AnyData,
   EncodedAccount,
   ImportedGenericAccount,
 } from '@polkadot-live/types';
-import { renderToast } from '../../../../utils';
 import type { AccountStatusesAdapter } from './types';
 
 export const chromeAdapter: AccountStatusesAdapter = {
@@ -31,7 +31,7 @@ export const chromeAdapter: AccountStatusesAdapter = {
               setStatusForAccount(
                 `${chainId}:${address}`,
                 generic.source,
-                status
+                status,
               );
 
               if (!success) {

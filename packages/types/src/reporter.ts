@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { AccountSource } from './accounts';
-import type { ActionMeta } from './tx';
-import type { AnyData, AnyJson } from './misc';
 import type { ChainID } from './chains';
+import type { AnyData, AnyJson } from './misc';
 import type { TaskAction } from './subscriptions';
+import type { ActionMeta } from './tx';
 
 export interface EventFetchCursor {
   timestamp: number;

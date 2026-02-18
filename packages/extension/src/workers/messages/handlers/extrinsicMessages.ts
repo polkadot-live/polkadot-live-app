@@ -22,14 +22,14 @@ import {
   setPendingTabData,
 } from '../../state';
 import { isMainTabOpen, sendChromeMessage } from '../../utils';
-import type { ActionMeta, ExtrinsicInfo } from '@polkadot-live/types/tx';
-import type { AnyData } from '@polkadot-live/types/misc';
-import type { LedgerTaskResponse } from '@polkadot-live/types/ledger';
 import type { TabData } from '@polkadot-live/types/communication';
+import type { LedgerTaskResponse } from '@polkadot-live/types/ledger';
+import type { AnyData } from '@polkadot-live/types/misc';
+import type { ActionMeta, ExtrinsicInfo } from '@polkadot-live/types/tx';
 
 export const handleExtrinsicMessage = (
   message: AnyData,
-  sendResponse: (response?: AnyData) => void
+  sendResponse: (response?: AnyData) => void,
 ): boolean => {
   switch (message.task) {
     case 'buildExtrinsic': {
@@ -116,7 +116,7 @@ export const handleExtrinsicMessage = (
     case 'ledgerSignSubmit': {
       const { info }: { info: ExtrinsicInfo } = message.payload;
       handleLedgerSignSubmit(info).then((result: LedgerTaskResponse) =>
-        sendResponse(result)
+        sendResponse(result),
       );
       return true;
     }

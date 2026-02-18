@@ -1,13 +1,13 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { createContext, useEffect, useRef, useState } from 'react';
-import { createSafeContextHook } from '../../../utils';
 import { getDefaultSettings } from '@polkadot-live/consts/settings';
 import { setStateWithRef } from '@w3ux/utils';
+import { createContext, useEffect, useRef, useState } from 'react';
+import { createSafeContextHook } from '../../../utils';
 import { useConnections } from '../../common';
 import { getSettingFlagsAdapter } from './adapters';
-import type { SettingKey, SettingItem } from '@polkadot-live/types/settings';
+import type { SettingItem, SettingKey } from '@polkadot-live/types/settings';
 import type { SettingFlagsContextInterface } from '../../../types/settings';
 
 export const SettingFlagsContext = createContext<
@@ -16,7 +16,7 @@ export const SettingFlagsContext = createContext<
 
 export const useSettingFlags = createSafeContextHook(
   SettingFlagsContext,
-  'SettingFlagsContext'
+  'SettingFlagsContext',
 );
 
 export const SettingFlagsProvider = ({

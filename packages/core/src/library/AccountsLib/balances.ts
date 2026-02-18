@@ -3,8 +3,8 @@
 
 import { AccountsController, APIsController } from '../../controllers';
 import type { AccountBalance } from '@polkadot-live/types/accounts';
-import type { ChainID } from '@polkadot-live/types/chains';
 import type { DedotClientSet } from '@polkadot-live/types/apis';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 /**
  * @name getAddressNonce
@@ -12,7 +12,7 @@ import type { DedotClientSet } from '@polkadot-live/types/apis';
  */
 export const getAddressNonce = async (
   api: DedotClientSet,
-  address: string
+  address: string,
 ): Promise<number> => (await api.query.system.account(address)).nonce;
 
 /**
@@ -23,7 +23,7 @@ export const getBalance = async (
   api: DedotClientSet,
   address: string,
   chainId: ChainID,
-  syncAccount = true
+  syncAccount = true,
 ): Promise<AccountBalance> => {
   const result = await api.query.system.account(address);
 
@@ -52,7 +52,7 @@ export const getBalance = async (
  */
 export const getSpendableBalanceBrowser = async (
   address: string,
-  chainId: ChainID
+  chainId: ChainID,
 ): Promise<string> =>
   await chrome.runtime.sendMessage({
     type: 'rawAccount',
@@ -62,7 +62,7 @@ export const getSpendableBalanceBrowser = async (
 
 export const getSpendableBalanceElectron = async (
   address: string,
-  chainId: ChainID
+  chainId: ChainID,
 ): Promise<string> => {
   const api = (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
   const ed = api.consts.balances.existentialDeposit;

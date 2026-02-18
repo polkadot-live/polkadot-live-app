@@ -1,19 +1,19 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { createContext } from 'react';
+import { ledgerErrorMeta } from '@polkadot-live/consts/ledger';
 import { createSafeContextHook, useAppSettings } from '@polkadot-live/contexts';
 import {
   ConfigRenderer,
   ExtrinsicsController,
   LedgerTxError,
 } from '@polkadot-live/core';
-import { ledgerErrorMeta } from '@polkadot-live/consts/ledger';
 import { decodeAddress, u8aToHex } from 'dedot/utils';
+import { createContext } from 'react';
+import type { LedgerSignerContextInterface } from '@polkadot-live/contexts';
+import type { LedgerErrorStatusCode } from '@polkadot-live/types/ledger';
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 import type { HexString } from 'dedot/utils';
-import type { LedgerErrorStatusCode } from '@polkadot-live/types/ledger';
-import type { LedgerSignerContextInterface } from '@polkadot-live/contexts';
 
 export const LedgerSignerContext = createContext<
   LedgerSignerContextInterface | undefined
@@ -21,7 +21,7 @@ export const LedgerSignerContext = createContext<
 
 export const useLedgerSigner = createSafeContextHook(
   LedgerSignerContext,
-  'LedgerSignerContext'
+  'LedgerSignerContext',
 );
 
 export const LedgerSignerProvider = ({
@@ -71,14 +71,14 @@ export const LedgerSignerProvider = ({
       const rawPayloadHex = rawPayload.data as HexString;
       const result = await window.myAPI.doLedgerTask(
         'ledger_sign',
-        JSON.stringify({ index, chainId, proofHex, rawPayloadHex })
+        JSON.stringify({ index, chainId, proofHex, rawPayloadHex }),
       );
 
       if (result.ack === 'failure') {
         throw new LedgerTxError(result.statusCode as LedgerErrorStatusCode);
       }
       const { signature }: { signature: HexString } = JSON.parse(
-        result.serData!
+        result.serData!,
       );
 
       // Attach signature to `info` and submit transaction.
@@ -118,7 +118,9 @@ export const LedgerSignerProvider = ({
           }),
         },
       })) as string;
-      result !== '' && (info.actionMeta.ledgerMeta = JSON.parse(result));
+      if (result !== '') {
+        info.actionMeta.ledgerMeta = JSON.parse(result);
+      }
     } catch (error) {
       console.error('Error parsing JSON:', error);
     }

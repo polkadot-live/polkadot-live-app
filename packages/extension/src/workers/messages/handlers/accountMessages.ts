@@ -14,12 +14,12 @@ import {
 } from '../../accounts';
 import { getSharedState } from '../../state';
 import type { AccountSource } from '@polkadot-live/types/accounts';
-import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { AnyData } from '@polkadot-live/types/misc';
 
 export const handleAccountMessage = (
   message: AnyData,
-  sendResponse: (response?: AnyData) => void
+  sendResponse: (response?: AnyData) => void,
 ): boolean => {
   switch (message.task) {
     case 'getAll': {
@@ -29,7 +29,7 @@ export const handleAccountMessage = (
     case 'getAllBySource': {
       const { source }: { source: AccountSource } = message.payload;
       DbController.get('accounts', source).then((result) =>
-        sendResponse(result)
+        sendResponse(result),
       );
       return true;
     }
@@ -37,7 +37,7 @@ export const handleAccountMessage = (
       const { address, chainId }: { address: string; chainId: ChainID } =
         message.payload;
       handleGetSpendableBalance(address, chainId).then((res) =>
-        sendResponse(res.toString())
+        sendResponse(res.toString()),
       );
       return true;
     }

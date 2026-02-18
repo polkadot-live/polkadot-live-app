@@ -5,12 +5,12 @@ import {
   getSupportedChains,
   getSupportedLedgerChains,
 } from '@polkadot-live/consts/chains';
+import { decodeAddress, encodeAddress, u8aToHex } from 'dedot/utils';
 import { createContext } from 'react';
 import { createSafeContextHook, renderToast } from '../../../utils';
+import { useConnections } from '../../common';
 import { useAccountStatuses } from '../AccountStatuses';
 import { useImportAddresses } from '../Addresses';
-import { useConnections } from '../../common';
-import { decodeAddress, encodeAddress, u8aToHex } from 'dedot/utils';
 import { getImportHandlerAdapter } from './adapters';
 import type {
   AccountSource,
@@ -27,7 +27,7 @@ export const ImportHandlerContext = createContext<
 
 export const useImportHandler = createSafeContextHook(
   ImportHandlerContext,
-  'ImportHandlerContext'
+  'ImportHandlerContext',
 );
 
 export const ImportHandlerProvider = ({
@@ -60,14 +60,14 @@ export const ImportHandlerProvider = ({
     source: AccountSource,
     accountName?: string,
     ledgerMeta?: LedgerMetadata,
-    showToast = true
+    showToast = true,
   ) => {
     // Construct generic account and set import status.
     const genericAccount = construct(
       enAddress,
       source,
       accountName,
-      ledgerMeta
+      ledgerMeta,
     );
 
     // Handle default bookmarks.
@@ -96,7 +96,7 @@ export const ImportHandlerProvider = ({
       renderToast(
         `Account added successfully as ${genericAccount.accountName}`,
         'import-success',
-        'success'
+        'success',
       );
   };
 
@@ -104,13 +104,13 @@ export const ImportHandlerProvider = ({
    * Import an account from a data file.
    */
   const handleImportAddressFromBackup = async (
-    genericAccount: ImportedGenericAccount
+    genericAccount: ImportedGenericAccount,
   ) => {
     const { encodedAccounts, source } = genericAccount;
 
     // Set processing flag for account if it needs importing.
     for (const { address, chainId, isImported } of Object.values(
-      encodedAccounts
+      encodedAccounts,
     )) {
       setStatusForAccount(`${chainId}:${address}`, source, isImported);
     }
@@ -125,7 +125,7 @@ export const ImportHandlerProvider = ({
     address: string,
     source: AccountSource,
     accountName?: string,
-    ledgerMeta?: LedgerMetadata
+    ledgerMeta?: LedgerMetadata,
   ): ImportedGenericAccount => {
     const _accountName = accountName || getDefaultName();
     const encodedAccounts = {} as Record<ChainID, EncodedAccount>;
@@ -169,7 +169,7 @@ export const ImportHandlerProvider = ({
    */
   const postToMain = (
     genericAccount: ImportedGenericAccount,
-    encodedAccount: EncodedAccount
+    encodedAccount: EncodedAccount,
   ) => adapter.postToMain(genericAccount, encodedAccount);
 
   return (

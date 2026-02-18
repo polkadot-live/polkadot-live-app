@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ScreenInfoCardWrapper, InfoCardWrapper } from './InfoCard.styles';
-import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { FlexColumn } from '@polkadot-live/styles';
+import { InfoCardWrapper, ScreenInfoCardWrapper } from './InfoCard.styles';
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
 export interface InfoCardProps {
   children: React.ReactNode;

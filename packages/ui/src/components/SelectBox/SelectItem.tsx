@@ -1,14 +1,14 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Select from '@radix-ui/react-select';
 import { CheckIcon } from '@radix-ui/react-icons';
+import * as Select from '@radix-ui/react-select';
 import { forwardRef } from 'react';
 import type { AnyData } from '@polkadot-live/types/misc';
 
 export const SelectItem = forwardRef(function SelectItem(
   { children, className, ...props }: AnyData,
-  forwardedRef
+  forwardedRef,
 ) {
   return (
     <Select.Item

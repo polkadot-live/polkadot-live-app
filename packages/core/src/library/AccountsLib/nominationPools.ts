@@ -1,25 +1,24 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { APIsController } from '../../controllers/APIsController';
-import { ChainList, getStakingChains } from '@polkadot-live/consts/chains';
 import {
-  toU8a,
   bnToU8a,
   concatU8a,
   encodeAddress,
   hexToString,
   stringToU8a,
+  toU8a,
 } from '@dedot/utils';
-
+import { ChainList, getStakingChains } from '@polkadot-live/consts/chains';
+import { APIsController } from '../../controllers/APIsController';
 import type {
   AccountNominationPoolData,
   NominationPoolCommission,
   NominationPoolRoles,
 } from '@polkadot-live/types/accounts';
-import type { Account } from '../../model';
-import type { ChainID } from '@polkadot-live/types/chains';
 import type { DedotStakingClient } from '@polkadot-live/types/apis';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { Account } from '../../model';
 
 /**
  * @name getNominationPoolRewards
@@ -29,7 +28,7 @@ import type { DedotStakingClient } from '@polkadot-live/types/apis';
  */
 export const getNominationPoolRewards = async (
   address: string,
-  chainId: ChainID
+  chainId: ChainID,
 ): Promise<bigint> => {
   if (!getStakingChains().includes(chainId)) {
     return 0n;
@@ -49,7 +48,7 @@ export const getNominationPoolRewards = async (
  * @param {number} poolId - id of the pool.
  */
 const getPoolAccounts = (poolId: number, api: DedotStakingClient) => {
-  const createAccount = (pId: bigint, index: number): string => {
+  const createAccount = (_pId: bigint, index: number): string => {
     const poolsPalletId = api.consts.nominationPools.palletId;
 
     const key = concatU8a(
@@ -57,7 +56,7 @@ const getPoolAccounts = (poolId: number, api: DedotStakingClient) => {
       toU8a(poolsPalletId),
       new Uint8Array([index]),
       bnToU8a(BigInt(poolId.toString())).reverse(), // NOTE: Reversing for little endian
-      new Uint8Array(32)
+      new Uint8Array(32),
     );
 
     const prefix = api.consts.system.ss58Prefix;
@@ -78,7 +77,7 @@ const getPoolAccounts = (poolId: number, api: DedotStakingClient) => {
  */
 export const getNominationPoolData = async (
   account: Account,
-  api: DedotStakingClient
+  api: DedotStakingClient,
 ): Promise<AccountNominationPoolData | null> => {
   if (!Array.from(ChainList.keys()).includes(account.chain)) {
     return null;

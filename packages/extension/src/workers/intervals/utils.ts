@@ -5,10 +5,10 @@ import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 
 export const compare = (
   left: IntervalSubscription,
-  right: IntervalSubscription
+  right: IntervalSubscription,
 ): boolean =>
-  left.action === right.action &&
-  left.chainId === right.chainId &&
-  left.referendumId === right.referendumId
-    ? true
-    : false;
+  !!(
+    left.action === right.action &&
+    left.chainId === right.chainId &&
+    left.referendumId === right.referendumId
+  );

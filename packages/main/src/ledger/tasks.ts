@@ -1,28 +1,28 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { TX_METADATA_SRV_URL } from '@polkadot-live/consts/ledger';
 import { getLedgerAppName } from '@polkadot-live/consts/chains';
+import { TX_METADATA_SRV_URL } from '@polkadot-live/consts/ledger';
 import {
   handleLedgerTaskError,
   serializeTaskResponse,
 } from '@polkadot-live/core';
-import { MainDebug } from '../utils/DebugUtils';
 import { PolkadotGenericApp, supportedApps } from '@zondax/ledger-substrate';
-import { USBController } from './controller';
+import { hexToU8a, u8aToHex } from 'dedot/utils';
 import { WindowsController } from '../controller';
+import { MainDebug } from '../utils/DebugUtils';
+import { USBController } from './controller';
 import { withTimeout } from './utils';
+import type Transport from '@ledgerhq/hw-transport';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   LedgerGetAddressData,
   LedgerPolkadotApp,
   LedgerResult,
   LedgerTask,
-  SerLedgerTaskResponse,
   LedgerTaskResult,
+  SerLedgerTaskResponse,
 } from '@polkadot-live/types/ledger';
-import { hexToU8a, u8aToHex } from 'dedot/utils';
-import type Transport from '@ledgerhq/hw-transport';
 import type { HexString } from 'dedot/utils';
 
 const debug = MainDebug.extend('Ledger');
@@ -32,7 +32,7 @@ const debug = MainDebug.extend('Ledger');
  */
 export const executeLedgerTask = async (
   task: LedgerTask,
-  serData: string
+  serData: string,
 ): Promise<SerLedgerTaskResponse> => {
   switch (task) {
     /**
@@ -161,12 +161,12 @@ export const closePolkadot = (): LedgerTaskResult => {
  */
 export const getPolkadotGenericApp = (
   chainId: ChainID,
-  transport: Transport
+  transport: Transport,
 ): LedgerPolkadotApp => {
   // Get ss58 address prefix for requested chain.
   const appName = getLedgerAppName(chainId as ChainID);
   const { ss58_addr_type: ss58Prefix } = supportedApps.find(
-    (app) => app.name === appName
+    (app) => app.name === appName,
   )!;
 
   // Get the correct chain name for the metadata API.
@@ -184,7 +184,7 @@ export const signLedgerPayload = async (
   chainId: ChainID,
   index: number,
   blob: Uint8Array,
-  proof: Uint8Array
+  proof: Uint8Array,
 ): Promise<LedgerTaskResult> => {
   try {
     const transport = USBController.transport;
@@ -200,11 +200,11 @@ export const signLedgerPayload = async (
     const { signature: buffer } = await app.signWithMetadataEd25519(
       bip42Path,
       txBlob,
-      txMeta
+      txMeta,
     );
 
     const signatureHex: HexString = u8aToHex(
-      new Uint8Array(buffer.buffer, buffer.byteOffset, buffer.byteLength)
+      new Uint8Array(buffer.buffer, buffer.byteOffset, buffer.byteLength),
     );
 
     return { success: true, results: signatureHex };
@@ -218,7 +218,7 @@ export const signLedgerPayload = async (
  */
 export const handleGetAddresses = async (
   chainId: ChainID,
-  indices: number[]
+  indices: number[],
 ): Promise<LedgerTaskResult> => {
   try {
     const transport = USBController.transport;
@@ -243,7 +243,7 @@ export const handleGetAddresses = async (
       const PATH = `m/44'/${slip}'/${index}'/0'/0'`;
       const result: LedgerGetAddressData | Error = await withTimeout(
         3000,
-        app.getAddressEd25519(PATH, ss58Prefix, false)
+        app.getAddressEd25519(PATH, ss58Prefix, false),
       );
 
       if (result instanceof Error) {

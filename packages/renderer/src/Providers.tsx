@@ -1,34 +1,21 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-// Main window contexts.
-import {
-  BootstrappingProvider,
-  CogMenuProvider,
-  DataBackupProvider,
-  LedgerSignerProvider,
-  TreasuryApiProvider,
-  WalletConnectProvider,
-} from './contexts/main';
-
-// Actions window contexts.
-import { TxMetaProvider, WcVerifierProvider } from './contexts/action';
-
 // Import window contexts.
 import {
-  AddressesProvider,
-  AppSettingsProvider,
-  ApiHealthProvider,
   AccountStatusesProvider,
-  ImportAddressesProvider,
   AddHandlerProvider,
-  ChainsProvider,
+  AddressesProvider,
+  ApiHealthProvider,
+  AppSettingsProvider,
   ChainEventsProvider,
+  ChainsProvider,
   ConnectionsProvider,
   DeleteHandlerProvider,
   DialogControlProvider,
   EventsProvider,
   HelpProvider,
+  ImportAddressesProvider,
   ImportHandlerProvider,
   IntervalSubscriptionsProvider,
   IntervalTasksManagerProvider,
@@ -51,11 +38,21 @@ import {
   TreasuryProvider,
   WcFeedbackProvider,
 } from '@polkadot-live/contexts';
+import { withProviders } from '@polkadot-live/ui';
+// Actions window contexts.
+import { TxMetaProvider, WcVerifierProvider } from './contexts/action';
 import { WalletConnectImportProvider } from './contexts/import';
-
+// Main window contexts.
+import {
+  BootstrappingProvider,
+  CogMenuProvider,
+  DataBackupProvider,
+  LedgerSignerProvider,
+  TreasuryApiProvider,
+  WalletConnectProvider,
+} from './contexts/main';
 // Other imports.
 import { Theme } from './Theme';
-import { withProviders } from '@polkadot-live/ui';
 
 const getProvidersForWindow = () => {
   const windowId = window.myAPI.getWindowId();
@@ -87,7 +84,7 @@ const getProvidersForWindow = () => {
         CogMenuProvider,
         WalletConnectProvider,
         LedgerSignerProvider,
-        SummaryProvider
+        SummaryProvider,
       )(Theme);
     }
     case 'tabs': {
@@ -123,7 +120,7 @@ const getProvidersForWindow = () => {
         PolkassemblyProvider,
         ReferendaProvider,
         ReferendaSubscriptionsProvider,
-        TaskHandlerProvider
+        TaskHandlerProvider,
       )(Theme);
     }
     default: {

@@ -1,16 +1,16 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faTimes,
   faCircleChevronDown,
   faTags,
+  faTimes,
 } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FlexRow } from '@polkadot-live/styles';
-import { HeaderWrapper } from './Wrapper';
 import { Padlock } from '../Padlock';
 import { TooltipRx } from '../TooltipRx';
+import { HeaderWrapper } from './Wrapper';
 import type { HeaderProps } from './types';
 
 export const Header = ({
@@ -34,7 +34,11 @@ export const Header = ({
       <FlexRow data-testid="version" $gap="0.75rem" className="release">
         <span>{version || 'unknown'}</span>
         {onClickTag && (
-          <span className="LatestRelease" onClick={() => onClickTag()}>
+          <button
+            type="button"
+            className="LatestRelease"
+            onClick={() => onClickTag()}
+          >
             <TooltipRx
               style={{ zIndex: 25 }}
               text={'Check Latest Release'}
@@ -43,7 +47,7 @@ export const Header = ({
             >
               <FontAwesomeIcon icon={faTags} />
             </TooltipRx>
-          </span>
+          </button>
         )}
       </FlexRow>
       <div className="right">
@@ -60,7 +64,7 @@ export const Header = ({
               <button
                 type="button"
                 data-testid="minimize-btn"
-                onClick={() => onMinimizeWindow && onMinimizeWindow()}
+                onClick={() => onMinimizeWindow?.()}
               >
                 <FontAwesomeIcon
                   style={{ paddingLeft: '0.25rem' }}
@@ -74,7 +78,7 @@ export const Header = ({
             {Boolean(showDock) && (
               <Padlock
                 locked={Boolean(dockToggled)}
-                onClick={() => onDockToggle && onDockToggle()}
+                onClick={() => onDockToggle?.()}
               />
             )}
           </div>
@@ -84,7 +88,7 @@ export const Header = ({
             type="button"
             data-testid="close-btn"
             disabled={Boolean(appLoading)}
-            onClick={() => onCloseWindow && onCloseWindow()}
+            onClick={() => onCloseWindow?.()}
           >
             <FontAwesomeIcon icon={faTimes} transform="shrink-1" />
           </button>

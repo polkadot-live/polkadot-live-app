@@ -1,9 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { appendOrEmpty } from '@w3ux/utils';
 import { motion } from 'framer-motion';
 import type { ModalContentProps } from '../types';
-import { appendOrEmpty } from '@w3ux/utils';
 
 /**
  * @name ModalContent

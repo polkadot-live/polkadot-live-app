@@ -6,14 +6,14 @@ import type { AnyData } from '@polkadot-live/types/misc';
 export const sendChromeMessage = async <T>(
   type: string,
   task: string,
-  payloadObj?: AnyData
-): Promise<T | void> => {
+  payloadObj?: AnyData,
+): Promise<T | undefined> => {
   try {
     return (await chrome.runtime.sendMessage({
       type,
       task,
       payload: payloadObj ? { ...payloadObj } : undefined,
-    })) as T | void;
+    })) as T | undefined;
   } catch (err) {
     console.error(err);
   }

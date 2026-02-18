@@ -3,13 +3,13 @@
 
 import { intervalTasks } from '@polkadot-live/consts/subscriptions/interval';
 import { createContext } from 'react';
-import { getTaskHandlerAdapter } from './adapters';
 import { createSafeContextHook, renderToast } from '../../../utils';
 import { useConnections } from '../../common';
 import { useReferendaSubscriptions } from '../ReferendaSubscriptions';
+import { getTaskHandlerAdapter } from './adapters';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { ReferendaInfo, RefStatus } from '@polkadot-live/types/openGov';
+import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { TaskHandlerContextInterface } from '../../../types/openGov';
 
 export const TaskHandlerContext = createContext<
@@ -18,7 +18,7 @@ export const TaskHandlerContext = createContext<
 
 export const useTaskHandler = createSafeContextHook(
   TaskHandlerContext,
-  'TaskHandlerContext'
+  'TaskHandlerContext',
 );
 
 export const TaskHandlerProvider = ({
@@ -33,7 +33,7 @@ export const TaskHandlerProvider = ({
 
   const getIntervalSubscriptions = (
     chainId: ChainID,
-    refInfo: ReferendaInfo
+    refInfo: ReferendaInfo,
   ) => {
     const { refStatus } = refInfo;
     return intervalTasks
@@ -53,17 +53,19 @@ export const TaskHandlerProvider = ({
     const { refId } = refInfo;
     const all = getIntervalSubscriptions(chainId, refInfo);
     const updated = all.map(
-      (t) => ({ ...t, referendumId: refId }) as IntervalSubscription
+      (t) => ({ ...t, referendumId: refId }) as IntervalSubscription,
     );
     // Cache task data in context.
     const isOnline = getOnlineMode();
-    updated.forEach((t) => addReferendaSubscription({ ...t }));
+    updated.forEach((t) => {
+      addReferendaSubscription({ ...t });
+    });
     adapter.addReferendumSubscriptions(refId, updated, isOnline, chainId);
     adapter.handleAnalytics('referenda-subscribe-all', null);
     renderToast(
       `Subscriptions added for referendum ${refId}.`,
       `add-all-${chainId}-${refId}`,
-      'success'
+      'success',
     );
   };
 
@@ -77,17 +79,19 @@ export const TaskHandlerProvider = ({
           ...t,
           status: 'disable',
           referendumId: refId,
-        }) as IntervalSubscription
+        }) as IntervalSubscription,
     );
     // Cache task data in context.
     const isOnline = getOnlineMode();
-    updated.forEach((t) => removeReferendaSubscription({ ...t }));
+    updated.forEach((t) => {
+      removeReferendaSubscription({ ...t });
+    });
     adapter.removeReferendumSubscriptions(refId, updated, isOnline, chainId);
     adapter.handleAnalytics('referenda-unsubscribe-all', null);
     renderToast(
       `Subscriptions removed for referendum ${refId}.`,
       `remove-all-${chainId}-${refId}`,
-      'success'
+      'success',
     );
   };
 

@@ -1,19 +1,19 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as UI from '@polkadot-live/ui';
-import * as Styles from '@polkadot-live/styles';
+import { faCaretLeft, faQrcode } from '@fortawesome/free-solid-svg-icons';
 import {
   useConnections,
   useImportAddresses,
   useImportHandler,
   useOverlay,
 } from '@polkadot-live/contexts';
-import { faQrcode, faCaretLeft } from '@fortawesome/free-solid-svg-icons';
+import * as Styles from '@polkadot-live/styles';
+import * as UI from '@polkadot-live/ui';
+import { renderToast } from '@polkadot-live/ui';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Listing } from '../Addresses';
 import { Reader } from './Reader';
-import { renderToast } from '@polkadot-live/ui';
 import type { ManageVaultProps } from './types';
 
 export const Manage = ({ setSection }: ManageVaultProps) => {
@@ -37,7 +37,7 @@ export const Manage = ({ setSection }: ManageVaultProps) => {
             />
           </ErrorBoundary>,
           'small',
-          true
+          true,
         );
       }
     });

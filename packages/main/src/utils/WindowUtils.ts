@@ -1,29 +1,29 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import path, { dirname, join, resolve } from 'node:path';
+import { fileURLToPath, pathToFileURL, URLSearchParams } from 'node:url';
 import {
-  BrowserWindow,
-  Tray,
-  nativeImage,
-  ipcMain,
-  shell,
-  screen,
   BaseWindow,
+  BrowserWindow,
+  ipcMain,
+  nativeImage,
+  screen,
+  shell,
+  Tray,
   WebContentsView,
 } from 'electron';
-import path, { resolve, join, dirname } from 'path';
-import { fileURLToPath, pathToFileURL, URLSearchParams } from 'url';
-import { store } from '../main';
-import { hideDockIcon, reportOnlineStatus } from '../utils/SystemUtils';
+import { Config as ConfigMain } from '../config/main';
 import {
   EventsController,
   SettingsController,
   WindowsController,
 } from '../controller';
-import { Config as ConfigMain } from '../config/main';
+import { store } from '../main';
+import { hideDockIcon, reportOnlineStatus } from '../utils/SystemUtils';
 import { MainDebug } from './DebugUtils';
-import type { AnyJson } from '@polkadot-live/types/misc';
 import type { PortPairID } from '@polkadot-live/types/communication';
+import type { AnyJson } from '@polkadot-live/types/misc';
 import type { Rectangle } from 'electron';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -81,7 +81,7 @@ const getWindowBackgroundColor = (): string => {
  */
 export const createMainWindow = () => {
   const initialMenuBounds: AnyJson = (store as Record<string, AnyJson>).get(
-    'menu_bounds'
+    'menu_bounds',
   );
 
   const primaryDisplay = screen.getPrimaryDisplay();
@@ -132,7 +132,7 @@ export const createMainWindow = () => {
 
     // Send IPC message to renderer for app Initialization.
     WindowsController.getWindow('menu')?.webContents?.send(
-      'renderer:app:initialize'
+      'renderer:app:initialize',
     );
 
     // Report online status to renderer.
@@ -245,7 +245,7 @@ export const createBaseWindow = () => {
     WindowsController.getWindow('menu')?.webContents.postMessage(
       'port',
       { target: 'main-tabs:main' },
-      [port1]
+      [port1],
     );
     debug(`🔷 Send port ${pairId} to tabs`);
     tabsView.webContents.postMessage('port', { target: 'main-tabs:tabs' }, [
@@ -302,7 +302,7 @@ export const handleViewOnIPC = (name: string) => {
  */
 const loadUrlWithRoute = (
   window: BrowserWindow | WebContentsView,
-  options: { uri?: string; args?: Record<string, string> }
+  options: { uri?: string; args?: Record<string, string> },
 ) => {
   // Dev server routes start with /#/
   // Production routes start with #/
@@ -320,7 +320,7 @@ const loadUrlWithRoute = (
     // Production: load from app build.
     const indexHtmlPath = path.join(
       __dirname,
-      '../../renderer/dist/index.html'
+      '../../renderer/dist/index.html',
     );
     const fileUrl = pathToFileURL(indexHtmlPath).toString();
     cont.loadURL(`${fileUrl}#${route}`);

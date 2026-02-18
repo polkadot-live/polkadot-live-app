@@ -1,15 +1,15 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { getSendChains } from '@polkadot-live/consts/chains';
 import { ConfigRenderer } from '../config';
 import type {
   AccountSource,
   ImportedGenericAccount,
   SendAccount,
 } from '@polkadot-live/types/accounts';
-import { getSendChains } from '@polkadot-live/consts/chains';
-import type { ActionMeta } from '@polkadot-live/types/tx';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { ActionMeta } from '@polkadot-live/types/tx';
 
 /**
  * @name initExtrinsicElectron
@@ -52,13 +52,11 @@ export const fetchSendAccountsBrowser = async () => {
   const sendChains = getSendChains();
 
   for (const [source, genericAccounts] of rec.entries()) {
-    const addresses = genericAccounts
-      .map(({ encodedAccounts }) =>
-        Object.entries(encodedAccounts)
-          .filter(([cid]) => sendChains.includes(cid as ChainID))
-          .map(([, en]) => en)
-      )
-      .flat();
+    const addresses = genericAccounts.flatMap(({ encodedAccounts }) =>
+      Object.entries(encodedAccounts)
+        .filter(([cid]) => sendChains.includes(cid as ChainID))
+        .map(([, en]) => en),
+    );
     const accounts = addresses.map((en) => ({ ...en, source }));
     map.set(source, accounts);
   }
@@ -81,13 +79,11 @@ export const fetchSendAccountsElectron = async () => {
 
   for (const [source, ser] of parsedMap.entries()) {
     const parsed: ImportedGenericAccount[] = JSON.parse(ser);
-    const addresses = parsed
-      .map(({ encodedAccounts }) =>
-        Object.entries(encodedAccounts)
-          .filter(([cid]) => sendChains.includes(cid as ChainID))
-          .map(([, en]) => en)
-      )
-      .flat();
+    const addresses = parsed.flatMap(({ encodedAccounts }) =>
+      Object.entries(encodedAccounts)
+        .filter(([cid]) => sendChains.includes(cid as ChainID))
+        .map(([, en]) => en),
+    );
     const accounts = addresses.map((en) => ({ ...en, source }));
     map.set(source, accounts);
   }

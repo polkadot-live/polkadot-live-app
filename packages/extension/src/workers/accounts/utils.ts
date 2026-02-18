@@ -8,7 +8,7 @@ import type {
 } from '@polkadot-live/types/accounts';
 
 export const isAlreadyPersisted = async (
-  publicKeyHex: string
+  publicKeyHex: string,
 ): Promise<boolean> => {
   for (const source of [
     'ledger',

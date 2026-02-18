@@ -1,15 +1,15 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import manifest from './manifest.config.js';
+import { join, resolve } from 'node:path';
+import { crx } from '@crxjs/vite-plugin';
 import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import svgr from 'vite-plugin-svgr';
 import zip from 'vite-plugin-zip-pack';
-import { crx } from '@crxjs/vite-plugin';
-import { defineConfig } from 'vite';
+import manifest from './manifest.config.js';
 import { version } from './package.json';
-import { join, resolve } from 'node:path';
-import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 const PACKAGE_ROOT = __dirname;
 const PROJECT_ROOT = join(PACKAGE_ROOT, '../..');

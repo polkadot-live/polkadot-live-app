@@ -6,7 +6,7 @@ import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';
 export interface DeleteProps {
   genericAccount: ImportedGenericAccount;
   handleDeleteAddress: (
-    genericAccount: ImportedGenericAccount
+    genericAccount: ImportedGenericAccount,
   ) => Promise<boolean>;
   setSection: React.Dispatch<React.SetStateAction<number>>;
   setStatus: (s: number) => void;

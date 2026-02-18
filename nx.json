@@ -1,6 +1,6 @@
 {
   "namedInputs": {
-    "noMarkdown": ["!{projectRoot}/**/*.md"] 
+    "noMarkdown": ["!{projectRoot}/**/*.md"]
   },
   "targetDefaults": {
     "build": {

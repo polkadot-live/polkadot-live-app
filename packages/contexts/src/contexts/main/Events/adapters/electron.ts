@@ -31,7 +31,7 @@ export const electronAdapter: EventsAdapter = {
         (await window.myAPI.sendEventTaskAsync({
           action: 'events:counts',
           data: null,
-        })) as string
+        })) as string,
       );
     } catch (err) {
       console.error(err);
@@ -59,7 +59,7 @@ export const electronAdapter: EventsAdapter = {
     _setRenamedEvents,
     incCount,
     addEvent,
-    removeOutdatedEvents
+    removeOutdatedEvents,
   ) => {
     window.myAPI.reportNewEvent((_, event, newEvent) => {
       if (!ConfigRenderer.getAppSeting('setting:keep-outdated-events')) {

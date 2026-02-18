@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Zoom, toast } from 'react-toastify';
+import { toast, Zoom } from 'react-toastify';
 import type { ToastOptions, ToastPosition } from 'react-toastify';
 
 /**
@@ -11,7 +11,7 @@ export const renderToast = (
   message: string,
   toastId: string,
   toastType: 'error' | 'success',
-  position?: ToastPosition
+  position?: ToastPosition,
 ) => {
   const args: ToastOptions<unknown> = {
     position: position ? position : 'top-center',

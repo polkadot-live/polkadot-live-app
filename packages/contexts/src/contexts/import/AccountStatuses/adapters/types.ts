@@ -12,11 +12,11 @@ export interface AccountStatusesAdapter {
     setStatusForAccount?: (
       key: string,
       source: AccountSource,
-      status: boolean
+      status: boolean,
     ) => void,
     handleRemoveAddress?: (
       encodedAccount: EncodedAccount,
-      genericAccount: ImportedGenericAccount
-    ) => Promise<void>
+      genericAccount: ImportedGenericAccount,
+    ) => Promise<void>,
   ) => (() => void) | null;
 }

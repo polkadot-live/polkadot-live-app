@@ -8,10 +8,12 @@ SPDX-License-Identifier: GPL-3.0-only */
   backdrop-filter: brightness(70%) blur(4px);
   transition: backdrop-filter 0.65s;
 }
+
 @keyframes dialog_overlayShadow {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }

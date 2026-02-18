@@ -10,7 +10,7 @@ import type { SettingItem } from '@polkadot-live/types/settings';
 
 export const handleSettingMessage = (
   message: AnyData,
-  sendResponse: (response?: AnyData) => void
+  sendResponse: (response?: AnyData) => void,
 ): boolean => {
   switch (message.task) {
     case 'showDisclaimer': {

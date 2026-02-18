@@ -1,13 +1,13 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { APIsController } from './APIsController';
-import { BusDispatcher } from './BusDispatcher';
+import { intervalDurationsConfig } from '@polkadot-live/consts/subscriptions/interval';
 import { executeIntervaledOneShot } from '../callbacks/intervaled';
 import { secondsUntilNextMinute } from '../library/TimeLib';
-import { intervalDurationsConfig } from '@polkadot-live/consts/subscriptions/interval';
-import type { AnyData } from '@polkadot-live/types/misc';
+import { APIsController } from './APIsController';
+import { BusDispatcher } from './BusDispatcher';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { AnyData } from '@polkadot-live/types/misc';
 import type {
   IntervalSetting,
   IntervalSubscription,
@@ -51,7 +51,7 @@ export class IntervalsController {
    * NOTE: This method is called when app initializes and switches to online mode.
    */
   static initIntervals(isOnline: boolean) {
-    isOnline && this.initClock();
+    isOnline && IntervalsController.initClock();
   }
 
   /**
@@ -60,10 +60,10 @@ export class IntervalsController {
    */
   static insertSubscriptions(
     subscriptions: IntervalSubscription[],
-    isOnline: boolean
+    isOnline: boolean,
   ) {
     // Stop interval if it is running.
-    this.stopInterval();
+    IntervalsController.stopInterval();
 
     // Insert tasks into map.
     for (const task of subscriptions) {
@@ -71,15 +71,18 @@ export class IntervalsController {
         continue;
       }
       const { chainId } = task;
-      if (this.subscriptions.has(chainId)) {
-        const current = this.subscriptions.get(chainId)!;
-        this.subscriptions.set(chainId, [...current, { ...task }]);
+      if (IntervalsController.subscriptions.has(chainId)) {
+        const current = IntervalsController.subscriptions.get(chainId)!;
+        IntervalsController.subscriptions.set(chainId, [
+          ...current,
+          { ...task },
+        ]);
       } else {
-        this.subscriptions.set(chainId, [{ ...task }]);
+        IntervalsController.subscriptions.set(chainId, [{ ...task }]);
       }
     }
     // Restart interval.
-    isOnline && this.initClock();
+    isOnline && IntervalsController.initClock();
   }
 
   /**
@@ -88,22 +91,25 @@ export class IntervalsController {
    */
   static insertSubscription(
     subscription: IntervalSubscription,
-    isOnline: boolean
+    isOnline: boolean,
   ) {
     console.log('Insert interval subscription:');
     console.log(subscription);
     // Stop interval.
-    this.stopInterval();
+    IntervalsController.stopInterval();
 
     const { chainId } = subscription;
-    if (this.subscriptions.has(chainId)) {
-      const current = this.subscriptions.get(chainId)!;
-      this.subscriptions.set(chainId, [...current, { ...subscription }]);
+    if (IntervalsController.subscriptions.has(chainId)) {
+      const current = IntervalsController.subscriptions.get(chainId)!;
+      IntervalsController.subscriptions.set(chainId, [
+        ...current,
+        { ...subscription },
+      ]);
     } else {
-      this.subscriptions.set(chainId, [{ ...subscription }]);
+      IntervalsController.subscriptions.set(chainId, [{ ...subscription }]);
     }
     // Restart interval after updating cached tasks.
-    isOnline && this.initClock();
+    isOnline && IntervalsController.initClock();
   }
 
   /**
@@ -112,28 +118,28 @@ export class IntervalsController {
    */
   static removeSubscriptions(
     subscriptions: IntervalSubscription[],
-    isOnline: boolean
+    isOnline: boolean,
   ) {
     // Stop interval.
-    this.stopInterval();
+    IntervalsController.stopInterval();
 
     // Remove subscriptions from map.
     for (const task of subscriptions) {
-      if (!this.subscriptions.has(task.chainId)) {
+      if (!IntervalsController.subscriptions.has(task.chainId)) {
         continue;
       }
       const { chainId, action, referendumId } = task;
-      const updated = this.subscriptions
+      const updated = IntervalsController.subscriptions
         .get(chainId)!
         .filter(
-          (t) => !(t.action === action && t.referendumId === referendumId)
+          (t) => !(t.action === action && t.referendumId === referendumId),
         );
       updated.length !== 0
-        ? this.subscriptions.set(chainId, updated)
-        : this.subscriptions.delete(chainId);
+        ? IntervalsController.subscriptions.set(chainId, updated)
+        : IntervalsController.subscriptions.delete(chainId);
     }
-    if (isOnline && this.hasActiveSubscriptions()) {
-      this.initClock();
+    if (isOnline && IntervalsController.hasActiveSubscriptions()) {
+      IntervalsController.initClock();
     }
   }
 
@@ -143,29 +149,29 @@ export class IntervalsController {
    */
   static removeSubscription(
     subscription: IntervalSubscription,
-    isOnline: boolean
+    isOnline: boolean,
   ) {
     // Stop interval.
-    this.stopInterval();
+    IntervalsController.stopInterval();
     const { chainId, action, referendumId } = subscription;
 
     // This task may not be enabled and thus not managed by this controller.
     // Check if the subscriptions map as a chain ID key to avoid errors.
     // Exit early if the key does not exist in the map.
-    if (!this.subscriptions.has(chainId)) {
+    if (!IntervalsController.subscriptions.has(chainId)) {
       return;
     }
-    const updated = this.subscriptions
+    const updated = IntervalsController.subscriptions
       .get(chainId)!
       .filter((t) => !(t.action === action && t.referendumId === referendumId));
 
     updated.length !== 0
-      ? this.subscriptions.set(chainId, updated)
-      : this.subscriptions.delete(chainId);
+      ? IntervalsController.subscriptions.set(chainId, updated)
+      : IntervalsController.subscriptions.delete(chainId);
 
     // Start interval if tasks are still being managed.
-    if (isOnline && this.hasActiveSubscriptions()) {
-      this.initClock();
+    if (isOnline && IntervalsController.hasActiveSubscriptions()) {
+      IntervalsController.initClock();
     }
   }
 
@@ -178,17 +184,17 @@ export class IntervalsController {
       return;
     }
     // Stop interval.
-    this.stopInterval();
+    IntervalsController.stopInterval();
     const { chainId, action, referendumId } = task;
-    const updated = this.subscriptions
+    const updated = IntervalsController.subscriptions
       .get(chainId)!
       .map((t) =>
-        t.action === action && t.referendumId === referendumId ? task : t
+        t.action === action && t.referendumId === referendumId ? task : t,
       );
-    this.subscriptions.set(chainId, updated);
+    IntervalsController.subscriptions.set(chainId, updated);
 
     // Restart interval.
-    this.initClock();
+    IntervalsController.initClock();
   }
 
   /**
@@ -200,28 +206,28 @@ export class IntervalsController {
    */
   static initClock() {
     console.log(`Init Clock:`);
-    console.log(this.subscriptions);
+    console.log(IntervalsController.subscriptions);
 
     // Exit early if no subscriptions are being managed.
-    if (!this.hasActiveSubscriptions()) {
+    if (!IntervalsController.hasActiveSubscriptions()) {
       return;
     }
     // Seconds until next period synched with clock.
-    const seconds = secondsUntilNextMinute(this.tickDuration);
+    const seconds = secondsUntilNextMinute(IntervalsController.tickDuration);
     console.log(`Seconds to wait: ${seconds}`);
 
     if (seconds === 0) {
       // Start the interval now clock is synched.
-      this.startInterval();
+      IntervalsController.startInterval();
     } else {
       // Wait until clock is synched before starting interval.
-      this.timeoutId = setTimeout(async () => {
-        if (this.timeoutId !== null) {
-          this.timeoutId = null;
+      IntervalsController.timeoutId = setTimeout(async () => {
+        if (IntervalsController.timeoutId !== null) {
+          IntervalsController.timeoutId = null;
 
           // Process the first tick and then start the interval..
-          await this.processTick();
-          this.startInterval();
+          await IntervalsController.processTick();
+          IntervalsController.startInterval();
         }
       }, seconds * 1000);
     }
@@ -232,11 +238,11 @@ export class IntervalsController {
    * @summary Start the interval for processing managed subscriptions.
    */
   private static startInterval() {
-    this.intervalId = setInterval(
+    IntervalsController.intervalId = setInterval(
       async () => {
-        await this.processTick();
+        await IntervalsController.processTick();
       },
-      this.tickDuration * 60 * 1000 // tick duration in minutes.
+      IntervalsController.tickDuration * 60 * 1000, // tick duration in minutes.
     );
   }
 
@@ -245,13 +251,13 @@ export class IntervalsController {
    * @summary Stops the interval.
    */
   static stopInterval() {
-    if (this.timeoutId !== null) {
-      clearTimeout(this.timeoutId);
-      this.timeoutId = null;
+    if (IntervalsController.timeoutId !== null) {
+      clearTimeout(IntervalsController.timeoutId);
+      IntervalsController.timeoutId = null;
     }
-    if (this.intervalId !== null) {
-      clearInterval(this.intervalId);
-      this.intervalId = null;
+    if (IntervalsController.intervalId !== null) {
+      clearInterval(IntervalsController.intervalId);
+      IntervalsController.intervalId = null;
     }
   }
 
@@ -263,7 +269,10 @@ export class IntervalsController {
     const taskQueue: IntervalSubscription[] = [];
 
     // Iterate all subscriptions and execute the ones whose tick has synched.
-    for (const [chainId, chainSubscriptions] of this.subscriptions.entries()) {
+    for (const [
+      chainId,
+      chainSubscriptions,
+    ] of IntervalsController.subscriptions.entries()) {
       console.log(`Processing interval subscriptions for chain: ${chainId}`);
 
       for (const task of chainSubscriptions) {
@@ -275,7 +284,7 @@ export class IntervalsController {
       }
 
       // Increment tick counter by one or reset to zero for all tasks.
-      this.subscriptions.set(
+      IntervalsController.subscriptions.set(
         chainId,
         chainSubscriptions.map(
           (t): IntervalSubscription => ({
@@ -284,13 +293,13 @@ export class IntervalsController {
               t.tickCounter + 1 >= t.intervalSetting.ticksToWait
                 ? 0
                 : t.tickCounter + 1,
-          })
-        )
+          }),
+        ),
       );
     }
 
     // Execute callbacks for queued tasks.
-    await this.processTaskQueue(taskQueue);
+    await IntervalsController.processTaskQueue(taskQueue);
   }
 
   /**

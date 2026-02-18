@@ -1,9 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Dialog from '@radix-ui/react-dialog';
-import * as Styles from '@polkadot-live/styles';
 import { useConnections, useContextProxy } from '@polkadot-live/contexts';
+import * as Styles from '@polkadot-live/styles';
+import * as Dialog from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import type { DialogDeleteExtrinsicProps } from './types';
 
@@ -50,6 +50,7 @@ export const DialogDeleteExtrinsic = ({
                   Cancel
                 </Dialog.Close>
                 <button
+                  type="button"
                   className="Dialog__Button Danger"
                   onClick={async () => await onDeleteClick()}
                   style={{ flex: 1 }}

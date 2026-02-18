@@ -9,8 +9,8 @@ import {
 } from '../../../utils';
 import { useImportAddresses } from '../Addresses';
 import { getRenameHandlerAdapter } from './adapters';
-import type { RenameHandlerContextInterface } from '../../../types/import';
 import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';
+import type { RenameHandlerContextInterface } from '../../../types/import';
 
 export const RenameHandlerContext = createContext<
   RenameHandlerContextInterface | undefined
@@ -18,7 +18,7 @@ export const RenameHandlerContext = createContext<
 
 export const useRenameHandler = createSafeContextHook(
   RenameHandlerContext,
-  'RenameHandlerContext'
+  'RenameHandlerContext',
 );
 
 export const RenameHandlerProvider = ({
@@ -34,7 +34,7 @@ export const RenameHandlerProvider = ({
    */
   const renameHandler = async (
     updatedAccount: ImportedGenericAccount,
-    originalAccount: ImportedGenericAccount
+    originalAccount: ImportedGenericAccount,
   ) => {
     await adapter.handleRename(updatedAccount, originalAccount);
     handleAddressImport(updatedAccount);
@@ -54,7 +54,7 @@ export const RenameHandlerProvider = ({
       renderToast(
         'Account name is already in use.',
         `toast-${trimmed}`,
-        'error'
+        'error',
       );
       return false;
     }

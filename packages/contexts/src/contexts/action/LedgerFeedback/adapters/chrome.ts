@@ -19,7 +19,7 @@ export const chromeAdapter: LedgerFeedbackAdapter = {
     setDisableClose,
     setIsSigning,
     setOverlayStatus,
-    setMessage
+    setMessage,
   ) => {
     chrome.runtime
       .sendMessage({

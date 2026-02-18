@@ -1,9 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-/// Dependencies.
-import * as Core from '@polkadot-live/core';
-import { createContext } from 'react';
 import {
   createSafeContextHook,
   useChainEvents,
@@ -11,11 +8,14 @@ import {
   useEvents,
   useIntervalSubscriptions,
 } from '@polkadot-live/contexts';
+/// Dependencies.
+import * as Core from '@polkadot-live/core';
 import {
   AccountsController,
   IntervalsController,
   SubscriptionsController,
 } from '@polkadot-live/core';
+import { createContext } from 'react';
 import type {
   DataBackupContextInterface,
   ImportFunc,
@@ -25,8 +25,8 @@ import type {
   AccountSource,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
-import type { ChainID } from '@polkadot-live/types/chains';
 import type { ExportResult, ImportResult } from '@polkadot-live/types/backup';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   IntervalSubscription,
   SubscriptionTask,
@@ -38,7 +38,7 @@ export const DataBackupContext = createContext<
 
 export const useDataBackup = createSafeContextHook(
   DataBackupContext,
-  'DataBackupContext'
+  'DataBackupContext',
 );
 
 export const DataBackupProvider = ({
@@ -100,7 +100,7 @@ export const DataBackupProvider = ({
    */
   const importDataFromBackup = async (
     handleImportAddress: ImportFunc,
-    handleRemoveAddress: RemoveFunc
+    handleRemoveAddress: RemoveFunc,
   ) => {
     const response: ImportResult = await window.myAPI.importAppData();
 
@@ -165,7 +165,7 @@ export const DataBackupProvider = ({
   const importAddressData = async (
     serialized: string,
     handleImportAddress: ImportFunc,
-    handleRemoveAddress: RemoveFunc
+    handleRemoveAddress: RemoveFunc,
   ) => {
     const s_addresses = Core.getFromBackupFile('addresses', serialized);
     if (!s_addresses) {
@@ -284,16 +284,16 @@ export const DataBackupProvider = ({
     const s_array: [string, string][] = JSON.parse(s_data);
     const map = new Map<string, string>(s_array);
     const inserts: IntervalSubscription[] = JSON.parse(
-      map.get('insert') || '[]'
+      map.get('insert') || '[]',
     );
     const updates: IntervalSubscription[] = JSON.parse(
-      map.get('update') || '[]'
+      map.get('update') || '[]',
     );
 
     // Add interval subscriptions to store.
     const addIntervalToStore = async (
       tasks: IntervalSubscription[],
-      op: 'add' | 'update'
+      op: 'add' | 'update',
     ) => {
       for (const task of tasks) {
         await window.myAPI.sendIntervalTask({
@@ -321,7 +321,9 @@ export const DataBackupProvider = ({
     // Update managed subscriptions in controller and React state.
     if (inserts.length > 0) {
       IntervalsController.insertSubscriptions(inserts, isOnline);
-      inserts.forEach((t) => addIntervalSubscription(t));
+      inserts.forEach((t) => {
+        addIntervalSubscription(t);
+      });
       await addIntervalToStore(inserts, 'add');
       await addActiveRefIds(inserts);
     }

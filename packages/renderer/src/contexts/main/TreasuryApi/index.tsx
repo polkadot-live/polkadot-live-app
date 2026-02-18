@@ -1,20 +1,20 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { createSafeContextHook } from '@polkadot-live/contexts';
 import {
-  ConfigRenderer,
   APIsController,
+  ConfigRenderer,
   fetchCoreTreasuryInfo,
-  fetchStatemintTreasuryInfo,
   fetchStatemineTreasuryInfo,
+  fetchStatemintTreasuryInfo,
 } from '@polkadot-live/core';
 import { createContext } from 'react';
-import { createSafeContextHook } from '@polkadot-live/contexts';
-import type { ChainID } from '@polkadot-live/types/chains';
-import type { ClientTypes } from '@polkadot-live/types/apis';
-import type { DedotClient } from 'dedot';
-import type { IpcTreasuryInfo } from '@polkadot-live/types/treasury';
 import type { TreasuryApiContextInterface } from '@polkadot-live/contexts';
+import type { ClientTypes } from '@polkadot-live/types/apis';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { IpcTreasuryInfo } from '@polkadot-live/types/treasury';
+import type { DedotClient } from 'dedot';
 
 export const TreasuryApiContext = createContext<
   TreasuryApiContextInterface | undefined
@@ -22,7 +22,7 @@ export const TreasuryApiContext = createContext<
 
 export const useTreasuryApi = createSafeContextHook(
   TreasuryApiContext,
-  'TreasuryApiContext'
+  'TreasuryApiContext',
 );
 
 export const TreasuryApiProvider = ({

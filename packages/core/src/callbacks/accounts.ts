@@ -2,41 +2,41 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { hexToU8a, u8aToString } from 'dedot/utils';
-import { getApiOrThrow, handleEvent } from './utils';
-import { checkAccountWithProperties } from '../library/AccountsLib';
-import { areSortedArraysEqual } from '../library/CommonLib';
 import {
   AccountsController,
   EventsController,
   NotificationsController,
 } from '../controllers';
+import { checkAccountWithProperties } from '../library/AccountsLib';
 import {
   getAccountNominatingData,
   getEraRewards,
 } from '../library/AccountsLib/nominating';
-import type {
-  ApiCallEntry,
-  PostCallbackFlags,
-} from '@polkadot-live/types/subscriptions';
-import type { AnyData } from '@polkadot-live/types/misc';
-import type { ChainID } from '@polkadot-live/types/chains';
-import type { EventCallback } from '@polkadot-live/types/reporter';
-import type { Account, QueryMultiWrapper } from '../model';
-import type {
-  NominationPoolCommission,
-  NominationPoolRoles,
-} from '@polkadot-live/types/accounts';
+import { areSortedArraysEqual } from '../library/CommonLib';
+import { getApiOrThrow, handleEvent } from './utils';
 import type {
   PalletBalancesAccountData,
   PalletNominationPoolsBondedPoolInner,
   PalletStakingActiveEraInfo,
 } from '@dedot/chaintypes/substrate';
 import type {
+  NominationPoolCommission,
+  NominationPoolRoles,
+} from '@polkadot-live/types/accounts';
+import type {
   ClientTypes,
   DedotClientSet,
   DedotStakingClient,
 } from '@polkadot-live/types/apis';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { AnyData } from '@polkadot-live/types/misc';
+import type { EventCallback } from '@polkadot-live/types/reporter';
+import type {
+  ApiCallEntry,
+  PostCallbackFlags,
+} from '@polkadot-live/types/subscriptions';
 import type { DedotClient } from 'dedot';
+import type { Account, QueryMultiWrapper } from '../model';
 
 /**
  * @name callback_query_timestamp_now
@@ -48,7 +48,7 @@ import type { DedotClient } from 'dedot';
 export const callback_query_timestamp_now = (
   data: AnyData,
   entry: ApiCallEntry,
-  wrapper: QueryMultiWrapper
+  wrapper: QueryMultiWrapper,
 ) => {
   try {
     const { action, chainId } = entry.task;
@@ -97,7 +97,7 @@ export const callback_query_timestamp_now = (
 export const callback_query_babe_currentSlot = (
   data: AnyData,
   entry: ApiCallEntry,
-  wrapper: QueryMultiWrapper
+  wrapper: QueryMultiWrapper,
 ) => {
   try {
     const { action, chainId } = entry.task;
@@ -142,13 +142,13 @@ export const callback_account_balance_free = async (
   data: AnyData,
   entry: ApiCallEntry,
   syncFlags: PostCallbackFlags,
-  isOneShot = false
+  isOneShot = false,
 ): Promise<boolean> => {
   try {
     // Get account.
     const account = AccountsController.get(
       entry.task.chainId,
-      entry.task.account!.address
+      entry.task.account!.address,
     );
     if (!account || !account.balance) {
       return false;
@@ -200,13 +200,13 @@ export const callback_account_balance_frozen = async (
   data: AnyData,
   entry: ApiCallEntry,
   syncFlags: PostCallbackFlags,
-  isOneShot = false
+  isOneShot = false,
 ): Promise<boolean> => {
   try {
     // Get account.
     const account = AccountsController.get(
       entry.task.chainId,
-      entry.task.account!.address
+      entry.task.account!.address,
     );
 
     if (!account || !account.balance) {
@@ -259,13 +259,13 @@ export const callback_account_balance_reserved = async (
   data: AnyData,
   entry: ApiCallEntry,
   syncFlags: PostCallbackFlags,
-  isOneShot = false
+  isOneShot = false,
 ): Promise<boolean> => {
   try {
     // Get account.
     const account = AccountsController.get(
       entry.task.chainId,
-      entry.task.account!.address
+      entry.task.account!.address,
     );
 
     if (!account || !account.balance) {
@@ -318,13 +318,13 @@ export const callback_account_balance_spendable = async (
   data: AnyData,
   entry: ApiCallEntry,
   syncFlags: PostCallbackFlags,
-  isOneShot = false
+  isOneShot = false,
 ): Promise<boolean> => {
   try {
     // Get account.
     const account = AccountsController.get(
       entry.task.chainId,
-      entry.task.account!.address
+      entry.task.account!.address,
     );
     if (!account || !account.balance) {
       return false;
@@ -392,7 +392,7 @@ export const callback_account_balance_spendable = async (
 export const callback_nomination_pool_rewards = async (
   entry: ApiCallEntry,
   syncFlags: PostCallbackFlags,
-  isOneShot = false
+  isOneShot = false,
 ): Promise<boolean> => {
   try {
     const account = checkAccountWithProperties(entry, ['nominationPoolData']);
@@ -401,7 +401,7 @@ export const callback_nomination_pool_rewards = async (
 
     // Fetch pending rewards for the account.
     const pending = await api.call.nominationPoolsApi.pendingRewards(
-      account.address
+      account.address,
     );
 
     const cur = BigInt(account.nominationPoolData!.poolPendingRewards);
@@ -446,7 +446,7 @@ export const callback_nomination_pool_state = async (
   data: AnyData,
   entry: ApiCallEntry,
   syncFlags: PostCallbackFlags,
-  isOneShot = false
+  isOneShot = false,
 ): Promise<boolean> => {
   try {
     const account = checkAccountWithProperties(entry, ['nominationPoolData']);
@@ -496,7 +496,7 @@ export const callback_nomination_pool_renamed = async (
   data: AnyData,
   entry: ApiCallEntry,
   syncFlags: PostCallbackFlags,
-  isOneShot = false
+  isOneShot = false,
 ): Promise<boolean> => {
   try {
     const account = checkAccountWithProperties(entry, ['nominationPoolData']);
@@ -545,7 +545,7 @@ export const callback_nomination_pool_roles = async (
   data: AnyData,
   entry: ApiCallEntry,
   syncFlags: PostCallbackFlags,
-  isOneShot = false
+  isOneShot = false,
 ): Promise<boolean> => {
   try {
     const account = checkAccountWithProperties(entry, ['nominationPoolData']);
@@ -611,7 +611,7 @@ export const callback_nomination_pool_commission = async (
   data: AnyData,
   entry: ApiCallEntry,
   syncFlags: PostCallbackFlags,
-  isOneShot = false
+  isOneShot = false,
 ): Promise<boolean> => {
   try {
     const account = checkAccountWithProperties(entry, ['nominationPoolData']);
@@ -680,7 +680,7 @@ export const callback_nomination_pool_commission = async (
  */
 export const callback_nominating_era_rewards = async (
   entry: ApiCallEntry,
-  isOneShot = false
+  isOneShot = false,
 ): Promise<boolean> => {
   try {
     // Check if account has nominating rewards from the previous era.
@@ -696,7 +696,7 @@ export const callback_nominating_era_rewards = async (
     const notification = NotificationsController.getNotification(
       entry,
       account,
-      { rewards: eraRewards.toString(), chainId: account.chain }
+      { rewards: eraRewards.toString(), chainId: account.chain },
     );
 
     const event = EventsController.getEvent(entry, {
@@ -735,7 +735,7 @@ export const callback_nominating_exposure = async (
   data: AnyData,
   entry: ApiCallEntry,
   syncFlags: PostCallbackFlags,
-  isOneShot = false
+  isOneShot = false,
 ): Promise<boolean> => {
   try {
     const casted = data as PalletStakingActiveEraInfo;
@@ -798,7 +798,7 @@ export const callback_nominating_commission = async (
   data: AnyData,
   entry: ApiCallEntry,
   syncFlags: PostCallbackFlags,
-  isOneShot = false
+  isOneShot = false,
 ): Promise<boolean> => {
   try {
     const casted = data as PalletStakingActiveEraInfo;
@@ -868,7 +868,7 @@ export const callback_nominating_nominations = async (
   data: AnyData,
   entry: ApiCallEntry,
   syncFlags: PostCallbackFlags,
-  isOneShot = false
+  isOneShot = false,
 ): Promise<boolean> => {
   try {
     const casted = data as PalletStakingActiveEraInfo;
@@ -952,7 +952,7 @@ const getStakingApi = (chainId: ChainID, api: DedotClientSet) => {
  */
 const getNotificationFlags = (
   entry: ApiCallEntry,
-  isOneShot: boolean
+  isOneShot: boolean,
 ): { isOneShot: boolean; isEnabled: boolean } => ({
   isOneShot,
   isEnabled: entry.task.enableOsNotifications,
@@ -965,9 +965,9 @@ const getNotificationFlags = (
 const getNominatingData = async (
   api: DedotStakingClient,
   account: Account,
-  era: number
+  era: number,
 ) => {
-  let result = undefined;
+  let result;
   const nominators = await api.query.staking.nominators(account.address);
   if (nominators) {
     const fnData = { account, era, nominators };

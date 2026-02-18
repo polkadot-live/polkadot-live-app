@@ -8,5 +8,3 @@ declare global {
     myAPI: typeof API;
   }
 }
-
-export {};

@@ -8,18 +8,18 @@ import {
   getNominationPoolRolesText,
   getNominationPoolStateText,
 } from '../library/TextLib';
-import type { Account } from '../model';
-import type { AnyData } from '@polkadot-live/types/misc';
-import type {
-  ApiCallEntry,
-  IntervalSubscription,
-} from '@polkadot-live/types/subscriptions';
-import type { ChainID } from '@polkadot-live/types/chains';
-import type { NotificationData } from '@polkadot-live/types/reporter';
 import type {
   NominationPoolCommission,
   NominationPoolRoles,
 } from '@polkadot-live/types/accounts';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { AnyData } from '@polkadot-live/types/misc';
+import type { NotificationData } from '@polkadot-live/types/reporter';
+import type {
+  ApiCallEntry,
+  IntervalSubscription,
+} from '@polkadot-live/types/subscriptions';
+import type { Account } from '../model';
 
 export class NotificationsController {
   /**
@@ -28,7 +28,7 @@ export class NotificationsController {
    */
   static getIntervalNotification(
     task: IntervalSubscription,
-    miscData?: AnyData
+    miscData?: AnyData,
   ): NotificationData {
     const { action, referendumId } = task;
 
@@ -59,7 +59,7 @@ export class NotificationsController {
       }
       default: {
         throw new Error(
-          `getIntervalNotification: Not implemented for ${task.action}`
+          `getIntervalNotification: Not implemented for ${task.action}`,
         );
       }
     }
@@ -89,7 +89,7 @@ export class NotificationsController {
       }
       default: {
         throw new Error(
-          `getChainNotification: Not implemented for ${entry.task.action}`
+          `getChainNotification: Not implemented for ${entry.task.action}`,
         );
       }
     }
@@ -102,7 +102,7 @@ export class NotificationsController {
   static getNotification(
     entry: ApiCallEntry,
     account: Account,
-    miscData?: AnyData
+    miscData?: AnyData,
   ): NotificationData {
     switch (entry.task.action) {
       case 'subscribe:account:balance:free': {
@@ -239,7 +239,7 @@ export class NotificationsController {
       }
       default: {
         throw new Error(
-          `getNotification: Not implemented for ${entry.task.action}`
+          `getNotification: Not implemented for ${entry.task.action}`,
         );
       }
     }

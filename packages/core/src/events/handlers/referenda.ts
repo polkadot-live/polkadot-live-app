@@ -3,19 +3,19 @@
 
 import { getSs58Prefix } from '@polkadot-live/consts/chains';
 import { encodeRecord } from '@polkadot-live/encoder';
+import { handleEvent } from '../../callbacks/utils';
 import { getBalanceText } from '../../library';
 import { getRefUriActions, makeChainEvent } from './utils';
-import { handleEvent } from '../../callbacks/utils';
+import type { PalletReferendaEvent } from '@polkadot-live/types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { EventCallback } from '@polkadot-live/types/reporter';
-import type { PalletReferendaEvent } from '@polkadot-live/types';
 import type { WhoMeta } from '../types';
 
 export const handleReferendaEvent = (
   chainId: ChainID,
   osNotify: boolean,
   palletEvent: PalletReferendaEvent,
-  whoMeta?: WhoMeta
+  whoMeta?: WhoMeta,
 ) => {
   try {
     handleEvent({
@@ -33,7 +33,7 @@ export const handleReferendaEvent = (
 
 const getReferendaNotification = (
   chainId: ChainID,
-  palletEvent: PalletReferendaEvent
+  palletEvent: PalletReferendaEvent,
 ) => {
   const { name: eventName, data: miscData } = palletEvent;
   switch (eventName) {
@@ -158,7 +158,7 @@ const getReferendaNotification = (
 const getReferendaChainEvent = (
   chainId: ChainID,
   palletEvent: PalletReferendaEvent,
-  whoMeta?: WhoMeta
+  whoMeta?: WhoMeta,
 ): EventCallback => {
   const { name: eventName, data: miscData } = palletEvent;
   const ev = makeChainEvent({ chainId, category: 'OpenGov' }, whoMeta);

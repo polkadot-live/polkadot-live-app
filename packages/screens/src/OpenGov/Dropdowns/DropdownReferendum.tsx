@@ -1,21 +1,18 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { useConnections } from '@polkadot-live/contexts';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  DropdownMenuContent,
-  MenuButton,
-} from '@polkadot-live/styles';
 import {
   faEllipsis,
   faUpRightFromSquare,
 } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   getPolkassemblySubdomain,
   getSubsquareSubdomain,
 } from '@polkadot-live/consts/chains';
+import { useConnections } from '@polkadot-live/contexts';
+import { DropdownMenuContent, MenuButton } from '@polkadot-live/styles';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import type { ReferendumDropdownMenuProps } from './types';
 
 /**

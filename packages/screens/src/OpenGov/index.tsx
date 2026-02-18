@@ -1,10 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as UI from '@polkadot-live/ui';
-import * as Styles from '@polkadot-live/styles';
-import { useState } from 'react';
 import { useConnections, useHelp } from '@polkadot-live/contexts';
+import * as Styles from '@polkadot-live/styles';
+import * as UI from '@polkadot-live/ui';
+import { useState } from 'react';
 import { Overview } from './Overview';
 import { Referenda } from './Referenda';
 import { Tracks } from './Tracks';

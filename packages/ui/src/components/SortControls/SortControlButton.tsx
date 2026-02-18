@@ -41,7 +41,11 @@ export const SortControlButton: React.FC<SortControlsButtonProps> = ({
   const iconOnly = !onLabel && !offLabel;
 
   return (
-    <div className={getButtonClass()} onClick={() => handleClick()}>
+    <button
+      type="button"
+      className={getButtonClass()}
+      onClick={() => handleClick()}
+    >
       {faIcon && (
         <div className="icon">
           <FontAwesomeIcon
@@ -59,6 +63,6 @@ export const SortControlButton: React.FC<SortControlsButtonProps> = ({
           {isActive ? onLabel : offLabel}
         </span>
       )}
-    </div>
+    </button>
   );
 };

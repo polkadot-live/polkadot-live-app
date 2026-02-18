@@ -18,8 +18,8 @@ import {
   SummaryProvider,
 } from '@polkadot-live/contexts';
 import { withProviders } from '@polkadot-live/ui';
-import { BootstrappingProvider, CogMenuProvider } from './contexts';
 import App from './App';
+import { BootstrappingProvider, CogMenuProvider } from './contexts';
 
 export const Providers = withProviders(
   HelpProvider,
@@ -37,5 +37,5 @@ export const Providers = withProviders(
   EventsProvider,
   BootstrappingProvider,
   CogMenuProvider,
-  SummaryProvider
+  SummaryProvider,
 )(App);

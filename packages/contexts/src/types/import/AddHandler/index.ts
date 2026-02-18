@@ -9,10 +9,10 @@ import type {
 export interface AddHandlerContextInterface {
   handleAddAddress: (
     encodedAccount: EncodedAccount,
-    genericAccount: ImportedGenericAccount
+    genericAccount: ImportedGenericAccount,
   ) => Promise<void>;
   handleBookmarkToggle: (
     encodedAccount: EncodedAccount,
-    genericAccount: ImportedGenericAccount
+    genericAccount: ImportedGenericAccount,
   ) => Promise<void>;
 }

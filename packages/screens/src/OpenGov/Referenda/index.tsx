@@ -1,29 +1,29 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as UI from '@polkadot-live/ui';
-import * as Styles from '@polkadot-live/styles';
-import * as Tabs from '@radix-ui/react-tabs';
-import * as Wrappers from './Wrappers';
 import {
-  faCaretLeft,
   faArrowsRotate,
+  faCaretLeft,
   faCaretRight,
   faEllipsis,
 } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   useConnections,
   useHelp,
   useReferenda,
   useTracks,
 } from '@polkadot-live/contexts';
+import * as Styles from '@polkadot-live/styles';
+import * as UI from '@polkadot-live/ui';
+import * as Tabs from '@radix-ui/react-tabs';
 import { useEffect } from 'react';
-import { ReferendumRow } from './ReferendumRow';
-import { DropdownReferendaFilter } from '../Dropdowns';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { HistoryRow } from './HistoryRow';
 import { PuffLoader } from 'react-spinners';
+import { DropdownReferendaFilter } from '../Dropdowns';
 import { DialogFindReferendum } from './Dialogs';
+import { HistoryRow } from './HistoryRow';
+import { ReferendumRow } from './ReferendumRow';
+import * as Wrappers from './Wrappers';
 import type { ReferendaProps } from '../types';
 
 export const Referenda = ({ setSection }: ReferendaProps) => {
@@ -76,7 +76,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
   // Update page state when a pagination arrow is clicked.
   const onPageArrowClick = (
     tab: 'active' | 'history',
-    dir: 'prev' | 'next'
+    dir: 'prev' | 'next',
   ) => {
     const { page, pageCount } =
       tab === 'active' ? activePagedReferenda : historyPagedReferenda;
@@ -117,6 +117,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
         <Styles.PaginationRow>
           <Styles.FlexRow $gap={'0.75rem'} style={{ flex: 1 }}>
             <button
+              type="button"
               className="btn"
               disabled={curPage === 1 || referenda.length === 0}
               onClick={() => onPageArrowClick(tab, 'prev')}
@@ -126,11 +127,12 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
             {getPageNumbers(tab).map((i, j) => (
               <Styles.FlexRow key={i} $gap={'0.75rem'}>
                 {j === 2 && !showPageEllipsis(tab) && pageCount > 4 && (
-                  <button className="btn placeholder">
+                  <button type="button" className="btn placeholder">
                     <FontAwesomeIcon className="icon" icon={faEllipsis} />
                   </button>
                 )}
                 <button
+                  type="button"
                   onClick={() => onPageClick(tab, i)}
                   className={`btn ${curPage === i && 'selected'}
               ${j === 2 && getPageNumbers(tab).length === 5 && 'middle'}`}
@@ -140,6 +142,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
               </Styles.FlexRow>
             ))}
             <button
+              type="button"
               className="btn"
               disabled={curPage === pageCount || referenda.length === 0}
               onClick={() => onPageArrowClick(tab, 'next')}
@@ -309,9 +312,7 @@ export const Referenda = ({ setSection }: ReferendaProps) => {
                               className="filterContainer"
                               $gap={'0.75rem'}
                             >
-                              <p className={getTrackClass(null)} role="button">
-                                All
-                              </p>
+                              <p className={getTrackClass(null)}>All</p>
                               <span>{getReferendaCount(null)}</span>
                             </Styles.FlexRow>
                             {getOrderedTracks(chainId).map((t) => (

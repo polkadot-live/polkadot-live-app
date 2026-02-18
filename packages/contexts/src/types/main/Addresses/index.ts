@@ -12,7 +12,7 @@ export interface AddressesContextInterface {
   addressExists: (address: string, chainId: ChainID) => boolean;
   getAddress: (
     address: string,
-    chainId: ChainID
+    chainId: ChainID,
   ) => FlattenedAccountData | null;
   getAddresses: () => FlattenedAccountData[];
   getAllAccounts: () => FlattenedAccountData[];

@@ -2,13 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import { Loader } from './Loader';
-import {
-  ReferendumRowWrapper,
-  RefStatusBadge,
-  TitleWithOrigin,
-} from './Wrappers';
-import { renderOrigin } from '@polkadot-live/core';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   useConnections,
   usePolkassembly,
@@ -16,10 +10,16 @@ import {
   useReferendaSubscriptions,
   useTaskHandler,
 } from '@polkadot-live/contexts';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { TooltipRx } from '@polkadot-live/ui';
+import { renderOrigin } from '@polkadot-live/core';
 import { FlexRow, MenuButton } from '@polkadot-live/styles';
+import { TooltipRx } from '@polkadot-live/ui';
 import { ReferendumDropdownMenu } from '../Dropdowns';
+import { Loader } from './Loader';
+import {
+  ReferendumRowWrapper,
+  RefStatusBadge,
+  TitleWithOrigin,
+} from './Wrappers';
 import type { ReferendumRowProps } from '../types';
 
 export const ReferendumRow = ({ referendum }: ReferendumRowProps) => {

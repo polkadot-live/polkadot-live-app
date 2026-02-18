@@ -19,6 +19,6 @@ export interface LedgerFeedbackAdapter {
     setDisableClose: (d: boolean) => void,
     setIsSigning: (value: SetStateAction<boolean>) => void,
     setOverlayStatus: (s: number) => void,
-    setMessage: (value: SetStateAction<LedgerFeedbackMessage | null>) => void
+    setMessage: (value: SetStateAction<LedgerFeedbackMessage | null>) => void,
   ) => void;
 }

@@ -1,10 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { NavCardWrapper } from './NavCard.styles';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretRight, faInfo } from '@fortawesome/free-solid-svg-icons';
-import type { NavCardProps, NavCardBaseProps } from './types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { NavCardWrapper } from './NavCard.styles';
+import type { NavCardBaseProps, NavCardProps } from './types';
 
 export const NavCard = ({
   // TItle of the card.
@@ -32,7 +32,8 @@ export const NavCard = ({
           <div className="label">
             <h1>{title}</h1>
             {helpKey && (
-              <div
+              <button
+                type="button"
                 data-testid="help-icon"
                 className="help-icon stay"
                 onClick={() => {
@@ -40,7 +41,7 @@ export const NavCard = ({
                 }}
               >
                 <FontAwesomeIcon icon={faInfo} transform={'shrink-2'} />
-              </div>
+              </button>
             )}
           </div>
           <div style={{ display: 'flex' }}>{childrenSubtitle}</div>

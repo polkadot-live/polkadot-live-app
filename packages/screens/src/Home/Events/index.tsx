@@ -1,16 +1,16 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useEffect, useState } from 'react';
-import { MainHeading } from '@polkadot-live/ui';
+import { useEvents } from '@polkadot-live/contexts';
 import {
   CarouselWrapper,
   FlexColumn,
   FlexColumnWrap,
 } from '@polkadot-live/styles';
+import { MainHeading } from '@polkadot-live/ui';
+import { useEffect, useState } from 'react';
 import { Categories } from './Categories';
 import { EventsList } from './EventsList';
-import { useEvents } from '@polkadot-live/contexts';
 
 export const Events = () => {
   const [section, setSection] = useState<number>(0);

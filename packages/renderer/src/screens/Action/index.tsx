@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useConnections } from '@polkadot-live/contexts';
-import { FadeInWrapper } from '@polkadot-live/ui';
 import { Action } from '@polkadot-live/screens';
+import { FadeInWrapper } from '@polkadot-live/ui';
 
 export const FadeAction = () => {
   const { stateLoaded } = useConnections();

@@ -15,7 +15,7 @@ export interface WalletConnectImportContextInterface {
   handleDisconnect: () => Promise<void>;
   handleFetch: () => void;
   handleImportProcess: (
-    setShowImportUi: React.Dispatch<React.SetStateAction<boolean>>
+    setShowImportUi: React.Dispatch<React.SetStateAction<boolean>>,
   ) => Promise<void>;
   handleOpenCloseWcModal: (open: boolean, uri?: string) => Promise<void>;
   setWcNetworks: React.Dispatch<React.SetStateAction<WcSelectNetwork[]>>;

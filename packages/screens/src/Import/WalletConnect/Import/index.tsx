@@ -1,25 +1,24 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as UI from '@polkadot-live/ui';
-import * as Styles from '@polkadot-live/styles';
-import * as AccordionRx from '@radix-ui/react-accordion';
-import * as Checkbox from '@radix-ui/react-checkbox';
 import * as FA from '@fortawesome/free-solid-svg-icons';
-
-import { BarLoader } from 'react-spinners';
-import { CheckIcon, ChevronDownIcon } from '@radix-ui/react-icons';
 import {
   useConnections,
   useContextProxy,
   useDialogControl,
   useImportAddresses,
 } from '@polkadot-live/contexts';
-import { useState } from 'react';
+import * as Styles from '@polkadot-live/styles';
+import * as UI from '@polkadot-live/ui';
+import * as AccordionRx from '@radix-ui/react-accordion';
+import * as Checkbox from '@radix-ui/react-checkbox';
+import { CheckIcon, ChevronDownIcon } from '@radix-ui/react-icons';
 import { ellipsisFn } from '@w3ux/utils';
-import { WcSessionButton } from './Wrappers';
-import { AddressListFooter, ImportAddressRow } from '../../Wrappers';
+import { useState } from 'react';
+import { BarLoader } from 'react-spinners';
 import { DialogShowAddress } from '../../Addresses/Dialogs';
+import { AddressListFooter, ImportAddressRow } from '../../Wrappers';
+import { WcSessionButton } from './Wrappers';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ImportProps } from './types';
 
@@ -70,7 +69,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   const handleSelectAddress = (
     encoded: string,
     chainId: ChainID,
-    checkState: Checkbox.CheckedState
+    checkState: Checkbox.CheckedState,
   ) => {
     setWcFetchedAddresses((prev) => {
       const updated = prev.map((data) =>
@@ -80,7 +79,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
               selected:
                 typeof checkState === 'string' ? false : Boolean(checkState),
             }
-          : data
+          : data,
       );
 
       return updated;
@@ -240,7 +239,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                   checked={selected}
                                   disabled={false}
                                   onCheckedChange={(
-                                    checked: Checkbox.CheckedState
+                                    checked: Checkbox.CheckedState,
                                   ) =>
                                     setWcNetworks((prev) => {
                                       const updated = prev.map((data) =>
@@ -252,7 +251,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                                   ? false
                                                   : Boolean(checked),
                                             }
-                                          : data
+                                          : data,
                                       );
                                       return updated;
                                     })
@@ -326,7 +325,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                             {wcFetchedAddresses.map(
                               (
                                 { chainId, encoded, publicKeyHex, selected },
-                                i
+                                i,
                               ) => (
                                 <ImportAddressRow key={`${chainId}-${encoded}`}>
                                   <div className="identicon">
@@ -374,12 +373,12 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                         checked={selected}
                                         disabled={false}
                                         onCheckedChange={(
-                                          checked: Checkbox.CheckedState
+                                          checked: Checkbox.CheckedState,
                                         ) => {
                                           handleSelectAddress(
                                             encoded,
                                             chainId,
-                                            checked
+                                            checked,
                                           );
                                         }}
                                       >
@@ -390,13 +389,14 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                     )}
                                   </div>
                                 </ImportAddressRow>
-                              )
+                              ),
                             )}
                           </Styles.ItemsColumn>
 
                           <AddressListFooter>
                             <div className="importBtn">
                               <button
+                                type="button"
                                 disabled={
                                   isImporting ||
                                   getSelectedAddresses().length === 0

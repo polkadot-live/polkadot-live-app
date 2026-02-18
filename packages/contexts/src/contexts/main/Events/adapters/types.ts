@@ -22,6 +22,6 @@ export interface EventsAdapter {
     setActiveCategory: React.Dispatch<
       React.SetStateAction<EventCategory | null>
     >,
-    setSyncCounts: React.Dispatch<React.SetStateAction<boolean>>
+    setSyncCounts: React.Dispatch<React.SetStateAction<boolean>>,
   ) => (() => void) | null;
 }

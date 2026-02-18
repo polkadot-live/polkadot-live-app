@@ -9,7 +9,7 @@ import type { AnyData } from '@polkadot-live/types/misc';
 export const AccordionTrigger = forwardRef(
   (
     { children, className, narrow, height, ...props }: AnyData,
-    forwardedRef
+    forwardedRef,
   ) => (
     <Accordion.Header className="AccordionHeader">
       <Accordion.Trigger
@@ -25,13 +25,13 @@ export const AccordionTrigger = forwardRef(
         </div>
       </Accordion.Trigger>
     </Accordion.Header>
-  )
+  ),
 );
 
 export const AccordionContent = forwardRef(
   (
     { children, className, narrow, transparent, topGap, ...props }: AnyData,
-    forwardedRef
+    forwardedRef,
   ) => (
     <Accordion.Content
       className={`AccordionContent ${className}`}
@@ -45,7 +45,7 @@ export const AccordionContent = forwardRef(
         {children}
       </div>
     </Accordion.Content>
-  )
+  ),
 );
 
 AccordionTrigger.displayName = 'AccordionTrigger';

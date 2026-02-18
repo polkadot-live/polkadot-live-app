@@ -5,15 +5,15 @@ import type {
   AccountSource,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
-import type { SummaryAdapter } from './types';
 import type { TxStatus } from '@polkadot-live/types/tx';
+import type { SummaryAdapter } from './types';
 
 export const electronAdapter: SummaryAdapter = {
   onMount: async (
     addressMapRef,
     extrinsicCountsRef,
     setAddressMap,
-    setExtrinsicCounts
+    setExtrinsicCounts,
   ) => {
     // Accounts.
     const serialized = (await window.myAPI.rawAccountTask({

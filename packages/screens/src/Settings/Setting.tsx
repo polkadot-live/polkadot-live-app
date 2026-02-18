@@ -3,15 +3,15 @@
 
 import { faInfo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { SettingWrapper } from './Wrappers';
-import { ButtonMonoInvert, EllipsisSpinner, Switch } from '@polkadot-live/ui';
 import {
   useConnections,
   useHelp,
   useSettingFlags,
 } from '@polkadot-live/contexts';
-import type { SettingProps } from './types';
+import { ButtonMonoInvert, EllipsisSpinner, Switch } from '@polkadot-live/ui';
+import { SettingWrapper } from './Wrappers';
 import type { SettingItem, SettingKey } from '@polkadot-live/types/settings';
+import type { SettingProps } from './types';
 
 export const Setting = ({ setting }: SettingProps) => {
   const { title, settingType, helpKey } = setting;
@@ -33,7 +33,7 @@ export const Setting = ({ setting }: SettingProps) => {
    */
   const handleButtonClick = () => {
     handleSetting(setting);
-    handleAnalytics && handleAnalytics(setting);
+    handleAnalytics?.(setting);
   };
 
   /**
@@ -53,9 +53,13 @@ export const Setting = ({ setting }: SettingProps) => {
   return (
     <SettingWrapper>
       <div className="left">
-        <div className="icon-wrapper" onClick={() => openHelp(helpKey)}>
+        <button
+          type="button"
+          className="icon-wrapper"
+          onClick={() => openHelp(helpKey)}
+        >
           <FontAwesomeIcon icon={faInfo} transform={'shrink-1'} />
-        </div>
+        </button>
         <span className="text-ellipsis">{title}</span>
       </div>
       <div className="right">

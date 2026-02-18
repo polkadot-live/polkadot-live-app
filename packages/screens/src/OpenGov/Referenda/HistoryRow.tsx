@@ -1,18 +1,18 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Wrappers from './Wrappers';
+import { faHashtag } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   useConnections,
   usePolkassembly,
   useReferenda,
 } from '@polkadot-live/contexts';
-import { Loader } from './Loader';
 import { renderOrigin } from '@polkadot-live/core';
 import { FlexRow } from '@polkadot-live/styles';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHashtag } from '@fortawesome/free-solid-svg-icons';
 import { ReferendumDropdownMenu } from '../Dropdowns';
+import { Loader } from './Loader';
+import * as Wrappers from './Wrappers';
 import type * as OG from '@polkadot-live/types/openGov';
 
 interface HistoryRowProps {

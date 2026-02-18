@@ -19,7 +19,7 @@ export interface ChainEventsContextInterface {
   addSubsForRef: (chainId: ChainID, refId: number) => void;
   countActiveRefSubs: () => number;
   getCategorisedForAccount: (
-    account: FlattenedAccountData
+    account: FlattenedAccountData,
   ) => Record<string, ChainEventSubscription[]>;
   getActiveRefIds: () => Promise<string[]>;
   getCategorisedRefsForChain: () => Record<number, ChainEventSubscription[]>;

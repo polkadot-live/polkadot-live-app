@@ -3,8 +3,8 @@
 
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { NavItemWrapper, SideNavWrapper } from './SideNav.styles';
 import { NavItem } from './NavItem';
+import { NavItemWrapper, SideNavWrapper } from './SideNav.styles';
 import type { SideNavProps } from './SideNav.types';
 
 export const SideNav = ({

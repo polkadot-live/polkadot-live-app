@@ -1,10 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useEffect, useState } from 'react';
 import { useImportAddresses } from '@polkadot-live/contexts';
-import { Manage } from './Manage';
+import { useEffect, useState } from 'react';
 import { Import } from './Import';
+import { Manage } from './Manage';
 import type { ImportLedgerProps } from '../types';
 
 export const ImportLedger = ({ setSection }: ImportLedgerProps) => {
@@ -12,7 +12,7 @@ export const ImportLedger = ({ setSection }: ImportLedgerProps) => {
   const addresses = getAccounts('ledger');
 
   const [showImportUi, setShowImportUi] = useState<boolean>(
-    addresses.length === 0
+    addresses.length === 0,
   );
 
   /**

@@ -1,11 +1,12 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import React, { memo, useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import xxhash from 'xxhash-wasm';
-import { DisplayWrapper } from './Wrappers';
 import { qrcode } from './qrcode';
 import { createImgSize } from './util';
+import { DisplayWrapper } from './Wrappers';
+import type React from 'react';
 import type { DisplayProps } from './types';
 
 const getDataUrl = (value: Uint8Array): string => {

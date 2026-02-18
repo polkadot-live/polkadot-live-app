@@ -1,11 +1,16 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Dialog from '@radix-ui/react-dialog';
-import { Cross2Icon } from '@radix-ui/react-icons';
-import { useState } from 'react';
+import { faAngleRight, faCaretRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { getSupportedChains } from '@polkadot-live/consts/chains';
+import {
+  useConnections,
+  useDialogControl,
+  useImportAddresses,
+  useImportHandler,
+} from '@polkadot-live/contexts';
 import { isValidAddress } from '@polkadot-live/core';
-import { decodeAddress, u8aToHex } from 'dedot/utils';
 import {
   DialogContent,
   DialogHr,
@@ -13,17 +18,12 @@ import {
   FlexColumn,
   FlexRow,
 } from '@polkadot-live/styles';
-import { faAngleRight, faCaretRight } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { getSupportedChains } from '@polkadot-live/consts/chains';
 import { renderToast } from '@polkadot-live/ui';
+import * as Dialog from '@radix-ui/react-dialog';
+import { Cross2Icon } from '@radix-ui/react-icons';
 import { unescape } from '@w3ux/utils';
-import {
-  useConnections,
-  useDialogControl,
-  useImportAddresses,
-  useImportHandler,
-} from '@polkadot-live/contexts';
+import { decodeAddress, u8aToHex } from 'dedot/utils';
+import { useState } from 'react';
 
 export const DialogImportReadOnly = () => {
   const { isAlreadyImported } = useImportAddresses();

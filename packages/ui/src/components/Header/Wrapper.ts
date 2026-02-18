@@ -40,6 +40,7 @@ export const HeaderWrapper = styled.div`
 
       .LatestRelease {
         cursor: pointer;
+        font-size: 0.8rem;
         &:hover {
           opacity: 0.75;
         }

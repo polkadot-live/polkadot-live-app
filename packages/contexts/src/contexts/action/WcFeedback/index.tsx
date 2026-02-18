@@ -12,7 +12,7 @@ export const WcFeedbackContext = createContext<
 
 export const useWcFeedback = createSafeContextHook(
   WcFeedbackContext,
-  'WcFeedbackContext'
+  'WcFeedbackContext',
 );
 
 export const WcFeedbackProvider = ({

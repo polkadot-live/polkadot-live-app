@@ -1,22 +1,22 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { ChainID, ChainStatus } from './chains';
-import type { DedotClient } from 'dedot';
 import type {
   KusamaApi,
   KusamaAssetHubApi,
   KusamaPeopleApi,
+  PaseoApi,
+  PaseoAssetHubApi,
+  PaseoPeopleApi,
   PolkadotApi,
   PolkadotAssetHubApi,
   PolkadotPeopleApi,
   WestendApi,
   WestendAssetHubApi,
   WestendPeopleApi,
-  PaseoApi,
-  PaseoAssetHubApi,
-  PaseoPeopleApi,
 } from '@dedot/chaintypes';
+import type { DedotClient } from 'dedot';
+import type { ChainID, ChainStatus } from './chains';
 
 export type NodeEndpoint = 'rpc' | 'smoldot';
 

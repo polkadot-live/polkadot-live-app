@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 import type { AnyData } from '@polkadot-live/types/misc';
 
 // Return SHA256 hash of a string.

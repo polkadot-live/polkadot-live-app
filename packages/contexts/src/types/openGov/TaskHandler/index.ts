@@ -8,6 +8,6 @@ export interface TaskHandlerContextInterface {
   addSubscriptions: (chainId: ChainID, referendumInfo: ReferendaInfo) => void;
   removeSubscriptions: (
     chainId: ChainID,
-    referendumInfo: ReferendaInfo
+    referendumInfo: ReferendaInfo,
   ) => void;
 }

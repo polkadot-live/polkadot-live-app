@@ -1,12 +1,12 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import pkg from './package.json';
-import pkgRoot from '../../package.json';
-import dts from 'vite-plugin-dts';
+import { join } from 'node:path';
 import { defineConfig } from 'vite';
-import { join } from 'path';
+import dts from 'vite-plugin-dts';
 import { chrome } from '../../.electron-vendors.cache.json';
+import pkgRoot from '../../package.json';
+import pkg from './package.json';
 
 const PACKAGE_ROOT = __dirname;
 const PROJECT_ROOT = join(PACKAGE_ROOT, '../..');

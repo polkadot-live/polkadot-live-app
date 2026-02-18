@@ -1,19 +1,19 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useState } from 'react';
-import { useHelp, useTracks } from '@polkadot-live/contexts';
-import { StickyHeading, TrackItem } from './Wrappers';
-import { formatChainUnits, formatBlocksToTime } from '@polkadot-live/core';
-import { motion } from 'framer-motion';
 import {
   faAngleDown,
   faAngleUp,
-  faInfo,
   faHashtag,
+  faInfo,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useHelp, useTracks } from '@polkadot-live/contexts';
+import { formatBlocksToTime, formatChainUnits } from '@polkadot-live/core';
 import { FlexRow } from '@polkadot-live/styles';
+import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { StickyHeading, TrackItem } from './Wrappers';
 import type { HelpItemKey } from '@polkadot-live/types/help';
 import type { TrackRowProps } from '../types';
 
@@ -39,12 +39,13 @@ export const StickyHeadingsRow = () => {
             <StickyHeading style={{ marginLeft: '-2px' }}>
               <FlexRow $gap={'0.2rem'}>
                 Track
-                <div
+                <button
+                  type="button"
                   className="IconWrapper"
                   onClick={() => openHelp('help:openGov:track')}
                 >
                   <FontAwesomeIcon className="Icon" icon={faInfo} />
-                </div>
+                </button>
               </FlexRow>
             </StickyHeading>
           </div>
@@ -57,12 +58,13 @@ export const StickyHeadingsRow = () => {
             <StickyHeading style={{ marginLeft: '-20px' }}>
               <FlexRow $gap={'0.2rem'}>
                 Max Desciding
-                <div
+                <button
+                  type="button"
                   className="IconWrapper"
                   onClick={() => openHelp('help:openGov:maxDeciding')}
                 >
                   <FontAwesomeIcon className="Icon" icon={faInfo} />
-                </div>
+                </button>
               </FlexRow>
             </StickyHeading>
           </div>
@@ -88,9 +90,13 @@ export const TrackRow = ({ track }: TrackRowProps) => {
   };
 
   const renderHelpIcon = (key: HelpItemKey) => (
-    <div className="icon-wrapper" onClick={() => openHelp(key)}>
+    <button
+      type="button"
+      className="icon-wrapper"
+      onClick={() => openHelp(key)}
+    >
       <FontAwesomeIcon icon={faInfo} transform={'shrink-0'} />
-    </div>
+    </button>
   );
 
   return (
@@ -117,7 +123,8 @@ export const TrackRow = ({ track }: TrackRowProps) => {
           </div>
         </FlexRow>
         <FlexRow>
-          <div
+          <button
+            type="button"
             className={`expand-btn-wrapper ${chainId === 'Polkadot Asset Hub' ? 'polkadot-bg' : 'kusama-bg'}`}
             onClick={() => setExpanded(!expanded)}
           >
@@ -128,7 +135,7 @@ export const TrackRow = ({ track }: TrackRowProps) => {
                 transform={'shrink-3'}
               />
             </div>
-          </div>
+          </button>
         </FlexRow>
       </FlexRow>
       <motion.section

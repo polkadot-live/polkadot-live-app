@@ -1,7 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AnyData } from '@polkadot-live/types/misc';
 import { handleAccountMessage } from './handlers/accountMessages';
 import { handleAccountSubscriptionMessage } from './handlers/accountSubscriptionMessages';
 import { handleApiMessage } from './handlers/apiMessages';
@@ -21,10 +20,11 @@ import { handleSharedStateMessage } from './handlers/sharedStateMessages';
 import { handleSubscriptionMessage } from './handlers/subscriptionMessages';
 import { handleTabMessage } from './handlers/tabMessages';
 import { handleWalletConnectMessage } from './handlers/walletConnectMessages';
+import type { AnyData } from '@polkadot-live/types/misc';
 
 export const handleMessage = (
   message: AnyData,
-  sendResponse: (response?: AnyData) => void
+  sendResponse: (response?: AnyData) => void,
 ): boolean => {
   const handlerFn = messageHandlerMap[message.type as string];
   return handlerFn ? handlerFn(message, sendResponse) : false;

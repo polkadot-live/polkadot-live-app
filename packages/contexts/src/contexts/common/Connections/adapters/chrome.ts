@@ -1,13 +1,13 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { setStateWithRef } from '@w3ux/utils';
 import type {
   ActionMeta,
   AnyData,
   SyncID,
   TabData,
 } from '@polkadot-live/types';
-import { setStateWithRef } from '@w3ux/utils';
 import type { ConnectionsAdapter } from './types';
 
 export const chromeAdapter: ConnectionsAdapter = {
@@ -30,7 +30,9 @@ export const chromeAdapter: ConnectionsAdapter = {
     }
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      stream.getTracks().forEach((track) => track.stop());
+      stream.getTracks().forEach((track) => {
+        track.stop();
+      });
       return true;
     } catch {
       return false;

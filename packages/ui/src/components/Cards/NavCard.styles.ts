@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import styled from 'styled-components';
 import { mixinHelpIcon } from '@polkadot-live/styles';
+import styled from 'styled-components';
 
 export const NavCardWrapper = styled.div<{ $thin?: boolean }>`
   background-color: var(--background-primary);
@@ -49,6 +49,7 @@ export const NavCardWrapper = styled.div<{ $thin?: boolean }>`
         ${mixinHelpIcon}
         color: var(--text-dimmed);
         transition: color 150ms ease-out;
+        font-size: 0.98rem;
         &:hover {
           color: inherit;
         }

@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { onMouseHandlers } from '../Utils';
 import { appendOr, appendOrEmpty } from '@w3ux/utils';
-import type { ButtonCommonProps, ButtonIconProps } from '../types';
+import { onMouseHandlers } from '../Utils';
 import type { ComponentBaseWithClassName } from '../../../types';
+import type { ButtonCommonProps, ButtonIconProps } from '../types';
 
 export type ButtonPrimaryInvertProps = ComponentBaseWithClassName &
   ButtonIconProps &
@@ -44,10 +44,10 @@ export const ButtonPrimaryInvert = ({
   <button
     className={`btn-primary-invert${appendOrEmpty(
       colorSecondary,
-      'secondary-color'
+      'secondary-color',
     )}${appendOrEmpty(grow, 'grow')}${appendOr(lg, 'lg', 'sm')}${appendOrEmpty(
       marginRight,
-      'm-right'
+      'm-right',
     )}${appendOrEmpty(marginLeft, 'm-left')}${appendOrEmpty(marginX, 'm-x')}${
       className ? ` ${className}` : ''
     }`}

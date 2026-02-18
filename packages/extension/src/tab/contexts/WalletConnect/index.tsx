@@ -1,30 +1,30 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as wc from '@polkadot-live/consts/walletConnect';
-import UniversalProvider from '@walletconnect/universal-provider';
 import { ChainList } from '@polkadot-live/consts/chains';
-import { WcError } from '@polkadot-live/core';
-import { createContext, useEffect, useRef } from 'react';
+import * as wc from '@polkadot-live/consts/walletConnect';
 import {
   createSafeContextHook,
   useConnections,
   useOverlay,
   useWcFeedback,
 } from '@polkadot-live/contexts';
-import { decodeAddress, encodeAddress, u8aToHex } from 'dedot/utils';
-import { getSdkError } from '@walletconnect/utils';
+import { WcError } from '@polkadot-live/core';
 import { renderToast } from '@polkadot-live/ui';
+import UniversalProvider from '@walletconnect/universal-provider';
+import { getSdkError } from '@walletconnect/utils';
+import { decodeAddress, encodeAddress, u8aToHex } from 'dedot/utils';
+import { createContext, useEffect, useRef } from 'react';
 import { handleWcError } from '../utils';
-import type { AnyData } from '@polkadot-live/types/misc';
-import type { ChainID } from '@polkadot-live/types/chains';
-import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
-import type { SignerPayloadJSON } from 'dedot/types';
 import type { WalletConnectContextInterface } from '@polkadot-live/contexts';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { AnyData } from '@polkadot-live/types/misc';
+import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 import type {
   WcFetchedAddress,
   WcSelectNetwork,
 } from '@polkadot-live/types/walletConnect';
+import type { SignerPayloadJSON } from 'dedot/types';
 
 export const WalletConnectContext = createContext<
   WalletConnectContextInterface | undefined
@@ -32,7 +32,7 @@ export const WalletConnectContext = createContext<
 
 export const useWalletConnect = createSafeContextHook(
   WalletConnectContext,
-  'WalletConnectContext'
+  'WalletConnectContext',
 );
 
 export const WalletConnectProvider = ({
@@ -102,7 +102,7 @@ export const WalletConnectProvider = ({
    */
   const getNamespaces = () => {
     const selectedNetworks = wcNetworksRef.current.filter(
-      ({ selected }) => selected
+      ({ selected }) => selected,
     );
 
     // Select signing network if it's not already.
@@ -136,16 +136,16 @@ export const WalletConnectProvider = ({
    */
   const setFetchedAddresses = (namespaces: AnyData) => {
     // Get the accounts from the session.
-    const wcAccounts = Object.values(namespaces)
-      .map((namespace: AnyData) => namespace.accounts)
-      .flat();
+    const wcAccounts = Object.values(namespaces).flatMap(
+      (namespace: AnyData) => namespace.accounts,
+    );
 
     // Grab account addresses and their CAIP ID.
     const accounts: { address: string; caipId: string }[] = wcAccounts.map(
       (wcAccount) => ({
         address: wcAccount.split(':')[2],
         caipId: wcAccount.split(':')[1],
-      })
+      }),
     );
 
     // Send fetched accounts to import window.
@@ -161,7 +161,7 @@ export const WalletConnectProvider = ({
           substrate: address,
           selected: false,
         };
-      }
+      },
     );
 
     // Set fetched addresses state in other context.
@@ -179,7 +179,7 @@ export const WalletConnectProvider = ({
     if (!wcProvider.current) {
       // Instantiate provider.
       const provider = await UniversalProvider.init({
-        projectId: wc.WC_PROJECT_IDS['browser'],
+        projectId: wc.WC_PROJECT_IDS.browser,
         relayUrl: wc.WC_RELAY_URL,
         // TODO: metadata
       });
@@ -221,7 +221,7 @@ export const WalletConnectProvider = ({
    */
   const cacheWcMeta = async () => {
     const { uri, approval } = await wcProvider.current!.client.connect(
-      getConnectionParams()
+      getConnectionParams(),
     );
     wcMetaRef.current = { uri, approval };
   };
@@ -266,7 +266,7 @@ export const WalletConnectProvider = ({
    * Try to cache a WalletConnect session or prepare a new one.
    */
   const tryCacheSession = async (
-    origin: 'extrinsics' | 'import' | null = null
+    origin: 'extrinsics' | 'import' | null = null,
   ) => {
     try {
       if (!wcInitializedRef.current) {
@@ -281,14 +281,14 @@ export const WalletConnectProvider = ({
       } else {
         await cacheWcMeta();
       }
-    } catch (error: AnyData) {
+    } catch (error) {
       const feedback = handleWcError(error, origin);
       switch (origin) {
         case 'import':
           renderToast(
             feedback.body.msg,
             `wc-error-${String(Date.now())}`,
-            'error'
+            'error',
           );
           break;
         case 'extrinsics':
@@ -331,7 +331,7 @@ export const WalletConnectProvider = ({
         setFetchedAddresses(wcSession.current.namespaces);
         relayFlag('wc:session:restored', true);
       }
-    } catch (error: AnyData) {
+    } catch (error) {
       const feedback = handleWcError(error, 'import');
       renderToast(feedback.body.msg, `wc-error-${String(Date.now())}`, 'error');
     }
@@ -343,7 +343,7 @@ export const WalletConnectProvider = ({
    */
   const verifySigningAccount = async (
     target: string,
-    chainId: ChainID
+    chainId: ChainID,
   ): Promise<{ approved: boolean; errorThrown: boolean }> => {
     try {
       if (!wcSession.current) {
@@ -353,10 +353,9 @@ export const WalletConnectProvider = ({
       // Get the accounts from the session.
       const caip = wc.getWalletConnectChainId(chainId)!;
       const accounts: { address: string; caipId: string }[] = Object.values(
-        wcSession.current.namespaces
+        wcSession.current.namespaces,
       )
-        .map((namespace: AnyData) => namespace.accounts)
-        .flat()
+        .flatMap((namespace: AnyData) => namespace.accounts)
         .map((wcAccount) => ({
           address: wcAccount.split(':')[2],
           caipId: wcAccount.split(':')[1],
@@ -366,9 +365,9 @@ export const WalletConnectProvider = ({
       // Verify signing account exists in the session.
       const prefix = ChainList.get(chainId)!.prefix;
       const found = accounts.find(
-        ({ address }) => encodeAddress(address, prefix) === target
+        ({ address }) => encodeAddress(address, prefix) === target,
       );
-      const approved = found ? true : false;
+      const approved = !!found;
       return { approved, errorThrown: false };
     } catch (error) {
       const feedback = handleWcError(error, 'extrinsics');

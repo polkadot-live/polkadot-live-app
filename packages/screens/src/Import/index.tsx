@@ -1,13 +1,13 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as UI from '@polkadot-live/ui';
-import React, { useEffect, useState } from 'react';
 import { useConnections, useHelp } from '@polkadot-live/contexts';
+import * as UI from '@polkadot-live/ui';
+import { useEffect, useState } from 'react';
 import { Home } from './Home';
+import { ImportLedger } from './Ledger';
 import { ImportReadOnly } from './ReadOnly';
 import { ImportVault } from './Vault';
-import { ImportLedger } from './Ledger';
 import { ImportWalletConnect } from './WalletConnect';
 import type { AccountSource } from '@polkadot-live/types/accounts';
 import type { ImportScreenProps } from './types';

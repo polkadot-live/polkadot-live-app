@@ -1,10 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { DefinitionWrapper } from '../Wrappers';
 import { useEffect, useRef, useState } from 'react';
-import type { DefinitionProps } from './types';
+import { DefinitionWrapper } from '../Wrappers';
 import type { RefObject } from 'react';
+import type { DefinitionProps } from './types';
 
 export const Definition = ({ title, description }: DefinitionProps) => {
   // Store whether the definition is open or not.
@@ -31,15 +31,12 @@ export const Definition = ({ title, description }: DefinitionProps) => {
 
       <div style={{ height }}>
         <div className="content" ref={contentRef}>
-          {open && (
-            <>
-              {description.map((item, index: number) => (
-                <h4 key={`inner_def_${index}`} className="definition">
-                  {item}
-                </h4>
-              ))}
-            </>
-          )}
+          {open &&
+            description.map((item, index: number) => (
+              <h4 key={`inner_def_${index}`} className="definition">
+                {item}
+              </h4>
+            ))}
         </div>
       </div>
     </DefinitionWrapper>

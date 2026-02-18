@@ -1,18 +1,17 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Accordion from '@radix-ui/react-accordion';
-import * as UI from '@polkadot-live/ui';
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import { FlexColumn, FlexRow } from '@polkadot-live/styles';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { chainCurrency } from '@polkadot-live/consts/chains';
 import { useConnections } from '@polkadot-live/contexts';
-import { useState } from 'react';
-import { ellipsisFn } from '@w3ux/utils';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ActionButton, InputWrapper } from './Wrappers';
-import { DialogSelectAccount, DialogSelectNetwork } from './Dialogs';
 import { formatDecimal, getBalanceText } from '@polkadot-live/core';
+import { FlexColumn, FlexRow } from '@polkadot-live/styles';
+import * as UI from '@polkadot-live/ui';
+import * as Accordion from '@radix-ui/react-accordion';
+import { ellipsisFn } from '@w3ux/utils';
+import { useState } from 'react';
+import { DialogSelectAccount, DialogSelectNetwork } from './Dialogs';
 import {
   AccountNameWithTooltip,
   AddressWithTooltip,
@@ -22,6 +21,7 @@ import {
   ProgressBar,
   TriggerContent,
 } from './SendHelpers';
+import { ActionButton, InputWrapper } from './Wrappers';
 import type { SendAccordionValue, SendProps } from './types';
 
 export const Send = ({

@@ -1,20 +1,20 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useState, createContext, useEffect } from 'react';
-import { useChainEvents } from '../ChainEvents';
+import { createContext, useEffect, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
+import { useChainEvents } from '../ChainEvents';
 import { getManageAdapter } from './adapters';
 import type {
   SubscriptionTask,
   TaskCategory,
   WrappedSubscriptionTasks,
 } from '@polkadot-live/types/subscriptions';
-import type { ManageContextInterface } from '../../../types/main';
 import type { ReactNode } from 'react';
+import type { ManageContextInterface } from '../../../types/main';
 
 export const ManageContext = createContext<ManageContextInterface | undefined>(
-  undefined
+  undefined,
 );
 
 export const useManage = createSafeContextHook(ManageContext, 'ManageContext');
@@ -54,7 +54,7 @@ export const ManageProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const removeListener = adapter.onMount(setRenderedSubscriptionsState);
     return () => {
-      removeListener && removeListener();
+      removeListener?.();
     };
   }, []);
 

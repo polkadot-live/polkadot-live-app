@@ -1,9 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 import type { WcSelectNetwork } from '@polkadot-live/types/walletConnect';
-import type { ChainID } from '@polkadot-live/types/chains';
 
 export interface WalletConnectContextInterface {
   wcSessionRestored: boolean;
@@ -18,12 +18,12 @@ export interface WalletConnectContextInterface {
   tryCacheSession: (origin?: 'extrinsics' | 'import' | null) => Promise<void>;
   wcEstablishSessionForExtrinsic: (
     signingAddress: string,
-    chainId: ChainID
+    chainId: ChainID,
   ) => Promise<void>;
   wcSignExtrinsic: (info: ExtrinsicInfo) => Promise<void>;
   updateWcTxSignMap: (txId: string, flag: boolean) => void;
   verifySigningAccount: (
     target: string,
-    chainId: ChainID
+    chainId: ChainID,
   ) => Promise<{ approved: boolean; errorThrown: boolean }>;
 }

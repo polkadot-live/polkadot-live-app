@@ -30,7 +30,7 @@ export interface ReferendaContextInterface {
   setFilterOption: (
     tab: 'active' | 'history',
     filter: RefStatus,
-    selected: boolean
+    selected: boolean,
   ) => void;
   setPage: (page: number, directory: 'active' | 'history') => void;
   setReferendaMap: React.Dispatch<

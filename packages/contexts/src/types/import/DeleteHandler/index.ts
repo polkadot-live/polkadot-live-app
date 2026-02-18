@@ -5,6 +5,6 @@ import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';
 
 export interface DeleteHandlerContextInterface {
   handleDeleteAddress: (
-    genericAccount: ImportedGenericAccount
+    genericAccount: ImportedGenericAccount,
   ) => Promise<boolean>;
 }

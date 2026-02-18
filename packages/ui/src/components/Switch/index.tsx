@@ -1,9 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { ComponentBaseWithClassName } from '../../types';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Wrapper } from './Wrapper';
+import type { ComponentBaseWithClassName } from '../../types';
 
 export type SwitchPrimaryProps = ComponentBaseWithClassName & {
   type?: 'primary' | 'secondary' | 'mono' | 'monoInvert';
@@ -80,7 +80,6 @@ export const Switch = ({
         }
         break;
       }
-      case 'primary':
       default: {
         if (disabled) {
           setBgColor('var(--switch-disable-background)');

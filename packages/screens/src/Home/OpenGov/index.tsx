@@ -1,7 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useEffect, useState } from 'react';
 import { useChainEvents } from '@polkadot-live/contexts';
 import {
   CarouselWrapper,
@@ -9,6 +8,7 @@ import {
   FlexColumnWrap,
 } from '@polkadot-live/styles';
 import { MainHeading } from '@polkadot-live/ui';
+import { useEffect, useState } from 'react';
 import { Networks } from './Networks';
 import { Subscriptions } from './Subscriptions';
 

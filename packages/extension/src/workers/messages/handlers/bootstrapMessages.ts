@@ -11,7 +11,7 @@ import type { AnyData } from '@polkadot-live/types/misc';
 
 export const handleBootstrapMessage = (
   message: AnyData,
-  sendResponse: (response?: AnyData) => void
+  sendResponse: (response?: AnyData) => void,
 ): boolean => {
   switch (message.task) {
     case 'initSystems': {

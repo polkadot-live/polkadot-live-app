@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Styles from '@polkadot-live/styles';
-import { OverviewTreasury } from './OverviewTreasury';
 import { OverviewExplore } from './OverviewExplore';
+import { OverviewTreasury } from './OverviewTreasury';
 import type { OverviewProps } from './types';
 
 export const Overview: React.FC<OverviewProps> = ({

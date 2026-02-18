@@ -15,7 +15,7 @@ export const IntervalSubscriptionsContext = createContext<
 
 export const useIntervalSubscriptions = createSafeContextHook(
   IntervalSubscriptionsContext,
-  'IntervalSubscriptionsContext'
+  'IntervalSubscriptionsContext',
 );
 
 export const IntervalSubscriptionsProvider = ({
@@ -69,7 +69,7 @@ export const IntervalSubscriptionsProvider = ({
             t.chainId === chainId &&
             t.action === action &&
             t.referendumId === refId
-          )
+          ),
       );
       next.set(chainId, [...updated, task]);
       return next;
@@ -91,7 +91,7 @@ export const IntervalSubscriptionsProvider = ({
     setSubscriptions((prev) => {
       const cur = prev.get(chainId) || [];
       const upd = cur.filter(
-        (t) => !(t.chainId === chainId && t.referendumId === refId)
+        (t) => !(t.chainId === chainId && t.referendumId === refId),
       );
       const newMap = new Map(prev);
       upd.length === 0 ? newMap.delete(chainId) : newMap.set(chainId, upd);
@@ -107,7 +107,7 @@ export const IntervalSubscriptionsProvider = ({
       const updated = cloned
         .get(chainId)!
         .map((t) =>
-          t.action === action && t.referendumId === referendumId ? task : t
+          t.action === action && t.referendumId === referendumId ? task : t,
         );
       cloned.set(chainId, updated);
       return cloned;
@@ -141,7 +141,7 @@ export const IntervalSubscriptionsProvider = ({
     [...subscriptions.values()].reduce(
       (acc, tasks) =>
         acc + tasks.filter((task) => task.status === 'enable').length,
-      0
+      0,
     );
 
   // Get subscriptions from database and set state on mount.
@@ -153,7 +153,7 @@ export const IntervalSubscriptionsProvider = ({
   useEffect(() => {
     const removeListener = adapter.listenOnMount(setSubscriptions);
     return () => {
-      removeListener && removeListener();
+      removeListener?.();
     };
   }, []);
 
@@ -161,7 +161,9 @@ export const IntervalSubscriptionsProvider = ({
   useEffect(() => {
     const fetch = async () => {
       const tasks = await adapter.getIntervalSubs();
-      tasks.forEach((t) => addIntervalSubscription(t));
+      tasks.forEach((t) => {
+        addIntervalSubscription(t);
+      });
     };
     fetch();
   }, [activeRefChain]);

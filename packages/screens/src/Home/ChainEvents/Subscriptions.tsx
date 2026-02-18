@@ -1,29 +1,25 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Accordion from '@radix-ui/react-accordion';
-import * as UI from '@polkadot-live/ui';
+import { faCaretLeft, faSplotch } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   ChainPallets,
   getReadablePallet,
 } from '@polkadot-live/consts/subscriptions/chainEvents';
-import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { SubscriptionRow } from './SubscriptionRow';
-import { faCaretLeft, faSplotch } from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
 import {
   useApiHealth,
   useChainEvents,
   useConnections,
 } from '@polkadot-live/contexts';
-import {
-  FlexColumn,
-  FlexRow,
-  ItemsColumn,
-} from '@polkadot-live/styles';
-import type { ChainID } from '@polkadot-live/types/chains';
+import { FlexColumn, FlexRow, ItemsColumn } from '@polkadot-live/styles';
+import * as UI from '@polkadot-live/ui';
+import * as Accordion from '@radix-ui/react-accordion';
+import { ChevronDownIcon } from '@radix-ui/react-icons';
+import { useState } from 'react';
+import { SubscriptionRow } from './SubscriptionRow';
 import type { ChainEventSubscription } from '@polkadot-live/types';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { SubscriptionsProps } from './types';
 
 export const Subscriptions = ({

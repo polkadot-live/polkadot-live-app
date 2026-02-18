@@ -1,12 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { setStateWithRef } from '@w3ux/utils';
-import { ButtonSecondary } from '../../kits/buttons';
-import { useOutsideAlerter } from '../../hooks/useOutsideAlerter';
-import React, { useRef, useState } from 'react';
-import { MenuWrapper, Separator } from './Wrapper';
 import {
   faBell,
   faBellSlash,
@@ -14,6 +8,12 @@ import {
   faLinkSlash,
   faWifi,
 } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { setStateWithRef } from '@w3ux/utils';
+import React, { useRef, useState } from 'react';
+import { useOutsideAlerter } from '../../hooks/useOutsideAlerter';
+import { ButtonSecondary } from '../../kits/buttons';
+import { MenuWrapper, Separator } from './Wrapper';
 import type { MenuProps } from './types';
 
 export * from './types';
@@ -68,7 +68,7 @@ export const Menu = ({
                 </button>
                 {appendSeparator && <Separator style={{ opacity: '0.5' }} />}
               </React.Fragment>
-            )
+            ),
           )}
 
           {/* Controls */}

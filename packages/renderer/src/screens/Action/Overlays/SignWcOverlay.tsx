@@ -2,19 +2,19 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import WalletConnectSVG from '@w3ux/extension-assets/WalletConnect.svg?react';
-import { ConfigTabs } from '@polkadot-live/core';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   useConnections,
-  useWcFeedback,
   useOverlay,
+  useWcFeedback,
 } from '@polkadot-live/contexts';
-import { useEffect } from 'react';
-import { useWcVerifier } from '../../../contexts/action';
-import { ButtonPrimary, ButtonSecondary, InfoCard } from '@polkadot-live/ui';
+import { ConfigTabs } from '@polkadot-live/core';
 import { FlexRow, WcOverlayWrapper } from '@polkadot-live/styles';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ButtonPrimary, ButtonSecondary, InfoCard } from '@polkadot-live/ui';
+import WalletConnectSVG from '@w3ux/extension-assets/WalletConnect.svg?react';
+import { useEffect } from 'react';
 import { PuffLoader } from 'react-spinners';
+import { useWcVerifier } from '../../../contexts/action';
 import type { SignWcOverlayProps } from './types';
 
 export const SignWcOverlay = ({ info }: SignWcOverlayProps) => {
@@ -81,7 +81,11 @@ export const SignWcOverlay = ({ info }: SignWcOverlayProps) => {
             </span>
             {wcFeedback.body.msg}
           </span>
-          <button className="dismiss" onClick={() => clearFeedback()}>
+          <button
+            type="button"
+            className="dismiss"
+            onClick={() => clearFeedback()}
+          >
             <FontAwesomeIcon icon={FA.faX} />
           </button>
         </InfoCard>

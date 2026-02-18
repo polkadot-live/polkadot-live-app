@@ -35,10 +35,10 @@
       "@polkadot-live/screens/*": ["./packages/screens/src/*"],
       "@polkadot-live/styles/*": ["./packages/styles/src/*"],
       "@polkadot-live/types/*": ["./packages/types/src/*"],
-      "@polkadot-live/ui/*": ["./packages/ui/src/*"],
+      "@polkadot-live/ui/*": ["./packages/ui/src/*"]
     },
     "declarationMap": false,
-    "noEmitOnError": true,
+    "noEmitOnError": true
   },
   "include": [
     "packages/**/*.ts",
@@ -52,6 +52,6 @@
     "**/*/node_modules",
     "**/*/dist",
     "**/*/vite.config.js",
-    ".vite/**/*",
-  ],
+    ".vite/**/*"
+  ]
 }

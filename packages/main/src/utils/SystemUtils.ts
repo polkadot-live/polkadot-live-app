@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { OnlineStatusController, WindowsController } from '../controller';
 import { app } from 'electron';
+import { OnlineStatusController, WindowsController } from '../controller';
 import type { AnyFunction } from '@polkadot-live/types/misc';
 
 // Hide dock icon if platform is macOS.
@@ -11,7 +11,9 @@ import type { AnyFunction } from '@polkadot-live/types/misc';
 export const hideDockIcon = () => {
   if (process.platform === 'darwin') {
     setTimeout(() => {
-      app.dock && app.dock.hide();
+      if (app.dock) {
+        app.dock.hide();
+      }
     }, 2_000);
   }
 };
@@ -20,7 +22,9 @@ export const hideDockIcon = () => {
 export const showDockIcon = () => {
   if (process.platform === 'darwin') {
     setTimeout(() => {
-      app.dock && app.dock.show();
+      if (app.dock) {
+        app.dock.show();
+      }
     }, 2_000);
   }
 };
@@ -31,7 +35,7 @@ export const reportOnlineStatus = (id: string) => {
 
   WindowsController.getWindow(id)?.webContents?.send(
     'renderer:broadcast:onlineStatus',
-    status
+    status,
   );
 };
 

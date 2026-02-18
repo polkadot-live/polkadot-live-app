@@ -9,6 +9,6 @@ export interface TreasuryAdapter {
   initTreasury: (
     chainId: ChainID,
     setFetchingTreasuryData: (value: SetStateAction<boolean>) => void,
-    setTreasuryData: (data: IpcTreasuryInfo) => void
+    setTreasuryData: (data: IpcTreasuryInfo) => void,
   ) => void;
 }

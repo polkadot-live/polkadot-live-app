@@ -1,39 +1,39 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { formatDecimal } from '@polkadot-live/core';
 import { chainUnits, getSendChains } from '@polkadot-live/consts/chains';
+import { formatDecimal } from '@polkadot-live/core';
 import { ellipsisFn, unitToPlanck } from '@w3ux/utils';
+import { useEffect, useState } from 'react';
 import {
   getRecipientAccounts,
   getSenderAccounts,
   removeLeadingZeros,
   truncateDecimals,
 } from './utils';
-import { useEffect, useState } from 'react';
-import type {
-  ActionMeta,
-  ExTransferKeepAliveData,
-} from '@polkadot-live/types/tx';
 import type {
   AccountSource,
   SendAccount,
   SendRecipient,
 } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type {
+  ActionMeta,
+  ExTransferKeepAliveData,
+} from '@polkadot-live/types/tx';
 import type { ChangeEvent } from 'react';
 import type { SendNativeHookInterface } from '../types/main';
 
 export const useSendNative = (
   initExtrinsic: (meta: ActionMeta) => Promise<void>,
   fetchSendAccounts: () => Promise<Map<AccountSource, SendAccount[]>>,
-  getSpendableBalance: (address: string, chainId: ChainID) => Promise<string>
+  getSpendableBalance: (address: string, chainId: ChainID) => Promise<string>,
 ): SendNativeHookInterface => {
   /**
    * Addresses fetched from main process.
    */
   const [addressMap, setAddressMap] = useState(
-    new Map<AccountSource, SendAccount[]>()
+    new Map<AccountSource, SendAccount[]>(),
   );
 
   const [sendNetwork, setSendNetwork] = useState<ChainID | null>(null);
@@ -67,7 +67,7 @@ export const useSendNative = (
 
     // Data for action meta.
     const senderObj = getSenderAccounts(addressMap, sendNetwork).find(
-      ({ address }) => address === sender.address
+      ({ address }) => address === sender.address,
     )!;
 
     const recipientObj = {
@@ -80,7 +80,7 @@ export const useSendNative = (
 
     const sendAmountPlanck: string = unitToPlanck(
       formatDecimal(sendAmount),
-      chainUnits(sendNetwork)
+      chainUnits(sendNetwork),
     ).toString();
 
     // Specific data for transfer extrinsic.
@@ -142,7 +142,7 @@ export const useSendNative = (
       setValidAmount(true);
       return;
     }
-    if (!isNaN(Number(val))) {
+    if (!Number.isNaN(Number(val))) {
       // Truncate to network's allowable decimal places and remove any leading zeros.
       const tmp: string = removeLeadingZeros(val);
       const amount = truncateDecimals(tmp, sender.chainId);
@@ -191,7 +191,7 @@ export const useSendNative = (
     receiver === null ||
     sendAmount === '0' ||
     sendAmount === '' ||
-    isNaN(Number(sendAmount)) ||
+    Number.isNaN(Number(sendAmount)) ||
     !getSendChains().includes(sender.chainId) ||
     !validAmount ||
     summaryComplete;
@@ -222,7 +222,7 @@ export const useSendNative = (
     } else {
       setSenderAccounts(getSenderAccounts(addressMap, sendNetwork));
       setRecipientAccounts(
-        getRecipientAccounts(addressMap, sendNetwork, sender)
+        getRecipientAccounts(addressMap, sendNetwork, sender),
       );
     }
   }, [sendNetwork]);
@@ -240,10 +240,10 @@ export const useSendNative = (
   useEffect(() => {
     const steps = 4;
     let conditions = 0;
-    sendNetwork && (conditions += 1);
-    sender && (conditions += 1);
-    receiver && (conditions += 1);
-    sendAmount !== '0' && sendAmount !== '' && validAmount && (conditions += 1);
+    if (sendNetwork) conditions += 1;
+    if (sender) conditions += 1;
+    if (receiver) conditions += 1;
+    if (sendAmount !== '0' && sendAmount !== '' && validAmount) conditions += 1;
     setProgress((100 / steps) * conditions);
   }, [sendNetwork, sender, receiver, sendAmount]);
 
@@ -288,7 +288,7 @@ export const useSendNative = (
     !applyFilter
       ? setRecipientAccounts([...accounts])
       : setRecipientAccounts(
-          accounts.filter(({ address }) => address.startsWith(recipientFilter))
+          accounts.filter(({ address }) => address.startsWith(recipientFilter)),
         );
   }, [recipientFilter]);
 

@@ -9,6 +9,6 @@ import type {
 export interface RemoveHandlerContextInterface {
   handleRemoveAddress: (
     encodedAccount: EncodedAccount,
-    genericAccount: ImportedGenericAccount
+    genericAccount: ImportedGenericAccount,
   ) => Promise<void>;
 }

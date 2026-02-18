@@ -3,8 +3,8 @@
 
 import { AccountsController } from '@polkadot-live/core';
 import { DbController } from '../../controllers';
-import type { ChainID } from '@polkadot-live/types/chains';
 import type { StoredAccount } from '@polkadot-live/types/accounts';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 export const initManagedAccounts = async () => {
   type T = Map<ChainID, StoredAccount[]>;

@@ -21,5 +21,3 @@ declare module 'react' {
     onPointerLeaveCapture?: React.PointerEventHandler<T> | undefined;
   }
 }
-
-export {};

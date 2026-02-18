@@ -5,9 +5,9 @@ import { createContext, useEffect, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
 import { getReferendaSubscriptionsAdapter } from './adapters';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { ReferendaInfo } from '@polkadot-live/types/openGov';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { ReferendaSubscriptionsContextInterface } from '../../../types/openGov';
-import type { ReferendaInfo } from '@polkadot-live/types/openGov';
 
 export const ReferendaSubscriptionsContext = createContext<
   ReferendaSubscriptionsContextInterface | undefined
@@ -15,7 +15,7 @@ export const ReferendaSubscriptionsContext = createContext<
 
 export const useReferendaSubscriptions = createSafeContextHook(
   ReferendaSubscriptionsContext,
-  'ReferendaSubscriptionsContext'
+  'ReferendaSubscriptionsContext',
 );
 
 export const ReferendaSubscriptionsProvider = ({
@@ -32,7 +32,7 @@ export const ReferendaSubscriptionsProvider = ({
 
   // Map to identify referenda added to main window.
   const [addedRefsMap, setAddedRefsMap] = useState(
-    new Map<ChainID, number[] /* refIds */>()
+    new Map<ChainID, number[] /* refIds */>(),
   );
 
   const removeRef = (chainId: ChainID, refId: number) => {
@@ -86,8 +86,8 @@ export const ReferendaSubscriptionsProvider = ({
                 .get(chainId)!
                 .filter(
                   (t) =>
-                    !(t.action === action && t.referendumId === referendumId)
-                )
+                    !(t.action === action && t.referendumId === referendumId),
+                ),
             );
       }
       return cloned;
@@ -129,7 +129,9 @@ export const ReferendaSubscriptionsProvider = ({
   useEffect(() => {
     adapter.fetchOnMount().then((result) => {
       if (result) {
-        result.forEach((t) => addReferendaSubscription(t));
+        result.forEach((t) => {
+          addReferendaSubscription(t);
+        });
       }
     });
   }, []);
@@ -139,10 +141,10 @@ export const ReferendaSubscriptionsProvider = ({
     const removeListener = adapter.listenOnMount(
       addReferendaSubscription,
       removeReferendaSubscription,
-      updateReferendaSubscription
+      updateReferendaSubscription,
     );
     return () => {
-      removeListener && removeListener();
+      removeListener?.();
     };
   }, []);
 

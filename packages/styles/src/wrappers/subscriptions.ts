@@ -233,7 +233,7 @@ export const TaskEntryWrapper = styled(motion.div)`
             .icon-wrapper {
               color: var(--text-dimmed);
               ${mixinHelpIcon}
-              font-size: 1rem;
+              font-size: 0.96rem;
               transition: color 150ms ease-out;
               &:hover {
                 color: inherit;

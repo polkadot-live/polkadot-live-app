@@ -1,6 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { ChainEventsService } from '@polkadot-live/core';
 import {
   getActiveCount,
   getActiveRefIds,
@@ -17,17 +18,16 @@ import {
   removeChainEventsForRef,
   updateChainEvent,
 } from '../../chainEvents';
-import { ChainEventsService } from '@polkadot-live/core';
-import type { AnyData } from '@polkadot-live/types/misc';
 import type {
   ChainEventSubscription,
   FlattenedAccountData,
 } from '@polkadot-live/types';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { AnyData } from '@polkadot-live/types/misc';
 
 export const handleChainEventMessage = (
   message: AnyData,
-  sendResponse: (response?: AnyData) => void
+  sendResponse: (response?: AnyData) => void,
 ): boolean => {
   switch (message.task) {
     case 'getActiveCount': {
@@ -73,7 +73,9 @@ export const handleChainEventMessage = (
       const { chainId, refId, subscriptions } = message.payload;
       const subs = subscriptions as ChainEventSubscription[];
       putChainEventsForRef(subs).then(() => {
-        subs.forEach((s) => ChainEventsService.insertRefScoped(refId, s));
+        subs.forEach((s) => {
+          ChainEventsService.insertRefScoped(refId, s);
+        });
         ChainEventsService.initEventStream(chainId);
       });
       return false;
@@ -82,7 +84,9 @@ export const handleChainEventMessage = (
       const { chainId, refId, subscriptions } = message.payload;
       const subs = subscriptions as ChainEventSubscription[];
       removeChainEventsForRef(subs).then(() => {
-        subs.forEach((s) => ChainEventsService.removeRefScoped(refId, s));
+        subs.forEach((s) => {
+          ChainEventsService.removeRefScoped(refId, s);
+        });
         ChainEventsService.tryStopEventsStream(chainId);
       });
       return false;

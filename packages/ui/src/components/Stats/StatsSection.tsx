@@ -1,11 +1,11 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ButtonMono } from '../../kits/buttons';
 import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { cubicBezier, motion } from 'framer-motion';
 import { useState } from 'react';
+import { ButtonMono } from '../../kits/buttons';
 import { StatsSectionWrapper, SubHeading } from './Stats.styles';
 import type { StatsSectionProps } from './StatsSection.types';
 
@@ -30,7 +30,7 @@ export const StatsSection = ({
 
   return (
     <StatsSectionWrapper>
-      <div className="header-wrapper" onClick={handleClick}>
+      <button type="button" className="header-wrapper" onClick={handleClick}>
         <SubHeading>
           <FontAwesomeIcon
             style={{ minWidth: '0.75rem' }}
@@ -44,7 +44,7 @@ export const StatsSection = ({
           text={btnText}
           onClick={btnClickHandler}
         />
-      </div>
+      </button>
 
       <motion.div
         style={{ overflowY: 'hidden' }}

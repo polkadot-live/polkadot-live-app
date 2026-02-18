@@ -40,10 +40,10 @@ export const compareExtrinsics = (a: ExtrinsicInfo, b: ExtrinsicInfo) => {
 
   return a.txId === b.txId
     ? true
-    : aFrom === bFrom &&
+    : !!(
+        aFrom === bFrom &&
         aAction === bAction &&
         aAction !== whiteListed &&
         a.txStatus !== 'finalized'
-      ? true
-      : false;
+      );
 };

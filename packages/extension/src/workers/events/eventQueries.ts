@@ -14,7 +14,7 @@ export const getAllEvents = async (): Promise<EventCallback[]> => {
 };
 
 export const getEvents = async (
-  payload: EventFetchPayload
+  payload: EventFetchPayload,
 ): Promise<EventCallback[]> => {
   const { category, limit, order, cursor } = payload;
   const map = (await DbController.getAllObjects('events')) as Map<

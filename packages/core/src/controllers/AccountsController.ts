@@ -1,12 +1,11 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Account } from '../model';
-import { getAccountNominatingData, getNominationPoolData } from '../library';
 import { getStakingChains } from '@polkadot-live/consts/chains';
 import { QueryError } from '../errors';
+import { getAccountNominatingData, getNominationPoolData } from '../library';
+import { Account } from '../model';
 import { TaskOrchestrator } from '../orchestrators';
-import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   AccountBalance,
   AccountSource,
@@ -18,6 +17,7 @@ import type {
   DedotClientSet,
   DedotStakingClient,
 } from '@polkadot-live/types/apis';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 
 /**
@@ -47,15 +47,15 @@ export class AccountsController {
   // Injects accounts into class from store.
   static async initialize(
     backend: 'browser' | 'electron',
-    fetched?: Map<ChainID, StoredAccount[]>
+    fetched?: Map<ChainID, StoredAccount[]>,
   ) {
-    this.backend = backend;
+    AccountsController.backend = backend;
     switch (backend) {
       case 'electron':
-        await this.initElectron();
+        await AccountsController.initElectron();
         break;
       case 'browser':
-        this.initBrowser(fetched);
+        AccountsController.initBrowser(fetched);
         break;
     }
   }
@@ -63,20 +63,21 @@ export class AccountsController {
   // Initialize accounts from indexedDB.
   static initBrowser(fetched?: Map<ChainID, StoredAccount[]>) {
     if (!fetched) {
-      this.accounts = new Map();
+      AccountsController.accounts = new Map();
       return;
     }
     for (const [chainId, stored] of fetched) {
       const updated = [];
-      const cur = this.accounts.get(chainId) ?? [];
+      const cur = AccountsController.accounts.get(chainId) ?? [];
 
       for (const { _address, _source, _name } of stored) {
-        if (this.accountExists(chainId, _address)) {
+        if (AccountsController.accountExists(chainId, _address)) {
           continue;
         }
         updated.push(new Account(chainId, _source, _address, _name));
       }
-      updated.length > 0 && this.accounts.set(chainId, [...cur, ...updated]);
+      updated.length > 0 &&
+        AccountsController.accounts.set(chainId, [...cur, ...updated]);
     }
   }
 
@@ -89,21 +90,22 @@ export class AccountsController {
       })) || '';
 
     if (serialized === '') {
-      this.accounts = new Map();
+      AccountsController.accounts = new Map();
       return;
     }
     const parsed = new Map<ChainID, StoredAccount[]>(JSON.parse(serialized));
     for (const [chain, stored] of parsed) {
       const updated = [];
-      const cur = this.accounts.get(chain) ?? [];
+      const cur = AccountsController.accounts.get(chain) ?? [];
 
       for (const { _address, _source, _name } of stored) {
-        if (this.accountExists(chain, _address)) {
+        if (AccountsController.accountExists(chain, _address)) {
           continue;
         }
         updated.push(new Account(chain, _source, _address, _name));
       }
-      updated.length > 0 && this.accounts.set(chain, [...cur, ...updated]);
+      updated.length > 0 &&
+        AccountsController.accounts.set(chain, [...cur, ...updated]);
     }
   }
 
@@ -131,14 +133,14 @@ export class AccountsController {
   // Fetch and build persisted tasks from the store.
   static async initAccountSubscriptions(
     backend: 'electron' | 'browser',
-    active?: Map<string, SubscriptionTask[]>
+    active?: Map<string, SubscriptionTask[]>,
   ) {
     switch (backend) {
       case 'electron': {
-        if (!this.accounts) {
+        if (!AccountsController.accounts) {
           return;
         }
-        for (const accounts of this.accounts.values()) {
+        for (const accounts of AccountsController.accounts.values()) {
           for (const account of accounts) {
             const stored =
               (await window.myAPI.sendSubscriptionTask({
@@ -162,8 +164,8 @@ export class AccountsController {
         for (const [key, tasks] of active.entries()) {
           if (tasks.length) {
             const [chainId, address] = key.split(':');
-            const account = this.get(chainId as ChainID, address);
-            if (account && account.queryMulti) {
+            const account = AccountsController.get(chainId as ChainID, address);
+            if (account?.queryMulti) {
               await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
             }
           }
@@ -190,14 +192,14 @@ export class AccountsController {
 
   // Same as `subscribeAccounts` but for a specific chain.
   static async subscribeAccountsForChain(chainId: ChainID) {
-    const chainAccounts = this.accounts.get(chainId);
+    const chainAccounts = AccountsController.accounts.get(chainId);
     if (!chainAccounts) {
       return;
     }
     // Resubscribe to the each account's tasks.
     for (const account of chainAccounts) {
       const tasks = (account.getSubscriptionTasks() || []).filter(
-        (t) => t.chainId === chainId
+        (t) => t.chainId === chainId,
       );
       if (tasks.length && account.queryMulti) {
         await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
@@ -213,17 +215,17 @@ export class AccountsController {
         ({
           ...task,
           status: 'disable',
-        }) as SubscriptionTask
+        }) as SubscriptionTask,
     );
 
     // Send tasks to query multi wrapper for removal.
-    if (tasks && tasks.length && account && account.queryMulti) {
+    if (tasks?.length && account && account.queryMulti) {
       await TaskOrchestrator.subscribeTasks(tasks, account.queryMulti);
 
       // Remove tasks from electron store.
       // TODO: Batch removal of task data in electron store.
       for (const task of tasks) {
-        if (this.backend === 'electron') {
+        if (AccountsController.backend === 'electron') {
           await window.myAPI.sendSubscriptionTask({
             action: 'subscriptions:account:update',
             data: {
@@ -246,7 +248,7 @@ export class AccountsController {
     for (const [chain, accounts] of this.accounts) {
       map.set(
         chain,
-        accounts.map((a) => a.flatten())
+        accounts.map((a) => a.flatten()),
       );
     }
     return map;
@@ -260,7 +262,7 @@ export class AccountsController {
       chainId,
       this.accounts
         .get(chainId)
-        ?.map((a) => (a.address === account.address ? account : a)) || []
+        ?.map((a) => (a.address === account.address ? account : a)) || [],
     );
     if (this.backend === 'electron') {
       await window.myAPI.sendAccountTask({
@@ -273,7 +275,7 @@ export class AccountsController {
   // Adds a managed account. Fails if the account already exists.
   static add = (
     enAccount: EncodedAccount,
-    source: AccountSource
+    source: AccountSource,
   ): Account | false => {
     const { address, alias, chainId } = enAccount;
     if (this.accountExists(chainId, address)) {
@@ -334,7 +336,7 @@ export class AccountsController {
   // Sync live balances for all managed accounts.
   private static syncAllBalances = async (
     api: DedotClientSet,
-    chainId: ChainID
+    chainId: ChainID,
   ) => {
     console.log(`fetching balances for chain: ${chainId}`);
     const accounts = this.accounts.get(chainId) ?? [];
@@ -360,7 +362,7 @@ export class AccountsController {
   // Sync live balances for a single managed account.
   private static syncBalance = async (
     account: Account,
-    api: DedotClientSet
+    api: DedotClientSet,
   ) => {
     const result = await api.query.system.account(account.address);
 
@@ -377,7 +379,7 @@ export class AccountsController {
   // Sync live nominating data for all managed accounts.
   private static syncAllNominatingData = async (
     api: DedotStakingClient,
-    chainId: ChainID
+    chainId: ChainID,
   ) => {
     console.log(`fetching nominating data for chain: ${chainId}`);
     const accounts = this.accounts.get(chainId) ?? [];
@@ -413,7 +415,7 @@ export class AccountsController {
   // Sync live nominating data for a single managed accounts.
   private static syncNominatingData = async (
     account: Account,
-    api: DedotStakingClient
+    api: DedotStakingClient,
   ) => {
     try {
       const { address } = account;
@@ -436,7 +438,7 @@ export class AccountsController {
   // Sync live nomination pool data for all managed accounts.
   private static syncAllNominationPoolData = async (
     api: DedotStakingClient,
-    chainId: ChainID
+    chainId: ChainID,
   ) => {
     console.log(`fetching nomination pool data for chain: ${chainId}`);
     const accounts = this.accounts.get(chainId) ?? [];
@@ -448,7 +450,7 @@ export class AccountsController {
   // Sync live nomination pool data for a single managed accounts.
   private static syncNominationPoolData = async (
     account: Account,
-    api: DedotStakingClient
+    api: DedotStakingClient,
   ) => {
     const result = await getNominationPoolData(account, api);
     if (result) {

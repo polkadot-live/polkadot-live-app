@@ -1,12 +1,12 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import * as FA from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useConnections, useReferenda } from '@polkadot-live/contexts';
 import * as Styles from '@polkadot-live/styles';
 import { CheckboxRx, TooltipRx } from '@polkadot-live/ui';
-import { useConnections, useReferenda } from '@polkadot-live/contexts';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import type { DropdownReferendaFilterProps } from './types';
 
 export const DropdownReferendaFilter = ({
@@ -17,9 +17,7 @@ export const DropdownReferendaFilter = ({
   const theme = getTheme();
 
   const renderFilterMark = (): boolean =>
-    getSortedFilterOptions(tab).find(({ selected }) => !selected)
-      ? true
-      : false;
+    !!getSortedFilterOptions(tab).find(({ selected }) => !selected);
 
   return (
     <DropdownMenu.Root>
@@ -27,6 +25,7 @@ export const DropdownReferendaFilter = ({
         <span>
           <TooltipRx text={'Filter Referenda'} theme={theme}>
             <button
+              type="button"
               className="btn"
               style={{ position: 'relative' }}
               aria-label="Filter Referenda"
@@ -77,7 +76,7 @@ export const DropdownReferendaFilter = ({
                     <span>{label}</span>
                   </Styles.FlexRow>
                 </DropdownMenu.Item>
-              )
+              ),
             )}
           </Styles.FlexColumn>
 

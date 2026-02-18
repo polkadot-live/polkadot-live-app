@@ -12,7 +12,7 @@ export const ModalSection = ({ children, style, type }: ModalSectionProps) => (
   <div
     className={`${appendOrEmpty(type === 'carousel', 'modal-carousel')}${appendOrEmpty(
       type === 'tab',
-      'modal-tabs'
+      'modal-tabs',
     )}`}
     style={style}
   >

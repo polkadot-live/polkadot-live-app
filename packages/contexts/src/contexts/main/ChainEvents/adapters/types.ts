@@ -9,53 +9,53 @@ import type { ChainID } from '@polkadot-live/types/chains';
 
 export interface ChainEventsAdapter {
   listenOnMount: (
-    removeAllForAccount: (account: FlattenedAccountData) => void
+    removeAllForAccount: (account: FlattenedAccountData) => void,
   ) => (() => void) | null;
   getStored: () => Promise<Map<ChainID, ChainEventSubscription[]>>;
   getStoredForAccount: (
-    account: FlattenedAccountData
+    account: FlattenedAccountData,
   ) => Promise<ChainEventSubscription[]>;
   getActiveRefIds: () => Promise<string[]>;
   getAllRefSubs: () => Promise<
     Record<string, Record<number, ChainEventSubscription[]>>
   >;
   getStoredRefSubsForChain: (
-    chainId: ChainID
+    chainId: ChainID,
   ) => Promise<ChainEventSubscription[]>;
   getSubCount: () => Promise<number>;
   getSubCountForAccount: (account: FlattenedAccountData) => Promise<number>;
   storeInsert: (chainId: ChainID, subscription: ChainEventSubscription) => void;
   storeInsertForAccount: (
     account: FlattenedAccountData,
-    subscription: ChainEventSubscription
+    subscription: ChainEventSubscription,
   ) => void;
   storeRemove: (chainId: ChainID, subscription: ChainEventSubscription) => void;
   storeRemoveForAccount: (
     account: FlattenedAccountData,
-    subscription: ChainEventSubscription
+    subscription: ChainEventSubscription,
   ) => void;
   storeRemoveAllForAccount: (account: FlattenedAccountData) => void;
   toggleNotify: (
     chainId: ChainID,
-    subscription: ChainEventSubscription
+    subscription: ChainEventSubscription,
   ) => void;
   toggleNotifyForAccount: (
     account: FlattenedAccountData,
-    subscription: ChainEventSubscription
+    subscription: ChainEventSubscription,
   ) => void;
   toggleNotifyForRef: (
     chainId: ChainID,
     refId: number,
-    subscription: ChainEventSubscription
+    subscription: ChainEventSubscription,
   ) => void;
   storeInsertForRef: (
     chainId: ChainID,
     refId: number,
-    subscriptions: ChainEventSubscription[]
+    subscriptions: ChainEventSubscription[],
   ) => void;
   storeRemoveForRef: (
     chainId: ChainID,
     refId: number,
-    subscriptions: ChainEventSubscription[]
+    subscriptions: ChainEventSubscription[],
   ) => void;
 }

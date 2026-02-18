@@ -78,7 +78,7 @@ export class Config {
   // Get local storage key for subscription tasks of a particular address.
   static getSubscriptionsStorageKeyFor(
     address: string,
-    chainId: ChainID
+    chainId: ChainID,
   ): string {
     return `${chainId}_${address}_subscriptions`;
   }

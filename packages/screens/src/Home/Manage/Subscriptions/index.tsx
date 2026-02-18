@@ -1,8 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as UI from '@polkadot-live/ui';
-import { useEffect, useState } from 'react';
+import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import {
   useApiHealth,
   useAppSettings,
@@ -10,10 +9,11 @@ import {
   useConnections,
   useManage,
 } from '@polkadot-live/contexts';
-import { ellipsisFn } from '@w3ux/utils';
-import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
-import { ClassicSubscriptions } from './ClassicSubscriptions';
 import { FlexRow } from '@polkadot-live/styles';
+import * as UI from '@polkadot-live/ui';
+import { ellipsisFn } from '@w3ux/utils';
+import { useEffect, useState } from 'react';
+import { ClassicSubscriptions } from './ClassicSubscriptions';
 import { SmartSubscriptions } from './SmartSubscriptions';
 import type { SubscriptionsProps } from './types';
 
@@ -26,7 +26,7 @@ export const Subscriptions = ({
 }: SubscriptionsProps) => {
   const { cacheGet: settingsCacheGet } = useAppSettings();
   const showDebuggingSubscriptions = settingsCacheGet(
-    'setting:show-debugging-subscriptions'
+    'setting:show-debugging-subscriptions',
   );
 
   const { hasConnectionIssue } = useApiHealth();

@@ -14,16 +14,16 @@ import type {
  */
 export const handleWcError = (
   error: AnyData,
-  origin: 'import' | 'extrinsics' | null = null
+  origin: 'import' | 'extrinsics' | null = null,
 ): WalletConnectMeta => {
   console.error(error);
   if (!origin) {
-    return wc.wcErrorFeedback['WcCatchAll'];
+    return wc.wcErrorFeedback.WcCatchAll;
   }
   if (error instanceof WcError) {
     return wc.wcErrorFeedback[error.statusCode as WcErrorStatusCode];
   }
   return error.code === -32000
-    ? wc.wcErrorFeedback['WcCanceledTx']
-    : wc.wcErrorFeedback['WcCatchAll'];
+    ? wc.wcErrorFeedback.WcCanceledTx
+    : wc.wcErrorFeedback.WcCatchAll;
 };

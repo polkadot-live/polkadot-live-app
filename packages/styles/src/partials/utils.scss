@@ -4,6 +4,7 @@ SPDX-License-Identifier: GPL-3.0-only */
 .show {
   display: inherit;
 }
+
 .hide {
   display: none;
 }
@@ -13,14 +14,17 @@ SPDX-License-Identifier: GPL-3.0-only */
     opacity: 0.6;
   }
 }
+
 .animate-fade {
   opacity: 0.8;
   animation: fadeIn 1s infinite alternate;
 }
+
 .round-primary-border {
   border: 1px solid var(--border-primary-color);
   border-radius: 1.25rem;
 }
+
 .text-ellipsis {
   display: inline-block;
   white-space: nowrap;

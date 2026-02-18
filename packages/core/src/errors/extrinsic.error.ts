@@ -8,7 +8,7 @@ export class ExtrinsicError extends Error {
 
   constructor(
     statusCode: ExtrinsicErrorStatusCode,
-    message = 'ExtrinsicError'
+    message = 'ExtrinsicError',
   ) {
     super(message);
     this.name = 'ExtrinsicError';

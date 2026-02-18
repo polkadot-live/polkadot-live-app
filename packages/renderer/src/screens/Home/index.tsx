@@ -1,17 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as UI from '@polkadot-live/ui';
-import * as Ctx from '../../contexts/main';
-import { version } from '../../../package.json';
-import {
-  initExtrinsicElectron,
-  fetchSendAccountsElectron,
-  getSpendableBalanceElectron,
-} from '@polkadot-live/core';
-import { useEffect, useState } from 'react';
-import { useInitIpcHandlers } from '../../hooks/useInitIpcHandlers';
-import { useMainMessagePorts } from '../../hooks/useMainMessagePorts';
+import { GITHUB_LATEST_RELEASE_URL } from '@polkadot-live/consts';
 import {
   useAddresses,
   useAppSettings,
@@ -20,7 +10,11 @@ import {
   useSendNative,
   useSideNav,
 } from '@polkadot-live/contexts';
-import { Classic } from '@theme-toggles/react';
+import {
+  fetchSendAccountsElectron,
+  getSpendableBalanceElectron,
+  initExtrinsicElectron,
+} from '@polkadot-live/core';
 import {
   ChainEvents,
   Events,
@@ -36,8 +30,14 @@ import {
   FixedFlexWrapper,
   ScrollWrapper,
 } from '@polkadot-live/styles';
+import * as UI from '@polkadot-live/ui';
 import PolkadotIcon from '@polkadot-live/ui/svg/polkadotIcon.svg?react';
-import { GITHUB_LATEST_RELEASE_URL } from '@polkadot-live/consts';
+import { Classic } from '@theme-toggles/react';
+import { useEffect, useState } from 'react';
+import { version } from '../../../package.json';
+import * as Ctx from '../../contexts/main';
+import { useInitIpcHandlers } from '../../hooks/useInitIpcHandlers';
+import { useMainMessagePorts } from '../../hooks/useMainMessagePorts';
 
 export const Home = () => {
   useMainMessagePorts();

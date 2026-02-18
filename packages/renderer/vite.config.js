@@ -1,10 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import svgr from 'vite-plugin-svgr';
+import { join, resolve } from 'node:path';
 import react from '@vitejs/plugin-react-swc';
 import { defineConfig } from 'vite';
-import { join, resolve } from 'path';
+import svgr from 'vite-plugin-svgr';
 import { chrome } from '../../.electron-vendors.cache.json';
 
 const PACKAGE_ROOT = __dirname;
@@ -29,7 +29,7 @@ const PROJECT_ROOT = join(PACKAGE_ROOT, '../..');
  */
 
 const getAliasConfig = () => {
-  let alias = [];
+  const alias = [];
   if (process.env.MODE !== 'development') {
     return alias;
   }

@@ -1,9 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { getAllAccountSubscriptions } from './subscriptionQueries';
 import { getSupportedChains } from '@polkadot-live/consts/chains';
 import { sendChromeMessage } from '../utils';
+import { getAllAccountSubscriptions } from './subscriptionQueries';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 
@@ -13,7 +13,7 @@ export const getActiveChains = async (map: Map<string, SubscriptionTask[]>) => {
     const chainId = key.split(':')[0] as ChainID;
     active.set(
       chainId,
-      tasks.reduce((acc, t) => (t.status === 'enable' ? acc + 1 : acc), 0)
+      tasks.reduce((acc, t) => (t.status === 'enable' ? acc + 1 : acc), 0),
     );
   }
   for (const chainId of Object.keys(getSupportedChains()) as ChainID[]) {

@@ -32,8 +32,8 @@
       "@polkadot-live/consts/*": ["../consts/src/*"],
       "@polkadot-live/styles/*": ["../styles/src/*"],
       "@polkadot-live/types/*": ["../types/src/*"],
-      "@polkadot-live/ui/*": ["../ui/src/*"],
-    },
+      "@polkadot-live/ui/*": ["../ui/src/*"]
+    }
   },
   "include": ["src"]
 }

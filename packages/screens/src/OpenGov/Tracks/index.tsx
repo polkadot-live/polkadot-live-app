@@ -1,14 +1,14 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as UI from '@polkadot-live/ui';
-import * as Styles from '@polkadot-live/styles';
-import { useConnections, useHelp, useTracks } from '@polkadot-live/contexts';
-import { useEffect, useState } from 'react';
 import {
   faArrowDownShortWide,
   faCaretLeft,
 } from '@fortawesome/free-solid-svg-icons';
+import { useConnections, useHelp, useTracks } from '@polkadot-live/contexts';
+import * as Styles from '@polkadot-live/styles';
+import * as UI from '@polkadot-live/ui';
+import { useEffect, useState } from 'react';
 import { PuffLoader } from 'react-spinners';
 import { StickyHeadingsRow, TrackRow } from './TrackRow';
 import type { TracksProps } from '../types';
@@ -114,7 +114,7 @@ export const Tracks = ({ setSection }: TracksProps) => {
                     .sort((a, b) =>
                       sortIdAscending
                         ? a.trackId - b.trackId
-                        : b.trackId - a.trackId
+                        : b.trackId - a.trackId,
                     )
                     .map((track) => (
                       <TrackRow key={track.trackId} track={track} />

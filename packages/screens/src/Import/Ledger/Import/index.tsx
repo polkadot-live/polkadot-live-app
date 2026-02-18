@@ -1,13 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Accordion from '@radix-ui/react-accordion';
-import * as Checkbox from '@radix-ui/react-checkbox';
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import * as Icons from '@radix-ui/react-icons';
-import * as Select from '@radix-ui/react-select';
-import * as Styles from '@polkadot-live/styles';
-import * as UI from '@polkadot-live/ui';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { getSelectLedgerNetworkData } from '@polkadot-live/consts/chains';
 import {
   useConnections,
   useDialogControl,
@@ -15,18 +11,22 @@ import {
   useImportHandler,
   useLedgerHardware,
 } from '@polkadot-live/contexts';
+import * as Styles from '@polkadot-live/styles';
+import { ItemsColumn } from '@polkadot-live/styles';
+import * as UI from '@polkadot-live/ui';
+import * as Accordion from '@radix-ui/react-accordion';
+import * as Checkbox from '@radix-ui/react-checkbox';
+import * as Icons from '@radix-ui/react-icons';
+import * as Select from '@radix-ui/react-select';
+import { ellipsisFn } from '@w3ux/utils';
 import { useEffect, useState } from 'react';
 import { BarLoader } from 'react-spinners';
-import { ItemsColumn } from '@polkadot-live/styles';
-import { ellipsisFn } from '@w3ux/utils';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ConnectButton } from './Wrappers';
 import { DialogShowAddress } from '../../Addresses/Dialogs';
 import { AddressListFooter, ImportAddressRow } from '../../Wrappers';
 import { determineStatusFromCode } from './Utils';
-import { getSelectLedgerNetworkData } from '@polkadot-live/consts/chains';
-import type { ImportProps } from './types';
+import { ConnectButton } from './Wrappers';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { ImportProps } from './types';
 
 export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   const { cacheGet, copyToClipboard, getTheme } = useConnections();
@@ -60,12 +60,12 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
   const handleCheckboxClick = (
     checkState: Checkbox.CheckedState,
     pk: string,
-    accountName: string
+    accountName: string,
   ) => {
     ledger.updateSelectedAddresses(
       typeof checkState === 'string' ? false : Boolean(checkState),
       pk,
-      accountName
+      accountName,
     );
   };
 
@@ -74,7 +74,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
    */
   const handleGetLedgerAddresses = async (
     changingPage: boolean,
-    targetIndex = 0
+    targetIndex = 0,
   ) => {
     const selected = ledger.selectedNetworkState;
     if (selected === '') {
@@ -120,7 +120,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
         source,
         accountName,
         ledgerMeta,
-        toast
+        toast,
       );
 
       i += 1;
@@ -268,7 +268,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                           <div>{network}</div>
                                         </div>
                                       </UI.SelectItem>
-                                    )
+                                    ),
                                   )}
                                 </Select.Group>
                               </Select.Viewport>
@@ -301,11 +301,12 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                             {
                               determineStatusFromCode(
                                 ledger.lastStatusCode,
-                                false
+                                false,
                               ).title
                             }
                           </span>
                           <button
+                            type="button"
                             className="dismiss"
                             onClick={() => setShowConnectStatus(false)}
                           >
@@ -417,12 +418,12 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                                         checked={ledger.getChecked(pubKey)}
                                         disabled={ledger.isFetching}
                                         onCheckedChange={(
-                                          checked: Checkbox.CheckedState
+                                          checked: Checkbox.CheckedState,
                                         ) =>
                                           handleCheckboxClick(
                                             checked,
                                             pubKey,
-                                            `${connectedNetwork} Ledger Account ${ledger.pageIndex * 5 + i + 1}`
+                                            `${connectedNetwork} Ledger Account ${ledger.pageIndex * 5 + i + 1}`,
                                           )
                                         }
                                       >
@@ -439,6 +440,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
 
                           <AddressListFooter>
                             <button
+                              type="button"
                               className="pageBtn"
                               disabled={
                                 ledger.pageIndex === 0 || ledger.isFetching
@@ -448,6 +450,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                               <Icons.CaretLeftIcon />
                             </button>
                             <button
+                              type="button"
                               className="pageBtn"
                               disabled={ledger.isFetching}
                               onClick={() => handlePaginationClick('next')}
@@ -456,6 +459,7 @@ export const Import = ({ setSection, setShowImportUi }: ImportProps) => {
                             </button>
                             <div className="importBtn">
                               <button
+                                type="button"
                                 disabled={
                                   selectedAddresses.length === 0 ||
                                   ledger.isFetching ||

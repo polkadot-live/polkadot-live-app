@@ -1,15 +1,15 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as ImportUtils from '../utils/ImportUtils';
 import { store } from '../main';
+import * as ImportUtils from '../utils/ImportUtils';
+import type { IpcTask } from '@polkadot-live/types/communication';
 import type { AnyJson } from '@polkadot-live/types/misc';
 import type {
   ExTransferKeepAliveData,
   ExtrinsicInfo,
   TxStatus,
 } from '@polkadot-live/types/tx';
-import type { IpcTask } from '@polkadot-live/types/communication';
 
 export class ExtrinsicsController {
   private static storeKey = 'persisted_extrinsics';
@@ -18,37 +18,37 @@ export class ExtrinsicsController {
   /**
    * Process an async IPC task.
    */
-  static processAsync(task: IpcTask): string | void {
+  static processAsync(task: IpcTask): string | undefined {
     switch (task.action) {
       case 'extrinsics:getAll': {
-        return this.getAll();
+        return ExtrinsicsController.getAll();
       }
       case 'extrinsics:getCount': {
-        return this.getCount(task);
+        return ExtrinsicsController.getCount(task);
       }
       case 'extrinsics:import': {
-        return this.import(task);
+        return ExtrinsicsController.import(task);
       }
       case 'extrinsics:persist': {
-        this.persist(task);
+        ExtrinsicsController.persist(task);
         return;
       }
       case 'extrinsics:remove': {
-        this.remove(task);
+        ExtrinsicsController.remove(task);
         return;
       }
       case 'extrinsics:update': {
-        this.update(task);
+        ExtrinsicsController.update(task);
         return;
       }
       case 'extrinsics:addPending': {
         const { serMeta }: { serMeta: string } = task.data;
-        this.pendingExtrinsics.push(serMeta);
+        ExtrinsicsController.pendingExtrinsics.push(serMeta);
         return;
       }
       case 'extrinsics:getPending': {
-        const res = JSON.stringify(this.pendingExtrinsics);
-        this.pendingExtrinsics = [];
+        const res = JSON.stringify(ExtrinsicsController.pendingExtrinsics);
+        ExtrinsicsController.pendingExtrinsics = [];
         return res;
       }
       default: {
@@ -64,16 +64,18 @@ export class ExtrinsicsController {
     const { serialized }: { serialized: string } = task.data;
     const info: ExtrinsicInfo = JSON.parse(serialized);
     info.dynamicInfo = undefined;
-    const stored = this.getExtrinsicsFromStore();
+    const stored = ExtrinsicsController.getExtrinsicsFromStore();
     const updated = stored.map((i) => (i.txId === info.txId ? { ...info } : i));
-    this.persistExtrinsicsToStore(updated);
+    ExtrinsicsController.persistExtrinsicsToStore(updated);
   }
 
   /**
    * Get all stored extrinsics in serialized form.
    */
   private static getAll(): string {
-    return (store as Record<string, AnyJson>).get(this.storeKey) as string;
+    return (store as Record<string, AnyJson>).get(
+      ExtrinsicsController.storeKey,
+    ) as string;
   }
 
   /**
@@ -81,7 +83,7 @@ export class ExtrinsicsController {
    */
   private static getCount(task: IpcTask): string {
     const { status }: { status: TxStatus } = task.data;
-    const stored = this.getExtrinsicsFromStore();
+    const stored = ExtrinsicsController.getExtrinsicsFromStore();
 
     return !status
       ? stored.length.toString()
@@ -99,7 +101,7 @@ export class ExtrinsicsController {
     const addressNameMap = ImportUtils.getAddressNameMap();
 
     // Get stored extrinsics and sync account names with import data.
-    const stored = this.getExtrinsicsFromStore().map((info) => {
+    const stored = ExtrinsicsController.getExtrinsicsFromStore().map((info) => {
       const { action, accountName, chainId, from } = info.actionMeta;
 
       // Update transfer extrinsic data if necessary.
@@ -124,10 +126,10 @@ export class ExtrinsicsController {
 
     // Append unique imported extrinsics.
     const append: ExtrinsicInfo[] = received.filter(
-      (a) => !stored.find((b) => ImportUtils.compareExtrinsics(a, b))
+      (a) => !stored.find((b) => ImportUtils.compareExtrinsics(a, b)),
     );
 
-    this.persistExtrinsicsToStore([...stored, ...append]);
+    ExtrinsicsController.persistExtrinsicsToStore([...stored, ...append]);
     return JSON.stringify([...stored, ...append]);
   }
 
@@ -143,7 +145,7 @@ export class ExtrinsicsController {
     info.dynamicInfo = undefined;
 
     // Get stored extrinsics and remove any duplicate extrinsics.
-    const stored = this.getExtrinsicsFromStore();
+    const stored = ExtrinsicsController.getExtrinsicsFromStore();
     const filtered = stored.filter((i) => {
       if (action === i.actionMeta.action) {
         switch (action) {
@@ -159,16 +161,15 @@ export class ExtrinsicsController {
               from === i.actionMeta.from &&
               extra === i.actionMeta.data.extra &&
               i.txStatus === 'pending';
-            return found ? false : true;
+            return !found;
           }
         }
-      } else {
-        return true;
       }
+      return true;
     });
 
     const updated = [...filtered, info];
-    this.persistExtrinsicsToStore(updated);
+    ExtrinsicsController.persistExtrinsicsToStore(updated);
   }
 
   /**
@@ -176,9 +177,9 @@ export class ExtrinsicsController {
    */
   private static remove(task: IpcTask) {
     const { txId } = task.data;
-    const stored = this.getExtrinsicsFromStore();
+    const stored = ExtrinsicsController.getExtrinsicsFromStore();
     const updated = stored.filter((info) => info.txId !== txId);
-    this.persistExtrinsicsToStore(updated);
+    ExtrinsicsController.persistExtrinsicsToStore(updated);
   }
 
   /**
@@ -186,7 +187,7 @@ export class ExtrinsicsController {
    */
   private static getExtrinsicsFromStore = (): ExtrinsicInfo[] => {
     const stored = (store as Record<string, AnyJson>).get(
-      this.storeKey
+      this.storeKey,
     ) as string;
 
     return !stored ? [] : JSON.parse(stored);
@@ -198,7 +199,7 @@ export class ExtrinsicsController {
   private static persistExtrinsicsToStore = (extrinsics: ExtrinsicInfo[]) => {
     (store as Record<string, AnyJson>).set(
       this.storeKey,
-      JSON.stringify(extrinsics)
+      JSON.stringify(extrinsics),
     );
   };
 
@@ -206,6 +207,8 @@ export class ExtrinsicsController {
    * Get all stored extrinsics in serialized form.
    */
   static getBackupDate(): string {
-    return (store as Record<string, AnyJson>).get(this.storeKey) as string;
+    return (store as Record<string, AnyJson>).get(
+      ExtrinsicsController.storeKey,
+    ) as string;
   }
 }

@@ -2,31 +2,30 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as Callbacks from '../callbacks';
-import * as Utils from '../library/CommonLib';
 import { AccountsController, APIsController } from '../controllers';
+import { QueryError } from '../errors';
 import {
+  getAccountNominatingData,
   getBalance,
   getNominationPoolData,
-  getAccountNominatingData,
 } from '../library/AccountsLib';
-import { QueryError } from '../errors';
-
-import type { Account } from './Account';
-import type { AnyData, AnyFunction } from '@polkadot-live/types/misc';
+import * as Utils from '../library/CommonLib';
 import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
-import type { ChainID } from '@polkadot-live/types/chains';
-import type { QueryWithParams } from 'dedot/types';
 import type {
   DedotClientSet,
   DedotStakingClient,
 } from '@polkadot-live/types/apis';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { AnyData, AnyFunction } from '@polkadot-live/types/misc';
 import type {
-  SubscriptionTask,
-  QueryMultiEntry,
   ApiCallEntry,
   PostCallbackFlags,
+  QueryMultiEntry,
   QueryParamMeta,
+  SubscriptionTask,
 } from '@polkadot-live/types/subscriptions';
+import type { QueryWithParams } from 'dedot/types';
+import type { Account } from './Account';
 
 export class QueryMultiWrapper {
   /**
@@ -76,7 +75,7 @@ export class QueryMultiWrapper {
     const retrieved = this.subscriptions.get(chainId);
     if (retrieved) {
       const newEntries = retrieved.callEntries.map((e) =>
-        e.task.action === entry.task.action ? { ...e, curVal: newVal } : e
+        e.task.action === entry.task.action ? { ...e, curVal: newVal } : e,
       );
       this.subscriptions.set(chainId, {
         unsub: retrieved.unsub,
@@ -116,7 +115,7 @@ export class QueryMultiWrapper {
               ...e,
               task: { ...e.task, justBuilt: flag } as SubscriptionTask,
             } as ApiCallEntry)
-          : e
+          : e,
       );
       this.subscriptions.set(chainId, {
         unsub: retrieved.unsub,
@@ -259,15 +258,17 @@ export class QueryMultiWrapper {
   private postCallback = async (
     api: DedotClientSet,
     chainId: ChainID,
-    callEntries: ApiCallEntry[]
+    callEntries: ApiCallEntry[],
   ) => {
     // Get the task's associated account.
     const firstEntry = callEntries.at(0);
-    let account: Account | undefined = undefined;
+    let account: Account | undefined;
     if (firstEntry !== undefined) {
       const { task } = firstEntry;
       const address = task.account ? task.account.address : null;
-      address && (account = AccountsController.get(chainId, address));
+      if (address) {
+        account = AccountsController.get(chainId, address);
+      }
     }
 
     if (account) {
@@ -283,7 +284,7 @@ export class QueryMultiWrapper {
         const nominators = await api.query.staking.nominators(address);
         const client = api as DedotStakingClient;
 
-        let result = undefined;
+        let result;
         if (nominators) {
           const era = (await client.query.staking.activeEra())?.index;
           if (era) {
@@ -297,9 +298,11 @@ export class QueryMultiWrapper {
       if (this.postCallbackSyncFlags.syncAccountNominationPool) {
         const result = await getNominationPoolData(
           account,
-          api as DedotStakingClient
+          api as DedotStakingClient,
         );
-        result && (account.nominationPoolData = result);
+        if (result) {
+          account.nominationPoolData = result;
+        }
       }
       // Set updated account data in the appropriate entries.
       for (const entry of callEntries) {
@@ -325,7 +328,7 @@ export class QueryMultiWrapper {
    */
   updateEntryAccountData = (
     chainId: ChainID,
-    flattened: FlattenedAccountData
+    flattened: FlattenedAccountData,
   ) => {
     const subscriptions = this.subscriptions.get(chainId);
     if (!subscriptions) {
@@ -440,7 +443,7 @@ export class QueryMultiWrapper {
                 ...e,
                 task: { ...e.task, enableOsNotifications },
               }
-            : e
+            : e,
         ),
       });
     }
@@ -496,7 +499,7 @@ export class QueryMultiWrapper {
         ? 0
         : dataIndexRegistry.reduce(
             (acc, { dataIndex }) => (dataIndex > acc ? dataIndex : acc),
-            0
+            0,
           ) + 1;
 
     // Util: Check if tasks can share an API call.
@@ -504,7 +507,7 @@ export class QueryMultiWrapper {
       const isSameQuery = a.apiCallAsString === b.apiCallAsString;
       const isSameArgs = Utils.arraysAreEqual(
         a.actionArgs || [],
-        b.actionArgs || []
+        b.actionArgs || [],
       );
       return isSameQuery && isSameArgs;
     };

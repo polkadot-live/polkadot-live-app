@@ -1,18 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as MainCtx from '../contexts/main';
-import * as Core from '@polkadot-live/core';
-import {
-  ConfigRenderer,
-  AccountsController,
-  APIsController,
-  ExtrinsicsController,
-  IntervalsController,
-  SubscriptionsController,
-  TaskOrchestrator,
-} from '@polkadot-live/core';
-import { useEffect } from 'react';
 import { WC_EVENT_ORIGIN } from '@polkadot-live/consts/walletConnect';
 import {
   useAddresses,
@@ -24,24 +12,35 @@ import {
   useManage,
   useSubscriptions,
 } from '@polkadot-live/contexts';
-
-import type * as OG from '@polkadot-live/types/openGov';
-import type { ChainID } from '@polkadot-live/types/chains';
-import type { ClientTypes } from '@polkadot-live/types/apis';
-import type { DedotClient } from 'dedot';
-import type { EventCallback } from '@polkadot-live/types/reporter';
-import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
+import * as Core from '@polkadot-live/core';
+import {
+  AccountsController,
+  APIsController,
+  ConfigRenderer,
+  ExtrinsicsController,
+  IntervalsController,
+  SubscriptionsController,
+  TaskOrchestrator,
+} from '@polkadot-live/core';
+import { useEffect } from 'react';
+import * as MainCtx from '../contexts/main';
+import type { PalletReferendaTrackDetails } from '@dedot/chaintypes/substrate';
 import type {
   EncodedAccount,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
+import type { ClientTypes } from '@polkadot-live/types/apis';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type * as OG from '@polkadot-live/types/openGov';
+import type { EventCallback } from '@polkadot-live/types/reporter';
+import type { SettingItem } from '@polkadot-live/types/settings';
 import type {
   IntervalSubscription,
   SubscriptionTask,
 } from '@polkadot-live/types/subscriptions';
-import type { PalletReferendaTrackDetails } from '@dedot/chaintypes/substrate';
-import type { SettingItem } from '@polkadot-live/types/settings';
+import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 import type { WcSelectNetwork } from '@polkadot-live/types/walletConnect';
+import type { DedotClient } from 'dedot';
 
 export const useMainMessagePorts = () => {
   const { getOnlineMode } = useConnections();
@@ -101,7 +100,7 @@ export const useMainMessagePorts = () => {
           await AccountsController.removeAllSubscriptions(account);
           const allTasks = SubscriptionsController.buildSubscriptions(
             account,
-            'disable'
+            'disable',
           );
 
           for (const task of allTasks) {
@@ -136,7 +135,7 @@ export const useMainMessagePorts = () => {
         const status = ConfigRenderer.getAppSeting(key) ? 'enable' : 'disable';
         const tasks = SubscriptionsController.buildSubscriptions(
           account,
-          status
+          status,
         );
         // Update persisted state and React state for tasks.
         for (const task of tasks) {
@@ -445,7 +444,9 @@ export const useMainMessagePorts = () => {
     addSubsForRef(chainId, refId);
 
     // Update React state.
-    parsed.forEach((task) => addIntervalSubscription(task));
+    parsed.forEach((task) => {
+      addIntervalSubscription(task);
+    });
 
     // Update controller and store.
     IntervalsController.insertSubscriptions(parsed, getOnlineMode());
@@ -665,7 +666,7 @@ export const useMainMessagePorts = () => {
               if (setting.key === 'setting:import-data') {
                 await importDataFromBackup(
                   handleImportAddress,
-                  handleRemoveAddress
+                  handleRemoveAddress,
                 );
                 return;
               }

@@ -8,8 +8,8 @@
  */
 
 // NOTE: set `type: module` in package.json to enable ES syntax.
-import { writeFileSync } from 'fs';
-import path from 'path';
+import { writeFileSync } from 'node:fs';
+import path from 'node:path';
 
 const electronRelease = process.versions;
 
@@ -20,6 +20,6 @@ const browserslistrcPath = path.resolve(process.cwd(), '.browserslistrc');
 
 writeFileSync(
   './.electron-vendors.cache.json',
-  JSON.stringify({ chrome, node })
+  JSON.stringify({ chrome, node }),
 );
 writeFileSync(browserslistrcPath, `Chrome ${chrome}`, 'utf8');

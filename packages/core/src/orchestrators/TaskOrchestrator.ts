@@ -1,10 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { getOnlineStatus } from '../library/CommonLib';
 import { APIsController } from '../controllers';
-import type { QueryMultiWrapper } from '../model';
+import { getOnlineStatus } from '../library/CommonLib';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
+import type { QueryMultiWrapper } from '../model';
 
 /**
  * This class is used in the main window renderer.
@@ -24,14 +24,14 @@ export class TaskOrchestrator {
    */
   static async buildTasks(
     tasks: SubscriptionTask[],
-    wrapper: QueryMultiWrapper
+    wrapper: QueryMultiWrapper,
   ) {
     if (tasks.length === 0) {
       return;
     }
     // Insert task in owner account's query multi wrapper.
     for (const task of tasks) {
-      this.next(task, wrapper);
+      TaskOrchestrator.next(task, wrapper);
     }
     // Build query multi API argument.
     await wrapper.build(tasks[0].chainId);
@@ -43,14 +43,14 @@ export class TaskOrchestrator {
    */
   static async subscribeTask(
     task: SubscriptionTask,
-    wrapper: QueryMultiWrapper
+    wrapper: QueryMultiWrapper,
   ) {
     const backend = APIsController.backend;
     const { chainId } = task;
 
     const isOnline: boolean = await getOnlineStatus(backend);
     const isRunnable = !APIsController.getFailedChainIds().includes(chainId);
-    this.next(task, wrapper);
+    TaskOrchestrator.next(task, wrapper);
 
     await wrapper.build(task.chainId);
     if (isOnline) {
@@ -64,7 +64,7 @@ export class TaskOrchestrator {
    */
   static async subscribeTasks(
     tasks: SubscriptionTask[],
-    wrapper: QueryMultiWrapper
+    wrapper: QueryMultiWrapper,
   ) {
     // Return early if no tasks received.
     if (tasks.length === 0) {
@@ -72,7 +72,7 @@ export class TaskOrchestrator {
     }
     // Insert task in owner account's query multi wrapper.
     for (const task of tasks) {
-      this.next(task, wrapper);
+      TaskOrchestrator.next(task, wrapper);
     }
     // Build query multi API argument.
     await wrapper.build(tasks[0].chainId);
@@ -87,7 +87,7 @@ export class TaskOrchestrator {
       [...new Set(tasks.map(({ chainId }) => chainId))].map((chainId) => ({
         chainId,
         isRunnable: !disconnected.includes(chainId),
-      }))
+      })),
     );
     for (const { chainId, isRunnable } of chainIds) {
       isRunnable && (await wrapper.run(chainId));
@@ -141,7 +141,7 @@ export class TaskOrchestrator {
         }
 
         // Rebuild query.
-        this.handleTask(task, wrapper);
+        TaskOrchestrator.handleTask(task, wrapper);
         break;
       }
     }
@@ -153,7 +153,7 @@ export class TaskOrchestrator {
    */
   private static handleTask(
     task: SubscriptionTask,
-    wrapper: QueryMultiWrapper
+    wrapper: QueryMultiWrapper,
   ) {
     switch (task.status) {
       // Add this action to the chain's subscriptions.

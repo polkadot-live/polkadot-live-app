@@ -1,16 +1,16 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Dialog from '@radix-ui/react-dialog';
-import * as Styles from '@polkadot-live/styles';
-import { chainCurrency, chainUnits } from '@polkadot-live/consts/chains';
-import { formatDecimal } from '@polkadot-live/core';
-import { useConnections } from '@polkadot-live/contexts';
-import { Cross2Icon } from '@radix-ui/react-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTableList } from '@fortawesome/free-solid-svg-icons';
-import { ellipsisFn, planckToUnit } from '@w3ux/utils';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { chainCurrency, chainUnits } from '@polkadot-live/consts/chains';
+import { useConnections } from '@polkadot-live/contexts';
+import { formatDecimal } from '@polkadot-live/core';
+import * as Styles from '@polkadot-live/styles';
 import { CopyButton, Identicon, TooltipRx } from '@polkadot-live/ui';
+import * as Dialog from '@radix-ui/react-dialog';
+import { Cross2Icon } from '@radix-ui/react-icons';
+import { ellipsisFn, planckToUnit } from '@w3ux/utils';
 import { truncateDecimalPlaces } from '../Helpers';
 import { InfoPanel } from './Wrappers';
 import type { ExTransferKeepAliveData } from '@polkadot-live/types/tx';
@@ -245,7 +245,7 @@ export const DialogExtrinsicSummary = ({
                   {info
                     ? renderAccountItem(
                         info.actionMeta.from,
-                        info.actionMeta.accountName
+                        info.actionMeta.accountName,
                       )
                     : '-'}
                 </div>

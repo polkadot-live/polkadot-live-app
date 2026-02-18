@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { useConnections, useHelp } from '@polkadot-live/contexts';
-import { Help } from '@polkadot-live/ui';
 import {
   DialogClearEvents,
   DialogConnectChains,
   DialogEventData,
 } from '@polkadot-live/screens';
 import { MainInterfaceWrapper } from '@polkadot-live/styles';
+import { Help } from '@polkadot-live/ui';
 import { ToastContainer } from 'react-toastify';
 import { Home } from './screens';
 import './App.scss';

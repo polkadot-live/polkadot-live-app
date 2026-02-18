@@ -9,13 +9,13 @@ export interface TaskHandlerAdapter {
     refId: number,
     tasks: IntervalSubscription[],
     isOnline: boolean,
-    chainId?: ChainID
+    chainId?: ChainID,
   ) => void;
   handleAnalytics: (event: string, data: AnyData | null) => void;
   removeReferendumSubscriptions: (
     refId: number,
     tasks: IntervalSubscription[],
     isOnline: boolean,
-    chainId?: ChainID
+    chainId?: ChainID,
   ) => void;
 }

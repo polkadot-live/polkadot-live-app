@@ -1,7 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import pLimit from 'p-limit';
 import {
   AccountsController,
   APIsController,
@@ -10,8 +9,9 @@ import {
   SubscriptionsController,
   withTimeout,
 } from '@polkadot-live/core';
-import type { ChainID } from '@polkadot-live/types/chains';
+import pLimit from 'p-limit';
 import type { NodeEndpoint } from '@polkadot-live/types/apis';
+import type { ChainID } from '@polkadot-live/types/chains';
 
 export const connectApis = async () => {
   if (!navigator.onLine) {
@@ -48,7 +48,7 @@ export const startApi = async (chainId: ChainID) => {
 
     // Run tasks sequentially.
     const results = await runSequential<boolean>(
-      tasks.map((task) => () => withTimeout(task(), ms))
+      tasks.map((task) => () => withTimeout(task(), ms)),
     );
 
     // Reset API if any task timed out.
@@ -71,7 +71,7 @@ export const startApi = async (chainId: ChainID) => {
 
 export const onEndpointChange = async (
   chainId: ChainID,
-  endpoint: NodeEndpoint
+  endpoint: NodeEndpoint,
 ) => {
   await APIsController.setEndpoint(chainId, endpoint);
   await startApi(chainId);

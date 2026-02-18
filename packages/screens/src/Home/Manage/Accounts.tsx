@@ -1,9 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Accordion from '@radix-ui/react-accordion';
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import * as UI from '@polkadot-live/ui';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { getSupportedChains } from '@polkadot-live/consts/chains';
 import {
   useAppSettings,
   useChainEvents,
@@ -11,20 +11,20 @@ import {
   useManage,
   useSubscriptions,
 } from '@polkadot-live/contexts';
-import { useEffect, useState } from 'react';
-import { ellipsisFn } from '@w3ux/utils';
-import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   FlexColumn,
-  ItemsColumn,
-  ItemEntryWrapper,
   FlexRow,
+  ItemEntryWrapper,
+  ItemsColumn,
 } from '@polkadot-live/styles';
-import { getSupportedChains } from '@polkadot-live/consts/chains';
-import type { AccountsProps } from './types';
-import type { ChainID } from '@polkadot-live/types/chains';
+import * as UI from '@polkadot-live/ui';
+import * as Accordion from '@radix-ui/react-accordion';
+import { ChevronDownIcon } from '@radix-ui/react-icons';
+import { ellipsisFn } from '@w3ux/utils';
+import { useEffect, useState } from 'react';
 import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { AccountsProps } from './types';
 
 export const Accounts = ({
   addresses,
@@ -50,7 +50,7 @@ export const Accounts = ({
 
   const theme = getTheme();
   const showDebuggingSubscriptions = cacheGet(
-    'setting:show-debugging-subscriptions'
+    'setting:show-debugging-subscriptions',
   );
 
   const accountHasSubs = (account: FlattenedAccountData) =>
@@ -79,7 +79,7 @@ export const Accounts = ({
     for (const [chainId, chainAddresses] of sorted.entries()) {
       sorted.set(
         chainId,
-        chainAddresses.sort((x, y) => x.name.localeCompare(y.name))
+        chainAddresses.sort((x, y) => x.name.localeCompare(y.name)),
       );
     }
     // Remove any empty entries.
@@ -102,8 +102,8 @@ export const Accounts = ({
    */
   const [accordionValue, setAccordionValue] = useState<string[]>(
     ([...getSortedAddresses().keys()] as string[]).concat(
-      showDebuggingSubscriptions ? ['Debug'] : []
-    )
+      showDebuggingSubscriptions ? ['Debug'] : [],
+    ),
   );
 
   /**
@@ -157,7 +157,7 @@ export const Accounts = ({
         ? !prev.includes('Debug')
           ? [...prev, 'Debug']
           : [...prev]
-        : [...prev.filter((v) => v !== 'Debug')]
+        : [...prev.filter((v) => v !== 'Debug')],
     );
   }, [showDebuggingSubscriptions]);
 
@@ -243,13 +243,13 @@ export const Accounts = ({
                                 </FlexRow>
                               </div>
                             </ItemEntryWrapper>
-                          )
+                          ),
                         )}
                       </ItemsColumn>
                     )}
                   </UI.AccordionContent>
                 </Accordion.Item>
-              )
+              ),
             )}
 
             {/* Manage Chains */}

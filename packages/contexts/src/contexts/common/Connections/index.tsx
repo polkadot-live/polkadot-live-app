@@ -1,16 +1,16 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { createSafeContextHook } from '../../../utils';
-import { createContext, useEffect, useRef, useState } from 'react';
-import { darkTheme, lightTheme } from '@polkadot-live/styles';
-import { getConnectionsAdapter } from './adapters';
 import { initSharedState } from '@polkadot-live/consts/sharedState';
+import { darkTheme, lightTheme } from '@polkadot-live/styles';
 import { setStateWithRef } from '@w3ux/utils';
-import type { ActionMeta } from '@polkadot-live/types/tx';
-import type { AnyData } from '@polkadot-live/types/misc';
-import type { ConnectionsContextInterface } from '../../../types/common';
+import { createContext, useEffect, useRef, useState } from 'react';
+import { createSafeContextHook } from '../../../utils';
+import { getConnectionsAdapter } from './adapters';
 import type { SyncID } from '@polkadot-live/types/communication';
+import type { AnyData } from '@polkadot-live/types/misc';
+import type { ActionMeta } from '@polkadot-live/types/tx';
+import type { ConnectionsContextInterface } from '../../../types/common';
 
 export const ConnectionsContext = createContext<
   ConnectionsContextInterface | undefined
@@ -18,7 +18,7 @@ export const ConnectionsContext = createContext<
 
 export const useConnections = createSafeContextHook(
   ConnectionsContext,
-  'ConnectionsContext'
+  'ConnectionsContext',
 );
 
 export const ConnectionsProvider = ({
@@ -83,7 +83,7 @@ export const ConnectionsProvider = ({
    */
   const openTab = (
     tab: string,
-    analytics?: { event: string; data: AnyData | null }
+    analytics?: { event: string; data: AnyData | null },
   ) => adapter.openTab(tab, analytics);
 
   /**
@@ -109,7 +109,7 @@ export const ConnectionsProvider = ({
   useEffect(() => {
     const removeListener = adapter.listenSharedStateOnMount(setCache, cacheRef);
     return () => {
-      removeListener && removeListener();
+      removeListener?.();
     };
   }, []);
 

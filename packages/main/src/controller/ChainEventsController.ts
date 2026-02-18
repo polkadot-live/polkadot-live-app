@@ -51,7 +51,7 @@ export class ChainEventsController {
       case 'chainEvents:getAllRefSubsForChain': {
         const { chainId } = task.data;
         return JSON.stringify(
-          ChainEventsController.getAllRefSubsForChain(chainId)
+          ChainEventsController.getAllRefSubsForChain(chainId),
         );
       }
       case 'chainEvents:removeRefSubs': {
@@ -94,7 +94,7 @@ export class ChainEventsController {
     const idsCur: string[] = idsRaw ? JSON.parse(idsRaw) : [];
     const idsObj = idsCur.map((k) => {
       const s = k.split('::');
-      return { chainId: s[0] as ChainID, refId: parseInt(s[1]) };
+      return { chainId: s[0] as ChainID, refId: parseInt(s[1], 10) };
     });
 
     // Construct record chainId -> refId -> subscriptions.
@@ -114,9 +114,7 @@ export class ChainEventsController {
       for (const refId of refIds) {
         const key = `${prefix}::${cid}::${refId}`;
         const raw = (store as Record<string, AnyData>).get(key);
-        raw !== undefined
-          ? (recRefs[refId] = JSON.parse(raw))
-          : (recRefs[refId] = []);
+        recRefs[refId] = raw !== undefined ? JSON.parse(raw) : [];
       }
       recResult[cid] = recRefs;
     }
@@ -124,7 +122,7 @@ export class ChainEventsController {
   };
 
   private static getAllRefSubsForChain = (
-    chainId: ChainID
+    chainId: ChainID,
   ): ChainEventSubscription[] => {
     const cacheKey = ChainEventsController.activeRefsKey;
     const rawIds = (store as Record<string, AnyData>).get(cacheKey);
@@ -133,7 +131,7 @@ export class ChainEventsController {
     const refIds = cur
       .map((id) => {
         const s = id.split('::');
-        return { cid: s[0] as ChainID, rid: parseInt(s[1]) };
+        return { cid: s[0] as ChainID, rid: parseInt(s[1], 10) };
       })
       .filter(({ cid }) => cid === chainId)
       .map(({ rid }) => rid);
@@ -144,7 +142,7 @@ export class ChainEventsController {
       const key = `${prefix}::${chainId}::${refId}`;
       const raw = (store as Record<string, AnyData>).get(key);
       subs = subs.concat(
-        raw ? (JSON.parse(raw) as ChainEventSubscription[]) : []
+        raw ? (JSON.parse(raw) as ChainEventSubscription[]) : [],
       );
     }
     return subs;
@@ -153,7 +151,7 @@ export class ChainEventsController {
   private static putSubsForRef = (
     chainId: ChainID,
     refId: number,
-    serialized: string
+    serialized: string,
   ) => {
     ChainEventsController.putActiveRefId(chainId, refId);
     const parsed: ChainEventSubscription[] = JSON.parse(serialized);
@@ -171,7 +169,7 @@ export class ChainEventsController {
   private static removeSubsForRef = (
     chainId: ChainID,
     refId: number,
-    serialized: string
+    serialized: string,
   ) => {
     const parsed: ChainEventSubscription[] = JSON.parse(serialized);
     if (!parsed.length) {
@@ -210,7 +208,7 @@ export class ChainEventsController {
   // Get all persisted ref chain event subscriptions.
   private static getAllForRef = (
     chainId: ChainID,
-    refId: number
+    refId: number,
   ): ChainEventSubscription[] => {
     const prefix = ChainEventsController.scopeKeyPrefix;
     const key = `${prefix}::${chainId}::${refId}`;
@@ -222,7 +220,7 @@ export class ChainEventsController {
   private static updateStoreForRef = (
     chainId: ChainID,
     refId: number,
-    subs: ChainEventSubscription[]
+    subs: ChainEventSubscription[],
   ) => {
     const prefix = ChainEventsController.scopeKeyPrefix;
     const key = `${prefix}::${chainId}::${refId}`;
@@ -232,7 +230,7 @@ export class ChainEventsController {
 
   private static getActiveCount = (): number => {
     const map = new Map<ChainID, ChainEventSubscription[]>(
-      JSON.parse(ChainEventsController.getAll() ?? '[]')
+      JSON.parse(ChainEventsController.getAll() ?? '[]'),
     );
     return map.values().reduce((acc, subs) => (acc += subs.length), 0);
   };
@@ -256,7 +254,7 @@ export class ChainEventsController {
    * Get all account-scoped chain event subscriptions from store.
    */
   private static getAllForAccount(
-    account: FlattenedAccountData
+    account: FlattenedAccountData,
   ): string | undefined {
     const { address, chain: chainId } = account;
     const prefix = ChainEventsController.scopeKeyPrefix;
@@ -271,7 +269,7 @@ export class ChainEventsController {
   private static put(chainId: ChainID, sub: ChainEventSubscription) {
     const cmp = ChainEventsController.cmp;
     const map = new Map<ChainID, ChainEventSubscription[]>(
-      JSON.parse(ChainEventsController.getAll() ?? '[]')
+      JSON.parse(ChainEventsController.getAll() ?? '[]'),
     );
     const updated = (map.get(chainId) ?? []).filter((s) => !cmp(s, sub));
     updated.push(sub);
@@ -284,7 +282,7 @@ export class ChainEventsController {
    */
   private static putForAccount(
     account: FlattenedAccountData,
-    sub: ChainEventSubscription
+    sub: ChainEventSubscription,
   ) {
     const cmp = ChainEventsController.cmp;
     const stored = ChainEventsController.getAllForAccount(account);
@@ -315,7 +313,7 @@ export class ChainEventsController {
    */
   private static removeForAccount(
     account: FlattenedAccountData,
-    sub: ChainEventSubscription
+    sub: ChainEventSubscription,
   ) {
     const cmp = ChainEventsController.cmp;
     const stored = ChainEventsController.getAllForAccount(account);
@@ -360,7 +358,7 @@ export class ChainEventsController {
    */
   private static updateStoreForAccount(
     account: FlattenedAccountData,
-    ser: string
+    ser: string,
   ) {
     const { address, chain: chainId } = account;
     const prefix = ChainEventsController.scopeKeyPrefix;

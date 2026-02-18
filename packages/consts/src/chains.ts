@@ -2,19 +2,19 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import {
-  polkadot,
-  polkadot_asset_hub,
-  polkadot_people,
   ksmcc3,
   ksmcc3_asset_hub,
   ksmcc3_people,
+  paseo,
+  polkadot,
+  polkadot_asset_hub,
+  polkadot_people,
   westend2,
   westend2_asset_hub,
   westend2_people,
-  paseo,
 } from '@dedot/chain-specs';
-import type { AccountSource } from '@polkadot-live/types/accounts';
 import type { EventCategory } from '@polkadot-live/types';
+import type { AccountSource } from '@polkadot-live/types/accounts';
 import type {
   ChainID,
   EcosystemID,

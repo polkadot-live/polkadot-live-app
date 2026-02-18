@@ -1,33 +1,34 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import pLimit from 'p-limit';
-import React, { createContext, useEffect, useRef, useState } from 'react';
-import {
-  AccountsController,
-  APIsController,
-  ConfigRenderer,
-  ExtrinsicsController,
-  SubscriptionsController,
-  IntervalsController,
-  getOnlineStatus,
-  ChainEventsService,
-  parseMap,
-} from '@polkadot-live/core';
 import {
   createSafeContextHook,
   useApiHealth,
   useConnections,
   useIntervalSubscriptions,
 } from '@polkadot-live/contexts';
+import {
+  AccountsController,
+  APIsController,
+  ChainEventsService,
+  ConfigRenderer,
+  ExtrinsicsController,
+  getOnlineStatus,
+  IntervalsController,
+  parseMap,
+  SubscriptionsController,
+} from '@polkadot-live/core';
 import { setStateWithRef } from '@w3ux/utils';
 import { startWithWorker } from 'dedot/smoldot/with-worker';
-import type { AnyData } from '@polkadot-live/types/misc';
+import pLimit from 'p-limit';
+import { createContext, useEffect, useRef, useState } from 'react';
 import type { BootstrappingInterface } from '@polkadot-live/contexts';
 import type { ChainEventSubscription } from '@polkadot-live/types';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { IpcTask } from '@polkadot-live/types/communication';
+import type { AnyData } from '@polkadot-live/types/misc';
+import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
+import type React from 'react';
 
 export const BootstrappingContext = createContext<
   BootstrappingInterface | undefined
@@ -35,7 +36,7 @@ export const BootstrappingContext = createContext<
 
 export const useBootstrapping = createSafeContextHook(
   BootstrappingContext,
-  'BootstrappingContext'
+  'BootstrappingContext',
 );
 
 export const BootstrappingProvider = ({
@@ -86,7 +87,7 @@ export const BootstrappingProvider = ({
   const initSmoldot = async () => {
     const SmoldotWorker = new Worker(
       new URL('dedot/smoldot/worker', import.meta.url),
-      { type: 'module' }
+      { type: 'module' },
     );
     APIsController.smoldotClient = startWithWorker(SmoldotWorker);
   };
@@ -119,7 +120,7 @@ export const BootstrappingProvider = ({
       (await window.myAPI.sendChainEventTask({
         action: 'chainEvents:getAll',
         data: null,
-      })) || '[]'
+      })) || '[]',
     );
 
     // Insert chain-scoped subscriptions.
@@ -138,7 +139,7 @@ export const BootstrappingProvider = ({
           (await window.myAPI.sendChainEventTask({
             action: 'chainEvents:getAllForAccount',
             data: { account: flat, chainId: flat.chain },
-          })) as string
+          })) as string,
         );
         subs.length && activeChainIds.push(flat.chain);
         for (const sub of subs) {
@@ -165,7 +166,7 @@ export const BootstrappingProvider = ({
           .forEach((s) => {
             const cid = chainId as ChainID;
             !activeChainIds.includes(cid) && activeChainIds.push(cid);
-            ChainEventsService.insertRefScoped(parseInt(refId), s);
+            ChainEventsService.insertRefScoped(parseInt(refId, 10), s);
           });
       }
     }

@@ -1,16 +1,16 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { compare } from './utils';
-import { DbController } from '../../controllers';
 import { IntervalsController } from '@polkadot-live/core';
+import { DbController } from '../../controllers';
+import { compare } from './utils';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 import type { Stores } from '../../controllers';
 
 export const handleAddIntervalSubscriptions = async (
   tasks: IntervalSubscription[],
-  onlineMode: boolean
+  onlineMode: boolean,
 ) => {
   for (const task of tasks) {
     await handleAddIntervalSubscription(task, onlineMode);
@@ -19,7 +19,7 @@ export const handleAddIntervalSubscriptions = async (
 
 export const handleAddIntervalSubscription = async (
   task: IntervalSubscription,
-  onlineMode: boolean
+  onlineMode: boolean,
 ) => {
   IntervalsController.insertSubscription(task, onlineMode);
   // Persist task to store.
@@ -34,7 +34,7 @@ export const handleAddIntervalSubscription = async (
 };
 
 export const handleUpdateIntervalSubscription = async (
-  task: IntervalSubscription
+  task: IntervalSubscription,
 ) => {
   const { chainId } = task;
   const store: Stores = 'intervalSubscriptions';
@@ -49,7 +49,7 @@ export const handleUpdateIntervalSubscription = async (
 
 export const removeAllSubscriptions = async (
   chainId: ChainID,
-  refId: number
+  refId: number,
 ) => {
   const store: Stores = 'intervalSubscriptions';
   const fetched = (await DbController.get(store, chainId)) as

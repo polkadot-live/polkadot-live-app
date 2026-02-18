@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { AnyJson } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { AnyJson } from '@polkadot-live/types/misc';
 import type {
   ActionMeta,
   AddressInfo,
@@ -45,7 +45,7 @@ export interface TxMetaContextInterface {
   updateAccountName: (
     address: string,
     chainId: ChainID,
-    accountName: string
+    accountName: string,
   ) => Promise<void>;
   updateTxStatus: (txId: string, txStatus: TxStatus) => Promise<void>;
 }

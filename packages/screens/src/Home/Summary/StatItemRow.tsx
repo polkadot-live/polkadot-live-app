@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as FA from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useConnections, useHelp } from '@polkadot-live/contexts';
 import * as Styles from '@polkadot-live/styles';
 import * as UI from '@polkadot-live/ui';
-import { useConnections, useHelp } from '@polkadot-live/contexts';
 import { ellipsisFn } from '@w3ux/utils';
 import { StatItemRowWrapper } from './Wrappers';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import type { FlattenedAccountData, HelpItemKey } from '@polkadot-live/types';
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import type { FlattenedAccountData, HelpItemKey } from '@polkadot-live/types';
 
 export const StatItemRow = ({
   kind,
@@ -42,9 +42,13 @@ export const StatItemRow = ({
       {kind === 'total' && (
         <Styles.FlexRow>
           {helpKey && (
-            <div className="left help" onClick={() => openHelp(helpKey)}>
+            <button
+              type="button"
+              className="left help"
+              onClick={() => openHelp(helpKey)}
+            >
               <FontAwesomeIcon icon={FA.faInfo} />
-            </div>
+            </button>
           )}
           <h3 className="total">Total</h3>
           <div className="meter">

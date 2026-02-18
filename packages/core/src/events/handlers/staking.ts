@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { getSs58Prefix } from '@polkadot-live/consts/chains';
-import { ellipsisFn } from '@w3ux/utils';
 import { encodeRecord } from '@polkadot-live/encoder';
-import { getBalanceText } from '../../library';
+import { ellipsisFn } from '@w3ux/utils';
 import { handleEvent } from '../../callbacks/utils';
+import { getBalanceText } from '../../library';
 import { makeChainEvent, notifyTitle } from './utils';
 import type { PalletStakingEvent } from '@polkadot-live/types';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -15,7 +15,7 @@ export const handleStakingEvent = (
   chainId: ChainID,
   osNotify: boolean,
   palletEvent: PalletStakingEvent,
-  whoMeta?: WhoMeta
+  whoMeta?: WhoMeta,
 ) => {
   try {
     handleEvent({
@@ -33,7 +33,7 @@ export const handleStakingEvent = (
 
 export const getStakingPalletScopedAccountsFromEvent = (
   chainId: ChainID,
-  palletEvent: PalletStakingEvent
+  palletEvent: PalletStakingEvent,
 ): string[] => {
   const { name: eventName, data: miscData } = palletEvent;
   const ss58Prefix = getSs58Prefix(chainId);
@@ -61,7 +61,7 @@ export const getStakingPalletScopedAccountsFromEvent = (
 const getStakingNotification = (
   chainId: ChainID,
   palletEvent: PalletStakingEvent,
-  whoMeta?: WhoMeta
+  whoMeta?: WhoMeta,
 ) => {
   const { name: eventName, data: miscData } = palletEvent;
   switch (eventName) {
@@ -139,7 +139,7 @@ const getStakingNotification = (
 const getStakingChainEvent = (
   chainId: ChainID,
   palletEvent: PalletStakingEvent,
-  whoMeta?: WhoMeta
+  whoMeta?: WhoMeta,
 ) => {
   const { name: eventName, data: miscData } = palletEvent;
   const ev = makeChainEvent({ chainId, category: 'Nominating' }, whoMeta);

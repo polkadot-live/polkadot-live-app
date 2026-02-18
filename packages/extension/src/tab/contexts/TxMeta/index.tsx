@@ -2,39 +2,40 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as wc from '@polkadot-live/consts/walletConnect';
-import { ExtrinsicError, generateUID } from '@polkadot-live/core';
-import React, { createContext, useEffect, useRef, useState } from 'react';
-import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
-import type { TxMetaContextInterface } from '@polkadot-live/contexts';
-import type {
-  ActionMeta,
-  AddressInfo,
-  ExtFilterOption,
-  ExTransferKeepAliveData,
-  ExtrinsicDynamicInfo,
-  ExtrinsicInfo,
-  PagedExtrinsicItems,
-  TxStatus,
-} from '@polkadot-live/types/tx';
-import { setStateWithRef } from '@w3ux/utils';
 import {
   createSafeContextHook,
   useConnections,
   useOverlay,
 } from '@polkadot-live/contexts';
+import { ExtrinsicError, generateUID } from '@polkadot-live/core';
 import { ChainIcon, renderToast } from '@polkadot-live/ui';
+import { setStateWithRef } from '@w3ux/utils';
 import { WalletConnectModal } from '@walletconnect/modal';
+import { createContext, useEffect, useRef, useState } from 'react';
 import {
   SignLedgerOverlay,
   SignVaultOverlay,
   SignWcOverlay,
 } from '../../screens';
+import type { TxMetaContextInterface } from '@polkadot-live/contexts';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
+import type {
+  ActionMeta,
+  AddressInfo,
+  ExTransferKeepAliveData,
+  ExtFilterOption,
+  ExtrinsicDynamicInfo,
+  ExtrinsicInfo,
+  PagedExtrinsicItems,
+  TxStatus,
+} from '@polkadot-live/types/tx';
+import type React from 'react';
 
 const PAGINATION_ITEMS_PER_PAGE = 10;
 
 export const TxMetaContext = createContext<TxMetaContextInterface | undefined>(
-  undefined
+  undefined,
 );
 
 export const useTxMeta = createSafeContextHook(TxMetaContext, 'TxMetaContext');
@@ -51,7 +52,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
    * Collection of active extrinsics.
    */
   const [extrinsics, setExtrinsics] = useState<Map<string, ExtrinsicInfo>>(
-    new Map()
+    new Map(),
   );
   const extrinsicsRef = useRef<Map<string, ExtrinsicInfo>>(extrinsics);
   const [updateCache, setUpdateCache] = useState(false);
@@ -70,7 +71,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
 
   const setFilterOption = (filter: TxStatus, selected: boolean) => {
     setFilterOptions((pv) =>
-      pv.map((f) => (f.filter === filter ? { ...f, selected } : f))
+      pv.map((f) => (f.filter === filter ? { ...f, selected } : f)),
     );
   };
 
@@ -151,7 +152,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
         enableExplorer: false,
         explorerRecommendedWalletIds: 'NONE',
         explorerExcludedWalletIds: 'ALL',
-        projectId: wc.WC_PROJECT_IDS['browser'],
+        projectId: wc.WC_PROJECT_IDS.browser,
       });
       wcModal.current = modal;
     }
@@ -361,13 +362,12 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
                 from === info.actionMeta.from &&
                 extra === info.actionMeta.data.extra &&
                 info.txStatus === 'pending';
-              return found ? true : false;
+              return !!found;
             }
           }
-        } else {
-          return false;
         }
-      }
+        return false;
+      },
     );
 
     if (alreadyExists !== undefined) {
@@ -375,7 +375,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       renderToast(
         'Extrinsic already added.',
         `toast-already-exists-${String(Date.now())}`,
-        'error'
+        'error',
       );
       return;
     }
@@ -428,7 +428,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       renderToast(
         'Extrinsic added.',
         `toast-added-${String(Date.now())}`,
-        'success'
+        'success',
       );
     } catch (err) {
       console.error(err);
@@ -494,7 +494,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
    */
   const setTxDynamicInfo = (
     txId: string,
-    dynamicInfo: ExtrinsicDynamicInfo
+    dynamicInfo: ExtrinsicDynamicInfo,
   ) => {
     try {
       const info = extrinsicsRef.current.get(txId);
@@ -648,12 +648,12 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
 
       // Remove address info if there are no more extrinsics for the address.
       const found = Array.from(extrinsicsRef.current.values()).find(
-        ({ actionMeta: { from } }) => from === fromAddress
+        ({ actionMeta: { from } }) => from === fromAddress,
       );
       if (!found) {
         // Update cached address state.
         setAddressesInfo((prev) =>
-          prev.filter(({ address }) => address !== fromAddress)
+          prev.filter(({ address }) => address !== fromAddress),
         );
         // Display all extrinsics.
         setStateWithRef('all', setSelectedFilter, selectedFilterRef);
@@ -672,7 +672,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
     // Apply account filter.
     if (selectedFilterRef.current !== 'all') {
       values = values.filter(
-        ({ actionMeta: { from } }) => from === selectedFilterRef.current
+        ({ actionMeta: { from } }) => from === selectedFilterRef.current,
       );
     }
     // Apply selected filters.
@@ -698,7 +698,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
   const updateAccountName = async (
     address: string,
     chainId: ChainID,
-    accountName: string
+    accountName: string,
   ) => {
     const updatedInfos: ExtrinsicInfo[] = [];
 

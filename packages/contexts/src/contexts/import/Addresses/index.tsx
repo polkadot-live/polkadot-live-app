@@ -1,11 +1,11 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { getSupportedSources } from '@polkadot-live/consts/chains';
+import { setStateWithRef } from '@w3ux/utils';
 import { createContext, useEffect, useRef, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
 import { getImportAddressesAdapter } from './adapters';
-import { getSupportedSources } from '@polkadot-live/consts/chains';
-import { setStateWithRef } from '@w3ux/utils';
 import type {
   AccountSource,
   ImportedGenericAccount,
@@ -18,7 +18,7 @@ export const ImportAddressesContext = createContext<
 
 export const useImportAddresses = createSafeContextHook(
   ImportAddressesContext,
-  'ImportAddressesContext'
+  'ImportAddressesContext',
 );
 
 export const ImportAddressesProvider = ({
@@ -32,7 +32,7 @@ export const ImportAddressesProvider = ({
    * Generic accounts map and reference.
    */
   const [genericAccounts, setGenericAccounts] = useState(
-    new Map<AccountSource, ImportedGenericAccount[]>()
+    new Map<AccountSource, ImportedGenericAccount[]>(),
   );
   const genericAccountsRef = useRef(genericAccounts);
 
@@ -67,11 +67,11 @@ export const ImportAddressesProvider = ({
    * Update account state and reference upon address deletion.
    */
   const handleAddressDelete = (
-    genericAccount: ImportedGenericAccount
+    genericAccount: ImportedGenericAccount,
   ): boolean => {
     const { publicKeyHex, source } = genericAccount;
     const updated = (genericAccountsRef.current.get(source) || []).filter(
-      ({ publicKeyHex: pk }) => publicKeyHex !== pk
+      ({ publicKeyHex: pk }) => publicKeyHex !== pk,
     );
     const map = new Map(genericAccountsRef.current).set(source, updated);
     const goBack = source === 'read-only' ? false : updated.length === 0;
@@ -85,7 +85,7 @@ export const ImportAddressesProvider = ({
   const handleAddressUpdate = (genericAccount: ImportedGenericAccount) => {
     const { publicKeyHex, source } = genericAccount;
     const updated = (genericAccountsRef.current.get(source) || []).map((a) =>
-      a.publicKeyHex === publicKeyHex ? genericAccount : a
+      a.publicKeyHex === publicKeyHex ? genericAccount : a,
     );
     const map = new Map(genericAccountsRef.current).set(source, updated);
     setStateWithRef(map, setGenericAccounts, genericAccountsRef);
@@ -97,7 +97,7 @@ export const ImportAddressesProvider = ({
   const isUniqueAccountName = (target: string): boolean => {
     for (const s of getSupportedSources()) {
       const found = getAccounts(s).find(
-        ({ accountName }) => accountName === target
+        ({ accountName }) => accountName === target,
       );
       if (found) {
         return false;
@@ -143,21 +143,18 @@ export const ImportAddressesProvider = ({
    * Get next `n` account names.
    */
   const getNextNames = (len: number): string[] => {
-    const accountNames: string[] = [];
     let uniqueName = getDefaultName();
 
-    Array.from({ length: len }, (_, i) => {
+    return Array.from({ length: len }, (_, i) => {
       if (i > 0) {
-        let n = parseInt(uniqueName.split(' ').pop()!) + 1;
+        let n = parseInt(uniqueName.split(' ').pop()!, 10) + 1;
         while (!isUniqueAccountName(`Account ${n}`)) {
           n += 1;
         }
         uniqueName = `Account ${n}`;
       }
-      accountNames.push(uniqueName);
+      return uniqueName;
     });
-
-    return accountNames;
   };
 
   /**
@@ -177,10 +174,10 @@ export const ImportAddressesProvider = ({
   useEffect(() => {
     const removeListener = adapter.listenOnMount(
       setGenericAccounts,
-      genericAccountsRef
+      genericAccountsRef,
     );
     return () => {
-      removeListener && removeListener();
+      removeListener?.();
     };
   }, []);
 

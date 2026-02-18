@@ -1,9 +1,11 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Accordion from '@radix-ui/react-accordion';
-import * as UI from '@polkadot-live/ui';
 import * as FA from '@fortawesome/free-solid-svg-icons';
+import {
+  getAllEventCategories,
+  getSupportedSources,
+} from '@polkadot-live/consts/chains';
 import {
   useAddresses,
   useChainEvents,
@@ -15,16 +17,14 @@ import {
   useSummary,
 } from '@polkadot-live/contexts';
 import { getReadableAccountSource } from '@polkadot-live/core';
-import {
-  getAllEventCategories,
-  getSupportedSources,
-} from '@polkadot-live/consts/chains';
-import { useEffect, useState } from 'react';
 import { FlexColumn, FlexRow } from '@polkadot-live/styles';
+import * as UI from '@polkadot-live/ui';
+import * as Accordion from '@radix-ui/react-accordion';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { SideTriggerButton } from './Wrappers';
+import { useEffect, useState } from 'react';
 import { OpenViewButton } from './OpenViewButton';
 import { StatItemRow } from './StatItemRow';
+import { SideTriggerButton } from './Wrappers';
 import type { FlattenedAccountData } from '@polkadot-live/types';
 import type { SummaryAccordionValue } from './types';
 
@@ -156,18 +156,18 @@ export const Summary = () => {
                       meterValue={getTotalAccounts()}
                     />
 
-                    {getSupportedSources().map((source) => {
-                      if ((addressMap.get(source) || []).length > 0) {
-                        return (
-                          <StatItemRow
-                            key={`total_${source}_accounts`}
-                            kind="import"
-                            category={getReadableAccountSource(source)}
-                            meterValue={(addressMap.get(source) || []).length}
-                          />
-                        );
-                      }
-                    })}
+                    {getSupportedSources()
+                      .filter(
+                        (source) => (addressMap.get(source) ?? []).length > 0,
+                      )
+                      .map((source) => (
+                        <StatItemRow
+                          key={`total_${source}_accounts`}
+                          kind="import"
+                          category={getReadableAccountSource(source)}
+                          meterValue={(addressMap.get(source) || []).length}
+                        />
+                      ))}
                   </FlexColumn>
                 </UI.StatsSectionWrapper>
               </UI.AccordionContent>

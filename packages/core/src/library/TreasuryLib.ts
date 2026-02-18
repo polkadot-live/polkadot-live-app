@@ -1,23 +1,23 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import BigNumber from 'bignumber.js';
-import { APIsController } from '../controllers';
 import { chainUnits } from '@polkadot-live/consts/chains';
-import { concatU8a, encodeAddress, hexToU8a, stringToU8a } from 'dedot/utils';
-import { planckToUnit } from '@w3ux/utils';
 import { TreasuryAccounts } from '@polkadot-live/consts/treasury';
+import { planckToUnit } from '@w3ux/utils';
+import BigNumber from 'bignumber.js';
+import { concatU8a, encodeAddress, hexToU8a, stringToU8a } from 'dedot/utils';
+import { APIsController } from '../controllers';
+import type {
+  ClientTypes,
+  DedotOpenGovClient,
+} from '@polkadot-live/types/apis';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { DedotClient } from 'dedot';
 import type {
   CoreTreasuryInfo,
   StatemineTreasuryInfo,
   StatemintTreasuryInfo,
 } from '@polkadot-live/types/treasury';
-import type {
-  ClientTypes,
-  DedotOpenGovClient,
-} from '@polkadot-live/types/apis';
+import type { DedotClient } from 'dedot';
 
 /**
  * @name fetchCoreTreasuryInfo
@@ -25,7 +25,7 @@ import type {
  */
 export const fetchCoreTreasuryInfo = async (
   api: DedotOpenGovClient,
-  chainId: ChainID
+  chainId: ChainID,
 ): Promise<CoreTreasuryInfo> => {
   const publicKey = getTreasuryPublicKey(api);
   const free = await getFreeBalance(api, publicKey);
@@ -35,7 +35,7 @@ export const fetchCoreTreasuryInfo = async (
   const spendPeriod = api.consts.treasury.spendPeriod;
   const spendPeriodElapsedBlocksAsStr = await getElapsedSpendPeriod(
     api,
-    spendPeriod
+    spendPeriod,
   );
   return {
     freeBalance,
@@ -98,14 +98,14 @@ const getTreasuryPublicKey = (api: DedotOpenGovClient): Uint8Array => {
   const publicKey = concatU8a(
     stringToU8a('modl'),
     u8aPalleId,
-    EMPTY_U8A_32
+    EMPTY_U8A_32,
   ).subarray(0, 32);
   return publicKey;
 };
 
 const getFreeBalance = async (
   api: DedotOpenGovClient,
-  publicKey: Uint8Array
+  publicKey: Uint8Array,
 ): Promise<bigint> => {
   const prefix: number = api.consts.system.ss58Prefix;
   const encoded = encodeAddress(publicKey, prefix);
@@ -117,16 +117,16 @@ const getFreeBalance = async (
 const getNextBurn = (
   api: DedotOpenGovClient,
   chainId: ChainID,
-  free: bigint
+  free: bigint,
 ): string => {
   const burn = api.consts.treasury.burn;
   const toBurn = new BigNumber(burn)
-    .dividedBy(Math.pow(10, 6))
+    .dividedBy(10 ** 6)
     .multipliedBy(new BigNumber(free.toString()));
 
   const nextBurn = planckToUnit(
     toBurn.toString(),
-    chainUnits(chainId)
+    chainUnits(chainId),
   ).toString();
 
   return nextBurn;
@@ -134,7 +134,7 @@ const getNextBurn = (
 
 const getToBeAwarded = async (
   api: DedotOpenGovClient,
-  chainId: ChainID
+  chainId: ChainID,
 ): Promise<string> => {
   const [approvals, proposals] = await Promise.all([
     api.query.treasury.approvals(),
@@ -154,7 +154,7 @@ const getToBeAwarded = async (
 
 const getElapsedSpendPeriod = async (
   api: DedotOpenGovClient,
-  spendPeriod: number
+  spendPeriod: number,
 ) => {
   const lastHeader = await api.rpc.chain_getHeader();
   const dedotBlockHeight = lastHeader?.number;

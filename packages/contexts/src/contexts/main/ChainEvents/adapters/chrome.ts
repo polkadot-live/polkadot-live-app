@@ -1,9 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import type { AnyData, ChainEventSubscription } from '@polkadot-live/types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChainEventsAdapter } from './types';
-import type { AnyData, ChainEventSubscription } from '@polkadot-live/types';
 
 export const chromeAdapter: ChainEventsAdapter = {
   listenOnMount: (removeAllForAccount) => {
@@ -145,7 +145,7 @@ export const chromeAdapter: ChainEventsAdapter = {
     });
   },
 
-  toggleNotifyForRef: (chainId, refId, subscription) => {
+  toggleNotifyForRef: (_chainId, refId, subscription) => {
     chrome.runtime.sendMessage({
       type: 'chainEvents',
       task: 'putRefSub',

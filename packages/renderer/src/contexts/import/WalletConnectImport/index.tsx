@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as wc from '@polkadot-live/consts/walletConnect';
-import { ConfigTabs } from '@polkadot-live/core';
-import { createContext, useEffect, useRef, useState } from 'react';
 import {
   createSafeContextHook,
   useImportAddresses,
   useImportHandler,
 } from '@polkadot-live/contexts';
+import { ConfigTabs } from '@polkadot-live/core';
 import { WalletConnectModal } from '@walletconnect/modal';
+import { createContext, useEffect, useRef, useState } from 'react';
 import type { WalletConnectImportContextInterface } from '@polkadot-live/contexts';
 import type {
   WcFetchedAddress,
@@ -22,7 +22,7 @@ export const WalletConnectImportContext = createContext<
 
 export const useWalletConnectImport = createSafeContextHook(
   WalletConnectImportContext,
-  'WalletConnectImportContext'
+  'WalletConnectImportContext',
 );
 
 export const WalletConnectImportProvider = ({
@@ -43,7 +43,7 @@ export const WalletConnectImportProvider = ({
    * WalletConnect networks and their selected state.
    */
   const [wcNetworks, setWcNetworks] = useState<WcSelectNetwork[]>(
-    wc.WcNetworks
+    wc.WcNetworks,
   );
 
   /**
@@ -55,7 +55,7 @@ export const WalletConnectImportProvider = ({
         enableExplorer: false,
         explorerRecommendedWalletIds: 'NONE',
         explorerExcludedWalletIds: 'ALL',
-        projectId: wc.WC_PROJECT_IDS['electron'],
+        projectId: wc.WC_PROJECT_IDS.electron,
       });
 
       wcModal.current = modal;
@@ -74,7 +74,7 @@ export const WalletConnectImportProvider = ({
    */
   const handleConnect = async () => {
     const selectedNetworks = wcNetworks.filter(
-      ({ selected }) => selected === true
+      ({ selected }) => selected === true,
     );
 
     ConfigTabs.portToMain.postMessage({
@@ -125,7 +125,7 @@ export const WalletConnectImportProvider = ({
    * Handle importing the selected WalletConnect addresses.
    */
   const handleImportProcess = async (
-    setShowImportUi: React.Dispatch<React.SetStateAction<boolean>>
+    setShowImportUi: React.Dispatch<React.SetStateAction<boolean>>,
   ) => {
     const selectedAddresses = getSelectedAddresses();
     if (selectedAddresses.length === 0) {
@@ -156,7 +156,7 @@ export const WalletConnectImportProvider = ({
 
     // Clear selected WalletAccount addresses.
     setWcFetchedAddresses((prev) =>
-      prev.map((item) => ({ ...item, selected: false }))
+      prev.map((item) => ({ ...item, selected: false })),
     );
   };
 

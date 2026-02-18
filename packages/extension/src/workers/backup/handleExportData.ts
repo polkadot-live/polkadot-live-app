@@ -5,8 +5,8 @@ import { version } from '../../../package.json';
 import { DbController } from '../../controllers';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { EventCallback } from '@polkadot-live/types/reporter';
-import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
+import type { ExtrinsicInfo } from '@polkadot-live/types/tx';
 
 export const getExportData = async (): Promise<string> => {
   const map = new Map<string, string>();
@@ -15,7 +15,7 @@ export const getExportData = async (): Promise<string> => {
     type M = Map<string, EventCallback>;
     const fetched = (await DbController.getAllObjects('events')) as M;
     return JSON.stringify(
-      Array.from(fetched.values()).filter((e) => e.category !== 'Debugging')
+      Array.from(fetched.values()).filter((e) => e.category !== 'Debugging'),
     );
   };
   const getSerExtrinsics = async () => {

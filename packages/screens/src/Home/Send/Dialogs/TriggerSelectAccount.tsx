@@ -1,10 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Styles from '@polkadot-live/styles';
 import { useConnections } from '@polkadot-live/contexts';
-import { ellipsisFn } from '@w3ux/utils';
+import * as Styles from '@polkadot-live/styles';
 import { Identicon } from '@polkadot-live/ui';
+import { ellipsisFn } from '@w3ux/utils';
 import { SelectedAddressItem } from './Wrappers';
 import type { SendAccount, SendRecipient } from '@polkadot-live/types/accounts';
 import type { TriggerSelectAccountProps } from '.';

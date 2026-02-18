@@ -7,8 +7,8 @@ import {
   faWarning,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Wrapper } from './Wrapper';
 import { appendOrEmpty } from '@w3ux/utils';
+import { Wrapper } from './Wrapper';
 import type { TxProps } from './types';
 
 /**

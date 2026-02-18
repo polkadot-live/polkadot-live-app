@@ -2,16 +2,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import { useConnections } from '@polkadot-live/contexts';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { chainCurrency, chainUnits } from '@polkadot-live/consts/chains';
+import { useConnections } from '@polkadot-live/contexts';
 import { formatDecimal } from '@polkadot-live/core';
+import { FlexRow, ResponsiveRow } from '@polkadot-live/styles';
 import { planckToUnit } from '@w3ux/utils';
 import { Signer } from './Signer';
-import { FlexRow, ResponsiveRow } from '@polkadot-live/styles';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ExtrinsicItemContentWrapper } from './Wrappers';
-import type { ExtrinsicItemContentProps } from './types';
 import type { ExTransferKeepAliveData } from '@polkadot-live/types/tx';
+import type { ExtrinsicItemContentProps } from './types';
 
 export const ExtrinsicItemContent = ({
   info,
@@ -22,7 +22,11 @@ export const ExtrinsicItemContent = ({
   const isBuildingExtrinsic = cacheGet('extrinsic:building');
 
   const renderSummaryButton = () => (
-    <button className="SummaryButton" onClick={() => onClickSummary()}>
+    <button
+      type="button"
+      className="SummaryButton"
+      onClick={() => onClickSummary()}
+    >
       <FlexRow $gap={'0.5rem'}>
         <FontAwesomeIcon icon={FA.faTableList} transform={'shrink-2'} />
         <span>Summary</span>

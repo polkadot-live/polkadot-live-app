@@ -1,16 +1,16 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { useState } from 'react';
+import { useChainEvents } from '@polkadot-live/contexts';
 import {
   CarouselWrapper,
   FlexColumn,
   FlexColumnWrap,
 } from '@polkadot-live/styles';
 import { MainHeading } from '@polkadot-live/ui';
+import { useState } from 'react';
 import { Networks } from './Networks';
 import { Subscriptions } from './Subscriptions';
-import { useChainEvents } from '@polkadot-live/contexts';
 
 export const ChainEvents = () => {
   const { setActiveChain, activeChain, subscriptions } = useChainEvents();

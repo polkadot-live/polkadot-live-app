@@ -13,6 +13,8 @@ export interface ImportAddressesAdapter {
     setGenericAccounts?: Dispatch<
       SetStateAction<Map<AccountSource, ImportedGenericAccount[]>>
     >,
-    genericAccountsRef?: RefObject<Map<AccountSource, ImportedGenericAccount[]>>
+    genericAccountsRef?: RefObject<
+      Map<AccountSource, ImportedGenericAccount[]>
+    >,
   ) => (() => void) | null;
 }

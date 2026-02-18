@@ -13,7 +13,7 @@ export const readFile = async (): Promise<string> => {
 
 export const writeFile = async (
   fileHandle: FileSystemFileHandle,
-  contents: string
+  contents: string,
 ) => {
   const writable = await fileHandle.createWritable();
   await writable.write(contents);
@@ -39,7 +39,7 @@ export const getNewFileHandle = async (): Promise<FileSystemFileHandle> => {
 
 export const verifyPermission = async (
   fileHandle: FileSystemFileHandle,
-  mode: FileSystemPermissionMode
+  mode: FileSystemPermissionMode,
 ) => {
   const options: FileSystemHandlePermissionDescriptor = { mode };
   // Check if permission was already granted. If so, return true.

@@ -3,13 +3,13 @@
 
 import { AccountsController, ChainEventsService } from '@polkadot-live/core';
 import { DbController } from '../../../controllers';
+import { removeAllSubsForRef } from '../../chainEvents';
 import {
   handleAddIntervalSubscriptions,
   removeAllSubscriptions,
 } from '../../intervals';
-import { removeAllSubsForRef } from '../../chainEvents';
-import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
+import type { AnyData } from '@polkadot-live/types/misc';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 
 interface I {
@@ -20,7 +20,7 @@ interface I {
 
 export const handleSubscriptionMessage = (
   message: AnyData,
-  sendResponse: (response?: AnyData) => void
+  sendResponse: (response?: AnyData) => void,
 ): boolean => {
   switch (message.task) {
     case 'addReferendumSubscriptions': {
@@ -61,7 +61,7 @@ export const handleSubscriptionMessage = (
 export const addReferendumSubscriptions = async (
   chainId: ChainID,
   refId: number,
-  tasks: IntervalSubscription[]
+  tasks: IntervalSubscription[],
 ) => {
   // Cache refId.
   type T = string[] | undefined;
@@ -79,7 +79,7 @@ export const addReferendumSubscriptions = async (
  */
 const removeReferendumSubscriptions = async (
   chainId: ChainID,
-  refId: number
+  refId: number,
 ) => {
   // Remove cached refId.
   type T = string[] | undefined;

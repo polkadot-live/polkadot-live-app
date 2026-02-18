@@ -4,30 +4,30 @@
 import { store } from '../main';
 import { NotificationsController } from './NotificationsController';
 import { SubscriptionsController } from './SubscriptionsController';
-import type { AnyData } from '@polkadot-live/types/misc';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IpcTask } from '@polkadot-live/types/communication';
+import type { AnyData } from '@polkadot-live/types/misc';
 
 export class AccountsController {
   /**
    * @name process
    * @summary Process an address IPC task.
    */
-  static async process(task: IpcTask): Promise<string | void> {
+  static async process(task: IpcTask): Promise<string | undefined> {
     switch (task.action) {
       case 'account:getAll': {
-        return this.getAll();
+        return AccountsController.getAll();
       }
       case 'account:import': {
-        await this.import(task);
+        await AccountsController.import(task);
         return;
       }
       case 'account:remove': {
-        await this.remove(task);
+        await AccountsController.remove(task);
         return;
       }
       case 'account:updateAll': {
-        this.updateAll(task);
+        AccountsController.updateAll(task);
         return;
       }
     }
@@ -41,7 +41,7 @@ export class AccountsController {
     const { accountName }: { accountName: string } = task.data;
     NotificationsController.showNotification(
       'Subscriptions Added',
-      accountName
+      accountName,
     );
   }
 

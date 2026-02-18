@@ -1,29 +1,28 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as Accordion from '@radix-ui/react-accordion';
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import * as Select from '@radix-ui/react-select';
-import * as Styles from '@polkadot-live/styles';
-import * as UI from '@polkadot-live/ui';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { getSubscanSubdomain } from '@polkadot-live/consts/chains';
 import {
   useConnections,
   useContextProxy,
   useDialogControl,
   useHelp,
 } from '@polkadot-live/contexts';
-import { useEffect, useState } from 'react';
+import * as Styles from '@polkadot-live/styles';
+import * as UI from '@polkadot-live/ui';
+import * as Accordion from '@radix-ui/react-accordion';
+import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
+import * as Select from '@radix-ui/react-select';
 import { ellipsisFn } from '@w3ux/utils';
 import { formatDistanceToNow } from 'date-fns';
-import { getExtrinsicTitle } from './Helpers';
-import { getSubscanSubdomain } from '@polkadot-live/consts/chains';
+import { useEffect, useState } from 'react';
 import { BarLoader } from 'react-spinners';
-import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
-import { DropdownExtrinsicsFilter, ExtrinsicDropdownMenu } from './Dropdowns';
 import { DialogDeleteExtrinsic, DialogExtrinsicSummary } from './Dialogs';
+import { DropdownExtrinsicsFilter, ExtrinsicDropdownMenu } from './Dropdowns';
 import { ExtrinsicItemContent } from './ExtrinsicItemContent';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { getExtrinsicTitle } from './Helpers';
 import type { ExtrinsicInfo, TxStatus } from '@polkadot-live/types/tx';
 
 export const Action = () => {
@@ -84,10 +83,10 @@ export const Action = () => {
         return 'In Block';
       case 'finalized':
         return 'Finalized';
-      default:
-        return 'Error Occured';
       case 'submitted-unknown':
         return 'Submitted';
+      default:
+        return 'Error Occured';
     }
   };
 
@@ -96,7 +95,7 @@ export const Action = () => {
     addressesInfo.sort((a, b) => a.accountName.localeCompare(b.accountName));
 
   const fadeTxIcon = (txStatus: TxStatus) =>
-    txStatus === 'submitted' || txStatus === 'in_block' ? true : false;
+    !!(txStatus === 'submitted' || txStatus === 'in_block');
 
   useEffect(() => {
     if (!summaryDialogOpen) {
@@ -245,6 +244,7 @@ export const Action = () => {
         {pageItems.length > 0 && (
           <Styles.PaginationRow>
             <button
+              type="button"
               className={`btn ${page === 1 && 'disable'}`}
               disabled={page === 1}
               onClick={() => onPageArrowClick('prev')}
@@ -254,11 +254,12 @@ export const Action = () => {
             {getPageNumbers().map((i, j) => (
               <Styles.FlexRow key={i} $gap={'0.75rem'}>
                 {j === 2 && getPageNumbers().length !== 5 && pageCount > 4 && (
-                  <button className="btn placeholder">
+                  <button type="button" className="btn placeholder">
                     <FontAwesomeIcon className="icon" icon={FA.faEllipsis} />
                   </button>
                 )}
                 <button
+                  type="button"
                   onClick={() => onPageClick(i)}
                   className={`btn ${page === i && 'selected'} ${j === 2 && getPageNumbers().length === 5 && 'middle'}`}
                 >
@@ -267,6 +268,7 @@ export const Action = () => {
               </Styles.FlexRow>
             ))}
             <button
+              type="button"
               className={`btn ${page === pageCount && 'disable'}`}
               disabled={page === pageCount}
               onClick={() => onPageArrowClick('next')}
@@ -344,7 +346,7 @@ export const Action = () => {
                           <UI.TriggerRightIcon
                             text={formatDistanceToNow(
                               new Date(info.timestamp),
-                              { addSuffix: true }
+                              { addSuffix: true },
                             )}
                             theme={theme}
                             icon={FA.faClock}

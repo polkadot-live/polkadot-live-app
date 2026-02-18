@@ -1,13 +1,13 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as UI from '@polkadot-live/ui';
-import * as Styles from '@polkadot-live/styles';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilePen, faList } from '@fortawesome/free-solid-svg-icons';
-import { NetworkHeader } from '../Wrappers';
-import { useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useReferenda, useTracks } from '@polkadot-live/contexts';
+import * as Styles from '@polkadot-live/styles';
+import * as UI from '@polkadot-live/ui';
+import { useEffect } from 'react';
+import { NetworkHeader } from '../Wrappers';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { OverviewExploreProps } from './types';
 
@@ -41,7 +41,7 @@ export const OverviewExplore: React.FC<OverviewExploreProps> = ({
   useEffect(() => {
     const applyBorders = () => {
       const cards = document.querySelectorAll(
-        '.methodCard'
+        '.methodCard',
       ) as NodeListOf<HTMLElement>;
 
       cards.forEach((card, i) => {

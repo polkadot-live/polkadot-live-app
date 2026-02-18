@@ -6,6 +6,6 @@ import type { ImportedGenericAccount } from '@polkadot-live/types';
 export interface RenameHandlerAdapter {
   handleRename: (
     updatedAccount: ImportedGenericAccount,
-    originalAccount: ImportedGenericAccount
+    originalAccount: ImportedGenericAccount,
   ) => Promise<void>;
 }

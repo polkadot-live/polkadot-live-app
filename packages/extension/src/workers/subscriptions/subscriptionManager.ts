@@ -36,7 +36,7 @@ export const updateAccountSubscriptions = async (tasks: SubscriptionTask[]) => {
 
 export const updateAccountSubscription = async (
   account: Account,
-  task: SubscriptionTask
+  task: SubscriptionTask,
 ) => {
   const { address, chain: chainId } = account;
   const { action, status } = task;

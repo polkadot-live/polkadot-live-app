@@ -7,15 +7,15 @@ import {
   getBalance,
   getNominationPoolData,
 } from './AccountsLib';
-import type { Account } from '../model';
-import type {
-  PostCallbackFlags,
-  SubscriptionTask,
-} from '@polkadot-live/types/subscriptions';
 import type {
   DedotClientSet,
   DedotStakingClient,
 } from '@polkadot-live/types/apis';
+import type {
+  PostCallbackFlags,
+  SubscriptionTask,
+} from '@polkadot-live/types/subscriptions';
+import type { Account } from '../model';
 
 /**
  * @name compareTasks
@@ -23,7 +23,7 @@ import type {
  */
 export const compareTasks = (
   a: SubscriptionTask,
-  b: SubscriptionTask
+  b: SubscriptionTask,
 ): boolean => {
   // Different task types.
   if ((!a.account && b.account) || (a.account && !b.account)) {
@@ -64,7 +64,7 @@ export const getPostCallbackFlags = (): PostCallbackFlags => ({
 export const processOneShotPostCallback = async (
   api: DedotClientSet,
   account: Account,
-  syncFlags: PostCallbackFlags
+  syncFlags: PostCallbackFlags,
 ) => {
   // Sync account balance.
   if (syncFlags.syncAccountBalance) {
@@ -79,7 +79,7 @@ export const processOneShotPostCallback = async (
     const { address } = account;
     const nominators = await api.query.staking.nominators(address);
 
-    let result = undefined;
+    let result;
     if (nominators) {
       const era = (await client.query.staking.activeEra())?.index;
       if (era) {
@@ -94,9 +94,11 @@ export const processOneShotPostCallback = async (
   if (syncFlags.syncAccountNominationPool) {
     const result = await getNominationPoolData(
       account,
-      api as DedotStakingClient
+      api as DedotStakingClient,
     );
-    result && (account.nominationPoolData = result);
+    if (result) {
+      account.nominationPoolData = result;
+    }
   }
 
   // Update managed account data.

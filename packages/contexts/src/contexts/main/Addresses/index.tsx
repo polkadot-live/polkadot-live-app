@@ -1,15 +1,15 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { createContext, useState, useRef, useEffect } from 'react';
+import { createContext, useEffect, useRef, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
 import { getAddressesAdapter } from './adapters';
-import type { AddressesContextInterface } from '../../../types/main';
-import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   FlattenedAccountData,
   FlattenedAccounts,
 } from '@polkadot-live/types/accounts';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { AddressesContextInterface } from '../../../types/main';
 
 export const AddressesContext = createContext<
   AddressesContextInterface | undefined
@@ -17,7 +17,7 @@ export const AddressesContext = createContext<
 
 export const useAddresses = createSafeContextHook(
   AddressesContext,
-  'AddressesContext'
+  'AddressesContext',
 );
 
 export const AddressesProvider = ({
@@ -47,7 +47,7 @@ export const AddressesProvider = ({
       accountName,
       fromBackup,
       addressesRef,
-      setAddresses
+      setAddresses,
     );
   };
 
@@ -82,7 +82,7 @@ export const AddressesProvider = ({
     }
     return (
       result.find(
-        (account) => account.address === address && account.chain === chainId
+        (account) => account.address === address && account.chain === chainId,
       ) ?? null
     );
   };
@@ -91,7 +91,7 @@ export const AddressesProvider = ({
   const getAllAccounts = (): FlattenedAccountData[] =>
     [...addresses.values()].reduce(
       (acc, as) => acc.concat([...as.map((a) => a)]),
-      []
+      [],
     );
 
   /// Cache functions on mount (electron).
@@ -103,7 +103,7 @@ export const AddressesProvider = ({
   useEffect(() => {
     const removeListener = adapter.listenOnMount(addressesRef, setAddresses);
     return () => {
-      removeListener && removeListener();
+      removeListener?.();
     };
   }, []);
 

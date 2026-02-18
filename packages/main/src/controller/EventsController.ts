@@ -1,24 +1,25 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { store } from '../main';
-import { getUid } from '../utils/CryptoUtils';
-import { MainDebug } from '../utils/DebugUtils';
 import { doRemoveOutdatedEvents, pushUniqueEvent } from '@polkadot-live/core';
-import { AddressesController } from './AddressesController';
 import {
   NotificationsController,
   SettingsController,
   SubscriptionsController,
   WindowsController,
 } from '../controller';
-import type { AnyJson } from '@polkadot-live/types/misc';
-import type { ChainID } from '@polkadot-live/types/chains';
+import { store } from '../main';
+import { getUid } from '../utils/CryptoUtils';
+import { MainDebug } from '../utils/DebugUtils';
+import { AddressesController } from './AddressesController';
 import type {
   AccountSource,
   EncodedAccount,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
+import type { ChainID } from '@polkadot-live/types/chains';
+import type { IpcTask } from '@polkadot-live/types/communication';
+import type { AnyJson } from '@polkadot-live/types/misc';
 import type {
   EventAccountData,
   EventCallback,
@@ -26,7 +27,6 @@ import type {
   EventFetchPayload,
   NotificationData,
 } from '@polkadot-live/types/reporter';
-import type { IpcTask } from '@polkadot-live/types/communication';
 
 const debug = MainDebug.extend('EventsController');
 
@@ -44,14 +44,14 @@ export class EventsController {
    * @summary Fetch persisted events from store and send to frontend.
    */
   static initialize() {
-    if (this.isInitialized) {
+    if (EventsController.isInitialized) {
       return;
     }
     // Set toggle to indicate stored events have been sent to renderer.
-    this.isInitialized = true;
+    EventsController.isInitialized = true;
 
     // Fetch events from store and send them to renderer.
-    const events = this.getEventsFromStore();
+    const events = EventsController.getEventsFromStore();
     if (events.length === 0) {
       return;
     }
@@ -61,7 +61,7 @@ export class EventsController {
       WindowsController.getWindow('menu')?.webContents?.send(
         'renderer:event:new',
         event,
-        false // Old event.
+        false, // Old event.
       );
     }
   }
@@ -92,12 +92,13 @@ export class EventsController {
 
         // Remove any outdated events of the same type, if setting enabled.
         if (!SettingsController.get('setting:keep-outdated-events')) {
-          this.removeOutdatedEvents(event);
+          EventsController.removeOutdatedEvents(event);
         }
 
         // TODO: Decouple showing notification from this function.
         // Persist new event to store.
-        const { event: eventWithUid, wasPersisted } = this.persistEvent(event);
+        const { event: eventWithUid, wasPersisted } =
+          EventsController.persistEvent(event);
         if (isOneShot || (wasPersisted && notify)) {
           const { title, body, subtitle } = notification;
           NotificationsController.showNotification(title, body, subtitle);
@@ -106,7 +107,7 @@ export class EventsController {
         WindowsController.getWindow('menu')?.webContents?.send(
           'renderer:event:new',
           eventWithUid,
-          true // New event.
+          true, // New event.
         );
 
         return;
@@ -116,13 +117,13 @@ export class EventsController {
         const { uid, chainId }: { uid: string; chainId: ChainID } = task.data;
 
         // Update event in store.
-        this.persistStaleEvent(uid);
+        EventsController.persistStaleEvent(uid);
 
         // Update event react state.
         WindowsController.getWindow('menu')?.webContents?.send(
           'renderer:event:stale',
           uid,
-          chainId
+          chainId,
         );
         return;
       }
@@ -143,33 +144,37 @@ export class EventsController {
         }: { address: string; chainId: ChainID; newName: string } = task.data;
 
         // Update events in storage.
-        const updated = this.updateEventAccountName(address, chainId, newName);
+        const updated = EventsController.updateEventAccountName(
+          address,
+          chainId,
+          newName,
+        );
 
         // Update account's subscription tasks in storage.
         SubscriptionsController.updateCachedAccountNameForTasks(
           address,
           chainId,
-          newName
+          newName,
         );
 
         // Return updated events in serialized form.
         return JSON.stringify(updated);
       }
       case 'events:clearAll': {
-        return this.clearAll(task.data.category);
+        return EventsController.clearAll(task.data.category);
       }
       case 'events:remove': {
-        return this.removeEvent(task.data.event);
+        return EventsController.removeEvent(task.data.event);
       }
       case 'events:import': {
-        return this.doImport(task.data.events);
+        return EventsController.doImport(task.data.events);
       }
       case 'events:fetch': {
         const { payload }: { payload: EventFetchPayload } = task.data;
-        return this.fetch(payload);
+        return EventsController.fetch(payload);
       }
       case 'events:counts': {
-        return this.counts();
+        return EventsController.counts();
       }
       default: {
         return false;
@@ -182,8 +187,10 @@ export class EventsController {
    * @summary Remove all events in a given cateory.
    */
   private static clearAll(category: EventCategory): boolean {
-    this.persistEventsToStore(
-      this.getEventsFromStore().filter((e) => e.category !== category)
+    EventsController.persistEventsToStore(
+      EventsController.getEventsFromStore().filter(
+        (e) => e.category !== category,
+      ),
     );
     return true;
   }
@@ -194,7 +201,7 @@ export class EventsController {
    */
   private static counts() {
     const result: Partial<Record<EventCategory, number>> = {};
-    for (const { category } of this.getEventsFromStore()) {
+    for (const { category } of EventsController.getEventsFromStore()) {
       result[category] = (result[category] ?? 0) + 1;
     }
     return JSON.stringify(result);
@@ -207,7 +214,7 @@ export class EventsController {
   private static fetch(payload: EventFetchPayload) {
     const { category, limit, order, cursor } = payload;
 
-    const all = this.getEventsFromStore()
+    const all = EventsController.getEventsFromStore()
       .filter((e) => e.category === category)
       .sort((a, b) => {
         if (a.timestamp === b.timestamp) {
@@ -256,12 +263,12 @@ export class EventsController {
       });
     }
 
-    const stored = this.getEventsFromStore();
+    const stored = EventsController.getEventsFromStore();
     const { events, updated } = pushUniqueEvent(event, stored);
 
     // Persist new array to store if event was pushed.
     if (updated) {
-      this.persistEventsToStore(events);
+      EventsController.persistEventsToStore(events);
       debug('🔷 Event persisted (%o total in store)', events.length);
     }
 
@@ -274,9 +281,9 @@ export class EventsController {
    */
   private static doImport(serialized: string): string {
     const parsed: EventCallback[] = JSON.parse(serialized);
-    this.syncAccountNames();
+    EventsController.syncAccountNames();
 
-    let stored = this.getEventsFromStore();
+    let stored = EventsController.getEventsFromStore();
     let persist = false;
 
     const isChainEvent = (e: EventCallback) => e.who.origin === 'chainEvent';
@@ -299,7 +306,7 @@ export class EventsController {
       }
     }
     if (persist) {
-      this.persistEventsToStore(stored);
+      EventsController.persistEventsToStore(stored);
       debug('🔷 Event persisted (%o total in store)', stored.length);
     }
 
@@ -311,30 +318,32 @@ export class EventsController {
    * @summary Updates the associated account names of persisted events.
    */
   private static syncAccountNames() {
-    const accounts = this.getAllGenericAccounts();
-    const updated = this.getEventsFromStore().map((e: EventCallback) => {
-      if (e.who.origin !== 'account') {
-        return e;
-      }
-
-      const who = e.who.data as EventAccountData;
-      const encoded: EncodedAccount[] = [];
-
-      for (const { encodedAccounts } of accounts) {
-        const enAccount = encodedAccounts?.[who.chainId] ?? null;
-        enAccount && encoded.push(enAccount);
-      }
-
-      for (const { address, alias } of encoded) {
-        if (who.address === address) {
-          (e.who.data as EventAccountData).accountName = alias;
+    const accounts = EventsController.getAllGenericAccounts();
+    const updated = EventsController.getEventsFromStore().map(
+      (e: EventCallback) => {
+        if (e.who.origin !== 'account') {
+          return e;
         }
-      }
 
-      return e;
-    });
+        const who = e.who.data as EventAccountData;
+        const encoded: EncodedAccount[] = [];
 
-    this.persistEventsToStore(updated);
+        for (const { encodedAccounts } of accounts) {
+          const enAccount = encodedAccounts?.[who.chainId] ?? null;
+          enAccount && encoded.push(enAccount);
+        }
+
+        for (const { address, alias } of encoded) {
+          if (who.address === address) {
+            (e.who.data as EventAccountData).accountName = alias;
+          }
+        }
+
+        return e;
+      },
+    );
+
+    EventsController.persistEventsToStore(updated);
   }
 
   /**
@@ -346,7 +355,7 @@ export class EventsController {
     const map = new Map<AccountSource, string>(JSON.parse(serialized));
 
     return Array.from(map.values()).flatMap(
-      (ser) => JSON.parse(ser) as ImportedGenericAccount[]
+      (ser) => JSON.parse(ser) as ImportedGenericAccount[],
     );
   }
 
@@ -357,9 +366,9 @@ export class EventsController {
   private static updateEventAccountName(
     address: string,
     chainId: ChainID,
-    newName: string
+    newName: string,
   ): EventCallback[] {
-    const all = this.getEventsFromStore();
+    const all = EventsController.getEventsFromStore();
 
     const updated = all.map((e: EventCallback) => {
       if (e.who.origin === 'chain') {
@@ -389,7 +398,7 @@ export class EventsController {
     });
 
     // Persist updated events to store.
-    this.persistEventsToStore(updated);
+    EventsController.persistEventsToStore(updated);
 
     // Return the updated events.
     const filtered = updated.filter((e: EventCallback) => {
@@ -400,7 +409,7 @@ export class EventsController {
       const { address: nextAddress, chainId: nextChainId } = e.who
         .data as EventAccountData;
 
-      return nextAddress === address && chainId === nextChainId ? true : false;
+      return !!(nextAddress === address && chainId === nextChainId);
     });
 
     return filtered;
@@ -411,14 +420,14 @@ export class EventsController {
    * @summary Remove an event from the store.
    */
   private static removeEvent(event: EventCallback): boolean {
-    const events = this.getEventsFromStore();
+    const events = EventsController.getEventsFromStore();
 
     // Filter out event to remove via its uid.
     const { uid } = event;
     const updated = events.filter((e) => e.uid !== uid);
 
     // Persist new array to store.
-    this.persistEventsToStore(updated);
+    EventsController.persistEventsToStore(updated);
     debug('🔷 Event removed (%o total in store)', updated.length);
 
     return true;
@@ -429,7 +438,7 @@ export class EventsController {
    * @summary Get all stored events in serialized form.
    */
   static getBackupData(): string {
-    const stored = this.getEventsFromStore();
+    const stored = EventsController.getEventsFromStore();
     const filtered = stored.filter(({ category }) => category !== 'Debugging');
     return JSON.stringify(filtered);
   }
@@ -442,9 +451,9 @@ export class EventsController {
    * Will remove old matching events from the store.
    */
   private static removeOutdatedEvents(event: EventCallback) {
-    const all = this.getEventsFromStore();
+    const all = EventsController.getEventsFromStore();
     const { updated, events } = doRemoveOutdatedEvents(event, all);
-    updated && this.persistEventsToStore(events);
+    updated && EventsController.persistEventsToStore(events);
   }
 
   /**
@@ -452,12 +461,14 @@ export class EventsController {
    * @summary Mark an event stale and persist it to store.
    */
   private static persistStaleEvent(uid: string) {
-    const stored = this.getEventsFromStore();
+    const stored = EventsController.getEventsFromStore();
     const updated = stored.map((e) => {
-      e.uid === uid && (e.stale = true);
+      if (e.uid === uid) {
+        e.stale = true;
+      }
       return e;
     });
-    this.persistEventsToStore(updated);
+    EventsController.persistEventsToStore(updated);
   }
 
   /**
@@ -466,7 +477,7 @@ export class EventsController {
    */
   private static getEventsFromStore = (): EventCallback[] => {
     const stored = (store as Record<string, AnyJson>).get(
-      this.storeKey
+      this.storeKey,
     ) as string;
     return !stored ? [] : JSON.parse(stored);
   };
@@ -478,7 +489,7 @@ export class EventsController {
   private static persistEventsToStore = (events: EventCallback[]) => {
     (store as Record<string, AnyJson>).set(
       this.storeKey,
-      JSON.stringify(events)
+      JSON.stringify(events),
     );
   };
 }

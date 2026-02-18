@@ -1,16 +1,13 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import * as FA from '@fortawesome/free-solid-svg-icons';
-import { useConnections, useContextProxy } from '@polkadot-live/contexts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  DropdownMenuContent,
-  MenuButton,
-} from '@polkadot-live/styles';
-import type { EventAccountData } from '@polkadot-live/types/reporter';
+import { useConnections, useContextProxy } from '@polkadot-live/contexts';
+import { DropdownMenuContent, MenuButton } from '@polkadot-live/styles';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import type { AccountSource } from '@polkadot-live/types/accounts';
+import type { EventAccountData } from '@polkadot-live/types/reporter';
 import type { ActionMeta } from '@polkadot-live/types/tx';
 import type { ActionsDropdownProps } from './types';
 

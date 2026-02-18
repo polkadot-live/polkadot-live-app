@@ -12,7 +12,7 @@ export interface ReferendaSubscriptionsContextInterface {
   removeRef: (chainId: ChainID, refId: number) => void;
   removeReferendaSubscription: (task: IntervalSubscription) => void;
   setSubscriptions: (
-    subscriptions: Map<ChainID, IntervalSubscription[]>
+    subscriptions: Map<ChainID, IntervalSubscription[]>,
   ) => void;
   updateReferendaSubscription: (task: IntervalSubscription) => void;
 }

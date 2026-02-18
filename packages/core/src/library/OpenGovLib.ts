@@ -4,6 +4,14 @@
 import BigNumber from 'bignumber.js';
 import { Track } from '../model';
 import type {
+  PalletReferendaCurve,
+  PalletReferendaTrackDetails,
+} from '@dedot/chaintypes/substrate';
+import type {
+  DedotClientSet,
+  DedotOpenGovClient,
+} from '@polkadot-live/types/apis';
+import type {
   RefApproved,
   RefCancelled,
   RefConfirming,
@@ -19,21 +27,13 @@ import type {
   SerializedPalletReferendaCurve,
   SerializedTrackItem,
 } from '@polkadot-live/types/openGov';
-import type {
-  DedotClientSet,
-  DedotOpenGovClient,
-} from '@polkadot-live/types/apis';
-import type {
-  PalletReferendaCurve,
-  PalletReferendaTrackDetails,
-} from '@dedot/chaintypes/substrate';
 
 /**
  * @name fetchProcessReferenda
  * @summary Use API to fetch and parse a network's OpenGov referenda.
  */
 export const fetchProcessReferenda = async (
-  api: DedotOpenGovClient
+  api: DedotOpenGovClient,
 ): Promise<ReferendaInfo[]> => {
   // Populate referenda map.
   const results = await api.query.referenda.referendumInfoFor.entries();
@@ -75,7 +75,7 @@ export const fetchProcessReferenda = async (
         allReferenda.push({ refId, refStatus: 'TimedOut', info });
       } else if (storage.type === 'Ongoing') {
         const serRef = serializeReferendumInfo(
-          storage.value as ReferendumStatus
+          storage.value as ReferendumStatus,
         );
 
         // In Queue
@@ -149,7 +149,7 @@ const serializeCurve = (curve: PalletReferendaCurve) => {
  * @summary Parse serialized referenda curve data based on its type.
  */
 const parseCurve = (
-  curve: SerializedPalletReferendaCurve
+  curve: SerializedPalletReferendaCurve,
 ): PalletReferendaCurve => {
   switch (curve.type) {
     case 'LinearDecreasing': {
@@ -191,7 +191,7 @@ const parseCurve = (
  * @summary Serialize tracks for transmission.
  */
 export const getSerializedTracks = (
-  tracks: [number, PalletReferendaTrackDetails][]
+  tracks: [number, PalletReferendaTrackDetails][],
 ) =>
   tracks.map((item) => {
     const info = item[1];
@@ -229,8 +229,8 @@ export const getTracks = (serialized: SerializedTrackItem[]) =>
         item.info.preparePeriod,
         item.id,
         parseCurve(item.info.minApproval),
-        parseCurve(item.info.minSupport)
-      )
+        parseCurve(item.info.minSupport),
+      ),
   );
 
 /**
@@ -238,7 +238,7 @@ export const getTracks = (serialized: SerializedTrackItem[]) =>
  * @summary Serialize referendum info data.
  */
 export const serializeReferendumInfo = (
-  refStatus: ReferendumStatus
+  refStatus: ReferendumStatus,
 ): RefOngoing => {
   const {
     alarm,
@@ -328,23 +328,23 @@ export function rmChars(str: string): string {
 export function makeReciprocalCurve(
   factor: string,
   xOffset: string,
-  yOffset: string
+  yOffset: string,
 ) {
-  return function (percentage: number) {
+  return (percentage: number) => {
     const bnFactor = new BigNumber(factor);
     const bnXOffset = new BigNumber(xOffset);
     const bnYOffset = new BigNumber(yOffset);
 
-    const x = percentage * Math.pow(10, 9);
+    const x = percentage * 10 ** 9;
 
     const v = bnFactor
       .div(new BigNumber(x).plus(bnXOffset))
-      .multipliedBy(Math.pow(10, 9))
+      .multipliedBy(10 ** 9)
       .toFixed(0, BigNumber.ROUND_DOWN);
 
     const calcValue = new BigNumber(v)
       .plus(bnYOffset)
-      .div(Math.pow(10, 9))
+      .div(10 ** 9)
       .toString();
 
     return BigNumber.max(calcValue, 0).toString();
@@ -356,12 +356,12 @@ export function makeReciprocalCurve(
  * @summary Make linear curve function.
  */
 export function makeLinearCurve(length: number, floor: number, ceil: number) {
-  return function (percentage: number) {
+  return (percentage: number) => {
     const bnLength = new BigNumber(length);
     const bnFloor = new BigNumber(floor);
     const bnCeil = new BigNumber(ceil);
 
-    const x = percentage * Math.pow(10, 9);
+    const x = percentage * 10 ** 9;
 
     const xValue = BigNumber.min(x, bnLength);
     const slope = new BigNumber(bnCeil).minus(bnFloor).dividedBy(bnLength);
@@ -371,7 +371,7 @@ export function makeLinearCurve(length: number, floor: number, ceil: number) {
       .minus(deducted)
       .toFixed(0, BigNumber.ROUND_DOWN);
 
-    const calcValue = new BigNumber(perbill).div(Math.pow(10, 9)).toString();
+    const calcValue = new BigNumber(perbill).div(10 ** 9).toString();
     return BigNumber.max(calcValue, 0).toString();
   };
 }
@@ -383,12 +383,12 @@ export function makeLinearCurve(length: number, floor: number, ceil: number) {
 export const getMinApprovalSupport = async (
   api: DedotClientSet,
   referendumInfo: ReferendaInfo,
-  track: Track
+  track: Track,
 ) => {
   // Confirm referendum status is valid.
   if (
     !(['Deciding', 'Confirming'] as RefStatus[]).includes(
-      referendumInfo.refStatus
+      referendumInfo.refStatus,
     )
   ) {
     return null;
@@ -411,7 +411,7 @@ export const getMinApprovalSupport = async (
 
   const bnPercent = BigNumber.min(
     bnElapsed.dividedBy(bnDecisionPeriod),
-    new BigNumber(1)
+    new BigNumber(1),
   );
 
   // Handle min approval.
@@ -426,7 +426,7 @@ export const getMinApprovalSupport = async (
     const curveFn = makeReciprocalCurve(
       factor.toString(),
       xOffset.toString(),
-      yOffset.toString()
+      yOffset.toString(),
     );
     result.minApproval = curveFn(bnPercent.toNumber());
   }
@@ -443,7 +443,7 @@ export const getMinApprovalSupport = async (
     const curveFn = makeReciprocalCurve(
       factor.toString(),
       xOffset.toString(),
-      yOffset.toString()
+      yOffset.toString(),
     );
     result.minSupport = curveFn(bnPercent.toNumber());
   }

@@ -1,15 +1,15 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import BigNumber from 'bignumber.js';
-import { getTreasuryAdapter } from './adapters';
+import { chainCurrency, chainUnits } from '@polkadot-live/consts/chains';
 import { StatemintAssets } from '@polkadot-live/consts/treasury';
 import { formatBlocksToTime } from '@polkadot-live/core';
+import { rmCommas } from '@w3ux/utils';
+import BigNumber from 'bignumber.js';
 import { createContext, useEffect, useRef, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
 import { useConnections } from '../../common';
-import { rmCommas } from '@w3ux/utils';
-import { chainCurrency, chainUnits } from '@polkadot-live/consts/chains';
+import { getTreasuryAdapter } from './adapters';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   IpcTreasuryInfo,
@@ -24,7 +24,7 @@ export const TreasuryContext = createContext<
 
 export const useTreasury = createSafeContextHook(
   TreasuryContext,
-  'TreasuryContext'
+  'TreasuryContext',
 );
 
 export const TreasuryProvider = ({
@@ -45,7 +45,7 @@ export const TreasuryProvider = ({
 
   // Treasury free balance.
   const [treasuryFreeBalance, setTreasuryFreeBalance] = useState(
-    new BigNumber(0)
+    new BigNumber(0),
   );
   // Next burn amount and to be awarded at the end of the spend period.
   const [treasuryNextBurn, setTreasuryNextBurn] = useState(new BigNumber(0));
@@ -54,7 +54,7 @@ export const TreasuryProvider = ({
   // Spend period.
   const [spendPeriod, setSpendPeriod] = useState(new BigNumber(0));
   const [elapsedSpendPeriod, setElapsedSpendPeriod] = useState(
-    new BigNumber(0)
+    new BigNumber(0),
   );
 
   // Statemint treasury balances.
@@ -82,7 +82,7 @@ export const TreasuryProvider = ({
     adapter.initTreasury(
       treasuryChainId,
       setFetchingTreasuryData,
-      setTreasuryData
+      setTreasuryData,
     );
 
   // Setter for treasury public key.
@@ -100,7 +100,7 @@ export const TreasuryProvider = ({
     setToBeAwarded(new BigNumber(rmCommas(toBeAwardedAsStr)));
     setSpendPeriod(new BigNumber(rmCommas(spendPeriodAsStr)));
     setElapsedSpendPeriod(
-      new BigNumber(rmCommas(spendPeriodElapsedBlocksAsStr))
+      new BigNumber(rmCommas(spendPeriodElapsedBlocksAsStr)),
     );
     setStatemintTreasuryInfo(data.statemintTreasuryInfo || null);
     setStatemineTreasuryInfo(data.statemineTreasuryInfo || null);
@@ -128,13 +128,13 @@ export const TreasuryProvider = ({
 
   // Get readable balance for Polkadot Hub treasury assets.
   const getFormattedHubBalance = (
-    assetSymbol: 'DOT' | 'KSM' | 'USDC' | 'USDT'
+    assetSymbol: 'DOT' | 'KSM' | 'USDC' | 'USDT',
   ): string => {
     const relayTokens: string[] = ['DOT', 'KSM'];
 
     if (!relayTokens.includes(assetSymbol)) {
       const asset = Object.values(StatemintAssets).find(
-        ({ symbol }) => symbol === assetSymbol
+        ({ symbol }) => symbol === assetSymbol,
       );
       if (!asset) {
         return '-';
@@ -181,7 +181,7 @@ export const TreasuryProvider = ({
   const getFormattedRemainingSpendPeriod = (): string =>
     formatBlocksToTime(
       treasuryChainId,
-      spendPeriod.minus(elapsedSpendPeriod).toString()
+      spendPeriod.minus(elapsedSpendPeriod).toString(),
     );
 
   // Get readable spend period.

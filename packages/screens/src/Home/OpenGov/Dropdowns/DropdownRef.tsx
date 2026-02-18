@@ -1,23 +1,23 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import {
-  useChainEvents,
-  useConnections,
-  useIntervalTasksManager,
-} from '@polkadot-live/contexts';
-import { DropdownMenuContent } from '@polkadot-live/styles';
+  faCaretRight,
+  faEllipsis,
+  faUpRightFromSquare,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   getPolkassemblySubdomain,
   getSubsquareSubdomain,
 } from '@polkadot-live/consts/chains';
 import {
-  faCaretRight,
-  faEllipsis,
-  faUpRightFromSquare,
-} from '@fortawesome/free-solid-svg-icons';
+  useChainEvents,
+  useConnections,
+  useIntervalTasksManager,
+} from '@polkadot-live/contexts';
+import { DropdownMenuContent } from '@polkadot-live/styles';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
 interface DropdownRefProps {
   refId: number;
@@ -36,6 +36,7 @@ export const DropdownRef = ({ refId }: DropdownRefProps) => {
       <DropdownMenu.Trigger asChild>
         <span>
           <button
+            type="button"
             className="Dialog__Button"
             style={{ padding: '0.75rem 1rem' }}
           >

@@ -4,5 +4,5 @@
 export * from './InfoCard';
 export * from './InfoCardSteps';
 export * from './NavCard';
-export * from './TreasuryStatCard';
 export * from './TreasuryBalanceCard';
+export * from './TreasuryStatCard';

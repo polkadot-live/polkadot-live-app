@@ -1,9 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import React, { createContext, useState } from 'react';
+import { createContext, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
 import type { AnyJson } from '@polkadot-live/types/misc';
+import type React from 'react';
 import type { OverlayContextInterface } from '../../../types/common';
 
 export const OverlayContext = createContext<
@@ -12,7 +13,7 @@ export const OverlayContext = createContext<
 
 export const useOverlay = createSafeContextHook(
   OverlayContext,
-  'OverlayContext'
+  'OverlayContext',
 );
 
 export const OverlayProvider = ({
@@ -58,7 +59,7 @@ export const OverlayProvider = ({
   const openOverlayWith = (
     Overlay: React.ReactNode,
     size = 'small',
-    transparent = false
+    transparent = false,
   ) => {
     setState({
       ...state,

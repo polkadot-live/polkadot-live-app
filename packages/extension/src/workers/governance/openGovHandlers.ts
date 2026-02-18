@@ -9,15 +9,15 @@ import {
   fetchStatemintTreasuryInfo,
   getSerializedTracks,
 } from '@polkadot-live/core';
-import type { ChainID } from '@polkadot-live/types/chains';
-import type { ClientTypes } from '@polkadot-live/types/apis';
-import type { DedotClient } from 'dedot';
 import type { PalletReferendaTrackDetails } from '@dedot/chaintypes/substrate';
+import type { ClientTypes } from '@polkadot-live/types/apis';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { ReferendaInfo } from '@polkadot-live/types/openGov';
 import type { SerIpcTreasuryInfo } from '@polkadot-live/types/treasury';
+import type { DedotClient } from 'dedot';
 
 export const handleInitTreasury = async (
-  chainId: ChainID
+  chainId: ChainID,
 ): Promise<SerIpcTreasuryInfo | null> => {
   try {
     const api = (await APIsController.getConnectedApiOrThrow(chainId)).getApi();
@@ -78,7 +78,7 @@ export const handleFetchTracks = async (chainId: ChainID) => {
 };
 
 export const handleFetchReferenda = async (
-  chainId: ChainID
+  chainId: ChainID,
 ): Promise<ReferendaInfo[] | null> => {
   try {
     const client = await APIsController.getConnectedApiOrThrow(chainId);

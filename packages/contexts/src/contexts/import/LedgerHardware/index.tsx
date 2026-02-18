@@ -1,24 +1,24 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { setStateWithRef } from '@w3ux/utils';
+import { decodeAddress, u8aToHex } from 'dedot/utils';
 import { createContext, useRef, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
-import { decodeAddress, u8aToHex } from 'dedot/utils';
-import { setStateWithRef } from '@w3ux/utils';
 import { getLedgerHardwareAdapter } from './adapters';
-import type { ChainID } from '@polkadot-live/types/chains';
 import type { LedgerMetadata } from '@polkadot-live/types/accounts';
-import type {
-  LedgerHardwareContextInterface,
-  NamedRawLedgerAddress,
-  RawLedgerAddress,
-} from '../../../types/import';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type {
   ILedgerController,
   LedgerResponse,
   LedgerTaskResponse,
   SerLedgerTaskResponse,
 } from '@polkadot-live/types/ledger';
+import type {
+  LedgerHardwareContextInterface,
+  NamedRawLedgerAddress,
+  RawLedgerAddress,
+} from '../../../types/import';
 
 export const LedgerHardwareContext = createContext<
   LedgerHardwareContextInterface | undefined
@@ -26,7 +26,7 @@ export const LedgerHardwareContext = createContext<
 
 export const useLedgerHardware = createSafeContextHook(
   LedgerHardwareContext,
-  'LedgerHardwareContext'
+  'LedgerHardwareContext',
 );
 
 export const LedgerHardwareProvider = ({
@@ -42,7 +42,7 @@ export const LedgerHardwareProvider = ({
   const [isImporting, setIsImporting] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
   const [lastStatusCode, setLastStatusCode] = useState<LedgerResponse | null>(
-    null
+    null,
   );
 
   const [selectedNetworkState, setSelectedNetworkState] = useState('');
@@ -54,7 +54,7 @@ export const LedgerHardwareProvider = ({
    * Access to ledger controller (extension).
    */
   const ledgerControllerRef = useRef<ILedgerController | undefined>(
-    ledgerController
+    ledgerController,
   );
 
   /**
@@ -92,14 +92,14 @@ export const LedgerHardwareProvider = ({
       preConnect();
     }
     const accountIndices = Array.from({ length: 5 }, (_, i) => i).map(
-      (i) => i + offset
+      (i) => i + offset,
     );
     setIsFetching(true);
     const controller = ledgerControllerRef.current;
     const response = await adapter.getLedgerAddresses(
       accountIndices,
       network,
-      controller
+      controller,
     );
     handleLedgerStatusResponse(response);
 
@@ -115,7 +115,7 @@ export const LedgerHardwareProvider = ({
   const clearCaches = (
     clearReceived: boolean,
     clearSelected: boolean,
-    clearStatusCodes: boolean
+    clearStatusCodes: boolean,
   ) => {
     clearReceived && setSelectedAddresses([]);
     clearSelected && setReceivedAddresses([]);
@@ -145,10 +145,12 @@ export const LedgerHardwareProvider = ({
    * Determine if the checkbox for a fetched address should be checked.
    * An address which was selected before should have a checked state.
    */
-  const getChecked = (pk: string) =>
-    selectedAddresses.find(({ address }) => getPublicKey(address) === pk)
-      ? true
-      : false;
+  const getChecked = (pk: string) => {
+    const found = selectedAddresses.find(
+      ({ address }) => getPublicKey(address) === pk,
+    );
+    return !!found;
+  };
 
   /**
    * Get import button text.
@@ -182,7 +184,7 @@ export const LedgerHardwareProvider = ({
   const updateSelectedAddresses = (
     checked: boolean,
     pk: string,
-    accountName: string
+    accountName: string,
   ) => {
     setSelectedAddresses((pv) => {
       const filtered = pv.filter(({ address }) => pk !== getPublicKey(address));
@@ -191,7 +193,7 @@ export const LedgerHardwareProvider = ({
         return filtered;
       }
       const target = receivedAddresses.find(
-        ({ address }) => pk === getPublicKey(address)
+        ({ address }) => pk === getPublicKey(address),
       );
       if (target) {
         const namedTarget: NamedRawLedgerAddress = { ...target, accountName };
@@ -206,7 +208,7 @@ export const LedgerHardwareProvider = ({
    * Handle a collection of received Ledger addresses.
    */
   const handleLedgerStatusResponse = (
-    response: LedgerTaskResponse | SerLedgerTaskResponse
+    response: LedgerTaskResponse | SerLedgerTaskResponse,
   ) => {
     const { ack, statusCode } = response;
 

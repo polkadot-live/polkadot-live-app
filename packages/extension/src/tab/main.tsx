@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Providers } from './Providers';
 import { createRoot } from 'react-dom/client';
+import { Providers } from './Providers';
 
 // Package styles.
 import '@theme-toggles/react/css/Classic.css';

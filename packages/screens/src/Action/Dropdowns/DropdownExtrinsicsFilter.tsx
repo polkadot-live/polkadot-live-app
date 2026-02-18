@@ -1,16 +1,16 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import * as FA from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useConnections, useContextProxy } from '@polkadot-live/contexts';
 import {
   DropdownMenuContent,
   FlexColumn,
   FlexRow,
 } from '@polkadot-live/styles';
-import { useConnections, useContextProxy } from '@polkadot-live/contexts';
 import { CheckboxRx, TooltipRx } from '@polkadot-live/ui';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { FilterButton } from './Wrappers';
 
 export const DropdownExtrinsicsFilter = () => {
@@ -20,12 +20,10 @@ export const DropdownExtrinsicsFilter = () => {
   const theme = getTheme();
 
   const renderFilterMark = (): boolean =>
-    [
+    !![
       ...getSortedFilterOptions('top'),
       ...getSortedFilterOptions('bottom'),
-    ].find(({ selected }) => !selected)
-      ? true
-      : false;
+    ].find(({ selected }) => !selected);
 
   return (
     <DropdownMenu.Root>
@@ -76,7 +74,7 @@ export const DropdownExtrinsicsFilter = () => {
                     <span>{label}</span>
                   </FlexRow>
                 </DropdownMenu.Item>
-              )
+              ),
             )}
           </FlexColumn>
 
@@ -105,7 +103,7 @@ export const DropdownExtrinsicsFilter = () => {
                     <span>{label}</span>
                   </FlexRow>
                 </DropdownMenu.Item>
-              )
+              ),
             )}
           </FlexColumn>
 

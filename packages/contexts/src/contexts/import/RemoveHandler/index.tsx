@@ -3,8 +3,8 @@
 
 import { createContext } from 'react';
 import { createSafeContextHook } from '../../../utils';
-import { getRemoveHandlerAdapter } from './adapters';
 import { useImportAddresses } from '../Addresses';
+import { getRemoveHandlerAdapter } from './adapters';
 import type {
   EncodedAccount,
   ImportedGenericAccount,
@@ -18,7 +18,7 @@ export const RemoveHandlerContext = createContext<
 
 export const useRemoveHandler = createSafeContextHook(
   RemoveHandlerContext,
-  'RemoveHandlerContext'
+  'RemoveHandlerContext',
 );
 
 export const RemoveHandlerProvider = ({
@@ -34,7 +34,7 @@ export const RemoveHandlerProvider = ({
    */
   const handleRemoveAddress = async (
     encodedAccount: EncodedAccount,
-    genericAccount: ImportedGenericAccount
+    genericAccount: ImportedGenericAccount,
   ) => {
     const { address, chainId } = encodedAccount;
     genericAccount.encodedAccounts[chainId].isImported = false;

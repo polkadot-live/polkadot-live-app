@@ -1,8 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import styled from 'styled-components';
 import { mixinHelpIcon } from '@polkadot-live/styles';
+import styled from 'styled-components';
 
 export const MainHeading = styled.h1`
   color: var(--text-main-heading);
