@@ -27,7 +27,7 @@ export interface Migration {
 export const migrations: Migration[] = [
   {
     version: 1,
-    label: 'Create settings and app_meta tables',
+    label: 'Initialize database schema',
     up: (db) => {
       // Application metadata (version tracking, flags).
       db.exec(`
@@ -53,6 +53,27 @@ export const migrations: Migration[] = [
       for (const [key, value] of getDefaultSettings().entries()) {
         insert.run(key, value ? 1 : 0);
       }
+
+      // Raw addresses — one row per generic account (keyed by public key hex).
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS raw_addresses (
+          public_key_hex    TEXT PRIMARY KEY,
+          account_name      TEXT NOT NULL,
+          source            TEXT NOT NULL,
+          encoded_accounts  TEXT NOT NULL
+        );
+      `);
+
+      // Imported (managed) accounts — one row per address+chain combination.
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS imported_accounts (
+          address TEXT NOT NULL,
+          chain_id TEXT NOT NULL,
+          name    TEXT NOT NULL,
+          source  TEXT NOT NULL,
+          PRIMARY KEY (address, chain_id)
+        );
+      `);
     },
   },
 ];

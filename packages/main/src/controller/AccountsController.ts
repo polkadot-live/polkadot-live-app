@@ -1,12 +1,11 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { store } from '../main';
+import { AccountsRepository } from '../db';
 import { NotificationsController } from './NotificationsController';
 import { SubscriptionsController } from './SubscriptionsController';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IpcTask } from '@polkadot-live/types/communication';
-import type { AnyData } from '@polkadot-live/types/misc';
 
 export class AccountsController {
   /**
@@ -60,8 +59,7 @@ export class AccountsController {
    * @summary Send persisted accounts to frontend in serialized form.
    */
   private static getAll(): string {
-    const stored = (store as Record<string, AnyData>).get('imported_accounts');
-    return stored ? (stored as string) : '';
+    return AccountsRepository.getAll();
   }
 
   /**
@@ -70,6 +68,6 @@ export class AccountsController {
    */
   private static updateAll(task: IpcTask) {
     const { accounts }: { accounts: string } = task.data;
-    (store as Record<string, AnyData>).set('imported_accounts', accounts);
+    AccountsRepository.replaceAll(accounts);
   }
 }

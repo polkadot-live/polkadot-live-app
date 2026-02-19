@@ -3,6 +3,7 @@
 
 import { Config as ConfigMain } from '../config/main';
 import { OnlineStatusController } from '../controller';
+import { AccountsRepository } from '../db';
 import { store } from '../main';
 import type {
   FlattenedAccountData,
@@ -124,10 +125,9 @@ export class SubscriptionsController {
    */
 
   static getBackupData(): string {
-    // Get imported accounts from store.
-    const ser = (store as Record<string, AnyData>).get('imported_accounts');
-    const ser_array: [ChainID, StoredAccount[]][] = JSON.parse(ser);
-    const map_accounts = new Map<ChainID, StoredAccount[]>(ser_array);
+    // Get imported accounts from database.
+    const entries = AccountsRepository.getAllEntries();
+    const map_accounts = new Map<ChainID, StoredAccount[]>(entries);
 
     // ChainID:Address as key and its serialized subscription tasks as value.
     const map = new Map<string, string>();

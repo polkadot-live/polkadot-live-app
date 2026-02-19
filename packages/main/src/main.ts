@@ -32,7 +32,12 @@ import {
   SubscriptionsController,
   WindowsController,
 } from './controller';
-import { DatabaseManager, SettingsRepository } from './db';
+import {
+  AccountsRepository,
+  AddressesRepository,
+  DatabaseManager,
+  SettingsRepository,
+} from './db';
 import { executeLedgerTask, USBController } from './ledger';
 import { MainDebug } from './utils/DebugUtils';
 import { menuTemplate } from './utils/MenuUtils';
@@ -142,6 +147,8 @@ app.whenReady().then(async () => {
   // Initialize SQLite database and repositories.
   DatabaseManager.initialize(app.getPath('userData'));
   SettingsRepository.initialize();
+  AddressesRepository.initialize();
+  AccountsRepository.initialize();
 
   // Hide dock icon if we're on mac OS.
   SettingsController.initialize();
