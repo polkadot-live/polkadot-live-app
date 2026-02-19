@@ -74,6 +74,37 @@ export const migrations: Migration[] = [
           PRIMARY KEY (address, chain_id)
         );
       `);
+
+      // Events table — stores persisted events.
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS events (
+          uid TEXT PRIMARY KEY,
+          category TEXT NOT NULL,
+          task_action TEXT NOT NULL,
+          who_origin TEXT NOT NULL,
+          who_data TEXT NOT NULL,
+          title TEXT NOT NULL,
+          subtitle TEXT NOT NULL,
+          data TEXT,
+          timestamp INTEGER NOT NULL,
+          tx_actions TEXT,
+          uri_actions TEXT,
+          stale INTEGER NOT NULL DEFAULT 0,
+          encoded_info TEXT
+        );
+      `);
+
+      // Extrinsics table — stores persisted extrinsics.
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS extrinsics (
+          tx_id TEXT PRIMARY KEY,
+          action_meta TEXT NOT NULL,
+          estimated_fee TEXT,
+          tx_status TEXT NOT NULL,
+          timestamp INTEGER NOT NULL,
+          dynamic_info TEXT
+        );
+      `);
     },
   },
 ];

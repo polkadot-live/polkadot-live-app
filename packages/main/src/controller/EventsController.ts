@@ -8,7 +8,7 @@ import {
   SubscriptionsController,
   WindowsController,
 } from '../controller';
-import { store } from '../main';
+import { EventsRepository } from '../db';
 import { getUid } from '../utils/CryptoUtils';
 import { MainDebug } from '../utils/DebugUtils';
 import { AddressesController } from './AddressesController';
@@ -19,7 +19,6 @@ import type {
 } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IpcTask } from '@polkadot-live/types/communication';
-import type { AnyJson } from '@polkadot-live/types/misc';
 import type {
   EventAccountData,
   EventCallback,
@@ -31,8 +30,6 @@ import type {
 const debug = MainDebug.extend('EventsController');
 
 export class EventsController {
-  private static storeKey = 'persisted_events';
-
   /**
    * Set to `true` when app initializes and persisted events
    * are sent to the renderer.
@@ -51,7 +48,7 @@ export class EventsController {
     EventsController.isInitialized = true;
 
     // Fetch events from store and send them to renderer.
-    const events = EventsController.getEventsFromStore();
+    const events = EventsRepository.getAll();
     if (events.length === 0) {
       return;
     }
@@ -187,11 +184,10 @@ export class EventsController {
    * @summary Remove all events in a given cateory.
    */
   private static clearAll(category: EventCategory): boolean {
-    EventsController.persistEventsToStore(
-      EventsController.getEventsFromStore().filter(
-        (e) => e.category !== category,
-      ),
+    const events = EventsRepository.getAll().filter(
+      (e) => e.category !== category,
     );
+    EventsRepository.replaceAll(events);
     return true;
   }
 
@@ -201,7 +197,7 @@ export class EventsController {
    */
   private static counts() {
     const result: Partial<Record<EventCategory, number>> = {};
-    for (const { category } of EventsController.getEventsFromStore()) {
+    for (const { category } of EventsRepository.getAll()) {
       result[category] = (result[category] ?? 0) + 1;
     }
     return JSON.stringify(result);
@@ -214,7 +210,7 @@ export class EventsController {
   private static fetch(payload: EventFetchPayload) {
     const { category, limit, order, cursor } = payload;
 
-    const all = EventsController.getEventsFromStore()
+    const all = EventsRepository.getAll()
       .filter((e) => e.category === category)
       .sort((a, b) => {
         if (a.timestamp === b.timestamp) {
@@ -263,12 +259,12 @@ export class EventsController {
       });
     }
 
-    const stored = EventsController.getEventsFromStore();
+    const stored = EventsRepository.getAll();
     const { events, updated } = pushUniqueEvent(event, stored);
 
     // Persist new array to store if event was pushed.
     if (updated) {
-      EventsController.persistEventsToStore(events);
+      EventsRepository.replaceAll(events);
       debug('🔷 Event persisted (%o total in store)', events.length);
     }
 
@@ -283,7 +279,7 @@ export class EventsController {
     const parsed: EventCallback[] = JSON.parse(serialized);
     EventsController.syncAccountNames();
 
-    let stored = EventsController.getEventsFromStore();
+    let stored = EventsRepository.getAll();
     let persist = false;
 
     const isChainEvent = (e: EventCallback) => e.who.origin === 'chainEvent';
@@ -306,7 +302,7 @@ export class EventsController {
       }
     }
     if (persist) {
-      EventsController.persistEventsToStore(stored);
+      EventsRepository.replaceAll(stored);
       debug('🔷 Event persisted (%o total in store)', stored.length);
     }
 
@@ -319,31 +315,29 @@ export class EventsController {
    */
   private static syncAccountNames() {
     const accounts = EventsController.getAllGenericAccounts();
-    const updated = EventsController.getEventsFromStore().map(
-      (e: EventCallback) => {
-        if (e.who.origin !== 'account') {
-          return e;
-        }
-
-        const who = e.who.data as EventAccountData;
-        const encoded: EncodedAccount[] = [];
-
-        for (const { encodedAccounts } of accounts) {
-          const enAccount = encodedAccounts?.[who.chainId] ?? null;
-          enAccount && encoded.push(enAccount);
-        }
-
-        for (const { address, alias } of encoded) {
-          if (who.address === address) {
-            (e.who.data as EventAccountData).accountName = alias;
-          }
-        }
-
+    const updated = EventsRepository.getAll().map((e: EventCallback) => {
+      if (e.who.origin !== 'account') {
         return e;
-      },
-    );
+      }
 
-    EventsController.persistEventsToStore(updated);
+      const who = e.who.data as EventAccountData;
+      const encoded: EncodedAccount[] = [];
+
+      for (const { encodedAccounts } of accounts) {
+        const enAccount = encodedAccounts?.[who.chainId] ?? null;
+        enAccount && encoded.push(enAccount);
+      }
+
+      for (const { address, alias } of encoded) {
+        if (who.address === address) {
+          (e.who.data as EventAccountData).accountName = alias;
+        }
+      }
+
+      return e;
+    });
+
+    EventsRepository.replaceAll(updated);
   }
 
   /**
@@ -368,7 +362,7 @@ export class EventsController {
     chainId: ChainID,
     newName: string,
   ): EventCallback[] {
-    const all = EventsController.getEventsFromStore();
+    const all = EventsRepository.getAll();
 
     const updated = all.map((e: EventCallback) => {
       if (e.who.origin === 'chain') {
@@ -398,7 +392,7 @@ export class EventsController {
     });
 
     // Persist updated events to store.
-    EventsController.persistEventsToStore(updated);
+    EventsRepository.replaceAll(updated);
 
     // Return the updated events.
     const filtered = updated.filter((e: EventCallback) => {
@@ -420,16 +414,10 @@ export class EventsController {
    * @summary Remove an event from the store.
    */
   private static removeEvent(event: EventCallback): boolean {
-    const events = EventsController.getEventsFromStore();
-
-    // Filter out event to remove via its uid.
     const { uid } = event;
-    const updated = events.filter((e) => e.uid !== uid);
-
-    // Persist new array to store.
-    EventsController.persistEventsToStore(updated);
+    EventsRepository.delete(uid);
+    const updated = EventsRepository.getAll();
     debug('🔷 Event removed (%o total in store)', updated.length);
-
     return true;
   }
 
@@ -438,7 +426,7 @@ export class EventsController {
    * @summary Get all stored events in serialized form.
    */
   static getBackupData(): string {
-    const stored = EventsController.getEventsFromStore();
+    const stored = EventsRepository.getAll();
     const filtered = stored.filter(({ category }) => category !== 'Debugging');
     return JSON.stringify(filtered);
   }
@@ -451,9 +439,9 @@ export class EventsController {
    * Will remove old matching events from the store.
    */
   private static removeOutdatedEvents(event: EventCallback) {
-    const all = EventsController.getEventsFromStore();
+    const all = EventsRepository.getAll();
     const { updated, events } = doRemoveOutdatedEvents(event, all);
-    updated && EventsController.persistEventsToStore(events);
+    updated && EventsRepository.replaceAll(events);
   }
 
   /**
@@ -461,35 +449,6 @@ export class EventsController {
    * @summary Mark an event stale and persist it to store.
    */
   private static persistStaleEvent(uid: string) {
-    const stored = EventsController.getEventsFromStore();
-    const updated = stored.map((e) => {
-      if (e.uid === uid) {
-        e.stale = true;
-      }
-      return e;
-    });
-    EventsController.persistEventsToStore(updated);
+    EventsRepository.markStale(uid);
   }
-
-  /**
-   * @name getEventsFromStore
-   * @summary Utility to get parsed events array from the store.
-   */
-  private static getEventsFromStore = (): EventCallback[] => {
-    const stored = (store as Record<string, AnyJson>).get(
-      this.storeKey,
-    ) as string;
-    return !stored ? [] : JSON.parse(stored);
-  };
-
-  /**
-   * @name persistEventsToStore
-   * @summary Utility to persist events array to store.
-   */
-  private static persistEventsToStore = (events: EventCallback[]) => {
-    (store as Record<string, AnyJson>).set(
-      this.storeKey,
-      JSON.stringify(events),
-    );
-  };
 }

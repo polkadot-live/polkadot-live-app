@@ -3,4 +3,6 @@
 
 export { AccountsRepository } from './AccountsRepository';
 export { AddressesRepository } from './AddressesRepository';
+export { EventsRepository } from './EventsRepository';
+export { ExtrinsicsRepository } from './ExtrinsicsRepository';
 export { SettingsRepository } from './SettingsRepository';

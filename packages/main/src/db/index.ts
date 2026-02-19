@@ -5,5 +5,7 @@ export { DatabaseManager } from './Database';
 export {
   AccountsRepository,
   AddressesRepository,
+  EventsRepository,
+  ExtrinsicsRepository,
   SettingsRepository,
 } from './repositories';

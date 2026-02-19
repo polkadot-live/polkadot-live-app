@@ -36,6 +36,8 @@ import {
   AccountsRepository,
   AddressesRepository,
   DatabaseManager,
+  EventsRepository,
+  ExtrinsicsRepository,
   SettingsRepository,
 } from './db';
 import { executeLedgerTask, USBController } from './ledger';
@@ -149,6 +151,8 @@ app.whenReady().then(async () => {
   SettingsRepository.initialize();
   AddressesRepository.initialize();
   AccountsRepository.initialize();
+  EventsRepository.initialize();
+  ExtrinsicsRepository.initialize();
 
   // Hide dock icon if we're on mac OS.
   SettingsController.initialize();
