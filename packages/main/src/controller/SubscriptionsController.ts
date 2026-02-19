@@ -1,33 +1,23 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Config as ConfigMain } from '../config/main';
 import { OnlineStatusController } from '../controller';
-import { AccountsRepository } from '../db';
-import { store } from '../main';
-import type {
-  FlattenedAccountData,
-  StoredAccount,
-} from '@polkadot-live/types/accounts';
+import {
+  AccountSubscriptionsRepository,
+  ChainSubscriptionsRepository,
+} from '../db';
+import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IpcTask } from '@polkadot-live/types/communication';
-import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 
 /**
- * Key naming convention of subscription tasks in store:
+ * @name SubscriptionsController
+ * @summary Manages subscription task persistence.
  *
- * 'chain_subscriptions'
- *   Key that stores global chain subscription tasks.
- *
- * '<chainId_account_address>_subscriptions'
- *   Key that stores an account's subscription tasks.
- *
- * Ex: const serialized = store.get('chain_subscriptions');
- *
- * When subscription tasks are retrieved and deserialised,
- * they can be passed to the `TaskOrchestrator`, where the API
- * call will be re-built.
+ * Database tables:
+ * `account_subscriptions` table for per-account, per-chain tasks
+ * `chain_subscriptions` table for global chain-level tasks
  */
 
 export class SubscriptionsController {
@@ -72,27 +62,23 @@ export class SubscriptionsController {
 
   /**
    * @name get
-   * @summary Get serialized subscriptions from store for an address.
+   * @summary Get serialized subscriptions from database for an address.
    */
   private static get(address: string, chainId: ChainID): string {
-    const key = ConfigMain.getSubscriptionsStorageKeyFor(address, chainId);
-    const stored = (store as Record<string, AnyData>).get(key) as string;
-    return stored ? stored : '';
+    return AccountSubscriptionsRepository.getForAddress(chainId, address);
   }
 
   /**
    * @name getChainTasks
-   * @summary Return serialized chain tasks in the store.
+   * @summary Return serialized chain tasks from database.
    */
   private static getChainTasks(): string {
-    const key = ConfigMain.getChainSubscriptionsStorageKey();
-    const stored = (store as Record<string, AnyData>).get(key) as string;
-    return stored ? stored : '[]';
+    return ChainSubscriptionsRepository.getAll();
   }
 
   /**
    * @name doImport
-   * @summary Persist new tasks to store and return them to renderer to process.
+   * @summary Persist new tasks to database and return them to renderer to process.
    * Receives serialized tasks from an exported backup file.
    */
   private static doImport(ipcTask: IpcTask) {
@@ -109,7 +95,7 @@ export class SubscriptionsController {
         chainId as ChainID,
       );
 
-      // Persist backed up tasks to store if online.
+      // Persist backed up tasks to database if online.
       if (OnlineStatusController.getStatus()) {
         const received: SubscriptionTask[] = JSON.parse(serTasks);
         received.forEach((t) => {
@@ -123,25 +109,8 @@ export class SubscriptionsController {
    * @name getBackupData
    * @summary Return a serialized map of account subscription tasks for backup.
    */
-
   static getBackupData(): string {
-    // Get imported accounts from database.
-    const entries = AccountsRepository.getAllEntries();
-    const map_accounts = new Map<ChainID, StoredAccount[]>(entries);
-
-    // ChainID:Address as key and its serialized subscription tasks as value.
-    const map = new Map<string, string>();
-
-    // Copy stored account's serialized tasks into map.
-    for (const accounts of map_accounts.values()) {
-      for (const { _address, _chain } of accounts) {
-        const key = ConfigMain.getSubscriptionsStorageKeyFor(_address, _chain);
-        const ser_tasks: string =
-          (store as Record<string, AnyData>).get(key) || '[]';
-        map.set(`${_chain}:${_address}`, ser_tasks);
-      }
-    }
-    return JSON.stringify(Array.from(map.entries()));
+    return AccountSubscriptionsRepository.getAllForBackup();
   }
 
   /**
@@ -153,10 +122,7 @@ export class SubscriptionsController {
     address: string,
     chainId: ChainID,
   ) {
-    const ser = SubscriptionsController.get(address, task.chainId);
-    const tasks: SubscriptionTask[] = ser === '' ? [] : JSON.parse(ser);
-    const key = ConfigMain.getSubscriptionsStorageKeyFor(address, chainId);
-    SubscriptionsController.updateTask(tasks, task, key);
+    SubscriptionsController.updateTask(task, address, chainId);
   }
 
   /**
@@ -164,21 +130,19 @@ export class SubscriptionsController {
    * @summary Update a persisted chain task with the received data.
    */
   private static updateChainTask(task: SubscriptionTask) {
-    const key = ConfigMain.getChainSubscriptionsStorageKey();
-    const tasks: SubscriptionTask[] = JSON.parse(
-      SubscriptionsController.getChainTasks(),
-    );
-    SubscriptionsController.updateTask(tasks, task, key);
+    if (task.status === 'enable') {
+      ChainSubscriptionsRepository.set(task.chainId, task.action, task);
+    } else {
+      ChainSubscriptionsRepository.delete(task.chainId, task.action);
+    }
   }
 
   /**
    * @name clearAccountTasksInStore
-   * @summary Clears an account's persisted subscriptions in the store. Invoked when an account is removed.
+   * @summary Clears an account's persisted subscriptions in the database. Invoked when an account is removed.
    */
   static clearAccountTasksInStore(address: string, chainId: ChainID) {
-    (store as Record<string, AnyJson>).delete(
-      ConfigMain.getSubscriptionsStorageKeyFor(address, chainId),
-    );
+    AccountSubscriptionsRepository.clearForAddress(chainId, address);
   }
 
   /**
@@ -190,20 +154,24 @@ export class SubscriptionsController {
     chainId: ChainID,
     newName: string,
   ) {
-    const ser = SubscriptionsController.get(address, chainId);
-    const parsed: SubscriptionTask[] = ser === '' ? [] : JSON.parse(ser);
+    const tasks = AccountSubscriptionsRepository.getForAddressDeserialized(
+      chainId,
+      address,
+    );
 
-    if (parsed.length === 0) {
+    if (tasks.length === 0) {
       return;
     }
 
-    const updated = parsed.map((task) => ({
+    const updated = tasks.map((task) => ({
       ...task,
-      account: { ...task.account, name: newName },
+      account: task.account ? { ...task.account, name: newName } : undefined,
     }));
 
-    const key = ConfigMain.getSubscriptionsStorageKeyFor(address, chainId);
-    (store as Record<string, AnyJson>).set(key, JSON.stringify(updated));
+    // Update each task in the database with the new account name.
+    for (const task of updated) {
+      AccountSubscriptionsRepository.set(chainId, address, task.action, task);
+    }
   }
 
   /*------------------------------------------------------------
@@ -220,35 +188,28 @@ export class SubscriptionsController {
     );
   }
 
-  static updateTask(
-    tasks: SubscriptionTask[],
+  private static updateTask(
     task: SubscriptionTask,
-    key: string,
+    address: string,
+    chainId: ChainID,
   ) {
     if (task.status === 'enable') {
-      // Remove task from array if it already exists.
-      if (SubscriptionsController.exists(tasks, task)) {
-        tasks = SubscriptionsController.removeTaskFromArray(tasks, task);
+      // Get existing tasks for this account and chain.
+      const existing = AccountSubscriptionsRepository.getForAddressDeserialized(
+        chainId,
+        address,
+      );
+
+      // Remove task if it already exists.
+      if (SubscriptionsController.exists(existing, task)) {
+        AccountSubscriptionsRepository.delete(chainId, address, task.action);
       }
 
-      tasks.push(task);
+      // Insert or replace the task.
+      AccountSubscriptionsRepository.set(chainId, address, task.action, task);
     } else {
       // Otherwise, remove the task.
-      tasks = tasks.filter(
-        (t) => !(t.action === task.action && t.chainId === task.chainId),
-      );
+      AccountSubscriptionsRepository.delete(chainId, address, task.action);
     }
-
-    // Persist new array to store.
-    (store as Record<string, AnyJson>).set(key, JSON.stringify(tasks));
-  }
-
-  private static removeTaskFromArray(
-    tasks: SubscriptionTask[],
-    task: SubscriptionTask,
-  ) {
-    return tasks.filter(
-      (t) => !(t.action === task.action && t.chainId === task.chainId),
-    );
   }
 }

@@ -105,6 +105,48 @@ export const migrations: Migration[] = [
           dynamic_info TEXT
         );
       `);
+
+      // Account subscriptions table — stores subscription tasks per account+chain.
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS account_subscriptions (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          chain_id TEXT NOT NULL,
+          address TEXT NOT NULL,
+          action TEXT NOT NULL,
+          task_data TEXT NOT NULL,
+          UNIQUE (chain_id, address, action)
+        );
+      `);
+
+      // Chain subscriptions table — stores global chain subscription tasks.
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS chain_subscriptions (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          chain_id TEXT NOT NULL,
+          action TEXT NOT NULL,
+          task_data TEXT NOT NULL,
+          UNIQUE (chain_id, action)
+        );
+      `);
+
+      // Interval subscriptions table — stores interval-based subscription tasks.
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS interval_subscriptions (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          action TEXT NOT NULL,
+          interval_setting TEXT NOT NULL,
+          tick_counter INTEGER NOT NULL,
+          category TEXT NOT NULL,
+          chain_id TEXT NOT NULL,
+          label TEXT NOT NULL,
+          status TEXT NOT NULL,
+          enable_os_notifications INTEGER NOT NULL DEFAULT 0,
+          help_key TEXT NOT NULL,
+          referendum_id INTEGER,
+          just_built INTEGER NOT NULL DEFAULT 0,
+          UNIQUE (chain_id, action, referendum_id)
+        );
+      `);
     },
   },
 ];

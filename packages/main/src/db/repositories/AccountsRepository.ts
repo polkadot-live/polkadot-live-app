@@ -57,8 +57,7 @@ export class AccountsRepository {
   /**
    * Get all imported accounts as a serialized map structure.
    *
-   * Returns `[ChainID, StoredAccount[]][]` matching the format previously
-   * used by electron-store, serialized as a JSON string.
+   * Returns `[ChainID, StoredAccount[]][]`
    */
   static getAll(): string {
     const rows = AccountsRepository.stmtGetAll!.all() as ImportedAccountRow[];

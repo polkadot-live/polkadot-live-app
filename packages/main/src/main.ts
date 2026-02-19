@@ -33,11 +33,14 @@ import {
   WindowsController,
 } from './controller';
 import {
+  AccountSubscriptionsRepository,
   AccountsRepository,
   AddressesRepository,
+  ChainSubscriptionsRepository,
   DatabaseManager,
   EventsRepository,
   ExtrinsicsRepository,
+  IntervalSubscriptionsRepository,
   SettingsRepository,
 } from './db';
 import { executeLedgerTask, USBController } from './ledger';
@@ -151,6 +154,9 @@ app.whenReady().then(async () => {
   SettingsRepository.initialize();
   AddressesRepository.initialize();
   AccountsRepository.initialize();
+  AccountSubscriptionsRepository.initialize();
+  ChainSubscriptionsRepository.initialize();
+  IntervalSubscriptionsRepository.initialize();
   EventsRepository.initialize();
   ExtrinsicsRepository.initialize();
 

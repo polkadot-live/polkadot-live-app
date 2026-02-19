@@ -1,15 +1,17 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { store } from '../main';
+import { IntervalSubscriptionsRepository } from '../db';
 import { ChainEventsController } from './ChainEventsController';
+import type { ChainID } from '@polkadot-live/types/chains';
 import type { IpcTask } from '@polkadot-live/types/communication';
-import type { AnyData } from '@polkadot-live/types/misc';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 
+/**
+ * @name IntervalsController
+ * @summary Manages interval subscription persistence.
+ */
 export class IntervalsController {
-  private static key = 'interval_subscriptions';
-
   /**
    * @name process
    * @summary Process an interval subscription IPC task.
@@ -46,38 +48,30 @@ export class IntervalsController {
 
   /**
    * @name add
-   * @summary Add interval subscription to store.
+   * @summary Add interval subscription to database.
    */
   private static add(task: IpcTask) {
     const { serialized }: { serialized: string } = task.data;
-    const stored: IntervalSubscription[] = JSON.parse(
-      IntervalsController.get(),
-    );
-    stored.push(JSON.parse(serialized));
-    IntervalsController.set(stored);
+    const parsed = JSON.parse(serialized);
+    IntervalSubscriptionsRepository.set(parsed);
   }
 
   /**
    * @name addMulti
-   * @summary Add multiple interval subscription to store.
+   * @summary Add multiple interval subscriptions to database.
    */
   private static addMulti(tasks: IntervalSubscription[]) {
-    const stored: IntervalSubscription[] = JSON.parse(
-      IntervalsController.get(),
-    );
     tasks.forEach((t) => {
-      stored.push(t);
+      IntervalSubscriptionsRepository.set(t);
     });
-    IntervalsController.set(stored);
   }
 
   /**
    * @name clear
-   * @summary Clear interval subscriptions from store.
+   * @summary Clear interval subscriptions from database.
    */
   private static clear(): string {
-    const storePointer: Record<string, AnyData> = store;
-    storePointer.delete(IntervalsController.key);
+    IntervalSubscriptionsRepository.clear();
     return 'done';
   }
 
@@ -98,7 +92,7 @@ export class IntervalsController {
 
   /**
    * @name doImport
-   * @summary Persist new tasks to store and return them to renderer to process.
+   * @summary Persist new tasks to database and return them to renderer to process.
    * Receives serialized tasks from an exported backup file.
    */
   private static doImport(ipcTask: IpcTask): string {
@@ -108,7 +102,7 @@ export class IntervalsController {
       IntervalsController.get(),
     );
 
-    // Persist imported tasks to store.
+    // Persist imported tasks to database.
     const inserts = received.filter(
       (t) => !IntervalsController.exists(t, stored),
     );
@@ -132,7 +126,7 @@ export class IntervalsController {
 
   /**
    * @name exists
-   * @summary Check if a given interval subscription task exists in the store.
+   * @summary Check if a given interval subscription task exists in the database.
    */
   private static exists(
     task: IntervalSubscription,
@@ -148,12 +142,10 @@ export class IntervalsController {
 
   /**
    * @name get
-   * @summary Get serialized interval subscriptions from store.
+   * @summary Get serialized interval subscriptions from database.
    */
   private static get(): string {
-    const storePointer: Record<string, AnyData> = store;
-    const stored: string = storePointer.get(IntervalsController.key) || '[]';
-    return stored;
+    return IntervalSubscriptionsRepository.getAll();
   }
 
   /**
@@ -166,73 +158,42 @@ export class IntervalsController {
 
   /**
    * @name remove
-   * @summary Remove interval subscription from store.
+   * @summary Remove interval subscription from database.
    */
   private static remove(task: IpcTask) {
     const { serialized }: { serialized: string } = task.data;
     const target: IntervalSubscription = JSON.parse(serialized);
-    const stored: IntervalSubscription[] = JSON.parse(
-      IntervalsController.get(),
+    IntervalSubscriptionsRepository.delete(
+      target.action,
+      target.chainId,
+      target.referendumId,
     );
-    const filtered = stored.filter(
-      (t) =>
-        !(
-          t.action === target.action &&
-          t.chainId === target.chainId &&
-          t.referendumId === target.referendumId
-        ),
-    );
-    IntervalsController.set(filtered);
   }
 
   private static removeTasks(task: IpcTask) {
     const { chainId, refId } = task.data;
-    const stored: IntervalSubscription[] = JSON.parse(
-      IntervalsController.get(),
+    IntervalSubscriptionsRepository.deleteByChainAndRefId(
+      chainId as ChainID,
+      refId,
     );
-    const updated = stored.filter(
-      (t) => !(t.chainId === chainId && t.referendumId === refId),
-    );
-    IntervalsController.set(updated);
     ChainEventsController.removeActiveRefId(chainId, refId);
   }
 
   /**
-   * @name set
-   * @summary Updates stored interval subscriptions.
-   */
-  private static set(tasks: IntervalSubscription[]) {
-    const storePointer: Record<string, AnyData> = store;
-    storePointer.set(IntervalsController.key, JSON.stringify(tasks));
-  }
-
-  /**
    * @name update
-   * @summary Update an interval subscription in the store.
+   * @summary Update an interval subscription in the database.
    */
   private static update(task: IpcTask) {
     const { serialized }: { serialized: string } = task.data;
     const target: IntervalSubscription = JSON.parse(serialized);
-    const stored: IntervalSubscription[] = JSON.parse(
-      IntervalsController.get(),
-    );
-    const updated = stored.map((t) =>
-      IntervalsController.compare(target, t) ? target : t,
-    );
-    IntervalsController.set(updated);
+    IntervalSubscriptionsRepository.update(target);
   }
 
   /**
    * @name updateTask
-   * @summary Update data for an existing task persisted in the store.
+   * @summary Update data for an existing task persisted in the database.
    */
   private static updateTask(task: IntervalSubscription) {
-    const stored: IntervalSubscription[] = JSON.parse(
-      IntervalsController.get(),
-    );
-    const updated = stored.map((t) =>
-      IntervalsController.compare(task, t) ? task : t,
-    );
-    IntervalsController.set(updated);
+    IntervalSubscriptionsRepository.update(task);
   }
 }

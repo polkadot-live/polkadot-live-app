@@ -3,9 +3,12 @@
 
 export { DatabaseManager } from './Database';
 export {
+  AccountSubscriptionsRepository,
   AccountsRepository,
   AddressesRepository,
+  ChainSubscriptionsRepository,
   EventsRepository,
   ExtrinsicsRepository,
+  IntervalSubscriptionsRepository,
   SettingsRepository,
 } from './repositories';
