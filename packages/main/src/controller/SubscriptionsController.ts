@@ -61,11 +61,12 @@ export class SubscriptionsController {
   }
 
   // Called when an account is renamed.
-  static updateCachedAccountNameForTasks(
-    address: string,
-    chainId: ChainID,
-    newName: string,
-  ) {
+  static updateCachedAccountNameForTasks(params: {
+    address: string;
+    chainId: ChainID;
+    newName: string;
+  }) {
+    const { address, chainId, newName } = params;
     const tasks = AccountSubscriptionsRepository.getForAddressDeserialized(
       chainId,
       address,
