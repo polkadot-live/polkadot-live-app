@@ -6,6 +6,7 @@ export {
   AccountSubscriptionsRepository,
   AccountsRepository,
   AddressesRepository,
+  ChainEventsRepository,
   ChainSubscriptionsRepository,
   EventsRepository,
   ExtrinsicsRepository,

@@ -36,6 +36,7 @@ import {
   AccountSubscriptionsRepository,
   AccountsRepository,
   AddressesRepository,
+  ChainEventsRepository,
   ChainSubscriptionsRepository,
   DatabaseManager,
   EventsRepository,
@@ -159,6 +160,7 @@ app.whenReady().then(async () => {
   IntervalSubscriptionsRepository.initialize();
   EventsRepository.initialize();
   ExtrinsicsRepository.initialize();
+  ChainEventsRepository.initialize();
 
   // Hide dock icon if we're on mac OS.
   SettingsController.initialize();

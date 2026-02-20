@@ -4,6 +4,7 @@
 export { AccountSubscriptionsRepository } from './AccountSubscriptionsRepository';
 export { AccountsRepository } from './AccountsRepository';
 export { AddressesRepository } from './AddressesRepository';
+export { ChainEventsRepository } from './ChainEventsRepository';
 export { ChainSubscriptionsRepository } from './ChainSubscriptionsRepository';
 export { EventsRepository } from './EventsRepository';
 export { ExtrinsicsRepository } from './ExtrinsicsRepository';

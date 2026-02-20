@@ -147,6 +147,45 @@ export const migrations: Migration[] = [
           UNIQUE (chain_id, action, referendum_id)
         );
       `);
+
+      // Chain event subscriptions table.
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS chain_event_subscriptions (
+          id TEXT NOT NULL,
+          chain_id TEXT NOT NULL,
+          kind TEXT NOT NULL,
+          pallet TEXT NOT NULL,
+          event_name TEXT NOT NULL,
+          enabled INTEGER NOT NULL DEFAULT 0,
+          os_notify INTEGER NOT NULL DEFAULT 0,
+          label TEXT NOT NULL,
+          event_data TEXT,
+          help_key TEXT,
+          scope_type TEXT NOT NULL,
+          scope_id TEXT,
+          PRIMARY KEY (id, scope_type, scope_id)
+        );
+      `);
+
+      // Create indexes for common query patterns.
+      db.exec(`
+        CREATE INDEX IF NOT EXISTS idx_chain_events_chain_scope
+        ON chain_event_subscriptions (chain_id, scope_type, scope_id);
+      `);
+
+      db.exec(`
+        CREATE INDEX IF NOT EXISTS idx_chain_events_pallet_event
+        ON chain_event_subscriptions (pallet, event_name);
+      `);
+
+      // Chain event active refs cache.
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS chain_event_active_refs (
+          chain_id TEXT NOT NULL,
+          ref_id INT NOT NULL,
+          PRIMARY KEY (chain_id, ref_id)
+        );
+      `);
     },
   },
 ];

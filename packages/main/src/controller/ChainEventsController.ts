@@ -1,9 +1,8 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { store } from '../main';
+import { ChainEventsRepository } from '../db';
 import type {
-  AnyData,
   ChainEventSubscription,
   FlattenedAccountData,
   IpcTask,
@@ -11,10 +10,6 @@ import type {
 import type { ChainID } from '@polkadot-live/types/chains';
 
 export class ChainEventsController {
-  private static storeKey = 'chain_event_subscriptions';
-  private static activeRefsKey = 'chainEvents_activeRefs';
-  private static scopeKeyPrefix = 'chainEvents';
-
   /**
    * Process a chain event subscription task.
    */
@@ -29,7 +24,7 @@ export class ChainEventsController {
       }
       case 'chainEvents:insert': {
         const data = task.data;
-        ChainEventsController.put(data.chainId, data.subscription);
+        ChainEventsController.put(data.subscription);
         break;
       }
       case 'chainEvents:insertForAccount': {
@@ -81,24 +76,18 @@ export class ChainEventsController {
   }
 
   private static getActiveRefIds = (): string[] => {
-    const key = ChainEventsController.activeRefsKey;
-    const raw = (store as Record<string, AnyData>).get(key);
-    const cur: string[] = raw ? JSON.parse(raw) : [];
-    return cur;
+    return ChainEventsRepository.getActiveRefs();
   };
 
   private static getAllRefSubs = (): string => {
     // Get active ref ids.
-    const idsKey = ChainEventsController.activeRefsKey;
-    const idsRaw = (store as Record<string, AnyData>).get(idsKey);
-    const idsCur: string[] = idsRaw ? JSON.parse(idsRaw) : [];
+    const idsCur: string[] = ChainEventsRepository.getActiveRefs();
     const idsObj = idsCur.map((k) => {
       const s = k.split('::');
       return { chainId: s[0] as ChainID, refId: parseInt(s[1], 10) };
     });
 
     // Construct record chainId -> refId -> subscriptions.
-    const prefix = ChainEventsController.scopeKeyPrefix;
     const chainIds = new Set(idsObj.map(({ chainId }) => chainId));
     const recResult: Record<
       string,
@@ -112,9 +101,7 @@ export class ChainEventsController {
 
       const recRefs: Record<number, ChainEventSubscription[]> = {};
       for (const refId of refIds) {
-        const key = `${prefix}::${cid}::${refId}`;
-        const raw = (store as Record<string, AnyData>).get(key);
-        recRefs[refId] = raw !== undefined ? JSON.parse(raw) : [];
+        recRefs[refId] = ChainEventsRepository.getAllForRef(cid, refId);
       }
       recResult[cid] = recRefs;
     }
@@ -124,9 +111,7 @@ export class ChainEventsController {
   private static getAllRefSubsForChain = (
     chainId: ChainID,
   ): ChainEventSubscription[] => {
-    const cacheKey = ChainEventsController.activeRefsKey;
-    const rawIds = (store as Record<string, AnyData>).get(cacheKey);
-    const cur: string[] = rawIds ? JSON.parse(rawIds) : [];
+    const cur: string[] = ChainEventsRepository.getActiveRefs();
 
     const refIds = cur
       .map((id) => {
@@ -137,13 +122,8 @@ export class ChainEventsController {
       .map(({ rid }) => rid);
 
     let subs: ChainEventSubscription[] = [];
-    const prefix = ChainEventsController.scopeKeyPrefix;
     for (const refId of refIds) {
-      const key = `${prefix}::${chainId}::${refId}`;
-      const raw = (store as Record<string, AnyData>).get(key);
-      subs = subs.concat(
-        raw ? (JSON.parse(raw) as ChainEventSubscription[]) : [],
-      );
+      subs = subs.concat(ChainEventsRepository.getAllForRef(chainId, refId));
     }
     return subs;
   };
@@ -159,11 +139,11 @@ export class ChainEventsController {
       return;
     }
     const cmp = ChainEventsController.cmp;
-    const stored = ChainEventsController.getAllForRef(chainId, refId);
+    const stored = ChainEventsRepository.getAllForRef(chainId, refId);
     const updated = stored
       .filter((a) => !parsed.find((b) => cmp(a, b)))
       .concat(parsed);
-    ChainEventsController.updateStoreForRef(chainId, refId, updated);
+    ChainEventsController.updateRepoForRef(chainId, refId, updated);
   };
 
   private static removeSubsForRef = (
@@ -176,62 +156,35 @@ export class ChainEventsController {
       return;
     }
     const cmp = ChainEventsController.cmp;
-    const stored = ChainEventsController.getAllForRef(chainId, refId);
+    const stored = ChainEventsRepository.getAllForRef(chainId, refId);
     const updated = stored.filter((a) => !parsed.find((b) => cmp(a, b)));
-    ChainEventsController.updateStoreForRef(chainId, refId, updated);
+    ChainEventsController.updateRepoForRef(chainId, refId, updated);
   };
 
   // Functions to control cached ref ids.
   private static putActiveRefId = (chainId: ChainID, refId: number) => {
-    const key = ChainEventsController.activeRefsKey;
-    const raw = (store as Record<string, AnyData>).get(key);
-    const cur: string[] = raw ? JSON.parse(raw) : [];
-
-    const newId = `${chainId}::${refId}`;
-    const exists = cur.find((id) => id === newId);
-    if (!exists) {
-      const updated = JSON.stringify([...cur, newId]);
-      (store as Record<string, AnyData>).set(key, updated);
-    }
+    ChainEventsRepository.addActiveRef(chainId, refId);
   };
 
   static removeActiveRefId = (chainId: ChainID, refId: number) => {
-    const key = ChainEventsController.activeRefsKey;
-    const raw = (store as Record<string, AnyData>).get(key);
-    const cur: string[] = raw ? JSON.parse(raw) : [];
-
-    const rmId = `${chainId}::${refId}`;
-    const next = JSON.stringify(cur.filter((id) => id !== rmId));
-    (store as Record<string, AnyData>).set(key, next);
-  };
-
-  // Get all persisted ref chain event subscriptions.
-  private static getAllForRef = (
-    chainId: ChainID,
-    refId: number,
-  ): ChainEventSubscription[] => {
-    const prefix = ChainEventsController.scopeKeyPrefix;
-    const key = `${prefix}::${chainId}::${refId}`;
-    const ser = (store as Record<string, AnyData>).get(key);
-    return ser ? JSON.parse(ser) : [];
+    ChainEventsRepository.removeActiveRef(chainId, refId);
   };
 
   // Persist chain events subscriptions for a ref.
-  private static updateStoreForRef = (
+  private static updateRepoForRef = (
     chainId: ChainID,
     refId: number,
     subs: ChainEventSubscription[],
   ) => {
-    const prefix = ChainEventsController.scopeKeyPrefix;
-    const key = `${prefix}::${chainId}::${refId}`;
-    const ser = JSON.stringify(subs);
-    (store as Record<string, AnyData>).set(key, ser);
+    // Delete all existing subscriptions for this ref, then insert the updated ones.
+    ChainEventsRepository.removeAllForRef(chainId, refId);
+    for (const sub of subs) {
+      ChainEventsRepository.insert(sub, 'ref', refId.toString());
+    }
   };
 
   private static getActiveCount = (): number => {
-    const map = new Map<ChainID, ChainEventSubscription[]>(
-      JSON.parse(ChainEventsController.getAll() ?? '[]'),
-    );
+    const map = ChainEventsRepository.getAllGlobal();
     return map.values().reduce((acc, subs) => (acc += subs.length), 0);
   };
 
@@ -242,127 +195,75 @@ export class ChainEventsController {
     a.pallet === b.pallet && a.eventName === b.eventName;
 
   /**
-   * Get all chain event subscriptions from store.
+   * Get all chain event subscriptions from database.
    */
   private static getAll(): string | undefined {
-    const key = ChainEventsController.storeKey;
-    const stored = (store as Record<string, AnyData>).get(key);
-    return stored ? (stored as string) : undefined;
+    const globalSubs = ChainEventsRepository.getAllGlobalSerialized();
+    return globalSubs !== '[]' ? globalSubs : undefined;
   }
 
   /**
-   * Get all account-scoped chain event subscriptions from store.
+   * Get all account-scoped chain event subscriptions from database.
    */
   private static getAllForAccount(
     account: FlattenedAccountData,
   ): string | undefined {
     const { address, chain: chainId } = account;
-    const prefix = ChainEventsController.scopeKeyPrefix;
-    const key = `${prefix}::${chainId}::${address}`;
-    const stored = (store as Record<string, AnyData>).get(key);
-    return stored ? (stored as string) : undefined;
+    const subs = ChainEventsRepository.getAllForAccount(chainId, address);
+    return subs.length > 0 ? JSON.stringify(subs) : undefined;
   }
 
   /**
-   * Insert or update a chain event subscription in the store.
+   * Insert or update a chain event subscription in the database.
    */
-  private static put(chainId: ChainID, sub: ChainEventSubscription) {
-    const cmp = ChainEventsController.cmp;
-    const map = new Map<ChainID, ChainEventSubscription[]>(
-      JSON.parse(ChainEventsController.getAll() ?? '[]'),
-    );
-    const updated = (map.get(chainId) ?? []).filter((s) => !cmp(s, sub));
-    updated.push(sub);
-    map.set(chainId, updated);
-    ChainEventsController.updateStore(JSON.stringify([...map]));
+  private static put(sub: ChainEventSubscription) {
+    ChainEventsRepository.removeGlobal(sub.chainId, sub.pallet, sub.eventName);
+    ChainEventsRepository.insert(sub, 'global', null);
   }
 
   /**
-   * Insert or update an account-scoped chain event subscription in the store.
+   * Insert or update an account-scoped chain event subscription in the database.
    */
   private static putForAccount(
     account: FlattenedAccountData,
     sub: ChainEventSubscription,
   ) {
-    const cmp = ChainEventsController.cmp;
-    const stored = ChainEventsController.getAllForAccount(account);
-    const cur: ChainEventSubscription[] = stored ? JSON.parse(stored) : [];
-    const updated = cur.filter((s) => !cmp(s, sub));
-    updated.push(sub);
-    const ser = JSON.stringify(updated);
-    ChainEventsController.updateStoreForAccount(account, ser);
+    ChainEventsRepository.removeForAccount(
+      account.chain,
+      account.address,
+      sub.pallet,
+      sub.eventName,
+    );
+    ChainEventsRepository.insert(sub, 'account', account.address);
   }
 
   /**
-   * Remove a chain event subscription from the store.
+   * Remove a chain event subscription from the database.
    */
   private static remove(chainId: ChainID, sub: ChainEventSubscription) {
-    const cmp = ChainEventsController.cmp;
-    const stored = ChainEventsController.getAll();
-    if (!stored) {
-      return;
-    }
-    const map = new Map<ChainID, ChainEventSubscription[]>(JSON.parse(stored));
-    const updated = (map.get(chainId) ?? []).filter((s) => !cmp(s, sub));
-    updated.length ? map.set(chainId, updated) : map.delete(chainId);
-    ChainEventsController.updateStore(JSON.stringify([...map]));
+    ChainEventsRepository.removeGlobal(chainId, sub.pallet, sub.eventName);
   }
 
   /**
-   * Remove an account-scoped chain event subscription from the store.
+   * Remove an account-scoped chain event subscription from the database.
    */
   private static removeForAccount(
     account: FlattenedAccountData,
     sub: ChainEventSubscription,
   ) {
-    const cmp = ChainEventsController.cmp;
-    const stored = ChainEventsController.getAllForAccount(account);
-    if (!stored) {
-      return;
-    }
-    const cur: ChainEventSubscription[] = JSON.parse(stored);
-    const updated = cur.filter((s) => !cmp(s, sub));
-
-    // Update store or delete key if no subscriptions remain for account.
-    if (updated.length) {
-      const ser = JSON.stringify(updated);
-      ChainEventsController.updateStoreForAccount(account, ser);
-    } else {
-      const { address, chain: chainId } = account;
-      const prefix = ChainEventsController.scopeKeyPrefix;
-      const key = `${prefix}::${chainId}::${address}`;
-      (store as Record<string, AnyData>).delete(key);
-    }
+    ChainEventsRepository.removeForAccount(
+      account.chain,
+      account.address,
+      sub.pallet,
+      sub.eventName,
+    );
   }
 
   /**
-   * Remove account-scoped chain event subscriptions from the store.
+   * Remove account-scoped chain event subscriptions from the database.
    */
   private static removeAllForAccount(account: FlattenedAccountData) {
     const { address, chain: chainId } = account;
-    const prefix = ChainEventsController.scopeKeyPrefix;
-    const key = `${prefix}::${chainId}::${address}`;
-    (store as Record<string, AnyData>).delete(key);
-  }
-
-  /**
-   * Update store.
-   */
-  private static updateStore(ser: string) {
-    const key = ChainEventsController.storeKey;
-    (store as Record<string, AnyData>).set(key, ser);
-  }
-
-  /**
-   * Update store for account-scoped chain event subscriptions.
-   */
-  private static updateStoreForAccount(
-    account: FlattenedAccountData,
-    ser: string,
-  ) {
-    const { address, chain: chainId } = account;
-    const prefix = ChainEventsController.scopeKeyPrefix;
-    const key = `${prefix}::${chainId}::${address}`;
-    (store as Record<string, AnyData>).set(key, ser);
+    ChainEventsRepository.removeAllForAccount(chainId, address);
   }
 }
