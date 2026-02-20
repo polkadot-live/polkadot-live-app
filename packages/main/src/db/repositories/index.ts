@@ -10,3 +10,4 @@ export { EventsRepository } from './EventsRepository';
 export { ExtrinsicsRepository } from './ExtrinsicsRepository';
 export { IntervalSubscriptionsRepository } from './IntervalSubscriptionsRepository';
 export { SettingsRepository } from './SettingsRepository';
+export { WindowStateRepository } from './WindowStateRepository';

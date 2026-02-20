@@ -43,6 +43,7 @@ import {
   ExtrinsicsRepository,
   IntervalSubscriptionsRepository,
   SettingsRepository,
+  WindowStateRepository,
 } from './db';
 import { executeLedgerTask, USBController } from './ledger';
 import { MainDebug } from './utils/DebugUtils';
@@ -161,6 +162,7 @@ app.whenReady().then(async () => {
   EventsRepository.initialize();
   ExtrinsicsRepository.initialize();
   ChainEventsRepository.initialize();
+  WindowStateRepository.initialize();
 
   // Hide dock icon if we're on mac OS.
   SettingsController.initialize();

@@ -12,4 +12,5 @@ export {
   ExtrinsicsRepository,
   IntervalSubscriptionsRepository,
   SettingsRepository,
+  WindowStateRepository,
 } from './repositories';

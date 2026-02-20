@@ -186,6 +186,17 @@ export const migrations: Migration[] = [
           PRIMARY KEY (chain_id, ref_id)
         );
       `);
+
+      // Window state — persists window position and size.
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS window_state (
+          window_id TEXT PRIMARY KEY,
+          x INTEGER NOT NULL,
+          y INTEGER NOT NULL,
+          width INTEGER NOT NULL,
+          height INTEGER NOT NULL
+        );
+      `);
     },
   },
 ];

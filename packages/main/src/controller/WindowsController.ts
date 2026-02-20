@@ -2,9 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { BrowserWindow } from 'electron';
-import { store } from '../main';
+import { WindowStateRepository } from '../db';
 import type { SyncID } from '@polkadot-live/types/communication';
-import type { AnyJson } from '@polkadot-live/types/misc';
 import type { BaseWindow, WebContentsView } from 'electron';
 
 // A window helper to manage which windows are open and their current state.
@@ -286,10 +285,7 @@ export class WindowsController {
       );
     }
     if (mainWindow.isFocused()) {
-      (store as Record<string, AnyJson>).set(
-        'menu_bounds',
-        mainWindow.getBounds(),
-      );
+      WindowStateRepository.set('menu', mainWindow.getBounds());
     }
   };
 
@@ -301,9 +297,7 @@ export class WindowsController {
         `WindowsController.moveToMenuBounds - Main window doesn't exist`,
       );
     }
-    const storeMenuPos: AnyJson = (store as Record<string, AnyJson>).get(
-      'menu_bounds',
-    );
+    const storeMenuPos = WindowStateRepository.get('menu');
     if (storeMenuPos?.x && storeMenuPos?.y) {
       mainWindow.setPosition(storeMenuPos.x, storeMenuPos.y, false);
     }
