@@ -170,7 +170,8 @@ export class SubscriptionsController {
 
     // Update each task in the database with the new account name.
     for (const task of updated) {
-      AccountSubscriptionsRepository.set(chainId, address, task.action, task);
+      const params = { chainId, address, action: task.action, task };
+      AccountSubscriptionsRepository.set(params);
     }
   }
 
@@ -178,38 +179,19 @@ export class SubscriptionsController {
    * Utilities
    *------------------------------------------------------------*/
 
-  /**
-   * @name exists
-   * @summary Check if a given subscription task exists in the given array.
-   */
-  private static exists(tasks: SubscriptionTask[], task: SubscriptionTask) {
-    return tasks.some(
-      (t) => t.action === task.action && t.chainId === task.chainId,
-    );
-  }
-
   private static updateTask(
     task: SubscriptionTask,
     address: string,
     chainId: ChainID,
   ) {
     if (task.status === 'enable') {
-      // Get existing tasks for this account and chain.
-      const existing = AccountSubscriptionsRepository.getForAddressDeserialized(
-        chainId,
-        address,
-      );
-
-      // Remove task if it already exists.
-      if (SubscriptionsController.exists(existing, task)) {
-        AccountSubscriptionsRepository.delete(chainId, address, task.action);
-      }
-
-      // Insert or replace the task.
-      AccountSubscriptionsRepository.set(chainId, address, task.action, task);
+      // Insert or replace the task. SQLite's INSERT OR REPLACE handles upsert automatically.
+      const params = { chainId, address, action: task.action, task };
+      AccountSubscriptionsRepository.set(params);
     } else {
       // Otherwise, remove the task.
-      AccountSubscriptionsRepository.delete(chainId, address, task.action);
+      const params = { chainId, address, action: task.action };
+      AccountSubscriptionsRepository.delete(params);
     }
   }
 }

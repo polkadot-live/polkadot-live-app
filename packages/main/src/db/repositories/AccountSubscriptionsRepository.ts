@@ -18,6 +18,22 @@ interface AccountSubscriptionRow {
 }
 
 /**
+ * Parameters for subscription write operations.
+ */
+interface SubscriptionParams {
+  chainId: ChainID;
+  address: string;
+  action: string;
+}
+
+/**
+ * Parameters for setting a subscription task.
+ */
+interface SetSubscriptionParams extends SubscriptionParams {
+  task: SubscriptionTask;
+}
+
+/**
  * @name AccountSubscriptionsRepository
  * @summary Data-access layer for the `account_subscriptions` table.
  *
@@ -64,12 +80,8 @@ export class AccountSubscriptionsRepository {
   /**
    * Insert or replace a subscription task for an account.
    */
-  static set(
-    chainId: ChainID,
-    address: string,
-    action: string,
-    task: SubscriptionTask,
-  ): void {
+  static set(params: Readonly<SetSubscriptionParams>): void {
+    const { chainId, address, action, task } = params;
     const taskJson = JSON.stringify(task);
     AccountSubscriptionsRepository.stmtInsert!.run(
       chainId,
@@ -136,7 +148,8 @@ export class AccountSubscriptionsRepository {
   /**
    * Delete a single subscription task for an account.
    */
-  static delete(chainId: ChainID, address: string, action: string): void {
+  static delete(params: Readonly<SubscriptionParams>): void {
+    const { chainId, address, action } = params;
     AccountSubscriptionsRepository.stmtDelete!.run(chainId, address, action);
   }
 
