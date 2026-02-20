@@ -10,9 +10,6 @@ import type {
 import type { ChainID } from '@polkadot-live/types/chains';
 
 export class ChainEventsController {
-  /**
-   * Process a chain event subscription task.
-   */
   static process(task: IpcTask): string | undefined {
     switch (task.action) {
       case 'chainEvents:getAll': {
@@ -75,10 +72,99 @@ export class ChainEventsController {
     }
   }
 
+  // ===== Referenda Cache =====
+
+  // Get active refIds.
   private static getActiveRefIds = (): string[] => {
     return ChainEventsRepository.getActiveRefs();
   };
 
+  // Insert refId.
+  private static putActiveRefId = (chainId: ChainID, refId: number) => {
+    ChainEventsRepository.addActiveRef(chainId, refId);
+  };
+
+  // Remove a refId.
+  static removeActiveRefId = (chainId: ChainID, refId: number) => {
+    ChainEventsRepository.removeActiveRef(chainId, refId);
+  };
+
+  // ===== Global-Scoped Methods =====
+
+  // Compare global subscriptions.
+  private static cmp = (a: ChainEventSubscription, b: ChainEventSubscription) =>
+    a.pallet === b.pallet && a.eventName === b.eventName;
+
+  // Get active global subscription count.
+  private static getActiveCount = (): number => {
+    const map = ChainEventsRepository.getAllGlobal();
+    return map.values().reduce((acc, subs) => (acc += subs.length), 0);
+  };
+
+  // Get all global subscriptions.
+  private static getAll(): string | undefined {
+    const globalSubs = ChainEventsRepository.getAllGlobalSerialized();
+    return globalSubs !== '[]' ? globalSubs : undefined;
+  }
+
+  // Insert or update a global subscription.
+  private static put(sub: ChainEventSubscription) {
+    ChainEventsRepository.removeGlobal(sub.chainId, sub.pallet, sub.eventName);
+    ChainEventsRepository.insert(sub, 'global', null);
+  }
+
+  // ===== Account-Scoped Methods =====
+
+  // Get all account-scoped subscriptions.
+  private static getAllForAccount(
+    account: FlattenedAccountData,
+  ): string | undefined {
+    const { address, chain: chainId } = account;
+    const subs = ChainEventsRepository.getAllForAccount(chainId, address);
+    return subs.length > 0 ? JSON.stringify(subs) : undefined;
+  }
+
+  // Insert or update an account-scoped subscription.
+  private static putForAccount(
+    account: FlattenedAccountData,
+    sub: ChainEventSubscription,
+  ) {
+    ChainEventsRepository.removeForAccount(
+      account.chain,
+      account.address,
+      sub.pallet,
+      sub.eventName,
+    );
+    ChainEventsRepository.insert(sub, 'account', account.address);
+  }
+
+  // Remove a global subscription.
+  private static remove(chainId: ChainID, sub: ChainEventSubscription) {
+    ChainEventsRepository.removeGlobal(chainId, sub.pallet, sub.eventName);
+  }
+
+  // Remove all account-scoped subscriptions.
+  private static removeAllForAccount(account: FlattenedAccountData) {
+    const { address, chain: chainId } = account;
+    ChainEventsRepository.removeAllForAccount(chainId, address);
+  }
+
+  // Remove an account-scoped subscription.
+  private static removeForAccount(
+    account: FlattenedAccountData,
+    sub: ChainEventSubscription,
+  ) {
+    ChainEventsRepository.removeForAccount(
+      account.chain,
+      account.address,
+      sub.pallet,
+      sub.eventName,
+    );
+  }
+
+  // ===== Referenda Scoped Methods =====
+
+  // Get all ref-scoped subscriptions.
   private static getAllRefSubs = (): string => {
     // Get active ref ids.
     const idsCur: string[] = ChainEventsRepository.getActiveRefs();
@@ -108,6 +194,7 @@ export class ChainEventsController {
     return JSON.stringify(recResult);
   };
 
+  // Get all ref-scoped subscriptions by chain.
   private static getAllRefSubsForChain = (
     chainId: ChainID,
   ): ChainEventSubscription[] => {
@@ -128,6 +215,7 @@ export class ChainEventsController {
     return subs;
   };
 
+  // Update ref-scoped subscriptions by referendum.
   private static putSubsForRef = (
     chainId: ChainID,
     refId: number,
@@ -146,6 +234,7 @@ export class ChainEventsController {
     ChainEventsController.updateRepoForRef(chainId, refId, updated);
   };
 
+  // Remove ref-scoped subscriptions by referendum.
   private static removeSubsForRef = (
     chainId: ChainID,
     refId: number,
@@ -161,16 +250,7 @@ export class ChainEventsController {
     ChainEventsController.updateRepoForRef(chainId, refId, updated);
   };
 
-  // Functions to control cached ref ids.
-  private static putActiveRefId = (chainId: ChainID, refId: number) => {
-    ChainEventsRepository.addActiveRef(chainId, refId);
-  };
-
-  static removeActiveRefId = (chainId: ChainID, refId: number) => {
-    ChainEventsRepository.removeActiveRef(chainId, refId);
-  };
-
-  // Persist chain events subscriptions for a ref.
+  // Persist ref-scoped subscriptions.
   private static updateRepoForRef = (
     chainId: ChainID,
     refId: number,
@@ -182,88 +262,4 @@ export class ChainEventsController {
       ChainEventsRepository.insert(sub, 'ref', refId.toString());
     }
   };
-
-  private static getActiveCount = (): number => {
-    const map = ChainEventsRepository.getAllGlobal();
-    return map.values().reduce((acc, subs) => (acc += subs.length), 0);
-  };
-
-  /**
-   * Utility to compare chain event subscriptions.
-   */
-  private static cmp = (a: ChainEventSubscription, b: ChainEventSubscription) =>
-    a.pallet === b.pallet && a.eventName === b.eventName;
-
-  /**
-   * Get all chain event subscriptions from database.
-   */
-  private static getAll(): string | undefined {
-    const globalSubs = ChainEventsRepository.getAllGlobalSerialized();
-    return globalSubs !== '[]' ? globalSubs : undefined;
-  }
-
-  /**
-   * Get all account-scoped chain event subscriptions from database.
-   */
-  private static getAllForAccount(
-    account: FlattenedAccountData,
-  ): string | undefined {
-    const { address, chain: chainId } = account;
-    const subs = ChainEventsRepository.getAllForAccount(chainId, address);
-    return subs.length > 0 ? JSON.stringify(subs) : undefined;
-  }
-
-  /**
-   * Insert or update a chain event subscription in the database.
-   */
-  private static put(sub: ChainEventSubscription) {
-    ChainEventsRepository.removeGlobal(sub.chainId, sub.pallet, sub.eventName);
-    ChainEventsRepository.insert(sub, 'global', null);
-  }
-
-  /**
-   * Insert or update an account-scoped chain event subscription in the database.
-   */
-  private static putForAccount(
-    account: FlattenedAccountData,
-    sub: ChainEventSubscription,
-  ) {
-    ChainEventsRepository.removeForAccount(
-      account.chain,
-      account.address,
-      sub.pallet,
-      sub.eventName,
-    );
-    ChainEventsRepository.insert(sub, 'account', account.address);
-  }
-
-  /**
-   * Remove a chain event subscription from the database.
-   */
-  private static remove(chainId: ChainID, sub: ChainEventSubscription) {
-    ChainEventsRepository.removeGlobal(chainId, sub.pallet, sub.eventName);
-  }
-
-  /**
-   * Remove an account-scoped chain event subscription from the database.
-   */
-  private static removeForAccount(
-    account: FlattenedAccountData,
-    sub: ChainEventSubscription,
-  ) {
-    ChainEventsRepository.removeForAccount(
-      account.chain,
-      account.address,
-      sub.pallet,
-      sub.eventName,
-    );
-  }
-
-  /**
-   * Remove account-scoped chain event subscriptions from the database.
-   */
-  private static removeAllForAccount(account: FlattenedAccountData) {
-    const { address, chain: chainId } = account;
-    ChainEventsRepository.removeAllForAccount(chainId, address);
-  }
 }

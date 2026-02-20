@@ -39,9 +39,7 @@ export class WindowsController {
       : this.base?.window.minimize();
   };
 
-  /* ---------------------------------------- */
-  /* Messaging                                */
-  /* ---------------------------------------- */
+  // ===== Messaging =====
 
   static relaySharedState = (
     channel: string,
@@ -65,9 +63,7 @@ export class WindowsController {
     this.tabsView?.setBackgroundColor(color);
   };
 
-  /* ---------------------------------------- */
-  /* Overlay Window                           */
-  /* ---------------------------------------- */
+  // ===== Overlay Window =====
 
   static setBaseAlwaysOnTop = (alwaysOnTop: boolean) => {
     this.base?.window.setAlwaysOnTop(alwaysOnTop);
@@ -113,9 +109,7 @@ export class WindowsController {
     this.overlay = null;
   };
 
-  /* ---------------------------------------- */
-  /* Base Window                              */
-  /* ---------------------------------------- */
+  // ===== Base Window =====
 
   static setBaseWindow = (window: BaseWindow) => {
     this.base = { window, id: 'base', focused: false };
@@ -125,9 +119,7 @@ export class WindowsController {
     this.tabsView = view;
   };
 
-  /* ---------------------------------------- */
-  /* Tabs                                     */
-  /* ---------------------------------------- */
+  // ===== Tabs =====
 
   static addTab = (viewId: string) => {
     const Labels: Record<string, string> = {
@@ -141,9 +133,7 @@ export class WindowsController {
     this.tabsView?.webContents.send(channel, { id: -1, label, viewId });
   };
 
-  /* ---------------------------------------- */
-  /* Stored Views                             */
-  /* ---------------------------------------- */
+  // ===== Stored Views =====
 
   // Resize base window.
   static resizeBaseWindow = (size: 'small' | 'medium' | 'large' | '') => {
@@ -174,9 +164,7 @@ export class WindowsController {
     }
   };
 
-  /* ---------------------------------------- */
-  /* Stored Windows                           */
-  /* ---------------------------------------- */
+  // ===== Stored Windows =====
 
   // A window is in focus.
   static focus = (id: string) => {
@@ -281,7 +269,7 @@ export class WindowsController {
     const mainWindow = this.getWindow('menu');
     if (!mainWindow) {
       throw new Error(
-        `WindowsController.handleMenuBounds - Main window doesn't exist`,
+        `WindowsController.persistMenuBounds - Main window doesn't exist`,
       );
     }
     if (mainWindow.isFocused()) {
