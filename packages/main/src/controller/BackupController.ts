@@ -142,7 +142,7 @@ export class BackupController {
     const map = new Map<string, string>();
     const addresses = AddressesController.getBackupData();
     const events = EventsController.getBackupData();
-    const extrinsics = ExtrinsicsController.getBackupDate();
+    const extrinsics = ExtrinsicsController.getBackupData();
     const intervals = IntervalsController.getBackupData();
     const accountTasks = SubscriptionsController.getBackupData();
 

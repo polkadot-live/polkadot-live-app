@@ -10,14 +10,11 @@ import type { IpcTask } from '@polkadot-live/types/communication';
 import type { SettingKey } from '@polkadot-live/types/settings';
 
 export class SettingsController {
-  /**
-   * In-memory settings cache.
-   */
+  // In-memory settings cache.
   private static settingsCache = getDefaultSettings();
 
-  /**
-   * Initialize settings cache by fetching persisted settings from the database.
-   */
+  // ===== Initialize  =====
+
   static initialize = () => {
     const defaults = getDefaultSettings();
     const persisted = SettingsRepository.getAll();
@@ -33,30 +30,8 @@ export class SettingsController {
     }
   };
 
-  /**
-   * Get a cached value or `false` if it doesn't exist.
-   */
-  static get = (key: SettingKey): boolean =>
-    Boolean(this.settingsCache.get(key));
+  // ===== Process IPC Tasks =====
 
-  /**
-   * Set a cached value and persist to the database.
-   */
-  static set = (key: SettingKey, value: boolean) => {
-    this.settingsCache.set(key, value);
-    SettingsRepository.set(key, value);
-  };
-
-  /**
-   * Provide serialized cache to requesting renderer.
-   */
-  static getAppSettings = () =>
-    JSON.stringify(Array.from(this.settingsCache.entries()));
-
-  /**
-   * @name process
-   * @summary Process a one-way ipc task.
-   */
   static process(task: IpcTask) {
     switch (task.action) {
       case 'settings:handle': {
@@ -86,19 +61,27 @@ export class SettingsController {
     }
   };
 
-  /**
-   * @name toggleAllWorkspaces
-   * @summary Enable or disable showing the app on all workspaces (macos and linux).
-   */
+  // ===== Public =====
+
+  // Get a cached value.
+  static get = (key: SettingKey): boolean =>
+    Boolean(this.settingsCache.get(key));
+
+  // Return cache as serialized.
+  static getAppSettings = () =>
+    JSON.stringify(Array.from(this.settingsCache.entries()));
+
+  // Enable or disable showing the app on all workspaces (macos and linux).
   private static toggleAllWorkspaces() {
     if (!['darwin', 'linux'].includes(process.platform)) {
       return;
     }
 
-    const flag = Boolean(
-      SettingsController.settingsCache.get('setting:show-all-workspaces'),
+    WindowsController.setVisibleOnAllWorkspaces(
+      Boolean(
+        SettingsController.settingsCache.get('setting:show-all-workspaces'),
+      ),
     );
-    WindowsController.setVisibleOnAllWorkspaces(flag);
 
     // Re-hide dock if we're on macOS.
     // Electron will show the dock icon after calling the workspaces API.
@@ -107,4 +90,10 @@ export class SettingsController {
     );
     hideDock && hideDockIcon();
   }
+
+  // Set a cached value.
+  static set = (key: SettingKey, value: boolean) => {
+    this.settingsCache.set(key, value);
+    SettingsRepository.set(key, value);
+  };
 }

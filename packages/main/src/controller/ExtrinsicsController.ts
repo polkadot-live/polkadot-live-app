@@ -13,9 +13,6 @@ import type {
 export class ExtrinsicsController {
   private static pendingExtrinsics: string[] = [];
 
-  /**
-   * Process an async IPC task.
-   */
   static processAsync(task: IpcTask): string | undefined {
     switch (task.action) {
       case 'extrinsics:getAll': {
@@ -55,38 +52,29 @@ export class ExtrinsicsController {
     }
   }
 
-  /**
-   * Update an extrinsic in the store.
-   */
-  private static update(task: IpcTask) {
-    const { serialized }: { serialized: string } = task.data;
-    const info: ExtrinsicInfo = JSON.parse(serialized);
-    info.dynamicInfo = undefined;
-    ExtrinsicsRepository.update(info.txId, info.txStatus, info.estimatedFee);
+  // ===== Public =====
+
+  // Get serialized backup data.
+  static getBackupData(): string {
+    return ExtrinsicsController.getAll();
   }
 
-  /**
-   * Get all stored extrinsics in serialized form.
-   */
+  // ===== Private =====
+
+  // Get stored extrinsics as serialized.
   private static getAll(): string {
     const stored = ExtrinsicsRepository.getAll();
     return JSON.stringify(stored);
   }
 
-  /**
-   * Get count of extrinsics with optional status.
-   */
+  // Get count of extrinsics with optional status.
   private static getCount(task: IpcTask): string {
     const { status }: { status: TxStatus } = task.data;
     const count = ExtrinsicsRepository.count(status);
     return count.toString();
   }
 
-  /**
-   * @name import
-   * @summary Persist new extrinsics received from backup file.
-   * @returns Up-to-date serialized extrinsics after import.
-   */
+  // Persist new extrinsics received from backup file.
   private static import(task: IpcTask) {
     const { serialized }: { serialized: string } = task.data;
     const received: ExtrinsicInfo[] = JSON.parse(serialized);
@@ -121,13 +109,12 @@ export class ExtrinsicsController {
       (a) => !stored.find((b) => ImportUtils.compareExtrinsics(a, b)),
     );
 
+    // Persist and return up-to-date extrinsics after import.
     ExtrinsicsRepository.replaceAll([...stored, ...append]);
     return JSON.stringify([...stored, ...append]);
   }
 
-  /**
-   * Persist a received extrinsic to store.
-   */
+  // Persist a received extrinsic.
   private static persist(task: IpcTask) {
     const { serialized }: { serialized: string } = task.data;
     const info: ExtrinsicInfo = JSON.parse(serialized);
@@ -164,19 +151,17 @@ export class ExtrinsicsController {
     ExtrinsicsRepository.replaceAll(updated);
   }
 
-  /**
-   * Remove an extrinsic from store.
-   */
+  // Update an extrinsic.
+  private static update(task: IpcTask) {
+    const { serialized }: { serialized: string } = task.data;
+    const info: ExtrinsicInfo = JSON.parse(serialized);
+    info.dynamicInfo = undefined;
+    ExtrinsicsRepository.update(info.txId, info.txStatus, info.estimatedFee);
+  }
+
+  // Remove an extrinsic.
   private static remove(task: IpcTask) {
     const { txId } = task.data;
     ExtrinsicsRepository.delete(txId);
-  }
-
-  /**
-   * Get all stored extrinsics in serialized form.
-   */
-  static getBackupDate(): string {
-    const stored = ExtrinsicsRepository.getAll();
-    return JSON.stringify(stored);
   }
 }

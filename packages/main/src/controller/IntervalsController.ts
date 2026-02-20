@@ -7,15 +7,7 @@ import type { ChainID } from '@polkadot-live/types/chains';
 import type { IpcTask } from '@polkadot-live/types/communication';
 import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 
-/**
- * @name IntervalsController
- * @summary Manages interval subscription persistence.
- */
 export class IntervalsController {
-  /**
-   * @name process
-   * @summary Process an interval subscription IPC task.
-   */
   static process(task: IpcTask): string | undefined {
     switch (task.action) {
       case 'interval:task:add': {
@@ -46,39 +38,36 @@ export class IntervalsController {
     }
   }
 
-  /**
-   * @name add
-   * @summary Add interval subscription to database.
-   */
+  // ===== Public =====
+
+  // Get serialized backup data.
+  static getBackupData(): string {
+    return IntervalsController.get();
+  }
+
+  // ===== Private =====
+
+  // Add interval subscription.
   private static add(task: IpcTask) {
     const { serialized }: { serialized: string } = task.data;
     const parsed = JSON.parse(serialized);
     IntervalSubscriptionsRepository.set(parsed);
   }
 
-  /**
-   * @name addMulti
-   * @summary Add multiple interval subscriptions to database.
-   */
+  // Add multiple interval subscriptions.
   private static addMulti(tasks: IntervalSubscription[]) {
     tasks.forEach((t) => {
       IntervalSubscriptionsRepository.set(t);
     });
   }
 
-  /**
-   * @name clear
-   * @summary Clear interval subscriptions from database.
-   */
+  // Clear all interval subscriptions.
   private static clear(): string {
     IntervalSubscriptionsRepository.clear();
     return 'done';
   }
 
-  /**
-   * @name compare
-   * @summary Compare data of two tasks to determine if they're the same task.
-   */
+  // Determine if two tasks are the same.
   private static compare(
     left: IntervalSubscription,
     right: IntervalSubscription,
@@ -90,12 +79,9 @@ export class IntervalsController {
     );
   }
 
-  /**
-   * @name doImport
-   * @summary Persist new tasks to database and return them to renderer to process.
-   * Receives serialized tasks from an exported backup file.
-   */
+  // Persist new tasks to database and return them to renderer to process.
   private static doImport(ipcTask: IpcTask): string {
+    // Receive serialized tasks from an exported backup file.
     const { serialized }: { serialized: string } = ipcTask.data;
     const received: IntervalSubscription[] = JSON.parse(serialized);
     const stored: IntervalSubscription[] = JSON.parse(
@@ -124,10 +110,7 @@ export class IntervalsController {
     return JSON.stringify(Array.from(map.entries()));
   }
 
-  /**
-   * @name exists
-   * @summary Check if a given interval subscription task exists in the database.
-   */
+  // Check if a given interval subscription task exists.
   private static exists(
     task: IntervalSubscription,
     stored: IntervalSubscription[],
@@ -140,26 +123,12 @@ export class IntervalsController {
     return false;
   }
 
-  /**
-   * @name get
-   * @summary Get serialized interval subscriptions from database.
-   */
+  // Get all serialized interval subscriptions.
   private static get(): string {
     return IntervalSubscriptionsRepository.getAll();
   }
 
-  /**
-   * @name getBackupData
-   * @summary Get stored serialized tasks for writing to a backup text file.
-   */
-  static getBackupData(): string {
-    return IntervalsController.get();
-  }
-
-  /**
-   * @name remove
-   * @summary Remove interval subscription from database.
-   */
+  // Remove interval subscription.
   private static remove(task: IpcTask) {
     const { serialized }: { serialized: string } = task.data;
     const target: IntervalSubscription = JSON.parse(serialized);
@@ -170,6 +139,7 @@ export class IntervalsController {
     );
   }
 
+  // Remove multiple interval subscriptions.
   private static removeTasks(task: IpcTask) {
     const { chainId, refId } = task.data;
     IntervalSubscriptionsRepository.deleteByChainAndRefId(
@@ -179,20 +149,14 @@ export class IntervalsController {
     ChainEventsController.removeActiveRefId(chainId, refId);
   }
 
-  /**
-   * @name update
-   * @summary Update an interval subscription in the database.
-   */
+  // Update an interval subscription.
   private static update(task: IpcTask) {
     const { serialized }: { serialized: string } = task.data;
     const target: IntervalSubscription = JSON.parse(serialized);
     IntervalSubscriptionsRepository.update(target);
   }
 
-  /**
-   * @name updateTask
-   * @summary Update data for an existing task persisted in the database.
-   */
+  // Update data for an existing task persisted in the database.
   private static updateTask(task: IntervalSubscription) {
     IntervalSubscriptionsRepository.update(task);
   }
