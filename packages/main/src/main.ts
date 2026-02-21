@@ -12,9 +12,7 @@ import {
   shell,
   systemPreferences,
 } from 'electron';
-import Store from 'electron-store';
 import unhandled from 'electron-unhandled';
-import { version } from '../package.json';
 import { Config as ConfigMain } from './config/main';
 import { SharedState } from './config/SharedState';
 import {
@@ -53,7 +51,7 @@ import { hideDockIcon } from './utils/SystemUtils';
 import * as WindowUtils from './utils/WindowUtils';
 import type { IpcTask, SyncID } from '@polkadot-live/types/communication';
 import type { LedgerTask } from '@polkadot-live/types/ledger';
-import type { AnyData, AnyJson } from '@polkadot-live/types/misc';
+import type { AnyData } from '@polkadot-live/types/misc';
 import type { NotificationData } from '@polkadot-live/types/reporter';
 
 const debug = MainDebug;
@@ -104,23 +102,6 @@ unhandled({
 });
 
 // Start app boostrapping.
-
-// Initialise Electron store.
-export const store = new Store();
-
-// Clear the store if it's the first time opening this version.
-// TODO: Implement data migration between versions.
-if (!store.has('version')) {
-  store.clear();
-  (store as Record<string, AnyJson>).set('version', version);
-} else {
-  const stored = (store as Record<string, AnyJson>).get('version') as string;
-
-  if (stored !== version) {
-    store.clear();
-    (store as Record<string, AnyJson>).set('version', version);
-  }
-}
 
 // Ask for camera permission (Mac OS)
 const grantCameraPermission = async (): Promise<boolean> => {
