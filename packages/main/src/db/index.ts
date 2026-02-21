@@ -6,6 +6,7 @@ export {
   AccountSubscriptionsRepository,
   AccountsRepository,
   AddressesRepository,
+  AppMetaRepository,
   ChainEventsRepository,
   ChainSubscriptionsRepository,
   EventsRepository,

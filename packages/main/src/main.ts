@@ -36,6 +36,7 @@ import {
   AccountSubscriptionsRepository,
   AccountsRepository,
   AddressesRepository,
+  AppMetaRepository,
   ChainEventsRepository,
   ChainSubscriptionsRepository,
   DatabaseManager,
@@ -153,6 +154,7 @@ app.whenReady().then(async () => {
 
   // Initialize SQLite database and repositories.
   DatabaseManager.initialize(app.getPath('userData'));
+  AppMetaRepository.initialize();
   SettingsRepository.initialize();
   AddressesRepository.initialize();
   AccountsRepository.initialize();
@@ -229,14 +231,12 @@ app.whenReady().then(async () => {
    * Disclaimer
    */
   ipcMain.handle('main:disclaimer:show', async () => {
-    const key = ConfigMain.getShowDisclaimerStorageKey();
-
-    if (!store.get(key, false)) {
-      store.set(key, true);
+    const shown = AppMetaRepository.getDisclaimerShown();
+    if (!shown) {
+      AppMetaRepository.setDisclaimerShown(true);
       return true;
-    } else {
-      return false;
     }
+    return false;
   });
 
   /**
