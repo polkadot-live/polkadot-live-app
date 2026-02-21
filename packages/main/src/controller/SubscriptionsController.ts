@@ -144,9 +144,9 @@ export class SubscriptionsController {
   // Update a persisted chain task.
   private static updateChainTask(task: SubscriptionTask) {
     if (task.status === 'enable') {
-      ChainSubscriptionsRepository.set(task.chainId, task.action, task);
+      ChainSubscriptionsRepository.set(task);
     } else {
-      ChainSubscriptionsRepository.delete(task.chainId, task.action);
+      ChainSubscriptionsRepository.delete(task);
     }
   }
 }

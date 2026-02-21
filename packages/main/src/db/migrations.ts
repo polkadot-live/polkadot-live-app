@@ -124,7 +124,12 @@ export const migrations: Migration[] = [
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           chain_id TEXT NOT NULL,
           action TEXT NOT NULL,
-          task_data TEXT NOT NULL,
+          api_call_as_string TEXT NOT NULL,
+          category TEXT NOT NULL,
+          enable_os_notifications INTEGER NOT NULL,
+          help_key TEXT NOT NULL,
+          label TEXT NOT NULL,
+          status TEXT NOT NULL,
           UNIQUE (chain_id, action)
         );
       `);
