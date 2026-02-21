@@ -3,7 +3,12 @@
 
 import { DatabaseManager } from '../Database';
 import type { ChainID } from '@polkadot-live/types/chains';
-import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
+import type { HelpItemKey } from '@polkadot-live/types/help';
+import type {
+  SubscriptionTask,
+  TaskAction,
+  TaskCategory,
+} from '@polkadot-live/types/subscriptions';
 import type BetterSqlite3 from 'better-sqlite3';
 
 /**
@@ -14,7 +19,14 @@ interface AccountSubscriptionRow {
   chain_id: string;
   address: string;
   action: string;
-  task_data: string;
+  api_call_as_string: string;
+  category: string;
+  enable_os_notifications: number;
+  help_key: string;
+  label: string;
+  status: string;
+  account: string | null;
+  action_args: string | null;
 }
 
 /**
@@ -56,8 +68,8 @@ export class AccountSubscriptionsRepository {
 
     AccountSubscriptionsRepository.stmtInsert = db.prepare(`
       INSERT OR REPLACE INTO account_subscriptions
-        (chain_id, address, action, task_data)
-      VALUES (?, ?, ?, ?)
+        (chain_id, address, action, api_call_as_string, category, enable_os_notifications, help_key, label, status, account, action_args)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     AccountSubscriptionsRepository.stmtDelete = db.prepare(
@@ -65,11 +77,11 @@ export class AccountSubscriptionsRepository {
     );
 
     AccountSubscriptionsRepository.stmtGetByChainAndAddress = db.prepare(
-      'SELECT task_data FROM account_subscriptions WHERE chain_id = ? AND address = ? ORDER BY action',
+      'SELECT * FROM account_subscriptions WHERE chain_id = ? AND address = ? ORDER BY action',
     );
 
     AccountSubscriptionsRepository.stmtGetAll = db.prepare(
-      'SELECT chain_id, address, action, task_data FROM account_subscriptions ORDER BY chain_id, address, action',
+      'SELECT * FROM account_subscriptions ORDER BY chain_id, address, action',
     );
 
     AccountSubscriptionsRepository.stmtClearAddress = db.prepare(
@@ -82,12 +94,22 @@ export class AccountSubscriptionsRepository {
    */
   static set(params: Readonly<SetSubscriptionParams>): void {
     const { chainId, address, action, task } = params;
-    const taskJson = JSON.stringify(task);
+    const accountJson = task.account ? JSON.stringify(task.account) : null;
+    const actionArgsJson = task.actionArgs
+      ? JSON.stringify(task.actionArgs)
+      : null;
     AccountSubscriptionsRepository.stmtInsert!.run(
       chainId,
       address,
       action,
-      taskJson,
+      task.apiCallAsString,
+      task.category,
+      task.enableOsNotifications ? 1 : 0,
+      task.helpKey,
+      task.label,
+      task.status,
+      accountJson,
+      actionArgsJson,
     );
   }
 
@@ -99,13 +121,13 @@ export class AccountSubscriptionsRepository {
     const rows = AccountSubscriptionsRepository.stmtGetByChainAndAddress!.all(
       chainId,
       address,
-    ) as { task_data: string }[];
+    ) as AccountSubscriptionRow[];
 
     if (rows.length === 0) {
       return '[]';
     }
 
-    const tasks = rows.map((row) => JSON.parse(row.task_data));
+    const tasks = rows.map((row) => rowToTask(row));
     return JSON.stringify(tasks);
   }
 
@@ -119,9 +141,9 @@ export class AccountSubscriptionsRepository {
     const rows = AccountSubscriptionsRepository.stmtGetByChainAndAddress!.all(
       chainId,
       address,
-    ) as { task_data: string }[];
+    ) as AccountSubscriptionRow[];
 
-    return rows.map((row) => JSON.parse(row.task_data));
+    return rows.map((row) => rowToTask(row));
   }
 
   /**
@@ -135,7 +157,7 @@ export class AccountSubscriptionsRepository {
 
     for (const row of rows) {
       const key = `${row.chain_id}:${row.address}`;
-      const task = JSON.parse(row.task_data);
+      const task = rowToTask(row);
 
       const existing = map.get(key) || [];
       existing.push(task);
@@ -159,4 +181,22 @@ export class AccountSubscriptionsRepository {
   static clearForAddress(chainId: ChainID, address: string): void {
     AccountSubscriptionsRepository.stmtClearAddress!.run(chainId, address);
   }
+}
+
+/**
+ * Convert a database row to a SubscriptionTask object.
+ */
+function rowToTask(row: AccountSubscriptionRow): SubscriptionTask {
+  return {
+    action: row.action as TaskAction,
+    apiCallAsString: row.api_call_as_string,
+    actionArgs: row.action_args ? JSON.parse(row.action_args) : undefined,
+    category: row.category as TaskCategory,
+    chainId: row.chain_id as ChainID,
+    label: row.label,
+    status: row.status as 'enable' | 'disable',
+    enableOsNotifications: row.enable_os_notifications === 1,
+    helpKey: row.help_key as HelpItemKey,
+    account: row.account ? JSON.parse(row.account) : undefined,
+  };
 }
