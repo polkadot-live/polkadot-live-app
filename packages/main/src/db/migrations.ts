@@ -197,6 +197,17 @@ export const migrations: Migration[] = [
           height INTEGER NOT NULL
         );
       `);
+
+      // Indexes for event queries performance.
+      db.exec(`
+        CREATE INDEX IF NOT EXISTS idx_events_timestamp_desc
+        ON events (timestamp DESC);
+      `);
+
+      db.exec(`
+        CREATE INDEX IF NOT EXISTS idx_events_category
+        ON events (category);
+      `);
     },
   },
 ];
