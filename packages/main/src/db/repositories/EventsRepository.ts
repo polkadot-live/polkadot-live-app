@@ -41,7 +41,7 @@ export class EventsRepository {
   private static stmtDelete: BetterSqlite3.Statement | null = null;
   private static stmtDeleteByCategory: BetterSqlite3.Statement | null = null;
   private static stmtUpdate: BetterSqlite3.Statement | null = null;
-  private static stmtDeleteAll: BetterSqlite3.Statement | null = null;
+  private static stmtUpdateWhoDdata: BetterSqlite3.Statement | null = null;
 
   /**
    * Prepare and cache SQL statements. Call once after the database is ready.
@@ -89,7 +89,11 @@ export class EventsRepository {
       WHERE uid = ?
     `);
 
-    EventsRepository.stmtDeleteAll = db.prepare('DELETE FROM events');
+    EventsRepository.stmtUpdateWhoDdata = db.prepare(`
+      UPDATE events
+      SET who_data = ?
+      WHERE uid = ?
+    `);
   }
 
   /**
@@ -141,6 +145,18 @@ export class EventsRepository {
   }
 
   /**
+   * Delete multiple events by their UIDs in a single transaction.
+   */
+  static deleteMany(uids: string[]): void {
+    const db = DatabaseManager.getDb();
+    db.transaction(() => {
+      for (const uid of uids) {
+        EventsRepository.delete(uid);
+      }
+    })();
+  }
+
+  /**
    * Delete all events in a given category.
    */
   static deleteByCategory(category: EventCategory): void {
@@ -155,20 +171,16 @@ export class EventsRepository {
   }
 
   /**
-   * Clear all events from the table.
+   * Update event who_data for specific UIDs in a single transaction.
    */
-  static clear(): void {
-    EventsRepository.stmtDeleteAll!.run();
-  }
-
-  /**
-   * Replace all events (delete all and insert new ones).
-   */
-  static replaceAll(events: EventCallback[]): void {
+  static updateWhoDdataMany(
+    updates: Array<{ uid: string; whoData: unknown }>,
+  ): void {
     const db = DatabaseManager.getDb();
     db.transaction(() => {
-      EventsRepository.clear();
-      EventsRepository.insertMany(events);
+      for (const { uid, whoData } of updates) {
+        EventsRepository.stmtUpdateWhoDdata!.run(JSON.stringify(whoData), uid);
+      }
     })();
   }
 

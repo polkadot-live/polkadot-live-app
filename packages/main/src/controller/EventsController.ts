@@ -10,7 +10,6 @@ import {
 } from '../controller';
 import { EventsRepository } from '../db';
 import { getUid } from '../utils/CryptoUtils';
-import { MainDebug } from '../utils/DebugUtils';
 import { AddressesController } from './AddressesController';
 import type {
   AccountSource,
@@ -26,8 +25,6 @@ import type {
   EventFetchPayload,
   NotificationData,
 } from '@polkadot-live/types/reporter';
-
-const debug = MainDebug.extend('EventsController');
 
 export class EventsController {
   // Set to `true` when app initializes and persisted events
@@ -113,12 +110,9 @@ export class EventsController {
 
   // ===== Private =====
 
-  // Remove all events in a given cateory.
+  // Remove all events in a given category.
   private static clearAll(category: EventCategory): boolean {
-    const events = EventsRepository.getAll().filter(
-      (e) => e.category !== category,
-    );
-    EventsRepository.replaceAll(events);
+    EventsRepository.deleteByCategory(category);
     return true;
   }
 
@@ -137,7 +131,7 @@ export class EventsController {
     EventsController.syncAccountNames();
 
     let stored = EventsRepository.getAll();
-    let persist = false;
+    const newEvents: EventCallback[] = [];
     const isChainEvent = (e: EventCallback) => e.who.origin === 'chainEvent';
 
     // Process non-chain events.
@@ -145,7 +139,7 @@ export class EventsController {
       const res = pushUniqueEvent(event, stored);
       if (res.updated) {
         stored = res.events;
-        persist = true;
+        newEvents.push(event);
       }
     }
 
@@ -155,13 +149,13 @@ export class EventsController {
       if (!storedUids.has(event.uid)) {
         stored = [...stored, event];
         storedUids.add(event.uid);
-        persist = true;
+        newEvents.push(event);
       }
     }
 
-    if (persist) {
-      EventsRepository.replaceAll(stored);
-      debug('🔷 Event persisted (%o total in store)', stored.length);
+    // Insert new events.
+    if (newEvents.length > 0) {
+      EventsRepository.insertMany(newEvents);
     }
 
     return JSON.stringify(stored);
@@ -258,22 +252,23 @@ export class EventsController {
     EventsRepository.markStale(uid);
   }
 
-  // Remove an event from the store.
+  // Remove an event.
   private static removeEvent(event: EventCallback): boolean {
     EventsRepository.delete(event.uid);
     return true;
   }
 
-  // Remove outdated events from the store.
+  // Remove outdated events.
   private static removeOutdatedEvents(event: EventCallback) {
-    // TODO: Refactor to remove outdated events in a more targeted way,
-    // rather than by iterating through all events in the store.
-
     // Currently only for nomination pool rewards and nominating pending payout events.
-    // Will remove old matching events from the store.
+    // Will remove old matching events.
     const all = EventsRepository.getAll();
-    const { updated, events } = doRemoveOutdatedEvents(event, all);
-    updated && EventsRepository.replaceAll(events);
+    const { updated, removed } = doRemoveOutdatedEvents(event, all);
+
+    // Delete only the outdated events.
+    if (updated && removed && removed.length > 0) {
+      EventsRepository.deleteMany(removed.map((e) => e.uid));
+    }
   }
 
   // Update persisted events with new account name and return updated events.
@@ -301,20 +296,32 @@ export class EventsController {
     const matchesAccount = (data: EventAccountData) =>
       data.address === address && data.chainId === chainId;
 
-    const updated = all.map((e: EventCallback) => {
-      if (!isAccountEvent(e)) return e;
+    const updates: Array<{ uid: string; whoData: unknown }> = [];
+    const filtered: EventCallback[] = [];
+
+    for (const e of all) {
+      if (!isAccountEvent(e)) continue;
 
       const data = e.who.data as EventAccountData;
-      return matchesAccount(data) && newName !== data.accountName
-        ? { ...e, who: { ...e.who, data: { ...data, accountName: newName } } }
-        : e;
-    });
-
-    EventsRepository.replaceAll(updated);
-    return updated.filter(
-      (e) =>
-        isAccountEvent(e) && matchesAccount(e.who.data as EventAccountData),
-    );
+      if (matchesAccount(data)) {
+        // Create updated event with new account name.
+        const updatedData = { ...data, accountName: newName };
+        const updatedEvent = {
+          ...e,
+          who: { ...e.who, data: updatedData },
+        };
+        // Only update if the name actually changed.
+        if (newName !== data.accountName) {
+          updates.push({ uid: e.uid, whoData: updatedData });
+        }
+        filtered.push(updatedEvent);
+      }
+    }
+    // Update only the events that changed in the database.
+    if (updates.length > 0) {
+      EventsRepository.updateWhoDdataMany(updates);
+    }
+    return filtered;
   }
 
   // ===== Utilities =====
@@ -346,39 +353,45 @@ export class EventsController {
     }
 
     const stored = EventsRepository.getAll();
-    const { events, updated } = pushUniqueEvent(event, stored);
+    const { updated } = pushUniqueEvent(event, stored);
 
-    // Persist new array to store if event was pushed.
+    // Persist event to store if it was pushed.
     if (updated) {
-      EventsRepository.replaceAll(events);
-      debug('🔷 Event persisted (%o total in store)', events.length);
+      EventsRepository.insert(event);
     }
-
     return { event, wasPersisted: updated };
   }
 
   // Updates events associated account names.
   private static syncAccountNames() {
     const accounts = EventsController.getAllGenericAccounts();
-    const updated = EventsRepository.getAll().map((e: EventCallback) => {
-      if (e.who.origin !== 'account') {
-        return e;
-      }
-      const who = e.who.data as EventAccountData;
+    const all = EventsRepository.getAll();
+    const updates: Array<{ uid: string; whoData: unknown }> = [];
+
+    for (const event of all) {
+      if (event.who.origin !== 'account') continue;
+
+      const who = event.who.data as EventAccountData;
       const encoded: EncodedAccount[] = [];
 
       for (const { encodedAccounts } of accounts) {
         const enAccount = encodedAccounts?.[who.chainId] ?? null;
         enAccount && encoded.push(enAccount);
       }
+
       for (const { address, alias } of encoded) {
-        if (who.address === address) {
-          (e.who.data as EventAccountData).accountName = alias;
+        if (who.address === address && who.accountName !== alias) {
+          // Only update if the name actually changed.
+          const updatedData = { ...who, accountName: alias };
+          updates.push({ uid: event.uid, whoData: updatedData });
+          break; // Found matching account, no need to continue.
         }
       }
-      return e;
-    });
+    }
 
-    EventsRepository.replaceAll(updated);
+    // Update event names.
+    if (updates.length > 0) {
+      EventsRepository.updateWhoDdataMany(updates);
+    }
   }
 }
