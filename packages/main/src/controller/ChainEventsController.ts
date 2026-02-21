@@ -119,8 +119,7 @@ export class ChainEventsController {
   private static getAllForAccount(
     account: FlattenedAccountData,
   ): string | undefined {
-    const { address, chain: chainId } = account;
-    const subs = ChainEventsRepository.getAllForAccount(chainId, address);
+    const subs = ChainEventsRepository.getAllForAccount(account);
     return subs.length > 0 ? JSON.stringify(subs) : undefined;
   }
 
@@ -129,12 +128,7 @@ export class ChainEventsController {
     account: FlattenedAccountData,
     sub: ChainEventSubscription,
   ) {
-    ChainEventsRepository.removeForAccount(
-      account.chain,
-      account.address,
-      sub.pallet,
-      sub.eventName,
-    );
+    ChainEventsRepository.removeForAccount(account, sub);
     ChainEventsRepository.insert(sub, 'account', account.address);
   }
 
@@ -145,8 +139,7 @@ export class ChainEventsController {
 
   // Remove all account-scoped subscriptions.
   private static removeAllForAccount(account: FlattenedAccountData) {
-    const { address, chain: chainId } = account;
-    ChainEventsRepository.removeAllForAccount(chainId, address);
+    ChainEventsRepository.removeAllForAccount(account);
   }
 
   // Remove an account-scoped subscription.
@@ -154,12 +147,7 @@ export class ChainEventsController {
     account: FlattenedAccountData,
     sub: ChainEventSubscription,
   ) {
-    ChainEventsRepository.removeForAccount(
-      account.chain,
-      account.address,
-      sub.pallet,
-      sub.eventName,
-    );
+    ChainEventsRepository.removeForAccount(account, sub);
   }
 
   // ===== Referenda Scoped Methods =====

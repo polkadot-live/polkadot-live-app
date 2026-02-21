@@ -47,6 +47,7 @@ export class AccountsController {
     const { address, chainId }: { address: string; chainId: ChainID } =
       task.data;
     SubscriptionsController.clearAccountTasksInStore(address, chainId);
+    AccountsRepository.delete(address, chainId);
   }
 
   // Persist accounts.

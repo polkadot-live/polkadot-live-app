@@ -5,6 +5,7 @@ import { DatabaseManager } from '../Database';
 import type {
   ChainEventSubscription,
   EventSubKind,
+  FlattenedAccountData,
   HelpItemKey,
 } from '@polkadot-live/types';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -46,7 +47,6 @@ interface ActiveRefRow {
 export class ChainEventsRepository {
   // chain_event_subscriptions statements
   private static stmtInsert: BetterSqlite3.Statement | null = null;
-  private static stmtGetAll: BetterSqlite3.Statement | null = null;
   private static stmtGetGlobal: BetterSqlite3.Statement | null = null;
   private static stmtGetByAccount: BetterSqlite3.Statement | null = null;
   private static stmtGetByRef: BetterSqlite3.Statement | null = null;
@@ -68,20 +68,13 @@ export class ChainEventsRepository {
   static initialize(): void {
     const db = DatabaseManager.getDb();
 
-    // ============================================
-    // chain_event_subscriptions statements
-    // ============================================
+    // ===== chain_event_subscriptions statements =====
 
     ChainEventsRepository.stmtInsert = db.prepare(`
       INSERT OR REPLACE INTO chain_event_subscriptions
         (id, chain_id, kind, pallet, event_name, enabled, os_notify, label, event_data, help_key, scope_type, scope_id)
       VALUES
         (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `);
-
-    ChainEventsRepository.stmtGetAll = db.prepare(`
-      SELECT * FROM chain_event_subscriptions
-      ORDER BY chain_id, scope_type, scope_id
     `);
 
     ChainEventsRepository.stmtGetGlobal = db.prepare(`
@@ -122,9 +115,7 @@ export class ChainEventsRepository {
       WHERE chain_id = ? AND scope_type = 'global' AND pallet = ? AND event_name = ?
     `);
 
-    // ============================================
-    // chain_event_active_refs statements
-    // ============================================
+    // ===== chain_event_active_refs statements =====
 
     ChainEventsRepository.stmtInsertActiveRef = db.prepare(`
       INSERT OR IGNORE INTO chain_event_active_refs (chain_id, ref_id)
@@ -219,22 +210,14 @@ export class ChainEventsRepository {
    * Get all chain event subscriptions for a specific account (address + chain).
    */
   static getAllForAccount(
-    chainId: ChainID,
-    address: string,
+    account: FlattenedAccountData,
   ): ChainEventSubscription[] {
+    const { address, chain: chainId } = account;
     const rows = ChainEventsRepository.stmtGetByAccount!.all(
       chainId,
       address,
     ) as ChainEventRow[];
     return rows.map((row) => ChainEventsRepository.rowToSubscription(row));
-  }
-
-  /**
-   * Get all chain event subscriptions for a specific account, serialized.
-   */
-  static getAllForAccountSerialized(chainId: ChainID, address: string): string {
-    const subs = ChainEventsRepository.getAllForAccount(chainId, address);
-    return JSON.stringify(subs);
   }
 
   /**
@@ -248,16 +231,6 @@ export class ChainEventsRepository {
       chainId,
       refId.toString(),
     ) as ChainEventRow[];
-    return rows.map((row) => ChainEventsRepository.rowToSubscription(row));
-  }
-
-  /**
-   * Get all chain event subscriptions for a specific chain, across all scopes.
-   */
-  static getAllForChain(chainId: ChainID): ChainEventSubscription[] {
-    const rows = (
-      ChainEventsRepository.stmtGetAll!.all() as ChainEventRow[]
-    ).filter((row) => row.chain_id === chainId);
     return rows.map((row) => ChainEventsRepository.rowToSubscription(row));
   }
 
@@ -280,11 +253,11 @@ export class ChainEventsRepository {
    * Remove an account-scoped chain event subscription.
    */
   static removeForAccount(
-    chainId: ChainID,
-    address: string,
-    pallet: string,
-    eventName: string,
+    account: FlattenedAccountData,
+    sub: ChainEventSubscription,
   ): void {
+    const { chain: chainId, address } = account;
+    const { pallet, eventName } = sub;
     ChainEventsRepository.stmtDeleteByAccountAndId!.run(
       chainId,
       address,
@@ -296,25 +269,9 @@ export class ChainEventsRepository {
   /**
    * Remove all account-scoped chain event subscriptions for an account.
    */
-  static removeAllForAccount(chainId: ChainID, address: string): void {
+  static removeAllForAccount(account: FlattenedAccountData): void {
+    const { chain: chainId, address } = account;
     ChainEventsRepository.stmtDeleteAllByAccount!.run(chainId, address);
-  }
-
-  /**
-   * Remove a ref-scoped chain event subscription.
-   */
-  static removeForRef(
-    chainId: ChainID,
-    refId: number,
-    pallet: string,
-    eventName: string,
-  ): void {
-    ChainEventsRepository.stmtDeleteByAccountAndId!.run(
-      chainId,
-      refId.toString(),
-      pallet,
-      eventName,
-    );
   }
 
   /**
@@ -324,9 +281,7 @@ export class ChainEventsRepository {
     ChainEventsRepository.stmtDeleteAllByRef!.run(chainId, refId.toString());
   }
 
-  // ============================================
-  // Active Refs Management
-  // ============================================
+  // ===== Active Refs Management =====
 
   /**
    * Add a ref ID to the active refs cache.

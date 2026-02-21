@@ -156,16 +156,6 @@ export class IntervalSubscriptionsRepository {
   }
 
   /**
-   * Get all interval subscription tasks as deserialized objects.
-   */
-  static getAllDeserialized(): IntervalSubscription[] {
-    const rows =
-      IntervalSubscriptionsRepository.stmtGetAll!.all() as IntervalSubscriptionRow[];
-
-    return rows.map((row) => rowToTask(row));
-  }
-
-  /**
    * Delete a single interval subscription task by action, chain, and referendum ID.
    */
   static delete(action: string, chainId: ChainID, referendumId?: number): void {

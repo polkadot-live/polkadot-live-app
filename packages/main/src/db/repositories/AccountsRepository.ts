@@ -81,30 +81,6 @@ export class AccountsRepository {
   }
 
   /**
-   * Get all imported accounts as `[ChainID, StoredAccount[]][]` (deserialized).
-   */
-  static getAllEntries(): [ChainID, StoredAccount[]][] {
-    const rows = AccountsRepository.stmtGetAll!.all() as ImportedAccountRow[];
-    const map = new Map<ChainID, StoredAccount[]>();
-
-    for (const row of rows) {
-      const chainId = row.chain_id as ChainID;
-      const account: StoredAccount = {
-        _address: row.address,
-        _chain: chainId,
-        _name: row.name,
-        _source: row.source as AccountSource,
-      };
-
-      const existing = map.get(chainId) || [];
-      existing.push(account);
-      map.set(chainId, existing);
-    }
-
-    return Array.from(map.entries());
-  }
-
-  /**
    * Replace all imported accounts with the provided data.
    *
    * Accepts the serialized `[ChainID, StoredAccount[]][]` format used by

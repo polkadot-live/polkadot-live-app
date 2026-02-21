@@ -28,7 +28,6 @@ interface RawAddressRow {
 export class AddressesRepository {
   private static stmtGetBySource: BetterSqlite3.Statement | null = null;
   private static stmtGetByKey: BetterSqlite3.Statement | null = null;
-  private static stmtGetAll: BetterSqlite3.Statement | null = null;
   private static stmtUpsert: BetterSqlite3.Statement | null = null;
   private static stmtDelete: BetterSqlite3.Statement | null = null;
   private static stmtExists: BetterSqlite3.Statement | null = null;
@@ -45,7 +44,6 @@ export class AddressesRepository {
     AddressesRepository.stmtGetByKey = db.prepare(
       'SELECT * FROM raw_addresses WHERE public_key_hex = ?',
     );
-    AddressesRepository.stmtGetAll = db.prepare('SELECT * FROM raw_addresses');
     AddressesRepository.stmtUpsert = db.prepare(`
       INSERT OR REPLACE INTO raw_addresses
         (public_key_hex, account_name, source, encoded_accounts)
@@ -80,14 +78,6 @@ export class AddressesRepository {
   }
 
   /**
-   * Get all stored addresses.
-   */
-  static getAll(): ImportedGenericAccount[] {
-    const rows = AddressesRepository.stmtGetAll!.all() as RawAddressRow[];
-    return rows.map(AddressesRepository.rowToAccount);
-  }
-
-  /**
    * Insert or update an address.
    */
   static upsert(account: ImportedGenericAccount): void {
@@ -97,18 +87,6 @@ export class AddressesRepository {
       account.source,
       JSON.stringify(account.encodedAccounts),
     );
-  }
-
-  /**
-   * Insert or update multiple addresses in a single transaction.
-   */
-  static upsertMany(accounts: ImportedGenericAccount[]): void {
-    const db = DatabaseManager.getDb();
-    db.transaction(() => {
-      for (const account of accounts) {
-        AddressesRepository.upsert(account);
-      }
-    })();
   }
 
   /**
