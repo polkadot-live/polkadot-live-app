@@ -2,21 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { MessageChannelMain } from 'electron';
-import type { AccountSource } from '@polkadot-live/types/accounts';
-import type { ChainID } from '@polkadot-live/types/chains';
 import type { PortPair, PortPairID } from '@polkadot-live/types/communication';
 import type { Rectangle, Tray } from 'electron';
 
 export class Config {
-  // Storage keys.
-  private static _chainSubscriptionsStorageKey = 'chain_subscriptions';
-
-  // Raw account storage keys.
-  private static _ledgerAddressesStorageKey = 'ledger_addresses';
-  private static _vaultAddressesStorageKey = 'vault_addresses';
-  private static _readOnlyAddressesStorageKey = 'read_only_addresses';
-  private static _wcAddressesStorageKey = 'wc_addresses';
-
   // Main window's docked properties.
   private static _dockedWidth = 490;
   private static _dockedHeight = 720;
@@ -32,27 +21,6 @@ export class Config {
   // Cache Electron objects.
   private static _appTray: Tray | null = null;
 
-  // Return the local storage key for corresponding source addresses.
-  static getStorageKey(source: AccountSource): string {
-    switch (source) {
-      case 'ledger': {
-        return Config._ledgerAddressesStorageKey;
-      }
-      case 'vault': {
-        return Config._vaultAddressesStorageKey;
-      }
-      case 'read-only': {
-        return Config._readOnlyAddressesStorageKey;
-      }
-      case 'wallet-connect': {
-        return Config._wcAddressesStorageKey;
-      }
-      default: {
-        throw new Error('source not recognized');
-      }
-    }
-  }
-
   // Return port pair to facilitate window communication.
   static getPortPair = (id: PortPairID): PortPair => {
     switch (id) {
@@ -64,19 +32,6 @@ export class Config {
       }
     }
   };
-
-  // Get local storage key for chain subscription tasks.
-  static getChainSubscriptionsStorageKey(): string {
-    return Config._chainSubscriptionsStorageKey;
-  }
-
-  // Get local storage key for subscription tasks of a particular address.
-  static getSubscriptionsStorageKeyFor(
-    address: string,
-    chainId: ChainID,
-  ): string {
-    return `${chainId}_${address}_subscriptions`;
-  }
 
   // Initialize ports to facilitate communication between the main and other renderers.
   static initPorts(id: PortPairID): void {
