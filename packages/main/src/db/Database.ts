@@ -1,6 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { existsSync, unlinkSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join } from 'node:path';
 import { migrations } from './migrations';
@@ -42,10 +43,12 @@ export class DatabaseManager {
 
   /**
    * Initialize database and all repository instances.
-   *
    * Must be called once during app startup, before any repository is used.
    */
   static initializeAll(userDataPath: string): void {
+    // Clean up deprecated electron-store file
+    DatabaseManager.removeDeprecatedElectronStore(userDataPath);
+
     DatabaseManager.initialize(userDataPath);
     AppMetaRepository.initialize();
     SettingsRepository.initialize();
@@ -133,6 +136,22 @@ export class DatabaseManager {
         migration.up(db);
         db.pragma(`user_version = ${migration.version}`);
       })();
+    }
+  }
+
+  /**
+   * Remove deprecated electron-store config file if it exists.
+   * Called during initialization to clean up files from previous versions.
+   */
+  private static removeDeprecatedElectronStore(userDataPath: string): void {
+    const configFilePath = join(userDataPath, 'config.json');
+    try {
+      if (existsSync(configFilePath)) {
+        unlinkSync(configFilePath);
+      }
+    } catch (err) {
+      // Silently ignore if cleanup fails
+      console.warn('Failed to remove deprecated electron-store file:', err);
     }
   }
 }
