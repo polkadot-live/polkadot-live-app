@@ -30,20 +30,7 @@ import {
   SubscriptionsController,
   WindowsController,
 } from './controller';
-import {
-  AccountSubscriptionsRepository,
-  AccountsRepository,
-  AddressesRepository,
-  AppMetaRepository,
-  ChainEventsRepository,
-  ChainSubscriptionsRepository,
-  DatabaseManager,
-  EventsRepository,
-  ExtrinsicsRepository,
-  IntervalSubscriptionsRepository,
-  SettingsRepository,
-  WindowStateRepository,
-} from './db';
+import { DatabaseManager } from './db';
 import { executeLedgerTask, USBController } from './ledger';
 import { MainDebug } from './utils/DebugUtils';
 import { menuTemplate } from './utils/MenuUtils';
@@ -134,18 +121,7 @@ app.whenReady().then(async () => {
   });
 
   // Initialize SQLite database and repositories.
-  DatabaseManager.initialize(app.getPath('userData'));
-  AppMetaRepository.initialize();
-  SettingsRepository.initialize();
-  AddressesRepository.initialize();
-  AccountsRepository.initialize();
-  AccountSubscriptionsRepository.initialize();
-  ChainSubscriptionsRepository.initialize();
-  IntervalSubscriptionsRepository.initialize();
-  EventsRepository.initialize();
-  ExtrinsicsRepository.initialize();
-  ChainEventsRepository.initialize();
-  WindowStateRepository.initialize();
+  DatabaseManager.initializeAll(app.getPath('userData'));
 
   // Hide dock icon if we're on mac OS.
   SettingsController.initialize();
@@ -212,6 +188,7 @@ app.whenReady().then(async () => {
    * Disclaimer
    */
   ipcMain.handle('main:disclaimer:show', async () => {
+    const { AppMetaRepository } = await import('./db');
     const shown = AppMetaRepository.getDisclaimerShown();
     if (!shown) {
       AppMetaRepository.setDisclaimerShown(true);

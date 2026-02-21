@@ -4,6 +4,19 @@
 import { createRequire } from 'node:module';
 import { join } from 'node:path';
 import { migrations } from './migrations';
+import {
+  AccountSubscriptionsRepository,
+  AccountsRepository,
+  AddressesRepository,
+  AppMetaRepository,
+  ChainEventsRepository,
+  ChainSubscriptionsRepository,
+  EventsRepository,
+  ExtrinsicsRepository,
+  IntervalSubscriptionsRepository,
+  SettingsRepository,
+  WindowStateRepository,
+} from './repositories';
 import type BetterSqlite3 from 'better-sqlite3';
 import type { Migration } from './migrations';
 
@@ -28,10 +41,30 @@ export class DatabaseManager {
   private static db: BetterSqlite3.Database | null = null;
 
   /**
+   * Initialize database and all repository instances.
+   *
+   * Must be called once during app startup, before any repository is used.
+   */
+  static initializeAll(userDataPath: string): void {
+    DatabaseManager.initialize(userDataPath);
+    AppMetaRepository.initialize();
+    SettingsRepository.initialize();
+    AddressesRepository.initialize();
+    AccountsRepository.initialize();
+    AccountSubscriptionsRepository.initialize();
+    ChainSubscriptionsRepository.initialize();
+    IntervalSubscriptionsRepository.initialize();
+    EventsRepository.initialize();
+    ExtrinsicsRepository.initialize();
+    ChainEventsRepository.initialize();
+    WindowStateRepository.initialize();
+  }
+
+  /**
    * Open (or create) the database at `<userDataPath>/polkadot-live.db`,
    * enable WAL journal mode and foreign keys, then run any pending migrations.
    *
-   * Must be called once during app startup, before any repository is used.
+   * Must be called once during app startup. Prefer `initializeAll()` for full initialization.
    */
   static initialize(userDataPath: string): void {
     if (DatabaseManager.db) {
