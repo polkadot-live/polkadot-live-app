@@ -2,12 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { DatabaseManager } from '../Database';
-import type {
-  AccountNominatingData,
-  AccountNominationPoolData,
-  AccountSource,
-  FlattenedAccountData,
-} from '@polkadot-live/types/accounts';
+import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type BetterSqlite3 from 'better-sqlite3';
 
@@ -38,7 +33,6 @@ export class SubscriptionAccountsRepository {
   private static stmtUpdate: BetterSqlite3.Statement | null = null;
   private static stmtGetByAddressAndChain: BetterSqlite3.Statement | null =
     null;
-  private static stmtGetById: BetterSqlite3.Statement | null = null;
   private static stmtDelete: BetterSqlite3.Statement | null = null;
   private static stmtUpdateName: BetterSqlite3.Statement | null = null;
 
@@ -62,10 +56,6 @@ export class SubscriptionAccountsRepository {
 
     SubscriptionAccountsRepository.stmtGetByAddressAndChain = db.prepare(
       'SELECT * FROM subscription_accounts WHERE address = ? AND chain_id = ?',
-    );
-
-    SubscriptionAccountsRepository.stmtGetById = db.prepare(
-      'SELECT * FROM subscription_accounts WHERE id = ?',
     );
 
     SubscriptionAccountsRepository.stmtDelete = db.prepare(
@@ -123,47 +113,6 @@ export class SubscriptionAccountsRepository {
   }
 
   /**
-   * Get a subscription account by address and chain, or null if not found.
-   */
-  static getByAddressAndChain(
-    address: string,
-    chainId: ChainID,
-  ): FlattenedAccountData | null {
-    const row = SubscriptionAccountsRepository.stmtGetByAddressAndChain!.get(
-      address,
-      chainId,
-    ) as SubscriptionAccountRow | undefined;
-
-    return row ? rowToAccount(row) : null;
-  }
-
-  /**
-   * Get a subscription account by its row id, or null if not found.
-   */
-  static getById(id: number): FlattenedAccountData | null {
-    const row = SubscriptionAccountsRepository.stmtGetById!.get(id) as
-      | SubscriptionAccountRow
-      | undefined;
-
-    return row ? rowToAccount(row) : null;
-  }
-
-  /**
-   * Get the row id for an account by address and chain, or null if not found.
-   */
-  static getIdByAddressAndChain(
-    address: string,
-    chainId: ChainID,
-  ): number | null {
-    const row = SubscriptionAccountsRepository.stmtGetByAddressAndChain!.get(
-      address,
-      chainId,
-    ) as SubscriptionAccountRow | undefined;
-
-    return row ? row.id : null;
-  }
-
-  /**
    * Delete a subscription account by address and chain.
    */
   static delete(address: string, chainId: ChainID): void {
@@ -180,22 +129,4 @@ export class SubscriptionAccountsRepository {
       chainId,
     );
   }
-}
-
-/**
- * Convert a database row to a FlattenedAccountData object.
- */
-function rowToAccount(row: SubscriptionAccountRow): FlattenedAccountData {
-  return {
-    address: row.address,
-    chain: row.chain_id as ChainID,
-    name: row.name,
-    source: row.source as AccountSource,
-    nominationPoolData: row.nomination_pool_data
-      ? (JSON.parse(row.nomination_pool_data) as AccountNominationPoolData)
-      : null,
-    nominatingData: row.nominating_data
-      ? (JSON.parse(row.nominating_data) as AccountNominatingData)
-      : null,
-  };
 }

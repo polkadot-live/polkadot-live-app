@@ -216,21 +216,6 @@ export class AccountSubscriptionsRepository {
   }
 
   /**
-   * Get all subscription tasks for an account as deserialized objects.
-   */
-  static getForAddressDeserialized(
-    chainId: ChainID,
-    address: string,
-  ): SubscriptionTask[] {
-    const rows = AccountSubscriptionsRepository.stmtGetByChainAndAddress!.all(
-      chainId,
-      address,
-    ) as AccountSubscriptionRow[];
-
-    return rows.map((row) => rowToTask(row));
-  }
-
-  /**
    * Get all account subscriptions as a Map<`chainId:address`, SubscriptionTask[]>.
    * Serialized as JSON for compatibility with backup export format.
    */
