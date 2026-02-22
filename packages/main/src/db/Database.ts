@@ -16,6 +16,7 @@ import {
   ExtrinsicsRepository,
   IntervalSubscriptionsRepository,
   SettingsRepository,
+  SubscriptionAccountsRepository,
   WindowStateRepository,
 } from './repositories';
 import type BetterSqlite3 from 'better-sqlite3';
@@ -54,6 +55,7 @@ export class DatabaseManager {
     SettingsRepository.initialize();
     AddressesRepository.initialize();
     AccountsRepository.initialize();
+    SubscriptionAccountsRepository.initialize();
     AccountSubscriptionsRepository.initialize();
     ChainSubscriptionsRepository.initialize();
     IntervalSubscriptionsRepository.initialize();

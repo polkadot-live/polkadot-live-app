@@ -5,6 +5,7 @@ import { OnlineStatusController } from '../controller';
 import {
   AccountSubscriptionsRepository,
   ChainSubscriptionsRepository,
+  SubscriptionAccountsRepository,
 } from '../db';
 import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -61,31 +62,14 @@ export class SubscriptionsController {
   }
 
   // Called when an account is renamed.
+  // Updates the name in the normalized subscription_accounts.
   static updateCachedAccountNameForTasks(params: {
     address: string;
     chainId: ChainID;
     newName: string;
   }) {
     const { address, chainId, newName } = params;
-    const tasks = AccountSubscriptionsRepository.getForAddressDeserialized(
-      chainId,
-      address,
-    );
-
-    if (tasks.length === 0) {
-      return;
-    }
-
-    const updated = tasks.map((task) => ({
-      ...task,
-      account: task.account ? { ...task.account, name: newName } : undefined,
-    }));
-
-    // Update each task in the database with the new account name.
-    for (const task of updated) {
-      const params = { chainId, address, action: task.action, task };
-      AccountSubscriptionsRepository.set(params);
-    }
+    SubscriptionAccountsRepository.updateName(address, chainId, newName);
   }
 
   // ===== Private =====

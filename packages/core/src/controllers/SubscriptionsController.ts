@@ -14,22 +14,6 @@ import type {
 } from '@polkadot-live/types/subscriptions';
 import type { Account } from '../model';
 
-/**
- * Key naming convention of subscription tasks in store:
- *
- * 'chain_subscriptions'
- *   Key that stores global chain subscription tasks.
- *
- * '<account_address>_subscriptions'
- *   Key that stores an account's subscription tasks.
- *
- * Ex: const serialized = store.get('chain_subscriptions');
- *
- * When subscription tasks are retrieved and deserialised,
- * they can be passed to the `TaskOrchestrator`, where the API
- * call will be re-built.
- */
-
 export class SubscriptionsController {
   static backend: 'browser' | 'electron';
   static chainSubscriptions = new QueryMultiWrapper();

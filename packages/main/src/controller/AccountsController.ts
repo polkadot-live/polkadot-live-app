@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { AccountsRepository } from '../db';
+import { AccountsRepository, SubscriptionAccountsRepository } from '../db';
 import { NotificationsController } from './NotificationsController';
 import { SubscriptionsController } from './SubscriptionsController';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -47,6 +47,7 @@ export class AccountsController {
     const { address, chainId }: { address: string; chainId: ChainID } =
       task.data;
     SubscriptionsController.clearAccountTasksInStore(address, chainId);
+    SubscriptionAccountsRepository.delete(address, chainId);
     AccountsRepository.delete(address, chainId);
   }
 

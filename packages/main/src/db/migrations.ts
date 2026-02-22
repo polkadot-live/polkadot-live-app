@@ -106,6 +106,21 @@ export const migrations: Migration[] = [
         );
       `);
 
+      // Subscription accounts table — stores unique flattened account data.
+      // Referenced by account_subscriptions via foreign key (one-to-many).
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS subscription_accounts (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          address TEXT NOT NULL,
+          chain_id TEXT NOT NULL,
+          name TEXT NOT NULL,
+          source TEXT NOT NULL,
+          nomination_pool_data TEXT,
+          nominating_data TEXT,
+          UNIQUE (address, chain_id)
+        );
+      `);
+
       // Account subscriptions table — stores subscription tasks per account+chain.
       db.exec(`
         CREATE TABLE IF NOT EXISTS account_subscriptions (
@@ -119,8 +134,8 @@ export const migrations: Migration[] = [
           help_key TEXT NOT NULL,
           label TEXT NOT NULL,
           status TEXT NOT NULL,
-          account TEXT,
           action_args TEXT,
+          account_id INTEGER REFERENCES subscription_accounts(id) ON DELETE SET NULL,
           UNIQUE (chain_id, address, action)
         );
       `);
@@ -219,6 +234,11 @@ export const migrations: Migration[] = [
       db.exec(`
         CREATE INDEX IF NOT EXISTS idx_events_category
         ON events (category);
+      `);
+
+      db.exec(`
+        CREATE INDEX IF NOT EXISTS idx_account_subs_account_id
+        ON account_subscriptions (account_id);
       `);
     },
   },
