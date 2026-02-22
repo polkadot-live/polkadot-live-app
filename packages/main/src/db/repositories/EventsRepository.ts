@@ -41,7 +41,7 @@ export class EventsRepository {
   private static stmtDelete: BetterSqlite3.Statement | null = null;
   private static stmtDeleteByCategory: BetterSqlite3.Statement | null = null;
   private static stmtUpdate: BetterSqlite3.Statement | null = null;
-  private static stmtUpdateWhoDdata: BetterSqlite3.Statement | null = null;
+  private static stmtUpdateWhoData: BetterSqlite3.Statement | null = null;
 
   /**
    * Prepare and cache SQL statements. Call once after the database is ready.
@@ -89,7 +89,7 @@ export class EventsRepository {
       WHERE uid = ?
     `);
 
-    EventsRepository.stmtUpdateWhoDdata = db.prepare(`
+    EventsRepository.stmtUpdateWhoData = db.prepare(`
       UPDATE events
       SET who_data = ?
       WHERE uid = ?
@@ -173,13 +173,13 @@ export class EventsRepository {
   /**
    * Update event who_data for specific UIDs in a single transaction.
    */
-  static updateWhoDdataMany(
+  static updateWhoDataMany(
     updates: Array<{ uid: string; whoData: unknown }>,
   ): void {
     const db = DatabaseManager.getDb();
     db.transaction(() => {
       for (const { uid, whoData } of updates) {
-        EventsRepository.stmtUpdateWhoDdata!.run(JSON.stringify(whoData), uid);
+        EventsRepository.stmtUpdateWhoData!.run(JSON.stringify(whoData), uid);
       }
     })();
   }
@@ -191,7 +191,7 @@ export class EventsRepository {
     return {
       uid: row.uid,
       category: row.category as EventCategory,
-      taskAction: row.task_action as TaskAction,
+      taskAction: row.task_action as TaskAction | string,
       who: {
         origin: row.who_origin as
           | 'account'

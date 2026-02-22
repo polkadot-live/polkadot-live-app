@@ -319,7 +319,7 @@ export class EventsController {
     }
     // Update only the events that changed in the database.
     if (updates.length > 0) {
-      EventsRepository.updateWhoDdataMany(updates);
+      EventsRepository.updateWhoDataMany(updates);
     }
     return filtered;
   }
@@ -391,7 +391,7 @@ export class EventsController {
 
     // Update event names.
     if (updates.length > 0) {
-      EventsRepository.updateWhoDdataMany(updates);
+      EventsRepository.updateWhoDataMany(updates);
     }
   }
 }
