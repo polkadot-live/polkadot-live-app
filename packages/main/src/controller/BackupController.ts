@@ -16,10 +16,7 @@ import {
 import type { ExportResult, ImportResult } from '@polkadot-live/types/backup';
 
 export class BackupController {
-  /**
-   * @name export
-   * @summary Export Polkadot Live data to a text file.
-   */
+  // Export Polkadot Live data to a text file.
   static async export(): Promise<ExportResult> {
     // Exit early if overlay is created.
     if (process.platform === 'linux') {
@@ -85,10 +82,7 @@ export class BackupController {
     }
   }
 
-  /**
-   * @name import
-   * @summary Import a Polkadot Live data file.
-   */
+  // Import a Polkadot Live data file.
   static async import(): Promise<ImportResult> {
     // Exit early if overlay is created.
     if (process.platform === 'linux') {
@@ -143,15 +137,12 @@ export class BackupController {
     }
   }
 
-  /**
-   * @name getExportData
-   * @summary Return serialized backup data which should be written to a text file.
-   */
+  // Return serialized backup data for writing to a text file.
   private static getExportData(): string {
     const map = new Map<string, string>();
     const addresses = AddressesController.getBackupData();
     const events = EventsController.getBackupData();
-    const extrinsics = ExtrinsicsController.getBackupDate();
+    const extrinsics = ExtrinsicsController.getBackupData();
     const intervals = IntervalsController.getBackupData();
     const accountTasks = SubscriptionsController.getBackupData();
 

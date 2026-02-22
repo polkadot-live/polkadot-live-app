@@ -4,7 +4,7 @@
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getAllEventCategories } from '@polkadot-live/consts/chains';
-import { useEvents } from '@polkadot-live/contexts';
+import { useAppSettings, useEvents } from '@polkadot-live/contexts';
 import * as Wrappers from '@polkadot-live/styles';
 import * as UI from '@polkadot-live/ui';
 import * as Accordion from '@radix-ui/react-accordion';
@@ -14,10 +14,13 @@ import type { EventCategory } from '@polkadot-live/types';
 import type { CategoriesProps } from './types';
 
 export const Categories = ({ setSection }: CategoriesProps) => {
+  const { cacheGet } = useAppSettings();
   const { eventCounts, getEventCategoryIcon, changeActiveCategory } =
     useEvents();
 
   const [accordionValue, setAccordionValue] = useState('Categories');
+
+  const showDebugging = cacheGet('setting:show-debugging-subscriptions');
 
   const onCategoryClick = (category: EventCategory) => {
     changeActiveCategory(category);
@@ -48,7 +51,7 @@ export const Categories = ({ setSection }: CategoriesProps) => {
               <UI.AccordionContent transparent={true}>
                 <Wrappers.ItemsColumn>
                   {getAllEventCategories()
-                    .filter((c) => c !== 'Debugging')
+                    .filter((c) => showDebugging || c !== 'Debugging')
                     .sort((a, b) => a.localeCompare(b))
                     .map((category) => (
                       <Wrappers.ItemEntryWrapper

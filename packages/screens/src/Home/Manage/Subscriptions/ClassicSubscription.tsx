@@ -60,27 +60,27 @@ export const ClassicSubscription = ({
           </div>
         </div>
         <div>
-          {/* One Shot Button */}
           {getTaskType(task) === 'account' && (
-            <OneShotSwitch
-              task={task}
-              isChecked={nativeChecked}
-              isProcessing={oneShotProcessing}
-              isDisabled={getDisabled}
-              setProcessing={setOneShotProcessing}
-            />
-          )}
-          {/* Native OS Notification Checkbox */}
-          {task.account && (
-            <TooltipRx text={'OS Notifications'} theme={theme}>
-              <div className="native-wrapper">
-                <NotificationsSwitch
-                  task={task}
-                  isChecked={nativeChecked}
-                  isDisabled={getDisabled}
-                />
-              </div>
-            </TooltipRx>
+            <>
+              {/* One Shot Button */}
+              <OneShotSwitch
+                task={task}
+                isChecked={nativeChecked}
+                isProcessing={oneShotProcessing}
+                isDisabled={getDisabled}
+                setProcessing={setOneShotProcessing}
+              />
+              {/* Native OS Notification Checkbox */}
+              <TooltipRx text={'OS Notifications'} theme={theme}>
+                <div className="native-wrapper">
+                  <NotificationsSwitch
+                    task={task}
+                    isChecked={nativeChecked}
+                    isDisabled={getDisabled}
+                  />
+                </div>
+              </TooltipRx>
+            </>
           )}
           {/* Toggle Switch */}
           <span style={{ scale: '0.9' }}>

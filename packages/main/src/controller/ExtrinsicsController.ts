@@ -1,10 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { store } from '../main';
+import { ExtrinsicsRepository } from '../db';
 import * as ImportUtils from '../utils/ImportUtils';
 import type { IpcTask } from '@polkadot-live/types/communication';
-import type { AnyJson } from '@polkadot-live/types/misc';
 import type {
   ExTransferKeepAliveData,
   ExtrinsicInfo,
@@ -12,12 +11,8 @@ import type {
 } from '@polkadot-live/types/tx';
 
 export class ExtrinsicsController {
-  private static storeKey = 'persisted_extrinsics';
   private static pendingExtrinsics: string[] = [];
 
-  /**
-   * Process an async IPC task.
-   */
   static processAsync(task: IpcTask): string | undefined {
     switch (task.action) {
       case 'extrinsics:getAll': {
@@ -57,51 +52,36 @@ export class ExtrinsicsController {
     }
   }
 
-  /**
-   * Update an extrinsic in the store.
-   */
-  private static update(task: IpcTask) {
-    const { serialized }: { serialized: string } = task.data;
-    const info: ExtrinsicInfo = JSON.parse(serialized);
-    info.dynamicInfo = undefined;
-    const stored = ExtrinsicsController.getExtrinsicsFromStore();
-    const updated = stored.map((i) => (i.txId === info.txId ? { ...info } : i));
-    ExtrinsicsController.persistExtrinsicsToStore(updated);
+  // ===== Public =====
+
+  // Get serialized backup data.
+  static getBackupData(): string {
+    return ExtrinsicsController.getAll();
   }
 
-  /**
-   * Get all stored extrinsics in serialized form.
-   */
+  // ===== Private =====
+
+  // Get stored extrinsics as serialized.
   private static getAll(): string {
-    return (store as Record<string, AnyJson>).get(
-      ExtrinsicsController.storeKey,
-    ) as string;
+    const stored = ExtrinsicsRepository.getAll();
+    return JSON.stringify(stored);
   }
 
-  /**
-   * Get count of extrinsics with optional status.
-   */
+  // Get count of extrinsics with optional status.
   private static getCount(task: IpcTask): string {
     const { status }: { status: TxStatus } = task.data;
-    const stored = ExtrinsicsController.getExtrinsicsFromStore();
-
-    return !status
-      ? stored.length.toString()
-      : stored.filter(({ txStatus }) => status === txStatus).length.toString();
+    const count = ExtrinsicsRepository.count(status);
+    return count.toString();
   }
 
-  /**
-   * @name import
-   * @summary Persist new extrinsics received from backup file.
-   * @returns Up-to-date serialized extrinsics after import.
-   */
+  // Persist new extrinsics received from backup file.
   private static import(task: IpcTask) {
     const { serialized }: { serialized: string } = task.data;
     const received: ExtrinsicInfo[] = JSON.parse(serialized);
     const addressNameMap = ImportUtils.getAddressNameMap();
 
     // Get stored extrinsics and sync account names with import data.
-    const stored = ExtrinsicsController.getExtrinsicsFromStore().map((info) => {
+    const stored = ExtrinsicsRepository.getAll().map((info) => {
       const { action, accountName, chainId, from } = info.actionMeta;
 
       // Update transfer extrinsic data if necessary.
@@ -129,13 +109,12 @@ export class ExtrinsicsController {
       (a) => !stored.find((b) => ImportUtils.compareExtrinsics(a, b)),
     );
 
-    ExtrinsicsController.persistExtrinsicsToStore([...stored, ...append]);
+    // Persist and return up-to-date extrinsics after import.
+    ExtrinsicsRepository.replaceAll([...stored, ...append]);
     return JSON.stringify([...stored, ...append]);
   }
 
-  /**
-   * Persist a received extrinsic to store.
-   */
+  // Persist a received extrinsic.
   private static persist(task: IpcTask) {
     const { serialized }: { serialized: string } = task.data;
     const info: ExtrinsicInfo = JSON.parse(serialized);
@@ -145,7 +124,7 @@ export class ExtrinsicsController {
     info.dynamicInfo = undefined;
 
     // Get stored extrinsics and remove any duplicate extrinsics.
-    const stored = ExtrinsicsController.getExtrinsicsFromStore();
+    const stored = ExtrinsicsRepository.getAll();
     const filtered = stored.filter((i) => {
       if (action === i.actionMeta.action) {
         switch (action) {
@@ -169,46 +148,20 @@ export class ExtrinsicsController {
     });
 
     const updated = [...filtered, info];
-    ExtrinsicsController.persistExtrinsicsToStore(updated);
+    ExtrinsicsRepository.replaceAll(updated);
   }
 
-  /**
-   * Remove an extrinsic from store.
-   */
+  // Update an extrinsic.
+  private static update(task: IpcTask) {
+    const { serialized }: { serialized: string } = task.data;
+    const info: ExtrinsicInfo = JSON.parse(serialized);
+    info.dynamicInfo = undefined;
+    ExtrinsicsRepository.update(info.txId, info.txStatus, info.estimatedFee);
+  }
+
+  // Remove an extrinsic.
   private static remove(task: IpcTask) {
     const { txId } = task.data;
-    const stored = ExtrinsicsController.getExtrinsicsFromStore();
-    const updated = stored.filter((info) => info.txId !== txId);
-    ExtrinsicsController.persistExtrinsicsToStore(updated);
-  }
-
-  /**
-   * Utility to get and parse extrinsics from store.
-   */
-  private static getExtrinsicsFromStore = (): ExtrinsicInfo[] => {
-    const stored = (store as Record<string, AnyJson>).get(
-      this.storeKey,
-    ) as string;
-
-    return !stored ? [] : JSON.parse(stored);
-  };
-
-  /**
-   * Utility to persist an extrinsics array to store.
-   */
-  private static persistExtrinsicsToStore = (extrinsics: ExtrinsicInfo[]) => {
-    (store as Record<string, AnyJson>).set(
-      this.storeKey,
-      JSON.stringify(extrinsics),
-    );
-  };
-
-  /**
-   * Get all stored extrinsics in serialized form.
-   */
-  static getBackupDate(): string {
-    return (store as Record<string, AnyJson>).get(
-      ExtrinsicsController.storeKey,
-    ) as string;
+    ExtrinsicsRepository.delete(txId);
   }
 }
