@@ -35,8 +35,10 @@ interface ChainSubscriptionRow {
  */
 export class ChainSubscriptionsRepository {
   private static stmtInsert: BetterSqlite3.Statement | null = null;
+  private static stmtUpdate: BetterSqlite3.Statement | null = null;
   private static stmtDelete: BetterSqlite3.Statement | null = null;
   private static stmtGetAll: BetterSqlite3.Statement | null = null;
+  private static stmtGetByChainAndAction: BetterSqlite3.Statement | null = null;
 
   /**
    * Prepare and cache SQL statements. Call once after the database is ready.
@@ -45,9 +47,16 @@ export class ChainSubscriptionsRepository {
     const db = DatabaseManager.getDb();
 
     ChainSubscriptionsRepository.stmtInsert = db.prepare(`
-      INSERT OR REPLACE INTO chain_subscriptions
+      INSERT INTO chain_subscriptions
         (chain_id, action, api_call_as_string, category, enable_os_notifications, help_key, label, status)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    ChainSubscriptionsRepository.stmtUpdate = db.prepare(`
+      UPDATE chain_subscriptions
+      SET api_call_as_string = ?, category = ?, enable_os_notifications = ?,
+          help_key = ?, label = ?, status = ?
+      WHERE chain_id = ? AND action = ?
     `);
 
     ChainSubscriptionsRepository.stmtDelete = db.prepare(
@@ -57,22 +66,44 @@ export class ChainSubscriptionsRepository {
     ChainSubscriptionsRepository.stmtGetAll = db.prepare(
       'SELECT * FROM chain_subscriptions ORDER BY chain_id, action',
     );
+
+    ChainSubscriptionsRepository.stmtGetByChainAndAction = db.prepare(
+      'SELECT id FROM chain_subscriptions WHERE chain_id = ? AND action = ?',
+    );
   }
 
   /**
-   * Insert or replace a chain subscription task.
+   * Insert or update a chain subscription task.
    */
   static set(task: SubscriptionTask): void {
-    ChainSubscriptionsRepository.stmtInsert!.run(
+    const existing = ChainSubscriptionsRepository.stmtGetByChainAndAction!.get(
       task.chainId,
       task.action,
-      task.apiCallAsString,
-      task.category,
-      task.enableOsNotifications ? 1 : 0,
-      task.helpKey,
-      task.label,
-      task.status,
-    );
+    ) as { id: number } | undefined;
+
+    if (existing) {
+      ChainSubscriptionsRepository.stmtUpdate!.run(
+        task.apiCallAsString,
+        task.category,
+        task.enableOsNotifications ? 1 : 0,
+        task.helpKey,
+        task.label,
+        task.status,
+        task.chainId,
+        task.action,
+      );
+    } else {
+      ChainSubscriptionsRepository.stmtInsert!.run(
+        task.chainId,
+        task.action,
+        task.apiCallAsString,
+        task.category,
+        task.enableOsNotifications ? 1 : 0,
+        task.helpKey,
+        task.label,
+        task.status,
+      );
+    }
   }
 
   /**

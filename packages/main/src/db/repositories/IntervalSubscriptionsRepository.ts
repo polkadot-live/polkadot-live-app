@@ -34,24 +34,72 @@ interface IntervalSubscriptionRow {
  */
 export class IntervalSubscriptionsRepository {
   private static stmtInsert: BetterSqlite3.Statement | null = null;
+  private static stmtUpdateWithRef: BetterSqlite3.Statement | null = null;
+  private static stmtUpdateNullRef: BetterSqlite3.Statement | null = null;
+  private static stmtExistsWithRef: BetterSqlite3.Statement | null = null;
+  private static stmtExistsNullRef: BetterSqlite3.Statement | null = null;
+  private static stmtDeleteWithRef: BetterSqlite3.Statement | null = null;
+  private static stmtDeleteNullRef: BetterSqlite3.Statement | null = null;
   private static stmtGetAll: BetterSqlite3.Statement | null = null;
   private static stmtClear: BetterSqlite3.Statement | null = null;
   private static stmtDeleteByChainAndRefId: BetterSqlite3.Statement | null =
     null;
-  private static db: BetterSqlite3.Database | null = null;
 
   /**
    * Prepare and cache SQL statements. Call once after the database is ready.
+   *
+   * The UNIQUE constraint is `(chain_id, action, referendum_id)`. Because
+   * SQLite treats each NULL as distinct, queries that target rows where
+   * `referendum_id IS NULL` need a separate prepared statement from those
+   * that compare against a concrete value.
    */
   static initialize(): void {
     const db = DatabaseManager.getDb();
-    IntervalSubscriptionsRepository.db = db;
 
     IntervalSubscriptionsRepository.stmtInsert = db.prepare(`
-      INSERT OR REPLACE INTO interval_subscriptions
-        (action, interval_setting, tick_counter, category, chain_id, label, status, enable_os_notifications, help_key, referendum_id, just_built)
+      INSERT INTO interval_subscriptions
+        (action, interval_setting, tick_counter, category, chain_id, label,
+         status, enable_os_notifications, help_key, referendum_id, just_built)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
+
+    // --- UPDATE pairs (with / without referendum_id) ---
+
+    const updateCols = `
+      UPDATE interval_subscriptions
+      SET interval_setting = ?, tick_counter = ?, category = ?,
+          label = ?, status = ?, enable_os_notifications = ?,
+          help_key = ?, just_built = ?`;
+
+    IntervalSubscriptionsRepository.stmtUpdateWithRef = db.prepare(
+      `${updateCols} WHERE action = ? AND chain_id = ? AND referendum_id = ?`,
+    );
+
+    IntervalSubscriptionsRepository.stmtUpdateNullRef = db.prepare(
+      `${updateCols} WHERE action = ? AND chain_id = ? AND referendum_id IS NULL`,
+    );
+
+    // --- EXISTS pairs (with / without referendum_id) ---
+
+    IntervalSubscriptionsRepository.stmtExistsWithRef = db.prepare(
+      'SELECT id FROM interval_subscriptions WHERE chain_id = ? AND action = ? AND referendum_id = ?',
+    );
+
+    IntervalSubscriptionsRepository.stmtExistsNullRef = db.prepare(
+      'SELECT id FROM interval_subscriptions WHERE chain_id = ? AND action = ? AND referendum_id IS NULL',
+    );
+
+    // --- DELETE pairs (with / without referendum_id) ---
+
+    IntervalSubscriptionsRepository.stmtDeleteWithRef = db.prepare(
+      'DELETE FROM interval_subscriptions WHERE action = ? AND chain_id = ? AND referendum_id = ?',
+    );
+
+    IntervalSubscriptionsRepository.stmtDeleteNullRef = db.prepare(
+      'DELETE FROM interval_subscriptions WHERE action = ? AND chain_id = ? AND referendum_id IS NULL',
+    );
+
+    // --- Other ---
 
     IntervalSubscriptionsRepository.stmtGetAll = db.prepare(
       'SELECT * FROM interval_subscriptions ORDER BY chain_id, action',
@@ -67,76 +115,39 @@ export class IntervalSubscriptionsRepository {
   }
 
   /**
-   * Insert or replace an interval subscription task.
+   * Insert or update an interval subscription task.
+   *
+   * Checks for an existing row first and updates it in place to preserve
+   * the row id. Falls back to INSERT for new rows.
    */
   static set(task: IntervalSubscription): void {
-    const intervalSettingJson = JSON.stringify(task.intervalSetting);
-    IntervalSubscriptionsRepository.stmtInsert!.run(
-      task.action,
-      intervalSettingJson,
-      task.tickCounter,
-      task.category,
-      task.chainId,
-      task.label,
-      task.status,
-      task.enableOsNotifications ? 1 : 0,
-      task.helpKey,
-      task.referendumId ?? null,
-      task.justBuilt ? 1 : 0,
-    );
+    const existing = IntervalSubscriptionsRepository.exists(task);
+
+    if (existing) {
+      IntervalSubscriptionsRepository.runUpdate(task);
+    } else {
+      const intervalSettingJson = JSON.stringify(task.intervalSetting);
+      IntervalSubscriptionsRepository.stmtInsert!.run(
+        task.action,
+        intervalSettingJson,
+        task.tickCounter,
+        task.category,
+        task.chainId,
+        task.label,
+        task.status,
+        task.enableOsNotifications ? 1 : 0,
+        task.helpKey,
+        task.referendumId ?? null,
+        task.justBuilt ? 1 : 0,
+      );
+    }
   }
 
   /**
    * Update an existing interval subscription task.
    */
   static update(task: IntervalSubscription): void {
-    if (!IntervalSubscriptionsRepository.db) {
-      throw new Error('Database not initialized');
-    }
-
-    // Use dynamic SQL to properly handle NULL referendum_id comparison
-    const whereClause =
-      task.referendumId !== undefined
-        ? `WHERE action = ? AND chain_id = ? AND referendum_id = ?`
-        : `WHERE action = ? AND chain_id = ? AND referendum_id IS NULL`;
-
-    const stmt = IntervalSubscriptionsRepository.db!.prepare(`
-      UPDATE interval_subscriptions
-      SET interval_setting = ?, tick_counter = ?, category = ?,
-          label = ?, status = ?, enable_os_notifications = ?, help_key = ?, just_built = ?
-      ${whereClause}
-    `);
-
-    const intervalSettingJson = JSON.stringify(task.intervalSetting);
-    const params =
-      task.referendumId !== undefined
-        ? [
-            intervalSettingJson,
-            task.tickCounter,
-            task.category,
-            task.label,
-            task.status,
-            task.enableOsNotifications ? 1 : 0,
-            task.helpKey,
-            task.justBuilt ? 1 : 0,
-            task.action,
-            task.chainId,
-            task.referendumId,
-          ]
-        : [
-            intervalSettingJson,
-            task.tickCounter,
-            task.category,
-            task.label,
-            task.status,
-            task.enableOsNotifications ? 1 : 0,
-            task.helpKey,
-            task.justBuilt ? 1 : 0,
-            task.action,
-            task.chainId,
-          ];
-
-    stmt.run(...params);
+    IntervalSubscriptionsRepository.runUpdate(task);
   }
 
   /**
@@ -159,23 +170,14 @@ export class IntervalSubscriptionsRepository {
    * Delete a single interval subscription task by action, chain, and referendum ID.
    */
   static delete(action: string, chainId: ChainID, referendumId?: number): void {
-    if (!IntervalSubscriptionsRepository.db) {
-      throw new Error('Database not initialized');
-    }
-
-    const whereClause =
-      referendumId !== undefined
-        ? `WHERE action = ? AND chain_id = ? AND referendum_id = ?`
-        : `WHERE action = ? AND chain_id = ? AND referendum_id IS NULL`;
-
-    const stmt = IntervalSubscriptionsRepository.db!.prepare(
-      `DELETE FROM interval_subscriptions ${whereClause}`,
-    );
-
     if (referendumId !== undefined) {
-      stmt.run(action, chainId, referendumId);
+      IntervalSubscriptionsRepository.stmtDeleteWithRef!.run(
+        action,
+        chainId,
+        referendumId,
+      );
     } else {
-      stmt.run(action, chainId);
+      IntervalSubscriptionsRepository.stmtDeleteNullRef!.run(action, chainId);
     }
   }
 
@@ -194,6 +196,62 @@ export class IntervalSubscriptionsRepository {
       chainId,
       referendumId,
     );
+  }
+
+  // ===== Private helpers =====
+
+  /**
+   * Check if a row exists matching the task's unique key.
+   */
+  private static exists(task: IntervalSubscription): boolean {
+    if (task.referendumId !== undefined) {
+      return (
+        IntervalSubscriptionsRepository.stmtExistsWithRef!.get(
+          task.chainId,
+          task.action,
+          task.referendumId,
+        ) !== undefined
+      );
+    }
+    return (
+      IntervalSubscriptionsRepository.stmtExistsNullRef!.get(
+        task.chainId,
+        task.action,
+      ) !== undefined
+    );
+  }
+
+  /**
+   * Run an UPDATE statement for the given task, choosing the correct
+   * prepared statement based on whether `referendumId` is defined.
+   */
+  private static runUpdate(task: IntervalSubscription): void {
+    const intervalSettingJson = JSON.stringify(task.intervalSetting);
+    const setCols = [
+      intervalSettingJson,
+      task.tickCounter,
+      task.category,
+      task.label,
+      task.status,
+      task.enableOsNotifications ? 1 : 0,
+      task.helpKey,
+      task.justBuilt ? 1 : 0,
+    ];
+
+    if (task.referendumId !== undefined) {
+      IntervalSubscriptionsRepository.stmtUpdateWithRef!.run(
+        ...setCols,
+        task.action,
+        task.chainId,
+        task.referendumId,
+      );
+    } else {
+      IntervalSubscriptionsRepository.stmtUpdateNullRef!.run(
+        ...setCols,
+        task.action,
+        task.chainId,
+      );
+    }
   }
 }
 

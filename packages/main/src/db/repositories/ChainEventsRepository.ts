@@ -47,6 +47,8 @@ interface ActiveRefRow {
 export class ChainEventsRepository {
   // chain_event_subscriptions statements
   private static stmtInsert: BetterSqlite3.Statement | null = null;
+  private static stmtUpdate: BetterSqlite3.Statement | null = null;
+  private static stmtGetByPK: BetterSqlite3.Statement | null = null;
   private static stmtGetGlobal: BetterSqlite3.Statement | null = null;
   private static stmtGetByAccount: BetterSqlite3.Statement | null = null;
   private static stmtGetByRef: BetterSqlite3.Statement | null = null;
@@ -71,11 +73,22 @@ export class ChainEventsRepository {
     // ===== chain_event_subscriptions statements =====
 
     ChainEventsRepository.stmtInsert = db.prepare(`
-      INSERT OR REPLACE INTO chain_event_subscriptions
+      INSERT INTO chain_event_subscriptions
         (id, chain_id, kind, pallet, event_name, enabled, os_notify, label, event_data, help_key, scope_type, scope_id)
       VALUES
         (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
+
+    ChainEventsRepository.stmtUpdate = db.prepare(`
+      UPDATE chain_event_subscriptions
+      SET chain_id = ?, kind = ?, pallet = ?, event_name = ?, enabled = ?,
+          os_notify = ?, label = ?, event_data = ?, help_key = ?
+      WHERE id = ? AND scope_type = ? AND scope_id IS ?
+    `);
+
+    ChainEventsRepository.stmtGetByPK = db.prepare(
+      'SELECT 1 FROM chain_event_subscriptions WHERE id = ? AND scope_type = ? AND scope_id IS ?',
+    );
 
     ChainEventsRepository.stmtGetGlobal = db.prepare(`
       SELECT * FROM chain_event_subscriptions
@@ -151,7 +164,7 @@ export class ChainEventsRepository {
   }
 
   /**
-   * Insert or replace a chain event subscription.
+   * Insert or update a chain event subscription.
    */
   static insert(
     sub: ChainEventSubscription,
@@ -161,20 +174,43 @@ export class ChainEventsRepository {
     const eventDataStr = sub.eventData ? JSON.stringify(sub.eventData) : null;
     const helpKey = sub.helpKey ?? null;
 
-    ChainEventsRepository.stmtInsert!.run(
+    const existing = ChainEventsRepository.stmtGetByPK!.get(
       sub.id,
-      sub.chainId,
-      sub.kind,
-      sub.pallet,
-      sub.eventName,
-      sub.enabled ? 1 : 0,
-      sub.osNotify ? 1 : 0,
-      sub.label,
-      eventDataStr,
-      helpKey,
       scopeType,
       scopeId,
     );
+
+    if (existing) {
+      ChainEventsRepository.stmtUpdate!.run(
+        sub.chainId,
+        sub.kind,
+        sub.pallet,
+        sub.eventName,
+        sub.enabled ? 1 : 0,
+        sub.osNotify ? 1 : 0,
+        sub.label,
+        eventDataStr,
+        helpKey,
+        sub.id,
+        scopeType,
+        scopeId,
+      );
+    } else {
+      ChainEventsRepository.stmtInsert!.run(
+        sub.id,
+        sub.chainId,
+        sub.kind,
+        sub.pallet,
+        sub.eventName,
+        sub.enabled ? 1 : 0,
+        sub.osNotify ? 1 : 0,
+        sub.label,
+        eventDataStr,
+        helpKey,
+        scopeType,
+        scopeId,
+      );
+    }
   }
 
   /**
