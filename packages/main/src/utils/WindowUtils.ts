@@ -19,11 +19,10 @@ import {
   SettingsController,
   WindowsController,
 } from '../controller';
-import { store } from '../main';
+import { WindowStateRepository } from '../db';
 import { hideDockIcon, reportOnlineStatus } from '../utils/SystemUtils';
 import { MainDebug } from './DebugUtils';
 import type { PortPairID } from '@polkadot-live/types/communication';
-import type { AnyJson } from '@polkadot-live/types/misc';
 import type { Rectangle } from 'electron';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -80,9 +79,7 @@ const getWindowBackgroundColor = (): string => {
  * - Adds the browser window to WindowsController
  */
 export const createMainWindow = () => {
-  const initialMenuBounds: AnyJson = (store as Record<string, AnyJson>).get(
-    'menu_bounds',
-  );
+  const initialMenuBounds = WindowStateRepository.get('menu');
 
   const primaryDisplay = screen.getPrimaryDisplay();
   const { width: screenWidth, height: screenHeight } =
@@ -96,7 +93,7 @@ export const createMainWindow = () => {
     frame: false,
     x: initialMenuBounds?.x || defaultX,
     y: initialMenuBounds?.y || defaultY,
-    width: initialMenuBounds?.height || ConfigMain.dockedWidth,
+    width: initialMenuBounds?.width || ConfigMain.dockedWidth,
     height: initialMenuBounds?.height || ConfigMain.dockedHeight,
     minWidth: ConfigMain.dockedWidth,
     maxWidth: ConfigMain.dockedWidth,
@@ -394,7 +391,7 @@ const fixMainWindow = (mainWindow: BrowserWindow, windowBounds: Rectangle) => {
   mainWindow.setResizable(false);
 
   // Persist window position.
-  (store as Record<string, AnyJson>).set('menu_bounds', mainWindow.getBounds());
+  WindowStateRepository.set('menu', mainWindow.getBounds());
 };
 
 /**

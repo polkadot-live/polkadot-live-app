@@ -2,21 +2,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { getSupportedSources } from '@polkadot-live/consts/chains';
-import { Config as ConfigMain } from '../config/main';
-import { store } from '../main';
+import { AddressesRepository } from '../db';
 import type {
   AccountSource,
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IpcTask } from '@polkadot-live/types/communication';
-import type { AnyData } from '@polkadot-live/types/misc';
 
 export class AddressesController {
-  /**
-   * @name process
-   * @summary Process an address IPC task.
-   */
   static process(task: IpcTask): string | undefined {
     switch (task.action) {
       case 'raw-account:delete': {
@@ -47,89 +41,30 @@ export class AddressesController {
     }
   }
 
-  /**
-   * @name getAll
-   * @summary Get all stored addresses and serialize as map.
-   */
+  // ===== Public =====
+
+  // Get all stored addresses as serialized map.
   static getAll(): string {
     const map = new Map<AccountSource, string>();
     for (const source of getSupportedSources()) {
-      const key = ConfigMain.getStorageKey(source);
-      const addresses = store.has(key)
-        ? AddressesController.getFromStore(key)
-        : '[]';
-      map.set(source, addresses);
+      const addresses = AddressesRepository.getBySource(source);
+      map.set(source, JSON.stringify(addresses));
     }
 
     return JSON.stringify(Array.from(map.entries()));
   }
 
-  /**
-   * @name getLedgerMeta
-   * @summary Returns an account's ledger metadata if it exists.
-   */
-  private static getLedgerMeta(task: IpcTask): string {
-    interface Target {
-      chainId: ChainID;
-      publicKeyHex: string;
-    }
-
-    const { chainId, publicKeyHex }: Target = JSON.parse(task.data.serialized);
-    const key = ConfigMain.getStorageKey('ledger');
-    const account = AddressesController.getStoredAddresses(key).find(
-      (a) => a.publicKeyHex === publicKeyHex,
-    );
-
-    const result = account
-      ? account.encodedAccounts[chainId].ledgerMeta
-      : undefined;
-
-    return result ? JSON.stringify(result) : '';
+  // Get all addresses by source.
+  static getAllBySource(source: AccountSource): ImportedGenericAccount[] {
+    return AddressesRepository.getBySource(source);
   }
 
-  /**
-   * @name update
-   * @summary Overwrite a persisted account with the received data.
-   */
-  private static update(task: IpcTask) {
-    const account: ImportedGenericAccount = JSON.parse(task.data.serialized);
-    const { publicKeyHex, source } = account;
-    const key = ConfigMain.getStorageKey(source);
-    const ser = JSON.stringify(
-      AddressesController.getStoredAddresses(key).map((a) =>
-        a.publicKeyHex === publicKeyHex ? account : a,
-      ),
-    );
-
-    AddressesController.setInStore(key, ser);
-  }
-
-  /**
-   * @name delete
-   * @summary Delete a received address' data from store.
-   */
-  private static delete(task: IpcTask) {
-    const { publicKeyHex, source } = task.data;
-    const key = ConfigMain.getStorageKey(source);
-    const ser = JSON.stringify(
-      AddressesController.getStoredAddresses(key).filter(
-        (a) => a.publicKeyHex !== publicKeyHex,
-      ),
-    );
-
-    AddressesController.setInStore(key, ser);
-  }
-
-  /**
-   * @name getBackupData
-   * @summary Get all stored addresses in serialized form.
-   */
+  // Get all serialized stored addresses.
   static getBackupData(): string {
     const map = new Map<AccountSource, string>();
 
     for (const source of getSupportedSources()) {
-      const key = ConfigMain.getStorageKey(source);
-      const fetched = AddressesController.getStoredAddresses(key);
+      const fetched = AddressesRepository.getBySource(source);
       if (fetched.length === 0) {
         continue;
       }
@@ -138,99 +73,62 @@ export class AddressesController {
     return JSON.stringify(Array.from(map.entries()));
   }
 
-  /**
-   * @name getAllBySource
-   * @summary Get all addresses from a particular source.
-   */
-  static getAllBySource(source: AccountSource): ImportedGenericAccount[] {
-    const key = ConfigMain.getStorageKey(source);
-    return AddressesController.getStoredAddresses(key);
+  // ===== Private =====
+
+  // Delete an account.
+  private static delete(task: IpcTask) {
+    const { publicKeyHex } = task.data;
+    AddressesRepository.delete(publicKeyHex);
   }
 
-  /**
-   * @name get
-   * @summary Get all stored addresses for an account type.
-   */
-  private static get(task: IpcTask): string {
-    const { source } = task.data;
-    const key = ConfigMain.getStorageKey(source);
-    return store.has(key) ? AddressesController.getFromStore(key) : '[]';
-  }
-
-  /**
-   * @name doImport
-   * @summary Persist an address to store that's being imported from a backup file.
-   */
+  // Persist an imported account.
   private static doImport(task: IpcTask) {
     const { serialized } = task.data;
     const genericAccount: ImportedGenericAccount = JSON.parse(serialized);
-    const { publicKeyHex } = genericAccount;
-
-    if (AddressesController.isAlreadyPersisted(publicKeyHex)) {
-      AddressesController.update({
-        action: 'raw-account:update',
-        data: { serialized: JSON.stringify(genericAccount) },
-      });
-    } else {
-      AddressesController.persist({
-        action: 'raw-account:persist',
-        data: { serialized },
-      });
-    }
+    AddressesRepository.upsert(genericAccount);
   }
 
-  /**
-   * @name persist
-   * @summary Persist received address data to store.
-   */
+  // Get accounts by source.
+  private static get(task: IpcTask): string {
+    const { source } = task.data;
+    return JSON.stringify(AddressesRepository.getBySource(source));
+  }
+
+  // Returns an account's ledger metadata if exists.
+  private static getLedgerMeta(task: IpcTask): string {
+    interface Target {
+      chainId: ChainID;
+      publicKeyHex: string;
+    }
+
+    const { chainId, publicKeyHex }: Target = JSON.parse(task.data.serialized);
+    const account = AddressesRepository.getByKey(publicKeyHex);
+
+    const result = account
+      ? account.encodedAccounts[chainId].ledgerMeta
+      : undefined;
+
+    return result ? JSON.stringify(result) : '';
+  }
+
+  // Persist received account.
   private static persist(task: IpcTask) {
     try {
       const { serialized } = task.data;
       const genericAccount: ImportedGenericAccount = JSON.parse(serialized);
-      const { source, publicKeyHex } = genericAccount;
-      const key = ConfigMain.getStorageKey(source);
+      const { publicKeyHex } = genericAccount;
 
-      if (!AddressesController.isAlreadyPersisted(publicKeyHex)) {
-        const stored = AddressesController.getStoredAddresses(key);
-        AddressesController.setInStore(
-          key,
-          JSON.stringify([...stored, genericAccount]),
-        );
+      if (!AddressesRepository.exists(publicKeyHex)) {
+        AddressesRepository.upsert(genericAccount);
       }
     } catch (err) {
       console.log(err);
     }
   }
 
-  private static getFromStore(key: string) {
-    return (store as Record<string, AnyData>).get(key) as string;
-  }
-
-  private static setInStore(key: string, serialized: string) {
-    (store as Record<string, AnyData>).set(key, serialized);
-  }
-
-  private static getStoredAddresses(key: string): ImportedGenericAccount[] {
-    return store.has(key)
-      ? JSON.parse(AddressesController.getFromStore(key))
-      : [];
-  }
-
-  private static isAlreadyPersisted(publicKeyHex: string): boolean {
-    for (const source of [
-      'ledger',
-      'read-only',
-      'vault',
-      'wallet-connect',
-    ] as AccountSource[]) {
-      const key = ConfigMain.getStorageKey(source);
-      const stored = AddressesController.getStoredAddresses(key);
-
-      if (stored.find((a) => a.publicKeyHex === publicKeyHex)) {
-        return true;
-      }
-    }
-
-    return false;
+  // Overwrite an account.
+  private static update(task: IpcTask) {
+    const account: ImportedGenericAccount = JSON.parse(task.data.serialized);
+    AddressesRepository.upsert(account);
   }
 }

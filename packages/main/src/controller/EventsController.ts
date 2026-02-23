@@ -8,9 +8,8 @@ import {
   SubscriptionsController,
   WindowsController,
 } from '../controller';
-import { store } from '../main';
+import { EventsRepository } from '../db';
 import { getUid } from '../utils/CryptoUtils';
-import { MainDebug } from '../utils/DebugUtils';
 import { AddressesController } from './AddressesController';
 import type {
   AccountSource,
@@ -19,7 +18,6 @@ import type {
 } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IpcTask } from '@polkadot-live/types/communication';
-import type { AnyJson } from '@polkadot-live/types/misc';
 import type {
   EventAccountData,
   EventCallback,
@@ -28,21 +26,14 @@ import type {
   NotificationData,
 } from '@polkadot-live/types/reporter';
 
-const debug = MainDebug.extend('EventsController');
-
 export class EventsController {
-  private static storeKey = 'persisted_events';
-
-  /**
-   * Set to `true` when app initializes and persisted events
-   * are sent to the renderer.
-   */
+  // Set to `true` when app initializes and persisted events
+  // are sent to the renderer.
   private static isInitialized = false;
 
-  /**
-   * @name initialize
-   * @summary Fetch persisted events from store and send to frontend.
-   */
+  // ===== Initialize =====
+
+  // Fetch persisted events and send to frontend.
   static initialize() {
     if (EventsController.isInitialized) {
       return;
@@ -50,8 +41,8 @@ export class EventsController {
     // Set toggle to indicate stored events have been sent to renderer.
     EventsController.isInitialized = true;
 
-    // Fetch events from store and send them to renderer.
-    const events = EventsController.getEventsFromStore();
+    // Send stored events to renderer.
+    const events = EventsRepository.getAll();
     if (events.length === 0) {
       return;
     }
@@ -66,99 +57,25 @@ export class EventsController {
     }
   }
 
-  /**
-   * @name process
-   * @summary Process an IPC task.
-   */
+  // ===== IPC Task Processing =====
+
   static process(task: IpcTask): void {
     switch (task.action) {
-      // Persist an event and show an OS notification if event was persisted.
-      // Report event back to frontend after an event UID is assigned.
       case 'events:persist': {
-        // Destructure received data.
-        interface Target {
-          event: EventCallback;
-          notification: NotificationData;
-          showNotification: {
-            isOneShot: boolean;
-            isEnabled: boolean;
-          };
-        }
-        const { event, notification, showNotification }: Target = task.data;
-        const { isOneShot, isEnabled } = showNotification;
-        const key = 'setting:silence-os-notifications';
-        const silenced = SettingsController.get(key);
-        const notify = isOneShot ? true : silenced ? false : isEnabled;
-
-        // Remove any outdated events of the same type, if setting enabled.
-        if (!SettingsController.get('setting:keep-outdated-events')) {
-          EventsController.removeOutdatedEvents(event);
-        }
-
-        // TODO: Decouple showing notification from this function.
-        // Persist new event to store.
-        const { event: eventWithUid, wasPersisted } =
-          EventsController.persistEvent(event);
-        if (isOneShot || (wasPersisted && notify)) {
-          const { title, body, subtitle } = notification;
-          NotificationsController.showNotification(title, body, subtitle);
-        }
-
-        WindowsController.getWindow('menu')?.webContents?.send(
-          'renderer:event:new',
-          eventWithUid,
-          true, // New event.
-        );
-
+        EventsController.persistEventSync(task);
         return;
       }
-      // Mark event stale after extrinsic finalized.
       case 'events:makeStale': {
-        const { uid, chainId }: { uid: string; chainId: ChainID } = task.data;
-
-        // Update event in store.
-        EventsController.persistStaleEvent(uid);
-
-        // Update event react state.
-        WindowsController.getWindow('menu')?.webContents?.send(
-          'renderer:event:stale',
-          uid,
-          chainId,
-        );
+        EventsController.markStale(task);
         return;
       }
     }
   }
 
-  /**
-   * @name processAsync
-   * @summary Process an async IPC task.
-   */
   static processAsync(task: IpcTask): string | boolean {
     switch (task.action) {
       case 'events:update:accountName': {
-        const {
-          address,
-          chainId,
-          newName,
-        }: { address: string; chainId: ChainID; newName: string } = task.data;
-
-        // Update events in storage.
-        const updated = EventsController.updateEventAccountName(
-          address,
-          chainId,
-          newName,
-        );
-
-        // Update account's subscription tasks in storage.
-        SubscriptionsController.updateCachedAccountNameForTasks(
-          address,
-          chainId,
-          newName,
-        );
-
-        // Return updated events in serialized form.
-        return JSON.stringify(updated);
+        return EventsController.updateAccountName(task);
       }
       case 'events:clearAll': {
         return EventsController.clearAll(task.data.category);
@@ -182,39 +99,73 @@ export class EventsController {
     }
   }
 
-  /**
-   * @name clearAll
-   * @summary Remove all events in a given cateory.
-   */
+  // ===== Public =====
+
+  // Get all stored events in serialized form.
+  static getBackupData(): string {
+    const stored = EventsRepository.getAll();
+    const filtered = stored.filter(({ category }) => category !== 'Debugging');
+    return JSON.stringify(filtered);
+  }
+
+  // ===== Private =====
+
+  // Remove all events in a given category.
   private static clearAll(category: EventCategory): boolean {
-    EventsController.persistEventsToStore(
-      EventsController.getEventsFromStore().filter(
-        (e) => e.category !== category,
-      ),
-    );
+    EventsRepository.deleteByCategory(category);
     return true;
   }
 
-  /**
-   * @name counts
-   * @summary Return event counts by category.
-   */
+  // Return event counts by category.
   private static counts() {
     const result: Partial<Record<EventCategory, number>> = {};
-    for (const { category } of EventsController.getEventsFromStore()) {
+    for (const { category } of EventsRepository.getAll()) {
       result[category] = (result[category] ?? 0) + 1;
     }
     return JSON.stringify(result);
   }
 
-  /**
-   * @name fetch
-   * @summary Fetch events from database with a specific category.
-   */
+  // Persist unique imported events to the store.
+  private static doImport(serialized: string): string {
+    const parsed: EventCallback[] = JSON.parse(serialized);
+    EventsController.syncAccountNames();
+
+    let stored = EventsRepository.getAll();
+    const newEvents: EventCallback[] = [];
+    const isChainEvent = (e: EventCallback) => e.who.origin === 'chainEvent';
+
+    // Process non-chain events.
+    for (const event of parsed.filter((e) => !isChainEvent(e))) {
+      const res = pushUniqueEvent(event, stored);
+      if (res.updated) {
+        stored = res.events;
+        newEvents.push(event);
+      }
+    }
+
+    // Process chain events.
+    const storedUids = new Set(stored.map((e) => e.uid));
+    for (const event of parsed.filter(isChainEvent)) {
+      if (!storedUids.has(event.uid)) {
+        stored = [...stored, event];
+        storedUids.add(event.uid);
+        newEvents.push(event);
+      }
+    }
+
+    // Insert new events.
+    if (newEvents.length > 0) {
+      EventsRepository.insertMany(newEvents);
+    }
+
+    return JSON.stringify(stored);
+  }
+
+  // Fetch events from database with a specific category.
   private static fetch(payload: EventFetchPayload) {
     const { category, limit, order, cursor } = payload;
 
-    const all = EventsController.getEventsFromStore()
+    const all = EventsRepository.getAll()
       .filter((e) => e.category === category)
       .sort((a, b) => {
         if (a.timestamp === b.timestamp) {
@@ -243,10 +194,148 @@ export class EventsController {
     return JSON.stringify(page.slice(0, limit));
   }
 
-  /**
-   * @name persistEvent
-   * @summary Persist an event to the store.
-   */
+  // Mark event stale after extrinsic finalized.
+  private static markStale(task: IpcTask) {
+    const { uid, chainId }: { uid: string; chainId: ChainID } = task.data;
+    // Update event in store.
+    EventsController.persistStaleEvent(uid);
+    // Update event react state.
+    WindowsController.getWindow('menu')?.webContents?.send(
+      'renderer:event:stale',
+      uid,
+      chainId,
+    );
+  }
+
+  // Persist an event and show an OS notification if event was persisted.
+  private static persistEventSync(task: IpcTask) {
+    interface Target {
+      event: EventCallback;
+      notification: NotificationData;
+      showNotification: {
+        isOneShot: boolean;
+        isEnabled: boolean;
+      };
+    }
+
+    const { event, notification, showNotification }: Target = task.data;
+    const { isOneShot, isEnabled } = showNotification;
+    const key = 'setting:silence-os-notifications';
+    const silenced = SettingsController.get(key);
+    const notify = isOneShot ? true : silenced ? false : isEnabled;
+
+    // Remove any outdated events if setting enabled.
+    if (!SettingsController.get('setting:keep-outdated-events')) {
+      EventsController.removeOutdatedEvents(event);
+    }
+
+    // Persist event to store.
+    const { event: eventWithUid, wasPersisted } =
+      EventsController.persistEvent(event);
+
+    // TODO: Decouple showing notification from this function.
+    if (isOneShot || (wasPersisted && notify)) {
+      const { title, body, subtitle } = notification;
+      NotificationsController.showNotification(title, body, subtitle);
+    }
+
+    // Report event back to frontend after an event UID is assigned.
+    WindowsController.getWindow('menu')?.webContents?.send(
+      'renderer:event:new',
+      eventWithUid,
+      true, // New event.
+    );
+  }
+
+  // Mark an event stale.
+  private static persistStaleEvent(uid: string) {
+    EventsRepository.markStale(uid);
+  }
+
+  // Remove an event.
+  private static removeEvent(event: EventCallback): boolean {
+    EventsRepository.delete(event.uid);
+    return true;
+  }
+
+  // Remove outdated events.
+  private static removeOutdatedEvents(event: EventCallback) {
+    // Currently only for nomination pool rewards and nominating pending payout events.
+    // Will remove old matching events.
+    const all = EventsRepository.getAll();
+    const { updated, removed } = doRemoveOutdatedEvents(event, all);
+
+    // Delete only the outdated events.
+    if (updated && removed && removed.length > 0) {
+      EventsRepository.deleteMany(removed.map((e) => e.uid));
+    }
+  }
+
+  // Update persisted events with new account name and return updated events.
+  private static updateAccountName(task: IpcTask): string {
+    type T = { address: string; chainId: ChainID; newName: string };
+    const { address, chainId, newName }: T = task.data;
+
+    // Update names in storage.
+    const params = { address, chainId, newName };
+    const updated = EventsController.updateEventAccountName(params);
+    SubscriptionsController.updateCachedAccountNameForTasks(params);
+    return JSON.stringify(updated);
+  }
+
+  // Persist events with new account name and return updated events.
+  private static updateEventAccountName(params: {
+    address: string;
+    chainId: ChainID;
+    newName: string;
+  }): EventCallback[] {
+    const { address, chainId, newName } = params;
+    const all = EventsRepository.getAll();
+
+    const isAccountEvent = (e: EventCallback) => e.who.origin !== 'chain';
+    const matchesAccount = (data: EventAccountData) =>
+      data.address === address && data.chainId === chainId;
+
+    const updates: Array<{ uid: string; whoData: unknown }> = [];
+    const filtered: EventCallback[] = [];
+
+    for (const e of all) {
+      if (!isAccountEvent(e)) continue;
+
+      const data = e.who.data as EventAccountData;
+      if (matchesAccount(data)) {
+        // Create updated event with new account name.
+        const updatedData = { ...data, accountName: newName };
+        const updatedEvent = {
+          ...e,
+          who: { ...e.who, data: updatedData },
+        };
+        // Only update if the name actually changed.
+        if (newName !== data.accountName) {
+          updates.push({ uid: e.uid, whoData: updatedData });
+        }
+        filtered.push(updatedEvent);
+      }
+    }
+    // Update only the events that changed in the database.
+    if (updates.length > 0) {
+      EventsRepository.updateWhoDataMany(updates);
+    }
+    return filtered;
+  }
+
+  // ===== Utilities =====
+
+  // Returns all generic accounts as an array.
+  private static getAllGenericAccounts(): ImportedGenericAccount[] {
+    const serialized = AddressesController.getAll();
+    const map = new Map<AccountSource, string>(JSON.parse(serialized));
+    return Array.from(map.values()).flatMap(
+      (ser) => JSON.parse(ser) as ImportedGenericAccount[],
+    );
+  }
+
+  // Persist an event.
   private static persistEvent(event: EventCallback): {
     event: EventCallback;
     wasPersisted: boolean;
@@ -263,233 +352,46 @@ export class EventsController {
       });
     }
 
-    const stored = EventsController.getEventsFromStore();
-    const { events, updated } = pushUniqueEvent(event, stored);
+    const stored = EventsRepository.getAll();
+    const { updated } = pushUniqueEvent(event, stored);
 
-    // Persist new array to store if event was pushed.
+    // Persist event to store if it was pushed.
     if (updated) {
-      EventsController.persistEventsToStore(events);
-      debug('🔷 Event persisted (%o total in store)', events.length);
+      EventsRepository.insert(event);
     }
-
     return { event, wasPersisted: updated };
   }
 
-  /**
-   * @name doImport
-   * @summary Persists unique imported events to the store.
-   */
-  private static doImport(serialized: string): string {
-    const parsed: EventCallback[] = JSON.parse(serialized);
-    EventsController.syncAccountNames();
-
-    let stored = EventsController.getEventsFromStore();
-    let persist = false;
-
-    const isChainEvent = (e: EventCallback) => e.who.origin === 'chainEvent';
-
-    // Process non-chain events.
-    for (const event of parsed.filter((e) => !isChainEvent(e))) {
-      const res = pushUniqueEvent(event, stored);
-      if (res.updated) {
-        stored = res.events;
-        persist = true;
-      }
-    }
-    // Process chain events.
-    const storedUids = new Set(stored.map((e) => e.uid));
-    for (const event of parsed.filter(isChainEvent)) {
-      if (!storedUids.has(event.uid)) {
-        stored = [...stored, event];
-        storedUids.add(event.uid);
-        persist = true;
-      }
-    }
-    if (persist) {
-      EventsController.persistEventsToStore(stored);
-      debug('🔷 Event persisted (%o total in store)', stored.length);
-    }
-
-    return JSON.stringify(stored);
-  }
-
-  /**
-   * @name syncAccountName
-   * @summary Updates the associated account names of persisted events.
-   */
+  // Updates events associated account names.
   private static syncAccountNames() {
     const accounts = EventsController.getAllGenericAccounts();
-    const updated = EventsController.getEventsFromStore().map(
-      (e: EventCallback) => {
-        if (e.who.origin !== 'account') {
-          return e;
+    const all = EventsRepository.getAll();
+    const updates: Array<{ uid: string; whoData: unknown }> = [];
+
+    for (const event of all) {
+      if (event.who.origin !== 'account') continue;
+
+      const who = event.who.data as EventAccountData;
+      const encoded: EncodedAccount[] = [];
+
+      for (const { encodedAccounts } of accounts) {
+        const enAccount = encodedAccounts?.[who.chainId] ?? null;
+        enAccount && encoded.push(enAccount);
+      }
+
+      for (const { address, alias } of encoded) {
+        if (who.address === address && who.accountName !== alias) {
+          // Only update if the name actually changed.
+          const updatedData = { ...who, accountName: alias };
+          updates.push({ uid: event.uid, whoData: updatedData });
+          break; // Found matching account, no need to continue.
         }
-
-        const who = e.who.data as EventAccountData;
-        const encoded: EncodedAccount[] = [];
-
-        for (const { encodedAccounts } of accounts) {
-          const enAccount = encodedAccounts?.[who.chainId] ?? null;
-          enAccount && encoded.push(enAccount);
-        }
-
-        for (const { address, alias } of encoded) {
-          if (who.address === address) {
-            (e.who.data as EventAccountData).accountName = alias;
-          }
-        }
-
-        return e;
-      },
-    );
-
-    EventsController.persistEventsToStore(updated);
-  }
-
-  /**
-   * @name getAllGenericAccounts
-   * @summary Retrieves all generic accounts and returns them as an array.
-   */
-  private static getAllGenericAccounts(): ImportedGenericAccount[] {
-    const serialized = AddressesController.getAll();
-    const map = new Map<AccountSource, string>(JSON.parse(serialized));
-
-    return Array.from(map.values()).flatMap(
-      (ser) => JSON.parse(ser) as ImportedGenericAccount[],
-    );
-  }
-
-  /**
-   * @name updateEventAccountName
-   * @summary Update the associated account name for a particular event.
-   */
-  private static updateEventAccountName(
-    address: string,
-    chainId: ChainID,
-    newName: string,
-  ): EventCallback[] {
-    const all = EventsController.getEventsFromStore();
-
-    const updated = all.map((e: EventCallback) => {
-      if (e.who.origin === 'chain') {
-        return e;
       }
+    }
 
-      // Extract address and account name from iterated event.
-      const {
-        accountName,
-        address: nextAddress,
-        chainId: nextChainId,
-      } = e.who.data as EventAccountData;
-
-      // Handle name change.
-      if (
-        address === nextAddress &&
-        chainId === nextChainId &&
-        newName !== accountName
-      ) {
-        return {
-          ...e,
-          who: { ...e.who, data: { ...e.who.data, accountName: newName } },
-        };
-      } else {
-        return e;
-      }
-    });
-
-    // Persist updated events to store.
-    EventsController.persistEventsToStore(updated);
-
-    // Return the updated events.
-    const filtered = updated.filter((e: EventCallback) => {
-      if (e.who.origin === 'chain') {
-        return false;
-      }
-
-      const { address: nextAddress, chainId: nextChainId } = e.who
-        .data as EventAccountData;
-
-      return !!(nextAddress === address && chainId === nextChainId);
-    });
-
-    return filtered;
+    // Update event names.
+    if (updates.length > 0) {
+      EventsRepository.updateWhoDataMany(updates);
+    }
   }
-
-  /**
-   * @name removeEvent
-   * @summary Remove an event from the store.
-   */
-  private static removeEvent(event: EventCallback): boolean {
-    const events = EventsController.getEventsFromStore();
-
-    // Filter out event to remove via its uid.
-    const { uid } = event;
-    const updated = events.filter((e) => e.uid !== uid);
-
-    // Persist new array to store.
-    EventsController.persistEventsToStore(updated);
-    debug('🔷 Event removed (%o total in store)', updated.length);
-
-    return true;
-  }
-
-  /**
-   * @name getBackupData
-   * @summary Get all stored events in serialized form.
-   */
-  static getBackupData(): string {
-    const stored = EventsController.getEventsFromStore();
-    const filtered = stored.filter(({ category }) => category !== 'Debugging');
-    return JSON.stringify(filtered);
-  }
-
-  /**
-   * @name removeOutdatedEvents
-   * @summary Remove outdated events from the store.
-   *
-   * Currently only for nomination pool rewards and nominating pending payout events.
-   * Will remove old matching events from the store.
-   */
-  private static removeOutdatedEvents(event: EventCallback) {
-    const all = EventsController.getEventsFromStore();
-    const { updated, events } = doRemoveOutdatedEvents(event, all);
-    updated && EventsController.persistEventsToStore(events);
-  }
-
-  /**
-   * @name persistStaleEvent
-   * @summary Mark an event stale and persist it to store.
-   */
-  private static persistStaleEvent(uid: string) {
-    const stored = EventsController.getEventsFromStore();
-    const updated = stored.map((e) => {
-      if (e.uid === uid) {
-        e.stale = true;
-      }
-      return e;
-    });
-    EventsController.persistEventsToStore(updated);
-  }
-
-  /**
-   * @name getEventsFromStore
-   * @summary Utility to get parsed events array from the store.
-   */
-  private static getEventsFromStore = (): EventCallback[] => {
-    const stored = (store as Record<string, AnyJson>).get(
-      this.storeKey,
-    ) as string;
-    return !stored ? [] : JSON.parse(stored);
-  };
-
-  /**
-   * @name persistEventsToStore
-   * @summary Utility to persist events array to store.
-   */
-  private static persistEventsToStore = (events: EventCallback[]) => {
-    (store as Record<string, AnyJson>).set(
-      this.storeKey,
-      JSON.stringify(events),
-    );
-  };
 }

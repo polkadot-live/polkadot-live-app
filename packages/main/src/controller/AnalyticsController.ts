@@ -8,10 +8,7 @@ export class AnalyticsController {
   private static umami: Umami | null = null;
   private static enabled = false;
 
-  /**
-   * @name initialize
-   * @summary Initialize umami analytics instance.
-   */
+  // Initialize umami analytics instance.
   static initialize(agent: string, windowId: string, language: string) {
     if (process.env.DISABLE_ANALYTICS !== undefined) {
       AnalyticsController.enabled = false;
@@ -26,15 +23,11 @@ export class AnalyticsController {
     }
   }
 
-  /**
-   * @name track
-   * @summary Send an umami tracking event.
-   */
+  // Send umami tracking event.
   static async track(event: string, data?: AnyData) {
     if (!AnalyticsController.enabled || !AnalyticsController.umami) {
       return;
     }
-
     AnalyticsController.umami.event(event, { data: data ? data : {} });
   }
 }

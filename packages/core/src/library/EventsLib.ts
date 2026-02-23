@@ -42,9 +42,10 @@ export const getEventChainId = (event: EventCallback): ChainID =>
 export const doRemoveOutdatedEvents = (
   event: EventCallback,
   all: EventCallback[],
-): { updated: boolean; events: EventCallback[] } => {
+): { updated: boolean; events: EventCallback[]; removed?: EventCallback[] } => {
   const { address, chainId } = event.who.data as EventAccountData;
   const { taskAction } = event;
+  const removed: EventCallback[] = [];
 
   const updated = all.filter((ev) => {
     // Keep if it's a chain event.
@@ -66,6 +67,7 @@ export const doRemoveOutdatedEvents = (
         nextTaskAction === taskAction &&
         nextChainId === chainId
       ) {
+        removed.push(ev);
         return false;
       }
     } else if (ev.who.origin === 'account' && event.who.origin === 'account') {
@@ -78,6 +80,7 @@ export const doRemoveOutdatedEvents = (
         nextAddress === address &&
         nextChainId === chainId
       ) {
+        removed.push(ev);
         return false;
       }
     }
@@ -86,7 +89,7 @@ export const doRemoveOutdatedEvents = (
     return true;
   });
 
-  return { updated: true, events: updated };
+  return { updated: true, events: updated, removed };
 };
 
 /**

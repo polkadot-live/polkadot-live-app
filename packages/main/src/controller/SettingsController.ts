@@ -3,60 +3,35 @@
 
 import { getDefaultSettings } from '@polkadot-live/consts/settings';
 import { WindowsController } from '../controller';
-import { store } from '../main';
+import { SettingsRepository } from '../db';
 import { hideDockIcon, showDockIcon } from '../utils/SystemUtils';
 import * as WindowUtils from '../utils/WindowUtils';
 import type { IpcTask } from '@polkadot-live/types/communication';
-import type { AnyData } from '@polkadot-live/types/misc';
 import type { SettingKey } from '@polkadot-live/types/settings';
 
 export class SettingsController {
-  /**
-   * In-memory settings cache.
-   */
+  // In-memory settings cache.
   private static settingsCache = getDefaultSettings();
 
-  /**
-   * Initialize settings cache by fetching persisted settings from store.
-   */
+  // ===== Initialize  =====
+
   static initialize = () => {
     const defaults = getDefaultSettings();
+    const persisted = SettingsRepository.getAll();
 
-    for (const key of defaults.keys()) {
-      if (store.has(key)) {
-        const val = (store as Record<string, AnyData>).get(key) as boolean;
-        this.settingsCache.set(key, val);
+    for (const [key, defaultValue] of defaults.entries()) {
+      if (persisted.has(key)) {
+        this.settingsCache.set(key, persisted.get(key)!);
       } else {
-        const val = defaults.get(key)!;
-        (store as Record<string, AnyData>).set(key, val);
+        // Insert any new setting keys that were not in the database yet.
+        SettingsRepository.set(key, defaultValue);
+        this.settingsCache.set(key, defaultValue);
       }
     }
   };
 
-  /**
-   * Get a cached value or `false` if it doesn't exist.
-   */
-  static get = (key: SettingKey): boolean =>
-    Boolean(this.settingsCache.get(key));
+  // ===== Process IPC Tasks =====
 
-  /**
-   * Set a cached value.
-   */
-  static set = (key: SettingKey, value: boolean) => {
-    this.settingsCache.set(key, value);
-    (store as Record<string, AnyData>).set(key, value);
-  };
-
-  /**
-   * Provide serialized cache to requesting renderer.
-   */
-  static getAppSettings = () =>
-    JSON.stringify(Array.from(this.settingsCache.entries()));
-
-  /**
-   * @name process
-   * @summary Process a one-way ipc task.
-   */
   static process(task: IpcTask) {
     switch (task.action) {
       case 'settings:handle': {
@@ -86,19 +61,27 @@ export class SettingsController {
     }
   };
 
-  /**
-   * @name toggleAllWorkspaces
-   * @summary Enable or disable showing the app on all workspaces (macos and linux).
-   */
+  // ===== Public =====
+
+  // Get a cached value.
+  static get = (key: SettingKey): boolean =>
+    Boolean(this.settingsCache.get(key));
+
+  // Return cache as serialized.
+  static getAppSettings = () =>
+    JSON.stringify(Array.from(this.settingsCache.entries()));
+
+  // Enable or disable showing the app on all workspaces (macos and linux).
   private static toggleAllWorkspaces() {
     if (!['darwin', 'linux'].includes(process.platform)) {
       return;
     }
 
-    const flag = Boolean(
-      SettingsController.settingsCache.get('setting:show-all-workspaces'),
+    WindowsController.setVisibleOnAllWorkspaces(
+      Boolean(
+        SettingsController.settingsCache.get('setting:show-all-workspaces'),
+      ),
     );
-    WindowsController.setVisibleOnAllWorkspaces(flag);
 
     // Re-hide dock if we're on macOS.
     // Electron will show the dock icon after calling the workspaces API.
@@ -107,4 +90,10 @@ export class SettingsController {
     );
     hideDock && hideDockIcon();
   }
+
+  // Set a cached value.
+  static set = (key: SettingKey, value: boolean) => {
+    this.settingsCache.set(key, value);
+    SettingsRepository.set(key, value);
+  };
 }
