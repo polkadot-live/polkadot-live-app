@@ -1,7 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { mixinHelpIcon } from '@polkadot-live/styles';
 import styled from 'styled-components';
 
 export const MainHeading = styled.h1`
@@ -72,52 +71,5 @@ export const StatsSectionWrapper = styled.div`
     &:hover {
       background-color: var(--accordion-background-hover);
     }
-  }
-`;
-
-export const StatItemWrapper = styled.div`
-  background-color: var(--background-primary);
-  display: flex;
-  align-items: start;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding: 1rem;
-
-  > div:first-of-type {
-    width: 100%;
-    flex: 1;
-    display: flex;
-    align-items: center;
-    > h3 {
-      flex: 1;
-    }
-    .help {
-      ${mixinHelpIcon}
-      color: var(--text-dimmed);
-      font-size: 0.85rem;
-      transition: all 150ms ease-out;
-      border-radius: 0.275rem;
-      &:hover {
-        color: var(--text-highlight);
-      }
-    }
-  }
-
-  h3 {
-    color: var(--stats-text-title);
-    width: 100%;
-    font-size: 1.1rem;
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  span {
-    font-size: 1.2rem;
-    font-weight: 600;
-    width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 `;

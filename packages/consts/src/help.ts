@@ -493,34 +493,6 @@ export const HelpConfig: HelpItems = [
     ],
   },
   {
-    key: 'help:summary:accounts',
-    title: 'Accounts Summary',
-    definition: [
-      'Displays the total number of accounts managed by the application, along with a breakdown by import method.',
-    ],
-  },
-  {
-    key: 'help:summary:events',
-    title: 'Events Summary',
-    definition: [
-      'Displays the total number of events received. Individual stat boxes display totals by event category.',
-    ],
-  },
-  {
-    key: 'help:summary:extrinsics',
-    title: 'Extrinsics Summary',
-    definition: [
-      'Displays the total number of pending and finalized extrinsics managed by the application.',
-    ],
-  },
-  {
-    key: 'help:summary:subscriptions',
-    title: 'Subscriptions Summary',
-    definition: [
-      'Displays the total number of active subscriptions. Separate stat boxes display active subscriptions per account, along with a dedicated stat box for active referenda subscriptions when enabled.',
-    ],
-  },
-  {
     key: 'help:chainEvents:Balances:Transfer',
     title: 'Transfer',
     definition: ['A transfer on the network succeeded.'],

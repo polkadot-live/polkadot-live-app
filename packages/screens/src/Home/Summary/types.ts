@@ -12,4 +12,12 @@ export interface OpenViewButtonProps {
 export type SummaryAccordionValue =
   | 'summary-accounts'
   | 'summary-events'
+  | 'summary-extrinsics'
   | 'summary-subscriptions';
+
+export interface SummaryAccordionItemProps {
+  children: React.ReactNode;
+  onClick: () => void;
+  title: string;
+  value: SummaryAccordionValue;
+}

@@ -1,14 +1,11 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { faCaretRight, faInfo } from '@fortawesome/free-solid-svg-icons';
+import { faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useHelp } from '@polkadot-live/contexts';
 import { FlexRow } from '@polkadot-live/styles';
-import { ShiftingMeter, StatItemWrapper } from '@polkadot-live/ui';
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
-import type { HelpItemKey } from '@polkadot-live/types/help';
 
 export const HoverGradient = styled(motion.span).attrs<{
   $dark: boolean;
@@ -84,91 +81,3 @@ export const SideTriggerButton = ({ onClick }: { onClick: () => void }) => (
     </FlexRow>
   </SideTriggerButtonWrapper>
 );
-
-/**
- * StatItem components.
- */
-export const StatItem = ({
-  title,
-  helpKey,
-  meterValue,
-  total = false,
-}: {
-  title: string;
-  meterValue: number;
-  helpKey?: HelpItemKey;
-  total?: boolean;
-}) => {
-  const { openHelp } = useHelp();
-  const meterColor = total
-    ? 'var(--text-highlight)'
-    : 'var(--text-color-primary)';
-
-  return (
-    <StatItemWrapper className={total ? 'total-item' : ''}>
-      <div>
-        <h3>{title}</h3>
-        {helpKey && (
-          <button
-            type="button"
-            className="help"
-            onClick={() => openHelp(helpKey)}
-          >
-            <FontAwesomeIcon icon={faInfo} />
-          </button>
-        )}
-      </div>
-      <span>
-        <ShiftingMeter color={meterColor} value={meterValue} size={1.2} />
-      </span>
-    </StatItemWrapper>
-  );
-};
-
-export const StatItemRowWrapper = styled.div<{ $total?: boolean }>`
-  padding: 1rem;
-  background-color: var(--background-primary);
-
-  &:first-child {
-    border-top-right-radius: 0.375rem;
-    border-top-left-radius: 0.375rem;
-  }
-  &:last-child {
-    border-bottom-right-radius: 0.375rem;
-    border-bottom-left-radius: 0.375rem;
-  }
-
-  h3 {
-    color: var(--text-color-secondary);
-    flex: 1;
-    font-size: 1.02rem;
-    overflow-x: hidden;
-
-    &.total {
-      color: var(--text-highlight);
-    }
-  }
-  .left {
-    min-width: 2.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .meter {
-    padding-right: 0.5rem;
-    font-weight: bolder;
-  }
-  .help {
-    width: 1.6rem;
-    height: 1.5rem;
-    color: var(--text-dimmed);
-    font-size: 0.85rem;
-    transition: all 150ms ease-out;
-    border-radius: 0.275rem;
-    cursor: pointer;
-
-    &:hover {
-      color: var(--text-highlight);
-    }
-  }
-`;
