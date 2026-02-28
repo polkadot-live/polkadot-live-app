@@ -20,11 +20,11 @@ ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
  * Color mapping for each event category.
  */
 const categoryColors: Record<string, string> = {
-  Balances: '#8b5cf6',
-  Nominating: '#06b6d4',
-  'Nomination Pools': '#f59e0b',
-  OpenGov: '#10b981',
-  Voting: '#ef4444',
+  Balances: '#a78bda',
+  Nominating: '#6ec4c4',
+  'Nomination Pools': '#d4a574',
+  OpenGov: '#7ab89e',
+  Voting: '#cf8e8e',
 };
 
 export const EventsBarChart = () => {

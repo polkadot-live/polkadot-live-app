@@ -15,11 +15,11 @@ ChartJS.register(ArcElement, Tooltip, Legend);
  * Color mapping for each import source.
  */
 const sourceColors: Record<AccountSource, string> = {
-  ledger: '#8b5cf6',
-  'read-only': '#06b6d4',
-  vault: '#f59e0b',
-  'wallet-connect': '#10b981',
-  system: '#6b7280',
+  ledger: '#a78bda',
+  'read-only': '#6ec4c4',
+  vault: '#d4a574',
+  'wallet-connect': '#7ab89e',
+  system: '#8e99a4',
 };
 
 export const AccountsDonut = () => {
@@ -44,8 +44,9 @@ export const AccountsDonut = () => {
   };
 
   const options = {
-    cutout: '65%',
+    cutout: '68%',
     responsive: true,
+    spacing: 2,
     maintainAspectRatio: false,
     plugins: {
       legend: { display: false },

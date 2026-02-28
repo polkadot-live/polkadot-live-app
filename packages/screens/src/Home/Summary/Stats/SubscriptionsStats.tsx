@@ -74,7 +74,7 @@ export const SubscriptionsStats = () => {
         <SectionTitle>Global</SectionTitle>
         <StatRow>
           <IconWrap>
-            <FontAwesomeIcon icon={faChain} color="#06b6d4" />
+            <FontAwesomeIcon icon={faChain} color="#6ec4c4" />
           </IconWrap>
           <span className="name">Chain Events</span>
           <span className="count">{eventSubCount}</span>
@@ -82,7 +82,7 @@ export const SubscriptionsStats = () => {
 
         <StatRow>
           <IconWrap>
-            <FontAwesomeIcon icon={faComments} color="#10b981" />
+            <FontAwesomeIcon icon={faComments} color="#7ab89e" />
           </IconWrap>
           <span className="name">OpenGov</span>
           <span className="count">{refCount}</span>

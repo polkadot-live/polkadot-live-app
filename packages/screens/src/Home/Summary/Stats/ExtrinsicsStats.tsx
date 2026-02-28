@@ -9,8 +9,8 @@ import styled from 'styled-components';
  * Colors for each extrinsic status.
  */
 const statusColors: Record<string, string> = {
-  pending: '#f59e0b',
-  finalized: '#10b981',
+  pending: '#d4a574',
+  finalized: '#7ab89e',
 };
 
 export const ExtrinsicsStats = () => {
