@@ -75,6 +75,7 @@ const TotalRow = styled.div`
   display: flex;
   align-items: baseline;
   gap: 0.6rem;
+  margin-bottom: 0.25rem;
 
   .value {
     color: var(--text-color-primary);
@@ -106,7 +107,7 @@ const RowHeader = styled.div`
     color: var(--text-color-secondary);
   }
   .count {
-    font-size: 1rem;
+    font-size: 0.94rem;
     font-weight: 600;
     color: var(--text-color-primary);
     padding-right: 0.4rem;

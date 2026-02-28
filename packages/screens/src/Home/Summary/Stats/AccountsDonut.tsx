@@ -36,7 +36,7 @@ export const AccountsDonut = () => {
     datasets: [
       {
         data: total === 0 ? [1] : counts,
-        backgroundColor: total === 0 ? ['var(--border-secondary)'] : colors,
+        backgroundColor: total === 0 ? ['rgba(150, 150, 150, 0.15)'] : colors,
         borderWidth: 0,
         hoverOffset: 4,
       },
@@ -139,7 +139,7 @@ const LegendItem = styled.div`
     color: var(--text-color-secondary);
   }
   .legend-count {
-    font-size: 1rem;
+    font-size: 0.94rem;
     font-weight: 600;
     color: var(--text-color-primary);
   }

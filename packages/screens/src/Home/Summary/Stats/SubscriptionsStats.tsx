@@ -64,17 +64,21 @@ export const SubscriptionsStats = () => {
       {/* Accounts section */}
       <PanelMiddle>
         <SectionTitle>Accounts</SectionTitle>
-        {accounts.map((a, i) => (
-          <StatRow key={`${a.chain}::${a.address}`}>
-            <IconWrap>
-              <Identicon value={a.address} fontSize="1.6rem" />
-            </IconWrap>
-            <span className="name">{a.name}</span>
-            <CountBadge $color="#a78bda" $show={animated} $delay={i * 60}>
-              {getClassicSubCount(a) + getSmartCount(a)}
-            </CountBadge>
-          </StatRow>
-        ))}
+        {accounts.length === 0 ? (
+          <EmptyText>No accounts enabled for subscriptions.</EmptyText>
+        ) : (
+          accounts.map((a, i) => (
+            <StatRow key={`${a.chain}::${a.address}`}>
+              <IconWrap>
+                <Identicon value={a.address} fontSize="1.6rem" />
+              </IconWrap>
+              <span className="name">{a.name}</span>
+              <CountBadge $color="#a78bda" $show={animated} $delay={i * 60}>
+                {getClassicSubCount(a) + getSmartCount(a)}
+              </CountBadge>
+            </StatRow>
+          ))
+        )}
       </PanelMiddle>
 
       {/* Global section */}
@@ -146,6 +150,12 @@ const SectionTitle = styled.h4`
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--text-dimmed);
+  margin: 0;
+`;
+
+const EmptyText = styled.p`
+  font-size: 1rem;
+  color: var(--text-color-secondary);
   margin: 0;
 `;
 

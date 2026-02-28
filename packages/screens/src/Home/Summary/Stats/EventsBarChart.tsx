@@ -87,9 +87,13 @@ export const EventsBarChart = () => {
 
   return (
     <Wrapper>
-      {/* Bar chart */}
+      {/* Bar chart or empty state */}
       <ChartContainer>
-        <Bar data={data} options={options} />
+        {total === 0 ? (
+          <EmptyState>No events received yet.</EmptyState>
+        ) : (
+          <Bar data={data} options={options} />
+        )}
       </ChartContainer>
 
       {/* Legend + total */}
@@ -134,10 +138,22 @@ const ChartContainer = styled.div`
   flex-shrink: 0;
 `;
 
+const EmptyState = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 1rem;
+  color: var(--text-color-secondary);
+  text-align: center;
+  padding: 1rem;
+`;
+
 const LegendContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
 `;
 
 const TotalRow = styled.div`
@@ -179,7 +195,7 @@ const LegendItem = styled.div`
   .legend-count {
     text-align: right;
     min-width: 1.5rem;
-    font-size: 1rem;
+    font-size: 0.94rem;
     font-weight: 600;
     color: var(--text-color-primary);
   }
