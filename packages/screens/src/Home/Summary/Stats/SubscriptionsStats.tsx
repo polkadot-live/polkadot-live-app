@@ -10,8 +10,8 @@ import {
   useSubscriptions,
 } from '@polkadot-live/contexts';
 import { Identicon } from '@polkadot-live/ui';
-import { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import { useEffect, useRef, useState } from 'react';
+import styled, { css, keyframes } from 'styled-components';
 import type { FlattenedAccountData } from '@polkadot-live/types';
 
 export const SubscriptionsStats = () => {
@@ -32,6 +32,14 @@ export const SubscriptionsStats = () => {
     smartSubCounts.get(`${a.chain}::${a.address}`) ?? 0;
 
   const refCount = getTotalIntervalSubscriptionCount() + countActiveRefSubs();
+
+  const [animated, setAnimated] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  useEffect(() => {
+    timerRef.current = setTimeout(() => setAnimated(true), 100);
+    return () => clearTimeout(timerRef.current);
+  }, []);
 
   useEffect(() => {
     const fetch = async () => {
@@ -56,15 +64,15 @@ export const SubscriptionsStats = () => {
       {/* Accounts section */}
       <PanelMiddle>
         <SectionTitle>Accounts</SectionTitle>
-        {accounts.map((a) => (
+        {accounts.map((a, i) => (
           <StatRow key={`${a.chain}::${a.address}`}>
             <IconWrap>
               <Identicon value={a.address} fontSize="1.6rem" />
             </IconWrap>
             <span className="name">{a.name}</span>
-            <span className="count">
+            <CountBadge $color="#a78bda" $show={animated} $delay={i * 60}>
               {getClassicSubCount(a) + getSmartCount(a)}
-            </span>
+            </CountBadge>
           </StatRow>
         ))}
       </PanelMiddle>
@@ -77,7 +85,13 @@ export const SubscriptionsStats = () => {
             <FontAwesomeIcon icon={faChain} color="#6ec4c4" />
           </IconWrap>
           <span className="name">Chain Events</span>
-          <span className="count">{eventSubCount}</span>
+          <CountBadge
+            $color="#6ec4c4"
+            $show={animated}
+            $delay={accounts.length * 60}
+          >
+            {eventSubCount}
+          </CountBadge>
         </StatRow>
 
         <StatRow>
@@ -85,7 +99,13 @@ export const SubscriptionsStats = () => {
             <FontAwesomeIcon icon={faComments} color="#7ab89e" />
           </IconWrap>
           <span className="name">OpenGov</span>
-          <span className="count">{refCount}</span>
+          <CountBadge
+            $color="#7ab89e"
+            $show={animated}
+            $delay={(accounts.length + 1) * 60}
+          >
+            {refCount}
+          </CountBadge>
         </StatRow>
       </PanelBottom>
     </Wrapper>
@@ -143,13 +163,42 @@ const StatRow = styled.div`
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  .count {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--text-color-primary);
-    min-width: 1.5rem;
-    text-align: right;
+`;
+
+const popIn = keyframes`
+  from {
+    opacity: 0;
+    transform: scale(0.6);
   }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+`;
+
+const CountBadge = styled.span<{
+  $color: string;
+  $show: boolean;
+  $delay: number;
+}>`
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1;
+  min-width: 1.5rem;
+  padding: 0.35rem 1rem;
+  border-radius: 0.3rem;
+  text-align: center;
+  color: ${({ $color }) => $color};
+  background-color: ${({ $color }) => `${$color}18`};
+  opacity: 0;
+  transform: scale(0.6);
+
+  ${({ $show, $delay }) =>
+    $show &&
+    css`
+      animation: ${popIn} 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)
+        ${$delay}ms forwards;
+    `}
 `;
 
 const IconWrap = styled.div`
