@@ -7,6 +7,7 @@ import {
   createSafeContextHook,
   useAppSettings,
   useConnections,
+  useSummary,
 } from '@polkadot-live/contexts';
 import {
   ConfigRenderer,
@@ -44,6 +45,7 @@ export const WalletConnectProvider = ({
 }) => {
   const { cacheGet: getSetting } = useAppSettings();
   const { cacheGet, getOnlineMode } = useConnections();
+  const { handleTxStatusChange } = useSummary();
   const isConnected = cacheGet('mode:connected');
   const onlineMode = cacheGet('mode:online');
   const wcInitialized = cacheGet('wc:initialized');
@@ -445,7 +447,7 @@ export const WalletConnectProvider = ({
       const silence =
         getSetting('setting:silence-os-notifications') ||
         getSetting('setting:silence-extrinsic-notifications');
-      ExtrinsicsController.submit(info, silence);
+      ExtrinsicsController.submit(info, silence, handleTxStatusChange);
 
       // Close overlay in extrinsics window.
       ConfigRenderer.portToTabs?.postMessage({

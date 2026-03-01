@@ -2,7 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ledgerErrorMeta } from '@polkadot-live/consts/ledger';
-import { createSafeContextHook, useAppSettings } from '@polkadot-live/contexts';
+import {
+  createSafeContextHook,
+  useAppSettings,
+  useSummary,
+} from '@polkadot-live/contexts';
 import {
   ConfigRenderer,
   ExtrinsicsController,
@@ -30,6 +34,7 @@ export const LedgerSignerProvider = ({
   children: React.ReactNode;
 }) => {
   const { cacheGet } = useAppSettings();
+  const { handleTxStatusChange } = useSummary();
   /**
    * Sends Ledger error data to extrinsics window.
    */
@@ -86,7 +91,7 @@ export const LedgerSignerProvider = ({
       const silence =
         cacheGet('setting:silence-os-notifications') ||
         cacheGet('setting:silence-extrinsic-notifications');
-      ExtrinsicsController.submit(info, silence);
+      ExtrinsicsController.submit(info, silence, handleTxStatusChange);
 
       // Close overlay in extrinsics window.
       ConfigRenderer.portToTabs?.postMessage({

@@ -586,7 +586,7 @@ export const TxMetaProvider = ({ children }: { children: React.ReactNode }) => {
       // Remove cached transaction in main process.
       ConfigTabs.portToMain.postMessage({
         task: 'renderer:tx:delete',
-        data: { txId },
+        data: { txId, txStatus: info.txStatus },
       });
       // Remove extrinsic from store.
       await window.myAPI.sendExtrinsicsTaskAsync({

@@ -82,9 +82,9 @@ const getProvidersForWindow = () => {
         DataBackupProvider,
         // Requires useBootstrapping and useHelp.
         CogMenuProvider,
+        SummaryProvider,
         WalletConnectProvider,
         LedgerSignerProvider,
-        SummaryProvider,
       )(Theme);
     }
     case 'tabs': {

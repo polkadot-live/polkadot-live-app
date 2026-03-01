@@ -11,6 +11,7 @@ import {
   useIntervalSubscriptions,
   useManage,
   useSubscriptions,
+  useSummary,
 } from '@polkadot-live/contexts';
 import * as Core from '@polkadot-live/core';
 import {
@@ -69,6 +70,7 @@ export const useMainMessagePorts = () => {
   } = MainCtx.useWalletConnect();
   const { setRenderedSubscriptions } = useManage();
   const { removeAllForAccount } = useChainEvents();
+  const { adjustExtrinsicCount, handleTxStatusChange } = useSummary();
 
   /**
    * @name handleImportAddress
@@ -309,6 +311,9 @@ export const useMainMessagePorts = () => {
   const handleActionTxInit = async (ev: MessageEvent) => {
     const info: ExtrinsicInfo = JSON.parse(ev.data.data);
     await ExtrinsicsController.new(info);
+
+    // Increase pending extrinsic count in summary context.
+    adjustExtrinsicCount('pending', 1);
   };
 
   /**
@@ -337,7 +342,7 @@ export const useMainMessagePorts = () => {
     const silence =
       cacheGet('setting:silence-os-notifications') ||
       cacheGet('setting:silence-extrinsic-notifications');
-    ExtrinsicsController.submit(info, silence);
+    ExtrinsicsController.submit(info, silence, handleTxStatusChange);
   };
 
   /**
@@ -358,8 +363,13 @@ export const useMainMessagePorts = () => {
    * @summary Delete a cached transaction.
    */
   const handleTxDelete = (ev: MessageEvent) => {
-    const { txId } = ev.data.data;
+    const { txId, txStatus } = ev.data.data;
     ExtrinsicsController.deleteTx(txId);
+
+    // Decrement extrinsic count if the deleted tx was pending or finalized.
+    if (txStatus === 'pending' || txStatus === 'finalized') {
+      adjustExtrinsicCount(txStatus, -1);
+    }
   };
 
   /**

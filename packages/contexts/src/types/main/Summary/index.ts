@@ -10,4 +10,6 @@ import type { TxStatus } from '@polkadot-live/types/tx';
 export interface SummaryContextInterface {
   addressMap: Map<AccountSource, ImportedGenericAccount[]>;
   extrinsicCounts: Map<TxStatus, number>;
+  adjustExtrinsicCount: (status: TxStatus, delta: number) => void;
+  handleTxStatusChange: (status: TxStatus) => void;
 }
