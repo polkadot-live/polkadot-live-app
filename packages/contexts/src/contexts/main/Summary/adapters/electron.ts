@@ -15,34 +15,47 @@ export const electronAdapter: SummaryAdapter = {
     setAddressMap,
     setExtrinsicCounts,
   ) => {
-    // Accounts.
-    const serialized = (await window.myAPI.rawAccountTask({
-      action: 'raw-account:getAll',
-      data: null,
-    })) as string;
-
-    const parsedMap = new Map<AccountSource, string>(JSON.parse(serialized));
-    for (const [source, ser] of parsedMap.entries()) {
-      const parsed: ImportedGenericAccount[] = JSON.parse(ser);
-      addressMapRef.current.set(source, parsed);
-    }
-
-    // Extrinsics.
-    const getCount = async (status: TxStatus) =>
-      (await window.myAPI.sendExtrinsicsTaskAsync({
-        action: 'extrinsics:getCount',
-        data: { status },
-      })) || '0';
-
-    const counts = await Promise.all([
-      getCount('pending'),
-      getCount('finalized'),
+    await Promise.all([
+      fetchAccounts(addressMapRef),
+      fetchExtrinsicCounts(extrinsicCountsRef),
     ]);
-    extrinsicCountsRef.current.set('pending', Number(counts[0]));
-    extrinsicCountsRef.current.set('finalized', Number(counts[1]));
 
-    // Update state.
     setAddressMap(addressMapRef.current);
     setExtrinsicCounts(extrinsicCountsRef.current);
   },
+};
+
+// Fetch all imported accounts grouped by source.
+const fetchAccounts = async (
+  addressMapRef: React.RefObject<Map<AccountSource, ImportedGenericAccount[]>>,
+) => {
+  const serialized = (await window.myAPI.rawAccountTask({
+    action: 'raw-account:getAll',
+    data: null,
+  })) as string;
+
+  const parsedMap = new Map<AccountSource, string>(JSON.parse(serialized));
+  for (const [source, ser] of parsedMap.entries()) {
+    const parsed: ImportedGenericAccount[] = JSON.parse(ser);
+    addressMapRef.current.set(source, parsed);
+  }
+};
+
+// Fetch extrinsic counts for each status.
+const fetchExtrinsicCounts = async (
+  extrinsicCountsRef: React.RefObject<Map<TxStatus, number>>,
+) => {
+  const getCount = async (status: TxStatus) =>
+    (await window.myAPI.sendExtrinsicsTaskAsync({
+      action: 'extrinsics:getCount',
+      data: { status },
+    })) || '0';
+
+  const counts = await Promise.all([
+    getCount('pending'),
+    getCount('finalized'),
+  ]);
+
+  extrinsicCountsRef.current.set('pending', Number(counts[0]));
+  extrinsicCountsRef.current.set('finalized', Number(counts[1]));
 };
