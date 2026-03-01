@@ -5,7 +5,8 @@ import { ConfigTabs } from '@polkadot-live/core';
 import type { DeleteHandlerAdapter } from './types';
 
 export const electronAdapter: DeleteHandlerAdapter = {
-  removeFromStore: async (source, publicKeyHex) => {
+  removeFromStore: async (genericAccount) => {
+    const { publicKeyHex, source } = genericAccount;
     await window.myAPI.rawAccountTask({
       action: 'raw-account:delete',
       data: { publicKeyHex, source },

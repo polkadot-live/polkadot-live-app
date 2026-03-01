@@ -6,6 +6,7 @@ import type {
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
 import type { TxStatus } from '@polkadot-live/types/tx';
+import type { IpcRendererEvent } from 'electron';
 import type { SummaryAdapter } from './types';
 
 export const electronAdapter: SummaryAdapter = {
@@ -22,6 +23,18 @@ export const electronAdapter: SummaryAdapter = {
 
     setAddressMap(addressMapRef.current);
     setExtrinsicCounts(extrinsicCountsRef.current);
+  },
+
+  // Listen for account changes from the main process and update the address map.
+  listenForAccountChanges: (handleAccountChange) => {
+    window.myAPI.reportAccountChanged(
+      (_: IpcRendererEvent, serialized: string, action: 'add' | 'remove') => {
+        const account: ImportedGenericAccount = JSON.parse(serialized);
+        handleAccountChange(account, action);
+      },
+    );
+
+    return null;
   },
 };
 

@@ -80,6 +80,10 @@ export const API: PreloadAPI = {
   // Reports a new event to all open windows.
   reportNewEvent: (callback) => ipcRenderer.on('renderer:event:new', callback),
 
+  // Reports an account change (import or removal) to the main renderer.
+  reportAccountChanged: (callback) =>
+    ipcRenderer.on('renderer:account:changed', callback),
+
   // Reports a dismiss event.
   reportDismissEvent: (callback) =>
     ipcRenderer.on('renderer:event:dismiss', callback),

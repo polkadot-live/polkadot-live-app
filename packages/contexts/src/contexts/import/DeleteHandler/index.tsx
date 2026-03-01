@@ -6,10 +6,7 @@ import { createSafeContextHook } from '../../../utils';
 import { useAccountStatuses } from '../AccountStatuses';
 import { useImportAddresses } from '../Addresses';
 import { getDeleteHandlerAdapter } from './adapters';
-import type {
-  AccountSource,
-  ImportedGenericAccount,
-} from '@polkadot-live/types/accounts';
+import type { ImportedGenericAccount } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { DeleteHandlerContextInterface } from '../../../types/import';
 
@@ -37,7 +34,7 @@ export const DeleteHandlerProvider = ({
   const handleDeleteAddress = async (
     genericAccount: ImportedGenericAccount,
   ): Promise<boolean> => {
-    const { publicKeyHex, source } = genericAccount;
+    const { source } = genericAccount;
     let goBack = false;
 
     for (const { address, chainId } of Object.values(
@@ -51,15 +48,15 @@ export const DeleteHandlerProvider = ({
       postToMain(address, chainId);
     }
     // Delete all account data from store.
-    await removeFromStore(source, publicKeyHex);
+    await removeFromStore(genericAccount);
     return goBack;
   };
 
   /**
    * Remove generic account from store.
    */
-  const removeFromStore = async (source: AccountSource, publicKeyHex: string) =>
-    await adapter.removeFromStore(source, publicKeyHex);
+  const removeFromStore = async (genericAccount: ImportedGenericAccount) =>
+    await adapter.removeFromStore(genericAccount);
 
   /**
    * Send address data to main window to process removal.

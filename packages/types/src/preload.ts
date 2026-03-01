@@ -78,6 +78,7 @@ export interface PreloadAPI {
   requestImportedAccounts: ApiEmptyRequest;
 
   reportNewEvent: ApiReportNewEvent;
+  reportAccountChanged: ApiReportAccountChanged;
   reportDismissEvent: ApiReportDismissEvent;
   openBrowserURL: ApiOpenBrowserWindow;
 
@@ -97,6 +98,14 @@ type ApiReportNewEvent = (
     _: IpcRendererEvent,
     event: EventCallback,
     newEvent: boolean,
+  ) => void,
+) => Electron.IpcRenderer;
+
+type ApiReportAccountChanged = (
+  callback: (
+    _: IpcRendererEvent,
+    serialized: string,
+    action: 'add' | 'remove',
   ) => void,
 ) => Electron.IpcRenderer;
 

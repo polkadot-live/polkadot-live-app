@@ -65,6 +65,34 @@ export const SummaryProvider = ({
     [adjustExtrinsicCount],
   );
 
+  // Handle an account change (import or removal) in the address map.
+  const handleAccountChange = useCallback(
+    (account: ImportedGenericAccount, action: 'add' | 'remove') => {
+      const { source, publicKeyHex } = account;
+
+      setAddressMap((prev) => {
+        const updated = new Map(prev);
+        const existing = updated.get(source) ?? [];
+
+        if (action === 'add') {
+          if (existing.some((a) => a.publicKeyHex === publicKeyHex)) {
+            return prev;
+          }
+          updated.set(source, [...existing, account]);
+        } else {
+          updated.set(
+            source,
+            existing.filter((a) => a.publicKeyHex !== publicKeyHex),
+          );
+        }
+
+        addressMapRef.current = updated;
+        return updated;
+      });
+    },
+    [],
+  );
+
   // Fetch stored addresss from main when component loads.
   useEffect(() => {
     const fetch = async () => {
@@ -76,6 +104,14 @@ export const SummaryProvider = ({
       );
     };
     fetch();
+  }, []);
+
+  // Listen for account imports and removals from the main process.
+  useEffect(() => {
+    const removeListener = adapter.listenForAccountChanges(handleAccountChange);
+    return () => {
+      removeListener?.();
+    };
   }, []);
 
   return (
