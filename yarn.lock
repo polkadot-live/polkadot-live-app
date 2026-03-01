@@ -1365,6 +1365,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@kurkle/color@npm:^0.3.0":
+  version: 0.3.4
+  resolution: "@kurkle/color@npm:0.3.4"
+  checksum: 0e9fd55c614b005c5f0c4c755bca19ec0293bc7513b4ea3ec1725234f9c2fa81afbc78156baf555c8b9cb0d305619253c3f5bca016067daeebb3d00ebb4ea683
+  languageName: node
+  linkType: hard
+
 "@ledgerhq/devices@npm:8.4.7":
   version: 8.4.7
   resolution: "@ledgerhq/devices@npm:8.4.7"
@@ -5888,6 +5895,15 @@ __metadata:
   version: 5.4.1
   resolution: "chalk@npm:5.4.1"
   checksum: b23e88132c702f4855ca6d25cb5538b1114343e41472d5263ee8a37cccfccd9c4216d111e1097c6a27830407a1dc81fecdf2a56f2c63033d4dbbd88c10b0dcef
+  languageName: node
+  linkType: hard
+
+"chart.js@npm:^4.5.1":
+  version: 4.5.1
+  resolution: "chart.js@npm:4.5.1"
+  dependencies:
+    "@kurkle/color": "npm:^0.3.0"
+  checksum: 3f2a11dcaae9079e8e6b8ad077e2ae311f04996f9da14815730891e66215ee8b5f2c0eb70b5a156e5bde0f89a41bae13506dc6153e50fd22dcb282b21eec706f
   languageName: node
   linkType: hard
 
@@ -10602,6 +10618,7 @@ __metadata:
     axios: "npm:^1.7.2"
     better-sqlite3: "npm:^12.6.2"
     bignumber.js: "npm:^9.1.2"
+    chart.js: "npm:^4.5.1"
     cross-env: "npm:^7.0.3"
     date-fns: "npm:^3.6.0"
     debug: "npm:^4.4.3"
@@ -10617,6 +10634,7 @@ __metadata:
     postcss: "npm:^8.5.3"
     qrcode-generator: "npm:^1.4.4"
     react: "npm:^19.1.1"
+    react-chartjs-2: "npm:^5.3.1"
     react-content-loader: "npm:^7.1.1"
     react-dom: "npm:^19.1.1"
     react-error-boundary: "npm:^4.0.12"
@@ -10972,6 +10990,16 @@ __metadata:
   bin:
     rc: ./cli.js
   checksum: 24a07653150f0d9ac7168e52943cc3cb4b7a22c0e43c7dff3219977c2fdca5a2760a304a029c20811a0e79d351f57d46c9bde216193a0f73978496afc2b85b15
+  languageName: node
+  linkType: hard
+
+"react-chartjs-2@npm:^5.3.1":
+  version: 5.3.1
+  resolution: "react-chartjs-2@npm:5.3.1"
+  peerDependencies:
+    chart.js: ^4.1.1
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 40fac3fe23a163232d952bf5cd2a14d7baceadea326b57909d5e556ed2481b7cfb177582ac8f39b8dc51ac11f3d19a6127784746f35f5771181ab700110e7326
   languageName: node
   linkType: hard
 

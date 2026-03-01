@@ -1,62 +1,68 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { faCaretRight, faInfo } from '@fortawesome/free-solid-svg-icons';
+import { faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useHelp } from '@polkadot-live/contexts';
 import { FlexRow } from '@polkadot-live/styles';
-import { ShiftingMeter, StatItemWrapper } from '@polkadot-live/ui';
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
-import type { HelpItemKey } from '@polkadot-live/types/help';
 
-export const HoverGradient = styled(motion.span).attrs<{
-  $dark: boolean;
-}>((props) => ({ $dark: props.$dark }))`
-  --hover-color: ${({ $dark }) =>
-    $dark ? 'rgba(119, 93, 181, 0.411) 40%' : 'rgba(205, 185, 247, 0.411) 20%'};
-
-  position: absolute;
-  transition: 0.35s;
-  background-size: 200% auto;
-  background-image: linear-gradient(
-    45deg,
-    var(--background-primary) 0%,
-    var(--hover-color) 41%,
-    var(--background-primary) 100%
-  );
-
-  border-radius: 0.375rem;
-  inset: 0px;
-  z-index: 0;
-`;
-
-export const OpenViewButtonWrapper = styled(motion.button).attrs<{
-  $active: boolean;
-}>((props) => ({ $active: props.$active }))`
+export const OpenViewButtonWrapper = styled(motion.button)`
   flex: 1;
   background-color: var(--background-primary);
-
   position: relative;
   min-height: 65px;
   padding: 1.5rem 0.5rem;
   border: none;
   border-radius: 0.375rem;
   user-select: none;
+  overflow: hidden;
+  cursor: pointer;
+  transition:
+    background-color 0.25s ease,
+    box-shadow 0.25s ease;
 
   .icon {
     color: var(--nav-button-text);
     z-index: 2;
     font-size: 1.5rem;
+    transition: color 0.25s ease;
   }
   h2 {
     color: var(--nav-button-text);
     z-index: 2;
     font-size: 1rem;
     line-height: 1.75rem;
+    transition: color 0.25s ease;
   }
+
+  /* Accent line along the bottom */
+  .accent-line {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2.5px;
+    border-radius: 2px;
+    background: #c75d82;
+    transform: translateX(-50%);
+    transition: width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
   &:hover {
     background-color: var(--background-primary-hover);
+
+    .icon {
+      color: #c75d82;
+    }
+    .accent-line {
+      width: 60%;
+    }
+  }
+
+  &:active .accent-line {
+    width: 40%;
+    transition-duration: 0.1s;
   }
 `;
 
@@ -69,106 +75,51 @@ const SideTriggerButtonWrapper = styled.button`
   align-items: center;
   height: 100%;
   padding: 0 1.25rem;
-  opacity: 0.75;
   border-top-right-radius: 0.375rem;
   border-bottom-right-radius: 0.375rem;
   font-size: 1.05rem;
   font-weight: 600;
-  color: var(--text-color-primary);
+  color: var(--text-color-secondary);
+  cursor: pointer;
+  transition: color 0.25s ease;
+
+  .caret-icon {
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+`;
+
+/**
+ * Scoped hover styles for the Summary accordion trigger wrapper.
+ * Applied alongside HeaderContentDropdownWrapper without modifying it.
+ */
+export const SummaryTriggerStyles = styled.div`
+  .SummaryTriggerWrapper:hover {
+    .caret-icon {
+      transform: translateX(3px);
+    }
+    button {
+      color: #c75d82;
+    }
+  }
+  .SummaryTriggerWrapper:active {
+    .caret-icon {
+      transform: translateX(1px);
+      transition-duration: 0.1s;
+    }
+    button {
+      color: #c75d82;
+    }
+  }
 `;
 
 export const SideTriggerButton = ({ onClick }: { onClick: () => void }) => (
   <SideTriggerButtonWrapper onClick={() => onClick()}>
     <FlexRow $gap={'0.65rem'}>
-      <FontAwesomeIcon icon={faCaretRight} transform={'grow-2'} />
+      <FontAwesomeIcon
+        className="caret-icon"
+        icon={faCaretRight}
+        transform={'grow-2'}
+      />
     </FlexRow>
   </SideTriggerButtonWrapper>
 );
-
-/**
- * StatItem components.
- */
-export const StatItem = ({
-  title,
-  helpKey,
-  meterValue,
-  total = false,
-}: {
-  title: string;
-  meterValue: number;
-  helpKey?: HelpItemKey;
-  total?: boolean;
-}) => {
-  const { openHelp } = useHelp();
-  const meterColor = total
-    ? 'var(--text-highlight)'
-    : 'var(--text-color-primary)';
-
-  return (
-    <StatItemWrapper className={total ? 'total-item' : ''}>
-      <div>
-        <h3>{title}</h3>
-        {helpKey && (
-          <button
-            type="button"
-            className="help"
-            onClick={() => openHelp(helpKey)}
-          >
-            <FontAwesomeIcon icon={faInfo} />
-          </button>
-        )}
-      </div>
-      <span>
-        <ShiftingMeter color={meterColor} value={meterValue} size={1.2} />
-      </span>
-    </StatItemWrapper>
-  );
-};
-
-export const StatItemRowWrapper = styled.div<{ $total?: boolean }>`
-  padding: 1rem;
-  background-color: var(--background-primary);
-
-  &:first-child {
-    border-top-right-radius: 0.375rem;
-    border-top-left-radius: 0.375rem;
-  }
-  &:last-child {
-    border-bottom-right-radius: 0.375rem;
-    border-bottom-left-radius: 0.375rem;
-  }
-
-  h3 {
-    color: var(--text-color-secondary);
-    flex: 1;
-    font-size: 1.02rem;
-    overflow-x: hidden;
-
-    &.total {
-      color: var(--text-highlight);
-    }
-  }
-  .left {
-    min-width: 2.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .meter {
-    padding-right: 0.5rem;
-    font-weight: bolder;
-  }
-  .help {
-    width: 1.6rem;
-    height: 1.5rem;
-    color: var(--text-dimmed);
-    font-size: 0.85rem;
-    transition: all 150ms ease-out;
-    border-radius: 0.275rem;
-    cursor: pointer;
-
-    &:hover {
-      color: var(--text-highlight);
-    }
-  }
-`;
