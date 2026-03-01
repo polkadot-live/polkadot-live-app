@@ -42,8 +42,9 @@ export const Summary = () => {
   const { openTab } = useConnections();
   const { setSelectedId } = useSideNav();
 
-  const [accordionValue, setAccordionValue] =
-    useState<SummaryAccordionValue>('summary-accounts');
+  const [accordionValue, setAccordionValue] = useState<SummaryAccordionValue[]>(
+    ['summary-accounts'],
+  );
 
   const viewButtons = [
     {
@@ -73,7 +74,7 @@ export const Summary = () => {
   ] as const;
 
   return (
-    <FlexColumn $rowGap="1rem" style={{ padding: '2rem 1rem' }}>
+    <FlexColumn $rowGap="1rem" style={{ padding: '1rem' }}>
       <UI.MainHeading>Summary</UI.MainHeading>
 
       <FlexRow $gap={'0.75rem'}>
@@ -89,13 +90,13 @@ export const Summary = () => {
       </FlexRow>
 
       <SummaryTriggerStyles>
-        <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
+        <UI.AccordionWrapper>
           <Accordion.Root
             className="AccordionRoot"
-            type="single"
+            type="multiple"
             value={accordionValue}
             onValueChange={(val) =>
-              setAccordionValue(val as SummaryAccordionValue)
+              setAccordionValue(val as SummaryAccordionValue[])
             }
           >
             <FlexColumn $rowGap={'1rem'}>
