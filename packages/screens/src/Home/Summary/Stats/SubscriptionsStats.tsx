@@ -191,8 +191,8 @@ const CountBadge = styled.span<{
   $show: boolean;
   $delay: number;
 }>`
-  font-size: 0.82rem;
-  font-weight: 600;
+  font-size: 0.94rem;
+  font-weight: normal;
   line-height: 1;
   min-width: 1.5rem;
   padding: 0.35rem 1rem;

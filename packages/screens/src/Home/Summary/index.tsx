@@ -15,7 +15,7 @@ import {
   ExtrinsicsStats,
   SubscriptionsStats,
 } from './Stats';
-import { SideTriggerButton } from './Wrappers';
+import { SideTriggerButton, SummaryTriggerStyles } from './Wrappers';
 import type { SummaryAccordionItemProps, SummaryAccordionValue } from './types';
 
 const SummaryAccordionItem = ({
@@ -30,7 +30,7 @@ const SummaryAccordionItem = ({
         <ChevronDownIcon className="AccordionChevron" aria-hidden />
         <UI.TriggerHeader>{title}</UI.TriggerHeader>
       </UI.AccordionTrigger>
-      <div className="HeaderContentDropdownWrapper">
+      <div className="HeaderContentDropdownWrapper SummaryTriggerWrapper">
         <SideTriggerButton onClick={onClick} />
       </div>
     </FlexRow>
@@ -88,60 +88,62 @@ export const Summary = () => {
         ))}
       </FlexRow>
 
-      <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
-        <Accordion.Root
-          className="AccordionRoot"
-          type="single"
-          value={accordionValue}
-          onValueChange={(val) =>
-            setAccordionValue(val as SummaryAccordionValue)
-          }
-        >
-          <FlexColumn $rowGap={'1rem'}>
-            <SummaryAccordionItem
-              title="Accounts"
-              value="summary-accounts"
-              onClick={() =>
-                openTab('import', {
-                  event: 'window-open-accounts',
-                  data: null,
-                })
-              }
-            >
-              <AccountsDonut />
-            </SummaryAccordionItem>
+      <SummaryTriggerStyles>
+        <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
+          <Accordion.Root
+            className="AccordionRoot"
+            type="single"
+            value={accordionValue}
+            onValueChange={(val) =>
+              setAccordionValue(val as SummaryAccordionValue)
+            }
+          >
+            <FlexColumn $rowGap={'1rem'}>
+              <SummaryAccordionItem
+                title="Accounts"
+                value="summary-accounts"
+                onClick={() =>
+                  openTab('import', {
+                    event: 'window-open-accounts',
+                    data: null,
+                  })
+                }
+              >
+                <AccountsDonut />
+              </SummaryAccordionItem>
 
-            <SummaryAccordionItem
-              title="Events"
-              value="summary-events"
-              onClick={() => setSelectedId(1)}
-            >
-              <EventsBarChart />
-            </SummaryAccordionItem>
+              <SummaryAccordionItem
+                title="Events"
+                value="summary-events"
+                onClick={() => setSelectedId(1)}
+              >
+                <EventsBarChart />
+              </SummaryAccordionItem>
 
-            <SummaryAccordionItem
-              title="Extrinsics"
-              value="summary-extrinsics"
-              onClick={() =>
-                openTab('action', {
-                  event: 'window-open-extrinsics',
-                  data: null,
-                })
-              }
-            >
-              <ExtrinsicsStats />
-            </SummaryAccordionItem>
+              <SummaryAccordionItem
+                title="Extrinsics"
+                value="summary-extrinsics"
+                onClick={() =>
+                  openTab('action', {
+                    event: 'window-open-extrinsics',
+                    data: null,
+                  })
+                }
+              >
+                <ExtrinsicsStats />
+              </SummaryAccordionItem>
 
-            <SummaryAccordionItem
-              title="Subscriptions"
-              value="summary-subscriptions"
-              onClick={() => setSelectedId(2)}
-            >
-              <SubscriptionsStats />
-            </SummaryAccordionItem>
-          </FlexColumn>
-        </Accordion.Root>
-      </UI.AccordionWrapper>
+              <SummaryAccordionItem
+                title="Subscriptions"
+                value="summary-subscriptions"
+                onClick={() => setSelectedId(2)}
+              >
+                <SubscriptionsStats />
+              </SummaryAccordionItem>
+            </FlexColumn>
+          </Accordion.Root>
+        </UI.AccordionWrapper>
+      </SummaryTriggerStyles>
     </FlexColumn>
   );
 };
