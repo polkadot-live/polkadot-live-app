@@ -7,7 +7,7 @@ import type { Rectangle, Tray } from 'electron';
 
 export class Config {
   // Main window's docked properties.
-  private static _dockedWidth = 490;
+  private static _dockedWidth = 500;
   private static _dockedHeight = 720;
 
   // Child window properties.
