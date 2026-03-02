@@ -303,7 +303,11 @@ export class ExtrinsicsController {
   /**
    * Handles sending a signed transaction.
    */
-  static submit = async (info: ExtrinsicInfo, silence: boolean) => {
+  static submit = async (
+    info: ExtrinsicInfo,
+    silence: boolean,
+    onStatusChange?: (status: TxStatus) => void,
+  ) => {
     const { txId } = info;
     const { from, chainId } = info.actionMeta;
 
@@ -334,6 +338,7 @@ export class ExtrinsicsController {
         switch (status.type) {
           case 'Broadcasting': {
             this.postTxStatus('submitted', info);
+            onStatusChange?.('submitted');
             !silence &&
               this.showNotification(
                 'Transaction Submitted',
@@ -350,6 +355,7 @@ export class ExtrinsicsController {
           case 'Finalized': {
             info.txHash = txHash;
             this.postTxStatus('finalized', info);
+            onStatusChange?.('finalized');
             !silence &&
               this.showNotification('Finalized', 'Transaction was finalised.');
             unsub();

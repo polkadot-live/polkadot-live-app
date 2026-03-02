@@ -43,4 +43,6 @@ export const chromeAdapter: SummaryAdapter = {
     setAddressMap(addressMapRef.current);
     setExtrinsicCounts(extrinsicCountsRef.current);
   },
+
+  listenForAccountChanges: () => null,
 };

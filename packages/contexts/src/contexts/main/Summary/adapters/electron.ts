@@ -6,6 +6,7 @@ import type {
   ImportedGenericAccount,
 } from '@polkadot-live/types/accounts';
 import type { TxStatus } from '@polkadot-live/types/tx';
+import type { IpcRendererEvent } from 'electron';
 import type { SummaryAdapter } from './types';
 
 export const electronAdapter: SummaryAdapter = {
@@ -15,34 +16,59 @@ export const electronAdapter: SummaryAdapter = {
     setAddressMap,
     setExtrinsicCounts,
   ) => {
-    // Accounts.
-    const serialized = (await window.myAPI.rawAccountTask({
-      action: 'raw-account:getAll',
-      data: null,
-    })) as string;
-
-    const parsedMap = new Map<AccountSource, string>(JSON.parse(serialized));
-    for (const [source, ser] of parsedMap.entries()) {
-      const parsed: ImportedGenericAccount[] = JSON.parse(ser);
-      addressMapRef.current.set(source, parsed);
-    }
-
-    // Extrinsics.
-    const getCount = async (status: TxStatus) =>
-      (await window.myAPI.sendExtrinsicsTaskAsync({
-        action: 'extrinsics:getCount',
-        data: { status },
-      })) || '0';
-
-    const counts = await Promise.all([
-      getCount('pending'),
-      getCount('finalized'),
+    await Promise.all([
+      fetchAccounts(addressMapRef),
+      fetchExtrinsicCounts(extrinsicCountsRef),
     ]);
-    extrinsicCountsRef.current.set('pending', Number(counts[0]));
-    extrinsicCountsRef.current.set('finalized', Number(counts[1]));
 
-    // Update state.
     setAddressMap(addressMapRef.current);
     setExtrinsicCounts(extrinsicCountsRef.current);
   },
+
+  // Listen for account changes from the main process and update the address map.
+  listenForAccountChanges: (handleAccountChange) => {
+    window.myAPI.reportAccountChanged(
+      (_: IpcRendererEvent, serialized: string, action: 'add' | 'remove') => {
+        const account: ImportedGenericAccount = JSON.parse(serialized);
+        handleAccountChange(account, action);
+      },
+    );
+
+    return null;
+  },
+};
+
+// Fetch all imported accounts grouped by source.
+const fetchAccounts = async (
+  addressMapRef: React.RefObject<Map<AccountSource, ImportedGenericAccount[]>>,
+) => {
+  const serialized = (await window.myAPI.rawAccountTask({
+    action: 'raw-account:getAll',
+    data: null,
+  })) as string;
+
+  const parsedMap = new Map<AccountSource, string>(JSON.parse(serialized));
+  for (const [source, ser] of parsedMap.entries()) {
+    const parsed: ImportedGenericAccount[] = JSON.parse(ser);
+    addressMapRef.current.set(source, parsed);
+  }
+};
+
+// Fetch extrinsic counts for each status.
+const fetchExtrinsicCounts = async (
+  extrinsicCountsRef: React.RefObject<Map<TxStatus, number>>,
+) => {
+  const getCount = async (status: TxStatus) =>
+    (await window.myAPI.sendExtrinsicsTaskAsync({
+      action: 'extrinsics:getCount',
+      data: { status },
+    })) || '0';
+
+  const counts = await Promise.all([
+    getCount('pending'),
+    getCount('finalized'),
+  ]);
+
+  extrinsicCountsRef.current.set('pending', Number(counts[0]));
+  extrinsicCountsRef.current.set('finalized', Number(counts[1]));
 };

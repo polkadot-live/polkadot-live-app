@@ -4,7 +4,8 @@
 import type { DeleteHandlerAdapter } from './types';
 
 export const chromeAdapter: DeleteHandlerAdapter = {
-  removeFromStore: async (source, publicKeyHex) => {
+  removeFromStore: async (genericAccount) => {
+    const { publicKeyHex, source } = genericAccount;
     const payload = { publicKeyHex, source };
     const msg = { type: 'rawAccount', task: 'delete', payload };
     await chrome.runtime.sendMessage(msg);

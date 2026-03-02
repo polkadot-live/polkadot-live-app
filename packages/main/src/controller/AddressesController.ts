@@ -3,6 +3,7 @@
 
 import { getSupportedSources } from '@polkadot-live/consts/chains';
 import { AddressesRepository } from '../db';
+import { WindowsController } from './WindowsController';
 import type {
   AccountSource,
   ImportedGenericAccount,
@@ -78,7 +79,17 @@ export class AddressesController {
   // Delete an account.
   private static delete(task: IpcTask) {
     const { publicKeyHex } = task.data;
+    const account = AddressesRepository.getByKey(publicKeyHex);
     AddressesRepository.delete(publicKeyHex);
+
+    // Notify main renderer to update summary state.
+    if (account) {
+      WindowsController.getWindow('menu')?.webContents?.send(
+        'renderer:account:changed',
+        JSON.stringify(account),
+        'remove',
+      );
+    }
   }
 
   // Persist an imported account.
@@ -121,6 +132,13 @@ export class AddressesController {
       if (!AddressesRepository.exists(publicKeyHex)) {
         AddressesRepository.upsert(genericAccount);
       }
+
+      // Notify main renderer to update summary state.
+      WindowsController.getWindow('menu')?.webContents?.send(
+        'renderer:account:changed',
+        JSON.stringify(genericAccount),
+        'add',
+      );
     } catch (err) {
       console.log(err);
     }
