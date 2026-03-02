@@ -27,13 +27,7 @@ export class SubscriptionsController {
       // Update a persisted account subscription task.
       case 'subscriptions:account:update': {
         const subTask: SubscriptionTask = JSON.parse(task.data.serTask);
-        if (subTask.accountAddress) {
-          SubscriptionsController.update(
-            subTask,
-            subTask.accountAddress,
-            subTask.chainId,
-          );
-        }
+        SubscriptionsController.update(subTask);
         return;
       }
       // Import tasks from a backup text file.
@@ -93,18 +87,19 @@ export class SubscriptionsController {
       if (OnlineStatusController.getStatus()) {
         const received: SubscriptionTask[] = JSON.parse(serTasks);
         received.forEach((t) => {
-          SubscriptionsController.update(t, address, t.chainId);
+          SubscriptionsController.update(t);
         });
       }
     }
   }
 
   // Update a persisted account task.
-  private static update(
-    task: SubscriptionTask,
-    address: string,
-    chainId: ChainID,
-  ) {
+  private static update(task: SubscriptionTask) {
+    if (!task.accountAddress) {
+      return;
+    }
+    const { accountAddress: address, chainId } = task;
+
     if (task.status === 'enable') {
       // Insert or replace the task.
       const params = { chainId, address, action: task.action, task };
