@@ -12,4 +12,5 @@ export interface SummaryContextInterface {
   extrinsicCounts: Map<TxStatus, number>;
   adjustExtrinsicCount: (status: TxStatus, delta: number) => void;
   handleTxStatusChange: (status: TxStatus) => void;
+  syncExtrinsicCounts: (counts: Map<TxStatus, number>) => void;
 }

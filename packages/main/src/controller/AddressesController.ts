@@ -97,6 +97,13 @@ export class AddressesController {
     const { serialized } = task.data;
     const genericAccount: ImportedGenericAccount = JSON.parse(serialized);
     AddressesRepository.upsert(genericAccount);
+
+    // Notify main renderer to update summary state.
+    WindowsController.getWindow('menu')?.webContents?.send(
+      'renderer:account:changed',
+      JSON.stringify(genericAccount),
+      'add',
+    );
   }
 
   // Get accounts by source.
