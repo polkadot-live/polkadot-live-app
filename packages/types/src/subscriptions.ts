@@ -1,7 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import type { FlattenedAccountData } from './accounts';
 import type { ChainID } from './chains';
 import type { HelpItemKey } from './help';
 import type { AnyData, AnyFunction } from './misc';
@@ -62,8 +61,8 @@ export interface SubscriptionTask {
   label: string;
   // Enabled or disabled.
   status: SubscriptionNextStatus;
-  // Associated account for task.
-  account?: FlattenedAccountData;
+  // The address of the account associated with this task.
+  accountAddress?: string;
   // Index to retrieve api callback data.
   dataIndex?: number;
   // Flag to determine if native OS notifications are shown for the task.

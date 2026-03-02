@@ -63,8 +63,8 @@ export class SubscriptionsController {
   };
 
   private static updateAccountTaskState = (task: SubscriptionTask) => {
-    const { address, chain } = task.account!;
-    const key = `${chain}:${address}`;
+    const address = task.accountAddress!;
+    const key = `${task.chainId}:${address}`;
 
     if (this.backend === 'electron') {
       this.setAccountSubscriptions((prev) => {
@@ -297,7 +297,7 @@ export class SubscriptionsController {
   ) => {
     const task = {
       ...taskTemplate,
-      account: account.flatten(),
+      accountAddress: account.address,
     } as SubscriptionTask;
 
     switch (task.action) {

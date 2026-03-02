@@ -20,7 +20,7 @@ export const chromeAdapter: SubscriptionsAdapter = {
       : 0,
 
   toggleTaskNotifications: async (task, checked) => {
-    if (task.account) {
+    if (task.accountAddress) {
       task.enableOsNotifications = checked;
       await chrome.runtime.sendMessage({
         type: 'accountSubscriptions',

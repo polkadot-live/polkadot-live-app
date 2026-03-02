@@ -110,7 +110,6 @@ export const useMainMessagePorts = () => {
             await window.myAPI.sendSubscriptionTask({
               action: 'subscriptions:account:update',
               data: {
-                serAccount: JSON.stringify(account.flatten()),
                 serTask: JSON.stringify(task),
               },
             });
@@ -144,7 +143,6 @@ export const useMainMessagePorts = () => {
           await window.myAPI.sendSubscriptionTask({
             action: 'subscriptions:account:update',
             data: {
-              serAccount: JSON.stringify(account.flatten()),
               serTask: JSON.stringify(task),
             },
           });
@@ -252,11 +250,6 @@ export const useMainMessagePorts = () => {
       // Set new account name and persist new account data to storage.
       account.name = newName;
       await AccountsController.set(account);
-
-      // Update cached account name in subscription tasks.
-      const flattened = account.flatten();
-      flattened.name = newName;
-      account.queryMulti?.updateEntryAccountData(chainId, flattened);
 
       // Update account react state.
       AccountsController.syncState();

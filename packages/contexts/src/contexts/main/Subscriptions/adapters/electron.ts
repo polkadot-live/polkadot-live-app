@@ -18,6 +18,7 @@ export const electronAdapter: SubscriptionsAdapter = {
       const { action, category } = task;
       window.myAPI.umamiEvent('oneshot-account', { action, category });
     }
+
     return result;
   },
 
@@ -47,21 +48,17 @@ export const electronAdapter: SubscriptionsAdapter = {
   },
 
   toggleTaskNotifications: async (task, checked) => {
-    if (task.account) {
+    if (task.accountAddress) {
       task.enableOsNotifications = checked;
       await window.myAPI.sendSubscriptionTask({
         action: 'subscriptions:account:update',
         data: {
-          serAccount: JSON.stringify(task.account!),
           serTask: JSON.stringify(task),
         },
       });
       SubscriptionsController.updateTaskState(task);
       // Update tasks in query multi wrapper.
-      const account = AccountsController.get(
-        task.chainId,
-        task.account.address,
-      );
+      const account = AccountsController.get(task.chainId, task.accountAddress);
       if (account) {
         account.queryMulti?.setOsNotificationsFlag(task);
       }
@@ -99,8 +96,10 @@ export const electronAdapter: SubscriptionsAdapter = {
         break;
       }
       case 'account': {
-        const { chainId: cid, account: a } = task;
-        const account = AccountsController.get(cid, a?.address);
+        const account = AccountsController.get(
+          task.chainId,
+          task.accountAddress,
+        );
         if (!account) {
           break;
         }
@@ -109,7 +108,6 @@ export const electronAdapter: SubscriptionsAdapter = {
         await window.myAPI.sendSubscriptionTask({
           action: 'subscriptions:account:update',
           data: {
-            serAccount: JSON.stringify(account.flatten()),
             serTask: JSON.stringify(task),
           },
         });
@@ -162,8 +160,10 @@ export const electronAdapter: SubscriptionsAdapter = {
       }
       case 'account': {
         // Get associated account.
-        const { chainId: cid, account: a } = tasks[0];
-        const account = AccountsController.get(cid, a?.address);
+        const account = AccountsController.get(
+          tasks[0].chainId,
+          tasks[0].accountAddress,
+        );
         if (!account) {
           return;
         }
@@ -172,7 +172,6 @@ export const electronAdapter: SubscriptionsAdapter = {
           await window.myAPI.sendSubscriptionTask({
             action: 'subscriptions:account:update',
             data: {
-              serAccount: JSON.stringify(account.flatten()),
               serTask: JSON.stringify(task),
             },
           });

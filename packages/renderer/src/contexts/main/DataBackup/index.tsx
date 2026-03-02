@@ -118,7 +118,6 @@ export const DataBackupProvider = ({
           // Import serialized data.
           const { serialized: s } = response.data;
           await importAddressData(s, handleImportAddress, handleRemoveAddress);
-          updateTaskEntries();
           await importEventData(s);
           await importIntervalData(s);
           await importAccountTaskData(s);
@@ -369,18 +368,6 @@ export const DataBackupProvider = ({
           serialized: JSON.stringify(t),
         });
       });
-    }
-  };
-
-  /**
-   * Updates the account name cache maintained by subscription tasks.
-   */
-  const updateTaskEntries = () => {
-    for (const [chainId, managed] of AccountsController.accounts.entries()) {
-      for (const account of managed) {
-        const flattened = account.flatten();
-        account.queryMulti?.updateEntryAccountData(chainId, flattened);
-      }
     }
   };
 

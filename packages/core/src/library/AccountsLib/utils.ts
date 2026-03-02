@@ -35,13 +35,10 @@ export const checkAccountWithProperties = (
   properties: (keyof Account)[],
 ): Account => {
   // Check for account existence and fetch it.
-  if (!entry.task.account) {
+  if (!entry.task.accountAddress) {
     throw new Error('checkAccountWithProperties: Account not found');
   }
-  const {
-    chainId,
-    account: { address },
-  } = entry.task;
+  const { chainId, accountAddress: address } = entry.task;
   const account = AccountsController.get(chainId, address);
 
   if (account === undefined) {
@@ -85,7 +82,7 @@ export const checkFlattenedAccountProperties = (
   properties: (keyof FlattenedAccountData)[],
 ) => {
   // Check for account existence.
-  if (!entry.task.account) {
+  if (!entry.task.accountAddress) {
     throw new Error('checkFlattenedAccountWithProperties: Account not found');
   }
 
@@ -103,7 +100,7 @@ export const checkFlattenedAccountProperties = (
   };
 
   const { chainId } = entry.task;
-  const { address } = entry.task.account;
+  const address = entry.task.accountAddress!;
   const account = AccountsController.get(chainId, address);
   if (!account) {
     throw new Error('checkFlattenedAccountProperties: Account not found');

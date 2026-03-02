@@ -97,8 +97,8 @@ export const executeOneShot = async (
  * @summary Get the account associated with a subscription task.
  */
 const getTaskAccount = (task: SubscriptionTask): Account | null =>
-  task.account
-    ? AccountsController.get(task.chainId, task.account!.address) || null
+  task.accountAddress
+    ? AccountsController.get(task.chainId, task.accountAddress) || null
     : null;
 
 /**
@@ -111,8 +111,6 @@ const postOneShotCallback = async (
   flags: PostCallbackFlags,
 ) => {
   await processOneShotPostCallback(api, account, flags);
-  const flattened = account.flatten();
-  account.queryMulti?.updateEntryAccountData(account.chain, flattened);
 };
 
 /**
@@ -124,7 +122,7 @@ const oneShot_account_balance_free = async (
   api: DedotClientSet,
   flags: PostCallbackFlags,
 ): Promise<boolean> => {
-  const { address } = task.account!;
+  const address = task.accountAddress!;
   const data = await api.query.system.account(address);
   const entry: ApiCallEntry = { curVal: null, task };
   return await Callbacks.callback_account_balance_free(
@@ -144,7 +142,7 @@ const oneShot_account_balance_frozen = async (
   api: DedotClientSet,
   flags: PostCallbackFlags,
 ): Promise<boolean> => {
-  const { address } = task.account!;
+  const address = task.accountAddress!;
   const data = await api.query.system.account(address);
   const entry: ApiCallEntry = { curVal: null, task };
   return await Callbacks.callback_account_balance_frozen(
@@ -164,7 +162,7 @@ const oneShot_account_balance_reserved = async (
   api: DedotClientSet,
   flags: PostCallbackFlags,
 ): Promise<boolean> => {
-  const { address } = task.account!;
+  const address = task.accountAddress!;
   const data = await api.query.system.account(address);
   const entry: ApiCallEntry = { curVal: null, task };
   return await Callbacks.callback_account_balance_reserved(
@@ -184,7 +182,7 @@ const oneShot_account_balance_spendable = async (
   api: DedotClientSet,
   flags: PostCallbackFlags,
 ): Promise<boolean> => {
-  const { address } = task.account!;
+  const address = task.accountAddress!;
   const data = await api.query.system.account(address);
   const entry: ApiCallEntry = { curVal: null, task };
   return await Callbacks.callback_account_balance_spendable(

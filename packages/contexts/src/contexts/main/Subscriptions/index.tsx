@@ -66,19 +66,10 @@ export const SubscriptionsProvider = ({
     return chainActive || debugActive;
   };
 
-  // Update cached account name for an account's subscription tasks.
-  const updateAccountNameInTasks = (key: string, newName: string) => {
-    const tasks = accountSubscriptionsState.get(key);
-    if (!tasks) {
-      return;
-    }
-    setAccountSubscriptionsState((prev) => {
-      prev.set(
-        key,
-        tasks.map((t) => ({ ...t, account: { ...t.account!, name: newName } })),
-      );
-      return prev;
-    });
+  // No-op: account name is no longer cached in subscription tasks.
+  // Retained for interface compatibility with adapters.
+  const updateAccountNameInTasks = (_key: string, _newName: string) => {
+    // Intentionally empty.
   };
 
   // Get subscription tasks for a specific chain.

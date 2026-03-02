@@ -147,11 +147,6 @@ export const handleRenameAccount = async (enAccount: EncodedAccount) => {
     await AccountsController.set(account);
     await persistManagedAccount(account);
 
-    // Update cached account name in subscription tasks.
-    const flattened = account.flatten();
-    flattened.name = newName;
-    account.queryMulti?.updateEntryAccountData(chainId, flattened);
-
     // Sync managed accounts state.
     eventBus.dispatchEvent(new CustomEvent('setManagedAccountsState'));
 

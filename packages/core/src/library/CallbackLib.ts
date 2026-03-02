@@ -26,19 +26,22 @@ export const compareTasks = (
   b: SubscriptionTask,
 ): boolean => {
   // Different task types.
-  if ((!a.account && b.account) || (a.account && !b.account)) {
+  if (
+    (!a.accountAddress && b.accountAddress) ||
+    (a.accountAddress && !b.accountAddress)
+  ) {
     return false;
   }
 
   // Compare chain tasks.
-  if (!a.account && !b.account) {
+  if (!a.accountAddress && !b.accountAddress) {
     return a.chainId === b.chainId && a.action === b.action;
   }
 
-  // Account account tasks.
-  if (a.account && b.account) {
+  // Compare account tasks.
+  if (a.accountAddress && b.accountAddress) {
     return (
-      a.account.address === b.account.address &&
+      a.accountAddress === b.accountAddress &&
       a.action === b.action &&
       a.chainId === b.chainId
     );

@@ -19,8 +19,8 @@ export const handleAccountSubscriptionMessage = (
   switch (message.task) {
     case 'update': {
       const { task }: { task: SubscriptionTask } = message.payload;
-      const { chainId, account: flattened } = task;
-      const account = AccountsController.get(chainId, flattened?.address);
+      const { chainId, accountAddress } = task;
+      const account = AccountsController.get(chainId, accountAddress);
       if (!account) {
         sendResponse(false);
       } else {

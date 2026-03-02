@@ -586,7 +586,7 @@ export class EventsController {
        */
       case 'subscribe:account:nominating:pendingPayouts': {
         const { chainId } = entry.task;
-        const { address } = entry.task.account!;
+        const address = entry.task.accountAddress!;
         const { name: alias, source } = getFlattenedAccount(address, chainId);
         const { rewards, era }: { rewards: string; era: string } = miscData;
 
@@ -626,7 +626,7 @@ export class EventsController {
        */
       case 'subscribe:account:nominating:exposure': {
         const { chainId } = entry.task;
-        const { address } = entry.task.account!;
+        const address = entry.task.accountAddress!;
         const { name: alias, source } = getFlattenedAccount(address, chainId);
         const { era, exposed }: { era: number; exposed: boolean } = miscData;
 
@@ -669,7 +669,7 @@ export class EventsController {
        */
       case 'subscribe:account:nominating:commission': {
         const { chainId } = entry.task;
-        const { address } = entry.task.account!;
+        const address = entry.task.accountAddress!;
         const { name: alias, source } = getFlattenedAccount(address, chainId);
         const { era, hasChanged }: { era: number; hasChanged: boolean } =
           miscData;
@@ -710,7 +710,7 @@ export class EventsController {
        */
       case 'subscribe:account:nominating:nominations': {
         const { chainId } = entry.task;
-        const { address } = entry.task.account!;
+        const address = entry.task.accountAddress!;
         const { name: alias, source } = getFlattenedAccount(address, chainId);
         const { era, hasChanged }: { era: number; hasChanged: boolean } =
           miscData;
