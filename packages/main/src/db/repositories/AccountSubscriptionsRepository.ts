@@ -233,7 +233,14 @@ export class AccountSubscriptionsRepository {
       map.set(key, existing);
     }
 
-    return JSON.stringify(Array.from(map.entries()));
+    // Serialize task arrays to JSON strings so the backup format is
+    // [string, string][] — matching what the import side expects.
+    const stringMap = new Map<string, string>();
+    for (const [key, tasks] of map.entries()) {
+      stringMap.set(key, JSON.stringify(tasks));
+    }
+
+    return JSON.stringify(Array.from(stringMap.entries()));
   }
 
   /**

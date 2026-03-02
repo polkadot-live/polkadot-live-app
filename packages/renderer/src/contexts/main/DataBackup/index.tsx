@@ -8,7 +8,6 @@ import {
   useEvents,
   useIntervalSubscriptions,
 } from '@polkadot-live/contexts';
-/// Dependencies.
 import * as Core from '@polkadot-live/core';
 import {
   AccountsController,
