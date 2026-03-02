@@ -54,13 +54,10 @@ export const SummaryProvider = ({
   );
 
   // Set extrinsic counts to absolute values.
-  const syncExtrinsicCounts = useCallback(
-    (counts: Map<TxStatus, number>) => {
-      setExtrinsicCounts(counts);
-      extrinsicCountsRef.current = counts;
-    },
-    [],
-  );
+  const syncExtrinsicCounts = useCallback((counts: Map<TxStatus, number>) => {
+    setExtrinsicCounts(counts);
+    extrinsicCountsRef.current = counts;
+  }, []);
 
   // Handle extrinsic status changes for summary counts.
   const handleTxStatusChange = useCallback(
