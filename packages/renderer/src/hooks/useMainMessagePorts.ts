@@ -10,7 +10,6 @@ import {
   useEvents,
   useIntervalSubscriptions,
   useManage,
-  useSubscriptions,
   useSummary,
 } from '@polkadot-live/contexts';
 import * as Core from '@polkadot-live/core';
@@ -48,7 +47,6 @@ export const useMainMessagePorts = () => {
   const { cacheGet, toggleSetting } = useAppSettings();
   const { importAddress, removeAddress } = useAddresses();
   const { addSubsForRef, removeSubsForRef } = useChainEvents();
-  const { updateAccountNameInTasks } = useSubscriptions();
   const { exportDataToBackup, importDataFromBackup } = MainCtx.useDataBackup();
   const { setRenamedEvents } = useEvents();
   const { ledgerSignSubmit } = MainCtx.useLedgerSigner();
@@ -253,9 +251,6 @@ export const useMainMessagePorts = () => {
 
       // Update account react state.
       AccountsController.syncState();
-
-      // Update subscription task react state.
-      updateAccountNameInTasks(`${chainId}:${address}`, newName);
     }
 
     // The updated events will be sent back to the renderer for updating React state.

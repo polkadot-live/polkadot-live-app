@@ -33,7 +33,6 @@ export const chromeAdapter: SubscriptionsAdapter = {
   listenOnMount: (
     setAccountSubscriptionsState,
     setChainSubscriptionsState,
-    updateAccountNameInTasks,
     setActiveChainMap,
   ) => {
     if (!setActiveChainMap) {
@@ -60,12 +59,6 @@ export const chromeAdapter: SubscriptionsAdapter = {
               parseMap<string, SubscriptionTask[]>(subscriptions),
             );
             setActiveChainMap(parseMap<ChainID, number>(activeChains));
-            break;
-          }
-          case 'updateAccountName': {
-            const { key, newName }: { key: string; newName: string } =
-              message.payload;
-            updateAccountNameInTasks(key, newName);
             break;
           }
         }

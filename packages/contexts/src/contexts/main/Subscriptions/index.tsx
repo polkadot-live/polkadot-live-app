@@ -66,12 +66,6 @@ export const SubscriptionsProvider = ({
     return chainActive || debugActive;
   };
 
-  // No-op: account name is no longer cached in subscription tasks.
-  // Retained for interface compatibility with adapters.
-  const updateAccountNameInTasks = (_key: string, _newName: string) => {
-    // Intentionally empty.
-  };
-
   // Get subscription tasks for a specific chain.
   const getChainSubscriptions = (chainId: ChainID) =>
     chainSubscriptionsState.get(chainId) || [];
@@ -153,7 +147,6 @@ export const SubscriptionsProvider = ({
     const removeListener = adapter.listenOnMount(
       setAccountSubscriptionsState,
       setChainSubscriptionsState,
-      updateAccountNameInTasks,
       setActiveChainMap,
     );
     return () => {
@@ -170,7 +163,6 @@ export const SubscriptionsProvider = ({
         chainHasSubscriptions,
         getChainSubscriptions,
         getAccountSubscriptions,
-        updateAccountNameInTasks,
         handleQueuedToggle,
         onOneShot,
         onNotificationToggle,
