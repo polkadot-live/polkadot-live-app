@@ -2,13 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { DatabaseManager } from '../Database';
-import { SubscriptionAccountsRepository } from './SubscriptionAccountsRepository';
-import type {
-  AccountNominatingData,
-  AccountNominationPoolData,
-  AccountSource,
-  FlattenedAccountData,
-} from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { HelpItemKey } from '@polkadot-live/types/help';
 import type {
@@ -19,8 +12,7 @@ import type {
 import type BetterSqlite3 from 'better-sqlite3';
 
 /**
- * Row shape returned when querying `account_subscriptions`
- * joined with `subscription_accounts`.
+ * Row shape returned when querying `account_subscriptions`.
  */
 interface AccountSubscriptionRow {
   id: number;
@@ -34,12 +26,6 @@ interface AccountSubscriptionRow {
   label: string;
   status: string;
   action_args: string | null;
-  account_id: number | null;
-  // Joined columns from subscription_accounts (nullable when no match).
-  sa_name: string | null;
-  sa_source: string | null;
-  sa_nomination_pool_data: string | null;
-  sa_nominating_data: string | null;
 }
 
 /**
@@ -63,8 +49,8 @@ interface SetSubscriptionParams extends SubscriptionParams {
  * @summary Data-access layer for the `account_subscriptions` table.
  *
  * Provides typed CRUD operations using prepared statements for performance.
- * Account data is stored in the `subscription_accounts` table and linked via
- * a foreign key (`account_id`), eliminating duplicate account blobs.
+ * Account identity is derived from the (chain_id, address) composite key
+ * stored directly on each row.
  *
  * Must be initialized after `DatabaseManager.initialize()`.
  */
@@ -87,14 +73,14 @@ export class AccountSubscriptionsRepository {
 
     AccountSubscriptionsRepository.stmtInsert = db.prepare(`
       INSERT INTO account_subscriptions
-        (chain_id, address, action, api_call_as_string, category, enable_os_notifications, help_key, label, status, action_args, account_id)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (chain_id, address, action, api_call_as_string, category, enable_os_notifications, help_key, label, status, action_args)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     AccountSubscriptionsRepository.stmtUpdate = db.prepare(`
       UPDATE account_subscriptions
       SET api_call_as_string = ?, category = ?, enable_os_notifications = ?,
-          help_key = ?, label = ?, status = ?, action_args = ?, account_id = ?
+          help_key = ?, label = ?, status = ?, action_args = ?
       WHERE chain_id = ? AND address = ? AND action = ?
     `);
 
@@ -107,28 +93,14 @@ export class AccountSubscriptionsRepository {
     );
 
     AccountSubscriptionsRepository.stmtGetByChainAndAddress = db.prepare(`
-      SELECT
-        asub.*,
-        sa.name AS sa_name,
-        sa.source AS sa_source,
-        sa.nomination_pool_data AS sa_nomination_pool_data,
-        sa.nominating_data AS sa_nominating_data
-      FROM account_subscriptions asub
-      LEFT JOIN subscription_accounts sa ON sa.id = asub.account_id
-      WHERE asub.chain_id = ? AND asub.address = ?
-      ORDER BY asub.action
+      SELECT * FROM account_subscriptions
+      WHERE chain_id = ? AND address = ?
+      ORDER BY action
     `);
 
     AccountSubscriptionsRepository.stmtGetAll = db.prepare(`
-      SELECT
-        asub.*,
-        sa.name AS sa_name,
-        sa.source AS sa_source,
-        sa.nomination_pool_data AS sa_nomination_pool_data,
-        sa.nominating_data AS sa_nominating_data
-      FROM account_subscriptions asub
-      LEFT JOIN subscription_accounts sa ON sa.id = asub.account_id
-      ORDER BY asub.chain_id, asub.address, asub.action
+      SELECT * FROM account_subscriptions
+      ORDER BY chain_id, address, action
     `);
 
     AccountSubscriptionsRepository.stmtClearAddress = db.prepare(
@@ -139,21 +111,11 @@ export class AccountSubscriptionsRepository {
   /**
    * Insert or update a subscription task for an account.
    *
-   * If the task carries account data, the account is upserted into the
-   * `subscription_accounts` table first and the resulting id is stored as
-   * `account_id` on the subscription row.
-   *
    * Uses SELECT-then-INSERT/UPDATE so that existing rows keep their id
    * (SQLite's `INSERT OR REPLACE` would DELETE + INSERT, changing the id).
    */
   static set(params: Readonly<SetSubscriptionParams>): void {
     const { chainId, address, action, task } = params;
-
-    // Upsert account data into the normalized table when present.
-    let accountId: number | null = null;
-    if (task.account) {
-      accountId = SubscriptionAccountsRepository.upsert(task.account);
-    }
 
     const actionArgsJson = task.actionArgs
       ? JSON.stringify(task.actionArgs)
@@ -175,7 +137,6 @@ export class AccountSubscriptionsRepository {
         task.label,
         task.status,
         actionArgsJson,
-        accountId,
         chainId,
         address,
         action,
@@ -192,7 +153,6 @@ export class AccountSubscriptionsRepository {
         task.label,
         task.status,
         actionArgsJson,
-        accountId,
       );
     }
   }
@@ -260,27 +220,9 @@ export class AccountSubscriptionsRepository {
 }
 
 /**
- * Convert a joined database row to a SubscriptionTask object.
- * Account data is reconstructed from the joined `subscription_accounts` columns.
+ * Convert a database row to a SubscriptionTask object.
  */
 function rowToTask(row: AccountSubscriptionRow): SubscriptionTask {
-  let account: FlattenedAccountData | undefined;
-
-  if (row.account_id !== null && row.sa_name !== null) {
-    account = {
-      address: row.address,
-      chain: row.chain_id as ChainID,
-      name: row.sa_name,
-      source: row.sa_source as AccountSource,
-      nominationPoolData: row.sa_nomination_pool_data
-        ? (JSON.parse(row.sa_nomination_pool_data) as AccountNominationPoolData)
-        : null,
-      nominatingData: row.sa_nominating_data
-        ? (JSON.parse(row.sa_nominating_data) as AccountNominatingData)
-        : null,
-    };
-  }
-
   return {
     action: row.action as TaskAction,
     apiCallAsString: row.api_call_as_string,
@@ -291,6 +233,6 @@ function rowToTask(row: AccountSubscriptionRow): SubscriptionTask {
     status: row.status as 'enable' | 'disable',
     enableOsNotifications: row.enable_os_notifications === 1,
     helpKey: row.help_key as HelpItemKey,
-    account,
+    accountAddress: row.address,
   };
 }

@@ -31,7 +31,6 @@ export interface SubscriptionsAdapter {
     setChainSubscriptionsState: (
       value: SetStateAction<Map<ChainID, SubscriptionTask[]>>,
     ) => void,
-    updateAccountNameInTasks: (key: string, newName: string) => void,
     setActiveChainMap?: (value: SetStateAction<Map<ChainID, number>>) => void,
   ) => (() => void) | null;
 

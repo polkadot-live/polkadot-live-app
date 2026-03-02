@@ -10,15 +10,6 @@ import {
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 
-export const updateTaskEntries = () => {
-  for (const [chainId, managed] of AccountsController.accounts.entries()) {
-    for (const account of managed) {
-      const flattened = account.flatten();
-      account.queryMulti?.updateEntryAccountData(chainId, flattened);
-    }
-  }
-};
-
 export const importAccountTaskData = async (contents: string) => {
   const serTasks = getFromBackupFile('accountTasks', contents);
   if (!serTasks) {

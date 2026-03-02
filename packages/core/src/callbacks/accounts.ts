@@ -148,7 +148,7 @@ export const callback_account_balance_free = async (
     // Get account.
     const account = AccountsController.get(
       entry.task.chainId,
-      entry.task.account!.address,
+      entry.task.accountAddress!,
     );
     if (!account || !account.balance) {
       return false;
@@ -206,7 +206,7 @@ export const callback_account_balance_frozen = async (
     // Get account.
     const account = AccountsController.get(
       entry.task.chainId,
-      entry.task.account!.address,
+      entry.task.accountAddress!,
     );
 
     if (!account || !account.balance) {
@@ -265,7 +265,7 @@ export const callback_account_balance_reserved = async (
     // Get account.
     const account = AccountsController.get(
       entry.task.chainId,
-      entry.task.account!.address,
+      entry.task.accountAddress!,
     );
 
     if (!account || !account.balance) {
@@ -324,7 +324,7 @@ export const callback_account_balance_spendable = async (
     // Get account.
     const account = AccountsController.get(
       entry.task.chainId,
-      entry.task.account!.address,
+      entry.task.accountAddress!,
     );
     if (!account || !account.balance) {
       return false;

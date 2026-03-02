@@ -5,7 +5,6 @@ import { doRemoveOutdatedEvents, pushUniqueEvent } from '@polkadot-live/core';
 import {
   NotificationsController,
   SettingsController,
-  SubscriptionsController,
   WindowsController,
 } from '../controller';
 import { EventsRepository } from '../db';
@@ -279,7 +278,6 @@ export class EventsController {
     // Update names in storage.
     const params = { address, chainId, newName };
     const updated = EventsController.updateEventAccountName(params);
-    SubscriptionsController.updateCachedAccountNameForTasks(params);
     return JSON.stringify(updated);
   }
 

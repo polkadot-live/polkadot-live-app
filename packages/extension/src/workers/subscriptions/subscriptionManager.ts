@@ -8,8 +8,8 @@ import type { Account } from '@polkadot-live/core';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 
 export const onNotificationToggle = async (task: SubscriptionTask) => {
-  const { chainId, account: flattened } = task;
-  const account = AccountsController.get(chainId, flattened?.address);
+  const { chainId, accountAddress } = task;
+  const account = AccountsController.get(chainId, accountAddress);
   if (!account) {
     return;
   }
@@ -19,8 +19,8 @@ export const onNotificationToggle = async (task: SubscriptionTask) => {
 };
 
 export const updateAccountSubscriptions = async (tasks: SubscriptionTask[]) => {
-  const { chainId, account: flattened } = tasks[0];
-  const account = AccountsController.get(chainId, flattened?.address);
+  const { chainId, accountAddress } = tasks[0];
+  const account = AccountsController.get(chainId, accountAddress);
   if (!account) {
     return;
   }

@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { APIsController } from '../controllers';
+import { AccountsController, APIsController } from '../controllers';
 import { getOnlineStatus } from '../library/CommonLib';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 import type { QueryMultiWrapper } from '../model';
@@ -113,13 +113,17 @@ export class TaskOrchestrator {
       case 'Westend Asset Hub':
       case 'Westend People': {
         // Return if data is missing for certain tasks.
+        const taskAccount = task.accountAddress
+          ? AccountsController.get(task.chainId, task.accountAddress)
+          : undefined;
+
         switch (task.action) {
           case 'subscribe:account:nominationPools:rewards':
           case 'subscribe:account:nominationPools:state':
           case 'subscribe:account:nominationPools:renamed':
           case 'subscribe:account:nominationPools:roles':
           case 'subscribe:account:nominationPools:commission': {
-            if (!task.account?.nominationPoolData) {
+            if (!taskAccount?.nominationPoolData) {
               console.log('🟠 Account has not joined a nomination pool.');
               return;
             }
@@ -129,7 +133,7 @@ export class TaskOrchestrator {
           case 'subscribe:account:nominating:exposure':
           case 'subscribe:account:nominating:commission':
           case 'subscribe:account:nominating:nominations': {
-            if (!task.account?.nominatingData) {
+            if (!taskAccount?.nominatingData) {
               console.log('🟠 Account is not nominating.');
               return;
             }

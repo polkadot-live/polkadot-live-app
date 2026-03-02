@@ -66,21 +66,6 @@ export const SubscriptionsProvider = ({
     return chainActive || debugActive;
   };
 
-  // Update cached account name for an account's subscription tasks.
-  const updateAccountNameInTasks = (key: string, newName: string) => {
-    const tasks = accountSubscriptionsState.get(key);
-    if (!tasks) {
-      return;
-    }
-    setAccountSubscriptionsState((prev) => {
-      prev.set(
-        key,
-        tasks.map((t) => ({ ...t, account: { ...t.account!, name: newName } })),
-      );
-      return prev;
-    });
-  };
-
   // Get subscription tasks for a specific chain.
   const getChainSubscriptions = (chainId: ChainID) =>
     chainSubscriptionsState.get(chainId) || [];
@@ -162,7 +147,6 @@ export const SubscriptionsProvider = ({
     const removeListener = adapter.listenOnMount(
       setAccountSubscriptionsState,
       setChainSubscriptionsState,
-      updateAccountNameInTasks,
       setActiveChainMap,
     );
     return () => {
@@ -179,7 +163,6 @@ export const SubscriptionsProvider = ({
         chainHasSubscriptions,
         getChainSubscriptions,
         getAccountSubscriptions,
-        updateAccountNameInTasks,
         handleQueuedToggle,
         onOneShot,
         onNotificationToggle,

@@ -5,9 +5,7 @@ import { OnlineStatusController } from '../controller';
 import {
   AccountSubscriptionsRepository,
   ChainSubscriptionsRepository,
-  SubscriptionAccountsRepository,
 } from '../db';
-import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { IpcTask } from '@polkadot-live/types/communication';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
@@ -28,10 +26,8 @@ export class SubscriptionsController {
       }
       // Update a persisted account subscription task.
       case 'subscriptions:account:update': {
-        const account: FlattenedAccountData = JSON.parse(task.data.serAccount);
         const subTask: SubscriptionTask = JSON.parse(task.data.serTask);
-        const { address, chain: chainId } = account;
-        SubscriptionsController.update(subTask, address, chainId);
+        SubscriptionsController.update(subTask);
         return;
       }
       // Import tasks from a backup text file.
@@ -59,17 +55,6 @@ export class SubscriptionsController {
   // Return a serialized map of account subscription tasks for backup.
   static getBackupData(): string {
     return AccountSubscriptionsRepository.getAllForBackup();
-  }
-
-  // Called when an account is renamed.
-  // Updates the name in the normalized subscription_accounts.
-  static updateCachedAccountNameForTasks(params: {
-    address: string;
-    chainId: ChainID;
-    newName: string;
-  }) {
-    const { address, chainId, newName } = params;
-    SubscriptionAccountsRepository.updateName(address, chainId, newName);
   }
 
   // ===== Private =====
@@ -102,18 +87,19 @@ export class SubscriptionsController {
       if (OnlineStatusController.getStatus()) {
         const received: SubscriptionTask[] = JSON.parse(serTasks);
         received.forEach((t) => {
-          SubscriptionsController.update(t, address, t.chainId);
+          SubscriptionsController.update(t);
         });
       }
     }
   }
 
   // Update a persisted account task.
-  private static update(
-    task: SubscriptionTask,
-    address: string,
-    chainId: ChainID,
-  ) {
+  private static update(task: SubscriptionTask) {
+    if (!task.accountAddress) {
+      return;
+    }
+    const { accountAddress: address, chainId } = task;
+
     if (task.status === 'enable') {
       // Insert or replace the task.
       const params = { chainId, address, action: task.action, task };

@@ -10,7 +10,6 @@ import {
   getNominationPoolData,
 } from '../library/AccountsLib';
 import * as Utils from '../library/CommonLib';
-import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
 import type {
   DedotClientSet,
   DedotStakingClient,
@@ -265,7 +264,7 @@ export class QueryMultiWrapper {
     let account: Account | undefined;
     if (firstEntry !== undefined) {
       const { task } = firstEntry;
-      const address = task.account ? task.account.address : null;
+      const address = task.accountAddress ?? null;
       if (address) {
         account = AccountsController.get(chainId, address);
       }
@@ -304,12 +303,6 @@ export class QueryMultiWrapper {
           account.nominationPoolData = result;
         }
       }
-      // Set updated account data in the appropriate entries.
-      for (const entry of callEntries) {
-        if (entry.task.account) {
-          entry.task.account = account.flatten();
-        }
-      }
       // Update managed account data.
       await AccountsController.set(account);
 
@@ -319,25 +312,6 @@ export class QueryMultiWrapper {
         syncAccountNominating: false,
         syncAccountNominationPool: false,
       };
-    }
-  };
-
-  /**
-   * @name updateEntryAccountData
-   * @summary Updated cached flattened account data after processing a one-shot.
-   */
-  updateEntryAccountData = (
-    chainId: ChainID,
-    flattened: FlattenedAccountData,
-  ) => {
-    const subscriptions = this.subscriptions.get(chainId);
-    if (!subscriptions) {
-      return;
-    }
-    for (const entry of subscriptions.callEntries) {
-      if (entry.task.account) {
-        entry.task.account = flattened;
-      }
     }
   };
 

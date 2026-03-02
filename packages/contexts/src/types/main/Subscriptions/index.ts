@@ -25,7 +25,6 @@ export interface SubscriptionsContextInterface {
     checked: boolean,
     task: SubscriptionTask,
   ) => Promise<void>;
-  updateAccountNameInTasks: (key: string, newName: string) => void;
   handleQueuedToggle: (task: SubscriptionTask) => Promise<void>;
   toggleCategoryTasks: (c: TaskCategory, i: boolean) => Promise<void>;
   getClassicSubCount: (flattened: FlattenedAccountData) => number;

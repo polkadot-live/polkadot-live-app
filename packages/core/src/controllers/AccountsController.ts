@@ -177,11 +177,10 @@ export class AccountsController {
 
   // Handle account subscription tasks.
   static subscribeTask = async (task: SubscriptionTask) => {
-    if (!task.account?.address) {
+    if (!task.accountAddress) {
       return;
     }
-    const { address, chain } = task.account;
-    const account = this.get(chain, address);
+    const account = this.get(task.chainId, task.accountAddress);
 
     if (account && account.queryMulti !== null) {
       await TaskOrchestrator.subscribeTask(task, account.queryMulti);
@@ -229,7 +228,6 @@ export class AccountsController {
           await window.myAPI.sendSubscriptionTask({
             action: 'subscriptions:account:update',
             data: {
-              serAccount: JSON.stringify(account.flatten()),
               serTask: JSON.stringify(task),
             },
           });
