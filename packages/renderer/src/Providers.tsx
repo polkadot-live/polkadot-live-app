@@ -78,11 +78,11 @@ const getProvidersForWindow = () => {
         EventsProvider,
         // Online status relies on other contexts being initialized.
         BootstrappingProvider,
+        SummaryProvider,
         // Requires setting state from other contexts.
         DataBackupProvider,
         // Requires useBootstrapping and useHelp.
         CogMenuProvider,
-        SummaryProvider,
         WalletConnectProvider,
         LedgerSignerProvider,
       )(Theme);

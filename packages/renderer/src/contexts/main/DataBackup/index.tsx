@@ -7,6 +7,7 @@ import {
   useConnections,
   useEvents,
   useIntervalSubscriptions,
+  useSummary,
 } from '@polkadot-live/contexts';
 import * as Core from '@polkadot-live/core';
 import {
@@ -30,6 +31,7 @@ import type {
   IntervalSubscription,
   SubscriptionTask,
 } from '@polkadot-live/types/subscriptions';
+import type { ExtrinsicInfo, TxStatus } from '@polkadot-live/types/tx';
 
 export const DataBackupContext = createContext<
   DataBackupContextInterface | undefined
@@ -50,6 +52,7 @@ export const DataBackupProvider = ({
   const { setActiveCategory, setSyncCounts } = useEvents();
   const { addIntervalSubscription, updateIntervalSubscription } =
     useIntervalSubscriptions();
+  const { syncExtrinsicCounts } = useSummary();
 
   /**
    * Write Polkadot Live data to a file.
@@ -239,6 +242,19 @@ export const DataBackupProvider = ({
       action: 'extrinsics:import',
       data: { serialized: s_extrinsics },
     })) as string;
+
+    // Update extrinsic counts in summary context.
+    const synced: ExtrinsicInfo[] = JSON.parse(s_extrinsics_synced);
+    const counts = new Map<TxStatus, number>();
+    counts.set(
+      'pending',
+      synced.filter((e) => e.txStatus === 'pending').length,
+    );
+    counts.set(
+      'finalized',
+      synced.filter((e) => e.txStatus === 'finalized').length,
+    );
+    syncExtrinsicCounts(counts);
 
     Core.postToExtrinsics('action:tx:import', {
       serialized: s_extrinsics_synced,
