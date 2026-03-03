@@ -50,7 +50,7 @@ export const handleImportAddress = async (
         // Update account name with one in backup file.
         if (alias !== account.name) {
           account.name = alias;
-          await AccountsController.set(account);
+          AccountsController.set(account);
         }
         // Remove subscriptions then update database and state.
         const fn = SubscriptionsController.buildSubscriptions;
@@ -144,7 +144,7 @@ export const handleRenameAccount = async (enAccount: EncodedAccount) => {
   if (account) {
     // Set new account name and persist new account data to storage.
     account.name = newName;
-    await AccountsController.set(account);
+    AccountsController.set(account);
     await persistManagedAccount(account);
 
     // Sync managed accounts state.

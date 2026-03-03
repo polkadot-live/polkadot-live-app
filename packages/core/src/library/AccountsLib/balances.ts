@@ -39,7 +39,7 @@ export const getBalance = async (
     const account = AccountsController.get(chainId, address);
     if (account) {
       account.balance = balance;
-      await AccountsController.set(account);
+      AccountsController.set(account);
     }
   }
 

@@ -52,7 +52,7 @@ export interface IpcTask {
     | 'account:import'
     | 'account:remove'
     | 'account:getAll'
-    | 'account:updateAll'
+    | 'account:update'
     // Connection
     | 'connection:init'
     | 'connection:getStatus'

@@ -105,7 +105,7 @@ export const processOneShotPostCallback = async (
   }
 
   // Update managed account data.
-  await AccountsController.set(account);
+  AccountsController.set(account);
 
   // Reset flags.
   syncFlags = {

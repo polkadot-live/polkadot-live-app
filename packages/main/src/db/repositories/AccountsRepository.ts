@@ -30,7 +30,6 @@ export class AccountsRepository {
   private static stmtGetAll: BetterSqlite3.Statement | null = null;
   private static stmtUpsert: BetterSqlite3.Statement | null = null;
   private static stmtDelete: BetterSqlite3.Statement | null = null;
-  private static stmtDeleteAll: BetterSqlite3.Statement | null = null;
 
   /**
    * Prepare and cache SQL statements. Call once after the database is ready.
@@ -48,9 +47,6 @@ export class AccountsRepository {
     `);
     AccountsRepository.stmtDelete = db.prepare(
       'DELETE FROM imported_accounts WHERE address = ? AND chain_id = ?',
-    );
-    AccountsRepository.stmtDeleteAll = db.prepare(
-      'DELETE FROM imported_accounts',
     );
   }
 
@@ -81,34 +77,21 @@ export class AccountsRepository {
   }
 
   /**
-   * Replace all imported accounts with the provided data.
-   *
-   * Accepts the serialized `[ChainID, StoredAccount[]][]` format used by
-   * the renderer, clears the table, and inserts all rows in a transaction.
-   */
-  static replaceAll(serialized: string): void {
-    const entries: [ChainID, StoredAccount[]][] = JSON.parse(serialized);
-    const db = DatabaseManager.getDb();
-
-    db.transaction(() => {
-      AccountsRepository.stmtDeleteAll!.run();
-      for (const [, accounts] of entries) {
-        for (const account of accounts) {
-          AccountsRepository.stmtUpsert!.run(
-            account._address,
-            account._chain,
-            account._name,
-            account._source,
-          );
-        }
-      }
-    })();
-  }
-
-  /**
    * Delete a single imported account by address and chain.
    */
   static delete(address: string, chainId: ChainID): void {
     AccountsRepository.stmtDelete!.run(address, chainId);
+  }
+
+  /**
+   * Insert or update a single imported account.
+   */
+  static upsert(account: StoredAccount): void {
+    AccountsRepository.stmtUpsert!.run(
+      account._address,
+      account._chain,
+      account._name,
+      account._source,
+    );
   }
 }
