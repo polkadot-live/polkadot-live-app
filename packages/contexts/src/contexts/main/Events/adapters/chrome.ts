@@ -26,6 +26,8 @@ export const chromeAdapter: EventsAdapter = {
     }
   },
 
+  fetchDailyCounts: async (_category, days) => Array(days).fill(0) as number[],
+
   fetchEvents: async (payload) => {
     try {
       const msg = { type: 'events', task: 'getEvents', payload: { payload } };

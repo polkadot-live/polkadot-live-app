@@ -82,6 +82,11 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
       ? (eventCounts[category] ?? 0)
       : Object.values(eventCounts).reduce((acc, n) => acc + n, 0);
 
+  const fetchDailyCounts = async (
+    category: EventCategory,
+    days: number,
+  ): Promise<number[]> => adapter.fetchDailyCounts(category, days);
+
   const decCount = (event: EventCallback) => {
     setEventCounts((prev) => {
       const { category: c } = event;
@@ -307,6 +312,7 @@ export const EventsProvider = ({ children }: { children: React.ReactNode }) => {
         finishLoading,
         getEventCategoryIcon,
         getEventsCount,
+        fetchDailyCounts,
         getSortedEvents,
         markStaleEvent,
         removeEvent,

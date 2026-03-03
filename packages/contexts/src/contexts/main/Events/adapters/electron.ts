@@ -39,6 +39,20 @@ export const electronAdapter: EventsAdapter = {
     }
   },
 
+  fetchDailyCounts: async (category, days) => {
+    try {
+      return JSON.parse(
+        (await window.myAPI.sendEventTaskAsync({
+          action: 'events:dailyCounts',
+          data: { category, days },
+        })) as string,
+      );
+    } catch (err) {
+      console.error(err);
+      return Array(days).fill(0) as number[];
+    }
+  },
+
   fetchEvents: async (payload) => {
     try {
       const fetched = (await window.myAPI.sendEventTaskAsync({

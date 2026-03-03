@@ -42,6 +42,7 @@ export class EventsRepository {
   private static stmtDeleteByCategory: BetterSqlite3.Statement | null = null;
   private static stmtUpdate: BetterSqlite3.Statement | null = null;
   private static stmtUpdateWhoData: BetterSqlite3.Statement | null = null;
+  private static stmtDailyCounts: BetterSqlite3.Statement | null = null;
 
   /**
    * Prepare and cache SQL statements. Call once after the database is ready.
@@ -94,6 +95,16 @@ export class EventsRepository {
       SET who_data = ?
       WHERE uid = ?
     `);
+
+    EventsRepository.stmtDailyCounts = db.prepare(`
+      SELECT
+        CAST((timestamp / 86400) AS INTEGER) AS day_bucket,
+        COUNT(*) AS count
+      FROM events
+      WHERE category = ? AND timestamp >= ?
+      GROUP BY day_bucket
+      ORDER BY day_bucket ASC
+    `);
   }
 
   /**
@@ -135,6 +146,32 @@ export class EventsRepository {
         EventsRepository.insert(event);
       }
     })();
+  }
+
+  /**
+   * Get daily event counts for a category over the last N days.
+   * Returns an array of length `days` with counts per day (oldest first).
+   */
+  static getDailyCounts(category: EventCategory, days: number): number[] {
+    const now = new Date();
+    // Start of "days ago" day at midnight UTC.
+    const startOfRange = new Date(now);
+    startOfRange.setUTCHours(0, 0, 0, 0);
+    startOfRange.setUTCDate(startOfRange.getUTCDate() - (days - 1));
+    const sinceSec = Math.floor(startOfRange.getTime() / 1000);
+    const startBucket = Math.floor(sinceSec / 86400);
+
+    const rows = EventsRepository.stmtDailyCounts!.all(category, sinceSec) as {
+      day_bucket: number;
+      count: number;
+    }[];
+
+    const bucketMap = new Map(rows.map((r) => [r.day_bucket, r.count]));
+    const counts: number[] = [];
+    for (let i = 0; i < days; i++) {
+      counts.push(bucketMap.get(startBucket + i) ?? 0);
+    }
+    return counts;
   }
 
   /**

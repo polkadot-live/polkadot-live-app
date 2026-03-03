@@ -347,7 +347,7 @@ export class AccountsController {
         frozen: info.data.frozen,
       } as AccountBalance;
 
-      await this.set(account);
+      this.set(account);
     }
   };
 
@@ -365,7 +365,7 @@ export class AccountsController {
       frozen: result.data.frozen,
     } as AccountBalance;
 
-    await this.set(account);
+    this.set(account);
   };
 
   // Sync live nominating data for all managed accounts.
@@ -397,7 +397,7 @@ export class AccountsController {
           const fnData = { account, era, nominators };
           account.nominatingData = await getAccountNominatingData(api, fnData);
         }
-        await this.set(account);
+        this.set(account);
       } catch (err) {
         console.error(err);
       }
@@ -416,12 +416,12 @@ export class AccountsController {
 
       if (!(era && nominators)) {
         account.nominatingData = null;
-        await this.set(account);
+        this.set(account);
         return;
       }
       const data = { account, era, nominators };
       account.nominatingData = await getAccountNominatingData(api, data);
-      await this.set(account);
+      this.set(account);
     } catch (err) {
       console.error(err);
     }
@@ -447,7 +447,7 @@ export class AccountsController {
     const result = await getNominationPoolData(account, api);
     if (result) {
       account.nominationPoolData = result;
-      await this.set(account);
+      this.set(account);
     }
   };
 }

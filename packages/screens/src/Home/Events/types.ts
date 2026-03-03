@@ -5,6 +5,7 @@ import type { EventCallback } from '@polkadot-live/types/reporter';
 
 export interface CategoriesProps {
   setSection: React.Dispatch<React.SetStateAction<number>>;
+  visible: boolean;
 }
 
 export interface EventCategoryProps {

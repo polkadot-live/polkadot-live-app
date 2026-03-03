@@ -25,7 +25,7 @@ export const Events = () => {
   return (
     <FlexColumn
       $rowGap={'1rem'}
-      style={{ height: '100%', padding: '2rem 0rem 0' }}
+      style={{ height: '100%', padding: '1rem 0rem 0' }}
     >
       <MainHeading style={{ padding: '0 1rem' }}>Events</MainHeading>
       <CarouselWrapper
@@ -48,7 +48,7 @@ export const Events = () => {
           style={{ height: '100%', padding: '0 1rem' }}
         >
           <FlexColumnWrap>
-            <Categories setSection={setSection} />
+            <Categories setSection={setSection} visible={section === 0} />
           </FlexColumnWrap>
         </div>
         <div
