@@ -94,7 +94,7 @@ export const useMainMessagePorts = () => {
           // Update account name with one in backup file.
           if (alias !== account.name) {
             account.name = alias;
-            await AccountsController.set(account);
+            await AccountsController.setAndPersist(account);
           }
 
           await AccountsController.removeAllSubscriptions(account);
@@ -247,7 +247,7 @@ export const useMainMessagePorts = () => {
     if (account) {
       // Set new account name and persist new account data to storage.
       account.name = newName;
-      await AccountsController.set(account);
+      await AccountsController.setAndPersist(account);
 
       // Update account react state.
       AccountsController.syncState();

@@ -304,7 +304,7 @@ export class QueryMultiWrapper {
         }
       }
       // Update managed account data.
-      await AccountsController.set(account);
+      AccountsController.set(account);
 
       // Reset flags.
       this.postCallbackSyncFlags = {

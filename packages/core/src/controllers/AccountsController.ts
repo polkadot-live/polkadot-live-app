@@ -20,11 +20,6 @@ import type {
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { SubscriptionTask } from '@polkadot-live/types/subscriptions';
 
-/**
- * A static class to provide an interface for managing imported accounts.
- * @class
- * @property {Map<ChainID, Account[]>} accounts - list of imported accounts, separated by chain.
- */
 export class AccountsController {
   static backend: 'browser' | 'electron';
   static accounts = new Map<ChainID, Account[]>();
@@ -253,7 +248,7 @@ export class AccountsController {
   };
 
   // Updates an Account in the `accounts` property and store.
-  static set = async (account: Account) => {
+  static set = (account: Account) => {
     const chainId = account.chain;
 
     this.accounts.set(
@@ -262,10 +257,16 @@ export class AccountsController {
         .get(chainId)
         ?.map((a) => (a.address === account.address ? account : a)) || [],
     );
+  };
+
+  // Update account data and persist to database.
+  static setAndPersist = async (account: Account) => {
+    this.set(account);
+
     if (this.backend === 'electron') {
       await window.myAPI.sendAccountTask({
-        action: 'account:updateAll',
-        data: { accounts: this.serializeAccounts() },
+        action: 'account:update',
+        data: { account: account.toJSON() },
       });
     }
   };
@@ -285,32 +286,32 @@ export class AccountsController {
     this.accounts.get(chainId)?.push(account) ||
       this.accounts.set(chainId, [account]);
 
-    this.updateStore();
+    if (this.backend === 'electron') {
+      window.myAPI.sendAccountTask({
+        action: 'account:update',
+        data: { account: account.toJSON() },
+      });
+    }
     return account;
   };
 
   // Removes a managed account and updates store.
   static remove = (chainId: ChainID, address: string) => {
-    if (this.accountExists(chainId, address)) {
-      const filtered = this.accounts
-        .get(chainId)!
-        .filter((a) => a.address !== address);
-      this.accounts.set(chainId, filtered);
-      this.updateStore();
+    const account = this.get(chainId, address);
+    if (!account) {
+      return;
     }
-  };
 
-  // Utility to update accounts in store.
-  private static updateStore = () => {
+    this.accounts.set(
+      chainId,
+      this.accounts.get(chainId)!.filter((a) => a.address !== address),
+    );
+
     if (this.backend === 'electron') {
-      window.myAPI
-        .sendAccountTask({
-          action: 'account:updateAll',
-          data: { accounts: this.serializeAccounts() },
-        })
-        .then(() => {
-          console.log('🆕 Accounts updated');
-        });
+      window.myAPI.sendAccountTask({
+        action: 'account:remove',
+        data: { account: account.toJSON() },
+      });
     }
   };
 
@@ -322,13 +323,6 @@ export class AccountsController {
       }
     }
     return false;
-  };
-
-  // Serialize imported accounts for Electron store.
-  // Note: Account implements toJSON method for serializing account data correctly.
-  private static serializeAccounts = () => {
-    const serialized = JSON.stringify(Array.from(this.accounts.entries()));
-    return serialized;
   };
 
   // Sync live balances for all managed accounts.

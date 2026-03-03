@@ -4,7 +4,7 @@
 import { AccountsRepository } from '../db';
 import { NotificationsController } from './NotificationsController';
 import { SubscriptionsController } from './SubscriptionsController';
-import type { ChainID } from '@polkadot-live/types/chains';
+import type { StoredAccount } from '@polkadot-live/types/accounts';
 import type { IpcTask } from '@polkadot-live/types/communication';
 
 export class AccountsController {
@@ -21,8 +21,8 @@ export class AccountsController {
         await AccountsController.remove(task);
         return;
       }
-      case 'account:updateAll': {
-        AccountsController.updateAll(task);
+      case 'account:update': {
+        AccountsController.update(task);
         return;
       }
     }
@@ -44,15 +44,17 @@ export class AccountsController {
 
   // Remove an account.
   private static async remove(task: IpcTask) {
-    const { address, chainId }: { address: string; chainId: ChainID } =
-      task.data;
-    SubscriptionsController.clearAccountTasksInStore(address, chainId);
-    AccountsRepository.delete(address, chainId);
+    const { account }: { account: StoredAccount } = task.data;
+    SubscriptionsController.clearAccountTasksInStore(
+      account._address,
+      account._chain,
+    );
+    AccountsRepository.delete(account._address, account._chain);
   }
 
-  // Persist accounts.
-  private static updateAll(task: IpcTask) {
-    const { accounts }: { accounts: string } = task.data;
-    AccountsRepository.replaceAll(accounts);
+  // Persist a single account (insert or update).
+  private static update(task: IpcTask) {
+    const { account }: { account: StoredAccount } = task.data;
+    AccountsRepository.upsert(account);
   }
 }

@@ -24,10 +24,6 @@ export const electronAdapter: AddressesAdapter = {
 
   removeAddress: async (chainId, address) => {
     AccountsController.syncState();
-    // Remove persisted account from store.
-    await window.myAPI.sendAccountTask({
-      action: 'account:remove',
-      data: { address, chainId },
-    });
+    AccountsController.remove(chainId, address);
   },
 };
