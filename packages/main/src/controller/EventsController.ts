@@ -92,6 +92,11 @@ export class EventsController {
       case 'events:counts': {
         return EventsController.counts();
       }
+      case 'events:dailyCounts': {
+        const { category, days }: { category: EventCategory; days: number } =
+          task.data;
+        return JSON.stringify(EventsRepository.getDailyCounts(category, days));
+      }
       default: {
         return false;
       }

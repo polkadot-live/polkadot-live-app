@@ -1,22 +1,20 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as FA from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getAllEventCategories } from '@polkadot-live/consts/chains';
 import { useAppSettings, useEvents } from '@polkadot-live/contexts';
-import * as Wrappers from '@polkadot-live/styles';
+import { FlexColumn } from '@polkadot-live/styles';
 import * as UI from '@polkadot-live/ui';
 import * as Accordion from '@radix-ui/react-accordion';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { useState } from 'react';
+import { CategoryItem } from './CategoryItem';
 import type { EventCategory } from '@polkadot-live/types';
 import type { CategoriesProps } from './types';
 
-export const Categories = ({ setSection }: CategoriesProps) => {
+export const Categories = ({ setSection, visible }: CategoriesProps) => {
   const { cacheGet } = useAppSettings();
-  const { eventCounts, getEventCategoryIcon, changeActiveCategory } =
-    useEvents();
+  const { changeActiveCategory } = useEvents();
 
   const [accordionValue, setAccordionValue] = useState('Categories');
 
@@ -41,7 +39,7 @@ export const Categories = ({ setSection }: CategoriesProps) => {
           value={accordionValue}
           onValueChange={(val) => setAccordionValue(val as string)}
         >
-          <Wrappers.FlexColumn>
+          <FlexColumn>
             <Accordion.Item className="AccordionItem" value={'Categories'}>
               <UI.AccordionTrigger narrow={true}>
                 <ChevronDownIcon className="AccordionChevron" aria-hidden />
@@ -49,53 +47,22 @@ export const Categories = ({ setSection }: CategoriesProps) => {
               </UI.AccordionTrigger>
 
               <UI.AccordionContent transparent={true}>
-                <Wrappers.ItemsColumn>
+                <FlexColumn $rowGap={'0.75rem'}>
                   {getAllEventCategories()
                     .filter((c) => showDebugging || c !== 'Debugging')
                     .sort((a, b) => a.localeCompare(b))
                     .map((category) => (
-                      <Wrappers.ItemEntryWrapper
-                        whileHover={{ scale: 1.01 }}
-                        whileTap={{ scale: 0.99 }}
+                      <CategoryItem
                         key={`${category}-events`}
+                        category={category}
+                        visible={visible}
                         onClick={() => onCategoryClick(category)}
-                      >
-                        <div className="inner">
-                          <div>
-                            <span>
-                              <FontAwesomeIcon
-                                style={{ fontSize: '0.95rem' }}
-                                icon={getEventCategoryIcon(category)}
-                              />
-                            </span>
-                            <div className="content">
-                              <h3>{category}</h3>
-                            </div>
-                          </div>
-                          <Wrappers.FlexRow>
-                            <Wrappers.FlexRow>
-                              <span
-                                style={{
-                                  fontSize: '0.95rem',
-                                  fontWeight: '600',
-                                }}
-                              >
-                                {eventCounts[category] ?? 0}
-                              </span>
-                              <UI.ButtonText
-                                text=""
-                                iconRight={FA.faChevronRight}
-                                iconTransform="shrink-3"
-                              />
-                            </Wrappers.FlexRow>
-                          </Wrappers.FlexRow>
-                        </div>
-                      </Wrappers.ItemEntryWrapper>
+                      />
                     ))}
-                </Wrappers.ItemsColumn>
+                </FlexColumn>
               </UI.AccordionContent>
             </Accordion.Item>
-          </Wrappers.FlexColumn>
+          </FlexColumn>
         </Accordion.Root>
       </UI.AccordionWrapper>
     </div>

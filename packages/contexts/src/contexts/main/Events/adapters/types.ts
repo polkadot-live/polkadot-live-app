@@ -10,6 +10,10 @@ import type {
 export interface EventsAdapter {
   clearAll: (category: EventCategory) => Promise<boolean>;
   fetchCounts: () => Promise<Partial<Record<EventCategory, number>>>;
+  fetchDailyCounts: (
+    category: EventCategory,
+    days: number,
+  ) => Promise<number[]>;
   fetchEvents: (payload: EventFetchPayload) => Promise<EventCallback[]>;
   removeEvent: (event: EventCallback) => Promise<void>;
   listenOnMount: (

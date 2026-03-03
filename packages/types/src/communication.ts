@@ -59,6 +59,7 @@ export interface IpcTask {
     // Events
     | 'events:clearAll'
     | 'events:counts'
+    | 'events:dailyCounts'
     | 'events:fetch'
     | 'events:persist'
     | 'events:remove'

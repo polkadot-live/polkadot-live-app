@@ -28,6 +28,10 @@ export interface EventsContextInterface {
 
   getEventCategoryIcon: (category: EventCategory) => IconDefinition;
   getEventsCount: (category?: EventCategory) => number;
+  fetchDailyCounts: (
+    category: EventCategory,
+    days: number,
+  ) => Promise<number[]>;
   getSortedEvents: (desc?: boolean) => EventCallback[];
   markStaleEvent: (u: string, c: ChainID) => void;
   removeEvent: (event: EventCallback) => Promise<void>;

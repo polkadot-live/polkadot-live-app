@@ -48,7 +48,7 @@ export const Events = () => {
           style={{ height: '100%', padding: '0 1rem' }}
         >
           <FlexColumnWrap>
-            <Categories setSection={setSection} />
+            <Categories setSection={setSection} visible={section === 0} />
           </FlexColumnWrap>
         </div>
         <div
