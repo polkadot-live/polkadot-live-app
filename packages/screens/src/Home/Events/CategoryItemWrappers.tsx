@@ -47,7 +47,7 @@ export const CategoryCardHeader = styled.div`
 
   .category-name {
     flex: 1;
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 600;
     color: var(--text-color-primary);
     white-space: nowrap;
