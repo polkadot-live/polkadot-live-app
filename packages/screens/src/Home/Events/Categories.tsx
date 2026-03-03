@@ -5,7 +5,7 @@ import { getAllEventCategories } from '@polkadot-live/consts/chains';
 import { useAppSettings, useEvents } from '@polkadot-live/contexts';
 import { FlexColumn } from '@polkadot-live/styles';
 import * as UI from '@polkadot-live/ui';
-import { CategoryItem } from './CategoryItem';
+import { CategoryItem } from './Category';
 import type { EventCategory } from '@polkadot-live/types';
 import type { CategoriesProps } from './types';
 
