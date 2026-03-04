@@ -60,7 +60,7 @@ export const Networks = ({
         <div>Select a network to manage its subscriptions.</div>
       </UI.ScreenInfoCard>
 
-      <FlexColumn $rowGap="0.6rem" style={{ marginTop: '1rem' }}>
+      <FlexColumn $rowGap="0.6rem" style={{ marginTop: '0.75rem' }}>
         {(Object.keys(ChainPallets) as ChainID[]).map((cid) => {
           const color = getNetworkColor(cid);
           const { active = 0, osNotify = 0 } = stats[cid] ?? {};

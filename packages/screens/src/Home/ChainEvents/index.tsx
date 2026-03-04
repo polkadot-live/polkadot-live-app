@@ -20,7 +20,7 @@ export const ChainEvents = () => {
   return (
     <FlexColumn
       $rowGap={'1rem'}
-      style={{ height: '100%', padding: '2rem 0rem 0' }}
+      style={{ height: '100%', padding: '1rem 0 0' }}
     >
       <MainHeading style={{ padding: '0 1rem' }}>
         Chain Subscriptions
