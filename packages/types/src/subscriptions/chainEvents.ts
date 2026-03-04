@@ -91,6 +91,12 @@ export type PalletStakingEvent =
  */
 export type EventSubKind = 'account' | 'chain' | 'referendum';
 
+/** Per-network subscription stats returned by the database. */
+export interface NetworkSubStats {
+  active: number;
+  osNotify: number;
+}
+
 export interface ChainEventSubscription {
   id: string;
   chainId: ChainID;

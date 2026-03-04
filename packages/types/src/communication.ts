@@ -80,6 +80,7 @@ export interface IpcTask {
     | 'chainEvents:getAllRefSubs'
     | 'chainEvents:getAllRefSubsForChain'
     | 'chainEvents:getActiveRefIds'
+    | 'chainEvents:getNetworkStats'
     // Extrinsics
     | 'extrinsics:getAll'
     | 'extrinsics:getCount'

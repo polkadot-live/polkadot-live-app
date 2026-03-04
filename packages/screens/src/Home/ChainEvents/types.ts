@@ -8,6 +8,7 @@ export interface NetworksProps {
   setActiveChain: React.Dispatch<React.SetStateAction<ChainID | null>>;
   setBreadcrumb: React.Dispatch<React.SetStateAction<string>>;
   setSection: React.Dispatch<React.SetStateAction<number>>;
+  visible: boolean;
 }
 
 export interface SubscriptionsProps {

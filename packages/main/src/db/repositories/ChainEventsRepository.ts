@@ -59,6 +59,9 @@ export class ChainEventsRepository {
   private static stmtDeleteByChainIdAndPalletEvent: BetterSqlite3.Statement | null =
     null;
 
+  // Aggregation statement
+  private static stmtNetworkStats: BetterSqlite3.Statement | null = null;
+
   // chain_event_active_refs statements
   private static stmtInsertActiveRef: BetterSqlite3.Statement | null = null;
   private static stmtGetAllActiveRefs: BetterSqlite3.Statement | null = null;
@@ -126,6 +129,17 @@ export class ChainEventsRepository {
     ChainEventsRepository.stmtDeleteByChainIdAndPalletEvent = db.prepare(`
       DELETE FROM chain_event_subscriptions
       WHERE chain_id = ? AND scope_type = 'global' AND pallet = ? AND event_name = ?
+    `);
+
+    // ===== Aggregation statements =====
+
+    ChainEventsRepository.stmtNetworkStats = db.prepare(`
+      SELECT chain_id,
+             COUNT(*) AS active,
+             SUM(os_notify) AS os_notify
+      FROM chain_event_subscriptions
+      WHERE enabled = 1
+      GROUP BY chain_id
     `);
 
     // ===== chain_event_active_refs statements =====
@@ -315,6 +329,31 @@ export class ChainEventsRepository {
    */
   static removeAllForRef(chainId: ChainID, refId: number): void {
     ChainEventsRepository.stmtDeleteAllByRef!.run(chainId, refId.toString());
+  }
+
+  // ===== Network Stats =====
+
+  /**
+   * Get per-chain counts of active subscriptions and those with OS notifications.
+   * Returns a record keyed by ChainID.
+   */
+  static getNetworkStats(): Record<
+    string,
+    { active: number; osNotify: number }
+  > {
+    const rows = ChainEventsRepository.stmtNetworkStats!.all() as {
+      chain_id: string;
+      active: number;
+      os_notify: number;
+    }[];
+    const result: Record<string, { active: number; osNotify: number }> = {};
+    for (const row of rows) {
+      result[row.chain_id] = {
+        active: row.active,
+        osNotify: row.os_notify,
+      };
+    }
+    return result;
   }
 
   // ===== Active Refs Management =====

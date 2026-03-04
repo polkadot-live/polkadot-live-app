@@ -4,6 +4,7 @@
 import type {
   ChainEventSubscription,
   FlattenedAccountData,
+  NetworkSubStats,
 } from '@polkadot-live/types';
 import type { ChainID } from '@polkadot-live/types/chains';
 
@@ -18,6 +19,7 @@ export interface ChainEventsContextInterface {
   accountSubCount: (account: FlattenedAccountData) => Promise<number>;
   addSubsForRef: (chainId: ChainID, refId: number) => void;
   countActiveRefSubs: () => number;
+  fetchNetworkStats: () => Promise<Record<string, NetworkSubStats>>;
   getCategorisedForAccount: (
     account: FlattenedAccountData,
   ) => Record<string, ChainEventSubscription[]>;

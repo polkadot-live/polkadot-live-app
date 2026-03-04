@@ -71,6 +71,19 @@ export const electronAdapter: ChainEventsAdapter = {
     }
   },
 
+  getNetworkStats: async () => {
+    try {
+      const res = (await window.myAPI.sendChainEventTask({
+        action: 'chainEvents:getNetworkStats',
+        data: null,
+      })) as string;
+      return JSON.parse(res);
+    } catch (err) {
+      console.error(err);
+      return {};
+    }
+  },
+
   getSubCount: async () => {
     const res = await window.myAPI.sendChainEventTask({
       action: 'chainEvents:getActiveCount',

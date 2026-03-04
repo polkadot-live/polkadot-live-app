@@ -69,6 +69,9 @@ export class ChainEventsController {
       case 'chainEvents:getActiveCount': {
         return ChainEventsController.getActiveCount().toString();
       }
+      case 'chainEvents:getNetworkStats': {
+        return JSON.stringify(ChainEventsRepository.getNetworkStats());
+      }
     }
   }
 

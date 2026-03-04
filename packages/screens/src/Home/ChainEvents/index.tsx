@@ -49,6 +49,7 @@ export const ChainEvents = () => {
               setBreadcrumb={setBreadcrumb}
               setSection={setSection}
               setActiveChain={setActiveChain}
+              visible={section === 0}
             />
           </FlexColumnWrap>
         </div>

@@ -14,6 +14,7 @@ import { getChainEventAdapter } from './adapters';
 import type {
   ChainEventSubscription,
   FlattenedAccountData,
+  NetworkSubStats,
 } from '@polkadot-live/types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChainEventsContextInterface } from '../../../types/main';
@@ -408,6 +409,10 @@ export const ChainEventsProvider = ({
   const getEventSubscriptionCount = async (): Promise<number> =>
     await adapter.getSubCount();
 
+  const fetchNetworkStats = async (): Promise<
+    Record<string, NetworkSubStats>
+  > => await adapter.getNetworkStats();
+
   const syncStored = async () => {
     const stored = await adapter.getStored();
     setSubscriptions(
@@ -550,6 +555,7 @@ export const ChainEventsProvider = ({
         accountSubCountForPallet,
         addSubsForRef,
         countActiveRefSubs,
+        fetchNetworkStats,
         getActiveRefIds,
         getCategorisedForAccount,
         getCategorisedRefsForChain,

@@ -69,6 +69,8 @@ export const chromeAdapter: ChainEventsAdapter = {
     }
   },
 
+  getNetworkStats: async () => ({}),
+
   getSubCount: async () =>
     await chrome.runtime.sendMessage({
       type: 'chainEvents',
