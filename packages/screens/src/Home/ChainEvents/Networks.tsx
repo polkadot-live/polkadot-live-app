@@ -1,15 +1,25 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import * as FA from '@fortawesome/free-solid-svg-icons';
+import { faBell, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ChainPallets } from '@polkadot-live/consts/subscriptions/chainEvents';
 import { useChainEvents } from '@polkadot-live/contexts';
-import * as Wrappers from '@polkadot-live/styles';
+import { FlexColumn } from '@polkadot-live/styles';
 import * as UI from '@polkadot-live/ui';
-import * as Accordion from '@radix-ui/react-accordion';
-import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { getNetworkColor } from '../Wrappers';
+import {
+  NetworkCard,
+  NetworkCardContent,
+  NetworkCardHeader,
+  NetworkChevron,
+  NetworkIconCircle,
+  NetworkName,
+  NetworkStatsRow,
+  SubCountBadge,
+} from './Wrappers';
+import type { ActiveSubCounts } from '@polkadot-live/types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { NetworksProps } from './types';
 
@@ -17,21 +27,31 @@ export const Networks = ({
   setActiveChain,
   setBreadcrumb,
   setSection,
+  visible,
 }: NetworksProps) => {
-  const { subscriptions } = useChainEvents();
-  const [accordionValue, setAccordionValue] = useState('Polkadot Asset Hub');
+  const { fetchNetworkStats } = useChainEvents();
+
+  const [stats, setStats] = useState<Record<string, ActiveSubCounts>>({});
+
+  useEffect(() => {
+    if (!visible) {
+      return;
+    }
+    let cancelled = false;
+    fetchNetworkStats().then((result) => {
+      if (!cancelled) {
+        setStats(result);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [visible]);
 
   const onChainClick = (chainId: ChainID) => {
     setActiveChain(chainId);
     setBreadcrumb(chainId);
     setSection(1);
-  };
-
-  const chainHasSubs = (chainId: ChainID): boolean => {
-    const maybeSubs = subscriptions.get(chainId);
-    return maybeSubs
-      ? maybeSubs.filter(({ enabled }) => enabled).length > 0
-      : false;
   };
 
   return (
@@ -40,66 +60,50 @@ export const Networks = ({
         <div>Select a network to manage its subscriptions.</div>
       </UI.ScreenInfoCard>
 
-      <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
-        <Accordion.Root
-          style={{ marginBottom: '1rem' }}
-          className="AccordionRoot"
-          type="single"
-          value={accordionValue}
-          onValueChange={(val) => setAccordionValue(val as string)}
-        >
-          <Wrappers.FlexColumn>
-            <Accordion.Item
-              className="AccordionItem"
-              value={'Polkadot Asset Hub'}
-            >
-              <UI.AccordionTrigger narrow={true}>
-                <ChevronDownIcon className="AccordionChevron" aria-hidden />
-                <UI.TriggerHeader>Networks</UI.TriggerHeader>
-              </UI.AccordionTrigger>
+      <FlexColumn $rowGap="0.6rem" style={{ marginTop: '0.75rem' }}>
+        {(Object.keys(ChainPallets) as ChainID[]).map((cid) => {
+          const color = getNetworkColor(cid);
+          const { active = 0, osNotify = 0 } = stats[cid] ?? {};
 
-              <UI.AccordionContent transparent={true}>
-                <Wrappers.ItemsColumn>
-                  {(Object.keys(ChainPallets) as ChainID[]).map((cid) => (
-                    <Wrappers.ItemEntryWrapper
-                      whileHover={{ scale: 1.01 }}
-                      whileTap={{ scale: 0.99 }}
-                      key={`${cid}-chain-events`}
-                      onClick={() => onChainClick(cid)}
-                    >
-                      <div className="inner">
-                        <div>
-                          <span>
-                            <UI.ChainIcon chainId={cid} width={16} />
-                          </span>
-                          <div className="content">
-                            <h3>{cid}</h3>
-                          </div>
-                        </div>
-                        <Wrappers.FlexRow>
-                          <Wrappers.FlexRow>
-                            {chainHasSubs(cid) && (
-                              <FontAwesomeIcon
-                                className="splotch"
-                                icon={FA.faSplotch}
-                              />
-                            )}
-                            <UI.ButtonText
-                              text=""
-                              iconRight={FA.faChevronRight}
-                              iconTransform="shrink-3"
-                            />
-                          </Wrappers.FlexRow>
-                        </Wrappers.FlexRow>
-                      </div>
-                    </Wrappers.ItemEntryWrapper>
-                  ))}
-                </Wrappers.ItemsColumn>
-              </UI.AccordionContent>
-            </Accordion.Item>
-          </Wrappers.FlexColumn>
-        </Accordion.Root>
-      </UI.AccordionWrapper>
+          return (
+            <NetworkCard
+              $accentColor={color}
+              key={`${cid}-chain-events`}
+              onClick={() => onChainClick(cid)}
+            >
+              <NetworkIconCircle $color={color}>
+                <UI.ChainIcon chainId={cid} width={20} />
+              </NetworkIconCircle>
+
+              <NetworkCardContent>
+                <NetworkCardHeader>
+                  <NetworkName>{cid}</NetworkName>
+                </NetworkCardHeader>
+
+                <NetworkStatsRow $color={color} $inactive={active === 0}>
+                  <span className="stat-pill">
+                    Active <span className="stat-value">{active}</span>
+                  </span>
+                  <span className="stat-pill">
+                    <FontAwesomeIcon icon={faBell} />{' '}
+                    <span className="stat-value">{osNotify}</span>
+                  </span>
+                </NetworkStatsRow>
+              </NetworkCardContent>
+
+              {active > 0 && (
+                <SubCountBadge $color={color} $active={true}>
+                  {active}
+                </SubCountBadge>
+              )}
+
+              <NetworkChevron>
+                <FontAwesomeIcon icon={faChevronRight} />
+              </NetworkChevron>
+            </NetworkCard>
+          );
+        })}
+      </FlexColumn>
     </div>
   );
 };

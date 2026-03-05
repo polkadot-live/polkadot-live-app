@@ -11,6 +11,7 @@ export interface ManageProps {
 
 export interface AccountsProps {
   addresses: FlattenedAccountData[];
+  visible: boolean;
   setBreadcrumb: (s: string) => void;
   setTasksChainId: React.Dispatch<React.SetStateAction<ChainID | null>>;
   setSection: (n: number) => void;

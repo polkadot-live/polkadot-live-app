@@ -71,6 +71,7 @@ export interface IpcTask {
     | 'chainEvents:getActiveCount'
     | 'chainEvents:insert'
     | 'chainEvents:remove'
+    | 'chainEvents:getAccountStats'
     | 'chainEvents:getAllForAccount'
     | 'chainEvents:insertForAccount'
     | 'chainEvents:removeForAccount'
@@ -80,6 +81,7 @@ export interface IpcTask {
     | 'chainEvents:getAllRefSubs'
     | 'chainEvents:getAllRefSubsForChain'
     | 'chainEvents:getActiveRefIds'
+    | 'chainEvents:getNetworkStats'
     // Extrinsics
     | 'extrinsics:getAll'
     | 'extrinsics:getCount'

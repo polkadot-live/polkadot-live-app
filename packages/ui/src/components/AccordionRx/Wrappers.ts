@@ -198,6 +198,11 @@ export const AccordionWrapper = styled.div<{ $onePart?: boolean }>`
       }
     }
   }
+  .AccordionContentReduce {
+    .AccordionContentTransparent {
+      margin-top: 0.6rem;
+    }
+  }
 
   @keyframes slideDown {
     from {

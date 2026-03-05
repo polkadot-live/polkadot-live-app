@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { DatabaseManager } from '../Database';
+import type { ActiveSubCounts } from '@polkadot-live/types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { HelpItemKey } from '@polkadot-live/types/help';
 import type {
@@ -64,6 +65,7 @@ export class AccountSubscriptionsRepository {
     null;
   private static stmtGetAll: BetterSqlite3.Statement | null = null;
   private static stmtClearAddress: BetterSqlite3.Statement | null = null;
+  private static stmtAccountStats: BetterSqlite3.Statement | null = null;
 
   /**
    * Prepare and cache SQL statements. Call once after the database is ready.
@@ -106,6 +108,14 @@ export class AccountSubscriptionsRepository {
     AccountSubscriptionsRepository.stmtClearAddress = db.prepare(
       'DELETE FROM account_subscriptions WHERE chain_id = ? AND address = ?',
     );
+
+    AccountSubscriptionsRepository.stmtAccountStats = db.prepare(`
+      SELECT chain_id || ':' || address AS key,
+             COUNT(*) AS active,
+             SUM(enable_os_notifications) AS osNotify
+      FROM account_subscriptions
+      GROUP BY chain_id, address
+    `);
   }
 
   /**
@@ -216,6 +226,22 @@ export class AccountSubscriptionsRepository {
    */
   static clearForAddress(chainId: ChainID, address: string): void {
     AccountSubscriptionsRepository.stmtClearAddress!.run(chainId, address);
+  }
+
+  /**
+   * Get account stats (active subscriptions and os notify counts) for accounts.
+   */
+  static getAccountStats(): Record<string, ActiveSubCounts> {
+    const rows = AccountSubscriptionsRepository.stmtAccountStats!.all() as {
+      key: string;
+      active: number;
+      osNotify: number;
+    }[];
+    const result: Record<string, ActiveSubCounts> = {};
+    for (const row of rows) {
+      result[row.key] = { active: row.active, osNotify: row.osNotify };
+    }
+    return result;
   }
 }
 

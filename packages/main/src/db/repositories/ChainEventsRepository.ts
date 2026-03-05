@@ -3,6 +3,7 @@
 
 import { DatabaseManager } from '../Database';
 import type {
+  ActiveSubCounts,
   ChainEventSubscription,
   EventSubKind,
   FlattenedAccountData,
@@ -59,10 +60,15 @@ export class ChainEventsRepository {
   private static stmtDeleteByChainIdAndPalletEvent: BetterSqlite3.Statement | null =
     null;
 
+  // Aggregation statement
+  private static stmtNetworkStats: BetterSqlite3.Statement | null = null;
+
   // chain_event_active_refs statements
   private static stmtInsertActiveRef: BetterSqlite3.Statement | null = null;
   private static stmtGetAllActiveRefs: BetterSqlite3.Statement | null = null;
   private static stmtDeleteActiveRef: BetterSqlite3.Statement | null = null;
+
+  private static stmtAccountStats: BetterSqlite3.Statement | null = null;
 
   /**
    * Prepare and cache SQL statements. Call once after the database is ready.
@@ -126,6 +132,26 @@ export class ChainEventsRepository {
     ChainEventsRepository.stmtDeleteByChainIdAndPalletEvent = db.prepare(`
       DELETE FROM chain_event_subscriptions
       WHERE chain_id = ? AND scope_type = 'global' AND pallet = ? AND event_name = ?
+    `);
+
+    // ===== Aggregation statements =====
+
+    ChainEventsRepository.stmtNetworkStats = db.prepare(`
+      SELECT chain_id,
+             COUNT(*) AS active,
+             SUM(os_notify) AS os_notify
+      FROM chain_event_subscriptions
+      WHERE enabled = 1
+      GROUP BY chain_id
+    `);
+
+    ChainEventsRepository.stmtAccountStats = db.prepare(`
+      SELECT id,
+             COUNT(*) AS active,
+             SUM(os_notify) AS osNotify
+      FROM chain_event_subscriptions
+      WHERE scope_type = 'account'
+      GROUP BY id
     `);
 
     // ===== chain_event_active_refs statements =====
@@ -315,6 +341,56 @@ export class ChainEventsRepository {
    */
   static removeAllForRef(chainId: ChainID, refId: number): void {
     ChainEventsRepository.stmtDeleteAllByRef!.run(chainId, refId.toString());
+  }
+
+  // ===== Network Stats =====
+
+  /**
+   * Get network stats (active subscriptions and OS notifications) for chains.
+   */
+  static getNetworkStats(): Record<string, ActiveSubCounts> {
+    const rows = ChainEventsRepository.stmtNetworkStats!.all() as {
+      chain_id: string;
+      active: number;
+      os_notify: number;
+    }[];
+    const result: Record<string, ActiveSubCounts> = {};
+
+    for (const row of rows) {
+      result[row.chain_id] = {
+        active: row.active,
+        osNotify: row.os_notify,
+      };
+    }
+    return result;
+  }
+
+  // ===== Account Stats =====
+
+  /**
+   * Get per-account counts of active subscriptions and those with OS notifications.
+   */
+  static getAccountStats(): Record<string, ActiveSubCounts> {
+    const rows = ChainEventsRepository.stmtAccountStats!.all() as {
+      id: string;
+      active: number;
+      osNotify: number;
+    }[];
+    const result: Record<string, ActiveSubCounts> = {};
+
+    for (const row of rows) {
+      const [chainId, address] = row.id.split('::');
+      const key = `${chainId}:${address}`;
+
+      if (!result[key]) {
+        result[key] = { active: 0, osNotify: 0 };
+      }
+
+      result[key].active += row.active;
+      result[key].osNotify += row.osNotify;
+    }
+
+    return result;
   }
 
   // ===== Active Refs Management =====
