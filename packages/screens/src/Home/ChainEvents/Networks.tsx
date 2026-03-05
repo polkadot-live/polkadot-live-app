@@ -8,8 +8,8 @@ import { useChainEvents } from '@polkadot-live/contexts';
 import { FlexColumn } from '@polkadot-live/styles';
 import * as UI from '@polkadot-live/ui';
 import { useEffect, useState } from 'react';
+import { getNetworkColor } from '../Wrappers';
 import {
-  getNetworkColor,
   NetworkCard,
   NetworkCardContent,
   NetworkCardHeader,
