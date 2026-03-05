@@ -549,7 +549,7 @@ export const ChainEventsProvider = ({
   };
 
   return (
-    <ChainEventsContext.Provider
+    <ChainEventsContext
       value={{
         activeChain,
         activeAccount,
@@ -584,6 +584,6 @@ export const ChainEventsProvider = ({
       }}
     >
       {children}
-    </ChainEventsContext.Provider>
+    </ChainEventsContext>
   );
 };

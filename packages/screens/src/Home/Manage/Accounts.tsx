@@ -194,7 +194,7 @@ export const Accounts = ({
         <div>Select an account to manage its subscriptions.</div>
       </UI.ScreenInfoCard>
 
-      <UI.AccordionWrapper style={{ marginTop: '0.6rem' }}>
+      <UI.AccordionWrapper style={{ marginTop: '0.75rem' }}>
         <Accordion.Root
           style={{ marginBottom: '1rem' }}
           className="AccordionRoot"

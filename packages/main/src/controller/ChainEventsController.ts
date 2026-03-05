@@ -263,7 +263,7 @@ export class ChainEventsController {
     const accountStats = AccountSubscriptionsRepository.getAccountStats();
     const chainEventStats = ChainEventsRepository.getAccountStats();
 
-    // Merge stats from both repositories
+    // Merge stats from both repositories.
     const combinedStats: Record<string, ActiveSubCounts> = {};
 
     for (const key in accountStats) {
