@@ -12,9 +12,9 @@ import { createContext, useEffect, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
 import { getChainEventAdapter } from './adapters';
 import type {
+  ActiveSubCounts,
   ChainEventSubscription,
   FlattenedAccountData,
-  NetworkSubStats,
 } from '@polkadot-live/types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChainEventsContextInterface } from '../../../types/main';
@@ -410,7 +410,7 @@ export const ChainEventsProvider = ({
     await adapter.getSubCount();
 
   const fetchNetworkStats = async (): Promise<
-    Record<string, NetworkSubStats>
+    Record<string, ActiveSubCounts>
   > => await adapter.getNetworkStats();
 
   const syncStored = async () => {
@@ -542,8 +542,14 @@ export const ChainEventsProvider = ({
     fetch();
   }, [activeRefChain]);
 
+  const fetchAccountStats = async (): Promise<
+    Record<string, ActiveSubCounts>
+  > => {
+    return await adapter.getAccountStats();
+  };
+
   return (
-    <ChainEventsContext
+    <ChainEventsContext.Provider
       value={{
         activeChain,
         activeAccount,
@@ -574,9 +580,10 @@ export const ChainEventsProvider = ({
         toggle,
         toggleForAccount,
         toggleOsNotify,
+        fetchAccountStats,
       }}
     >
       {children}
-    </ChainEventsContext>
+    </ChainEventsContext.Provider>
   );
 };

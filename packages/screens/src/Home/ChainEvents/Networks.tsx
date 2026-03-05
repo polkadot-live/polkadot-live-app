@@ -19,7 +19,7 @@ import {
   NetworkStatsRow,
   SubCountBadge,
 } from './Wrappers';
-import type { NetworkSubStats } from '@polkadot-live/types';
+import type { ActiveSubCounts } from '@polkadot-live/types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { NetworksProps } from './types';
 
@@ -31,7 +31,7 @@ export const Networks = ({
 }: NetworksProps) => {
   const { fetchNetworkStats } = useChainEvents();
 
-  const [stats, setStats] = useState<Record<string, NetworkSubStats>>({});
+  const [stats, setStats] = useState<Record<string, ActiveSubCounts>>({});
 
   useEffect(() => {
     if (!visible) {

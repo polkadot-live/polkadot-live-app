@@ -2,28 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import styled from 'styled-components';
-import type { ChainID } from '@polkadot-live/types/chains';
-
-/**
- * Accent colors per network.
- */
-export const networkAccentColors: Record<string, string> = {
-  'Polkadot Asset Hub': '#c75d82',
-  'Polkadot People': '#c75d82',
-  'Kusama Asset Hub': '#6e6e6e',
-  'Kusama People': '#6e6e6e',
-  'Paseo Asset Hub': '#7a8fc2',
-  'Paseo People': '#7a8fc2',
-  'Westend Asset Hub': '#d47a7a',
-  'Westend People': '#d47a7a',
-};
-
-/** Helper — resolve accent color with a fallback. */
-export const getNetworkColor = (chainId: ChainID): string =>
-  networkAccentColors[chainId] ?? '#888888';
 
 /** Chevron-right indicator — nudges right on card hover. */
-export const NetworkChevron = styled.span`
+export const AccountChevron = styled.span`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -36,8 +17,8 @@ export const NetworkChevron = styled.span`
   flex-shrink: 0;
 `;
 
-/** Outer card wrapper — horizontal: icon | content column. */
-export const NetworkCard = styled.div<{ $accentColor: string }>`
+/** Outer card wrapper — horizontal: identicon | content column | badge | chevron. */
+export const AccountCard = styled.div<{ $accentColor: string }>`
   position: relative;
   background-color: var(--background-primary);
   border-radius: 0.5rem;
@@ -53,14 +34,27 @@ export const NetworkCard = styled.div<{ $accentColor: string }>`
     background-color: var(--background-primary-hover);
   }
 
-  &:hover ${NetworkChevron} {
+  &:hover ${AccountChevron} {
     opacity: 0.8;
     transform: translateX(2px);
   }
 `;
 
-/** Right side: stacks header row + stats row. */
-export const NetworkCardContent = styled.div`
+/** Accent-coloured circle behind the identicon. */
+export const AccountIconCircle = styled.span<{ $color: string }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background-color: ${({ $color }) => `${$color}22`};
+  flex-shrink: 0;
+  margin-right: 0.25rem;
+`;
+
+/** Right side: stacks header (name + address) + stats row. */
+export const AccountCardContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
@@ -68,15 +62,35 @@ export const NetworkCardContent = styled.div`
   min-width: 0;
 `;
 
-/** Top row: name, badge, chevron. */
-export const NetworkCardHeader = styled.div`
+/** Top section: account name + truncated address subtitle. */
+export const AccountCardHeader = styled.div`
   display: flex;
-  align-items: center;
-  gap: 0.75rem;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
+
+/** Account name text. */
+export const AccountName = styled.span`
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-color-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+/** Truncated address subtitle. */
+export const AccountAddress = styled.span`
+  font-size: 0.95rem;
+  color: var(--text-color-secondary);
+  opacity: 0.65;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 /** Bottom row: lightweight stats with accent colour. */
-export const NetworkStatsRow = styled.div<{
+export const AccountStatsRow = styled.div<{
   $color: string;
   $inactive?: boolean;
 }>`
@@ -104,32 +118,8 @@ export const NetworkStatsRow = styled.div<{
   }
 `;
 
-/** Accent-coloured circle behind the chain icon. */
-export const NetworkIconCircle = styled.span<{ $color: string }>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background-color: ${({ $color }) => `${$color}22`};
-  flex-shrink: 0;
-  margin-right: 0.25rem;
-`;
-
-/** Network name text. */
-export const NetworkName = styled.span`
-  flex: 1;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--text-color-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
-
 /** Pill-shaped subscription count badge. */
-export const SubCountBadge = styled.span<{
+export const AccountCountBadge = styled.span<{
   $color: string;
   $active: boolean;
 }>`

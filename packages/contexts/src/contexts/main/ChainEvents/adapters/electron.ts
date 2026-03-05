@@ -2,7 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ChainEventsService, parseMap } from '@polkadot-live/core';
-import type { ChainEventSubscription } from '@polkadot-live/types';
+import type {
+  ActiveSubCounts,
+  ChainEventSubscription,
+} from '@polkadot-live/types';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { ChainEventsAdapter } from './types';
 
@@ -192,5 +195,18 @@ export const electronAdapter: ChainEventsAdapter = {
       ChainEventsService.removeRefScoped(refId, s);
     });
     ChainEventsService.tryStopEventsStream(chainId);
+  },
+
+  getAccountStats: async (): Promise<Record<string, ActiveSubCounts>> => {
+    try {
+      const res = (await window.myAPI.sendChainEventTask({
+        action: 'chainEvents:getAccountStats',
+        data: null,
+      })) as string;
+      return JSON.parse(res);
+    } catch (err) {
+      console.error(err);
+      return {};
+    }
   },
 };

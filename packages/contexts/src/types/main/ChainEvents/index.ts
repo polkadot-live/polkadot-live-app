@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type {
+  ActiveSubCounts,
   ChainEventSubscription,
   FlattenedAccountData,
-  NetworkSubStats,
 } from '@polkadot-live/types';
 import type { ChainID } from '@polkadot-live/types/chains';
 
@@ -19,7 +19,8 @@ export interface ChainEventsContextInterface {
   accountSubCount: (account: FlattenedAccountData) => Promise<number>;
   addSubsForRef: (chainId: ChainID, refId: number) => void;
   countActiveRefSubs: () => number;
-  fetchNetworkStats: () => Promise<Record<string, NetworkSubStats>>;
+  fetchAccountStats: () => Promise<Record<string, ActiveSubCounts>>;
+  fetchNetworkStats: () => Promise<Record<string, ActiveSubCounts>>;
   getCategorisedForAccount: (
     account: FlattenedAccountData,
   ) => Record<string, ChainEventSubscription[]>;

@@ -92,7 +92,7 @@ export type PalletStakingEvent =
 export type EventSubKind = 'account' | 'chain' | 'referendum';
 
 /** Per-network subscription stats returned by the database. */
-export interface NetworkSubStats {
+export interface ActiveSubCounts {
   active: number;
   osNotify: number;
 }

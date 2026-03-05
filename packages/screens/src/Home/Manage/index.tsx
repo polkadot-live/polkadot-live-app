@@ -62,6 +62,7 @@ export const Manage = ({ addresses }: ManageProps) => {
           <FlexColumnWrap>
             <Accounts
               addresses={addresses}
+              visible={section === 0}
               setTasksChainId={setTasksChainId}
               setSection={setSection}
               setBreadcrumb={setBreadcrumb}

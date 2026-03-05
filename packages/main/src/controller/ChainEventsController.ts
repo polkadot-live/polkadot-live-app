@@ -1,8 +1,9 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ChainEventsRepository } from '../db';
+import { AccountSubscriptionsRepository, ChainEventsRepository } from '../db';
 import type {
+  ActiveSubCounts,
   ChainEventSubscription,
   FlattenedAccountData,
   IpcTask,
@@ -71,6 +72,9 @@ export class ChainEventsController {
       }
       case 'chainEvents:getNetworkStats': {
         return JSON.stringify(ChainEventsRepository.getNetworkStats());
+      }
+      case 'chainEvents:getAccountStats': {
+        return ChainEventsController.getAccountStats();
       }
     }
   }
@@ -253,4 +257,29 @@ export class ChainEventsController {
       ChainEventsRepository.insert(sub, 'ref', refId.toString());
     }
   };
+
+  // Get combined account stats from both repositories.
+  private static getAccountStats(): string {
+    const accountStats = AccountSubscriptionsRepository.getAccountStats();
+    const chainEventStats = ChainEventsRepository.getAccountStats();
+
+    // Merge stats from both repositories
+    const combinedStats: Record<string, ActiveSubCounts> = {};
+
+    for (const key in accountStats) {
+      combinedStats[key] = {
+        active: accountStats[key].active + (chainEventStats[key]?.active || 0),
+        osNotify:
+          accountStats[key].osNotify + (chainEventStats[key]?.osNotify || 0),
+      };
+    }
+
+    for (const key in chainEventStats) {
+      if (!combinedStats[key]) {
+        combinedStats[key] = chainEventStats[key];
+      }
+    }
+
+    return JSON.stringify(combinedStats);
+  }
 }

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as FA from '@fortawesome/free-solid-svg-icons';
+import { faBell, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getSupportedChains } from '@polkadot-live/consts/chains';
 import {
@@ -13,7 +14,6 @@ import {
 } from '@polkadot-live/contexts';
 import {
   FlexColumn,
-  FlexRow,
   ItemEntryWrapper,
   ItemsColumn,
 } from '@polkadot-live/styles';
@@ -22,39 +22,66 @@ import * as Accordion from '@radix-ui/react-accordion';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { ellipsisFn } from '@w3ux/utils';
 import { useEffect, useState } from 'react';
+import { getNetworkColor } from '../ChainEvents/Wrappers';
+import {
+  AccountAddress,
+  AccountCard,
+  AccountCardContent,
+  AccountCardHeader,
+  AccountChevron,
+  AccountCountBadge,
+  AccountIconCircle,
+  AccountName,
+  AccountStatsRow,
+} from './Wrappers';
+import type { ActiveSubCounts } from '@polkadot-live/types';
 import type { FlattenedAccountData } from '@polkadot-live/types/accounts';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { AccountsProps } from './types';
 
 export const Accounts = ({
   addresses,
+  visible,
   setBreadcrumb,
   setTasksChainId,
   setSection,
   setTypeClicked,
 }: AccountsProps) => {
   const { cacheGet } = useAppSettings();
-  const { getTheme, openTab } = useConnections();
-  const {
-    accountHasSubs: accountHasSmartSubs,
-    setActiveAccount,
-    syncAccounts,
-  } = useChainEvents();
+  const { openTab } = useConnections();
+  const { fetchAccountStats, setActiveAccount, syncAccounts } =
+    useChainEvents();
   const { setRenderedSubscriptions } = useManage();
-  const {
-    accountHasSubs: accountHasClassicSubs,
-    getChainSubscriptions,
-    getAccountSubscriptions,
-    chainSubscriptions,
-  } = useSubscriptions();
+  const { getChainSubscriptions, getAccountSubscriptions, chainSubscriptions } =
+    useSubscriptions();
 
-  const theme = getTheme();
   const showDebuggingSubscriptions = cacheGet(
     'setting:show-debugging-subscriptions',
   );
 
-  const accountHasSubs = (account: FlattenedAccountData) =>
-    accountHasClassicSubs(account) || accountHasSmartSubs(account);
+  const [accountStats, setAccountStats] = useState<
+    Record<string, ActiveSubCounts>
+  >({});
+
+  useEffect(() => {
+    if (!visible) {
+      return;
+    }
+    let cancelled = false;
+    fetchAccountStats().then((stats) => {
+      if (!cancelled) {
+        setAccountStats(stats);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [visible, addresses.length]);
+
+  const getAccountStats = (account: FlattenedAccountData) => {
+    const key = `${account.chain}:${account.address}`;
+    return accountStats[key] || { active: 0, osNotify: 0 };
+  };
 
   /**
    * Categorise addresses by their chain ID, sort by name.
@@ -167,7 +194,7 @@ export const Accounts = ({
         <div>Select an account to manage its subscriptions.</div>
       </UI.ScreenInfoCard>
 
-      <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
+      <UI.AccordionWrapper style={{ marginTop: '0.6rem' }}>
         <Accordion.Root
           style={{ marginBottom: '1rem' }}
           className="AccordionRoot"
@@ -175,7 +202,7 @@ export const Accounts = ({
           value={accordionValue}
           onValueChange={(val) => setAccordionValue(val as string[])}
         >
-          <FlexColumn $rowGap="1rem">
+          <FlexColumn $rowGap="0.6rem">
             {Array.from(getSortedAddresses().entries()).map(
               ([chainId, chainAddresses]) => (
                 <Accordion.Item
@@ -190,7 +217,10 @@ export const Accounts = ({
                     </UI.TriggerHeader>
                   </UI.AccordionTrigger>
 
-                  <UI.AccordionContent transparent={true}>
+                  <UI.AccordionContent
+                    transparent={true}
+                    className={'AccordionContentReduce'}
+                  >
                     {chainId === 'Empty' ? (
                       <UI.NoAccounts
                         onClick={() =>
@@ -201,51 +231,69 @@ export const Accounts = ({
                         }
                       />
                     ) : (
-                      <ItemsColumn>
+                      <FlexColumn $rowGap="0.6rem">
                         {chainAddresses.map(
-                          (a: FlattenedAccountData, j: number) => (
-                            <ItemEntryWrapper
-                              whileHover={{ scale: 1.01 }}
-                              whileTap={{ scale: 0.99 }}
-                              key={`manage_account_${j}`}
-                              onClick={() => handleClickAccount(a)}
-                            >
-                              <div className="inner">
-                                <div>
-                                  <UI.TooltipRx
-                                    text={ellipsisFn(a.address, 12)}
-                                    theme={theme}
-                                    side="right"
-                                  >
-                                    <span>
-                                      <UI.Identicon
-                                        value={a.address}
-                                        fontSize={'1.75rem'}
-                                      />
-                                    </span>
-                                  </UI.TooltipRx>
-                                  <div className="content">
-                                    <h3>{a.name}</h3>
-                                  </div>
-                                </div>
-                                <FlexRow>
-                                  {accountHasSubs(a) && (
-                                    <FontAwesomeIcon
-                                      className="splotch"
-                                      icon={FA.faSplotch}
-                                    />
-                                  )}
-                                  <UI.ButtonText
-                                    text=""
-                                    iconRight={FA.faChevronRight}
-                                    iconTransform="shrink-3"
+                          (a: FlattenedAccountData, j: number) => {
+                            const color = getNetworkColor(a.chain);
+                            const { active, osNotify } = getAccountStats(a);
+
+                            return (
+                              <AccountCard
+                                $accentColor={color}
+                                key={`manage_account_${j}`}
+                                onClick={() => handleClickAccount(a)}
+                              >
+                                <AccountIconCircle $color={color}>
+                                  <UI.Identicon
+                                    value={a.address}
+                                    fontSize={'2.25rem'}
                                   />
-                                </FlexRow>
-                              </div>
-                            </ItemEntryWrapper>
-                          ),
+                                </AccountIconCircle>
+
+                                <AccountCardContent>
+                                  <AccountCardHeader>
+                                    <AccountName>{a.name}</AccountName>
+                                    <AccountAddress>
+                                      {ellipsisFn(a.address, 12)}
+                                    </AccountAddress>
+                                  </AccountCardHeader>
+
+                                  <AccountStatsRow
+                                    $color={color}
+                                    $inactive={active === 0}
+                                  >
+                                    <span className="stat-pill">
+                                      Active
+                                      <span className="stat-value">
+                                        {active}
+                                      </span>
+                                    </span>
+                                    <span className="stat-pill">
+                                      <FontAwesomeIcon icon={faBell} />
+                                      <span className="stat-value">
+                                        {osNotify}
+                                      </span>
+                                    </span>
+                                  </AccountStatsRow>
+                                </AccountCardContent>
+
+                                {active > 0 && (
+                                  <AccountCountBadge
+                                    $color={color}
+                                    $active={true}
+                                  >
+                                    {active}
+                                  </AccountCountBadge>
+                                )}
+
+                                <AccountChevron>
+                                  <FontAwesomeIcon icon={faChevronRight} />
+                                </AccountChevron>
+                              </AccountCard>
+                            );
+                          },
                         )}
-                      </ItemsColumn>
+                      </FlexColumn>
                     )}
                   </UI.AccordionContent>
                 </Accordion.Item>
