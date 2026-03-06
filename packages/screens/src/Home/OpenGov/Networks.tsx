@@ -13,6 +13,7 @@ import * as UI from '@polkadot-live/ui';
 import * as Accordion from '@radix-ui/react-accordion';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { useEffect, useState } from 'react';
+import { DialogManageRef, DialogRemoveRef } from './Dialogs';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { NetworksProps } from './types';
 
@@ -22,34 +23,74 @@ export const Networks = ({
   setSection,
 }: NetworksProps) => {
   const { openTab } = useConnections();
-  const { subscriptions, getSortedKeys } = useIntervalSubscriptions();
+  const { subscriptions } = useIntervalSubscriptions();
   const {
     activeRefChain,
+    refSubscriptions,
     getActiveRefIds,
-    refChainHasSubs,
+    refHasActiveSubs,
     setActiveRefChain,
+    updateSelectedRef,
   } = useChainEvents();
 
   const [isReferendaAdded, setIsReferendaAdded] = useState(true);
 
-  // Accordion state.
-  const [accordionValue, setAccordionValue] = useState<string[]>(['OpenGov']);
-
-  // Set interval subscription tasks state when chain is clicked.
-  const handleClickOpenGovChain = (chainId: ChainID) => {
+  const handleClickRef = (chainId: ChainID, refId: number) => {
     setActiveRefChain(chainId);
-    setBreadcrumb(`${chainId} OpenGov`);
+    updateSelectedRef(refId);
+    setBreadcrumb(`Referendum ${refId}`);
     setSection(1);
   };
 
   // Determine if a chain has active subscriptions.
-  const chainHasSubs = (chainId: ChainID): boolean => {
-    const hasSmart = refChainHasSubs(chainId);
+  const refHasSubs = (chainId: ChainID, refId: number): boolean => {
+    const hasSmart = refHasActiveSubs(chainId, refId);
     const hasClassic = Boolean(
-      subscriptions.get(chainId)?.find((s) => s.status === 'enable'),
+      subscriptions
+        .get(chainId)
+        ?.find((s) => s.referendumId === refId && s.status === 'enable'),
     );
     return hasSmart || hasClassic;
   };
+
+  const getChainRefIds = () => {
+    const acc = new Map<ChainID, Set<number>>();
+
+    // Collect refIds from interval subscriptions.
+    subscriptions.forEach((subs, chainId) => {
+      subs?.forEach((s) => {
+        const refId = s?.referendumId;
+        if (Number.isInteger(refId)) {
+          !acc.has(chainId)
+            ? acc.set(chainId, new Set())
+            : acc.get(chainId)!.add(refId as number);
+        }
+      });
+    });
+
+    // Collect refIds from chain event subscriptions.
+    refSubscriptions.forEach((innerMap, chainId) => {
+      innerMap?.forEach((_, refId) => {
+        !acc.has(chainId)
+          ? acc.set(chainId, new Set())
+          : acc.get(chainId)!.add(refId);
+      });
+    });
+
+    // Build a Record<ChainID, number[]> with deduped, sorted ids. Omit empty chains.
+    const result: Record<ChainID, number[]> = {} as Record<ChainID, number[]>;
+    acc.forEach((set, chainId) => {
+      const arr = Array.from(set).sort((a, b) => a - b);
+      if (arr.length > 0) result[chainId] = arr;
+    });
+
+    return result;
+  };
+
+  // Accordion state.
+  const [accordionValue, setAccordionValue] = useState<string[]>(
+    Object.keys(getChainRefIds()),
+  );
 
   useEffect(() => {
     const fetch = async () => {
@@ -60,79 +101,110 @@ export const Networks = ({
   }, [activeRefChain, section, subscriptions]);
 
   return (
-    <div style={{ width: '100%' }}>
-      <UI.ScreenInfoCard>
-        <div>Select a network to manage OpenGov subscriptions.</div>
-      </UI.ScreenInfoCard>
+    <>
+      <DialogRemoveRef />
+      <div style={{ width: '100%' }}>
+        <UI.ScreenInfoCard>
+          <div>Select a referendum to manage subscriptions.</div>
+        </UI.ScreenInfoCard>
 
-      <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
-        <Accordion.Root
-          style={{ marginBottom: '1rem' }}
-          className="AccordionRoot"
-          type="multiple"
-          value={accordionValue}
-          onValueChange={(val) => setAccordionValue(val as string[])}
-        >
-          <Style.FlexColumn>
-            <Accordion.Item className="AccordionItem" value={'OpenGov'}>
-              {/** Trigger */}
-              <UI.AccordionTrigger narrow={true}>
-                <ChevronDownIcon className="AccordionChevron" aria-hidden />
-                <UI.TriggerHeader>OpenGov</UI.TriggerHeader>
-              </UI.AccordionTrigger>
-
-              {/** Content */}
-              <UI.AccordionContent transparent={true}>
-                {!isReferendaAdded ? (
-                  <UI.NoOpenGov
-                    onClick={() =>
-                      openTab('openGov', {
-                        event: 'window-open-openGov',
-                        data: null,
-                      })
-                    }
-                  />
-                ) : (
-                  <Style.ItemsColumn>
-                    {getSortedKeys().map((chainId, i) => (
-                      <Style.ItemEntryWrapper
-                        whileHover={{ scale: 1.01 }}
-                        whileTap={{ scale: 0.99 }}
-                        key={`manage_chain_${i}`}
-                        onClick={() => handleClickOpenGovChain(chainId)}
-                      >
-                        <div className="inner">
-                          <div>
-                            <span>
-                              <UI.ChainIcon chainId={chainId} width={16} />
-                            </span>
-                            <div className="content">
-                              <h3>{chainId}</h3>
-                            </div>
-                          </div>
-                          <Style.FlexRow>
-                            {chainHasSubs(chainId) && (
-                              <FontAwesomeIcon
-                                className="splotch"
-                                icon={faSplotch}
-                              />
-                            )}
-                            <UI.ButtonText
-                              text=""
-                              iconRight={faChevronRight}
-                              iconTransform="shrink-3"
-                            />
-                          </Style.FlexRow>
+        {!isReferendaAdded ? (
+          <UI.NoOpenGov
+            onClick={() =>
+              openTab('openGov', {
+                event: 'window-open-openGov',
+                data: null,
+              })
+            }
+          />
+        ) : (
+          <UI.AccordionWrapper style={{ marginTop: '0.75rem' }}>
+            <Accordion.Root
+              style={{ marginBottom: '1rem' }}
+              className="AccordionRoot"
+              type="multiple"
+              value={accordionValue}
+              onValueChange={(val) => setAccordionValue(val as string[])}
+            >
+              <Style.FlexColumn>
+                {Object.entries(getChainRefIds())
+                  .sort(([a], [b]) => b.localeCompare(a))
+                  .map(([cid, refIds]) => (
+                    <Accordion.Item
+                      key={cid}
+                      className="AccordionItem"
+                      value={cid}
+                    >
+                      <Style.FlexRow $gap={'2px'}>
+                        <UI.AccordionTrigger narrow={true}>
+                          <ChevronDownIcon
+                            className="AccordionChevron"
+                            aria-hidden
+                          />
+                          <UI.TriggerHeader>{cid}</UI.TriggerHeader>
+                        </UI.AccordionTrigger>
+                        <div
+                          className="HeaderContentDropdownWrapper"
+                          style={{ padding: 0 }}
+                        >
+                          <DialogManageRef
+                            refIds={refIds}
+                            chainId={cid as ChainID}
+                          />
                         </div>
-                      </Style.ItemEntryWrapper>
-                    ))}
-                  </Style.ItemsColumn>
-                )}
-              </UI.AccordionContent>
-            </Accordion.Item>
-          </Style.FlexColumn>
-        </Accordion.Root>
-      </UI.AccordionWrapper>
-    </div>
+                      </Style.FlexRow>
+
+                      <UI.AccordionContent
+                        transparent={true}
+                        className={'AccordionContentReduce'}
+                      >
+                        <Style.ItemsColumn>
+                          {refIds.map((refId, i) => (
+                            <Style.ItemEntryWrapper
+                              whileHover={{ scale: 1.01 }}
+                              whileTap={{ scale: 0.99 }}
+                              key={`referendum_item_${i}`}
+                              onClick={() =>
+                                handleClickRef(cid as ChainID, refId)
+                              }
+                            >
+                              <div className="inner">
+                                <div>
+                                  <span>
+                                    <UI.ChainIcon
+                                      chainId={cid as ChainID}
+                                      width={16}
+                                    />
+                                  </span>
+                                  <div className="content">
+                                    <h3>Referendum {refId}</h3>
+                                  </div>
+                                </div>
+                                <Style.FlexRow>
+                                  {refHasSubs(cid as ChainID, refId) && (
+                                    <FontAwesomeIcon
+                                      className="splotch"
+                                      icon={faSplotch}
+                                    />
+                                  )}
+                                  <UI.ButtonText
+                                    text=""
+                                    iconRight={faChevronRight}
+                                    iconTransform="shrink-3"
+                                  />
+                                </Style.FlexRow>
+                              </div>
+                            </Style.ItemEntryWrapper>
+                          ))}
+                        </Style.ItemsColumn>
+                      </UI.AccordionContent>
+                    </Accordion.Item>
+                  ))}
+              </Style.FlexColumn>
+            </Accordion.Root>
+          </UI.AccordionWrapper>
+        )}
+      </div>
+    </>
   );
 };

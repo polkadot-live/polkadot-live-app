@@ -13,6 +13,8 @@ export interface ChainEventsContextInterface {
   activeAccount: FlattenedAccountData | null;
   activeRefChain: ChainID | null;
   refSubscriptions: Map<ChainID, Map<number, ChainEventSubscription[]>>;
+  selectedRef: number | null;
+  selectedRefRef: React.RefObject<number | null>;
   subscriptions: Map<ChainID, ChainEventSubscription[]>;
   accountHasSubs: (account: FlattenedAccountData) => boolean;
   accountSubCountForPallet: (pallet: string) => number;
@@ -25,11 +27,11 @@ export interface ChainEventsContextInterface {
     account: FlattenedAccountData,
   ) => Record<string, ChainEventSubscription[]>;
   getActiveRefIds: () => Promise<string[]>;
-  getCategorisedRefsForChain: () => Record<number, ChainEventSubscription[]>;
+  getCategorisedRefsForChain: () => ChainEventSubscription[];
   getEventSubscriptionCount: () => Promise<number>;
   isApiRequired: (chainId: ChainID) => boolean;
-  refChainHasSubs: (chainId: ChainID) => boolean;
   refActiveSubCount: (refId: number) => number;
+  refHasActiveSubs: (chainId: ChainID, refId: number) => boolean;
   removeAllForAccount: (account: FlattenedAccountData) => void;
   removeSubsForRef: (chainId: ChainID, refId: number) => void;
   setActiveAccount: React.Dispatch<
@@ -43,4 +45,5 @@ export interface ChainEventsContextInterface {
   toggle: (sub: ChainEventSubscription) => Promise<void>;
   toggleForAccount: (sub: ChainEventSubscription) => Promise<void>;
   toggleOsNotify: (sub: ChainEventSubscription, updateStore?: boolean) => void;
+  updateSelectedRef: (value: number | null) => void;
 }

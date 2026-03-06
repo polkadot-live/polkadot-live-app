@@ -36,7 +36,10 @@ export const IntervalTasksManagerProvider = ({
 
   // Remove referendum dialog state.
   const [isRemoveRefDialogOpen, setIsRemoveRefDialogOpen] = useState(false);
-  const [refIdToRemove, setRefIdToRemove] = useState<number | null>(null);
+  const [removeRefData, setRemoveRefData] = useState<{
+    refId: number;
+    chainId: ChainID;
+  } | null>(null);
 
   // Utility to update an interval task.
   const updateIntervalTask = (task: IntervalSubscription) => {
@@ -140,9 +143,9 @@ export const IntervalTasksManagerProvider = ({
     <IntervalTasksManagerContext
       value={{
         isRemoveRefDialogOpen,
-        refIdToRemove,
+        removeRefData,
         setIsRemoveRefDialogOpen,
-        setRefIdToRemove,
+        setRemoveRefData,
         insertSubscriptions,
         handleIntervalToggle,
         handleIntervalNativeCheckbox,

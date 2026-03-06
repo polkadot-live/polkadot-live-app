@@ -25,13 +25,30 @@ export const ReferendaListWrapper = styled.div.attrs<{
 
 export const GearTriggerWrapper = styled.div`
   color: var(--text-color-primary);
+  display: flex;
+  align-items: center;
+  padding: 0;
   font-family: Inter, sans-serif;
   font-weight: 400;
   opacity: 0.75;
-  &:hover {
-    opacity: 1;
+  height: 100%;
+
+  .GearIcon {
+    color: var(--text-color-secondary);
   }
-  span {
-    font-size: 0.96rem;
+  > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0 2rem;
+    height: 100%;
+    cursor: pointer;
+
+    &:hover {
+      .GearIcon {
+        color: var(--text-color-primary);
+      }
+    }
   }
 `;

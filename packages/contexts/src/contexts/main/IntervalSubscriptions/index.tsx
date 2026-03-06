@@ -123,19 +123,6 @@ export const IntervalSubscriptionsProvider = ({
     return tasks;
   };
 
-  // Get sorted keys to render chain IDs in a certain order.
-  const getSortedKeys = () => {
-    const order: ChainID[] = ['Polkadot Asset Hub', 'Kusama Asset Hub'];
-    const result: ChainID[] = [];
-    for (const chainId of order) {
-      const cur = subscriptions.get(chainId);
-      if (cur?.length) {
-        result.push(chainId);
-      }
-    }
-    return result;
-  };
-
   // Get total interval subscription count.
   const getTotalIntervalSubscriptionCount = (): number =>
     [...subscriptions.values()].reduce(
@@ -176,7 +163,6 @@ export const IntervalSubscriptionsProvider = ({
         chainHasIntervalSubscriptions,
         getCategorised,
         getIntervalSubscriptionsForChain,
-        getSortedKeys,
         getTotalIntervalSubscriptionCount,
         removeIntervalSubscriptions,
         setSubscriptions,

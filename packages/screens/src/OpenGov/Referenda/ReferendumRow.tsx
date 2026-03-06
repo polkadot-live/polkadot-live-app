@@ -81,7 +81,7 @@ export const ReferendumRow = ({ referendum }: ReferendumRowProps) => {
           <FlexRow $gap={'2px'}>
             <TooltipRx
               theme={theme}
-              text={`${refAdded ? 'Add' : 'Remove'} Subscriptions`}
+              text={`${refAdded ? 'Remove' : 'Add'} Subscriptions`}
             >
               <span>
                 <MenuButton
