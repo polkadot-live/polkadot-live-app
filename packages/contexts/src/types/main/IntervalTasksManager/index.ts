@@ -7,9 +7,11 @@ import type { IntervalSubscription } from '@polkadot-live/types/subscriptions';
 
 export interface IntervalTasksManagerContextInterface {
   isRemoveRefDialogOpen: boolean;
-  refIdToRemove: number | null;
+  removeRefData: { refId: number; chainId: ChainID } | null;
+  setRemoveRefData: React.Dispatch<
+    React.SetStateAction<{ refId: number; chainId: ChainID } | null>
+  >;
   setIsRemoveRefDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setRefIdToRemove: React.Dispatch<React.SetStateAction<number | null>>;
   insertSubscriptions: (tasks: IntervalSubscription[]) => void;
   handleIntervalToggle: (task: IntervalSubscription) => Promise<void>;
   handleIntervalNativeCheckbox: (

@@ -12,23 +12,23 @@ import {
   getSubsquareSubdomain,
 } from '@polkadot-live/consts/chains';
 import {
-  useChainEvents,
   useConnections,
   useIntervalTasksManager,
 } from '@polkadot-live/contexts';
 import { DropdownMenuContent } from '@polkadot-live/styles';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import type { ChainID } from '@polkadot-live/types';
 
 interface DropdownRefProps {
+  chainId: ChainID;
   refId: number;
 }
 
-export const DropdownRef = ({ refId }: DropdownRefProps) => {
+export const DropdownRef = ({ chainId, refId }: DropdownRefProps) => {
   const { getTheme, openInBrowser } = useConnections();
-  const { setIsRemoveRefDialogOpen, setRefIdToRemove } =
+  const { setIsRemoveRefDialogOpen, setRemoveRefData } =
     useIntervalTasksManager();
 
-  const { activeRefChain } = useChainEvents();
   const theme = getTheme();
 
   return (
@@ -57,7 +57,7 @@ export const DropdownRef = ({ refId }: DropdownRefProps) => {
           <DropdownMenu.Item
             className="DropdownMenuItem"
             onSelect={async () => {
-              setRefIdToRemove(refId);
+              setRemoveRefData({ refId, chainId });
               setIsRemoveRefDialogOpen(true);
             }}
           >
@@ -73,11 +73,9 @@ export const DropdownRef = ({ refId }: DropdownRefProps) => {
           <DropdownMenu.Item
             className="DropdownMenuItem"
             onClick={() => {
-              if (activeRefChain) {
-                const subdomain = getSubsquareSubdomain(activeRefChain);
-                const uri = `https://${subdomain}.subsquare.io/referenda/${refId}`;
-                openInBrowser(uri);
-              }
+              const subdomain = getSubsquareSubdomain(chainId);
+              const uri = `https://${subdomain}.subsquare.io/referenda/${refId}`;
+              openInBrowser(uri);
             }}
           >
             <div className="LeftSlot">
@@ -93,11 +91,9 @@ export const DropdownRef = ({ refId }: DropdownRefProps) => {
           <DropdownMenu.Item
             className="DropdownMenuItem"
             onSelect={() => {
-              if (activeRefChain) {
-                const subdomain = getPolkassemblySubdomain(activeRefChain);
-                const uri = `https://${subdomain}.polkassembly.io/referenda/${refId}`;
-                openInBrowser(uri);
-              }
+              const subdomain = getPolkassemblySubdomain(chainId);
+              const uri = `https://${subdomain}.polkassembly.io/referenda/${refId}`;
+              openInBrowser(uri);
             }}
           >
             <div className="LeftSlot">

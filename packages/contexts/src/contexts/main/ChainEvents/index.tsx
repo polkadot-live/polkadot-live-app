@@ -56,6 +56,7 @@ export const ChainEventsProvider = ({
   /**
    * Active referendum-based subscriptions.
    */
+  const [selectedRef, setSelectedRef] = useState<number | null>(null);
   const [activeRefChain, setActiveRefChain] = useState<ChainID | null>(null);
   const [refSubscriptions, setRefSubscriptions] = useState<
     Map<ChainID, Map<number /* refId */, ChainEventSubscription[]>>
@@ -77,16 +78,14 @@ export const ChainEventsProvider = ({
   };
 
   const refChainHasSubs = (chainId: ChainID): boolean => {
-    const refs = refSubscriptions.get(chainId);
-    if (!refs) {
-      return false;
-    }
-    for (const subs of refs.values()) {
-      if (subs.find((s) => s.enabled)) {
-        return true;
-      }
-    }
-    return false;
+    return Array.from(refSubscriptions.get(chainId)?.values() ?? []).some(
+      (subs) => subs.some((s) => s.enabled),
+    );
+  };
+
+  const refHasActiveSubs = (chainId: ChainID, refId: number): boolean => {
+    const subs = refSubscriptions.get(chainId)?.get(refId) ?? [];
+    return subs.some((s) => s.enabled);
   };
 
   const countActiveRefSubs = (): number => {
@@ -157,24 +156,20 @@ export const ChainEventsProvider = ({
     adapter.storeRemoveForRef(chainId, refId, active);
   };
 
-  const getCategorisedRefsForChain = (): Record<
-    number,
-    ChainEventSubscription[]
-  > => {
-    if (!activeRefChain) {
-      return {};
+  const getCategorisedRefsForChain = (): ChainEventSubscription[] => {
+    if (!activeRefChain || !selectedRef) {
+      return [];
     }
+
     const chainMap = refSubscriptions.get(activeRefChain);
     if (!chainMap) {
-      return {};
+      return [];
     }
-    return Object.fromEntries(
-      Array.from(chainMap.entries())
-        .sort(([a], [b]) => b - a)
-        .map(([refId, subs]) => [
-          refId,
-          [...subs].sort((a, b) => a.label.localeCompare(b.label)),
-        ]),
+
+    return (
+      chainMap
+        .get(selectedRef)
+        ?.sort((a, b) => a.label.localeCompare(b.label)) ?? []
     );
   };
 
@@ -555,6 +550,7 @@ export const ChainEventsProvider = ({
         activeAccount,
         activeRefChain,
         refSubscriptions,
+        selectedRef,
         subscriptions,
         accountHasSubs,
         accountSubCount,
@@ -567,13 +563,14 @@ export const ChainEventsProvider = ({
         getCategorisedRefsForChain,
         getEventSubscriptionCount,
         isApiRequired,
-        refChainHasSubs,
         refActiveSubCount,
+        refHasActiveSubs,
         removeAllForAccount,
         removeSubsForRef,
         setActiveAccount,
         setActiveChain,
         setActiveRefChain,
+        setSelectedRef,
         syncAccounts,
         syncRefs,
         syncStored,

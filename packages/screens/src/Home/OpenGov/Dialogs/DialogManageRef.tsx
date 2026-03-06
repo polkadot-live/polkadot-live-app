@@ -20,15 +20,19 @@ import { Cross2Icon } from '@radix-ui/react-icons';
 import { useState } from 'react';
 import { DropdownRef } from '../Dropdowns';
 import { GearTriggerWrapper, ReferendaListWrapper } from './Wrappers';
-import type { ChainEventSubscription } from '@polkadot-live/types';
+import type { ChainID } from '@polkadot-live/types';
 
 interface DialogManageReferendaProps {
-  activeRefs: Record<number, ChainEventSubscription[]>;
+  chainId: ChainID;
+  refIds: number[];
 }
 
-export const DialogManageRef = ({ activeRefs }: DialogManageReferendaProps) => {
+export const DialogManageRef = ({
+  refIds,
+  chainId,
+}: DialogManageReferendaProps) => {
   const { getTheme } = useConnections();
-  const { setIsRemoveRefDialogOpen, setRefIdToRemove } =
+  const { setIsRemoveRefDialogOpen, setRemoveRefData } =
     useIntervalTasksManager();
 
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
@@ -42,10 +46,9 @@ export const DialogManageRef = ({ activeRefs }: DialogManageReferendaProps) => {
     <Dialog.Root open={dialogOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger $theme={theme}>
         <GearTriggerWrapper>
-          <FlexRow $gap={'0.65rem'} className="btn-text">
-            <FontAwesomeIcon icon={faGear} transform={'grow-2'} />
-            <span>Manage</span>
-          </FlexRow>
+          <div>
+            <FontAwesomeIcon className="GearIcon" icon={faGear} />
+          </div>
         </GearTriggerWrapper>
       </DialogTrigger>
       <Dialog.Portal>
@@ -69,11 +72,9 @@ export const DialogManageRef = ({ activeRefs }: DialogManageReferendaProps) => {
 
             {/** Active referenda list */}
             <ReferendaListWrapper $theme={theme}>
-              {!Array.from(Object.keys(activeRefs)).length && (
-                <p>No referenda available.</p>
-              )}
+              {!refIds.length && <p>No referenda available.</p>}
               <FlexColumn $rowGap={'0.25rem'}>
-                {Array.from(Object.keys(activeRefs)).map((refId, i) => (
+                {refIds.map((refId, i) => (
                   <FlexRow className="RefItem" key={`${refId}-${i}`}>
                     <FontAwesomeIcon
                       icon={FA.faCaretRight}
@@ -86,7 +87,7 @@ export const DialogManageRef = ({ activeRefs }: DialogManageReferendaProps) => {
                       <button
                         type="button"
                         onClick={() => {
-                          setRefIdToRemove(parseInt(refId, 10));
+                          setRemoveRefData({ refId, chainId });
                           setIsRemoveRefDialogOpen(true);
                         }}
                         className="Dialog__Button"
@@ -97,7 +98,7 @@ export const DialogManageRef = ({ activeRefs }: DialogManageReferendaProps) => {
                           transform={'shrink-2'}
                         />
                       </button>
-                      <DropdownRef refId={parseInt(refId, 10)} />
+                      <DropdownRef chainId={chainId} refId={refId} />
                     </FlexRow>
                   </FlexRow>
                 ))}

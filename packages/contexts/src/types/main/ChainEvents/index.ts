@@ -9,6 +9,10 @@ import type {
 import type { ChainID } from '@polkadot-live/types/chains';
 
 export interface ChainEventsContextInterface {
+  selectedRef: number | null;
+  refHasActiveSubs: (chainId: ChainID, refId: number) => boolean;
+  setSelectedRef: React.Dispatch<React.SetStateAction<number | null>>;
+
   activeChain: ChainID | null;
   activeAccount: FlattenedAccountData | null;
   activeRefChain: ChainID | null;
@@ -25,10 +29,9 @@ export interface ChainEventsContextInterface {
     account: FlattenedAccountData,
   ) => Record<string, ChainEventSubscription[]>;
   getActiveRefIds: () => Promise<string[]>;
-  getCategorisedRefsForChain: () => Record<number, ChainEventSubscription[]>;
+  getCategorisedRefsForChain: () => ChainEventSubscription[];
   getEventSubscriptionCount: () => Promise<number>;
   isApiRequired: (chainId: ChainID) => boolean;
-  refChainHasSubs: (chainId: ChainID) => boolean;
   refActiveSubCount: (refId: number) => number;
   removeAllForAccount: (account: FlattenedAccountData) => void;
   removeSubsForRef: (chainId: ChainID, refId: number) => void;

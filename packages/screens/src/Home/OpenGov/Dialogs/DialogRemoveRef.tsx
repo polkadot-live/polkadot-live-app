@@ -13,23 +13,29 @@ import { Cross2Icon } from '@radix-ui/react-icons';
 
 export const DialogRemoveRef = () => {
   const { getTheme } = useConnections();
-  const { activeRefChain, removeSubsForRef } = useChainEvents();
+  const { removeSubsForRef } = useChainEvents();
   const { removeAllSubscriptions } = useIntervalTasksManager();
   const { subscriptions } = useIntervalSubscriptions();
-  const { isRemoveRefDialogOpen, refIdToRemove, setIsRemoveRefDialogOpen } =
-    useIntervalTasksManager();
+  const {
+    isRemoveRefDialogOpen,
+    removeRefData,
+    setRemoveRefData,
+    setIsRemoveRefDialogOpen,
+  } = useIntervalTasksManager();
   const theme = getTheme();
 
   const onRemoveClick = async () => {
-    if (activeRefChain && refIdToRemove) {
+    if (removeRefData) {
       // Remove referenda-scoped subscriptions.
-      removeSubsForRef(activeRefChain, refIdToRemove);
+      const { refId, chainId } = removeRefData;
+      removeSubsForRef(chainId, refId);
 
       // Remove interval subscriptions.
-      const subs = subscriptions.get(activeRefChain) ?? [];
-      const filtered = subs.filter((s) => s.referendumId === refIdToRemove);
-      await removeAllSubscriptions(activeRefChain, refIdToRemove, filtered);
+      const subs = subscriptions.get(chainId) ?? [];
+      const filtered = subs.filter((s) => s.referendumId === refId);
+      await removeAllSubscriptions(chainId, refId, filtered);
     }
+    setRemoveRefData(null);
     setIsRemoveRefDialogOpen(false);
   };
 
@@ -48,7 +54,7 @@ export const DialogRemoveRef = () => {
           <Styles.FlexColumn $rowGap={'1.5rem'}>
             <Styles.FlexColumn $rowGap={'0.75rem'}>
               <Dialog.Title className="Dialog__Title">
-                Referendum {refIdToRemove}
+                Referendum {removeRefData?.refId ?? '-'}
               </Dialog.Title>
 
               <Dialog.Description className="Dialog__Description">
