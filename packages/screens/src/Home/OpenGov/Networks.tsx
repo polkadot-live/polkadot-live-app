@@ -33,6 +33,8 @@ export const Networks = ({
     updateSelectedRef,
   } = useChainEvents();
 
+  // Accordion state.
+  const [accordionValue, setAccordionValue] = useState<string[]>([]);
   const [isReferendaAdded, setIsReferendaAdded] = useState(true);
 
   const handleClickRef = (chainId: ChainID, refId: number) => {
@@ -61,9 +63,8 @@ export const Networks = ({
       subs?.forEach((s) => {
         const refId = s?.referendumId;
         if (Number.isInteger(refId)) {
-          !acc.has(chainId)
-            ? acc.set(chainId, new Set())
-            : acc.get(chainId)!.add(refId as number);
+          if (!acc.has(chainId)) acc.set(chainId, new Set());
+          acc.get(chainId)!.add(refId as number);
         }
       });
     });
@@ -71,9 +72,8 @@ export const Networks = ({
     // Collect refIds from chain event subscriptions.
     refSubscriptions.forEach((innerMap, chainId) => {
       innerMap?.forEach((_, refId) => {
-        !acc.has(chainId)
-          ? acc.set(chainId, new Set())
-          : acc.get(chainId)!.add(refId);
+        if (!acc.has(chainId)) acc.set(chainId, new Set());
+        acc.get(chainId)!.add(refId);
       });
     });
 
@@ -87,10 +87,9 @@ export const Networks = ({
     return result;
   };
 
-  // Accordion state.
-  const [accordionValue, setAccordionValue] = useState<string[]>(
-    Object.keys(getChainRefIds()),
-  );
+  useEffect(() => {
+    setAccordionValue(Object.keys(getChainRefIds()));
+  }, []);
 
   useEffect(() => {
     const fetch = async () => {
