@@ -1,7 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { faChevronRight, faSplotch } from '@fortawesome/free-solid-svg-icons';
+import { faBell, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   useChainEvents,
@@ -13,7 +13,18 @@ import * as UI from '@polkadot-live/ui';
 import * as Accordion from '@radix-ui/react-accordion';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { useEffect, useState } from 'react';
+import { getNetworkColor } from '../Wrappers';
 import { DialogManageRef, DialogRemoveRef } from './Dialogs';
+import {
+  RefCard,
+  RefCardContent,
+  RefCardHeader,
+  RefChevron,
+  RefIconCircle,
+  RefName,
+  RefStatsRow,
+  RefSubCountBadge,
+} from './Wrappers';
 import type { ChainID } from '@polkadot-live/types/chains';
 import type { NetworksProps } from './types';
 
@@ -33,6 +44,8 @@ export const Networks = ({
     updateSelectedRef,
   } = useChainEvents();
 
+  // Accordion state.
+  const [accordionValue, setAccordionValue] = useState<string[]>([]);
   const [isReferendaAdded, setIsReferendaAdded] = useState(true);
 
   const handleClickRef = (chainId: ChainID, refId: number) => {
@@ -53,6 +66,24 @@ export const Networks = ({
     return hasSmart || hasClassic;
   };
 
+  // Counts for interval and referenda subscriptions.
+  const getCounts = (chainId: ChainID, refId: number) => {
+    const interval = (subscriptions.get(chainId) ?? []).filter(
+      (s) => s.referendumId === refId,
+    );
+    const eventSubs = refSubscriptions.get(chainId)?.get(refId) ?? [];
+
+    const active =
+      interval.filter((s) => s.status === 'enable').length +
+      eventSubs.filter((s) => s.enabled).length;
+
+    const osNotify =
+      interval.filter((s) => s.enableOsNotifications).length +
+      eventSubs.filter((s) => s.osNotify).length;
+
+    return { active, osNotify };
+  };
+
   const getChainRefIds = () => {
     const acc = new Map<ChainID, Set<number>>();
 
@@ -61,9 +92,8 @@ export const Networks = ({
       subs?.forEach((s) => {
         const refId = s?.referendumId;
         if (Number.isInteger(refId)) {
-          !acc.has(chainId)
-            ? acc.set(chainId, new Set())
-            : acc.get(chainId)!.add(refId as number);
+          if (!acc.has(chainId)) acc.set(chainId, new Set());
+          acc.get(chainId)!.add(refId as number);
         }
       });
     });
@@ -71,9 +101,8 @@ export const Networks = ({
     // Collect refIds from chain event subscriptions.
     refSubscriptions.forEach((innerMap, chainId) => {
       innerMap?.forEach((_, refId) => {
-        !acc.has(chainId)
-          ? acc.set(chainId, new Set())
-          : acc.get(chainId)!.add(refId);
+        if (!acc.has(chainId)) acc.set(chainId, new Set());
+        acc.get(chainId)!.add(refId);
       });
     });
 
@@ -87,10 +116,9 @@ export const Networks = ({
     return result;
   };
 
-  // Accordion state.
-  const [accordionValue, setAccordionValue] = useState<string[]>(
-    Object.keys(getChainRefIds()),
-  );
+  useEffect(() => {
+    setAccordionValue(Object.keys(getChainRefIds()));
+  }, []);
 
   useEffect(() => {
     const fetch = async () => {
@@ -126,7 +154,7 @@ export const Networks = ({
               value={accordionValue}
               onValueChange={(val) => setAccordionValue(val as string[])}
             >
-              <Style.FlexColumn>
+              <Style.FlexColumn $rowGap="0.6rem">
                 {Object.entries(getChainRefIds())
                   .sort(([a], [b]) => b.localeCompare(a))
                   .map(([cid, refIds]) => (
@@ -158,45 +186,69 @@ export const Networks = ({
                         transparent={true}
                         className={'AccordionContentReduce'}
                       >
-                        <Style.ItemsColumn>
-                          {refIds.map((refId, i) => (
-                            <Style.ItemEntryWrapper
-                              whileHover={{ scale: 1.01 }}
-                              whileTap={{ scale: 0.99 }}
-                              key={`referendum_item_${i}`}
-                              onClick={() =>
-                                handleClickRef(cid as ChainID, refId)
-                              }
-                            >
-                              <div className="inner">
-                                <div>
-                                  <span>
-                                    <UI.ChainIcon
-                                      chainId={cid as ChainID}
-                                      width={16}
-                                    />
-                                  </span>
-                                  <div className="content">
-                                    <h3>Referendum {refId}</h3>
-                                  </div>
-                                </div>
-                                <Style.FlexRow>
-                                  {refHasSubs(cid as ChainID, refId) && (
-                                    <FontAwesomeIcon
-                                      className="splotch"
-                                      icon={faSplotch}
-                                    />
-                                  )}
-                                  <UI.ButtonText
-                                    text=""
-                                    iconRight={faChevronRight}
-                                    iconTransform="shrink-3"
+                        <Style.FlexColumn $rowGap="0.6rem">
+                          {refIds.map((refId, i) => {
+                            const color = getNetworkColor(cid as ChainID);
+                            const { active, osNotify } = getCounts(
+                              cid as ChainID,
+                              refId,
+                            );
+
+                            return (
+                              <RefCard
+                                $accentColor={color}
+                                key={`referendum_item_${i}`}
+                                onClick={() =>
+                                  handleClickRef(cid as ChainID, refId)
+                                }
+                              >
+                                <RefIconCircle $color={color}>
+                                  <UI.ChainIcon
+                                    chainId={cid as ChainID}
+                                    width={20}
                                   />
-                                </Style.FlexRow>
-                              </div>
-                            </Style.ItemEntryWrapper>
-                          ))}
-                        </Style.ItemsColumn>
+                                </RefIconCircle>
+
+                                <RefCardContent>
+                                  <RefCardHeader>
+                                    <RefName>{`Referendum ${refId}`}</RefName>
+                                  </RefCardHeader>
+
+                                  <RefStatsRow
+                                    $color={color}
+                                    $inactive={active === 0}
+                                  >
+                                    <span className="stat-pill">
+                                      Active
+                                      <span className="stat-value">
+                                        {active}
+                                      </span>
+                                    </span>
+                                    <span className="stat-pill">
+                                      <FontAwesomeIcon icon={faBell} />
+                                      <span className="stat-value">
+                                        {osNotify}
+                                      </span>
+                                    </span>
+                                  </RefStatsRow>
+                                </RefCardContent>
+
+                                {refHasSubs(cid as ChainID, refId) && (
+                                  <RefSubCountBadge
+                                    $color={color}
+                                    $active={true}
+                                  >
+                                    {active}
+                                  </RefSubCountBadge>
+                                )}
+
+                                <RefChevron>
+                                  <FontAwesomeIcon icon={faChevronRight} />
+                                </RefChevron>
+                              </RefCard>
+                            );
+                          })}
+                        </Style.FlexColumn>
                       </UI.AccordionContent>
                     </Accordion.Item>
                   ))}
