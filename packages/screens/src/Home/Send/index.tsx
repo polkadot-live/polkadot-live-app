@@ -90,7 +90,7 @@ export const Send = ({
   };
 
   return (
-    <FlexColumn style={{ padding: '2rem 1rem' }}>
+    <FlexColumn style={{ padding: '1rem 1rem' }}>
       <UI.MainHeading>Send</UI.MainHeading>
       {!getOnlineMode() && <UI.OfflineBanner rounded={true} />}
 

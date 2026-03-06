@@ -123,7 +123,7 @@ export const Subscriptions = ({
 
   return (
     <>
-      <UI.ControlsWrapper $sticky={false} style={{ marginBottom: '1.5rem' }}>
+      <UI.ControlsWrapper $sticky={false} style={{ marginBottom: '1.25rem' }}>
         <div className="left">
           <UI.ButtonPrimaryInvert
             className="back-btn"
@@ -151,13 +151,13 @@ export const Subscriptions = ({
         />
       )}
 
-      <UI.ScreenInfoCard style={{ marginBottom: '1rem' }}>
+      <UI.ScreenInfoCard>
         <div>Toggle referenda subscriptions.</div>
       </UI.ScreenInfoCard>
 
       {selectedRef && (
         <Style.FlexColumn>
-          <Style.FlexColumn style={{ margin: '1rem 0' }}>
+          <Style.FlexColumn $rowGap="0.6rem" style={{ margin: '0.75rem 0' }}>
             <Style.FlexRow>
               <Header label="Classic">
                 <span style={{ scale: '0.85' }}>

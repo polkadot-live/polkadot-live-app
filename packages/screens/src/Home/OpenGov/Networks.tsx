@@ -118,7 +118,7 @@ export const Networks = ({
             }
           />
         ) : (
-          <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
+          <UI.AccordionWrapper style={{ marginTop: '0.75rem' }}>
             <Accordion.Root
               style={{ marginBottom: '1rem' }}
               className="AccordionRoot"

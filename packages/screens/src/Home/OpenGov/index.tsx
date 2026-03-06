@@ -26,7 +26,7 @@ export const OpenGov = () => {
 
   return (
     <FlexColumn $rowGap={'1rem'} style={{ height: '100%' }}>
-      <MainHeading style={{ padding: '2rem 1rem 0' }}>
+      <MainHeading style={{ padding: '1rem 1rem 0' }}>
         OpenGov Subscriptions
       </MainHeading>
 
@@ -63,7 +63,7 @@ export const OpenGov = () => {
         </div>
         <div
           className="scrollable"
-          style={{ height: '100%', padding: '0 1rem 1rem' }}
+          style={{ height: '100%', padding: '0 1rem' }}
         >
           <Subscriptions breadcrumb={breadcrumb} setSection={setSection} />
         </div>
