@@ -1,8 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { faCaretLeft, faSplotch } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCaretLeft } from '@fortawesome/free-solid-svg-icons';
 import {
   ChainPallets,
   getReadablePallet,
@@ -17,6 +16,8 @@ import * as UI from '@polkadot-live/ui';
 import * as Accordion from '@radix-ui/react-accordion';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { useState } from 'react';
+import { CountSummary } from '../components';
+import { getNetworkColor } from '../Wrappers';
 import { SubscriptionRow } from './SubscriptionRow';
 import type { ChainEventSubscription } from '@polkadot-live/types';
 import type { ChainID } from '@polkadot-live/types/chains';
@@ -32,6 +33,7 @@ export const Subscriptions = ({
   const { hasConnectionIssue } = useApiHealth();
 
   const [accordionVal, setAccordionVal] = useState<string>('');
+  const badgeColor = activeChain ? getNetworkColor(activeChain) : '#a78bda';
 
   // Utility to determine if a connection issue exists.
   const showConnectionIssue = (): boolean => {
@@ -55,12 +57,6 @@ export const Subscriptions = ({
     }
     return result;
   };
-
-  // Get number of active subscriptions for pallet.
-  const activeSubCountForPallet = (pallet: string): number =>
-    subscriptions
-      .filter((s) => s.pallet === pallet)
-      .filter(({ enabled }) => enabled).length;
 
   return (
     <>
@@ -111,16 +107,14 @@ export const Subscriptions = ({
                         aria-hidden
                       />
                       <UI.TriggerHeader>
-                        <FlexRow>
-                          <span style={{ flex: 1 }}>
+                        <FlexRow
+                          style={{ alignItems: 'center', width: '100%' }}
+                        >
+                          <span style={{ flex: 1, minWidth: 0 }}>
                             {getReadablePallet(pallet)}
                           </span>
-                          {activeSubCountForPallet(pallet) > 0 && (
-                            <FontAwesomeIcon
-                              className="splotch"
-                              icon={faSplotch}
-                            />
-                          )}
+
+                          <CountSummary subs={subs} badgeColor={badgeColor} />
                         </FlexRow>
                       </UI.TriggerHeader>
                     </UI.AccordionTrigger>
