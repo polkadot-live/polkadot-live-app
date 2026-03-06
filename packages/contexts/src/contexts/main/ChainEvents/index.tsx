@@ -8,7 +8,8 @@ import {
   getEventSubscriptionsForAccount,
   getEventSubscriptionsForRef,
 } from '@polkadot-live/consts/subscriptions/chainEvents';
-import { createContext, useEffect, useState } from 'react';
+import { setStateWithRef } from '@w3ux/utils';
+import { createContext, useEffect, useRef, useState } from 'react';
 import { createSafeContextHook } from '../../../utils';
 import { getChainEventAdapter } from './adapters';
 import type {
@@ -57,10 +58,16 @@ export const ChainEventsProvider = ({
    * Active referendum-based subscriptions.
    */
   const [selectedRef, setSelectedRef] = useState<number | null>(null);
+  const selectedRefRef = useRef(selectedRef);
+
   const [activeRefChain, setActiveRefChain] = useState<ChainID | null>(null);
   const [refSubscriptions, setRefSubscriptions] = useState<
     Map<ChainID, Map<number /* refId */, ChainEventSubscription[]>>
   >(new Map());
+
+  const updateSelectedRef = (value: number | null) => {
+    setStateWithRef(value, setSelectedRef, selectedRefRef);
+  };
 
   const isApiRequired = (chainId: ChainID) => {
     // Chain-scoped
@@ -551,6 +558,7 @@ export const ChainEventsProvider = ({
         activeRefChain,
         refSubscriptions,
         selectedRef,
+        selectedRefRef,
         subscriptions,
         accountHasSubs,
         accountSubCount,
@@ -570,7 +578,6 @@ export const ChainEventsProvider = ({
         setActiveAccount,
         setActiveChain,
         setActiveRefChain,
-        setSelectedRef,
         syncAccounts,
         syncRefs,
         syncStored,
@@ -578,6 +585,7 @@ export const ChainEventsProvider = ({
         toggleForAccount,
         toggleOsNotify,
         fetchAccountStats,
+        updateSelectedRef,
       }}
     >
       {children}

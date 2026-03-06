@@ -30,14 +30,14 @@ export const Networks = ({
     getActiveRefIds,
     refHasActiveSubs,
     setActiveRefChain,
-    setSelectedRef,
+    updateSelectedRef,
   } = useChainEvents();
 
   const [isReferendaAdded, setIsReferendaAdded] = useState(true);
 
   const handleClickRef = (chainId: ChainID, refId: number) => {
     setActiveRefChain(chainId);
-    setSelectedRef(refId);
+    updateSelectedRef(refId);
     setBreadcrumb(`Referendum ${refId}`);
     setSection(1);
   };

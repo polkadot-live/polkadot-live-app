@@ -12,6 +12,7 @@ import {
 } from '@polkadot-live/contexts';
 import * as Style from '@polkadot-live/styles';
 import * as UI from '@polkadot-live/ui';
+import { useEffect } from 'react';
 import { SubscriptionRow } from '../ChainEvents/SubscriptionRow';
 import { Header } from '../Manage/Subscriptions/Header';
 import { IntervalRow } from './IntervalRow';
@@ -38,6 +39,7 @@ export const Subscriptions = ({
   const {
     activeRefChain,
     selectedRef,
+    updateSelectedRef,
     getCategorisedRefsForChain,
     refActiveSubCount,
     setActiveRefChain,
@@ -121,6 +123,12 @@ export const Subscriptions = ({
     }
   };
 
+  useEffect(() => {
+    if (!selectedRef) {
+      setSection(0);
+    }
+  }, [selectedRef]);
+
   return (
     <>
       <UI.ControlsWrapper $sticky={false} style={{ marginBottom: '1.25rem' }}>
@@ -131,6 +139,7 @@ export const Subscriptions = ({
             iconLeft={FA.faCaretLeft}
             onClick={() => {
               setActiveRefChain(null);
+              updateSelectedRef(null);
               setSection(0);
             }}
           />

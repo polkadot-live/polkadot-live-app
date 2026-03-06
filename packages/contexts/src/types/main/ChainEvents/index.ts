@@ -14,6 +14,7 @@ export interface ChainEventsContextInterface {
   activeRefChain: ChainID | null;
   refSubscriptions: Map<ChainID, Map<number, ChainEventSubscription[]>>;
   selectedRef: number | null;
+  selectedRefRef: React.RefObject<number | null>;
   subscriptions: Map<ChainID, ChainEventSubscription[]>;
   accountHasSubs: (account: FlattenedAccountData) => boolean;
   accountSubCountForPallet: (pallet: string) => number;
@@ -38,11 +39,11 @@ export interface ChainEventsContextInterface {
   >;
   setActiveChain: React.Dispatch<React.SetStateAction<ChainID | null>>;
   setActiveRefChain: React.Dispatch<React.SetStateAction<ChainID | null>>;
-  setSelectedRef: React.Dispatch<React.SetStateAction<number | null>>;
   syncAccounts: (accounts: FlattenedAccountData[]) => Promise<void>;
   syncRefs: () => Promise<void>;
   syncStored: () => Promise<void>;
   toggle: (sub: ChainEventSubscription) => Promise<void>;
   toggleForAccount: (sub: ChainEventSubscription) => Promise<void>;
   toggleOsNotify: (sub: ChainEventSubscription, updateStore?: boolean) => void;
+  updateSelectedRef: (value: number | null) => void;
 }

@@ -46,7 +46,8 @@ export const useMainMessagePorts = () => {
   const { getOnlineMode } = useConnections();
   const { cacheGet, toggleSetting } = useAppSettings();
   const { importAddress, removeAddress } = useAddresses();
-  const { addSubsForRef, removeSubsForRef } = useChainEvents();
+  const { addSubsForRef, removeSubsForRef, selectedRefRef, updateSelectedRef } =
+    useChainEvents();
   const { exportDataToBackup, importDataFromBackup } = MainCtx.useDataBackup();
   const { setRenamedEvents } = useEvents();
   const { ledgerSignSubmit } = MainCtx.useLedgerSigner();
@@ -472,6 +473,9 @@ export const useMainMessagePorts = () => {
 
     // Update React state.
     removeIntervalSubscriptions(chainId, refId);
+    if (selectedRefRef.current === refId) {
+      updateSelectedRef(null);
+    }
 
     // Update controller and store.
     IntervalsController.removeSubscriptions(parsed, getOnlineMode());
