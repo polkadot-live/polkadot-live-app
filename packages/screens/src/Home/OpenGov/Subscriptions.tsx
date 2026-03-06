@@ -14,7 +14,9 @@ import * as Style from '@polkadot-live/styles';
 import * as UI from '@polkadot-live/ui';
 import { useEffect } from 'react';
 import { SubscriptionRow } from '../ChainEvents/SubscriptionRow';
+import { CountSummary } from '../components';
 import { Header } from '../Manage/Subscriptions/Header';
+import { getNetworkColor } from '../Wrappers';
 import { IntervalRow } from './IntervalRow';
 import type { SubscriptionsProps } from './types';
 
@@ -46,6 +48,15 @@ export const Subscriptions = ({
   } = useChainEvents();
 
   const isImportingData = cacheGet('backup:importing');
+
+  const badgeColor = activeRefChain
+    ? getNetworkColor(activeRefChain)
+    : '#6e6e6e';
+
+  const chainEventSubs = getCategorisedRefsForChain();
+  const intervalSubs = selectedRef
+    ? (getCategorised().get(selectedRef) ?? [])
+    : [];
 
   // Utility to determine if a connection issue exists.
   const showConnectionIssue = (): boolean =>
@@ -171,26 +182,29 @@ export const Subscriptions = ({
           <Style.FlexColumn $rowGap="0.6rem" style={{ margin: '0.75rem 0' }}>
             <Style.FlexRow>
               <Header label="Classic">
-                <span style={{ scale: '0.85' }}>
-                  <UI.Switch
-                    disabled={isIntervalTaskDisabled()}
-                    size="sm"
-                    type="primary"
-                    isOn={
-                      selectedRef
-                        ? getOpenGovGlobalToggles().get(selectedRef)
-                        : false
-                    }
-                    handleToggle={async () => {
-                      if (selectedRef) {
-                        await toggleGlobalSwitch(
-                          selectedRef,
-                          getOpenGovGlobalToggles().get(selectedRef) || false,
-                        );
+                <Style.FlexRow>
+                  <CountSummary subs={intervalSubs} badgeColor={badgeColor} />
+                  <span style={{ scale: '0.85' }}>
+                    <UI.Switch
+                      disabled={isIntervalTaskDisabled()}
+                      size="sm"
+                      type="primary"
+                      isOn={
+                        selectedRef
+                          ? getOpenGovGlobalToggles().get(selectedRef)
+                          : false
                       }
-                    }}
-                  />
-                </span>
+                      handleToggle={async () => {
+                        if (selectedRef) {
+                          await toggleGlobalSwitch(
+                            selectedRef,
+                            getOpenGovGlobalToggles().get(selectedRef) || false,
+                          );
+                        }
+                      }}
+                    />
+                  </span>
+                </Style.FlexRow>
               </Header>
             </Style.FlexRow>
 
@@ -209,10 +223,12 @@ export const Subscriptions = ({
                 </Style.ItemsColumn>
               ))}
 
-            <Header label="Smart" />
+            <Header label="Smart">
+              <CountSummary subs={chainEventSubs} badgeColor={badgeColor} />
+            </Header>
             <Style.ItemsColumn>
               {selectedRef &&
-                getCategorisedRefsForChain().map((sub, i) => (
+                chainEventSubs.map((sub, i) => (
                   <SubscriptionRow
                     key={`${selectedRef}-${sub.eventName}-${i}`}
                     subscription={sub}

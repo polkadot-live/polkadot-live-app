@@ -17,7 +17,6 @@ export interface ChainEventsContextInterface {
   selectedRefRef: React.RefObject<number | null>;
   subscriptions: Map<ChainID, ChainEventSubscription[]>;
   accountHasSubs: (account: FlattenedAccountData) => boolean;
-  accountSubCountForPallet: (pallet: string) => number;
   accountSubCount: (account: FlattenedAccountData) => Promise<number>;
   addSubsForRef: (chainId: ChainID, refId: number) => void;
   countActiveRefSubs: () => number;

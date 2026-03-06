@@ -1,30 +1,61 @@
 import { faBell } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ActiveCount, CountGroup, NotifyCount } from './Wrappers';
-import type { ChainEventSubscription } from '@polkadot-live/types';
+import type {
+  ActiveSubCounts,
+  AnyData,
+  ChainEventSubscription,
+} from '@polkadot-live/types';
+import type {
+  IntervalSubscription,
+  SubscriptionTask,
+} from '@polkadot-live/types/subscriptions';
+
+const computeCounts = (
+  arr: ChainEventSubscription[] | SubscriptionTask[] | IntervalSubscription[],
+): ActiveSubCounts =>
+  arr.reduce(
+    (acc, item) => {
+      if (item && typeof item === 'object') {
+        if ('enabled' in item) {
+          // ChainEventSubscription
+          const enabled = Boolean(item.enabled);
+          acc.active += enabled ? 1 : 0;
+          acc.osNotify += enabled && Boolean(item.osNotify) ? 1 : 0;
+        } else if ('status' in item) {
+          // SubscriptionTask or IntervalSubscription
+          const enabled = item.status === 'enable';
+          acc.active += enabled ? 1 : 0;
+          acc.osNotify +=
+            enabled && Boolean(item.enableOsNotifications) ? 1 : 0;
+        }
+      }
+      return acc;
+    },
+    { active: 0, osNotify: 0 } as ActiveSubCounts,
+  );
 
 export const CountSummary = ({
   subs,
   badgeColor,
 }: {
-  subs: ChainEventSubscription[];
+  subs: ChainEventSubscription[] | SubscriptionTask[] | IntervalSubscription[];
   badgeColor: string;
 }) => {
-  const activeCount = subs.filter((s) => s.enabled).length;
-  const notifyCount = subs.filter((s) => s.enabled && s.osNotify).length;
+  const { active, osNotify } = computeCounts(subs as AnyData[]);
 
   return (
     <CountGroup>
-      <ActiveCount $color={badgeColor} $active={activeCount > 0}>
-        {activeCount}
+      <ActiveCount $color={badgeColor} $active={active > 0}>
+        {active}
       </ActiveCount>
 
-      <NotifyCount $color={badgeColor} $active={notifyCount > 0}>
+      <NotifyCount $color={badgeColor} $active={osNotify > 0}>
         <FontAwesomeIcon
           icon={faBell}
           style={{ marginRight: '6px', fontSize: '0.9rem' }}
         />
-        <span>{notifyCount}</span>
+        <span>{osNotify}</span>
       </NotifyCount>
     </CountGroup>
   );

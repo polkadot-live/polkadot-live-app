@@ -33,7 +33,7 @@ export const Subscriptions = ({
   const { hasConnectionIssue } = useApiHealth();
 
   const [accordionVal, setAccordionVal] = useState<string>('');
-  const badgeColor = activeChain ? getNetworkColor(activeChain) : '#a78bda';
+  const badgeColor = activeChain ? getNetworkColor(activeChain) : '#6e6e6e';
 
   // Utility to determine if a connection issue exists.
   const showConnectionIssue = (): boolean => {

@@ -210,20 +210,6 @@ export const ChainEventsProvider = ({
   const accountSubCount = (account: FlattenedAccountData) =>
     adapter.getSubCountForAccount(account);
 
-  const accountSubCountForPallet = (pallet: string): number => {
-    if (!activeAccount) {
-      return 0;
-    }
-    const { address, chain: chainId } = activeAccount;
-    const key = `${chainId}::${address}`;
-    return (
-      accountSubscriptions
-        .get(key)
-        ?.filter((s) => s.pallet === pallet)
-        .filter(({ enabled }) => enabled).length ?? 0
-    );
-  };
-
   // Called when account is deleted or removed.
   const removeAllForAccount = (account: FlattenedAccountData) => {
     const { address, chain: chainId } = account;
@@ -562,7 +548,6 @@ export const ChainEventsProvider = ({
         subscriptions,
         accountHasSubs,
         accountSubCount,
-        accountSubCountForPallet,
         addSubsForRef,
         countActiveRefSubs,
         fetchNetworkStats,
