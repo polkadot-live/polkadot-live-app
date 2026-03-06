@@ -101,7 +101,9 @@ export const Subscriptions = ({
         (t) => t.referendumId === referendumId && t.status === targetStatus,
       )
       .map((t) => {
-        t.status = t.status === 'enable' ? 'disable' : 'enable';
+        const newStatus = t.status === 'enable' ? 'disable' : 'enable';
+        t.status = newStatus;
+        if (newStatus === 'disable') t.enableOsNotifications = false;
         return t;
       })
       .sort((a, b) => a.label.localeCompare(b.label));

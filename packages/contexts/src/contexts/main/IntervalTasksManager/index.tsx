@@ -53,8 +53,9 @@ export const IntervalTasksManagerProvider = ({
 
   // Handle toggling an interval subscription.
   const handleIntervalToggle = async (task: IntervalSubscription) => {
-    const status = task.status === 'enable' ? 'disable' : 'enable';
-    task.status = status;
+    const newStatus = task.status === 'enable' ? 'disable' : 'enable';
+    task.status = newStatus;
+    if (newStatus === 'disable') task.enableOsNotifications = false;
     // Handle task in intervals controller.
     adapter.handleToggleSubscription(task, getOnlineMode());
 
