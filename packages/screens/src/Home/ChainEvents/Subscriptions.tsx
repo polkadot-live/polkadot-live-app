@@ -16,7 +16,6 @@ import * as UI from '@polkadot-live/ui';
 import * as Accordion from '@radix-ui/react-accordion';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { useState } from 'react';
-import { CountSummary } from '../components';
 import { getNetworkColor } from '../Wrappers';
 import { SubscriptionRow } from './SubscriptionRow';
 import type { ChainEventSubscription } from '@polkadot-live/types';
@@ -114,7 +113,10 @@ export const Subscriptions = ({
                             {getReadablePallet(pallet)}
                           </span>
 
-                          <CountSummary subs={subs} badgeColor={badgeColor} />
+                          <UI.CountSummary
+                            subs={subs}
+                            badgeColor={badgeColor}
+                          />
                         </FlexRow>
                       </UI.TriggerHeader>
                     </UI.AccordionTrigger>

@@ -13,7 +13,6 @@ import * as UI from '@polkadot-live/ui';
 import * as Accordion from '@radix-ui/react-accordion';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { useEffect, useState } from 'react';
-import { CountSummary } from '../../components';
 import { getNetworkColor } from '../../Wrappers';
 import { ClassicSubscription } from './ClassicSubscription';
 import { Header } from './Header';
@@ -128,7 +127,7 @@ export const ClassicSubscriptions = ({
                         <UI.TriggerHeader>
                           <FlexRow>
                             <span style={{ flex: 1 }}>{category}</span>
-                            <CountSummary
+                            <UI.CountSummary
                               subs={tasks}
                               badgeColor={getNetworkColor(tasks[0].chainId)}
                             />

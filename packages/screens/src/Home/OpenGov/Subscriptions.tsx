@@ -14,7 +14,6 @@ import * as Style from '@polkadot-live/styles';
 import * as UI from '@polkadot-live/ui';
 import { useEffect } from 'react';
 import { SubscriptionRow } from '../ChainEvents/SubscriptionRow';
-import { CountSummary } from '../components';
 import { Header } from '../Manage/Subscriptions/Header';
 import { getNetworkColor } from '../Wrappers';
 import { IntervalRow } from './IntervalRow';
@@ -43,7 +42,6 @@ export const Subscriptions = ({
     selectedRef,
     updateSelectedRef,
     getCategorisedRefsForChain,
-    refActiveSubCount,
     setActiveRefChain,
   } = useChainEvents();
 
@@ -61,19 +59,6 @@ export const Subscriptions = ({
   // Utility to determine if a connection issue exists.
   const showConnectionIssue = (): boolean =>
     activeRefChain ? hasConnectionIssue(activeRefChain) : false;
-
-  // Total active subscription count.
-  const activeCount = (refId: number): number => {
-    const smart = refActiveSubCount(refId);
-    if (!activeRefChain) {
-      return smart;
-    }
-    const chainSubs = subscriptions.get(activeRefChain) ?? [];
-    const classic = chainSubs.filter(
-      (s) => s.referendumId === refId && s.status === 'enable',
-    ).length;
-    return smart + classic;
-  };
 
   // Determines if interval task should be disabled.
   const isIntervalTaskDisabled = (): boolean =>
@@ -157,11 +142,6 @@ export const Subscriptions = ({
             }}
           />
           <UI.SortControlLabel label={breadcrumb} />
-          {selectedRef && (
-            <UI.SortControlLabel
-              label={`${activeCount(selectedRef).toString()} Active`}
-            />
-          )}
         </div>
       </UI.ControlsWrapper>
 
@@ -183,7 +163,10 @@ export const Subscriptions = ({
             <Style.FlexRow>
               <Header label="Classic">
                 <Style.FlexRow>
-                  <CountSummary subs={intervalSubs} badgeColor={badgeColor} />
+                  <UI.CountSummary
+                    subs={intervalSubs}
+                    badgeColor={badgeColor}
+                  />
                   <span style={{ scale: '0.85' }}>
                     <UI.Switch
                       disabled={isIntervalTaskDisabled()}
@@ -224,7 +207,7 @@ export const Subscriptions = ({
               ))}
 
             <Header label="Smart">
-              <CountSummary subs={chainEventSubs} badgeColor={badgeColor} />
+              <UI.CountSummary subs={chainEventSubs} badgeColor={badgeColor} />
             </Header>
             <Style.ItemsColumn>
               {selectedRef &&

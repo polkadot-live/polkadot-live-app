@@ -105,21 +105,6 @@ export const ChainEventsProvider = ({
     return count;
   };
 
-  const refActiveSubCount = (refId: number): number => {
-    if (!activeRefChain) {
-      return 0;
-    }
-    const refs = refSubscriptions.get(activeRefChain);
-    if (!refs) {
-      return 0;
-    }
-    const subs = refs.get(refId);
-    if (!subs) {
-      return 0;
-    }
-    return subs.filter((s) => s.enabled).length;
-  };
-
   // NOTE: Only called in Electron version.
   const addSubsForRef = (chainId: ChainID, refId: number) => {
     let updated: ChainEventSubscription[] = [];
@@ -556,7 +541,6 @@ export const ChainEventsProvider = ({
         getCategorisedRefsForChain,
         getEventSubscriptionCount,
         isApiRequired,
-        refActiveSubCount,
         refHasActiveSubs,
         removeAllForAccount,
         removeSubsForRef,

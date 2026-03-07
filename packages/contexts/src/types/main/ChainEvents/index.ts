@@ -29,7 +29,6 @@ export interface ChainEventsContextInterface {
   getCategorisedRefsForChain: () => ChainEventSubscription[];
   getEventSubscriptionCount: () => Promise<number>;
   isApiRequired: (chainId: ChainID) => boolean;
-  refActiveSubCount: (refId: number) => number;
   refHasActiveSubs: (chainId: ChainID, refId: number) => boolean;
   removeAllForAccount: (account: FlattenedAccountData) => void;
   removeSubsForRef: (chainId: ChainID, refId: number) => void;

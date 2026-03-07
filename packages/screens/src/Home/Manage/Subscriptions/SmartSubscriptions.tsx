@@ -9,7 +9,6 @@ import * as Accordion from '@radix-ui/react-accordion';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { useState } from 'react';
 import { SubscriptionRow } from '../../ChainEvents/SubscriptionRow';
-import { CountSummary } from '../../components';
 import { getNetworkColor } from '../../Wrappers';
 import { Header } from './Header';
 
@@ -55,7 +54,7 @@ export const SmartSubscriptions = () => {
                                 {getReadablePallet(pallet)}
                               </span>
 
-                              <CountSummary
+                              <UI.CountSummary
                                 subs={subs}
                                 badgeColor={badgeColor}
                               />

@@ -1,9 +1,11 @@
+// Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
+// SPDX-License-Identifier: GPL-3.0-only
+
 import { faBell } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ActiveCount, CountGroup, NotifyCount } from './Wrappers';
 import type {
   ActiveSubCounts,
-  AnyData,
   ChainEventSubscription,
 } from '@polkadot-live/types';
 import type {
@@ -42,7 +44,7 @@ export const CountSummary = ({
   subs: ChainEventSubscription[] | SubscriptionTask[] | IntervalSubscription[];
   badgeColor: string;
 }) => {
-  const { active, osNotify } = computeCounts(subs as AnyData[]);
+  const { active, osNotify } = computeCounts(subs);
 
   return (
     <CountGroup>
