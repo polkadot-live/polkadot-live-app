@@ -74,7 +74,7 @@ export const CardHeader = styled.div<{
   display: flex;
   flex-direction: ${({ direction }) => (direction === 'column' ? 'column' : 'row')};
   align-items: ${({ direction }) => (direction === 'column' ? 'flex-start' : 'center')};
-  gap: ${({ direction, gap }) => gap ?? (direction === 'column' ? '0.5rem' : '0.75rem')};
+  gap: ${({ direction, gap }) => gap ?? (direction === 'column' ? '0.8rem' : '0.75rem')};
 `;
 
 /** Accent-coloured circle behind the chain icon. */
@@ -103,7 +103,7 @@ export const Title = styled.span<{ $grow: boolean }>`
 
 /** Truncated subtitle text. */
 export const Subtitle = styled.span`
-  font-size: 0.95rem;
+  font-size: 0.98rem;
   color: var(--text-color-secondary);
   opacity: 0.65;
   white-space: nowrap;

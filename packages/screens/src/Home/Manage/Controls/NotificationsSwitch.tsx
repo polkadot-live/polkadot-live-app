@@ -16,36 +16,20 @@ export const NotificationsSwitch = ({
   return (
     <button
       type="button"
-      className="native-content"
+      disabled={task.status === 'disable'}
+      style={{
+        opacity: task.enableOsNotifications ? '1' : '0.3',
+        cursor: task.status === 'disable' ? 'not-allowed' : 'pointer',
+      }}
       onClick={async () =>
         !isDisabled(task) &&
         task.status === 'enable' &&
         onNotificationToggle(!isChecked, task)
       }
     >
-      {/* Main icon */}
-      <FontAwesomeIcon
-        className={
-          !isDisabled(task) && task.status === 'enable'
-            ? isChecked
-              ? 'checked'
-              : 'unchecked'
-            : 'disabled'
-        }
-        icon={FA.faList}
-        transform={'grow-3'}
-      />
-
-      {/* Check overlay icon when clicked */}
-      {isChecked && (
-        <div className="checked-icon-wrapper">
-          <FontAwesomeIcon
-            className={task.status === 'disable' ? 'disable' : ''}
-            icon={FA.faCircleCheck}
-            transform={'shrink-5'}
-          />
-        </div>
-      )}
+      <div className="native-wrapper">
+        <FontAwesomeIcon icon={FA.faList} />
+      </div>
     </button>
   );
 };

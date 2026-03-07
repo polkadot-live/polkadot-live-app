@@ -151,7 +151,7 @@ export const ClassicSubscriptions = ({
                           className="HeaderContentDropdownWrapper"
                           style={{ cursor: 'default' }}
                         >
-                          <span style={{ scale: '0.83' }}>
+                          <span style={{ scale: '0.68' }}>
                             <UI.Switch
                               size="sm"
                               type="primary"

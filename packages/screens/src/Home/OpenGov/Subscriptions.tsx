@@ -167,7 +167,7 @@ export const Subscriptions = ({
                     subs={intervalSubs}
                     badgeColor={badgeColor}
                   />
-                  <span style={{ scale: '0.85' }}>
+                  <span style={{ scale: '0.68' }}>
                     <UI.Switch
                       disabled={isIntervalTaskDisabled()}
                       size="sm"

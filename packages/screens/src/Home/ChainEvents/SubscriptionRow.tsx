@@ -27,7 +27,7 @@ export const SubscriptionRow = ({ subscription }: SubscriptionRowProps) => {
   }, [enabled]);
 
   return (
-    <TaskEntryWrapper whileHover={{ scale: 1.01 }}>
+    <TaskEntryWrapper>
       <div className="inner">
         <div style={{ flex: 1 }}>
           <div className="content">
@@ -40,12 +40,12 @@ export const SubscriptionRow = ({ subscription }: SubscriptionRowProps) => {
               >
                 <FontAwesomeIcon icon={FA.faInfo} transform={'shrink-1'} />
               </button>
-              <span className="text-ellipsis">{label}</span>
+              <span className="task-title text-ellipsis">{label}</span>
             </h3>
           </div>
         </div>
         <div style={{ flex: 0 }}>
-          <FlexRow $gap="1.75rem">
+          <FlexRow $gap="1.25rem">
             {/* Notification Checkbox */}
             <button
               type="button"
@@ -60,13 +60,13 @@ export const SubscriptionRow = ({ subscription }: SubscriptionRowProps) => {
             >
               <TooltipRx text={'OS Notifications'} theme={theme}>
                 <div className="native-wrapper">
-                  <FontAwesomeIcon icon={FA.faList} transform={'grow-3'} />
+                  <FontAwesomeIcon icon={FA.faList} />
                 </div>
               </TooltipRx>
             </button>
 
             {/* Toggle Switch */}
-            <span style={{ scale: '0.9' }}>
+            <span style={{ scale: '0.75' }}>
               <Switch
                 disabled={!getOnlineMode()}
                 style={{ paddingRight: '10px' }}

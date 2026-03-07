@@ -1,7 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { faClock } from '@fortawesome/free-regular-svg-icons';
 import * as FA from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { intervalDurationsConfig } from '@polkadot-live/consts/subscriptions/interval';
@@ -76,7 +75,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
         <FontAwesomeIcon
           className="enabled"
           icon={FA.faAnglesDown}
-          transform={'grow-3'}
+          transform={'grow-1'}
           onClick={async () =>
             await handleIntervalOneShot(task, setOneShotProcessing)
           }
@@ -88,7 +87,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
           className="processing"
           fade
           icon={FA.faAnglesDown}
-          transform={'grow-3'}
+          transform={'grow-1'}
         />
       )}
       {/* One-shot disabled */}
@@ -96,7 +95,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
         <FontAwesomeIcon
           className="disabled"
           icon={FA.faAnglesDown}
-          transform={'grow-3'}
+          transform={'grow-1'}
         />
       )}
     </div>
@@ -131,7 +130,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
   }, [getOnlineMode()]);
 
   return (
-    <TaskEntryWrapper whileHover={{ scale: 1.01 }}>
+    <TaskEntryWrapper>
       <div className="inner">
         <div>
           <div className="content">
@@ -143,7 +142,7 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
               >
                 <FontAwesomeIcon icon={FA.faInfo} transform={'shrink-1'} />
               </button>
-              {task.label}
+              <span className="task-title">{task.label}</span>
             </h3>
           </div>
         </div>
@@ -171,17 +170,6 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
                   <div className="interval-badge">
                     {getShortIntervalLabel(intervalSetting)}
                   </div>
-                  <FontAwesomeIcon
-                    style={{
-                      position: 'absolute',
-                      top: '-4px',
-                      left: '6px',
-                      opacity: isDisabled ? '0.3' : '1',
-                    }}
-                    className="enabled"
-                    icon={faClock}
-                    transform={'grow-0'}
-                  />
                 </button>
               </TooltipRx>
             ) : (
@@ -215,40 +203,22 @@ export const IntervalRow = ({ task }: IntervalRowProps) => {
 
           {/* Native OS Notification Checkbox */}
           <TooltipRx text={'OS Notifications'} theme={theme}>
-            <div className="native-wrapper">
-              <button
-                type="button"
-                className="native-content"
-                onClick={async () => await handleNativeCheckbox()}
-              >
-                {/* Main icon */}
-                <FontAwesomeIcon
-                  className={
-                    !isDisabled && task.status === 'enable'
-                      ? nativeChecked
-                        ? 'checked'
-                        : 'unchecked'
-                      : 'disabled'
-                  }
-                  icon={FA.faList}
-                  transform={'grow-3'}
-                />
-                {/* Check overlay icon when clicked */}
-                {nativeChecked && (
-                  <div className="checked-icon-wrapper">
-                    <FontAwesomeIcon
-                      className={task.status === 'disable' ? 'disable' : ''}
-                      icon={FA.faCircleCheck}
-                      transform={'shrink-5'}
-                    />
-                  </div>
-                )}
-              </button>
-            </div>
+            <button
+              type="button"
+              style={{
+                opacity: task.enableOsNotifications ? '1' : '0.3',
+                cursor: task.status === 'disable' ? 'not-allowed' : 'pointer',
+              }}
+              onClick={async () => await handleNativeCheckbox()}
+            >
+              <div className="native-wrapper">
+                <FontAwesomeIcon icon={FA.faList} />
+              </div>
+            </button>
           </TooltipRx>
 
           {/* Toggle Switch */}
-          <span style={{ scale: '0.9' }}>
+          <span style={{ scale: '0.75' }}>
             <Switch
               disabled={isDisabled}
               size="sm"
