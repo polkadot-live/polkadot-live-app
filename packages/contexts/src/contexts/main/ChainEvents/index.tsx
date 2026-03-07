@@ -105,21 +105,6 @@ export const ChainEventsProvider = ({
     return count;
   };
 
-  const refActiveSubCount = (refId: number): number => {
-    if (!activeRefChain) {
-      return 0;
-    }
-    const refs = refSubscriptions.get(activeRefChain);
-    if (!refs) {
-      return 0;
-    }
-    const subs = refs.get(refId);
-    if (!subs) {
-      return 0;
-    }
-    return subs.filter((s) => s.enabled).length;
-  };
-
   // NOTE: Only called in Electron version.
   const addSubsForRef = (chainId: ChainID, refId: number) => {
     let updated: ChainEventSubscription[] = [];
@@ -209,20 +194,6 @@ export const ChainEventsProvider = ({
 
   const accountSubCount = (account: FlattenedAccountData) =>
     adapter.getSubCountForAccount(account);
-
-  const accountSubCountForPallet = (pallet: string): number => {
-    if (!activeAccount) {
-      return 0;
-    }
-    const { address, chain: chainId } = activeAccount;
-    const key = `${chainId}::${address}`;
-    return (
-      accountSubscriptions
-        .get(key)
-        ?.filter((s) => s.pallet === pallet)
-        .filter(({ enabled }) => enabled).length ?? 0
-    );
-  };
 
   // Called when account is deleted or removed.
   const removeAllForAccount = (account: FlattenedAccountData) => {
@@ -562,7 +533,6 @@ export const ChainEventsProvider = ({
         subscriptions,
         accountHasSubs,
         accountSubCount,
-        accountSubCountForPallet,
         addSubsForRef,
         countActiveRefSubs,
         fetchNetworkStats,
@@ -571,7 +541,6 @@ export const ChainEventsProvider = ({
         getCategorisedRefsForChain,
         getEventSubscriptionCount,
         isApiRequired,
-        refActiveSubCount,
         refHasActiveSubs,
         removeAllForAccount,
         removeSubsForRef,

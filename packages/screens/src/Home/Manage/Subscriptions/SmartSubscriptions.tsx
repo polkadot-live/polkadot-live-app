@@ -1,8 +1,6 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { faSplotch } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getReadablePallet } from '@polkadot-live/consts/subscriptions/chainEvents';
 import { useChainEvents } from '@polkadot-live/contexts';
 import { FlexColumn, FlexRow, ItemsColumn } from '@polkadot-live/styles';
@@ -11,13 +9,17 @@ import * as Accordion from '@radix-ui/react-accordion';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { useState } from 'react';
 import { SubscriptionRow } from '../../ChainEvents/SubscriptionRow';
+import { getNetworkColor } from '../../Wrappers';
 import { Header } from './Header';
 
 export const SmartSubscriptions = () => {
-  const { activeAccount, accountSubCountForPallet, getCategorisedForAccount } =
-    useChainEvents();
+  const { activeAccount, getCategorisedForAccount } = useChainEvents();
 
   const [accordionValEvents, setAccordionValEvents] = useState<string>('');
+
+  const badgeColor = activeAccount?.chain
+    ? getNetworkColor(activeAccount.chain)
+    : '#6e6e6e';
 
   return (
     <>
@@ -51,12 +53,11 @@ export const SmartSubscriptions = () => {
                               <span style={{ flex: 1 }}>
                                 {getReadablePallet(pallet)}
                               </span>
-                              {accountSubCountForPallet(pallet) > 0 && (
-                                <FontAwesomeIcon
-                                  className="splotch"
-                                  icon={faSplotch}
-                                />
-                              )}
+
+                              <UI.CountSummary
+                                subs={subs}
+                                badgeColor={badgeColor}
+                              />
                             </FlexRow>
                           </UI.TriggerHeader>
                         </UI.AccordionTrigger>

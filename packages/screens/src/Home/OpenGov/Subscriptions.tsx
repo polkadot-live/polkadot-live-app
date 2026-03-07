@@ -15,6 +15,7 @@ import * as UI from '@polkadot-live/ui';
 import { useEffect } from 'react';
 import { SubscriptionRow } from '../ChainEvents/SubscriptionRow';
 import { Header } from '../Manage/Subscriptions/Header';
+import { getNetworkColor } from '../Wrappers';
 import { IntervalRow } from './IntervalRow';
 import type { SubscriptionsProps } from './types';
 
@@ -41,28 +42,23 @@ export const Subscriptions = ({
     selectedRef,
     updateSelectedRef,
     getCategorisedRefsForChain,
-    refActiveSubCount,
     setActiveRefChain,
   } = useChainEvents();
 
   const isImportingData = cacheGet('backup:importing');
 
+  const badgeColor = activeRefChain
+    ? getNetworkColor(activeRefChain)
+    : '#6e6e6e';
+
+  const chainEventSubs = getCategorisedRefsForChain();
+  const intervalSubs = selectedRef
+    ? (getCategorised().get(selectedRef) ?? [])
+    : [];
+
   // Utility to determine if a connection issue exists.
   const showConnectionIssue = (): boolean =>
     activeRefChain ? hasConnectionIssue(activeRefChain) : false;
-
-  // Total active subscription count.
-  const activeCount = (refId: number): number => {
-    const smart = refActiveSubCount(refId);
-    if (!activeRefChain) {
-      return smart;
-    }
-    const chainSubs = subscriptions.get(activeRefChain) ?? [];
-    const classic = chainSubs.filter(
-      (s) => s.referendumId === refId && s.status === 'enable',
-    ).length;
-    return smart + classic;
-  };
 
   // Determines if interval task should be disabled.
   const isIntervalTaskDisabled = (): boolean =>
@@ -146,11 +142,6 @@ export const Subscriptions = ({
             }}
           />
           <UI.SortControlLabel label={breadcrumb} />
-          {selectedRef && (
-            <UI.SortControlLabel
-              label={`${activeCount(selectedRef).toString()} Active`}
-            />
-          )}
         </div>
       </UI.ControlsWrapper>
 
@@ -171,26 +162,32 @@ export const Subscriptions = ({
           <Style.FlexColumn $rowGap="0.6rem" style={{ margin: '0.75rem 0' }}>
             <Style.FlexRow>
               <Header label="Classic">
-                <span style={{ scale: '0.85' }}>
-                  <UI.Switch
-                    disabled={isIntervalTaskDisabled()}
-                    size="sm"
-                    type="primary"
-                    isOn={
-                      selectedRef
-                        ? getOpenGovGlobalToggles().get(selectedRef)
-                        : false
-                    }
-                    handleToggle={async () => {
-                      if (selectedRef) {
-                        await toggleGlobalSwitch(
-                          selectedRef,
-                          getOpenGovGlobalToggles().get(selectedRef) || false,
-                        );
-                      }
-                    }}
+                <Style.FlexRow>
+                  <UI.CountSummary
+                    subs={intervalSubs}
+                    badgeColor={badgeColor}
                   />
-                </span>
+                  <span style={{ scale: '0.85' }}>
+                    <UI.Switch
+                      disabled={isIntervalTaskDisabled()}
+                      size="sm"
+                      type="primary"
+                      isOn={
+                        selectedRef
+                          ? getOpenGovGlobalToggles().get(selectedRef)
+                          : false
+                      }
+                      handleToggle={async () => {
+                        if (selectedRef) {
+                          await toggleGlobalSwitch(
+                            selectedRef,
+                            getOpenGovGlobalToggles().get(selectedRef) || false,
+                          );
+                        }
+                      }}
+                    />
+                  </span>
+                </Style.FlexRow>
               </Header>
             </Style.FlexRow>
 
@@ -209,10 +206,12 @@ export const Subscriptions = ({
                 </Style.ItemsColumn>
               ))}
 
-            <Header label="Smart" />
+            <Header label="Smart">
+              <UI.CountSummary subs={chainEventSubs} badgeColor={badgeColor} />
+            </Header>
             <Style.ItemsColumn>
               {selectedRef &&
-                getCategorisedRefsForChain().map((sub, i) => (
+                chainEventSubs.map((sub, i) => (
                   <SubscriptionRow
                     key={`${selectedRef}-${sub.eventName}-${i}`}
                     subscription={sub}

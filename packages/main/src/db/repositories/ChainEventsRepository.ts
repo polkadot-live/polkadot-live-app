@@ -141,7 +141,7 @@ export class ChainEventsRepository {
              COUNT(*) AS active,
              SUM(os_notify) AS os_notify
       FROM chain_event_subscriptions
-      WHERE enabled = 1
+      WHERE enabled = 1 AND scope_type = 'global'
       GROUP BY chain_id
     `);
 

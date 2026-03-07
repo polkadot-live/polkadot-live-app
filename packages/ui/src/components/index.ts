@@ -6,6 +6,7 @@ export * from './ActionItem';
 export * from './Cards';
 export * from './CheckboxRx';
 export * from './CopyButton';
+export * from './CountSummary';
 export * from './DragClose';
 export * from './Footers';
 export * from './Hardware';

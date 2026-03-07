@@ -44,8 +44,6 @@ export const Networks = ({
     updateSelectedRef,
   } = useChainEvents();
 
-  // Accordion state.
-  const [accordionValue, setAccordionValue] = useState<string[]>([]);
   const [isReferendaAdded, setIsReferendaAdded] = useState(true);
 
   const handleClickRef = (chainId: ChainID, refId: number) => {
@@ -116,9 +114,10 @@ export const Networks = ({
     return result;
   };
 
-  useEffect(() => {
-    setAccordionValue(Object.keys(getChainRefIds()));
-  }, []);
+  // Accordion state.
+  const [accordionValue, setAccordionValue] = useState<string[]>(
+    Object.keys(getChainRefIds()),
+  );
 
   useEffect(() => {
     const fetch = async () => {
