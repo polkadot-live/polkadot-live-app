@@ -92,7 +92,7 @@ export const Subscriptions = ({
             value={accordionVal}
             onValueChange={(val) => setAccordionVal(val as string)}
           >
-            <FlexColumn>
+            <FlexColumn $rowGap="0.6rem">
               {Object.entries(getCategorised()).map(([pallet, subs]) => (
                 <Accordion.Item
                   key={pallet}
@@ -122,7 +122,10 @@ export const Subscriptions = ({
                     </UI.AccordionTrigger>
                   </FlexRow>
 
-                  <UI.AccordionContent transparent={true}>
+                  <UI.AccordionContent
+                    transparent={true}
+                    className="AccordionContentReduce"
+                  >
                     <ItemsColumn>
                       {subs.map((sub, i) => (
                         <SubscriptionRow

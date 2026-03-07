@@ -35,6 +35,11 @@ export const Subscriptions = ({
   const { renderedSubscriptions } = useManage();
   const theme = getTheme();
 
+  // Control accordions.
+  const [clickedAccordionType, setClickedAccordionType] = useState<
+    'smart' | 'classic' | null
+  >(null);
+
   // Mechanism to trigger re-caculating the accordion value after the account state is updated.
   const [updateAccordionValue, setUpdateAccordionValue] = useState(false);
 
@@ -61,7 +66,7 @@ export const Subscriptions = ({
 
   return (
     <>
-      <UI.ControlsWrapper $sticky={false} style={{ marginBottom: '1.5rem' }}>
+      <UI.ControlsWrapper $sticky={false} style={{ marginBottom: '1rem' }}>
         <div className="left">
           <UI.ButtonPrimaryInvert
             className="back-btn"
@@ -116,10 +121,17 @@ export const Subscriptions = ({
         typeClicked={typeClicked}
         section={section}
         updateAccordionValue={updateAccordionValue}
+        clickedAccordionType={clickedAccordionType}
+        setClickedAccordionType={setClickedAccordionType}
         setSection={setSection}
       />
       {/** Smart Subscriptions */}
-      {renderedSubscriptions.type === 'account' && <SmartSubscriptions />}
+      {renderedSubscriptions.type === 'account' && (
+        <SmartSubscriptions
+          clickedAccordionType={clickedAccordionType}
+          setClickedAccordionType={setClickedAccordionType}
+        />
+      )}
     </>
   );
 };

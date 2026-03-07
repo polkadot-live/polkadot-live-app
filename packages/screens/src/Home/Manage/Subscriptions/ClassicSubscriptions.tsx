@@ -23,6 +23,8 @@ export const ClassicSubscriptions = ({
   typeClicked,
   section,
   updateAccordionValue,
+  clickedAccordionType,
+  setClickedAccordionType,
   setSection,
 }: ClassicSubscriptionsProps) => {
   const { useCtx } = useContextProxy();
@@ -90,11 +92,19 @@ export const ClassicSubscriptions = ({
     }
   }, [updateAccordionValue]);
 
+  useEffect(() => {
+    if (clickedAccordionType === 'smart') {
+      typeClicked === 'account'
+        ? setAccordionValueAccounts('')
+        : setAccordionValueChains('');
+    }
+  }, [clickedAccordionType]);
+
   return (
     <>
-      <Header label="Classic" />
+      <Header label="Storage Queries" />
       <FlexColumn>
-        <UI.AccordionWrapper style={{ margin: '1rem 0' }}>
+        <UI.AccordionWrapper style={{ margin: '0.6rem 0' }}>
           <Accordion.Root
             className="AccordionRoot"
             collapsible={true}
@@ -104,13 +114,15 @@ export const ClassicSubscriptions = ({
                 ? accordionValueAccounts
                 : accordionValueChains
             }
-            onValueChange={(val) =>
+            onValueChange={(val) => {
               typeClicked === 'account'
                 ? setAccordionValueAccounts(val as string)
-                : setAccordionValueChains(val as string)
-            }
+                : setAccordionValueChains(val as string);
+
+              setClickedAccordionType('classic');
+            }}
           >
-            <FlexColumn $rowGap="2px">
+            <FlexColumn $rowGap="0.6rem">
               {Array.from(categorisedTasks.entries()).map(
                 ([category, tasks]) => (
                   <Accordion.Item
@@ -153,7 +165,10 @@ export const ClassicSubscriptions = ({
                         </div>
                       )}
                     </FlexRow>
-                    <UI.AccordionContent transparent={true} topGap={'2px'}>
+                    <UI.AccordionContent
+                      transparent={true}
+                      className="AccordionContentReduce"
+                    >
                       <ItemsColumn>
                         {tasks
                           .sort((a, b) => a.label.localeCompare(b.label))

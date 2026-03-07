@@ -12,10 +12,12 @@ export const Header = ({ label, children }: HeaderProps) => (
   <FlexRow
     $gap="0.65rem"
     style={{
-      backgroundColor: 'var(--background-surface)',
+      background:
+        'linear-gradient(90deg, var(--background-surface) 0%, rgba(0,0,0,0.04) 55%, rgba(0,0,0,0) 100%)',
       borderRadius: '0.375rem',
       padding: '0.5rem 1rem 0.5rem 1.25rem',
       width: '100%',
+      transition: 'background 240ms ease',
     }}
   >
     <h2
