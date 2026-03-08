@@ -115,7 +115,7 @@ export const Send = ({
               setAccordionValue(val as SendAccordionValue)
             }
           >
-            <FlexColumn $rowGap={'1.25rem'}>
+            <FlexColumn>
               {/** Network Section */}
               <Accordion.Item className="AccordionItem" value="section-network">
                 <UI.AccordionTrigger narrow={true}>

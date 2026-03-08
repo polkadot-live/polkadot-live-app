@@ -13,19 +13,9 @@ import {
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import styled from 'styled-components';
+import { categoryColors } from '../../Wrappers';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
-
-/**
- * Color mapping for each event category.
- */
-const categoryColors: Record<string, string> = {
-  Balances: '#a78bda',
-  Nominating: '#6ec4c4',
-  'Nomination Pools': '#d4a574',
-  OpenGov: '#7ab89e',
-  Voting: '#cf8e8e',
-};
 
 export const EventsBarChart = () => {
   const { getEventsCount } = useEvents();

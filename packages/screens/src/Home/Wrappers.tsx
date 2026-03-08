@@ -16,6 +16,16 @@ export const networkAccentColors: Record<string, string> = {
   'Westend People': '#d47a7a',
 };
 
+/* Accent colors per events category. */
+export const categoryColors: Record<string, string> = {
+  Balances: '#a78bda',
+  Debugging: '#999999',
+  Nominating: '#6ec4c4',
+  'Nomination Pools': '#d4a574',
+  OpenGov: '#7ab89e',
+  Voting: '#cf8e8e',
+};
+
 /** Helper — resolve accent color with a fallback. */
 export const getNetworkColor = (chainId: ChainID): string =>
   networkAccentColors[chainId] ?? '#888888';
