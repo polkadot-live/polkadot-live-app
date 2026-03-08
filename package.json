@@ -97,7 +97,7 @@
     "react-router": "^7.8.2",
     "react-spinners": "^0.14.1",
     "react-toastify": "^11.0.5",
-    "smoldot": "^2.0.34",
+    "smoldot": "^2.0.40",
     "styled-components": "^6.1.17",
     "svg-inline-loader": "^0.8.2",
     "xxhash-wasm": "^1.1.0"

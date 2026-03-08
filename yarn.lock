@@ -10883,7 +10883,7 @@ __metadata:
     react-router: "npm:^7.8.2"
     react-spinners: "npm:^0.14.1"
     react-toastify: "npm:^11.0.5"
-    smoldot: "npm:^2.0.34"
+    smoldot: "npm:^2.0.40"
     styled-components: "npm:^6.1.17"
     svg-inline-loader: "npm:^0.8.2"
     ts-node: "npm:^10.9.2"
@@ -12169,15 +12169,6 @@ __metadata:
   version: 4.2.0
   resolution: "smart-buffer@npm:4.2.0"
   checksum: a16775323e1404dd43fabafe7460be13a471e021637bc7889468eb45ce6a6b207261f454e4e530a19500cc962c4cc5348583520843b363f4193cee5c00e1e539
-  languageName: node
-  linkType: hard
-
-"smoldot@npm:^2.0.34":
-  version: 2.0.34
-  resolution: "smoldot@npm:2.0.34"
-  dependencies:
-    ws: "npm:^8.8.1"
-  checksum: b9079a70706c54ee16d0ec0b626f6f13807b6130856c570b84ca8dd0506283110017bcc7696d08f3a15e70c9bf2d5ba8a2d7249665347185593193beb1907d1e
   languageName: node
   linkType: hard
 
