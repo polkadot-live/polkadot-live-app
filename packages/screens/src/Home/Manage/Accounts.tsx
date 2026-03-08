@@ -254,7 +254,7 @@ export const Accounts = ({
                                   <AccountCardHeader>
                                     <AccountName>{a.name}</AccountName>
                                     <AccountAddress>
-                                      {ellipsisFn(a.address, 12)}
+                                      {ellipsisFn(a.address, 6)}
                                     </AccountAddress>
                                   </AccountCardHeader>
 
