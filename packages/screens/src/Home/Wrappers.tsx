@@ -84,7 +84,7 @@ export const CardHeader = styled.div<{
   display: flex;
   flex-direction: ${({ direction }) => (direction === 'column' ? 'column' : 'row')};
   align-items: ${({ direction }) => (direction === 'column' ? 'flex-start' : 'center')};
-  gap: ${({ direction, gap }) => gap ?? (direction === 'column' ? '0.8rem' : '0.75rem')};
+  gap: ${({ direction, gap }) => gap ?? (direction === 'column' ? '0.4rem' : '0.75rem')};
 `;
 
 /** Accent-coloured circle behind the chain icon. */
@@ -142,6 +142,7 @@ export const StatsRow = styled.div<{
     border-radius: 0.375rem;
     background-color: ${({ $color }) => `${$color}20`};
     font-size: 0.92rem;
+    color: ${({ $color }) => `${$color}dd`};
   }
 
   .stat-value {
