@@ -161,13 +161,13 @@ export const Subscriptions = ({
         <Style.FlexColumn>
           <Style.FlexColumn $rowGap="0.6rem" style={{ margin: '0.75rem 0' }}>
             <Style.FlexRow>
-              <Header label="Classic">
+              <Header label="Storage Queries">
                 <Style.FlexRow>
                   <UI.CountSummary
                     subs={intervalSubs}
                     badgeColor={badgeColor}
                   />
-                  <span style={{ scale: '0.85' }}>
+                  <span style={{ scale: '0.68' }}>
                     <UI.Switch
                       disabled={isIntervalTaskDisabled()}
                       size="sm"
@@ -206,7 +206,7 @@ export const Subscriptions = ({
                 </Style.ItemsColumn>
               ))}
 
-            <Header label="Smart">
+            <Header label="Chain Events">
               <UI.CountSummary subs={chainEventSubs} badgeColor={badgeColor} />
             </Header>
             <Style.ItemsColumn>

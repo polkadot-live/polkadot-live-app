@@ -1,6 +1,7 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
+import { FlexRow } from '@polkadot-live/styles';
 import { motion } from 'framer-motion';
 import styled, { css } from 'styled-components';
 
@@ -44,6 +45,35 @@ export const NoEventsWrapper = styled.div`
   }
 `;
 
+/** Header */
+export const HeaderRow = styled(FlexRow)`
+  align-items: center;
+  gap: 0.75rem;
+  background: linear-gradient(90deg, var(--background-surface) 0%, rgba(0,0,0,0.04) 65%, rgba(0,0,0,0) 100%);
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.5rem;
+  transition: background 240ms ease;
+`;
+
+export const TotalBadge = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  .value {
+    color: var(--text-color-primary);
+    font-weight: 700;
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+  .label {
+    color: var(--text-color-secondary);
+    font-size: 0.84rem;
+    margin-top: 0.08rem;
+  }
+`;
+
+/** Event Group */
 export const EventGroup = styled.div`
   width: 100%;
   z-index: 2;
@@ -85,6 +115,7 @@ const eventBtnBase = css`
   }
 `;
 
+/** Event Item */
 export const EventItem = styled(motion.div)`
   --event-item-left-width: 4rem;
   position: relative;

@@ -43,7 +43,7 @@ export const ClassicSubscription = ({
   }, [task.enableOsNotifications]);
 
   return (
-    <TaskEntryWrapper whileHover={{ scale: 1.01 }}>
+    <TaskEntryWrapper>
       <div className="inner">
         <div>
           <div className="content">
@@ -55,7 +55,7 @@ export const ClassicSubscription = ({
               >
                 <FontAwesomeIcon icon={FA.faInfo} transform={'shrink-1'} />
               </button>
-              {task.label}
+              <span className="task-title">{task.label}</span>
             </h3>
           </div>
         </div>
@@ -83,7 +83,7 @@ export const ClassicSubscription = ({
             </>
           )}
           {/* Toggle Switch */}
-          <span style={{ scale: '0.9' }}>
+          <span style={{ scale: '0.75' }}>
             <Switch
               style={{ paddingRight: '10px' }}
               size="sm"

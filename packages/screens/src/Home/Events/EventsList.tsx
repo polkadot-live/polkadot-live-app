@@ -2,19 +2,21 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import * as FA from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useConnections, useEvents } from '@polkadot-live/contexts';
 import { getEventChainId } from '@polkadot-live/core';
-import { FlexColumn, FlexRow } from '@polkadot-live/styles';
+import { FlexColumn } from '@polkadot-live/styles';
 import {
   ButtonPrimaryInvert,
   ControlsWrapper,
   SortControlButton,
-  SortControlLabel,
   TooltipRx,
 } from '@polkadot-live/ui';
+import { categoryColors } from '../Wrappers';
+import { IconCircle } from './Category/Wrappers';
 import { Item } from './Item';
 import { NoEvents } from './NoEvents';
-import { EventGroup, Wrapper } from './Wrappers';
+import { EventGroup, HeaderRow, TotalBadge, Wrapper } from './Wrappers';
 import type { EventsListProps } from './types';
 
 export const EventsList = ({ setSection }: EventsListProps) => {
@@ -28,18 +30,14 @@ export const EventsList = ({ setSection }: EventsListProps) => {
     getSortedEvents,
     setClearDialogOpen,
     setSortDesc,
+    getEventCategoryIcon,
   } = useEvents();
 
   const theme = getTheme();
+  const total = activeCategory ? (eventCounts[activeCategory] ?? 0) : 0;
 
   return (
-    <FlexColumn $rowGap="0.75rem" style={{ paddingBottom: '1rem' }}>
-      <FlexRow $gap="0.6rem" style={{ marginBottom: '0.25rem' }}>
-        <h2 style={{ fontSize: '1.2rem', paddingBottom: '0.25rem' }}>
-          {activeCategory}
-        </h2>
-      </FlexRow>
-
+    <FlexColumn $rowGap="0.6rem">
       {/* Controls */}
       <ControlsWrapper>
         <ButtonPrimaryInvert
@@ -51,22 +49,6 @@ export const EventsList = ({ setSection }: EventsListProps) => {
             setSection(0);
           }}
         />
-        <TooltipRx theme={theme} text={'Total'}>
-          <span>
-            <SortControlLabel
-              style={{
-                color: 'var(--text-color-secondary)',
-                borderColor: 'var(--border-secondary-color)',
-                padding: '0.35rem 1.25rem',
-                fontSize: '1.06rem',
-                fontWeight: 'bold',
-              }}
-              label={
-                activeCategory ? eventCounts[activeCategory].toString() : '0'
-              }
-            />
-          </span>
-        </TooltipRx>
         <TooltipRx
           theme={theme}
           text={sortDesc ? 'Oldest First' : 'Newest First'}
@@ -95,6 +77,21 @@ export const EventsList = ({ setSection }: EventsListProps) => {
           </span>
         </TooltipRx>
       </ControlsWrapper>
+
+      <HeaderRow $gap="0.6rem">
+        {activeCategory && (
+          <IconCircle $color={categoryColors[activeCategory]}>
+            <FontAwesomeIcon icon={getEventCategoryIcon(activeCategory)} />
+          </IconCircle>
+        )}
+        <FlexColumn style={{ flex: 1 }}>
+          <h2 style={{ fontSize: '1.1rem' }}>{activeCategory}</h2>
+        </FlexColumn>
+        <TotalBadge>
+          <span className="value">{total}</span>
+          <span className="label">Total</span>
+        </TotalBadge>
+      </HeaderRow>
 
       {/* Events */}
       <Wrapper>

@@ -13,6 +13,7 @@ import {
   Tooltip,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import { categoryColors } from '../../Wrappers';
 import type { EventCategory } from '@polkadot-live/types';
 
 ChartJS.register(
@@ -24,16 +25,6 @@ ChartJS.register(
   PointElement,
   Tooltip,
 );
-
-/** Color mapping matching the Summary screen EventsBarChart. */
-export const categoryColors: Record<EventCategory, string> = {
-  Balances: '#a78bda',
-  Debugging: '#999999',
-  Nominating: '#6ec4c4',
-  'Nomination Pools': '#d4a574',
-  OpenGov: '#7ab89e',
-  Voting: '#cf8e8e',
-};
 
 /** Generate last‑10‑day labels (short month + day). */
 const makeLast10DayLabels = (): string[] => {

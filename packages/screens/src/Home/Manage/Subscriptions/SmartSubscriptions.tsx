@@ -7,12 +7,22 @@ import { FlexColumn, FlexRow, ItemsColumn } from '@polkadot-live/styles';
 import * as UI from '@polkadot-live/ui';
 import * as Accordion from '@radix-ui/react-accordion';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SubscriptionRow } from '../../ChainEvents/SubscriptionRow';
 import { getNetworkColor } from '../../Wrappers';
 import { Header } from './Header';
 
-export const SmartSubscriptions = () => {
+interface SmartSubscriptionsProps {
+  clickedAccordionType: 'smart' | 'classic' | null;
+  setClickedAccordionType: React.Dispatch<
+    React.SetStateAction<'smart' | 'classic' | null>
+  >;
+}
+
+export const SmartSubscriptions = ({
+  clickedAccordionType,
+  setClickedAccordionType,
+}: SmartSubscriptionsProps) => {
   const { activeAccount, getCategorisedForAccount } = useChainEvents();
 
   const [accordionValEvents, setAccordionValEvents] = useState<string>('');
@@ -21,20 +31,30 @@ export const SmartSubscriptions = () => {
     ? getNetworkColor(activeAccount.chain)
     : '#6e6e6e';
 
+  useEffect(() => {
+    if (clickedAccordionType === 'classic') {
+      setAccordionValEvents('');
+    }
+  }, [clickedAccordionType]);
+
   return (
     <>
-      <Header label="Smart" />
+      <Header label="Chain Events" />
+
       {activeAccount && (
         <FlexColumn>
-          <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
+          <UI.AccordionWrapper style={{ marginTop: '0.6rem' }}>
             <Accordion.Root
               className="AccordionRoot"
               collapsible={true}
               type="single"
               value={accordionValEvents}
-              onValueChange={(val) => setAccordionValEvents(val as string)}
+              onValueChange={(val) => {
+                setAccordionValEvents(val as string);
+                setClickedAccordionType('smart');
+              }}
             >
-              <FlexColumn $rowGap="2px">
+              <FlexColumn $rowGap="0.6rem">
                 {Object.entries(getCategorisedForAccount(activeAccount)).map(
                   ([pallet, subs]) => (
                     <Accordion.Item
@@ -63,7 +83,10 @@ export const SmartSubscriptions = () => {
                         </UI.AccordionTrigger>
                       </FlexRow>
 
-                      <UI.AccordionContent transparent={true} topGap={'2px'}>
+                      <UI.AccordionContent
+                        transparent={true}
+                        className="AccordionContentReduce"
+                      >
                         <ItemsColumn>
                           {subs.map((sub, i) => (
                             <SubscriptionRow

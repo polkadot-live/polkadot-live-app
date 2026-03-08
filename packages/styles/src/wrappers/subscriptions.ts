@@ -51,47 +51,18 @@ export const TaskEntryWrapper = styled(motion.div)`
   position: relative;
   display: flex;
   align-items: center;
-  min-height: 44px;
+  min-height: 40px;
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 0.5rem 1rem;
   overflow: hidden;
 
   /* OS Notifications Icon */
   .native-wrapper {
     color: var(--text-color-secondary);
+    font-size: 1.1rem;
 
     .native-content {
       position: relative;
-    }
-    .checked-icon-wrapper {
-      color: var(--text-color-tertiary);
-      position: absolute;
-      bottom: 1px;
-      right: 0;
-
-      .disable {
-        opacity: 0.4;
-      }
-    }
-    .checked {
-      transition: opacity 0.1s ease-in-out;
-      padding: 0.5rem;
-      cursor: pointer;
-    }
-    .unchecked {
-      transition: opacity 0.1s ease-in-out;
-      padding: 0.5rem;
-      opacity: 0.7;
-      cursor: pointer;
-
-      &:hover {
-        opacity: 0.8;
-      }
-    }
-    .disabled {
-      transition: opacity 0.1s ease-in-out;
-      padding: 0.5rem;
-      opacity: 0.25;
     }
   }
 
@@ -124,17 +95,12 @@ export const TaskEntryWrapper = styled(motion.div)`
 
     .interval-badge {
       color: var(--text-color-primary);
-      background-color: var(--background-surface);
-      position: absolute;
-      top: 9px;
-      left: -6px;
-      min-width: 46px;
-      padding: 1px 0;
       opacity: 0.9;
-      border-radius: 1.25rem;
-      font-size: 0.75rem;
+      font-size: 0.82rem;
       font-weight: 600;
-      text-align: center;
+      padding-right: 0.5rem;
+      text-align: left;
+      min-width: 42px;
       z-index: 3;
     }
 
@@ -229,6 +195,11 @@ export const TaskEntryWrapper = styled(motion.div)`
             width: 100%;
             margin: 0;
             font-size: 1.05rem;
+
+            .task-title {
+              font-size: 1rem;
+              color: var(--text-color-secondary);
+            }
 
             .icon-wrapper {
               color: var(--text-dimmed);

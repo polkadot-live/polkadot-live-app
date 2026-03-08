@@ -16,6 +16,16 @@ export const networkAccentColors: Record<string, string> = {
   'Westend People': '#d47a7a',
 };
 
+/* Accent colors per events category. */
+export const categoryColors: Record<string, string> = {
+  Balances: '#a78bda',
+  Debugging: '#999999',
+  Nominating: '#6ec4c4',
+  'Nomination Pools': '#d4a574',
+  OpenGov: '#7ab89e',
+  Voting: '#cf8e8e',
+};
+
 /** Helper — resolve accent color with a fallback. */
 export const getNetworkColor = (chainId: ChainID): string =>
   networkAccentColors[chainId] ?? '#888888';
@@ -74,7 +84,7 @@ export const CardHeader = styled.div<{
   display: flex;
   flex-direction: ${({ direction }) => (direction === 'column' ? 'column' : 'row')};
   align-items: ${({ direction }) => (direction === 'column' ? 'flex-start' : 'center')};
-  gap: ${({ direction, gap }) => gap ?? (direction === 'column' ? '0.5rem' : '0.75rem')};
+  gap: ${({ direction, gap }) => gap ?? (direction === 'column' ? '0.8rem' : '0.75rem')};
 `;
 
 /** Accent-coloured circle behind the chain icon. */
@@ -103,7 +113,7 @@ export const Title = styled.span<{ $grow: boolean }>`
 
 /** Truncated subtitle text. */
 export const Subtitle = styled.span`
-  font-size: 0.95rem;
+  font-size: 0.98rem;
   color: var(--text-color-secondary);
   opacity: 0.65;
   white-space: nowrap;

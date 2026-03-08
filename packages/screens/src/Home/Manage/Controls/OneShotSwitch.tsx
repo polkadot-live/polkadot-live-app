@@ -25,7 +25,7 @@ export const OneShotSwitch = ({
           <FontAwesomeIcon
             className="enabled"
             icon={FA.faAnglesDown}
-            transform={'grow-3'}
+            transform={'grow-1'}
             onClick={async () =>
               await onOneShot(task, setProcessing, isChecked)
             }
@@ -38,7 +38,7 @@ export const OneShotSwitch = ({
             className="processing"
             fade
             icon={FA.faAnglesDown}
-            transform={'grow-3'}
+            transform={'grow-1'}
           />
         )}
 
@@ -47,7 +47,7 @@ export const OneShotSwitch = ({
           <FontAwesomeIcon
             className="disabled"
             icon={FA.faAnglesDown}
-            transform={'grow-3'}
+            transform={'grow-1'}
           />
         )}
       </div>

@@ -16,6 +16,10 @@ export interface ClassicSubscriptionsProps {
   typeClicked: SubscriptionTaskType;
   section: number;
   updateAccordionValue: boolean;
+  clickedAccordionType: 'smart' | 'classic' | null;
+  setClickedAccordionType: React.Dispatch<
+    React.SetStateAction<'smart' | 'classic' | null>
+  >;
   setSection: (n: number) => void;
 }
 

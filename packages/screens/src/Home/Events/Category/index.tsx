@@ -5,7 +5,8 @@ import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEvents } from '@polkadot-live/contexts';
 import { useEffect, useState } from 'react';
-import { CategoryItemGraph, categoryColors } from './Graph';
+import { categoryColors } from '../../Wrappers';
+import { CategoryItemGraph } from './Graph';
 import {
   CategoryCard,
   CategoryCardBody,

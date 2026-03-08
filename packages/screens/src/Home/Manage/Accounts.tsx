@@ -307,7 +307,10 @@ export const Accounts = ({
                   <ChevronDownIcon className="AccordionChevron" aria-hidden />
                   <UI.TriggerHeader>Debugging</UI.TriggerHeader>
                 </UI.AccordionTrigger>
-                <UI.AccordionContent transparent={true}>
+                <UI.AccordionContent
+                  transparent={true}
+                  className="AccordionContentReduce"
+                >
                   <ItemsColumn>
                     {Array.from(chainSubscriptions.keys()).map((chainId, i) => (
                       <ItemEntryWrapper

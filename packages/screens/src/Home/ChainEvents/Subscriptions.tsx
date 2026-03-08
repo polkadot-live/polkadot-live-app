@@ -16,6 +16,7 @@ import * as UI from '@polkadot-live/ui';
 import * as Accordion from '@radix-ui/react-accordion';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { useState } from 'react';
+import { Header } from '../Manage/Subscriptions/Header';
 import { getNetworkColor } from '../Wrappers';
 import { SubscriptionRow } from './SubscriptionRow';
 import type { ChainEventSubscription } from '@polkadot-live/types';
@@ -78,13 +79,13 @@ export const Subscriptions = ({
           text={'Reconnect chain to restore API access.'}
         />
       )}
-
-      <UI.ScreenInfoCard>
+      <UI.ScreenInfoCard style={{ marginBottom: '0.75rem' }}>
         <div>Toggle chain subscriptions.</div>
       </UI.ScreenInfoCard>
 
-      <FlexColumn>
-        <UI.AccordionWrapper style={{ marginTop: '1rem' }}>
+      <FlexColumn $rowGap="0.6rem">
+        <Header label="Chain Events" />
+        <UI.AccordionWrapper>
           <Accordion.Root
             className="AccordionRoot"
             collapsible={true}
@@ -92,7 +93,7 @@ export const Subscriptions = ({
             value={accordionVal}
             onValueChange={(val) => setAccordionVal(val as string)}
           >
-            <FlexColumn>
+            <FlexColumn $rowGap="0.6rem">
               {Object.entries(getCategorised()).map(([pallet, subs]) => (
                 <Accordion.Item
                   key={pallet}
@@ -122,7 +123,10 @@ export const Subscriptions = ({
                     </UI.AccordionTrigger>
                   </FlexRow>
 
-                  <UI.AccordionContent transparent={true}>
+                  <UI.AccordionContent
+                    transparent={true}
+                    className="AccordionContentReduce"
+                  >
                     <ItemsColumn>
                       {subs.map((sub, i) => (
                         <SubscriptionRow
