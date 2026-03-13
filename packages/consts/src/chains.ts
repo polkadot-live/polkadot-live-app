@@ -63,13 +63,13 @@ export const ChainList = new Map<ChainID, Chain>([
     {
       endpoints: {
         rpcs: [
-          'wss://asset-hub-polkadot.dotters.network',
+          //'wss://asset-hub-polkadot.dotters.network',
+          //'wss://polkadot-asset-hub-rpc.polkadot.io',
+          //'wss://statemint-rpc-tn.dwellir.com',
+          //'wss://statemint.public.curie.radiumblock.co/ws',
           'wss://dot-rpc.stakeworld.io/assethub',
-          'wss://polkadot-asset-hub-rpc.polkadot.io',
           'wss://rpc-asset-hub-polkadot.luckyfriday.io',
-          'wss://statemint-rpc-tn.dwellir.com',
           'wss://statemint.api.onfinality.io/public-ws',
-          'wss://statemint.public.curie.radiumblock.co/ws',
         ],
         lightClient: polkadot_asset_hub,
       },
@@ -121,12 +121,12 @@ export const ChainList = new Map<ChainID, Chain>([
     {
       endpoints: {
         rpcs: [
-          'wss://asset-hub-kusama.dotters.network',
-          'wss://ksm-rpc.stakeworld.io/assethub',
+          //'wss://asset-hub-kusama.dotters.network',
+          //'wss://statemine-rpc-tn.dwellir.com',
+          //'wss://statemine.public.curie.radiumblock.co/ws',
           'wss://kusama-asset-hub-rpc.polkadot.io',
           'wss://rpc-asset-hub-kusama.luckyfriday.io',
-          'wss://statemine-rpc-tn.dwellir.com',
-          'wss://statemine.public.curie.radiumblock.co/ws',
+          'wss://ksm-rpc.stakeworld.io/assethub',
         ],
         lightClient: ksmcc3_asset_hub,
       },
