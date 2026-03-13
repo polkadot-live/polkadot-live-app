@@ -11,4 +11,6 @@ export interface AppSettingsAdapter {
     setCache: Dispatch<SetStateAction<Map<SettingKey, boolean>>>,
     cacheRef: RefObject<Map<SettingKey, boolean>>,
   ) => void;
+  getLatestRelease: () => Promise<string | null>;
+  setLatestRelease: (serialized: string) => Promise<void>;
 }

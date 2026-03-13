@@ -4,6 +4,7 @@
 import type { SettingKey } from '@polkadot-live/types/settings';
 
 export interface AppSettingsContextInterface {
+  newRelease: boolean;
   cacheGet: (key: SettingKey) => boolean;
   toggleSetting: (setting: SettingKey) => void;
 }

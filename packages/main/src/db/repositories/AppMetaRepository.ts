@@ -59,4 +59,18 @@ export class AppMetaRepository {
   static setDisclaimerShown(shown: boolean): void {
     AppMetaRepository.set('disclaimer_shown', shown ? '1' : '0');
   }
+
+  /**
+   * Get the latest app version JSON (serialized).
+   */
+  static getLatestVersion(): string | null {
+    return AppMetaRepository.get('latest_version');
+  }
+
+  /**
+   * Set the latest app version JSON (serialized).
+   */
+  static setLatestVersion(serialized: string): void {
+    AppMetaRepository.set('latest_version', serialized);
+  }
 }

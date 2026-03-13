@@ -113,6 +113,16 @@ export const API: PreloadAPI = {
   getShowDisclaimer: async () =>
     await ipcRenderer.invoke('main:disclaimer:show'),
 
+  /**
+   * Latest version
+   */
+
+  getLatestVersion: async () =>
+    await ipcRenderer.invoke('main:getLatestVersion'),
+
+  setLatestVersion: async (serialized: string) =>
+    await ipcRenderer.invoke('main:setLatestVersion', serialized),
+
   copyToClipboard: async (text: string) =>
     await ipcRenderer.invoke('main:clipboard:copy', text),
 
