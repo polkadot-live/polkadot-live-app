@@ -31,9 +31,9 @@ export class AppMetaRepository {
   /**
    * Get a metadata value by key.
    */
-  static get(key: string): number | null {
+  static get(key: string): string | null {
     const row = AppMetaRepository.stmtGet!.get(key) as
-      | { value: number }
+      | { value: string }
       | undefined;
     return row ? row.value : null;
   }
@@ -41,7 +41,7 @@ export class AppMetaRepository {
   /**
    * Set a metadata value by key (upsert).
    */
-  static set(key: string, value: number): void {
+  static set(key: string, value: string): void {
     AppMetaRepository.stmtSet!.run(key, value);
   }
 
@@ -50,13 +50,13 @@ export class AppMetaRepository {
    */
   static getDisclaimerShown(): boolean {
     const value = AppMetaRepository.get('disclaimer_shown');
-    return value === 1;
+    return parseInt(value ?? '0', 10) === 1;
   }
 
   /**
    * Set the disclaimer shown flag.
    */
   static setDisclaimerShown(shown: boolean): void {
-    AppMetaRepository.set('disclaimer_shown', shown ? 1 : 0);
+    AppMetaRepository.set('disclaimer_shown', shown ? '1' : '0');
   }
 }
