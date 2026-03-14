@@ -2,13 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import axios from 'axios';
+import type { LatestVersionCache } from '@polkadot-live/types';
 
-export interface LatestVersionCache {
-  version: string;
-  checkedAt: number;
-  etag?: string;
-  lastModified?: string;
-}
+const FORCE_LIMIT = 10 * 60 * 1000; // 10 minutes
 
 export const fetchLatestVersion = async (
   url: string,
@@ -22,6 +18,14 @@ export const fetchLatestVersion = async (
   // Respect 24-hour TTL unless forced.
   if (!force && cache && now - cache.checkedAt < 24 * 60 * 60 * 1000) {
     return cache;
+  }
+
+  // Rate-limit forced/manual checks to once per `FORCE_LIMIT`.
+  if (force) {
+    const lastForced = cache?.lastForcedAt || 0;
+    if (now - lastForced < FORCE_LIMIT) {
+      return cache;
+    }
   }
 
   const headers: Record<string, string> = {};
@@ -39,7 +43,11 @@ export const fetchLatestVersion = async (
 
     if (resp.status === 304) {
       // Not modified — update checkedAt and persist.
-      const updated = { ...(cache as LatestVersionCache), checkedAt: now };
+      const updated: LatestVersionCache = {
+        ...(cache as LatestVersionCache),
+        checkedAt: now,
+      };
+      if (force) updated.lastForcedAt = now;
       await setCache(updated);
       return updated;
     }
@@ -54,6 +62,8 @@ export const fetchLatestVersion = async (
       version: body.version,
       checkedAt: now,
     };
+
+    if (force) newCache.lastForcedAt = now;
 
     if (resp.headers.etag) newCache.etag = resp.headers.etag;
     if (resp.headers['last-modified'])

@@ -2,15 +2,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { getDefaultSettings } from '@polkadot-live/consts/settings';
+import { LATEST_VERSION_URL } from '@polkadot-live/consts/sharedState';
 import { setStateWithRef } from '@w3ux/utils';
 import { createContext, useEffect, useRef, useState } from 'react';
 import { version as curVersion } from '../../../../../../package.json';
-import { createSafeContextHook } from '../../../utils';
+import { createSafeContextHook, renderToast } from '../../../utils';
 import { getAppSettingsAdapter } from './adapters';
 import { fetchLatestVersion, isNewer } from './releaseChecker';
-import type { SettingKey } from '@polkadot-live/types/settings';
+import type { LatestVersionCache, SettingKey } from '@polkadot-live/types';
 import type { AppSettingsContextInterface } from '../../../types/main';
-import type { LatestVersionCache } from './releaseChecker';
 
 export const AppSettingsContext = createContext<
   AppSettingsContextInterface | undefined
@@ -30,7 +30,11 @@ export const AppSettingsProvider = ({
   const [cache, setCache] = useState(getDefaultSettings());
   const cacheRef = useRef(cache);
 
-  const [newRelease, setNewRelease] = useState(false);
+  const [newRelease, setNewRelease] = useState<LatestVersionCache | null>(null);
+  const newReleaseRef = useRef(newRelease);
+  const isFetchingRef = useRef(false);
+  const lastForcedRef = useRef<number | null>(null);
+  const FORCE_LIMIT = 10 * 60 * 1000; // 10 minutes
 
   // Get value from cache.
   const cacheGet = (key: SettingKey): boolean =>
@@ -39,6 +43,60 @@ export const AppSettingsProvider = ({
   // Update settings cache and database.
   const toggleSetting = (key: SettingKey) => {
     adapter.onSettingToggle(key, setCache, cacheRef);
+  };
+
+  // Fetch version cache from database.
+  const initLatest = async () => {
+    const latest = await getLatest();
+    if (latest) {
+      setStateWithRef(latest, setNewRelease, newReleaseRef);
+      if (latest.lastForcedAt) {
+        lastForcedRef.current = latest.lastForcedAt;
+      }
+    }
+  };
+
+  const updateAvailable = (): boolean =>
+    newRelease ? isNewer(curVersion, newRelease.version) : false;
+
+  // Fetch latest version and update state.
+  const fetchLatest = async (force = false) => {
+    // Prevent concurrent fetches.
+    if (isFetchingRef.current) return;
+
+    // Client-side cooldown for forced/manual checks.
+    if (force) {
+      const last = lastForcedRef.current || 0;
+      if (Date.now() - last < FORCE_LIMIT) {
+        return;
+      }
+    }
+
+    isFetchingRef.current = true;
+    try {
+      const url = LATEST_VERSION_URL;
+      const res = await fetchLatestVersion(url, getLatest, setLatest, force);
+
+      // Update last forced timestamp.
+      if (force && res?.lastForcedAt) {
+        lastForcedRef.current = res.lastForcedAt;
+      }
+      // Update state.
+      let toastMsg = '';
+      if (!res) {
+        setStateWithRef(null, setNewRelease, newReleaseRef);
+        toastMsg = 'Up to date';
+      } else if (isNewer(curVersion, res.version)) {
+        setStateWithRef(res, setNewRelease, newReleaseRef);
+        toastMsg = 'Update available';
+      }
+      // Toast message.
+      if (force) {
+        renderToast(toastMsg, 'check-update', 'success', 'top-center');
+      }
+    } finally {
+      isFetchingRef.current = false;
+    }
   };
 
   // Get cached latest release.
@@ -68,20 +126,17 @@ export const AppSettingsProvider = ({
 
   // Set new release flag.
   useEffect(() => {
-    const fetchLatest = async () => {
-      const URL = 'TODO'; // TODO: Set URL.
-      const res = await fetchLatestVersion(URL, getLatest, setLatest);
-      setNewRelease(res === null ? false : isNewer(curVersion, res.version));
-    };
-    fetchLatest();
+    initLatest().then(() => fetchLatest());
   }, []);
 
   return (
     <AppSettingsContext
       value={{
-        newRelease,
+        newReleaseRef,
         cacheGet,
+        fetchLatest,
         toggleSetting,
+        updateAvailable,
       }}
     >
       {children}

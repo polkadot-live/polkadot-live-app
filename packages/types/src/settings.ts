@@ -4,6 +4,16 @@
 import type { IconProp } from '@fortawesome/fontawesome-svg-core';
 import type { HelpItemKey } from './help';
 
+export interface LatestVersionCache {
+  version: string;
+  checkedAt: number;
+  etag?: string;
+  lastModified?: string;
+  // Timestamp (ms) of the last user-forced fetch. Used to rate-limit
+  // manual refreshes to avoid rapid repeated requests.
+  lastForcedAt?: number;
+}
+
 export type OsPlatform = 'chrome' | 'darwin' | 'linux' | 'win32';
 
 export type SettingKey =
