@@ -12,6 +12,14 @@ export const electronAdapter: AppSettingsAdapter = {
     return map;
   },
 
+  getLatestRelease: async () => {
+    return await window.myAPI.getLatestVersion();
+  },
+
+  setLatestRelease: async (serialized: string) => {
+    await window.myAPI.setLatestVersion(serialized);
+  },
+
   onSettingToggle: (key, setCache, cacheRef) => {
     // Sync settings view.
     switch (key) {

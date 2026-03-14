@@ -16,6 +16,8 @@ export interface PreloadAPI {
   grantCamera: () => Promise<boolean>;
   getOsPlatform: () => Promise<string>;
   getShowDisclaimer: () => Promise<boolean>;
+  getLatestVersion: () => Promise<string | null>;
+  setLatestVersion: (serialized: string) => Promise<void>;
   copyToClipboard: (text: string) => Promise<void>;
 
   rawAccountTask: (task: IpcTask) => Promise<string | void>;

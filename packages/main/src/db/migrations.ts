@@ -33,7 +33,7 @@ export const migrations: Migration[] = [
       db.exec(`
         CREATE TABLE IF NOT EXISTS app_meta (
           key   TEXT PRIMARY KEY,
-          value INTEGER NOT NULL
+          value TEXT NOT NULL
         );
       `);
 

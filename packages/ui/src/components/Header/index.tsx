@@ -17,6 +17,8 @@ export const Header = ({
   theme,
   children,
   appLoading,
+  updateAvailable,
+  releaseCache,
   showButtons,
   showDock,
   showMinimize,
@@ -25,6 +27,7 @@ export const Header = ({
   onCloseWindow,
   onDockToggle,
   onClickTag,
+  onCheckForUpdates,
   onMinimizeWindow,
   ToggleNode,
 }: HeaderProps) => (
@@ -32,21 +35,35 @@ export const Header = ({
     <div className="content-wrapper">
       <div className="grab" />
       <FlexRow data-testid="version" $gap="0.75rem" className="release">
-        <span>{version || 'unknown'}</span>
-        {onClickTag && (
-          <button
-            type="button"
-            className="LatestRelease"
-            onClick={() => onClickTag()}
+        <span className="version">{version || 'unknown'}</span>
+        {!updateAvailable && onCheckForUpdates && (
+          <TooltipRx
+            style={{ zIndex: 50 }}
+            text={'Check for updates'}
+            theme={theme}
+            side="bottom"
           >
-            <TooltipRx
-              style={{ zIndex: 25 }}
-              text={'Check Latest Release'}
-              theme={theme}
-              side="bottom"
+            <button
+              disabled={Boolean(
+                releaseCache?.current?.lastForcedAt &&
+                  Date.now() - releaseCache.current.lastForcedAt <
+                    10 * 60 * 1000,
+              )}
+              type="button"
+              className="LatestRelease version"
+              onClick={() => onCheckForUpdates()}
             >
               <FontAwesomeIcon icon={faTags} />
-            </TooltipRx>
+            </button>
+          </TooltipRx>
+        )}
+        {updateAvailable && releaseCache && onClickTag && (
+          <button
+            onClick={() => onClickTag()}
+            type="button"
+            className="new-release"
+          >
+            Download {releaseCache.current?.version}
           </button>
         )}
       </FlexRow>

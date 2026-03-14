@@ -6,6 +6,9 @@ import type { SyncID } from '@polkadot-live/types';
 export const GITHUB_LATEST_RELEASE_URL =
   'https://github.com/polkadot-live/polkadot-live-app/releases/latest';
 
+export const LATEST_VERSION_URL =
+  'https://raw.githubusercontent.com/polkadot-live/polkadot-live-app/main/assets/latest.json';
+
 export const initSharedState = () =>
   new Map<SyncID, boolean>([
     ['account:importing', false],

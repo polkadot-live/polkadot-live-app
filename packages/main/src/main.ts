@@ -30,7 +30,7 @@ import {
   SubscriptionsController,
   WindowsController,
 } from './controller';
-import { DatabaseManager } from './db';
+import { AppMetaRepository, DatabaseManager } from './db';
 import { executeLedgerTask, USBController } from './ledger';
 import { MainDebug } from './utils/DebugUtils';
 import { menuTemplate } from './utils/MenuUtils';
@@ -188,13 +188,24 @@ app.whenReady().then(async () => {
    * Disclaimer
    */
   ipcMain.handle('main:disclaimer:show', async () => {
-    const { AppMetaRepository } = await import('./db');
     const shown = AppMetaRepository.getDisclaimerShown();
     if (!shown) {
       AppMetaRepository.setDisclaimerShown(true);
       return true;
     }
     return false;
+  });
+
+  /**
+   * Latest version
+   */
+  ipcMain.handle('main:getLatestVersion', async () => {
+    return AppMetaRepository.getLatestVersion();
+  });
+
+  ipcMain.handle('main:setLatestVersion', async (_, serialized: string) => {
+    AppMetaRepository.setLatestVersion(serialized);
+    return;
   });
 
   /**

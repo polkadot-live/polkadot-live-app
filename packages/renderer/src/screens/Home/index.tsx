@@ -44,8 +44,16 @@ export const Home = () => {
   useInitIpcHandlers();
 
   const { getAddresses } = useAddresses();
-  const { cacheGet, toggleSetting } = useAppSettings();
   const { openHelp } = useHelp();
+
+  const {
+    newReleaseRef,
+    cacheGet,
+    fetchLatest,
+    toggleSetting,
+    updateAvailable,
+  } = useAppSettings();
+
   const {
     cacheGet: getSharedState,
     getTheme,
@@ -66,6 +74,10 @@ export const Home = () => {
 
   const onClickTag = () => {
     openInBrowser(GITHUB_LATEST_RELEASE_URL);
+  };
+
+  const onCheckForUpdates = async () => {
+    await fetchLatest(true);
   };
 
   const onDockToggle = () => {
@@ -117,10 +129,13 @@ export const Home = () => {
         }
         appLoading={appLoading}
         dockToggled={dockToggled}
+        updateAvailable={updateAvailable()}
+        releaseCache={newReleaseRef}
         showButtons={true}
         showDock={String(platform) !== 'linux'}
         showMinimize={String(platform) === 'linux'}
         onClickTag={onClickTag}
+        onCheckForUpdates={onCheckForUpdates}
         onDockToggle={onDockToggle}
         onMinimizeWindow={onMinimizeWindow}
         version={version}

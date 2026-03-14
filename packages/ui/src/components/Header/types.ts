@@ -2,10 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import type { darkTheme } from '@polkadot-live/styles';
+import type { LatestVersionCache } from '@polkadot-live/types';
 
 export interface HeaderProps {
   theme: typeof darkTheme;
   appLoading?: boolean;
+  updateAvailable?: boolean;
+  releaseCache?: React.RefObject<LatestVersionCache | null>;
   showButtons?: boolean;
   showDock?: boolean;
   showMinimize?: boolean;
@@ -14,6 +17,7 @@ export interface HeaderProps {
   ToggleNode?: React.ReactNode;
   onCloseWindow?: () => void;
   onClickTag?: () => void;
+  onCheckForUpdates?: () => Promise<void>;
   onDockToggle?: () => void;
   onMinimizeWindow?: () => void;
   children?: React.ReactNode;

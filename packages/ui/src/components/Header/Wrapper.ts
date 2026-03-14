@@ -26,23 +26,66 @@ export const HeaderWrapper = styled.div`
     .release {
       -webkit-app-region: no-drag;
       color: var(--release-badge-color);
-      background-color: var(--release-badge-background);
       position: absolute;
       top: 0.5rem;
       left: 0;
       height: 18px;
-      padding: 0.2rem 1.2rem;
-      opacity: 0.85;
-      font-size: 0.85rem;
-      letter-spacing: 0.05rem;
-      border-radius: 1.5rem;
       user-select: none;
+
+      .version {
+        background-color: var(--release-badge-background);
+        border-radius: 1.5rem;
+        font-size: 0.85rem;
+        letter-spacing: 0.025rem;
+        opacity: 0.85;
+        padding: 0.2rem 1.2rem;
+      }
+      .new-release {
+        font-size: 0.85rem;
+        letter-spacing: 0.025rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.25rem 1.2rem;
+        min-width: 48px;
+        color: #e8e8e8;
+        background: linear-gradient(180deg, #1f8a4d 0%, #16703f 100%);
+        border-radius: 12px;
+        cursor: pointer;
+        user-select: none;
+        transition: transform 160ms ease, opacity 160ms ease, background 160ms ease;
+        will-change: transform;
+        animation: subtle-pulse 2.6s ease-in-out infinite;
+
+        &:hover,
+        &:focus {
+          transform: translateY(-1px) scale(1.02);
+          color: #fff;
+          opacity: 0.98;
+        }
+      }
+
+      @keyframes subtle-pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.03);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
 
       .LatestRelease {
         cursor: pointer;
         font-size: 0.8rem;
         &:hover {
           opacity: 0.75;
+        }
+        &:disabled {
+          cursor: not-allowed;
+          opacity: 0.5;
         }
       }
     }

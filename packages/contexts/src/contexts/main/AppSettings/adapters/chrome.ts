@@ -21,4 +21,12 @@ export const chromeAdapter: AppSettingsAdapter = {
     setStateWithRef(map, setCache, cacheRef);
     chrome.runtime.sendMessage(data);
   },
+
+  getLatestRelease: async () => {
+    return null;
+  },
+
+  setLatestRelease: async (_serialized: string) => {
+    /** empty */
+  },
 };
