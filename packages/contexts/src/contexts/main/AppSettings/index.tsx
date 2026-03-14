@@ -81,15 +81,12 @@ export const AppSettingsProvider = ({
       if (force && res?.lastForcedAt) {
         lastForcedRef.current = res.lastForcedAt;
       }
+
       // Update state.
-      let toastMsg = '';
-      if (!res) {
-        setStateWithRef(null, setNewRelease, newReleaseRef);
-        toastMsg = 'Up to date';
-      } else if (isNewer(curVersion, res.version)) {
-        setStateWithRef(res, setNewRelease, newReleaseRef);
-        toastMsg = 'Update available';
-      }
+      const hasUpdate = Boolean(res && isNewer(curVersion, res.version));
+      setStateWithRef(res, setNewRelease, newReleaseRef);
+      const toastMsg = hasUpdate ? 'Update available' : 'Up to date';
+
       // Toast message.
       if (force) {
         renderToast(toastMsg, 'check-update', 'success', 'top-center');
