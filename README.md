@@ -13,7 +13,7 @@ Polkadot Live is a cross-platform desktop application built with Electron and Re
 
 ## Documentation
 
-Ready to explore Polkadot Live? Head to the [documentation portal](https://polkadot-live.app/) to get started.
+Ready to explore Polkadot Live? Head to the [documentation portal](https://docs.polkadot-live.app/) to get started.
 
 ## Build and run
 
