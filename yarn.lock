@@ -1372,6 +1372,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ledgerhq/devices@npm:8.11.0":
+  version: 8.11.0
+  resolution: "@ledgerhq/devices@npm:8.11.0"
+  dependencies:
+    "@ledgerhq/errors": "npm:^6.30.0"
+    "@ledgerhq/logs": "npm:^6.15.0"
+    rxjs: "npm:7.8.2"
+    semver: "npm:7.7.3"
+  checksum: 10c0/b3b3e7d51ed8eb18e588365180104aa35abec770efb171ee31bec6acfc9639b206fdfd96581008e3541aaeedd5071a443169a5144e5163d68657499eb64c6307
+  languageName: node
+  linkType: hard
+
 "@ledgerhq/devices@npm:8.4.7":
   version: 8.4.7
   resolution: "@ledgerhq/devices@npm:8.4.7"
@@ -1381,18 +1393,6 @@ __metadata:
     rxjs: "npm:^7.8.1"
     semver: "npm:^7.3.5"
   checksum: 10c0/a32232bb73a0a11a496c2824371796cb5564949acbc1c43ce32055de3e91675b8ffd13252b602f0bb92fcafccd7cc0996015a601d40c6403b4334d2faff891af
-  languageName: node
-  linkType: hard
-
-"@ledgerhq/devices@npm:8.6.1":
-  version: 8.6.1
-  resolution: "@ledgerhq/devices@npm:8.6.1"
-  dependencies:
-    "@ledgerhq/errors": "npm:^6.26.0"
-    "@ledgerhq/logs": "npm:^6.13.0"
-    rxjs: "npm:^7.8.1"
-    semver: "npm:^7.3.5"
-  checksum: 10c0/ec5c594884091e732650fcf6bdba017ec9c5d9aa50db7ced285a73bc8cb904cde400037defe4a0c8b830a9fac61eaa70a9663ffef906a4bf93c22215030f5968
   languageName: node
   linkType: hard
 
@@ -1422,10 +1422,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ledgerhq/errors@npm:^6.26.0":
-  version: 6.26.0
-  resolution: "@ledgerhq/errors@npm:6.26.0"
-  checksum: 10c0/27e5a1dda997f3c38105b49c709aaf447e37eb27970150ece98ce81065a3bf4eb5c75d37cb91f9f874da2e69d2093395508fa08d9a293cfa6c6235b33627b983
+"@ledgerhq/errors@npm:^6.30.0":
+  version: 6.30.0
+  resolution: "@ledgerhq/errors@npm:6.30.0"
+  checksum: 10c0/0f12154a7a34d54297977c97b8ebe19d43787aec62dbaa01f247daed97dd82667fa2583ab608a259086c6f953f9b5fb954414cb69bcc9eb9e973e911b636a1f2
   languageName: node
   linkType: hard
 
@@ -1458,15 +1458,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ledgerhq/hw-transport-webhid@npm:^6.30.8":
-  version: 6.30.8
-  resolution: "@ledgerhq/hw-transport-webhid@npm:6.30.8"
+"@ledgerhq/hw-transport-webhid@npm:^6.32.0":
+  version: 6.32.0
+  resolution: "@ledgerhq/hw-transport-webhid@npm:6.32.0"
   dependencies:
-    "@ledgerhq/devices": "npm:8.6.1"
-    "@ledgerhq/errors": "npm:^6.26.0"
-    "@ledgerhq/hw-transport": "npm:^6.31.12"
-    "@ledgerhq/logs": "npm:^6.13.0"
-  checksum: 10c0/1cbc9c386844d04b78d5db0b4da50b78b88b5413ec709dfb513614fca61dcf740107c797a614da1bd6ba56a3c68005a94e761486641a243dd293b45e52c01bb4
+    "@ledgerhq/devices": "npm:8.11.0"
+    "@ledgerhq/errors": "npm:^6.30.0"
+    "@ledgerhq/hw-transport": "npm:6.33.0"
+    "@ledgerhq/logs": "npm:^6.15.0"
+  checksum: 10c0/e9c1fc606ea83b460bbdd06455a91591ab95858582df6252a8e3166ac320cb2ea34e3b0e31460bb958ed02841d503b1dbb80f8387d5f533a3c3223c2e664dc0f
   languageName: node
   linkType: hard
 
@@ -1482,15 +1482,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ledgerhq/hw-transport@npm:^6.31.12":
-  version: 6.31.12
-  resolution: "@ledgerhq/hw-transport@npm:6.31.12"
+"@ledgerhq/hw-transport@npm:6.33.0":
+  version: 6.33.0
+  resolution: "@ledgerhq/hw-transport@npm:6.33.0"
   dependencies:
-    "@ledgerhq/devices": "npm:8.6.1"
-    "@ledgerhq/errors": "npm:^6.26.0"
-    "@ledgerhq/logs": "npm:^6.13.0"
+    "@ledgerhq/devices": "npm:8.11.0"
+    "@ledgerhq/errors": "npm:^6.30.0"
+    "@ledgerhq/logs": "npm:^6.15.0"
     events: "npm:^3.3.0"
-  checksum: 10c0/0e31af2f5f513a37a920fdbe77c2a66ae9773f6138b395d295653b6de2f77c60980a6cdbef8d2c848ce3fd7ebbdbbfc9460208fab6b625e65c91c4f7b61e06a8
+  checksum: 10c0/6b622bafbd8e5e598297f8fc4edb26ecac11689324bc34c613e3a32d5483633a995327b164bc7da2abf8784a1a0729675fd55fd80ae8c586bf649814089a4eff
   languageName: node
   linkType: hard
 
@@ -1517,6 +1517,13 @@ __metadata:
   version: 6.13.0
   resolution: "@ledgerhq/logs@npm:6.13.0"
   checksum: 10c0/8b40a7af64a9526b441394e84f05afc42552b4d3d1e45c33dd262d669c77e2351e06bd354929ffdf6cfe0e0404b0042b8b5da610016232a0eb516f1daa73f39f
+  languageName: node
+  linkType: hard
+
+"@ledgerhq/logs@npm:^6.15.0":
+  version: 6.15.0
+  resolution: "@ledgerhq/logs@npm:6.15.0"
+  checksum: 10c0/1772f50164fc27a89b5143960fdd5646c8aaa4b0428148bf736656caecbfc6d8bcfff85bf5b4580e47e18d369ec1a30c0070d0460efe0601693dcc3d59a9722c
   languageName: node
   linkType: hard
 
@@ -2193,7 +2200,7 @@ __metadata:
   resolution: "@polkadot-live/extension@workspace:packages/extension"
   dependencies:
     "@crxjs/vite-plugin": "npm:^2.0.3"
-    "@ledgerhq/hw-transport-webhid": "npm:^6.30.8"
+    "@ledgerhq/hw-transport-webhid": "npm:^6.32.0"
     "@polkadot-live/consts": "workspace:*"
     "@polkadot-live/contexts": "workspace:*"
     "@polkadot-live/core": "workspace:*"
@@ -11529,7 +11536,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rxjs@npm:^7.8.1":
+"rxjs@npm:7.8.2, rxjs@npm:^7.8.1":
   version: 7.8.2
   resolution: "rxjs@npm:7.8.2"
   dependencies:
@@ -11656,6 +11663,15 @@ __metadata:
   version: 1.0.0
   resolution: "semver-compare@npm:1.0.0"
   checksum: 10c0/9ef4d8b81847556f0865f46ddc4d276bace118c7cb46811867af82e837b7fc473911981d5a0abc561fa2db487065572217e5b06e18701c4281bcdd2a1affaff1
+  languageName: node
+  linkType: hard
+
+"semver@npm:7.7.3":
+  version: 7.7.3
+  resolution: "semver@npm:7.7.3"
+  bin:
+    semver: bin/semver.js
+  checksum: 10c0/4afe5c986567db82f44c8c6faef8fe9df2a9b1d98098fc1721f57c696c4c21cebd572f297fc21002f81889492345b8470473bc6f4aff5fb032a6ea59ea2bc45e
   languageName: node
   linkType: hard
 
