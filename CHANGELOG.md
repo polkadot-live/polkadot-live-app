@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.14.0-beta](https://github.com/polkadot-live/polkadot-live-app/compare/v0.13.0-beta...v0.14.0-beta) (2026-03-15)
+
+
+### Features
+
+* **core:** check for updates ([#1193](https://github.com/polkadot-live/polkadot-live-app/issues/1193)) ([e14cd54](https://github.com/polkadot-live/polkadot-live-app/commit/e14cd54518707a9699be4551ef2d40b00a342c13))
+* **db:** sqlite migration ([#1178](https://github.com/polkadot-live/polkadot-live-app/issues/1178)) ([e080922](https://github.com/polkadot-live/polkadot-live-app/commit/e080922ad71a2c3fe7a0ff52830a980c754c87e9))
+* **screens:** open gov subscriptions iteration ([#1186](https://github.com/polkadot-live/polkadot-live-app/issues/1186)) ([673ae77](https://github.com/polkadot-live/polkadot-live-app/commit/673ae771a94386855777a051104ddbcd01949114))
+* **screens:** redesign chain events network and account lists ([#1185](https://github.com/polkadot-live/polkadot-live-app/issues/1185)) ([35bdc02](https://github.com/polkadot-live/polkadot-live-app/commit/35bdc02b536fa0916b32d714aaac0e179533159f))
+* **screens:** redesign event category list ([#1184](https://github.com/polkadot-live/polkadot-live-app/issues/1184)) ([659aa1f](https://github.com/polkadot-live/polkadot-live-app/commit/659aa1f15ef322c96348bc1422a8e58c5a15cdcb))
+* **screens:** redesign opengov referenda list ([#1187](https://github.com/polkadot-live/polkadot-live-app/issues/1187)) ([af6048a](https://github.com/polkadot-live/polkadot-live-app/commit/af6048ae5fa373501fbf0307a6be9ac3f13acae1))
+* **screens:** summary screen redesign ([#1179](https://github.com/polkadot-live/polkadot-live-app/issues/1179)) ([c282ed4](https://github.com/polkadot-live/polkadot-live-app/commit/c282ed49526cbe1f6af9a69b8e2f5495b989df7d))
+* **tooling:** biome migration ([#1171](https://github.com/polkadot-live/polkadot-live-app/issues/1171)) ([0f3ab12](https://github.com/polkadot-live/polkadot-live-app/commit/0f3ab122fd0e98adfdd4dddb3d962ced31bec481))
+* **ui:** add subscription count summaries ([#1188](https://github.com/polkadot-live/polkadot-live-app/issues/1188)) ([aaafdb9](https://github.com/polkadot-live/polkadot-live-app/commit/aaafdb943a9ffe747dfd82e20ebdabe42f7ba6cb))
+* **ui:** refinement and improvements ([#1189](https://github.com/polkadot-live/polkadot-live-app/issues/1189)) ([a840e67](https://github.com/polkadot-live/polkadot-live-app/commit/a840e67fa545a7047428127cfb2ec88ddf8b1209))
+
+
+### Bug Fixes
+
+* **backup:** import parsing and summary sync ([#1181](https://github.com/polkadot-live/polkadot-live-app/issues/1181)) ([1880358](https://github.com/polkadot-live/polkadot-live-app/commit/18803588c6f5e9d410b0076f9fc2eabf7847f4a6))
+* **summary:** reactive stats syncing ([#1180](https://github.com/polkadot-live/polkadot-live-app/issues/1180)) ([f4d27b2](https://github.com/polkadot-live/polkadot-live-app/commit/f4d27b243f038841350844dd3208d6a4bdcf9921))
+* **ui:** check for update header ([#1194](https://github.com/polkadot-live/polkadot-live-app/issues/1194)) ([c266598](https://github.com/polkadot-live/polkadot-live-app/commit/c266598ebbb4efdc476f0fe029e106bc41379b97))
+
 ## [0.13.0-beta](https://github.com/polkadot-live/polkadot-live-app/compare/v0.12.0-beta...v0.13.0-beta) (2026-01-05)
 
 
