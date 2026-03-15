@@ -27,6 +27,7 @@ export const Header = ({
   onCloseWindow,
   onDockToggle,
   onClickTag,
+  onClickUpdate,
   onCheckForUpdates,
   onMinimizeWindow,
   ToggleNode,
@@ -35,7 +36,13 @@ export const Header = ({
     <div className="content-wrapper">
       <div className="grab" />
       <FlexRow data-testid="version" $gap="0.75rem" className="release">
-        <span className="version">{version || 'unknown'}</span>
+        <button
+          type="button"
+          onClick={() => onClickTag?.()}
+          className="version"
+        >
+          {version || 'unknown'}
+        </button>
         {!updateAvailable && onCheckForUpdates && (
           <TooltipRx
             style={{ zIndex: 50 }}
@@ -57,9 +64,9 @@ export const Header = ({
             </button>
           </TooltipRx>
         )}
-        {updateAvailable && releaseCache && onClickTag && (
+        {updateAvailable && releaseCache && onClickUpdate && (
           <button
-            onClick={() => onClickTag()}
+            onClick={() => onClickUpdate()}
             type="button"
             className="new-release"
           >

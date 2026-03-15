@@ -1,7 +1,10 @@
 // Copyright 2025 @polkadot-live/polkadot-live-app authors & contributors
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { GITHUB_LATEST_RELEASE_URL } from '@polkadot-live/consts';
+import {
+  GITHUB_LATEST_RELEASE_URL,
+  GITHUB_RELEASE_BASE_URL,
+} from '@polkadot-live/consts';
 import {
   useAddresses,
   useAppSettings,
@@ -73,6 +76,10 @@ export const Home = () => {
   const [platform, setPlatform] = useState<string | null>(null);
 
   const onClickTag = () => {
+    openInBrowser(`${GITHUB_RELEASE_BASE_URL}${version}`);
+  };
+
+  const onClickUpdate = () => {
     openInBrowser(GITHUB_LATEST_RELEASE_URL);
   };
 
@@ -135,6 +142,7 @@ export const Home = () => {
         showDock={String(platform) !== 'linux'}
         showMinimize={String(platform) === 'linux'}
         onClickTag={onClickTag}
+        onClickUpdate={onClickUpdate}
         onCheckForUpdates={onCheckForUpdates}
         onDockToggle={onDockToggle}
         onMinimizeWindow={onMinimizeWindow}
