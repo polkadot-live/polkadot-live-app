@@ -17,6 +17,7 @@ export interface HeaderProps {
   ToggleNode?: React.ReactNode;
   onCloseWindow?: () => void;
   onClickTag?: () => void;
+  onClickUpdate?: () => void;
   onCheckForUpdates?: () => Promise<void>;
   onDockToggle?: () => void;
   onMinimizeWindow?: () => void;
