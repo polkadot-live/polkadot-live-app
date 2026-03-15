@@ -51,6 +51,8 @@ jobs:
         cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
     - name: Install Dependencies
       run: yarn install
+    - name: Rebuild native Electron module
+      run: yarn rebuild:sqlite
     - name: Publish
       env:
         CSC_LINK: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
