@@ -82,5 +82,4 @@ jobs:
         tag_name: ${{ github.event.inputs.release_tag }}
         files: |
           ${{ steps.find_exe.outputs.exe_path }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+        token: ${{ secrets.PAT_TOKEN }}
