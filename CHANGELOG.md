@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.1-beta](https://github.com/polkadot-live/polkadot-live-app/compare/v0.14.0-beta...v0.14.1-beta) (2026-03-16)
+
+
+### Bug Fixes
+
+* **ci:** windows release workflow ([#1198](https://github.com/polkadot-live/polkadot-live-app/issues/1198)) ([8130087](https://github.com/polkadot-live/polkadot-live-app/commit/8130087be0b890898e1d0b06b7f5d8afc9857673))
+
 ## [0.14.0-beta](https://github.com/polkadot-live/polkadot-live-app/compare/v0.13.0-beta...v0.14.0-beta) (2026-03-15)
 
 
